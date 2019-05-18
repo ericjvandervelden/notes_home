@@ -5319,8 +5319,8 @@ def init():
 	global a,b,c,t,phi,w,y
 	a=np.array([.5,.75,1,1.25,1.5])
 	b=-a[::-1]
-	c=np.concatenate([a,b][::-1]) 
-	t=np.concatenate([np.zeros(len(a)),np.ones(len(b))]).reshape(-1,1)
+	c=np.concatenate([b,a]) # c=np.concatenate([a,b][::-1]) 
+	t=np.concatenate([np.zeros(len(b)),np.ones(len(a))]).reshape(-1,1)
 	phi=np.c_[np.ones((len(c),1)),c]
 	w=np.array([1,1])
 	y=expit(phi.dot(w))
@@ -5329,8 +5329,8 @@ def init2():
 	global a,b,c,t,phi,w,y
 	a=np.array([[1,1],[1,0],[1,-1]])
 	b=-a[::-1]
-	c=np.concatenate([a,b][::-1]) 
-	t=np.concatenate([np.zeros(len(a)),np.ones(len(b))]).reshape(-1,1)
+	c=np.concatenate([b,a]) #c=np.concatenate([a,b][::-1]) 
+	t=np.concatenate([np.zeros(len(b)),np.ones(len(a))]).reshape(-1,1)
 	phi=np.c_[np.ones((len(c),1)),c]
 	w=np.ones(1+a.shape[1])
 	y=expit(phi.dot(w))
@@ -5350,6 +5350,51 @@ def logreg(w):
 init()
 # pas evt a aan	, a=np.array([1])
 w=logreg(w)
+
+/ 13	. 
+
+/ Intermezzo
+
+In [4431]: np.e
+Out[4431]: 2.718281828459045
+In [4430]: np.log(np.e)
+Out[4430]: 1.0
+
+/ Einde Intermezzo
+
+def E(w):
+	global a,b,c,t,phi,w,y
+	a=np.array([1])
+	b=-a[::-1]
+	c=np.concatenate([b,a]) #c=np.concatenate([a,b][::-1]) 
+	phi=np.c_[np.ones((len(c),1)),c]
+	t=np.concatenate([np.zeros(len(a)),np.ones(len(b))]).reshape(-1,1)
+	w=np.array([1,1])
+	y=expit(phi.dot(w))
+
+def E(x,y):
+	return -np.log(expit(x+y))-np.log(1-expit(x-y))
+
+def E(x,y):
+	return x**2-y**2 
+
+x=np.linspace(-10,10,100)
+y=np.linspace(-10,10,100)
+X,Y=np.meshgrid(x,y)
+Z=E(X,Y)
+plt.figure()                    
+contours=plt.contour(X,Y,Z)     
+plt.clabel(contours,inline=True)
+
+
+/ Intermezzo
+
+/ zoek in history	, 
+
+In [4453]: %hist -g scipy.special
+3299: from scipy.special import expit
+
+/ Einde Intermezzo
 
 
 / Einde BISHOP
