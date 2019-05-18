@@ -1,0 +1,17 @@
+https://www.youtube.com/watch?v=ZZNb1NOPTp8
+/ android backend	,
+->
+https://cloud.google.com/solutions/mobile/
+/ click Development Guides	,
+https://cloud.google.com/solutions/mobile/#development_guides
+/ click de 1ste link linksboven	,
+https://cloud.google.com/solutions/mobile/mobile-app-backend-services
+/ we zien halverwege de link Hello Endpoints	,
+https://github.com/GoogleCloudPlatform/appengine-endpoints-helloendpoints-java-maven
+/ deze wordt niet meer maintained	, nu is er	,
+https://github.com/GoogleCloudPlatform/java-docs-samples/tree/master/appengine-java8/endpoints-v2-backend
+
+https://github.com/GoogleCloudPlatform/appengine-endpoints-tictactoe-java
+https://github.com/GoogleCloudPlatform/appengine-endpoints-tictactoe-python
+/ nog wel OK	,
+

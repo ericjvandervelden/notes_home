@@ -1,0 +1,1060 @@
+/ HIBERNATE
+
+/ 7	.
+
+/ hibernate_xml_N_1_bidir_ehcache
+
+/ new session	,
+	        employee = (Employee) session.get(Employee.class, 1l);
+/*
+	        address=(Address)session.get(Address.class, 12l);
+/**
+
+/ Na * is employee in 1c, en heeft een Address-proxy	,
+employee	Employee  (id=50)	
+	address	Address_$$_jvst593_0  (id=53)	
+
+/ Na ** is address in 1c, maar employee.address is nog steeds de Address-proxy	,
+
+/ dus in 1c zijn 2 entities	,
+
+/ 7	.
+
+/ In een coll zitten geen proxies, maar insts	,
+/ TODO
+
+/ 7	.
+
+/ hibernate_xml_N_1_bidir_ehcache
+/ of	,
+/ hibernate_xml_1_N_bidir_ehcache
+
+/ 13	.
+
+/ session
+/ 	address with a set,
+/ Einde session	,			
+/ session
+	        employee = (Employee) session.get(Employee.class, 1l);		
+/ Einde session	,			
+
+/ buiten session	,	
+	        Set<Employee>employees_=address.getEmployees();
+	        Iterator<Employee>iterator_=employees_.iterator();
+/ GEEN LazyInitExc 
+		String s__=employee.getAddress().getZipcode();
+/ WEL LazyInitExc	, want employee.address is een proxy	,
+
+/ 13	.
+
+/ session
+/ 		address with a set,
+/ Einde session	,			
+
+/ session
+		address=(Address)session.get(Address.class, 12l);
+/ address has empty set	,
+	        employee = (Employee) session.get(Employee.class, 1l);		
+/ Einde session	,			
+		
+/ session	,	
+		String s__=employee.getAddress().getZipcode();
+/ GEEN LazyInitExc	, want employee.address in een inst	, geen proxy	,
+	        Set<Employee>employees_=address.getEmployees();
+	        Iterator<Employee>iterator_=employees_.iterator();
+/ WEL LazyInitExc 
+			
+/ als coll lazy init exc	, 
+
+Thread [main] (Suspended)	
+	PersistentSet(AbstractPersistentCollection).withTemporarySessionIfNeeded(LazyInitializationWork<T>) line: 214	
+		if ( session == null ) {
+			if ( allowLoadOutsideTransaction ) {
+/ NEE
+			else {
+				throwLazyInitializationException( "could not initialize proxy - no Session" );
+
+	PersistentSet(AbstractPersistentCollection).initialize(boolean) line: 554	
+	PersistentSet(AbstractPersistentCollection).read() line: 142	
+	PersistentSet.iterator() line: 180	
+
+/ 7	.
+
+/ 13	.
+
+/ we kunnnen op een prop lazy="proxy/no-proxy/false"	,	
+/ als lazy="proxy", dan is de prop een proxy, als lazy="false" is de prop een inst	,
+
+/ als we in de 2de session	,
+	        employee = (Employee) session.get(Employee.class, 1l);
+	        address=(Address)session.get(Address.class, 12l);
+
+/ dan is address een RESOLVED proxy	, 
+/ na employee=... is employee een inst, en employee.address een UNRESOLVED proxy	,
+/ na address=... is adddress een RESOLVED proxy (de proxy van hierboven is resolved)	, 
+/ in 1c zijn dus 2 entries en 1 proxy	, 
+
+/ 13	. 
+
+/ we kunnen op een coll lazy="true/false/extra"	,
+/ als lazy="true", dan is de coll leeg	, en als we .size of .iterator doen, dan wordt de set init	, 
+/ als lazy="extra", dan is de coll ook leeg	, maar als we .size doen, wordt alleen de size berekend, en als we .iterator doen wordt de coll init	, 
+/ als lazy="false"	, dan is de coll filled (with insts)	,  
+
+/ in coll altijd insts	, 
+/ TODO
+
+/ 7	.
+
+/ TMP
+select address0_.id__ as id__1_0_0_, address0_.address_line1__ as address_2_0_0_, address0_.zipcode__ as zipcode_3_0_0_, address0_.city__ as city__4_0_0_, employees1_.address_ as address_4_0_1_, employees1_.id_ as id_1_1_1_, employees1_.id_ as id_1_1_2_, employees1_.name_ as name_2_1_2_, employees1_.salary_ as salary_3_1_2_, employees1_.address_ as address_4_1_2_, employees1_.living_ as living_5_1_2_ 
+from address address0_ 
+left outer join employee employees1_ on address0_.id__=employees1_.address_ 
+where address0_.id__=?
+
+/ 13	. 
+
+/ N+1 problem	, 
+
+/ je hebt een coll,	 en voor ieder item uit de coll doet hij weer een select	,
+/ hieronder: je doet voor ieder item=employee (op het werk address) een query naar de living address	, 
+
+/ hibernate_xml_N_1_bidir_fetch_ehcache
+/ EntFetchApp
+/ Address's map	,
+<set 
+	name="employees"
+	fetch="select"
+/ Employee's map	,
+	<many-to-one 
+		name="living"
+		fetch="join"
+
+			Address address2=(Address)session.get(Address.class, 1l);
+
+select address0_.id__ as id__1_0_0_, address0_.address_line1__ as address_2_0_0_, address0_.zipcode__ as zipcode_3_0_0_, address0_.city__ as city__4_0_0_ 
+from address address0_ 
+where address0_.id__=?
+
+			Set<Employee>employees=address2.getEmployees();
+			Iterator<Employee>iterator=employees.iterator();
+
+select employees0_.address_ as address_4_0_0_, employees0_.id_ as id_1_1_0_, employees0_.id_ as id_1_1_1_, employees0_.name_ as name_2_1_1_, employees0_.salary_ as salary_3_1_1_, employees0_.address_ as address_4_1_1_, employees0_.living_ as living_5_1_1_ 
+from employee employees0_ 
+where employees0_.address_=?
+
+			while (iterator.hasNext()) {
+				Employee employee = (Employee) iterator.next();
+				Address living =employee.getLiving();
+				String zip=living.getZipcode();
+select address0_.id__ as id__1_0_0_, address0_.address_line1__ as address_2_0_0_, address0_.zipcode__ as zipcode_3_0_0_, address0_.city__ as city__4_0_0_ 
+from address address0_ 
+where address0_.id__=?
+/ steeds	,
+
+/ 13	. 
+
+/ hibernate_xml_N_1_bidir_fetch_ehcache
+/ EntFetchApp
+/ Address's map	,
+<set 
+	name="employees"
+	fetch="select"
+/ Employee's map	,
+	<many-to-one 
+		name="living"
+		fetch="join"
+
+			Address address2=(Address)session.get(Address.class, 1l);
+
+Hibernate: select address0_.id__ as id__1_0_0_, address0_.address_line1__ as address_2_0_0_, address0_.zipcode__ as zipcode_3_0_0_, address0_.city__ as city__4_0_0_ from address address0_ where address0_.id__=?
+
+			Set<Employee>employees=address2.getEmployees();
+			Iterator<Employee>iterator=employees.iterator();
+
+select employees0_.address_ as address_4_0_0_, employees0_.id_ as id_1_1_0_, employees0_.id_ as id_1_1_1_, employees0_.name_ as name_2_1_1_, employees0_.salary_ as salary_3_1_1_, employees0_.address_ as address_4_1_1_, employees0_.living_ as living_5_1_1_, address1_.id__ as id__1_0_2_, address1_.address_line1__ as address_2_0_2_, address1_.zipcode__ as zipcode_3_0_2_, address1_.city__ as city__4_0_2_ 
+from employee employees0_ 
+left outer join address address1_ on employees0_.living_=address1_.id__ 
+where employees0_.address_=?
+
+			while (iterator.hasNext()) {
+				Employee employee = (Employee) iterator.next();
+				Address living =employee.getLiving();
+				String zip=living.getZipcode();
+
+/ No further queries	,
+
+/ 13	. 
+
+/ hibernate_xml_N_1_bidir_fetch_ehcache
+/ EntFetchApp
+/ Address's map	,
+<set 
+	name="employees"
+	fetch="join"
+/ Employee's map	,
+	<many-to-one 
+		name="living"
+		fetch="select"
+
+			Address address2=(Address)session.get(Address.class, 1l);
+
+
+select address0_.id__ as id__1_0_0_, address0_.address_line1__ as address_2_0_0_, address0_.zipcode__ as zipcode_3_0_0_, address0_.city__ as city__4_0_0_, employees1_.address_ as address_4_0_1_, employees1_.id_ as id_1_1_1_, employees1_.id_ as id_1_1_2_, employees1_.name_ as name_2_1_2_, employees1_.salary_ as salary_3_1_2_, employees1_.address_ as address_4_1_2_, employees1_.living_ as living_5_1_2_ 
+from address address0_ 
+left outer join employee employees1_ on address0_.id__=employees1_.address_ 
+where address0_.id__=?
+/ steeds	, 
+
+			Set<Employee>employees=address2.getEmployees();
+			Iterator<Employee>iterator=employees.iterator();
+/ Geen query	, 
+			while (iterator.hasNext()) {
+				Employee employee = (Employee) iterator.next();
+				Address living =employee.getLiving();
+				String zip=living.getZipcode();
+
+select address0_.id__ as id__1_0_0_, address0_.address_line1__ as address_2_0_0_, address0_.zipcode__ as zipcode_3_0_0_, address0_.city__ as city__4_0_0_, employees1_.address_ as address_4_0_1_, employees1_.id_ as id_1_1_1_, employees1_.id_ as id_1_1_2_, employees1_.name_ as name_2_1_2_, employees1_.salary_ as salary_3_1_2_, employees1_.address_ as address_4_1_2_, employees1_.living_ as living_5_1_2_ 
+from address address0_ 
+left outer join employee employees1_ on address0_.id__=employees1_.address_ 
+where address0_.id__=?
+/ elke keer	,
+/ we zien overbodige join op employee	,	,
+/ TODO
+
+
+
+/ 7	.
+
+
+
+
+/ Einde HIBERNATE
+
+/ JBOSS QUICKSTARTS
+
+http://www.jboss.org/quickstarts/eap/
+http://www.jboss.org/quickstarts/wfk
+
+
+
+
+/ Einde JBOSS QUICKSTARTS
+
+/ SIA
+
+/ 7	. 
+
+/ 2 manieren tx	,
+
+/ 13	. 
+
+/ rename original bean	,
+
+$ vi ./src/main/resources/roadrantz-services.xml
+
+<bean id="rantServiceTarget"
+	class="com.roadrantz.service.RantServiceImpl">
+...
+
+$ vi ./src/main/resources/roadrantz-transactions.xml
+
+  <bean id="rantService"
+      class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+    <property name="target"
+        ref="rantServiceTarget" />
+... 
+
+/ 13. 	
+
+/ do not change name original bean	, and add annotation	,
+
+/ but now they do it differently	, with annotations,	
+
+$ vi ./src/main/resources/roadrantz-services.xml 
+
+<bean id="rantService"
+	class="com.roadrantz.service.RantServiceImpl">
+...
+
+$ vi ./src/main/resources/roadrantz-transactions.xml
+
+  <tx:annotation-driven/>
+
+/ 7	.
+
+
+
+
+/ Einde SIA
+
+/ HIBERNATE
+
+/ 7	.
+
+my.test.own.hibernate_xml_N_1_bidir_fetch_coll_ehcache.CollFetchApp2 at localhost:56611	
+
+	        
+        	detachedCriteria=DetachedCriteria.forClass(Address.class)
+        			.add(Restrictions.like("zipcode", "%Work"))
+        			.createCriteria("employees")
+        			.setResultTransformer(org.hibernate.Criteria.ALIAS_TO_ENTITY_MAP);
+	        			
+	        {
+			session = sessionFactory.openSession();
+			tx=session.beginTransaction();
+			{
+				org.hibernate.Criteria criteria=detachedCriteria.getExecutableCriteria(session);
+				List objects=criteria.list();
+				boolean b=false;
+			}
+
+/ OK,	 
+
+/ 7	.
+
+/ see LOG_8_sep_2014.txt	, SAMENVATTING CRITERIA
+
+my.test.own.hibernate_xml_N_1_bidir_fetch_coll_ehcache.CollFetchApp at localhost:56611	
+
+			List objects=session.createCriteria(Address.class)
+				.add(Restrictions.like("zipcode", "%Work"))
+				.createCriteria("employees")
+				.setResultTransformer(org.hibernate.Criteria.ALIAS_TO_ENTITY_MAP)
+				.list();		
+
+/ we kunnen	 in Address's map,
+<set
+ 		name="employees"
+ 		inverse="true"
+/ 1	.
+  		lazy="true"
+		fetch="select"
+/ 2	.
+  		lazy="false"
+		fetch="select"
+/ 3	.
+  		lazy="false"
+		fetch="join"
+/ Zinloos	, is voor .get	, NIET voor criteria	,
+
+/ 1	. 
+
+Hibernate: select this_.id__ as id__1_0_1_, this_.address_line1__ as address_2_0_1_, this_.zipcode__ as zipcode_3_0_1_, this_.city__ as city__4_0_1_, employee1_.id_ as id_1_1_0_, employee1_.name_ as name_2_1_0_, employee1_.salary_ as salary_3_1_0_, employee1_.address_ as address_4_1_0_, employee1_.living_ as living_5_1_0_ from address_coll this_ inner join employee_coll employee1_ on this_.id__=employee1_.address_ where this_.zipcode__ like ?
+
+
+/ In list 15 Address's (5 verschllende)	, lege employees set	,
+
+/ 2	.
+
+Hibernate: select this_.id__ as id__1_0_1_, this_.address_line1__ as address_2_0_1_, this_.zipcode__ as zipcode_3_0_1_, this_.city__ as city__4_0_1_, employee1_.id_ as id_1_1_0_, employee1_.name_ as name_2_1_0_, employee1_.salary_ as salary_3_1_0_, employee1_.address_ as address_4_1_0_, employee1_.living_ as living_5_1_0_ from address_coll this_ inner join employee_coll employee1_ on this_.id__=employee1_.address_ where this_.zipcode__ like ?
+Hibernate: select employees0_.address_ as address_4_0_0_, employees0_.id_ as id_1_1_0_, employees0_.id_ as id_1_1_1_, employees0_.name_ as name_2_1_1_, employees0_.salary_ as salary_3_1_1_, employees0_.address_ as address_4_1_1_, employees0_.living_ as living_5_1_1_ from employee_coll employees0_ where employees0_.address_=?
+Hibernate: select employees0_.address_ as address_4_0_0_, employees0_.id_ as id_1_1_0_, employees0_.id_ as id_1_1_1_, employees0_.name_ as name_2_1_1_, employees0_.salary_ as salary_3_1_1_, employees0_.address_ as address_4_1_1_, employees0_.living_ as living_5_1_1_ from employee_coll employees0_ where employees0_.address_=?
+Hibernate: select employees0_.address_ as address_4_0_0_, employees0_.id_ as id_1_1_0_, employees0_.id_ as id_1_1_1_, employees0_.name_ as name_2_1_1_, employees0_.salary_ as salary_3_1_1_, employees0_.address_ as address_4_1_1_, employees0_.living_ as living_5_1_1_ from employee_coll employees0_ where employees0_.address_=?
+Hibernate: select employees0_.address_ as address_4_0_0_, employees0_.id_ as id_1_1_0_, employees0_.id_ as id_1_1_1_, employees0_.name_ as name_2_1_1_, employees0_.salary_ as salary_3_1_1_, employees0_.address_ as address_4_1_1_, employees0_.living_ as living_5_1_1_ from employee_coll employees0_ where employees0_.address_=?
+Hibernate: select employees0_.address_ as address_4_0_0_, employees0_.id_ as id_1_1_0_, employees0_.id_ as id_1_1_1_, employees0_.name_ as name_2_1_1_, employees0_.salary_ as salary_3_1_1_, employees0_.address_ as address_4_1_1_, employees0_.living_ as living_5_1_1_ from employee_coll employees0_ where employees0_.address_=?
+
+/ In list 15 Address's (5 verschllende)	, lege employees initialized	,
+
+
+/ 3	. 
+
+			List objects=session.createCriteria(Address.class)
+				.add(Restrictions.like("zipcode", "%Work"))
+				.setFetchMode("employees", FetchMode.JOIN)
+//				.createCriteria("employees")
+				.list();		
+
+/ This cancels .setFetchMode	,
+				.createCriteria("employees")
+
+select this_.id__ as id__1_0_1_, this_.address_line1__ as address_2_0_1_, this_.zipcode__ as zipcode_3_0_1_, this_.city__ as city__4_0_1_, employees2_.address_ as address_4_0_3_, employees2_.id_ as id_1_1_3_, employees2_.id_ as id_1_1_0_, employees2_.name_ as name_2_1_0_, employees2_.salary_ as salary_3_1_0_, employees2_.address_ as address_4_1_0_, employees2_.living_ as living_5_1_0_ 
+from address_coll this_ 
+left outer join employee_coll employees2_ on this_.id__=employees2_.address_ 
+where this_.zipcode__ like ?
+
+/ Dit is bij 1	, 
+select this_.id__ as id__1_0_1_, this_.address_line1__ as address_2_0_1_, this_.zipcode__ as zipcode_3_0_1_, this_.city__ as city__4_0_1_, employee1_.id_ as id_1_1_0_, employee1_.name_ as name_2_1_0_, employee1_.salary_ as salary_3_1_0_, employee1_.address_ as address_4_1_0_, employee1_.living_ as living_5_1_0_ 
+from address_coll this_ 
+inner join employee_coll employee1_ on this_.id__=employee1_.address_ 
+where this_.zipcode__ like ?
+
+/ MORGEN	, 
+/ Wat doet .createCriteria.("employees")	,
+/ Wat doet .createCriteria.("employees","employees")	,
+
+/ Einde HIBERNATE
+
+/ LAZY INITIALIZATION EXCEPTION
+
+file:///home/eric/Devel/Java/Ehcache/hibernate_xml_N_1_bidir_join_ehcache 
+
+$ vi Main3.java	,
+
+/ A
+		{
+			session = sessionFactory.openSession();
+			tx=session.beginTransaction();
+
+			Employee employee=new Employee(1l,"Foo1",1.00);
+			Employee employee2=new Employee(2l,"Foo2",2.00);
+			address=new Address(12l,"foostreet", "12 foo", "FooCity12");
+
+			employee.setAddress(address);
+			address.getEmployees().add(employee);
+			employee2.setAddress(address);
+			address.getEmployees().add(employee2);
+			
+			session.save(address);
+			session.save(employee);
+			session.save(employee2);
+			
+			tx.commit();
+			session.close();
+		}
+			
+/ B	,
+		{
+			session = sessionFactory.openSession();
+			tx=session.beginTransaction();
+			
+			address=(Address)session.get(Address.class, 12l);
+			tx.commit();
+			session.close();
+		}
+
+/ C	,
+		{
+			session = sessionFactory.openSession();
+			tx=session.beginTransaction();
+			
+			Employee employee=new Employee(3l,"Foo3",3.00);
+			session.save(employee);
+->		  	address.getEmployees().add(employee);
+		  	employee.setAddress(address);
+
+			tx.commit();
+			session.close();
+		}
+
+/ Er is een lazy init exc bij ->
+/ Zonder B is er GEEN lazy loaded exc bij ->, want dan is er geen H	, de address.employees is dan een HashSet	, GEEN PersistentSet	,
+/ In A create de appl zelf de data	, ipv dat het uit de db komt	,
+/ Eig moeten we dat in een apart prg doen	, zodat je simuleert dat data uit de db komt ipv de appl zelf	,
+
+/ Je kunt ook B in C doen	, dat simuleert ook dat data uit db komt ipv uit appl	,
+
+/ Als we B in C doen, dan geen lazy init exc	, 
+/ We doen "address uit db" juist in B, in andere session als in C	,
+
+
+/ De oplossing is	,
+			session.update(address);
+
+/ C	,
+		{
+			session = sessionFactory.openSession();
+			tx=session.beginTransaction();
+			
+			Employee employee=new Employee(3l,"Foo3",3.00);
+			session.save(employee);
+			session.update(address);
+->		  	address.getEmployees().add(employee);
+		  	employee.setAddress(address);
+
+			tx.commit();
+			session.close();
+		}
+
+
+
+
+
+ 
+
+
+/ Einde LAZY INITIALIZATION EXCEPTION
+
+/ HIBERNATE CRITERIA UPDATE MERGE
+
+/ project hibernate_annot
+
+/ In Main criteria	, 
+
+/ We use WH van JAP alleen JPA annotaties	,
+/ we use Hibernate's Session, Query, Criteria	,
+
+/ see jpa-annot voor alles in JPA	,
+
+/ als we een @ManyToOne prop hebben, dan als we bijv de name van de column  willen veranderen, of not-null, dan kunnen we NIET @Column use, maar moeten we @JoinColumn use	,
+
+/ 7	.
+
+        Query query=session.createQuery("select p.name from Person p where p.address.zipCode like '%Work'");
+        List<String>names=query.list();
+
+select person0_.name__ as col_0_0_ 
+from person person0_ 
+cross join address address1_ 
+where person0_.address__=address1_.id_ 
+and (address1_.zipCode_ like '%Work')
+
+/ 7	.
+
+        Criteria criteria=session.createCriteria(Person.class);
+
+//     	criteria.createCriteria("address");
+//      Criterion criterion=Restrictions.like("address.zipCode", "%Work");
+/ ERR
+/ We add restriction address.zipCode aan Person-criteria	,
+
+        criteria.createCriteria("address","a");
+        Criterion criterion=Restrictions.like("a.zipCode", "%Work");
+/ OK
+/ / we add restriction zipCode aan Adress TODO
+
+        criteria.add(criterion);
+        Projection projection=Projections.id();
+        criteria.setProjection(projection);
+
+//      criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+        criteria.setResultTransformer(Criteria.ROOT_ENTITY);
+
+        List<Long>ids=criteria.list();
+
+
+select this_.id__ as y0_ 
+from person this_ 
+inner join address a1_ on this_.address__=a1_.id_ 
+where a1_.zipCode_ like ?
+
+/ als we 
+    	criteria.createCriteria("address");
+      	Criterion criterion=Restrictions.like("address.zipCode", "%Work");
+
+/ dan 	,
+org.hibernate.QueryException: could not resolve property: address.zipCode of: many.to.one.Person
+/ Klopt	, Person heeft property address	, address.zipCode is geen property	,
+
+/  7	.
+
+            Criteria criteria=session.createCriteria(Person.class);
+            Criteria criteria2=criteria.createCriteria("address","a");
+            Criterion criterion=Restrictions.like("a.zipCode", "%Work");
+
+            criteria.add(criterion);
+/ of	,
+            criteria2.add(criterion);
+
+            Projection projection=Projections.id();
+            criteria2.setProjection(projection);
+//            criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+            criteria.setResultTransformer(Criteria.ROOT_ENTITY);
+            List<Object>ids=criteria.list();
+
+
+/ als we 
+            criteria2.setProjection(projection);
+/ dan a1_.id_	, met a1_ alias voor address	,
+
+/ als we 
+            criteria.setProjection(projection);
+/ dan this_.id_ (this_ is alias voor person)
+
+/ 7	. 
+
+/ we kunnen .createCriteria("address","a") net zo use als .createCriteria("address")	,
+/ dus we schrijven "zipCode" in Restrictions.like("zipCode", "%Work"), niet "a.zipCode"	, 
+/ we moeten criteria2.add(criterion),	 criteria.add(criterion) is ERR, omdat Person geen prop zipCode heeft		,
+
+            Criteria criteria=session.createCriteria(Person.class);
+            Criteria criteria2=criteria.createCriteria("address","a");
+            Criterion criterion=Restrictions.like("zipCode", "%Work");
+            criteria2.add(criterion);
+            Projection projection=Projections.id();
+            criteria.setProjection(projection);
+            criteria.setResultTransformer(Criteria.ROOT_ENTITY);
+            List<Object>ids=criteria.list();
+
+/ Maar als we .createCriteria("address","a")	, dan hebben we meer vrijheid	,
+/ we moeten wel "a.zipCode" in Restrictions.like("a.zipCode", "%Work")	,
+/ we kunnen criteria.add(criterion), of criteria2.add(criterion)
+
+            Criteria criteria=session.createCriteria(Person.class);
+            Criteria criteria2=criteria.createCriteria("address","a");
+            Criterion criterion=Restrictions.like("a.zipCode", "%Work");
+            criteria.add(criterion);
+            Projection projection=Projections.id();
+            criteria.setProjection(projection);
+            criteria.setResultTransformer(Criteria.ROOT_ENTITY);
+            
+
+
+/ 7	.
+
+        Criteria criteria=session.createCriteria(Person.class);
+        Criteria criteria2=criteria.createCriteria("address");
+        Criterion criterion=Restrictions.like("zipCode", "%Work");
+        criteria2.add(criterion);
+        Projection projection=Projections.id();
+        criteria.setProjection(projection);
+        criteria.setResultTransformer(Criteria.ROOT_ENTITY);
+        List<Object>ids=criteria.list();
+/ OK
+Hibernate: select this_.id__ as y0_ from person this_ inner join address address1_ on this_.address__=address1_.id_ where address1_.zipCode_ like ?
+
+        Criteria criteria=session.createCriteria(Person.class);
+        Criteria criteria2=criteria.createCriteria("address");
+        Criterion criterion=Restrictions.like("zipCode", "%Work");
+        criteria2.add(criterion);
+        Projection projection=Projections.id();
+        criteria2.setProjection(projection);
+        criteria.setResultTransformer(Criteria.ROOT_ENTITY);
+        List<Object>ids=criteria.list();
+/ OK
+Hibernate: select address1_.id_ as y0_ from person this_ inner join address address1_ on this_.address__=address1_.id_ where address1_.zipCode_ like ?
+
+/  7	.
+
+/ Het ligt er aan waar we .setProjection set	, of .add(Restrictions...)	,  
+/ de ene keer op de Person-criteria, de andere keer op de address-criteria	,
+
+        Criteria criteria=session.createCriteria(Person.class)
+            	.setProjection(Projections.id())
+        	.createCriteria("address")
+        	.add(Restrictions.like("zipCode", "%Work"))
+        	.setResultTransformer(Criteria.ROOT_ENTITY);
+        List<Object>ids=criteria.list();
+
+Hibernate: select this_.id__ as y0_ from person this_ inner join address address1_ on this_.address__=address1_.id_ where address1_.zipCode_ like ?
+
+
+
+        Criteria criteria=session.createCriteria(Person.class)
+        	.createCriteria("address")
+        	.add(Restrictions.like("zipCode", "%Work"))
+        	.setProjection(Projections.id())
+        	.setResultTransformer(Criteria.ROOT_ENTITY);
+        List<Object>ids=criteria.list();
+
+Hibernate: select address1_.id_ as y0_ from person this_ inner join address address1_ on this_.address__=address1_.id_ where address1_.zipCode_ like ?
+
+/ we kunnen net zo goed	,
+        	.createCriteria("address","a")
+/ in	,
+
+        Criteria criteria=session.createCriteria(Person.class)
+            	.setProjection(Projections.id())
+        	.createCriteria("address","a")
+        	.add(Restrictions.like("zipCode", "%Work"))
+        	.setResultTransformer(Criteria.ROOT_ENTITY);
+        List<Object>ids=criteria.list();
+
+Hibernate: select this_.id__ as y0_ from person this_ inner join address a1_ on this_.address__=a1_.id_ where a1_.zipCode_ like ?
+
+/ we zien de alias a1_ used	,
+
+
+
+Hibernate: select a1_.id_ as y0_ from person this_ inner join address a1_ on this_.address__=a1_.id_ where a1_.zipCode_ like ?
+Hibernate: select a1_.id_ as y0_ from person this_ inner join address a1_ on this_.address__=a1_.id_ where a1_.zipCode_ like ?
+
+
+
+
+/ Einde HIBERNATE CRITERIA
+
+/ HIBERNATE UPDATE MERGE
+
+/ In Main3 de site hieronder	,
+
+/ we lezen	,
+http://www.journaldev.com/3481/hibernate-save-vs-saveorupdate-vs-persist-vs-merge-vs-update-explanation-with-examples
+
+/ 7	.
+
+/ H. sets autoCommit=false	, see volgende 7	. 
+
+/ In 	,
+		Transaction tx=session.beginTransaction();
+
+/ wordt conn met db create	, 
+/ autocommit is al false  	, see 
+	JdbcTransaction.doBegin() line: 70	
+	JdbcTransaction(AbstractTransactionImpl).begin() line: 162	
+	SessionImpl.beginTransaction() line: 1435	
+/ TODO
+/ we hoeven geen .begin() of zoiets	, zoals in psql	, in jdbc doen we self conn.setAutoCommit(false)	, en hoeven we geen begin of zoiets	,
+
+/  7	.
+
+/ in	,
+
+	DriverConnectionCreator(BasicConnectionCreator).createConnection() line: 91	
+	DriverManagerConnectionProviderImpl.configure(Map) line: 106	
+	StandardServiceRegistryImpl.configureService(ServiceBinding<R>) line: 111	
+	StandardServiceRegistryImpl(AbstractServiceRegistryImpl).initializeService(ServiceBinding<R>) line: 234	
+	StandardServiceRegistryImpl(AbstractServiceRegistryImpl).getService(Class<R>) line: 206	
+	JdbcServicesImpl.buildJdbcConnectionAccess(Map) line: 260	
+	JdbcServicesImpl.configure(Map) line: 94	
+	StandardServiceRegistryImpl.configureService(ServiceBinding<R>) line: 111	
+	StandardServiceRegistryImpl(AbstractServiceRegistryImpl).initializeService(ServiceBinding<R>) line: 234	
+	StandardServiceRegistryImpl(AbstractServiceRegistryImpl).getService(Class<R>) line: 206	
+	Configuration.buildTypeRegistrations(ServiceRegistry) line: 1885	
+	Configuration.buildSessionFactory(ServiceRegistry) line: 1843	
+	Main3.setUp() line: 77	
+	Main3.<init>() line: 65	
+	Main3.main(String[]) line: 60	
+
+DriverConnectionCreator(BasicConnectionCreator).createConnection() line: 91	
+	@Override
+	public Connection createConnection() {
+		final Connection conn = makeConnection( url, connectionProps );
+		try {
+			if ( isolation != null ) {
+/ NEE
+/ isolation==null
+				conn.setTransactionIsolation( isolation );
+			}
+		}
+
+		try {
+			if ( conn.getAutoCommit() != autoCommit ) {
+/ JA
+/ conn.autoCommit==true
+this.autoCommit==false
+				conn.setAutoCommit( autoCommit );
+
+/ dus hier wordt autoCommit=false set	,
+
+/ Hoe is this.autoCommit==false	?
+/ See	,
+DriverManagerConnectionProviderImpl.configure(Map) line: 106	
+		connectionCreator = buildCreator( configurationValues );
+
+/ 7	.
+
+
+
+
+
+
+/ Einde HIBERNATE UPDATE MERGE
+
+/ DEBUG HIBERNATE SAVE
+
+/ project hibernate_annot
+
+/ save doet inderdaad de insert direct	, met stmt.executeUpdate	,
+/ maar de commit is pas in tx.commit()	,
+
+/ 7	.
+
+/ save in tx	,
+
+$ vi Main3.java
+
+	ession session = fact.openSession();
+	Transaction tx=session.beginTransaction();
+
+	Address address=new Address("1 Work");
+		
+        Person person=new Person("Foo 1");
+        person.setAddress(address);
+        address.getPersons().add(person);
+         
+        session.save(address);
+        session.save(person);
+
+	tx.commit();
+	session.close();
+
+/ In	,
+        session.save(address);
+...
+/s
+	IdentityGenerator$GetGeneratedKeysDelegate.executeAndExtract(PreparedStatement, SessionImplementor) line: 96	
+	IdentityGenerator$GetGeneratedKeysDelegate(AbstractReturningDelegate).performInsert(String, SessionImplementor, Binder) line: 58	
+	SingleTableEntityPersister(AbstractEntityPersister).insert(Object[], boolean[], String, Object, SessionImplementor) line: 3032	
+	SingleTableEntityPersister(AbstractEntityPersister).insert(Object[], Object, SessionImplementor) line: 3558	
+	EntityIdentityInsertAction.execute() line: 98	
+	ActionQueue.execute(E) line: 490	
+->	ActionQueue.addResolvedEntityInsertAction(AbstractEntityInsertAction) line: 195	
+	ActionQueue.addInsertAction(AbstractEntityInsertAction) line: 179	
+	ActionQueue.addAction(EntityIdentityInsertAction) line: 214	
+	DefaultSaveEventListener(AbstractSaveEventListener).addInsertAction(Object[], Serializable, Object, EntityPersister, boolean, EventSource, boolean) line: 324	
+	DefaultSaveEventListener(AbstractSaveEventListener).performSaveOrReplicate(Object, EntityKey, EntityPersister, boolean, Object, EventSource, boolean) line: 288	
+	DefaultSaveEventListener(AbstractSaveEventListener).performSave(Object, Serializable, EntityPersister, boolean, Object, EventSource, boolean) line: 194	
+	DefaultSaveEventListener(AbstractSaveEventListener).saveWithGeneratedId(Object, String, Object, EventSource, boolean) line: 125	
+	DefaultSaveEventListener(DefaultSaveOrUpdateEventListener).saveWithGeneratedOrRequestedId(SaveOrUpdateEvent) line: 209	
+	DefaultSaveEventListener.saveWithGeneratedOrRequestedId(SaveOrUpdateEvent) line: 55	
+	DefaultSaveEventListener(DefaultSaveOrUpdateEventListener).entityIsTransient(SaveOrUpdateEvent) line: 194	
+	DefaultSaveEventListener.performSaveOrUpdate(SaveOrUpdateEvent) line: 49	
+	DefaultSaveEventListener(DefaultSaveOrUpdateEventListener).onSaveOrUpdate(SaveOrUpdateEvent) line: 90	
+	SessionImpl.fireSave(SaveOrUpdateEvent) line: 715	
+	SessionImpl.save(String, Object) line: 707	
+	SessionImpl.save(Object) line: 702	
+	Main3.testBasicUsage() line: 101	
+	Main3.<init>() line: 66	
+	Main3.main(String[]) line: 60	
+
+/ we zijn in	,
+		public Serializable executeAndExtract(PreparedStatement insert, SessionImplementor session) throws SQLException {
+			session.getTransactionCoordinator().getJdbcCoordinator().getResultSetReturn().executeUpdate( insert );
+...
+/ Hoe als .save niet in tx	?
+/ Dan is er ook een tx coord	, ...
+/ TODO
+
+/ Dan	,
+ResultSetReturnImpl.executeUpdate(PreparedStatement) line: 207	
+			jdbcCoordinator.getTransactionCoordinator().getTransactionContext().startStatementExecution();
+/ doet niets	, want er is geen listener	,
+/ TODO
+/ De tx context==session	,
+////////////////////////////////////////
+
+			return statement.executeUpdate();
+/ jdbc method	,
+/ we zien	,
+Hibernate: insert into address (zipcode_) values (?)
+HibernateLog --> 07:44:19 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [1 Work]
+/ In deze tx is hij dus gedaan, staat hij in de db! Alleen  andere tx'en zien hem niet omdat hij nog niet is commit	,
+
+/ We hebben nu id gen	, we zien dat door de insert een id in de rs staat!	, 1 nu	,
+
+		public Serializable executeAndExtract(PreparedStatement insert, SessionImplementor session) throws SQLException {
+			session.getTransactionCoordinator().getJdbcCoordinator().getResultSetReturn().executeUpdate( insert );
+/d
+			ResultSet rs = null;
+			try {
+				rs = insert.getGeneratedKeys();
+				return IdentifierGeneratorHelper.getGeneratedIdentity(
+						rs,
+						persister.getRootTableKeyColumnNames()[0],
+						persister.getIdentifierType()
+				);
+/s
+	public static Serializable getGeneratedIdentity(ResultSet rs, String identifier, Type type) throws SQLException, HibernateException {
+		final Serializable id = get( rs, identifier, type );
+Long 1	,
+
+/t
+ActionQueue.addResolvedEntityInsertAction(AbstractEntityInsertAction) line: 201	
+			execute( insert );
+/d
+		insert.makeEntityManaged();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/ 7	.
+
+
+
+
+
+
+/ Einde DEBUG HIBERNATE SAVE
+
+/ HIBERNATE
+
+/ 7	. 
+
+/ cascade=CascadeType.ALL saves items in coll	,
+
+/ proj hibernate_annot	,
+
+$ vi Address.java
+
+@Entity
+@Table(name="address")
+public class Address{
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id_")
+	private Long id;
+	
+	@Column(name="zipcode_")
+	private String zipCode;
+
+	@OneToMany(mappedBy="address",cascade=CascadeType.ALL)
+	private Set<Person>persons=new HashSet<Person>();
+
+$ vi Person.java
+
+@Entity
+@Table(name="person")
+public class Person{
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id__")
+	private Long id;
+	
+	@Column(name="name__")
+	private String name;
+	
+	@ManyToOne
+	@JoinColumn(name="address__",nullable=false)
+	private Address address;
+
+$ vi Main3.java
+
+	Session session = fact.openSession();
+
+	Address address=new Address("1 Work");
+        Person person=new Person("Foo 1");
+        person.setAddress(address);
+        address.getPersons().add(person);
+        Person person2=new Person("Foo 1");
+        person2.setAddress(address);
+        address.getPersons().add(person2);
+       
+        session.save(address);
+
+/ we zien	,
+
+Hibernate: insert into address (zipcode_) values (?)
+HibernateLog --> 08:22:19 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [1 Work]
+HibernateLog --> 08:22:19 DEBUG org.hibernate.SQL - insert into person (address__, name__) values (?, ?)
+
+Hibernate: insert into person (address__, name__) values (?, ?)
+HibernateLog --> 08:22:19 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+HibernateLog --> 08:22:19 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [Foo 1]
+HibernateLog --> 08:22:19 DEBUG org.hibernate.SQL - insert into person (address__, name__) values (?, ?)
+
+Hibernate: insert into person (address__, name__) values (?, ?)
+HibernateLog --> 08:22:19 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+HibernateLog --> 08:22:19 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [Foo 1]
+
+/ 7	.
+
+/ 13	.
+
+/ Met JPA annots	,
+
+/ In hibernate_annot
+/ In Main3	,
+
+		Criteria query=session.createCriteria(Person.class);
+		query.list();
+
+
+select this_.id__ as id__1_1_1_, this_.address__ as address_3_1_1_, this_.name__ as name__2_1_1_, address2_.id_ as id_1_0_0_, address2_.zipcode_ as zipcode_2_0_0_ 
+from person this_ 
+inner join address address2_ on this_.address__=address2_.id_
+
+		session.get(Person.class, 1l);
+
+select person0_.id__ as id__1_1_0_, person0_.address__ as address_3_1_0_, person0_.name__ as name__2_1_0_, address1_.id_ as id_1_0_1_, address1_.zipcode_ as zipcode_2_0_1_ 
+from person person0_ 
+inner join address address1_ on person0_.address__=address1_.id_ 
+where person0_.id__=?
+
+/  13		. 
+
+/ Met H. config	, 
+
+/ In hibernate_xml_N_1_bidir_ehcache	, 
+/ In Main3_N_1	,
+
+	        session.get(Employee.class, 1l);		
+
+select employee0_.id_ as id_1_1_0_, employee0_.name_ as name_2_1_0_, employee0_.salary_ as salary_3_1_0_, employee0_.address_ as address_4_1_0_ 
+from employee2 employee0_ 
+where employee0_.id_=?
+
+	        Criteria query=session.createCriteria(Employee.class);
+	        query.list();
+
+select this_.id_ as id_1_1_0_, this_.name_ as name_2_1_0_, this_.salary_ as salary_3_1_0_, this_.address_ as address_4_1_0_ 
+from employee2 this_
+
+/ Als we	,
+<class 
+	name="Address" 
+	table="address2"
+	lazy="false"
+>
+/ dan	,
+
+	        session.get(Employee.class, 1l);		
+
+select employee0_.id_ as id_1_1_0_, employee0_.name_ as name_2_1_0_, employee0_.salary_ as salary_3_1_0_, employee0_.address_ as address_4_1_0_, address1_.id__ as id__1_0_1_, address1_.address_line1__ as address_2_0_1_, address1_.zipcode__ as zipcode_3_0_1_, address1_.city__ as city__4_0_1_ 
+from employee2 employee0_ 
+left outer join address2 address1_ on employee0_.address_=address1_.id__ 
+where employee0_.id_=?
+
+select employees0_.address_ as address_4_0_0_, employees0_.id_ as id_1_1_0_, employees0_.id_ as id_1_1_1_, employees0_.name_ as name_2_1_1_, employees0_.salary_ as salary_3_1_1_, employees0_.address_ as address_4_1_1_ 
+from employee2 employees0_ 
+where employees0_.address_=?
+
+			session = sessionFactory.openSession();
+			tx=session.beginTransaction();
+
+select this_.id_ as id_1_1_1_, this_.name_ as name_2_1_1_, this_.salary_ as salary_3_1_1_, this_.address_ as address_4_1_1_, address2_.id__ as id__1_0_0_, address2_.address_line1__ as address_2_0_0_, address2_.zipcode__ as zipcode_3_0_0_, address2_.city__ as city__4_0_0_ 
+from employee2 this_ 
+left outer join address2 address2_ on this_.address_=address2_.id__
+
+select employees0_.address_ as address_4_0_0_, employees0_.id_ as id_1_1_0_, employees0_.id_ as id_1_1_1_, employees0_.name_ as name_2_1_1_, employees0_.salary_ as salary_3_1_1_, employees0_.address_ as address_4_1_1_ 
+from employee2 employees0_ 
+where employees0_.address_=?
+
+/ Wat doen H annots?
+/ TODO
+
+/ 7	. 
+
+Collections.prepareCollectionForUpdate(PersistentCollection, CollectionEntry, SessionFactoryImplementor) line: 238	
+/ bepaalt of coll wordt recreate, update	,
+
+/ in hibernate_annot	,
+/ In Main3b worden persons in addresses verwisseld
+/ TODO
+
+
+
+
+/ Einde HIBERNATE
+
+/ BACKUP
+
+[root@localhost Devel]# pwd
+/home/eric/Devel
+[root@localhost Devel]# rsync -avz Java /run/media/eric/WD/mpo/home/eric/Devel
+[root@localhost Devel]# rsync -avz Postgres /run/media/eric/WD/mpo/home/eric/Devel
+[root@localhost eric]# pwd
+/home/eric
+[root@localhost eric]# rsync -avz LOGS /run/media/eric/WD/mpo/home/eric
+
+
+
+
+
+/ Einde BACKUP
+
+
+/ JAVA SE JPA
+
+/ project jpa-annot	,
+
+
+
+
+
+/ Einde JAVA SE JPA
+
+
+

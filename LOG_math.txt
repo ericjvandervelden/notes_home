@@ -1,0 +1,27 @@
+/ google	,
+perfect field primitive element
+/ lees	,
+https://math.stackexchange.com/questions/101406/is-a-field-perfect-iff-the-primitive-element-theorem-holds-for-all-extensions-a
+
+/ lees	,
+https://math.stackexchange.com/questions/1080746/the-limit-of-the-alternating-series-x-x2-x4-x8-x16-dotsb-as
+
+/ lees	,
+https://math.stackexchange.com/questions/1091160/sine-of-a-complex-number
+
+/ 7	. 
+
+/ lees	,
+https://math.stackexchange.com/posts/2160349/edit
+
+Yes, if $n$ is a rational integer, then $\mathbb{Z}[i]/n\mathbb{Z}[i]$ is a field if and only if it is an integral domain, if and only if $n$ is a prime number which is $\equiv 3 \pmod{4}$.  You can argue this using some elementary number theory and some results about unique factorization domains (as well as the fact that $\mathbb{Z}[i]$ is a unique factorization domain).  I'll show that if $n$ is *not* a prime number which is $3 \pmod{4}$, then that ring is not an integral domain.
+
+/ 7	. 
+
+https://math.stackexchange.com/questions/2980493/how-many-eisenstein-integers-modulo-3-are-there
+
+/ 7	. 
+
+https://www.researchgate.net/publication/235993684_On_Eisenstein_Integers_Modulo_n
+
+

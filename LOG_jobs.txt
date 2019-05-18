@@ -1,0 +1,8 @@
+/ 7	.
+
+Scala Developer
+TradeCloud Delft, Netherlands
+
+Our team uses the latest software architecture such as Event-driven, Event-sourcing, Actor Model, CQRS and DDD. Also the latest technology like Scala, Akka, Cassandra and Kafka are in use. Furthermore, TradeCloud uses Continuous Delivery, which means we release per feature. The source code integration and deployment are fully automated.
+
+

@@ -1,0 +1,5493 @@
+/ HIBERNATE
+
+/ Item heeft een one-to-many mapping	,  en Bid een many-to-one	,
+
+<class
+        name="Item">
+        <id name="id">
+                <generator
+                        class="increment"/></id>
+        <property
+                name="name"/>
+        <property
+                name="city"/>
+        <set
+                cascade="all"
+                name="bids">
+                <key
+                        column="item_"/>
+                <one-to-many
+                        class="Bid"/>
+        </set>
+</class>
+
+
+<class
+        name="Bid">
+        <id
+                name="id">
+                <generator
+                        class="increment"/></id>
+        <many-to-one
+                name="item"
+                column="item_"
+                cascade="all"
+        />
+<!--
+                not-null="true"
+-->
+</class>
+
+/ alle mappings die in de mapping files staan, worden ook gedaan	,
+
+
+
+/ we doen	,
+	item.getBids().add(bid);
+
+/ Als Bid een many-to-one mapping heeft, en deze is not-null="true"	, dan moeten we  
+	bid.setItem(item)
+/ anders ERR	,
+org.hibernate.PropertyValueException: not-null property references a null or transient value: org.hibernate.book.hbm.Bid.item
+/ Als we NIET
+	bid.setItem(item)
+/ dan insert hij null in de item column van de bid table	,
+
+/ Als Bid een many-to-one mapping heeft, en deze is NIET not-null="true"	, dan hoeven we NIET  
+	bid.setItem(item)
+/ en komt het toch goed	, 
+/ want hij insert blijkbaar eerst null in de item column van de bid table, omdat we de item field map op de bid table, 
+/ en blijkbaar DAARNA komt de mapping van de item's set, die updates de bid table	, 
+
+/ we zien dat ook	,
+
+ibernate: insert into Item (name, city, id) values (?, ?, ?)
+Hibernate: insert into Bid (item_, id) values (?, ?)	/ insert null in item column in bid table	,
+Hibernate: insert into Bid (item_, id) values (?, ?)
+Hibernate: update Bid set item_=? where id=?		/ updates item column in bid table
+Hibernate: update Bid set item_=? where id=?
+ 
+
+1,1
+2,1
+
+/ 7	.
+
+/ Lees	,
+http://www.mkyong.com/hibernate/inverse-true-example-and-explanation/
+/ en boek(293)
+
+/ we maken de item-bid one-to-many, bidir	,
+
+$ vi Item.hbm.xml
+
+<class
+        name="Item">
+...
+        <set
+                name="bids">
+                <key
+                        not-null="true"					/ ! MOET = (*)
+                        column="item_"/>
+                <one-to-many
+                        class="Bid"/>
+        </set>
+
+$ vi Bid.hbm.xml
+
+<class
+        name="Bid">
+...
+        <many-to-one
+                name="item"
+                column="item_"
+                not-null="true"
+                update="false"						/ ! MOET als (*)
+                insert="false"						/ ! MOET als (*)
+        />
+<!--
+                cascade="all"
+-->
+</class>
+
+/ Als we (*) wordt er 	,
+Hibernate: insert into Item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into Bid (item_, id) values (?, ?)
+Hibernate: insert into Bid (item_, id) values (?, ?)
+Hibernate: update Bid set item_=? where id=?
+Hibernate: update Bid set item_=? where id=?
+
+/ als we NIET (*), dan wordt er	,
+Hibernate: insert into Bid (id) values (?)
+Hibernate: insert into Bid (id) values (?)
+/ dus ERR, want we hebben in Bid's mapping dat item_ not-null="true"	,
+
+
+
+/ Einde HIBERNATE
+
+/ HSQLDB
+
+/ Lees	,
+http://hsqldb.org/doc/2.0/guide/running-chapt.html
+
+/ 7	.	
+
+
+$ mvn archetype:generate
+/ quickstart
+Define value for property 'groupId': : org.hsqldb.guide
+Define value for property 'artifactId': : first
+Define value for property 'version':  1.0-SNAPSHOT: : 
+Define value for property 'package':  org.hsqldb.guide: : 
+
+$ vi pom.xml
+
+  <dependencies>
+...
+       <dependency>
+    <groupId>org.hsqldb</groupId>
+    <artifactId>hsqldb</artifactId>
+    <version>2.3.2</version>
+        </dependency>
+
+  </dependencies>
+
+    <build>
+       <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+[eric@localhost first]$ mvn clean assembly:assembly
+[eric@localhost first]$ java -cp target/first-1.0-SNAPSHOT-jar-with-dependencies.jar org.hsqldb.util.DatabaseManagerSwing
+
+/ 7	.
+
+Types of catalog data
+
+mem: stored entirely in RAM - without any persistence beyond the JVM process's life
+
+file: stored in filesystem files
+
+res: stored in a Java resource, such as a Jar and always read-only
+
+
+
+
+/ Einde HSQLDB
+
+/ HIBERNATE
+
+/ als item detached/transient,	 dan .save -> P , sets item.id, en .commit -> insert
+/ als item.id=1, en is D, dan .save: item.id=2	, als item.id=null, en is T, dan .save sets item.id 
+/ als item al P , bijv door .load, dan save -> niets	, item.id=1 blijft	,
+
+[eric@localhost merge2]$ pwd
+/home/eric/Devel/Java/Hibernate/hibernate-book/merge2
+/ er zijn Main2 en Main2a	,
+/ in Main2	,
+                session.save(item); 
+                Item item1=(Item)session.merge(item); 
+/ In Main2a	,
+                Item item1=(Item)session.merge(item); 
+
+/ in Main2 is item P, 	en item1==item	,  beide hebben id=2	,
+/ In Main2a is item D en item1 P	, beide hebben id=1
+
+
+
+/ .merge(item) copies state item in 
+/ session.merge(item) copies item in persistent obj met dezelfde id	,  
+
+/ Einde HIBERNATE
+
+/ HIBERNATE
+
+[eric@localhost psql2]$ pwd
+/home/eric/Devel/Java/Hibernate/hibernate-book/psql2
+
+$ vi Item.hbm.xml
+
+<class
+        name="Item">
+        <id
+                column="id_"
+                name="id">
+                <generator
+                        class="increment"/></id>
+        <property
+                name="name"/>
+        <property
+                name="city"/>
+        <set
+                name="bids">
+                <key
+                        not-null="true"
+                        column="item_"/>
+                <one-to-many
+                        class="Bid"/>
+        </set>
+</class>
+
+$ vi Bid.hbm.xml
+
+<class
+        name="Bid">
+        <id
+                name="id">
+                <generator
+                        class="increment"/>
+        </id>
+        <many-to-one
+                name="item"
+                column="item_"
+                not-null="true"
+        />
+</class>
+
+
+[eric@localhost psql2]$ java -cp target/psql2-1.0-SNAPSHOT-jar-with-dependencies.jar org.hibernate.book.hbm.Main
+
+org.hibernate.MappingException: Repeated column in mapping for entity: org.hibernate.book.hbm.Bid column: item_ (should be mapped with insert="false" update="false")
+	at org.hibernate.mapping.PersistentClass.checkColumnDuplication(PersistentClass.java:709)
+	at org.hibernate.mapping.PersistentClass.checkPropertyColumnDuplication(PersistentClass.java:731)
+	at org.hibernate.mapping.PersistentClass.checkColumnDuplication(PersistentClass.java:753)
+	at org.hibernate.mapping.PersistentClass.validate(PersistentClass.java:506)
+	at org.hibernate.mapping.RootClass.validate(RootClass.java:270)
+	at org.hibernate.cfg.Configuration.validate(Configuration.java:1358)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:1849)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:1928)
+	at org.hibernate.book.hbm.Main.setUp(Main.java:57)
+	at org.hibernate.book.hbm.Main.<init>(Main.java:47)
+	at org.hibernate.book.hbm.Main.main(Main.java:42)
+
+/ Oplossing:
+
+/ 7	.
+
+/ rm in Item.hbm.xml	,
+                        not-null="true"
+/ Dus OK	,
+        <set
+                name="bids">
+                <key
+                        column="item_"/>
+                <one-to-many
+                        class="Bid"/>
+        </set>
+
+/ 7	. 
+/ add in Item.hbm.xml	,
+		inverse="true"
+/ Dus OK	,
+        <set
+		inverse="true"
+                name="bids">
+                <key
+                        not-null="true"
+                        column="item_"/>
+                <one-to-many
+                        class="Bid"/>
+        </set>
+
+/ 7	. 
+
+/ add in in Bid.hbm.xml	,
+                update="false"
+                insert="false"
+/ Dus OK	,
+
+        <many-to-one
+                name="item"
+                column="item_"
+                not-null="true"
+                update="false"
+                insert="false"
+        />
+
+/ 7	. 
+
+/ als we in <key in Item.hbm.xml geen column attr , dan doet Hibernate alsof er staat	,
+       <set
+                inverse="true"
+                name="bids"
+        >
+                <key
+                        not-null="true"
+                        column="id"/>
+/ en dan maakt Hibernate 2 fk's	in bid tbl	, 
+/ 1 uit bid's mapping, <many-to-one, die bid.item_  -> item
+/ 1 uit item's mapping, <key, die bid.id -> item
+
+/ Hibnernate maakt de mapping dus ook als er 
+                inverse="true"
+
+/ 7	. 
+
+/ de name attr in <id , <property 	, <many-to-one zijn property names uit Java	, in de class types	, deze moeten er staan in de XML	,
+
+/ 7	.
+
+/ In de mapping staat steeds: 
+
+<class name="Baz" table="gee"
+/ Dat betekent dat inst van type Baz wordt mapped top table gee	, 
+
+	name="foo"
+	column="bar"
+/ Dat betekent dat field "foo" uit Baz's inst wordt mapped op column "bar"  in table gee	,
+
+
+/ Dit is OK	,
+
+<class
+        name="Item"
+	table="item"
+>
+        <id    
+                name="id"
+                column="id_"
+        >
+                <generator
+                        class="increment"/></id>
+        <property
+                name="name"/>
+        <property
+                name="city"/>
+        <set					/ de fk in <key komen dus uit Item's bids	,
+                name="bids"
+        >
+                <key
+                        not-null="true"		/ mapping elems in Item's bids op column item__ in tbl bid 
+                        column="item__"
+                />
+                <one-to-many			/ de column item__ is dus in table bid
+                        class="Bid"/>
+        </set>
+</class>
+
+<class
+        name="Bid"
+	table="bid"
+>
+        <id
+                name="id"
+                column="id__"
+        >
+                <generator
+                        class="increment"/>
+        </id>
+        <many-to-one				/ mapping Bid's field item op column item_  in table bid	,k
+                name="item"
+                not-null="true"
+                column="item_"
+        />
+</class>
+
+               	Bid bid=new Bid();
+                bid.setItem(item);		/ moet, anders wordt null insert in column item_	,
+			// org.hibernate.PropertyValueException: not-null property references a null or transient value
+                item.getBids().add(bid);	/ moet, anders wordt null insert in column item__
+			// org.hibernate.PropertyValueException: not-null property references a null or transient value
+
+                Bid bid2=new Bid();
+                bid2.setItem(item);
+                item.getBids().add(bid2);
+
+                session.save(item);
+                session.save(bid);
+                session.save(bid2);
+
+
+ibernate: create table Bid (id__ int8 not null, item_ int8 not null, item__ int8 not null, primary key (id__))
+Hibernate: create table Item (id_ int8 not null, name varchar(255), city varchar(255), primary key (id_))
+Hibernate: alter table Bid add constraint FK_1oe7ovx41gdrk9aw4qralynau foreign key (item_) references Item
+Hibernate: alter table Bid add constraint FK_tgjsooge4qt1kh8ho883sdoti foreign key (item__) references Item
+Jul 02, 2014 7:46:35 AM org.hibernate.tool.hbm2ddl.SchemaExport execute
+INFO: HHH000230: Schema export complete
+Hibernate: select max(id_) from Item
+Hibernate: select max(id__) from Bid
+Hibernate: insert into Item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into Bid (item_, item__, id__) values (?, ?, ?)
+Hibernate: insert into Bid (item_, item__, id__) values (?, ?, ?)
+Hibernate: update Bid set item__=? where id__=?
+Hibernate: update Bid set item__=? where id__=?
+Hibernate: select bid0_.id__ as id__1_0_, bid0_.item_ as item_2_0_ from Bid bid0_
+1,1
+2,1
+Hibernate: select bids1_.id__ as id__1_0_, bids1_.item_ as item_2_0_ from Item item0_ inner join Bid bids1_ on item0_.id_=bids1_.item__
+1,1
+2,1
+
+foo=> select*from item\g
+ id_ | name  |    city     
+-----+-------+-------------
+   1 | first | Vlaardingen
+(1 row)
+
+foo=> select*from bid\g
+ id__ | item_ | item__ 
+------+-------+--------
+    1 |     1 |      1
+    2 |     1 |      1
+(2 rows)
+
+/ 7	. 
+
+<class
+        name="Item"
+	table="item"
+>
+...
+        <set			
+                name="bids"
+        >
+                <key
+                        not-null="true"		/ er wordt insert op deze column	,
+                        column="item__"
+                />
+                <one-to-many		
+                        class="Bid"/>
+        </set>
+</class>
+
+               	Bid bid=new Bid();
+                bid.setItem(item);
+                item.getBids().add(bid);
+
+
+/ Met not-null="true"	,
+Hibernate: insert into item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into bid (item_, item__, id__) values (?, ?, ?)
+Hibernate: insert into bid (item_, item__, id__) values (?, ?, ?)
+Hibernate: update bid set item__=? where id__=?
+Hibernate: update bid set item__=? where id__=?
+
+foo=> \d+ bid
+                         Table "public.bid"
+ Column |  Type  | Modifiers | Storage | Stats target | Description 
+--------+--------+-----------+---------+--------------+-------------
+ id__   | bigint | not null  | plain   |              | 
+ item_  | bigint | not null  | plain   |              | 
+ item__ | bigint | not null  | plain   |              | 
+
+
+/ Zonder not-null="true"	,
+Hibernate: insert into item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: update bid set item__=? where id__=?
+Hibernate: update bid set item__=? where id__=?
+
+
+=> \d+ bid
+                         Table "public.bid"
+ Column |  Type  | Modifiers | Storage | Stats target | Description 
+--------+--------+-----------+---------+--------------+-------------
+ id__   | bigint | not null  | plain   |              | 
+ item_  | bigint | not null  | plain   |              | 
+ item__ | bigint |           | plain   |              | 
+
+/ 13	.
+
+/ Met not-null="true"	,
+                Bid bid=new Bid();
+                bid.setItem(item);
+                item.getBids().add(null);
+org.hibernate.PropertyValueException: not-null property references a null or transient value : org.hibernate.book.hbm.Bid._org.hibernate.book.hbm.Item.bidsBackref
+
+/ Zonder not-null="true"	,
+                Bid bid=new Bid();
+                bid.setItem(item);
+                item.getBids().add(null);
+org.hibernate.StaleStateException: Batch update returned unexpected row count from update [0]; actual row count: 0; expected: 1
+
+/ Als de item.bids={bid, bid2}, dan  wordt in de row die corresp. met bid in item__ column 1 set (1=pk item)	, en in de row dir corresp. met bid2 in item__ column 1 set (1=pk item)	, 
+/ maar als item.bids={null, bid2}, dan is er geen column die corresp. met null, 
+/ TODO 
+
+/ 7	.
+
+/ OK is	,
+
+/ we rm de not-null="true" in bid's column item_	,
+
+
+<class
+        name="Bid" 
+        table="bid"
+>
+        <id
+                name="id"
+                column="id__"
+        >
+                <generator
+                        class="increment"/>
+        </id>
+        <many-to-one
+                name="item"
+                column="item_"
+        />
+</class>
+
+               Bid bid=new Bid();
+                bid.setItem(null);
+                item.getBids().add(bid);
+
+foo=> select*from bid\g
+ id__ | item_ | item__ 
+------+-------+--------
+    1 |       |      1
+    2 |     1 |      1
+(2 rows)
+
+foo=> \d+ bid
+                         Table "public.bid"
+ Column |  Type  | Modifiers | Storage | Stats target | Description 
+--------+--------+-----------+---------+--------------+-------------
+ id__   | bigint | not null  | plain   |              | 
+ item_  | bigint |           | plain   |              | 
+ item__ | bigint | not null  | plain   |              | 
+
+/ 7	.
+
+
+
+
+
+
+/ 7	.
+
+/ we add in de set inverse="true"	, 
+/ voor de mapping maakt het niet uit, maar in Main staat deze er voor spek en bonen bij	,
+                item.getBids().add(bid);
+
+<class
+        name="Item"
+        table="item"
+>
+        <id
+                name="id"
+                column="id_"
+        >
+                <generator
+                        class="increment"/></id>
+        <property
+                name="name"/>
+        <property
+                name="city"/>
+        <set
+                inverse="true"
+                name="bids"
+        >
+       >
+                <key
+                        not-null="true"
+                        column="item__"
+                />
+                <one-to-many
+                        class="Bid"/>
+        </set>
+</class>
+
+               	Bid bid=new Bid();
+                bid.setItem(item);
+                item.getBids().add(bid);
+
+Hibernate: create table bid (id__ int8 not null, item_ int8 not null, item__ int8 not null, primary key (id__))
+Hibernate: create table item (id_ int8 not null, name varchar(255), city varchar(255), primary key (id_))
+Hibernate: alter table bid add constraint FK_eja4hs0e8mmw9orqccy083eb9 foreign key (item_) references item
+Hibernate: alter table bid add constraint FK_s0p7qf5anb9imk6p243ppr82n foreign key (item__) references item
+Hibernate: select max(id_) from item
+Hibernate: select max(id__) from bid
+Hibernate: insert into item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+ERROR: ERROR: null value in column "item__" violates not-null constraint
+  Detail: Failing row contains (1, 1, null).
+Jul 02, 2014 8:25:06 AM org.hibernate.engine.jdbc.batch.internal.AbstractBatchImpl release
+INFO: HHH000010: On release of batch it still contained JDBC statements
+org.hibernate.exception.ConstraintViolationException: could not execute statement
+
+/ Zonder inverse="true"	,
+Hibernate: insert into Bid (item_, item__, id__) values (?, ?, ?)
+
+/ Met inverse="true"
+Hibernate: insert into bid (item_, id__) values (?, ?)
+
+/ 7	.
+
+/ propertyvalueexception
+
+Thrown when the (illegal) value of a property can not be persisted. There are two main causes:
+
+a property declared not-null="true" is null
+an association references an unsaved transient instance
+
+/ constraintviolationexception
+
+Implementation of JDBCException indicating that the requested DML operation resulted in a violation of a defined integrity constraint.
+
+/ SAMENVATTING
+
+/ we doen steeds	,
+              	Bid bid=new Bid();
+                bid.setItem(item);
+                item.getBids().add(bid);
+/ we houden	,
+<class
+        name="Bid" 
+        table="bid"
+>
+...
+        <many-to-one
+                name="item"
+                not-null="true"
+                column="item_"
+        />
+
+/ 7	.
+
+<class
+        name="Item"
+        table="item"
+>
+...
+        <set
+                name="bids"
+        >
+                <key
+                        not-null="true"
+                        column="item__"
+                />
+                <one-to-many
+                        class="Bid"/>
+        </set>
+
+/ we zien	,
+Hibernate: insert into item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into bid (item_, item__, id__) values (?, ?, ?)
+Hibernate: insert into bid (item_, item__, id__) values (?, ?, ?)
+Hibernate: update bid set item__=? where id__=?
+Hibernate: update bid set item__=? where id__=?
+
+/ 7	.
+
+<class
+        name="Item"
+        table="item"
+>
+...
+        <set
+                name="bids"
+        >
+                <key
+                        column="item__"
+                />
+                <one-to-many
+                        class="Bid"/>
+        </set>
+
+/ we zien	,
+Hibernate: insert into item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: update bid set item__=? where id__=?
+Hibernate: update bid set item__=? where id__=?
+
+/ 7	. 
+
+<class
+        name="Item"
+        table="item"
+>
+...
+        <set
+                inverse="true"
+                name="bids"
+        >
+                <key
+                        not-null="true"
+                        column="item__"
+                />
+                <one-to-many
+                        class="Bid"/>
+        </set>
+
+/ we zien	,
+Hibernate: select max(id__) from bid
+Hibernate: insert into item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Jul 02, 2014 11:26:58 AM org.hibernate.engine.jdbc.spi.SqlExceptionHelper logExceptions
+WARN: SQL Error: 0, SQLState: 23502
+Jul 02, 2014 11:26:58 AM org.hibernate.engine.jdbc.spi.SqlExceptionHelper logExceptions
+ERROR: ERROR: null value in column "item__" violates not-null constraint
+  Detail: Failing row contains (1, 1, null).
+Jul 02, 2014 11:26:58 AM org.hibernate.engine.jdbc.batch.internal.AbstractBatchImpl release
+INFO: HHH000010: On release of batch it still contained JDBC statements
+org.hibernate.exception.ConstraintViolationException: could not execute statement
+
+
+/ Einde SAMENVATTING
+
+/ SAMENVATTING
+
+/ we doen nu	,
+               	Bid bid=new Bid();
+                bid.setItem(null);
+                item.getBids().add(bid);
+
+<class
+        name="Item"
+        table="item"
+>
+        <set
+                name="bids"
+        >
+                <key
+                        not-null="true"
+                        column="item__"
+                />
+                <one-to-many
+                        class="Bid"/>
+        </set>
+
+<class
+        name="Bid"
+        table="bid"
+>
+        <id
+                name="id"
+                column="id__"
+        >
+                <generator
+                        class="increment"/>
+        </id>
+        <many-to-one
+                name="item"
+                column="item_"
+        />
+
+/ Dus GEEN not-null="true" op item_ in de bid table	,
+
+/ we zien	,
+Hibernate: insert into item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into bid (item_, item__, id__) values (?, ?, ?)
+Hibernate: insert into bid (item_, item__, id__) values (?, ?, ?)
+Hibernate: update bid set item__=? where id__=?
+Hibernate: update bid set item__=? where id__=?
+
+foo=> select*from bid\g
+ id__ | item_ | item__ 
+------+-------+--------
+    2 |     1 |      1
+    1 |       |      1
+(2 rows)
+
+///////////////////////////////
+/ Er is item.bids={bid,bid2}. , en bid.item=null	, 
+/ we zien dat in item__ de item.id=1 staat van de item waar bid in de coll zit,	 NIET de item field in de bid, want die is null	, 
+////////////////////////////////////////////////////
+
+/ 7	. 
+
+/ we zien het ook goed	, 
+
+                Item item=new Item("first","Vlaardingen");
+                Item item2=new Item("second","Rijswijk");
+
+                Bid bid=new Bid();
+                bid.setItem(item);
+                item2.getBids().add(bid);
+
+                Bid bid2=new Bid();
+                bid2.setItem(item);
+                item.getBids().add(bid2);
+
+<class
+        name="Item"
+        table="item"
+>
+        <set
+                name="bids"
+        >
+                <key
+                        not-null="true"
+                        column="item__"
+                />
+                <one-to-many
+                        class="Bid"/>
+        </set>
+
+<class
+        name="Bid"
+        table="bid"
+>
+        <many-to-one
+                name="item"
+                column="item_"
+                not-null="true"
+        />
+
+foo=> select*from item\g
+ id_ |  name  |    city     
+-----+--------+-------------
+   1 | first  | Vlaardingen
+   2 | second | Rijswijk
+(2 rows)
+
+foo=> select*from bid\g
+ id__ | item_ | item__ 
+------+-------+--------
+    2 |     1 |      1
+    1 |     1 |      2
+
+/ we zien dat 
+bid.item=item	, en item2.bids={bid}
+bid2.item=item2	, en item.bids={bid2}
+/ en in de tbl bid zien we dat item__ inderdaad de item.id is waar de Bid in de coll zit	,
+
+/ Einde SAMENVATTING
+
+/ SAMENVATTING
+
+/ we doen	,
+                Bid bid2=new Bid();
+                bid2.setItem(item);
+                item.getBids().add(null);
+
+/ we hebben item.bids={bid,null}. we kunnen null niet vertalen naar een row in de bid table, 
+
+<class
+        name="Item"
+        table="item"
+>
+        <set
+                name="bids"
+        >
+                <key
+                        not-null="true"
+                        column="item__"
+                />
+                <one-to-many
+                        class="Bid"/>
+        </set>
+
+<class
+        name="Bid"
+        table="bid"
+>
+        <id
+                name="id"
+                column="id__"
+        >
+                <generator
+                        class="increment"/>
+        </id>
+        <many-to-one
+                name="item"
+                column="item_"
+        />
+
+Hibernate: select max(id_) from item
+Hibernate: select max(id__) from bid
+org.hibernate.PropertyValueException: not-null property references a null or transient value : org.hibernate.book.hbm.Bid._org.hibernate.book.hbm.Item.bidsBackref
+...
+	at org.hibernate.book.hbm.Main.testBasicUsage(Main.java:85)
+/ di	,
+	session.save(bid2)
+
+/ 7	. 
+
+/ rm not-null="true" in <key	,
+
+<class
+        name="Item"
+        table="item"
+>
+...
+        <set
+                name="bids"
+        >
+                <key
+                        column="item__"
+                />
+                <one-to-many
+                        class="Bid"/>
+        </set>
+
+
+Hibernate: select max(id_) from item
+Hibernate: select max(id__) from bid
+Hibernate: insert into item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: update bid set item__=? where id__=?
+org.hibernate.StaleStateException: Batch update returned unexpected row count from update [0]; actual row count: 0; expected: 1
+...
+	at org.hibernate.book.hbm.Main.testBasicUsage(Main.java:87)
+/ di
+                session.getTransaction().commit();
+
+
+/ Einde SAMENVATTING
+
+/ SAMENVATTING
+
+/ we maken in de Item's <set alleen item_	, 
+
+<class
+        name="Item"
+        table="item"
+>
+        <set
+                inverse="true"
+                name="bids"
+        >
+                <key
+                        not-null="true"
+                        column="item_"
+                />
+                <one-to-many
+                        class="Bid"/>
+        </set>
+</class>
+
+<class
+        name="Bid"
+        table="bid"
+>
+        <many-to-one
+                name="item"
+                column="item_"
+                not-null="true"
+        />
+</class>
+
+                Bid bid=new Bid();
+                bid.setItem(item);
+                //item.getBids().add(bid);
+
+                Bid bid2=new Bid();
+                bid2.setItem(item);
+                //item.getBids().add(bid2);
+
+
+
+/ we zien 	,
+Hibernate: insert into item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: select bid0_.id__ as id__1_0_, bid0_.item_ as item_2_0_ from bid bid0_
+1,1
+2,1
+Hibernate: select bids1_.id__ as id__1_0_, bids1_.item_ as item_2_0_ from item item0_ inner join bid bids1_ on item0_.id_=bids1_.item_
+1,1
+2,1
+
+/ we zien alleen insert, geen update
+/ als ze er zijn, komen ze van de <set kant	,
+/ TODO
+
+/ we moeten de <set hebben ,anders gaat de 2de query , op item.bids fout	,
+
+/ 7	. 
+
+/ we rm in Item's mapping inverse="true" en replace in Bid's mapping insert="false", update="false"
+
+<class
+        name="Item"
+        table="item"
+>
+        <set
+                name="bids"
+        >
+                <key
+                        not-null="true"
+                        column="item_"
+                />
+                <one-to-many
+                        class="Bid"/>
+        </set>
+
+<class
+        name="Bid"
+        table="bid"
+>
+        <many-to-one
+                name="item"
+                column="item_"
+                not-null="true"
+                update="false"
+                insert="false"
+        />
+
+                Bid bid=new Bid();
+                //bid.setItem(item);
+                item2.getBids().add(bid);
+
+                Bid bid2=new Bid();
+                //bid2.setItem(item);
+                item.getBids().add(bid2);
+
+Hibernate: insert into item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: update bid set item_=? where id__=?
+Hibernate: update bid set item_=? where id__=?
+Hibernate: select bid0_.id__ as id__1_0_, bid0_.item_ as item_2_0_ from bid bid0_
+2,1
+1,2
+Hibernate: select bids1_.id__ as id__1_0_, bids1_.item_ as item_2_0_ from item item0_ inner join bid bids1_ on item0_.id_=bids1_.item_
+2,1
+1,2
+
+
+/ Einde SAMENVATTING
+ 
+
+
+/ Einde HIBERNATE
+
+/ HIBERNATE IN MPO GETOLD
+
+/ 7	. 
+
+/ we kunnen ook zelf de pk's geven	,
+
+/ Item is owner	side	,
+/ bij Item mogen we 
+                <generator
+                        class="increment"/>
+/ maar bij Item mogen we ook comment out	,
+/ Bij Bid moeten we comment out	,
+                <generator
+                        class="increment"/>
+
+<class
+        name="Item"
+        table="item"
+>
+        <id
+                name="id"
+                column="id_"
+        >
+                <generator
+                        class="increment"/>
+        </id>
+        <set
+                cascade="all"
+                name="bids"
+        >
+                <key
+                        not-null="true"
+                        column="item_"
+                />
+                <one-to-many
+                        class="Bid"/>
+        </set>
+</class>
+
+<class
+        name="Bid"
+        table="bid"
+>
+        <id
+                name="id"
+                column="id__"
+        >
+<!--
+                <generator
+                        class="increment"/>
+-->
+        </id>
+        <many-to-one
+                name="item"
+                column="item_"
+                not-null="true"
+                update="false"
+                insert="false"
+        />
+</class>
+
+                Item item=new Item(1l,"first","Vlaardingen");
+                Item item2=new Item(2l,"second","Rijswijk");
+
+                Bid bid=new Bid(1l);
+                //bid.setItem(item2);
+                //item.getBids().add(bid);
+                item2.getBids().add(bid);
+
+                Bid bid2=new Bid(2l);
+                bid2.setItem(item);
+                item.getBids().add(bid2);
+                //item2.getBids().add(bid2);
+
+                Bid bid3=new Bid(3l);
+                //bid3.setItem(item2);
+                item2.getBids().add(bid3);
+
+                Bid bid4=new Bid(4l);
+                //bid4.setItem(item);
+                item.getBids().add(bid4);
+
+               	List result = session.createQuery( "select b from Bid b" ).list();
+                for ( Bid b: (List<Bid>) result ) {
+                        System.out.println( b.getId()+","+b.getItem().getId()  );
+                }
+
+                List result2 = session.createQuery( "select bids from Item" ).list();
+                for ( Bid b: (List<Bid>) result2 ) {
+                        System.out.println( b.getId()+","+b.getItem().getId()  );
+                }
+
+
+/ we zien	,
+
+Hibernate: select bid_.id__ from bid bid_ where bid_.id__=?
+Hibernate: select bid_.id__ from bid bid_ where bid_.id__=?
+Hibernate: select bid_.id__ from bid bid_ where bid_.id__=?
+Hibernate: select bid_.id__ from bid bid_ where bid_.id__=?
+Hibernate: insert into item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: insert into item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: update bid set item_=? where id__=?
+Hibernate: update bid set item_=? where id__=?
+Hibernate: update bid set item_=? where id__=?
+Hibernate: update bid set item_=? where id__=?
+Hibernate: select bid0_.id__ as id__1_0_, bid0_.item_ as item_2_0_ from bid bid0_
+2,1
+4,1
+1,2
+3,2
+Hibernate: select bids1_.id__ as id__1_0_, bids1_.item_ as item_2_0_ from item item0_ inner join bid bids1_ on item0_.id_=bids1_.item_
+2,1
+4,1
+1,2
+3,2
+
+/ we moeten in Bid's mapping	 de generator comment out	,
+        <id
+                name="id"
+                column="id_"
+        >
+<!--
+                <generator
+                        class="increment"/>
+-->
+        </id>
+
+/ anders	,
+
+org.hibernate.StaleStateException: Batch update returned unexpected row count from update [0]; actual row count: 0; expected: 1
+	at org.hibernate.jdbc.Expectations$BasicExpectation.checkBatched(Expectations.java:81)
+	at org.hibernate.jdbc.Expectations$BasicExpectation.verifyOutcome(Expectations.java:73)
+	at org.hibernate.engine.jdbc.batch.internal.NonBatchingBatch.addToBatch(NonBatchingBatch.java:63)
+	at org.hibernate.persister.collection.AbstractCollectionPersister.recreate(AbstractCollectionPersister.java:1311)
+	at org.hibernate.persister.collection.OneToManyPersister.recreate(OneToManyPersister.java:184)
+	at org.hibernate.action.internal.CollectionRecreateAction.execute(CollectionRecreateAction.java:67)
+	at org.hibernate.engine.spi.ActionQueue.executeActions(ActionQueue.java:463)
+	at org.hibernate.engine.spi.ActionQueue.executeActions(ActionQueue.java:349)
+	at org.hibernate.event.internal.AbstractFlushingEventListener.performExecutions(AbstractFlushingEventListener.java:350)
+	at org.hibernate.event.internal.DefaultFlushEventListener.onFlush(DefaultFlushEventListener.java:56)
+	at org.hibernate.internal.SessionImpl.flush(SessionImpl.java:1222)
+	at org.hibernate.internal.SessionImpl.managedFlush(SessionImpl.java:425)
+	at org.hibernate.engine.transaction.internal.jdbc.JdbcTransaction.beforeTransactionCommit(JdbcTransaction.java:101)
+	at org.hibernate.engine.transaction.spi.AbstractTransactionImpl.commit(AbstractTransactionImpl.java:177)
+	at org.hibernate.book.hbm.Main.testBasicUsage(Main.java:108)
+	at org.hibernate.book.hbm.Main.<init>(Main.java:52)
+	at org.hibernate.book.hbm.Main.main(Main.java:46)
+
+/ 7	. 
+
+/ als we het omdraaien	,
+
+/ Bid is de owner side	,
+/ bij Bid mogen we 
+                <generator
+                        class="increment"/>
+/ maar bij Bid mogen we ook comment out	,
+/ Bij Item moeten we comment out	,
+                <generator
+                        class="increment"/>
+
+<class
+        name="Item"
+        table="item"
+>
+        <id    
+                name="id"
+                column="id_"
+        >
+<!--
+                <generator
+                        class="increment"/>
+        </id>
+-->
+        <set
+                inverse="true"
+                name="bids"
+        >
+               <key
+                        not-null="true"
+                        column="item_"
+                />
+                <one-to-many
+                        class="Bid"/>
+        </set>
+</class>
+
+<class
+        name="Bid"
+        table="bid"
+>
+        <id
+                name="id"
+                column="id__"
+        >
+                <generator
+                        class="increment"/>
+        </id>
+        <many-to-one
+                name="item"
+                column="item_"
+                not-null="true"
+                cascade="all"
+        />
+</class>
+
+
+               	Item item=new Item(1l,"first","Vlaardingen");
+                Item item2=new Item(2l,"second","Rijswijk");
+
+                Bid bid=new Bid(1l);
+                bid.setItem(item2);
+                //item2.getBids().add(bid);
+
+                Bid bid2=new Bid(2l);
+                bid2.setItem(item);
+                //item.getBids().add(bid2);
+
+                Bid bid3=new Bid(3l);
+                bid3.setItem(item2);
+                //item2.getBids().add(bid3);
+
+                Bid bid4=new Bid(4l);
+                bid4.setItem(item);
+                //item.getBids().add(bid4);
+
+                session.save(bid);
+                session.save(bid2);
+                session.save(bid3);
+                session.save(bid4);
+
+Hibernate: select max(id__) from bid
+Hibernate: select item_.id_, item_.name as name2_1_, item_.city as city3_1_ from item item_ where item_.id_=?
+Hibernate: select item_.id_, item_.name as name2_1_, item_.city as city3_1_ from item item_ where item_.id_=?
+Hibernate: insert into item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: insert into item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: insert into bid (item_, id__) values (?, ?)
+Hibernate: select bid0_.id__ as id__1_0_, bid0_.item_ as item_2_0_ from bid bid0_
+1,2
+2,1
+3,2
+4,1
+Hibernate: select bids1_.id__ as id__1_0_, bids1_.item_ as item_2_0_ from item item0_ inner join bid bids1_ on item0_.id_=bids1_.item_
+1,2
+2,1
+3,2
+4,1
+
+/ als we in Item	,
+                <generator
+                        class="increment"/>
+
+Jul 04, 2014 9:05:15 AM org.hibernate.engine.jdbc.spi.SqlExceptionHelper logExceptions
+ERROR: ERROR: insert or update on table "bid" violates foreign key constraint "fk_eja4hs0e8mmw9orqccy083eb9"
+  Detail: Key (item_)=(2) is not present in table "item".
+Jul 04, 2014 9:05:15 AM org.hibernate.engine.jdbc.batch.internal.AbstractBatchImpl release
+INFO: HHH000010: On release of batch it still contained JDBC statements
+org.hibernate.exception.ConstraintViolationException: could not execute statement
+	at org.hibernate.exception.internal.SQLStateConversionDelegate.convert(SQLStateConversionDelegate.java:129)
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:49)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:126)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:112)
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:190)
+	at org.hibernate.engine.jdbc.batch.internal.NonBatchingBatch.addToBatch(NonBatchingBatch.java:62)
+	at org.hibernate.persister.entity.AbstractEntityPersister.insert(AbstractEntityPersister.java:3124)
+	at org.hibernate.persister.entity.AbstractEntityPersister.insert(AbstractEntityPersister.java:3581)
+	at org.hibernate.action.internal.EntityInsertAction.execute(EntityInsertAction.java:104)
+	at org.hibernate.engine.spi.ActionQueue.executeActions(ActionQueue.java:463)
+	at org.hibernate.engine.spi.ActionQueue.executeActions(ActionQueue.java:349)
+	at org.hibernate.event.internal.AbstractFlushingEventListener.performExecutions(AbstractFlushingEventListener.java:350)
+	at org.hibernate.event.internal.DefaultFlushEventListener.onFlush(DefaultFlushEventListener.java:56)
+	at org.hibernate.internal.SessionImpl.flush(SessionImpl.java:1222)
+	at org.hibernate.internal.SessionImpl.managedFlush(SessionImpl.java:425)
+	at org.hibernate.engine.transaction.internal.jdbc.JdbcTransaction.beforeTransactionCommit(JdbcTransaction.java:101)
+	at org.hibernate.engine.transaction.spi.AbstractTransactionImpl.commit(AbstractTransactionImpl.java:177)
+	at org.hibernate.book.hbm.Main.testBasicUsage(Main.java:105)
+	at org.hibernate.book.hbm.Main.<init>(Main.java:52)
+	at org.hibernate.book.hbm.Main.main(Main.java:46)
+Caused by: org.postgresql.util.PSQLException: ERROR: insert or update on table "bid" violates foreign key constraint "fk_eja4hs0e8mmw9orqccy083eb9"
+  Detail: Key (item_)=(2) is not present in table "item".
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2102)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:1835)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:257)
+	at org.postgresql.jdbc2.AbstractJdbc2Statement.execute(AbstractJdbc2Statement.java:500)
+	at org.postgresql.jdbc2.AbstractJdbc2Statement.executeWithFlags(AbstractJdbc2Statement.java:388)
+	at org.postgresql.jdbc2.AbstractJdbc2Statement.executeUpdate(AbstractJdbc2Statement.java:334)
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:187)
+	... 15 more
+
+/ 7	. 
+
+               	List result = session.createQuery( "select b from Bid b" ).list();
+                for ( Bid b: (List<Bid>) result ) {
+                        System.out.println( b.getId()+","+b.getItem().getId()  );
+                }
+
+/ we kunnen WEL
+"from Bid" 
+"from Bid b" 
+"select b from Bid b"	, 
+
+/ maar NIET 
+"select * from Bid"  
+"select b.* from Bid b"  
+org.hibernate.hql.internal.ast.QuerySyntaxException: expecting IDENT, found '*' near line 1, column 10 [select b.* from org.hibernate.book.hbm.Bid b]
+"from bid"
+Caused by: org.hibernate.hql.internal.ast.QuerySyntaxException: bid is not mapped
+
+
+/ we kunnen WEL	,
+"select bids from Item"
+"select i.bids from Item i"
+"select bids from Item i"
+
+/ 7	. 
+
+$ vi Main.java
+
+                Session session = sessionFactory.openSession();
+                session.beginTransaction();
+
+                SessionImplementor si=(SessionImplementor)session;
+                PersistenceContext pc=si.getPersistenceContext();
+                EntityPersister ep=si.getEntityPersister("org.hibernate.book.hbm.Item",null);
+
+                Item item=(Item)session.load(Item.class,1l);
+                Bid bid=(Bid)session.load(Bid.class,1l);
+ pc = "PersistenceContext[entityKeys=[],collectionKeys=[]]"
+
+                item.getBids().add(bid);
+ pc = "PersistenceContext[entityKeys=[EntityKey[org.hibernate.book.hbm.Bid#4], EntityKey[org.hibernate.book.hbm.Bid#2], EntityKey[org.hibernate.book.hbm.Item#1]],collectionKeys=[CollectionKey[org.hibernate.book.hbm.Item.bids#1]]]"
+/ item, bid zijn nog steeds proxies!
+
+$ vi Main.java
+
+               	EntityPersister ep=si.getEntityPersister("org.hibernate.book.hbm.Item",null);
+
+                Serializable id=1l;
+                EntityKey k= new EntityKey(id, ep);
+
+//              Item item=(Item)session.get(Item.class,1l);
+//              item.setName("firstagain");
+                Item item=(Item)session.load(Item.class,1l);
+                Bid bid=(Bid)session.load(Bid.class,1l);
+                item.getBids().add(bid);
+/ pc: item en de 2 bids in item.bids 
+
+		item.setName("firstagain");
+/ duidelijkheid met debug; item (en 2 bids) zijn al in pc	, 
+
+                Object l= pc.getEntity(k);
+                EntityEntry ee= pc.getEntry(l);
+                Object[]s= ee.getLoadedState();
+                Object r= si.instantiate(ep.getEntityName(), id);
+                ep.setPropertyValues(r, s);
+
+main[1] dump k
+ k = {
+    identifier: instance of java.lang.Long(id=2422)
+    hashCode: 630
+    persister: instance of org.hibernate.persister.entity.SingleTableEntityPersister(id=2423)
+}
+main[1] print k.identifier
+ k.identifier = "1"
+main[1] print k.persister==ep
+ k.persister==ep = true
+
+/ l is GEEN proxy	,
+
+main[1] dump l
+ l = {
+    id: instance of java.lang.Long(id=2422)
+    name: "firstagain"
+    city: "Vlaardingen"
+    bids: instance of org.hibernate.collection.internal.PersistentSet(id=2429)
+}
+
+n[1] dump ee
+ ee = {
+    lockMode: instance of org.hibernate.LockMode(id=2466)
+    status: instance of org.hibernate.engine.spi.Status(id=2467)
+    previousStatus: instance of org.hibernate.engine.spi.Status(id=2468)
+    id: instance of java.lang.Long(id=2422)
+    loadedState: instance of java.lang.Object[3] (id=2469)
+    deletedState: null
+    existsInDatabase: true
+    version: null
+    persister: instance of org.hibernate.persister.entity.SingleTableEntityPersister(id=2423)
+    entityName: "org.hibernate.book.hbm.Item"
+    cachedEntityKey: instance of org.hibernate.engine.spi.EntityKey(id=2471)
+    isBeingReplicated: false
+    loadedWithLazyPropertiesUnfetched: true
+    rowId: null
+    persistenceContext: instance of org.hibernate.engine.internal.StatefulPersistenceContext(id=2382)
+}
+
+main[1] dump s
+ s = {
+"first", "Vlaardingen", instance of org.hibernate.collection.internal.PersistentSet(id=2429)
+}
+
+main[1] dump r
+ r = {
+    id: instance of java.lang.Long(id=2422)
+    name: null
+    city: null
+    bids: instance of java.util.HashSet(id=2478)
+}
+
+
+                ep.setPropertyValues(r, s);
+main[1] dump r
+ r = {
+    id: instance of java.lang.Long(id=2422)
+    name: "first"
+    city: "Vlaardingen"
+    bids: instance of org.hibernate.collection.internal.PersistentSet(id=2429)
+}
+
+/ 7	. 
+
+/ Variant voor getOld	,
+
+/ in getold2/	,
+
+/ Gewoon een nieuwe persistence context create	, 
+
+{
+                Session session = sessionFactory.openSession();
+                session.beginTransaction();
+
+                Item item=(Item)session.load(Item.class,1l);
+                Bid bid=(Bid)session.load(Bid.class,1l);
+                item.getBids().add(bid);
+
+               	item.setName("firstagain");
+	
+		Session session_= sessionFactory.openSession();
+                session_.beginTransaction();
+
+                Item item_=(Item)session_.get(Item.class,1l);
+
+                session_.getTransaction().commit();
+                session_.close();
+
+main[1] dump item_
+ item_ = {
+    id: instance of java.lang.Long(id=2423)
+    name: "first"
+    city: "Vlaardingen"
+    bids: instance of org.hibernate.collection.internal.PersistentSet(id=2426)
+}
+
+print item.bids.toArray()[0].id
+print item_.bids.toArray()[0].id
+
+[eric@localhost hibernate-book]$ tar cvzf getolg.tgz getold/
+
+
+/ 7	.
+
+/ op search.maven.org, 	we download met de hand sources.jar van hibernate-core	,
+
+[eric@localhost hibernate-core-4.3.5.Final-sources]$ pwd
+/home/eric/Devel/Java/Hibernate/hibernate-core-4.3.5.Final-sources
+[eric@localhost hibernate-core-4.3.5.Final-sources]$ jar xvf ~/Downloads/hibernate-core-4.3.5.Final-sources.jar 
+
+$ vi ~/.jdbrc
+
+stop in org.hibernate.book.hbm.Main.testBasicUsage
+
+stop in org.hibernate.book.hbm.Main2.testBasicUsage
+
+stop in org.hibernate.book.hbm.Main2a.testBasicUsage
+
+stop in org.hibernate.book.hbm.Main3.testBasicUsage
+
+stop in org.gradle.Person.main
+
+use src/main/java:/home/eric/Devel/Java/Hibernate/hibernate-core-4.3.5.Final-sources
+
+run
+
+[eric@localhost getold]$ pwd
+/home/eric/Devel/Java/Hibernate/hibernate-book/getold
+[eric@localhost getold]$ jdb -classpath  target/getold-1.0-SNAPSHOT-jar-with-dependencies.jar org.hibernate.book.hbm.Main 
+
+/ 7	. 
+
+main[1]  print session.getPersistenceContext()
+ session.getPersistenceContext() = "PersistenceContext[entityKeys=[],collectionKeys=[]]"
+/ of	,
+main[1] print session.persistenceContext
+ session.persistenceContext = "PersistenceContext[entityKeys=[],collectionKeys=[]]"
+/ OK
+
+/ 7	.
+
+/ hibernate query log
+
+http://stackoverflow.com/questions/2536829/hibernate-show-real-sql
+
+ you want to see the SQL sent directly to the database (that is formatted similar to your example), you'll have to use some kind of jdbc driver proxy like P6Spy (or log4jdbc).
+
+/ en 	,
+http://docs.jboss.org/hibernate/core/4.1/manual/en-US/html/ch03.html#configuration-logging
+
+$ vi ../pom.xml
+
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-api</artifactId>
+    <version>1.7.7</version>
+</dependency>
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-log4j12</artifactId>
+    <version>1.7.7</version>
+</dependency>
+<dependency>
+    <groupId>log4j</groupId>
+    <artifactId>log4j</artifactId>
+    <version>1.2.17</version>
+</dependency>
+
+[eric@localhost getold2]$ vi src/main/resources/log4j.properties 
+
+log4j.logger.org.hibernate=INFO, hb
+log4j.logger.org.hibernate.SQL=DEBUG
+log4j.logger.org.hibernate.type=TRACE
+log4j.logger.org.hibernate.hql.ast.AST=info
+log4j.logger.org.hibernate.tool.hbm2ddl=warn
+log4j.logger.org.hibernate.hql=debug
+log4j.logger.org.hibernate.cache=info
+log4j.logger.org.hibernate.jdbc=debug
+
+log4j.appender.hb=org.apache.log4j.ConsoleAppender
+log4j.appender.hb.layout=org.apache.log4j.PatternLayout
+log4j.appender.hb.layout.ConversionPattern=HibernateLog --> %d{HH:mm:ss} %-5p %c - %m%n
+log4j.appender.hb.Threshold=TRACE
+
+[eric@localhost getold2]$ jdb -classpath  target/getold2-1.0-SNAPSHOT-jar-with-dependencies.jar org.hibernate.book.hbm.Main 
+
+81    		Session session = sessionFactory.openSession();
+
+                Item item=new Item(1l,"first","Vlaardingen");
+                Item item2=new Item(2l,"second","Rijswijk");
+
+                Bid bid=new Bid(1l);
+                //bid.setItem(item2);
+                item2.getBids().add(bid);
+
+                Bid bid2=new Bid(2l);
+                //bid2.setItem(item);
+                item.getBids().add(bid2);
+
+                Bid bid3=new Bid(3l);
+                //bid3.setItem(item2);
+                item2.getBids().add(bid3);
+
+                Bid bid4=new Bid(4l);
+                //bid4.setItem(item);
+                item.getBids().add(bid4);
+
+
+106    		session.save(item); 
+/ naar pc	,
+
+main[1] next
+> HibernateLog --> 15:49:27 DEBUG org.hibernate.SQL - select bid_.id__ from bid bid_ where bid_.id__=?
+HibernateLog --> 15:49:27 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [2]
+HibernateLog --> 15:49:27 DEBUG org.hibernate.SQL - select bid_.id__ from bid bid_ where bid_.id__=?
+HibernateLog --> 15:49:27 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [4]
+
+main[1] print session
+ session = "SessionImpl(PersistenceContext[entityKeys=[EntityKey[org.hibernate.book.hbm.Bid#4], EntityKey[org.hibernate.book.hbm.Bid#2], EntityKey[org.hibernate.book.hbm.Item#1]],collectionKeys=[]]...
+
+                session.save(item2);
+
+
+117    		session.getTransaction().commit();
+/ Naar db	,
+
+> HibernateLog --> 08:08:30 DEBUG org.hibernate.SQL - insert into item (name, city, id_) values (?, ?, ?)
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [first]
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [Vlaardingen]
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+HibernateLog --> 08:08:30 DEBUG org.hibernate.SQL - insert into bid (item_, id__) values (?, ?)
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [2]
+HibernateLog --> 08:08:30 DEBUG org.hibernate.SQL - insert into bid (item_, id__) values (?, ?)
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [4]
+HibernateLog --> 08:08:30 DEBUG org.hibernate.SQL - insert into item (name, city, id_) values (?, ?, ?)
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [second]
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [Rijswijk]
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [2]
+HibernateLog --> 08:08:30 DEBUG org.hibernate.SQL - insert into bid (item_, id__) values (?, ?)
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [2]
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [1]
+HibernateLog --> 08:08:30 DEBUG org.hibernate.SQL - insert into bid (item_, id__) values (?, ?)
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [2]
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [3]
+HibernateLog --> 08:08:30 DEBUG org.hibernate.SQL - update bid set item_=? where id__=?
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [2]
+HibernateLog --> 08:08:30 DEBUG org.hibernate.SQL - update bid set item_=? where id__=?
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [4]
+HibernateLog --> 08:08:30 DEBUG org.hibernate.SQL - update bid set item_=? where id__=?
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [2]
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [1]
+HibernateLog --> 08:08:30 DEBUG org.hibernate.SQL - update bid set item_=? where id__=?
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [2]
+HibernateLog --> 08:08:30 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [3]
+
+/ Q ERICJ overbodige updates	,
+
+
+122    		Session session = sessionFactory.openSession();
+
+125    		Item item=(Item)session.get(Item.class,1l);
+
+main[1] next
+> HibernateLog --> 16:04:13 DEBUG org.hibernate.SQL - select item0_.id_ as id_1_1_0_, item0_.name as name2_1_0_, item0_.city as city3_1_0_ from item item0_ where item0_.id_=?
+HibernateLog --> 16:04:13 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+HibernateLog --> 16:04:13 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name2_1_0_] : [VARCHAR]) - [first]
+HibernateLog --> 16:04:13 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([city3_1_0_] : [VARCHAR]) - [Vlaardingen]
+HibernateLog --> 16:04:13 TRACE org.hibernate.type.CollectionType - Created collection wrapper: [org.hibernate.book.hbm.Item.bids#1]
+
+main[1] print session
+ session = "SessionImpl(PersistenceContext[entityKeys=[EntityKey[org.hibernate.book.hbm.Item#1]],collectionKeys=[CollectionKey[org.hibernate.book.hbm.Item.bids#1]]];...
+
+
+main[1] print session.persistenceContext.entitiesByKey
+ session.persistenceContext.entitiesByKey = "{EntityKey[org.hibernate.book.hbm.Item#1]=org.hibernate.book.hbm.Item@2c93829c}"
+
+/ Als we	,
+/ Dit doen we NIET	,
+main[1] print session.persistenceContext.collectionsByKey 
+HibernateLog --> 09:43:45 DEBUG org.hibernate.SQL - select bids0_.item_ as item_2_1_0_, bids0_.id__ as id__1_0_0_, bids0_.id__ as id__1_0_1_, bids0_.item_ as item_2_0_1_ from bid bids0_ where bids0_.item_=?
+HibernateLog --> 09:43:45 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+HibernateLog --> 09:43:45 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id__1_0_1_] : [BIGINT]) - [4]
+HibernateLog --> 09:43:45 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([item_2_0_1_] : [BIGINT]) - [1]
+HibernateLog --> 09:43:45 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([item_2_1_0_] : [BIGINT]) - [1]
+HibernateLog --> 09:43:45 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id__1_0_0_] : [BIGINT]) - [4]
+HibernateLog --> 09:43:45 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id__1_0_1_] : [BIGINT]) - [2]
+HibernateLog --> 09:43:45 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([item_2_0_1_] : [BIGINT]) - [1]
+HibernateLog --> 09:43:45 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([item_2_1_0_] : [BIGINT]) - [1]
+HibernateLog --> 09:43:45 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id_ session.persistenceContext.collectionsByKey = "{CollectionKey[org.hibernate.book.hbm.Item.bids#1]=[org.hibernate.book.hbm.Bid@fdcda7f, org.hibernate.book.hbm.Bid@59bd9c6d]}"
+_1_0_0_] : [BIGINT]) - [2]
+
+/ De entity zit al in de pc, 
+/ maar de collection NIET	, dat zien we als we de collection print, dan gaat hij query	, doe print de collection dus NIET
+
+126    		item.setName("sixth");
+/ geen query , want die is al gedaan bij session.get hierboven	,
+
+128    		Session session_ = sessionFactory.openSession();
+
+main[1] print session_
+ session_ = "SessionImpl(PersistenceContext[entityKeys=[],collectionKeys=[]]
+
+131    		Item item_=(Item)session_.get(Item.class,1l);
+
+main[1] next
+> HibernateLog --> 16:10:45 DEBUG org.hibernate.SQL - select item0_.id_ as id_1_1_0_, item0_.name as name2_1_0_, item0_.city as city3_1_0_ from item item0_ where item0_.id_=?
+HibernateLog --> 16:10:45 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+HibernateLog --> 16:10:45 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name2_1_0_] : [VARCHAR]) - [first]
+HibernateLog --> 16:10:45 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([city3_1_0_] : [VARCHAR]) - [Vlaardingen]
+HibernateLog --> 16:10:45 TRACE org.hibernate.type.CollectionType - Created collection wrapper: [org.hibernate.book.hbm.Item.bids#1]
+
+main[1] print session_
+ session_ = "SessionImpl(PersistenceContext[entityKeys=[EntityKey[org.hibernate.book.hbm.Item#1]],collectionKeys=[CollectionKey[org.hibernate.book.hbm.Item.bids#1]]]...
+
+133    		item_.setName("seventh");
+/ geen query , want die is al gedaan bij session.get hierboven	,
+
+135    		session_.getTransaction().commit();
+
+main[1] next
+> HibernateLog --> 09:55:02 DEBUG org.hibernate.SQL - update item set name=?, city=? where id_=?
+HibernateLog --> 09:55:02 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [seventh]
+HibernateLog --> 09:55:02 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [Vlaardingen]
+HibernateLog --> 09:55:02 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+
+138    		session.getTransaction().commit();
+
+main[1]  next
+> HibernateLog --> 09:56:08 DEBUG org.hibernate.SQL - update item set name=?, city=? where id_=?
+HibernateLog --> 09:56:08 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [sixth]
+HibernateLog --> 09:56:08 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [Vlaardingen]
+HibernateLog --> 09:56:08 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+
+
+
+141    		Session session = sessionFactory.openSession();
+
+144    		Item item=(Item)session.load(Item.class,1l);
+/ NIETS	, geen queries op de db	,
+
+main[1] print session_
+ session_ = "SessionImpl(PersistenceContext[entityKeys=[],collectionKeys=[]]
+
+147    		item.setName("third");
+
+main[1] next
+> HibernateLog --> 09:58:20 DEBUG org.hibernate.SQL - select item0_.id_ as id_1_1_0_, item0_.name as name2_1_0_, item0_.city as city3_1_0_ from item item0_ where item0_.id_=?
+HibernateLog --> 09:58:20 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+HibernateLog --> 09:58:20 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name2_1_0_] : [VARCHAR]) - [sixth]
+HibernateLog --> 09:58:20 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([city3_1_0_] : [VARCHAR]) - [Vlaardingen]
+HibernateLog --> 09:58:20 TRACE org.hibernate.type.CollectionType - Created collection wrapper: [org.hibernate.book.hbm.Item.bids#1]
+
+/ Nu dus wel een query, was nog niet gedaan bij session.load	,
+
+main[1] print session
+ session = "SessionImpl(PersistenceContext[entityKeys=[EntityKey[org.hibernate.book.hbm.Item#1]],collectionKeys=[CollectionKey[org.hibernate.book.hbm.Item.bids#1]]]...
+
+
+146    		Session session_ = sessionFactory.openSession();
+
+149    		Item item_=(Item)session_.load(Item.class,1l);
+
+main[1] print session_
+ session_ = "SessionImpl(PersistenceContext[entityKeys=[],collectionKeys=[]]
+
+150    		item.setName("fourth");
+
+main[1] next
+> HibernateLog --> 10:03:44 DEBUG org.hibernate.SQL - select item0_.id_ as id_1_1_0_, item0_.name as name2_1_0_, item0_.city as city3_1_0_ from item item0_ where item0_.id_=?
+HibernateLog --> 10:03:44 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+HibernateLog --> 10:03:44 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name2_1_0_] : [VARCHAR]) - [sixth]
+HibernateLog --> 10:03:44 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([city3_1_0_] : [VARCHAR]) - [Vlaardingen]
+HibernateLog --> 10:03:44 TRACE org.hibernate.type.CollectionType - Created collection wrapper: [org.hibernate.book.hbm.Item.bids#1]
+
+main[1] print session_
+ session_ = "SessionImpl(PersistenceContext[entityKeys=[EntityKey[org.hibernate.book.hbm.Item#1]],collectionKeys=[CollectionKey[org.hibernate.book.hbm.Item.bids#1]]]
+
+155    		session_.getTransaction().commit();
+main[1] next
+> HibernateLog --> 10:04:31 DEBUG org.hibernate.SQL - update item set name=?, city=? where id_=?
+HibernateLog --> 10:04:31 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [fourth]
+HibernateLog --> 10:04:31 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [Vlaardingen]
+HibernateLog --> 10:04:31 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+
+158    		session.getTransaction().commit();
+
+main[1] next
+> HibernateLog --> 10:05:31 DEBUG org.hibernate.SQL - update item set name=?, city=? where id_=?
+HibernateLog --> 10:05:31 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [third]
+HibernateLog --> 10:05:31 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [Vlaardingen]
+HibernateLog --> 10:05:31 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+
+164    		Session session = sessionFactory.openSession();
+165            	session.beginTransaction();
+
+167            	List result = session.createQuery( "from Bid " ).list();
+
+HibernateLog --> 10:06:48 DEBUG org.hibernate.SQL - select bid0_.id__ as id__1_0_, bid0_.item_ as item_2_0_ from bid bid0_
+HibernateLog --> 10:06:48 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id__1_0_] : [BIGINT]) - [2]
+HibernateLog --> 10:06:48 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([item_2_0_] : [BIGINT]) - [1]
+HibernateLog --> 10:06:48 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id__1_0_] : [BIGINT]) - [4]
+HibernateLog --> 10:06:48 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([item_2_0_] : [BIGINT]) - [1]
+HibernateLog --> 10:06:48 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id__1_0_] : [BIGINT]) - [1]
+HibernateLog --> 10:06:48 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([item_2_0_] : [BIGINT]) - [2]
+HibernateLog --> 10:06:48 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id__1_0_] : [BIGINT]) - [3]
+HibernateLog --> 10:06:48 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([item_2_0_] : [BIGINT]) - [2]
+
+172            	List result2 = session.createQuery( "select bids from Item i" ).list();
+
+HibernateLog --> 10:09:07 DEBUG org.hibernate.SQL - select bids1_.id__ as id__1_0_, bids1_.item_ as item_2_0_ from item item0_ inner join bid bids1_ on item0_.id_=bids1_.item_
+HibernateLog --> 10:09:07 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id__1_0_] : [BIGINT]) - [2]
+HibernateLog --> 10:09:07 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id__1_0_] : [BIGINT]) - [4]
+HibernateLog --> 10:09:07 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id__1_0_] : [BIGINT]) - [1]
+HibernateLog --> 10:09:07 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id__1_0_] : [BIGINT]) - [3]
+
+/ 7	. 
+
+/ Lees	,
+http://stackoverflow.com/questions/8621906/is-buildsessionfactory-deprecated-in-hibernate-4
+
+public class Main{
+	private SessionFactory sessionFactory;
+	private ServiceRegistry serviceRegistry;
+
+// EERST	,
+		//sessionFactory = new Configuration()
+              	//  .configure() // configures settings from hibernate.cfg.xml
+                //.buildSessionFactory();
+	
+/ NU	,	
+		Configuration configuration=new Configuration().configure();
+		serviceRegistry=new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
+		sessionFactory=configuration.buildSessionFactory(serviceRegistry);
+ 
+
+
+/ Einde HIBERNATE IN MPO GETOLD
+
+/ HIBERNATE MERGE2
+
+/ 7	.
+
+/ We moeten een detached obj WH niet .save	, want Hibernate maakt geen onderscheid tussen een transient of detached obj: beide krijgen een nieuwe id, een detached item met id=1 krijgt na .save id=2, en geeft bij .commit een nieuwe row in de tbl	,
+/ als we een detached item .saveOrUpdate/ .update	,	 dan blijft de id=1	,
+
+/ .save, .merge  op persistent elem doet NIETS	, 
+
+		Item item1=(Item)session.merge(item); 
+/ item1==item
+
+/we kunnen een transient obj NIET session.update	,
+org.hibernate.TransientObjectException: The given object has a null identifier: org.hibernate.book.hbm.Item
+
+
+
+
+
+/ 7	.
+
+/ als we	,
+		Item item=new Item("first","Vlaardingen"); 
+/ dan moeten we in Item.hbm.xml een gen hebben	, anders ERR,
+
+	<id 	
+		column="id_"
+		name="id">	
+            	<generator 
+			class="increment"/>
+	</id>
+
+/ Anders moeten we de id manually add	,
+
+/ 7	.
+
+/ query voor id	,
+
+$ vi merge2/.../Main2.java
+
+/ Item's mapping,	
+	<id 	
+		column="id_"
+		name="id">	
+            	<generator 
+			class="increment"/>
+	</id>
+
+/ item is T	,
+		session.save(item); 
+Hibernate: select max(id_) from Item
+
+/ de generator moet weten welk id hij item moet geven	
+
+/ 7	. 
+
+	.save (item T) 	/ sets in pc	,	
+	.commit		/ insert	,
+	.update(item D)	/ sets in pc	,
+	.commit		/ update	,
+
+/ .update sets detached elem in de pc	, en bij .commit volgt er een update	, want het is een detached elem, hij zit al in de tbl	, daarom heet .update zo	,
+
+/ 7	. 
+		item D
+		Item item1=(Item)session.get(Item.class,1l);	 / select, item1 in pc	,
+		session.update(item);	/ ERR, er is al elem met id=1l in de pc	,
+
+/ de precieze ERR	,
+/ org.hibernate.NonUniqueObjectException: A different object with the same identifier value was already associated with the session : [org.hibernate.book.hbm.Item#1]
+
+/ 7	. 
+		item / D	
+		Item item1=(Item)session.get(Item.class,1l); / select, P
+		item.setName("Bar");
+		Item item2=(Item)session.merge(item);	/ item1==item2, want item1 is P	,
+		item1.setName("Foo");
+
+/ Dus doe	,
+		session.merge(item);	
+/ ipv	,
+		Item item2=(Item)session.merge(item);	/ item1==item2, want item1 is P	,
+
+/ 7	.
+		item / D
+        	session.update(item);
+		session.getTransaction().commit();
+
+/ geeft een update, ook al hebben we niets veranderd aan item	,
+
+/ 7	.
+
+/ .update een T	,
+
+		item=new Item("first","Foo") / T
+		session.update(item)
+/ org.hibernate.TransientObjectException: The given object has a null identifier: org.hibernate.book.hbm.Item
+
+		/ in db is al 1l row	, 
+		item=new Item(2l,"first","Foo") / T
+		session.update(item)
+
+org.hibernate.StaleStateException: Batch update returned unexpected row count from update [0]; actual row count: 0; expected: 1
+/ Hibernate wilt een update doen op 2, maar die row is er niet	,
+
+       		Item item0=new Item(1l,"second","Bar");
+        	session.update(item0);
+		session.getTransaction().commit();
+/ OK, verrassend	,
+/ TODO
+
+/ 7	.
+
+	/ item is D	,
+       	Item item3=(Item)session.load(Item.class,1l);
+        session.update(item);
+        item3.setName("fourth");
+/ OK
+foo=> select*from item\g
+ id_ | name | city 
+-----+------+------
+   1 | fourth| Foo2
+
+/ 7	.
+      	Item item3=(Item)session.load(Item.class,1l);
+        item3.setName("fourth");
+/ .setName: select omdat hij obj fill die in de pc moet	,
+
+/ 7	. 
+
+/ In jdb,
+main[1] print session.persistenceContext.entitiesByKey.values().toArray()[0].name
+ session.persistenceContext.entitiesByKey.values().toArray()[0].name = "fifth"
+main[1] print session.persistenceContext.entitiesByKey.values().toArray()[0].city
+ session.persistenceContext.entitiesByKey.values().toArray()[0].city = "Foo2"
+
+/ Dit is een moment opname	,
+
+/ Lees	,
+http://stackoverflow.com/questions/1066589/java-iterate-through-hashmap
+
+If you're only interested in the keys, you can iterate through the keySet() of the map:
+
+Map<String, Object> map = ...;
+
+for (String key : map.keySet()) {
+    // ...
+}
+If you only need the values, use values():
+
+for (Object value : map.values()) {
+    // ...
+}
+Finally, if you want both the key and value, use entrySet():
+
+for (Map.Entry<String, Object> entry : map.entrySet()) {
+    String key = entry.getKey();
+    Object value = entry.getValue();
+    // ...
+}
+One caveat: if you want to remove items mid-iteration, you'll need to do so via an Iterator (see karim79's answer). However, changing item values is OK (see Map.Entry).
+
+/ TODO
+
+/ 7	. 
+
+/ T : obj heeft id null
+/ D : obj heeft 'n id	,
+       
+	/ item is D 
+        Item item3=(Item)session.load(Item.class,1l);
+        session.update(item); // no query, item is D, already in mem, -> in pc
+        item3.setName("fourth");// updates Item in pc, hier geen query, 
+        item.setCity("Gee"); // updates Item in pc,
+    	session.getTransaction().commit();
+	session.close();
+
+/ 7	.
+
+/ MPO,
+
+https://system.mp-objects.com/xwiki/bin/view/Technology/JRebel
+
+/ 7	. 
+
+/ Main4, debug
+
+               	Item item=new Item("first","Foo");
+                session.save(item);
+/ calls item.setId	, want er is een id gen	, en die moet set in item	,
+/ eerst was gedaan	,
+HibernateLog --> 07:39:27 DEBUG org.hibernate.SQL - select max(id_) from Item
+Hibernate: select max(id_) from Item
+
+
+
+
+
+
+/ Einde HIBERNATE MERGE2
+
+/ HIBERNATE DEBUG
+
+/ 7	.
+
+/ we hebben een b set in	,
+EntityLoader(AbstractLoadPlanBasedEntityLoader).<init>(OuterJoinLoadable, SessionFactoryImplementor, String[], Type, QueryBuildingParameters) line: 77	
+->		super( factory );
+...
+		this.staticLoadQuery = BatchingLoadQueryDetailsFactory.makeEntityLoadQueryDetails(
+				plan,
+				uniqueKeyColumnNames,
+				buildingParameters,
+				factory
+		);
+
+/ want we wilden zien hoe staticLoadQuery is create	,
+
+
+/ we lopen van onderuit hierheen	,
+
+/ Main4.java	,
+	protected void setUp() throws Exception {
+        	Configuration configuration=new Configuration().configure();
+    		serviceRegistry=new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
+    		sessionFactory=configuration.buildSessionFactory(serviceRegistry);
+/s
+Configuration.buildSessionFactory(ServiceRegistry) line: 1857	
+		return new SessionFactoryImpl(
+				this,
+				mapping,
+				serviceRegistry,
+				settings,
+				sessionFactoryObserver
+			);
+/s
+SessionFactoryImpl.<init>(Configuration, Mapping, ServiceRegistry, Settings, SessionFactoryObserver) line: 481	
+			persister.postInstantiate();
+/s
+SingleTableEntityPersister(AbstractEntityPersister).postInstantiate() line: 4017	
+		createLoaders();
+/s
+SingleTableEntityPersister(AbstractEntityPersister).createLoaders() line: 4035	
+		final Map loaders = getLoaders();
+{}
+		loaders.put( LockMode.NONE, createEntityLoader( LockMode.NONE ) );
+/s
+	protected UniqueEntityLoader createEntityLoader(LockMode lockMode) throws MappingException {
+		return createEntityLoader( lockMode, LoadQueryInfluencers.NONE );
+/s
+SingleTableEntityPersister(AbstractEntityPersister).createEntityLoader(LockMode, LoadQueryInfluencers) line: 2506	
+		return createEntityLoader( lockMode, LoadQueryInfluencers.NONE );
+/s
+SingleTableEntityPersister(AbstractEntityPersister).createEntityLoader(LockMode, LoadQueryInfluencers) line: 2506	
+		return BatchingEntityLoaderBuilder.getBuilder( getFactory() )
+				.buildLoader( this, batchSize, lockMode, getFactory(), loadQueryInfluencers );
+...
+/s
+/ TODO
+
+
+
+/ 7	. 
+
+
+/ .save
+
+/////////////////////////////////////
+/ In 
+DefaultSaveEventListener(AbstractSaveEventListener).performSaveOrReplicate(Object, EntityKey, EntityPersister, boolean, Object, EventSource, boolean) line: 288	
+
+		source.getPersistenceContext().addEntry(
+				entity,
+				Status.SAVING,
+				null,
+				null,
+				id,
+				null,
+				LockMode.WRITE,
+				useIdentityColumn,
+				persister,
+				false,
+				false
+		);
+/ sets pc.entityEntryContext.dirty=true	,
+/ TODO (Waarom wordt deze .addEntry gedaan?)
+		Object[] values = persister.getPropertyValuesToInsert( entity, getMergeMap( anything ), source );
+/ calls Item.getName, ...
+foo, Foo2
+		AbstractEntityInsertAction insert = addInsertAction(
+				values, id, entity, persister, useIdentityColumn, source, shouldDelayIdentityInserts
+		);
+/ calls ook .addEntry net als hieboven, maar nu met values=foo,Foo2	,  daarom deed hij Item.getName, ...
+/ sets pc.entityEntryContext.dirty=true	,
+
+/////////////////////////////////////////////////
+   
+
+/ doet	,
+HibernateLog --> 11:34:22 DEBUG org.hibernate.SQL - select max(id_) from Item
+Hibernate: select max(id_) from Item
+
+/ daarna	,
+	Item.setId
+
+/ daarna	,
+		Object[] values = persister.getPropertyValuesToInsert( entity, getMergeMap( anything ), source );
+/ doet	,
+	Item.getName
+	Item.getCity
+/ voor	,
+		boolean substitute = substituteValuesIfNecessary( entity, id, values, persister, source );
+/ maar	doet NIETS, 	want we hebben geen interceptor	,
+
+/ Belangrijkste in	,
+DefaultSaveEventListener(AbstractSaveEventListener).performSaveOrReplicate(Object, EntityKey, EntityPersister, boolean, Object, EventSource, boolean) line: 251	
+
+		// likewise, should it be done before onUpdate()?
+		source.getPersistenceContext().addEntry(
+				entity,
+				Status.SAVING,
+				null,
+				null,
+				id,
+				null,
+				LockMode.WRITE,
+				useIdentityColumn,
+				persister,
+				false,
+				false
+		);
+
+		AbstractEntityInsertAction insert = addInsertAction(
+				values, id, entity, persister, useIdentityColumn, source, shouldDelayIdentityInserts
+		);
+/ -> insert in tbl	,
+
+
+
+/ In Main4	,
+
+                Item item=new Item("first","Foo");
+                session.save(item);
+
+DefaultSaveEventListener.performSaveOrUpdate(SaveOrUpdateEvent) line: 49	
+		EntityEntry entry = event.getSession().getPersistenceContext().getEntry( event.getEntity() );
+/s
+StatefulPersistenceContext.getEntry(Object) line: 431	
+		return entityEntryContext.getEntityEntry( entity );
+
+		if ( entry!=null && entry.getStatus() != Status.DELETED ) {
+/ NEE
+entry=null
+		else {
+			return entityIsTransient(event);
+/s
+DefaultSaveEventListener(DefaultSaveOrUpdateEventListener).entityIsTransient(SaveOrUpdateEvent) line: 194	
+		Serializable id = saveWithGeneratedOrRequestedId( event );
+/s
+DefaultSaveEventListener(AbstractSaveEventListener).saveWithGeneratedId(Object, String, Object, EventSource, boolean) line: 137	
+			return performSave( entity, generatedId, persister, false, anything, source, true );
+/s
+DefaultSaveEventListener(AbstractSaveEventListener).performSave(Object, Serializable, EntityPersister, boolean, Object, EventSource, boolean) line: 176	
+			persister.setIdentifier( entity, id, source );
+/ sets in Item inst id=1	,	 calls Item.setId	,
+/////////////////////
+/ Dit is dus VOOR dat obj -> pc	,
+
+		return performSaveOrReplicate(
+				entity,
+				key,
+				persister,
+				useIdentityColumn,
+				anything,
+				source,
+				requiresImmediateIdAccess
+		);
+////////////////////////////
+/s
+DefaultSaveEventListener(AbstractSaveEventListener).performSaveOrReplicate(Object, EntityKey, EntityPersister, boolean, Object, EventSource, boolean) line: 243	
+
+/ Samenvatting 
+		Object[] values = persister.getPropertyValuesToInsert( entity, getMergeMap( anything ), source );
+/ snapshot	,
+foo, Foo2
+		AbstractEntityInsertAction insert = addInsertAction(
+				values, id, entity, persister, useIdentityColumn, source, shouldDelayIdentityInserts
+///////////////////////////////////////////////////////////////////
+/ de values komen in de EntityEntry's loadedState, dus in de pc's entityEntryContext 	,
+
+/ dit is wat een insert moet doen, want er kunnen nog updates erna komen, en deze moeten worden vergl met deze insert	,
+
+/ see ook	,
+DefaultUpdateEventListener(DefaultSaveOrUpdateEventListener).performUpdate(SaveOrUpdateEvent, Object, EntityPersister) line: 324	
+
+
+/ Einde Samenvatting 
+
+		source.getPersistenceContext().addEntry(
+				entity,					/ Item inst	,
+				Status.SAVING,
+				null,
+				null,
+				id,
+				null,
+				LockMode.WRITE,
+				useIdentityColumn,
+				persister,
+				false,
+				false
+		);
+/s
+StatefulPersistenceContext.addEntry(Object, Status, Object[], Object, Serializable, Object, LockMode, boolean, EntityPersister, boolean, boolean) line: 491	
+
+/ entry is key, entityEntry is value,
+
+		final EntityEntry e = new EntityEntry(
+				status,
+				loadedState,
+null
+				rowId,
+				id,
+				version,
+				lockMode,
+				existsInDatabase,
+				persister,
+				disableVersionIncrement,
+				lazyPropertiesAreUnfetched,
+				this
+		);
+e	EntityEntry  (id=129)	
+	cachedEntityKey	null	
+	deletedState	null	
+	entityName	"org.hibernate.book.hbm.Item" (id=131)	
+	existsInDatabase	false	
+	id	Long  (id=124)	
+1
+	isBeingReplicated	false	
+	loadedState	null	
+	loadedWithLazyPropertiesUnfetched	false	
+	lockMode	LockMode  (id=127)	
+	persistenceContext	StatefulPersistenceContext  (id=118)	
+	persister	SingleTableEntityPersister  (id=73)	
+	previousStatus	null	
+	rowId	null	
+	status	Status  (id=120)	
+	version	null	
+
+		entityEntryContext.addEntityEntry( entity, e );
+/s
+EntityEntryContext.addEntityEntry(Object, EntityEntry) line: 84	
+
+	public void addEntityEntry(Object entity, EntityEntry entityEntry) {
+
+		// IMPORTANT!!!!!
+		//		add is called more than once of some entities.  In such cases the first
+		//		call is simply setting up a "marker" to avoid infinite looping from reentrancy
+
+		// any addition (even the double one described above) should invalidate the cross-ref array
+		dirty = true;
+
+		else {
+			ManagedEntity wrapper = null;
+			if ( nonEnhancedEntityXref == null ) {
+				nonEnhancedEntityXref = new IdentityHashMap<Object, ManagedEntity>();
+
+			if ( wrapper == null ) {
+				wrapper = new ManagedEntityImpl( entity );
+				nonEnhancedEntityXref.put( entity, wrapper );
+				alreadyAssociated = false;
+			}
+
+			managedEntity = wrapper;
+
+		// associate the EntityEntry with the entity
+		managedEntity.$$_hibernate_setEntityEntry( entityEntry );
+/s
+			this.entityEntry = entityEntry;
+this	EntityEntryContext$ManagedEntityImpl  (id=179)	
+
+	if ( tail == null ) {
+			assert head == null;
+			head = managedEntity;
+			tail = head;
+			count = 1;
+		}
+
+/t
+StatefulPersistenceContext.addEntry(Object, Status, Object[], Object, Serializable, Object, LockMode, boolean, EntityPersister, boolean, boolean) line: 509	
+
+		return e;
+
+
+/t
+DefaultSaveEventListener(AbstractSaveEventListener).performSaveOrReplicate(Object, EntityKey, EntityPersister, boolean, Object, EventSource, boolean) line: 265	
+		source.getPersistenceContext().addEntry(
+				entity,
+				Status.SAVING,
+				null,
+				null,
+				id,
+				null,
+				LockMode.WRITE,
+				useIdentityColumn,
+				persister,
+				false,
+				false
+		);
+
+
+this	StatefulPersistenceContext  (id=82)	
+	entityEntryContext	EntityEntryContext  (id=84)	
+		head	EntityEntryContext$ManagedEntityImpl  (id=314)	
+			entityEntry	EntityEntry  (id=292)	
+			entityInstance	Item  (id=38)	
+				bids	HashSet<E>  (id=71)	
+				city	"Foo" (id=76)	
+				id	Long  (id=185)	
+				name	"first" (id=339)	
+
+/t
+DefaultSaveEventListener(AbstractSaveEventListener).performSaveOrReplicate(Object, EntityKey, EntityPersister, boolean, Object, EventSource, boolean) line: 288	
+		source.getPersistenceContext().addEntry(
+				entity,
+				Status.SAVING,
+				null,
+				null,
+				id,
+				null,
+				LockMode.WRITE,
+				useIdentityColumn,
+				persister,
+				false,
+				false
+		);
+/ D
+source	SessionImpl  (id=49)	
+	persistenceContext	StatefulPersistenceContext  (id=118)	
+			dirty	true	
+			head	EntityEntryContext$ManagedEntityImpl  (id=179)	
+				entityEntry	EntityEntry  (id=292)	
+					loadedState 				null
+				entityInstance	Item  (id=38)	
+					bids	HashSet<E>  (id=71)	
+					city	"Foo" (id=76)	
+					id	Long  (id=185)	
+					name	"first" (id=339)	
+//////////////////////////////////////////////
+/ Dus in entityEntry is loadedState=null
+
+		Object[] values = persister.getPropertyValuesToInsert( entity, getMergeMap( anything ), source );
+foo, Foo
+/ addInsertAction gaat deze use	,
+
+
+		AbstractEntityInsertAction insert = addInsertAction(
+				values, id, entity, persister, useIdentityColumn, source, shouldDelayIdentityInserts
+		);
+/s
+DefaultSaveEventListener(AbstractSaveEventListener).addInsertAction(Object[], Serializable, Object, EntityPersister, boolean, EventSource, boolean) line: 332	
+			EntityInsertAction insert = new EntityInsertAction(
+					id, values, entity, version, persister, isVersionIncrementDisabled(), source
+			);
+			source.getActionQueue().addAction( insert );
+
+////////////////////////////
+/ .save sets insert action op de queue	,
+/ hierna doen we .setCity, en dan sets .commit  een update action op de queue, want het obj is dirty	,
+/ 
+
+/s
+	public void addAction(EntityInsertAction action) {
+		addInsertAction( action );
+/s
+ActionQueue.addInsertAction(AbstractEntityInsertAction) line: 188	
+			unresolvedInsertions.addUnresolvedEntityInsertAction( insert, nonNullableTransientDependencies );
+/ s
+ActionQueue.addResolvedEntityInsertAction(AbstractEntityInsertAction) line: 202	
+
+			insertions.add( insert );
+///////////////////////////////////////////////////////////////////
+/ Hier op insert queue set	, we zien	,
+this	ActionQueue  (id=117)	
+	insertions	ExecutableList<E>  (id=144)	
+		executables	ArrayList<E>  (id=150)	
+			elementData	Object[5]  (id=160)	
+				[0]	EntityInsertAction  (id=165)	
+			size	1	
+
+
+		insert.makeEntityManaged();
+/s
+EntityInsertAction(AbstractEntityInsertAction).makeEntityManaged() line: 141	
+		final Object version = Versioning.getVersion( getState(), getPersister() );
+		getSession().getPersistenceContext().addEntity(
+				getInstance(),
+				( getPersister().isMutable() ? Status.MANAGED : Status.READ_ONLY ),
+				getState(),
+foo, Foo
+				getEntityKey(),
+				version,
+				LockMode.WRITE,
+				isExecuted,
+				getPersister(),
+				isVersionIncrementDisabled,
+				false
+		);
+/s
+StatefulPersistenceContext.addEntity(Object, Status, Object[], EntityKey, Object, LockMode, boolean, EntityPersister, boolean, boolean) line: 461	
+		addEntity( entityKey, entity );
+/s
+StatefulPersistenceContext.addEntity(EntityKey, Object) line: 387	
+		entitiesByKey.put( key, entity );
+		getBatchFetchQueue().removeBatchLoadableEntityKey( key );
+
+/t
+		addEntity( entityKey, entity );
+entityKey	EntityKey  (id=2725)	
+	hashCode	630	
+	identifier	Long  (id=68)	
+	persister	SingleTableEntityPersister  (id=83)	
+/ D
+/ Writes in entitiesByKey	,
+/ Nu hieronder in entityEntryContext	, waar de entry juist de key is	,
+/ WH MISSCHIEN use Hibernate beide: entitiesByKey om de entity te vinden ogv de id=1, en entityEntryContext om de entity entry te vinden, waar de values instaan voor de insert	naar de tbl	,
+		return addEntry(
+				entity,
+				status,
+				loadedState,
+				null,
+				entityKey.getIdentifier(),
+				version,
+				lockMode,
+				existsInDatabase,
+				persister,
+				disableVersionIncrement,
+				lazyPropertiesAreUnfetched
+		);
+/s
+StatefulPersistenceContext.addEntry(Object, Status, Object[], Object, Serializable, Object, LockMode, boolean, EntityPersister, boolean, boolean) line: 505	
+		final EntityEntry e = new EntityEntry(
+				status,
+				loadedState,
+foo, Foo
+				rowId,
+				id,
+				version,
+				lockMode,
+				existsInDatabase,
+				persister,
+				disableVersionIncrement,
+				lazyPropertiesAreUnfetched,
+				this
+		);
+		entityEntryContext.addEntityEntry( entity, e );
+
+/ Omdat entity de key is	, overwrite we dus met e de value,  die loadedState=null had	, die .save er eerder op had set	, (we zijn nog in .save)
+/ WH uses Hibernate deze entity entry voor de insert naar de table	, dus daar haalt hij zijn values uit die de table in moeten	, Dus niet uit het obj, entry	,
+/ TODO
+/ Dat doen we dus bij .commit, die een insert doet	, die een insert in de tbl gaat doen	, met deze values: foo, Foo	,
+
+/t
+DefaultSaveEventListener(AbstractSaveEventListener).performSaveOrReplicate(Object, EntityKey, EntityPersister, boolean, Object, EventSource, boolean) line: 294	
+		AbstractEntityInsertAction insert = addInsertAction(
+				values, id, entity, persister, useIdentityColumn, source, shouldDelayIdentityInserts
+		);
+/ D
+
+
+
+...
+/t
+Main5.testBasicUsage() line: 86	
+		session.save(item); 
+session	SessionImpl  (id=49)	
+	persistenceContext	StatefulPersistenceContext  (id=118)	
+		entityEntryContext	EntityEntryContext  (id=174)	
+			count	1	
+			dirty	true	
+			head	EntityEntryContext$ManagedEntityImpl  (id=179)	
+
+
+/ 7	. 
+
+		item.setCity("Foo2");
+/ doet	
+	Item.setCity
+
+/ 7	. 
+
+/ TODO
+
+	.get
+	.update
+
+/ dan in 	,
+package org.hibernate.event.internal;
+public abstract class AbstractSaveEventListener extends AbstractReassociateEventListener {
+
+	protected Serializable performSave(
+			Object entity,
+			Serializable id,
+			EntityPersister persister,
+			boolean useIdentityColumn,
+			Object anything,
+			EventSource source,
+			boolean requiresImmediateIdAccess) {
+
+			key = source.generateEntityKey( id, persister );
+			Object old = source.getPersistenceContext().getEntity( key );
+			if ( old != null ) {
+				if ( source.getPersistenceContext().getEntry( old ).getStatus() == Status.DELETED ) {
+					source.forceFlush( source.getPersistenceContext().getEntry( old ) );
+				}
+				else {
+					throw new NonUniqueObjectException( id, persister.getEntityName() );
+				}
+
+/ 7	.
+
+/ TODO
+
+	protected Serializable performSaveOrUpdate(SaveOrUpdateEvent event) {
+		// this implementation is supposed to tolerate incorrect unsaved-value
+		// mappings, for the purpose of backward-compatibility
+		EntityEntry entry = event.getSession().getPersistenceContext().getEntry( event.getEntity() );
+		if ( entry!=null && entry.getStatus() != Status.DELETED ) {
+			return entityIsPersistent(event);
+	
+
+
+/ 7	. 
+
+/ .commmit
+
+/ .save sets inserts in pc	, in entryentitycontext, en adds een insertaction aan de pc	, en sets pc.dirty=true	,
+/ .commit komt dus pc.dirty=true tegen, en pakt de dirty elems van head tot tail uit entryentitycontext, en sets ze in reentrantSafeEntityEntrie in entryentityContext (detail)	, en werkt daar verder mee en sets dirty =false	,
+/ dan gaat .commit check op deze dirty zijn, dwz dat verschillend zijn in	,
+	protected void dirtyCheck(final FlushEntityEvent event) throws HibernateException {
+->		final Object[] values = event.getPropertyValues();
+		final EntityEntry entry = event.getEntityEntry();
+->		final Object[] loadedState = entry.getLoadedState(); 
+/ Zo ja, dan komt er ook een update event 
+/ maar nogmaals : .save adds elems op pc, en sets pd.dirty=true, en adds insertactions aan de pc	, 
+/ .commit =flush, en of deze dirty elems nog dirtier zijn (set ze eerst dirty false, en kijkt of ze veranderd zijn), dat volgt er een update	,
+
+/ .commit maakt naast head in de entity entry context  reentrantSafeEntries 	,
+/ en sets dirty false	: .commit heeft ze van de pc gehaald	, de dirty dingen die moeten flush	,
+
+/ als we met .save een obj in de pc set, is het obj een snapshot, bijv foo, Foo	,
+/ als we later .setCity("Foo2"),	 dan is obj in de pc verschillend van de snapshot, het obj in de pc zoals hij nu is is dirty, er volgt naast de insert dus een update	,
+/////////////////////////////////////////
+/ Dus dirty => een update
+
+/ Als we alleen .save, volgt er een insert, geen update , het obj in de pc is niet dirty	,
+
+/ we hadden	,
+		session.save(item); 
+		item.setCity("Foo2");
+
+/ we krijgen een insert en een update	,
+
+/ doet	,
+
+	Item.getName
+	Item.getCity
+/ en 	,
+HibernateLog --> 12:39:24 DEBUG org.hibernate.SQL - insert into Item (name, city, id_) values (?, ?, ?)
+Hibernate: insert into Item (name, city, id_) values (?, ?, ?)
+HibernateLog --> 12:39:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [foo]
+HibernateLog --> 12:39:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [Foo]
+HibernateLog --> 12:39:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+HibernateLog --> 12:39:24 DEBUG org.hibernate.SQL - update Item set name=?, city=? where id_=?
+Hibernate: update Item set name=?, city=? where id_=?
+HibernateLog --> 12:39:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [foo]
+HibernateLog --> 12:39:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [Foo2]
+HibernateLog --> 12:39:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+
+/ haalt entity uit persistence context's entityEntryContext cache	, = head	,
+
+
+		session.getTransaction().commit();
+
+/s
+JdbcTransaction(AbstractTransactionImpl).commit() line: 177	
+		beforeTransactionCommit();
+/s
+JdbcTransaction.beforeTransactionCommit() line: 101	
+			transactionCoordinator().getTransactionContext().managedFlush();
+/s
+SessionImpl.managedFlush() line: 425	
+		flush();
+/s
+SessionImpl.flush() line: 1221	
+		FlushEvent flushEvent = new FlushEvent( this );
+			listener.onFlush( flushEvent );
+/s
+DefaultFlushEventListener.onFlush(FlushEvent) line: 55	
+
+		if ( persistenceContext.getNumberOfManagedEntities() > 0 ||
+true
+/ want	,
+/s
+			return entityEntryContext.getNumberOfManagedEntities();
+
+				flushEverythingToExecutions( event );
+/s
+DefaultFlushEventListener(AbstractFlushingEventListener).flushEverythingToExecutions(FlushEvent) line: 89	
+
+		prepareEntityFlushes( session, persistenceContext );
+/s
+DefaultFlushEventListener(AbstractFlushingEventListener).prepareEntityFlushes(EventSource, PersistenceContext) line: 153	
+		for ( Map.Entry<Object,EntityEntry> me : persistenceContext.reentrantSafeEntityEntries() ) {
+/s
+EntityEntryContext.reentrantSafeEntityEntries() line: 256	
+this	EntityEntryContext  (id=192)	
+	count	1	
+	dirty	true	
+	head	EntityEntryContext$ManagedEntityImpl  (id=193)	
+		entityEntry	EntityEntry  (id=2683)	
+		entityInstance	Item  (id=42)	
+	next 	null
+
+		if ( dirty ) {
+true
+/ Dat heeft .save gedaan	, als hij een entity,entityentry plaats op de pc, op de pc's entityEntryContext,
+	head	EntityEntryContext$ManagedEntityImpl  (id=136)	
+	nonEnhancedEntityXref	IdentityHashMap<K,V>  (id=139)	
+/ head points to first entry in nonEnhancedEntityXref
+
+
+/ .commit maakt naast head in de entity entry context  reentrantSafeEntries 	,
+/ en sets dirty false	: .commit heeft ze van de pc gehaald	, de dirty dingen die moeten flush	,
+//////////////////////////////////////
+
+			reentrantSafeEntries = new EntityEntryCrossRefImpl[count];
+/count=1
+			ManagedEntity managedEntity = head;
+			while ( managedEntity != null ) {
+				reentrantSafeEntries[i++] = new EntityEntryCrossRefImpl(
+						managedEntity.$$_hibernate_getEntityInstance(),
+/= entityInstance uit head	,
+						managedEntity.$$_hibernate_getEntityEntry()
+/= entityEntry uit head	,
+				);
+				managedEntity = managedEntity.$$_hibernate_getNextManagedEntity();
+/= next uit head	,
+null
+			dirty = false;
+////////////////////////////////////////////////////////////
+
+		return reentrantSafeEntries;
+
+/ t
+DefaultFlushEventListener(AbstractFlushingEventListener).prepareEntityFlushes(EventSource, PersistenceContext) line: 155	
+		for ( Map.Entry<Object,EntityEntry> me : persistenceContext.reentrantSafeEntityEntries() ) {
+/ D
+/ Nu de 1ste for loop	,
+			EntityEntry entry = (EntityEntry) me.getValue();
+			Status status = entry.getStatus();
+MANAGED
+			if ( status == Status.MANAGED || status == Status.SAVING || status == Status.READ_ONLY ) {
+				cascadeOnFlush( session, entry.getPersister(), me.getKey(), anything );
+me	EntityEntryContext$EntityEntryCrossRefImpl  (id=174)	
+	entity	Item  (id=60)					/ key	,	
+	entityEntry	EntityEntry  (id=165)			/ value
+/s
+		public Object getKey() {
+			return getEntity();
+/t
+/s
+DefaultFlushEventListener(AbstractFlushingEventListener).cascadeOnFlush(EventSource, EntityPersister, Object, Object) line: 165	
+object=Item inst	,
+anything=null
+/ Doet NIETS WH	,
+
+
+...
+/t
+DefaultFlushEventListener(AbstractFlushingEventListener).flushEverythingToExecutions(FlushEvent) line: 102	
+		prepareEntityFlushes( session, persistenceContext );
+/ D
+			int entityCount = flushEntities( event, persistenceContext );
+/s
+DefaultFlushEventListener(AbstractFlushingEventListener).flushEntities(FlushEvent, PersistenceContext) line: 218	
+		final Map.Entry<Object,EntityEntry>[] entityEntries = persistenceContext.reentrantSafeEntityEntries();
+/ Gemaakt in prepareEntityFlushes	,
+
+reentrantSafeEntries	EntityEntryContext$EntityEntryCrossRefImpl[1]  (id=167)	
+	[0]	EntityEntryContext$EntityEntryCrossRefImpl  (id=174)	
+		entity	Item  (id=60)	
+		entityEntry	EntityEntry  (id=165)	
+/ Komen  uit entityEntryContext	,
+
+
+		for ( Map.Entry<Object,EntityEntry> me : entityEntries ) {
+
+			// Update the status of the object and if necessary, schedule an update
+
+			EntityEntry entry = me.getValue();
+			Status status = entry.getStatus();
+			if ( status != Status.LOADING && status != Status.GONE ) {
+				final FlushEntityEvent entityEvent = new FlushEntityEvent( source, me.getKey(), entry );
+/ me.getKey()=Item  inst	,
+				for ( FlushEntityEventListener listener : flushListeners ) {
+					listener.onFlushEntity( entityEvent );
+/s
+DefaultFlushEntityEventListener.onFlushEntity(FlushEntityEvent) line: 143	
+		final Object[] values = event.getPropertyValues();
+		final EntityEntry entry = event.getEntityEntry();
+		final Object[] loadedState = entry.getLoadedState();
+
+		final Object[] values = getValues( entity, entry, mightBeDirty, session );
+foo, Foo2 , de props in de entity	,
+/ calls .getName, .getCity	,
+/////////////////
+		event.setPropertyValues( values );
+
+		if ( isUpdateNecessary( event, mightBeDirty ) ) {
+/s
+DefaultFlushEntityEventListener.isUpdateNecessary(FlushEntityEvent, boolean) line: 232	
+			dirtyCheck( event );
+/s
+DefaultFlushEntityEventListener.dirtyCheck(FlushEntityEvent) line: 484	
+		final Object entity = event.getEntity();
+		final Object[] values = event.getPropertyValues();
+foo, Foo2	
+/ now, zojuist set	,
+		final EntityEntry entry = event.getEntityEntry();
+		final Object[] loadedState = entry.getLoadedState();
+foo, Foo
+/ snapshot	
+/ .save deed addInsertAction, die een entity entry achter de entity set in de pc's entityEntryContext, 	met de values van het obj, de Item inst erin	,
+
+					// dirty check against the usual snapshot of the entity
+					dirtyProperties = persister.findDirty( values, loadedState, entity, session );
+values=foo, Foo2
+loadedState=foo, Foo
+/ entity's proerties = event.getPropertyValues() TODO
+/s
+SingleTableEntityPersister(AbstractEntityPersister).findDirty(Object[], Object[], Object, SessionImplementor) line: 4243	
+/=
+	public int[] findDirty(Object[] currentState, Object[] previousState, Object entity, SessionImplementor session)
+/ snapshot = previousState=foo, Foo
+currentState=foo, Foo2
+
+/ Lees	,
+http://stackoverflow.com/questions/82429/when-hibernate-flushes-a-session-how-does-it-decide-which-objects-in-the-sessio
+/ over snapshot: values die de pc ingaan	,
+
+
+		int[] props = TypeHelper.findDirty(
+				entityMetamodel.getProperties(),
+name, city
+				currentState,
+				previousState,
+				propertyColumnUpdateable,
+				hasUninitializedLazyProperties( entity ),
+false
+				session
+			);
+/s
+TypeHelper.findDirty(NonIdentifierAttribute[], Object[], Object[], boolean[][], boolean, SessionImplementor) line: 289	
+			final boolean dirty = currentState[i] != LazyPropertyInitializer.UNFETCHED_PROPERTY
+true
+					&& properties[i].isDirtyCheckable( anyUninitializedProperties )
+true
+					&& properties[i].getType().isDirty( previousState[i], currentState[i], includeColumns[i], session );
+true (bij Foo en Foo2): StringType.isDirty=!StringType.isSame=StringType.javaTypeDescriptor.areEqual( (T) one, (T) another)
+
+	results[count++] = i;
+1
+/ index prop die dirty is	,
+
+/t
+DefaultFlushEntityEventListener.dirtyCheck(FlushEntityEvent) line: 546	
+					// dirty check against the usual snapshot of the entity
+					dirtyProperties = persister.findDirty( values, loadedState, entity, session );
+/ D
+			finally {
+				session.getEventListenerManager().dirtyCalculationEnd( dirtyProperties != null );
+/ NIETS
+
+		event.setDirtyProperties( dirtyProperties );
+[1]
+/ indexes van prop die dirty is,	
+		event.setDirtyCheckHandledByInterceptor( interceptorHandledDirtyCheck );
+false
+		event.setDirtyCheckPossible( !cannotDirtyCheck );
+true
+
+event	FlushEntityEvent  (id=2651)	
+	dirtyProperties	(id=2737)	
+		[0]	1					/ prop met index 1 is dirty	,	
+	entityEntry	EntityEntry  (id=138)	
+		loadedState	Object[2]  (id=2679)	
+			[0]	"foo" (id=2715)	
+			[1]	"Foo" (id=2722)	
+
+/ event's entry's loadedState is nog de oude	,
+/ TODO
+
+/t
+	private boolean isUpdateNecessary(final FlushEntityEvent event, final boolean mightBeDirty) {
+			dirtyCheck( event );
+/ D
+event	FlushEntityEvent  (id=2641)	
+	dirtyCheckHandledByInterceptor	false	
+	dirtyCheckPossible	true	
+		[0]	1	
+	entityEntry	EntityEntry  (id=138)	
+		loadedState	Object[2]  (id=2679)	
+			[0]	"foo" (id=2715)	
+			[1]	"Foo" (id=2722)	
+
+
+/t
+	private boolean isUpdateNecessary(final FlushEntityEvent event, final boolean mightBeDirty) {
+			if ( isUpdateNecessary( event ) ) {
+true
+				return true;
+/ want	,
+/s
+			int[] dirtyProperties = event.getDirtyProperties();
+[1]	/ prop met index 1 is dirty	,
+			if ( dirtyProperties != null && dirtyProperties.length != 0 ) {
+				return true; //TODO: suck into event class
+
+
+/t
+DefaultFlushEntityEventListener.onFlushEntity(FlushEntityEvent) line: 160	
+		if ( isUpdateNecessary( event, mightBeDirty ) ) {
+true
+			substitute = scheduleUpdate( event ) || substitute;
+/s
+DefaultFlushEntityEventListener.scheduleUpdate(FlushEntityEvent) line: 257	
+
+		final Object[] values = event.getPropertyValues();
+foo, Foo2	, de now values	,
+
+		session.getActionQueue().addAction(
+				new EntityUpdateAction(
+						entry.getId(),
+						values,
+foo, Foo2,  de now values	,
+						dirtyProperties,
+						event.hasDirtyCollection(),
+						( status == Status.DELETED && !entry.isModifiableEntity() ?
+								persister.getPropertyValues( entity ) :
+								entry.getLoadedState() ),
+foo, Foo	,
+/ TODO (woord loadedState)
+						entry.getVersion(),
+						nextVersion,
+						entity,
+						entry.getRowId(),
+						persister,
+						session
+				)
+		);
+/s
+	public EntityUpdateAction(
+			final Serializable id,
+			final Object[] state,
+foo, Foo2
+			final int[] dirtyProperties,
+[1]
+			final boolean hasDirtyCollection,
+			final Object[] previousState,
+foo, Foo
+			final Object previousVersion,
+			final Object nextVersion,
+			final Object instance,
+			final Object rowId,
+			final EntityPersister persister,
+			final SessionImplementor session) {
+
+actionQueue	ActionQueue  (id=2678)	
+	insertions	ExecutableList<E>  (id=2787)	
+		executables	ArrayList<E>  (id=2803)	
+			elementData	Object[5]  (id=2810)	
+[EntityInsertAction[org.hibernate.book.hbm.Item#1], null, null, null, null]
+
+	updates	ExecutableList<E>  (id=2795)	
+		executables	ArrayList<E>  (id=2797)	
+			elementData	Object[5]  (id=2814)	
+[EntityUpdateAction[org.hibernate.book.hbm.Item#1], null, null, null, null]
+
+/t
+DefaultFlushEventListener(AbstractFlushingEventListener).flushEverythingToExecutions(FlushEvent) line: 103	
+			int entityCount = flushEntities( event, persistenceContext );
+/ D
+1
+
+/t
+DefaultFlushEventListener.onFlush(FlushEvent) line: 57	
+				flushEverythingToExecutions( event );
+/ D
+				performExecutions( source );
+/s
+DefaultFlushEventListener(AbstractFlushingEventListener).performExecutions(EventSource) line: 350	
+			session.getActionQueue().executeActions();
+/s
+ActionQueue.executeActions() line: 344	
+		for ( ExecutableList<?> l : executableLists ) {
+			executeActions( l );
+
+executableLists	Collections$UnmodifiableRandomAccessList<E>  (id=184)	
+	c	ArrayList<E>  (id=192)	
+			[0]	ExecutableList<E>  (id=...)	
+			[1]	ExecutableList<E>  (id=191)	
+				executables	ArrayList<E>  (id=215)	
+[EntityInsertAction[org.hibernate.book.hbm.Item#1]]
+			[2]	ExecutableList<E>  (id=199)	
+				executables	ArrayList<E>  (id=224)	
+[EntityUpdateAction[org.hibernate.book.hbm.Item#1]]
+			[3]	ExecutableList<E>  (id=...)	
+...
+
+
+
+Hibernate: update Item set name=?, city=? where id_=?
+HibernateLog --> 12:40:09 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [first]
+HibernateLog --> 12:40:09 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [Foo2]
+HibernateLog --> 12:40:09 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+
+
+/ 7	.
+
+/ .load	,
+
+/ doet	,
+/ GEEN sql
+
+/ queries pc's entitiesByKey, NOET entityEntityContext	,
+/ Beide LEEG	,
+
+		Item item5=(Item)session.load(Item.class,1l);
+/ s
+SessionImpl.load(Class, Serializable) line: 945	
+		return this.byId( entityClass ).getReference( id );
+/s
+SessionImpl$IdentifierLoadAccessImpl.getReference(Serializable) line: 2528	
+				fireLoad( event, LoadEventListener.LOAD );
+/s
+SessionImpl.fireLoad(LoadEvent, LoadEventListener$LoadType) line: 1070	
+			listener.onLoad( event, loadType );
+
+        public static final LoadType LOAD = new LoadType( "LOAD" )
+                        .setAllowNulls( false )
+                        .setAllowProxyCreation( true )
+                        .setCheckDeleted( true )
+                        .setNakedEntityReturned( false );
+
+/s
+DefaultLoadEventListener.onLoad(LoadEvent, LoadEventListener$LoadType) line: 150	
+		try {
+			if ( loadType.isNakedEntityReturned() ) {
+/ NEE
+/ Later WEL , als we op de proxy .setName doen	, dan is LoadType IMMEDIATE_LOAD	, nu LOAD	,
+
+				if ( event.getLockMode() == LockMode.NONE ) {
+					event.setResult( proxyOrLoad( event, persister, keyToLoad, loadType ) );
+/s
+DefaultLoadEventListener.proxyOrLoad(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType) line: 264	
+		// look for a proxy
+		Object proxy = persistenceContext.getProxy( keyToLoad );
+keyToLoad	EntityKey  (id=392)	
+	identifier	Long  (id=61)	
+/ proxy=null
+
+		if ( options.isAllowProxyCreation() ) {
+/ JA, bij LOAD, 
+	 		return createProxyIfNecessary( event, persister, keyToLoad, options, persistenceContext );
+/*
+/ NEE bij GET	,
+       	// return a newly loaded object
+	return load( event, persister, keyToLoad, options );
+
+/ IMMEDIATE_LOAD en LOAD geven een proxy, GET niet	,
+*/
+
+/s
+DefaultLoadEventListener.createProxyIfNecessary(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType, PersistenceContext) line: 335	
+		Object existing = persistenceContext.getEntity( keyToLoad );
+///////////////////////////////////
+/ queries EntitiesByKey	,
+null
+		if ( existing != null ) {
+/ NEE
+
+
+		// return new uninitialized proxy
+		Object proxy = persister.createProxy( event.getEntityId(), event.getSession() );
+...
+/s
+PojoEntityTuplizer(AbstractEntityTuplizer).createProxy(Serializable, SessionImplementor) line: 771	
+		return getProxyFactory().getProxy( id, session );
+
+/s
+JavassistProxyFactory.getProxy(Serializable, SessionImplementor) line: 75	
+		return JavassistLazyInitializer.getProxy(
+				factory,
+				entityName,
+				persistentClass,
+				interfaces,
+				getIdentifierMethod,
+				setIdentifierMethod,
+				componentIdType,
+				id,
+				session,
+				overridesEquals
+		);
+/s
+JavassistLazyInitializer.getProxy(Class, String, Class, Class[], Method, Method, CompositeType, Serializable, SessionImplementor, boolean) line: 147	
+		final JavassistLazyInitializer instance = new JavassistLazyInitializer(
+				entityName,
+				persistentClass,
+				interfaces, id,
+				getIdentifierMethod,
+				setIdentifierMethod,
+				componentIdType,
+				session,
+				classOverridesEquals
+		);
+instance	JavassistLazyInitializer  (id=2737)	
+	id	Long  (id=68)	
+	target	null	
+
+
+			proxy = ( HibernateProxy ) factory.newInstance();
+proxy	Item_$$_jvstb3f_0  (id=2740)	
+	city	null	
+	handler	RuntimeSupport$DefaultMethodHandler  (id=2742)	
+	id	null	
+	name	null	
+
+		( ( Proxy ) proxy ).setHandler( instance );
+
+
+
+...
+/t
+DefaultLoadEventListener.createProxyIfNecessary(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType, PersistenceContext) line: 350	
+		Object proxy = persister.createProxy( event.getEntityId(), event.getSession() );
+/ D
+		persistenceContext.getBatchFetchQueue().addBatchLoadableEntityKey( keyToLoad );
+		persistenceContext.addProxy( keyToLoad, proxy );
+/s
+	public void addProxy(EntityKey key, Object proxy) {
+		proxiesByKey.put( key, proxy );
+
+/t
+DefaultLoadEventListener.onLoad(LoadEvent, LoadEventListener$LoadType) line: 150	
+					event.setResult( proxyOrLoad( event, persister, keyToLoad, loadType ) );
+event	LoadEvent  (id=202)	
+/ D
+
+...
+/t
+SessionImpl$IdentifierLoadAccessImpl.getReference(Serializable) line: 2533	
+				return event.getResult();
+result	Item_$$_jvste67_0  (id=121)	
+
+/t
+	public Object load(Class entityClass, Serializable id) throws HibernateException {
+		return this.byId( entityClass ).getReference( id );
+/ D
+
+/t
+Main5	,
+		Item item2=(Item)session.load(Item.class,1l);
+item2	Item_$$_jvste67_0  (id=121)	
+
+
+
+
+
+
+/ 7	. 
+
+	Item item5=(Item)session.load(Item.class,1l);
+/ D
+        item5.setName("fifth");
+
+/ na .load	,
+item5	Item_$$_jvste67_0  (id=125)	
+
+/ .setName sets entityentry in pc	,
+
+/ item5 is proxy, item5.handler.target=null	, item5.handler.id=Long 1	,
+/ deze Item inst wordt update met values uit tbl item	, 
+
+/ dus doet	,
+Hibernate: select item0_.id_ as id_1_1_0_, item0_.name as name2_1_0_, item0_.city as city3_1_0_ from Item item0_ where item0_.id_=?
+HibernateLog --> 16:18:19 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+HibernateLog --> 16:18:43 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name2_1_0_] : [VARCHAR]) - [first]
+HibernateLog --> 16:18:43 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([city3_1_0_] : [VARCHAR]) - [Foo2]
+
+
+/s
+Thread [main] (Suspended)	
+	JavassistLazyInitializer.invoke(Object, Method, Method, Object[]) line: 176	
+	Item_$$_jvstb3f_0.setName(String) line: not available	
+	Main4.testBasicUsage() line: 95	
+
+				result = this.invoke( thisMethod, args, proxy );
+INVOKE_IMPLEMENTATION;
+/ want	,
+/s
+JavassistLazyInitializer(BasicLazyInitializer).invoke(Method, Object[], Object) line: 72	
+
+		// otherwise:
+		return INVOKE_IMPLEMENTATION;
+
+/t
+JavassistLazyInitializer.invoke(Object, Method, Method, Object[]) line: 183	
+			if ( result == INVOKE_IMPLEMENTATION ) {
+				Object target = getImplementation();
+/s
+JavassistLazyInitializer(AbstractLazyInitializer).getImplementation() line: 286	
+		initialize();
+/s
+JavassistLazyInitializer(AbstractLazyInitializer).initialize() line: 174	
+			else if ( session == null ) {
+/ NEE
+				throw new LazyInitializationException( "could not initialize proxy - no Session" );
+			}
+			else if ( !session.isOpen() ) {
+/ NEE
+				throw new LazyInitializationException( "could not initialize proxy - the owning Session was closed" );
+			}
+			else if ( !session.isConnected() ) {
+/ NEE
+				throw new LazyInitializationException( "could not initialize proxy - the owning Session is disconnected" );
+			}
+			else {
+/ JA 
+				target = session.immediateLoad( entityName, id );
+this	JavassistLazyInitializer  (id=232)	
+	entityName	"org.hibernate.book.hbm.Item" (id=255)	
+	id	Long  (id=61)	
+/s
+SessionImpl.immediateLoad(String, Serializable) line: 970	
+		LoadEvent event = new LoadEvent(id, entityName, true, this);
+		fireLoad(event, LoadEventListener.IMMEDIATE_LOAD);
+/s
+SessionImpl.fireLoad(LoadEvent, LoadEventListener$LoadType) line: 1070	
+		for ( LoadEventListener listener : listeners( EventType.LOAD ) ) {
+/ ook als LoadEventListener$LoadType=IMMEDIATE_LOAD	,
+
+			listener.onLoad( event, loadType );
+/ loadType=LoadEventListener.IMMEDIATE_LOAD
+/s
+DefaultLoadEventListener.onLoad(LoadEvent, LoadEventListener$LoadType) line: 90	
+		if ( event.getInstanceToLoad() != null ) {
+/ NEE
+		else {
+			persister = source.getFactory().getEntityPersister( event.getEntityClassName() );
+entityClassName	"org.hibernate.book.hbm.Item" (id=255)	
+
+		final Class idClass = persister.getIdentifierType().getReturnedClass();
+Long
+		final EntityKey keyToLoad = source.generateEntityKey( event.getEntityId(), persister );
+keyToLoad	EntityKey  (id=269)	
+	hashCode	630	
+	identifier	Long  (id=61)	
+	persister	SingleTableEntityPersister  (id=71)	
+
+		try {
+			if ( loadType.isNakedEntityReturned() ) {
+/ JA
+/ want loadType=LoadEventListener.IMMEDIATE_LOAD
+				//do not return a proxy!
+				//(this option indicates we are initializing a proxy)
+				event.setResult( load( event, persister, keyToLoad, loadType ) );
+/s
+DefaultLoadEventListener.load(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType) line: 198	
+		Object entity = doLoad( event, persister, keyToLoad, options );
+/s
+DefaultLoadEventListener.doLoad(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType) line: 422	
+		Object entity = loadFromSessionCache( event, keyToLoad, options );
+null
+/ TODO (interceptor)
+		entity = loadFromSecondLevelCache( event, persister, options );
+/s
+DefaultLoadEventListener.loadFromSecondLevelCache(LoadEvent, EntityPersister, LoadEventListener$LoadType) line: 580	
+		final boolean useCache = persister.hasCache() && ...
+false
+		if ( !useCache ) {
+			// we can't use cache here
+			return null;
+/t
+DefaultLoadEventListener.doLoad(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType) line: 452	
+		entity = loadFromSecondLevelCache( event, persister, options );
+null
+
+			entity = loadFromDatasource( event, persister, keyToLoad, options );
+////////////////////
+/ als niet van cache, dan van datasource	,
+/s
+DefaultLoadEventListener.loadFromDatasource(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType) line: 501	
+		final SessionImplementor source = event.getSession();
+		Object entity = persister.load(
+				event.getEntityId(),
+Long
+				event.getInstanceToLoad(),
+null
+				event.getLockOptions(),
+				source
+SessionImpl
+		);
+/s
+SingleTableEntityPersister(AbstractEntityPersister).load(Serializable, Object, LockOptions, SessionImplementor) line: 4126	
+		final UniqueEntityLoader loader = getAppropriateLoader(lockOptions, session );
+/s
+SingleTableEntityPersister(AbstractEntityPersister).getAppropriateLoader(LockOptions, SessionImplementor) line: 4181	
+		else {
+			return ( UniqueEntityLoader ) getLoaders().get( lockOptions.getLockMode() );
+/s
+SingleTableEntityPersister(AbstractEntityPersister).getLoaders() line: 4029	
+loaders	HashMap<K,V>  (id=2694)	
+{PESSIMISTIC_READ=org.hibernate.loader.entity.plan.EntityLoader@63de928
+ merge=org.hibernate.loader.entity.CascadeEntityLoader(select item0_.id_ as id_1_1_0_
+ 	item0_.name as name2_1_0_
+ 	item0_.city as city3_1_0_ from Item item0_ where item0_.id_=?)
+ NONE=org.hibernate.loader.entity.plan.EntityLoader@4a96444b
+ READ=org.hibernate.loader.entity.plan.EntityLoader@4f5dbe2e
+ PESSIMISTIC_WRITE=org.hibernate.loader.entity.plan.EntityLoader@1370e6b7
+ PESSIMISTIC_FORCE_INCREMENT=org.hibernate.loader.entity.plan.EntityLoader@593b0259
+ UPGRADE_SKIPLOCKED=org.hibernate.loader.entity.plan.EntityLoader@31174ed3
+ UPGRADE_NOWAIT=org.hibernate.loader.entity.plan.EntityLoader@713817d2
+ OPTIMISTIC=org.hibernate.loader.entity.plan.EntityLoader@19a41610
+ FORCE=org.hibernate.loader.entity.plan.EntityLoader@63a48196
+ OPTIMISTIC_FORCE_INCREMENT=org.hibernate.loader.entity.plan.EntityLoader@4537d1f5
+ UPGRADE=org.hibernate.loader.entity.plan.EntityLoader@53b94f53
+ refresh=org.hibernate.loader.entity.CascadeEntityLoader(select item0_.id_ as id_1_1_0_
+ 	item0_.name as name2_1_0_
+ 	item0_.city as city3_1_0_ from Item item0_ where item0_.id_=?)}
+
+lockOptions.getLockMode()=
+lockMode	LockMode  (id=2654)	
+	level	0	
+	name	"NONE" (id=2699)	
+	ordinal	0	
+
+/t
+SingleTableEntityPersister(AbstractEntityPersister).load(Serializable, Object, LockOptions, SessionImplementor) line: 4126	
+		final UniqueEntityLoader loader = getAppropriateLoader(lockOptions, session );
+loader	EntityLoader  (id=2700)	
+	columnNameCache	null	
+	entityName	"org.hibernate.book.hbm.Item" (id=2649)	
+	entityPersister	SingleTableEntityPersister  (id=2659)	
+	factory	SessionFactoryImpl  (id=2677)	
+	staticLoadQuery	EntityLoadQueryDetails  (id=2705)	
+	uniqueKeyType	LongType  (id=2706)	
+
+		return loader.load( id, optionalObject, session, lockOptions );
+/s
+EntityLoader(AbstractLoadPlanBasedEntityLoader).load(Serializable, Object, SessionImplementor, LockOptions) line: 178	
+			final QueryParameters qp = new QueryParameters();
+			qp.setPositionalParameterTypes( new Type[] { entityPersister.getIdentifierType() } );
+/s
+SingleTableEntityPersister(AbstractEntityPersister).getIdentifierType() line: 4922	
+		return entityMetamodel.getIdentifierProperty().getType();
+LongType
+/s
+EntityMetamodel.getIdentifierProperty() line: 1188	
+		return identifierAttribute;
+this	EntityMetamodel  (id=2675)	
+	identifierAttribute	IdentifierProperty  (id=2750)	
+		attributeName	"id" (id=2756)	
+		attributeType	LongType  (id=2706)	
+		embedded	false	
+		hasIdentifierMapper	false	
+		identifierAssignedByInsert	false	
+		identifierGenerator	IncrementGenerator  (id=2771)	
+		unsavedValue	IdentifierValue  (id=2774)	
+		virtual	false	
+
+/t
+EntityLoader(AbstractLoadPlanBasedEntityLoader).load(Serializable, Object, SessionImplementor, LockOptions) line: 180	
+			qp.setPositionalParameterValues( new Object[] { id } );
+id=Long 1
+			qp.setOptionalObject( optionalObject );
+null
+			qp.setOptionalEntityName( entityPersister.getEntityName() );
+/s
+		return entityMetamodel.getName();
+name	"org.hibernate.book.hbm.Item" (id=2649)	
+
+			qp.setOptionalId( id );
+			qp.setLockOptions( lockOptions );
+
+			final List results = executeLoad(
+					session,
+					qp,
+					staticLoadQuery,
+					false,
+					null
+			);
+staticLoadQuery	EntityLoadQueryDetails  (id=315)	
+	entityReferenceAliases	EntityReferenceAliasesImpl  (id=319)	
+	keyColumnNames	String[1]  (id=100)	
+		[0]	"id_" (id=330)	
+	loadPlan	LoadPlanImpl  (id=322)	
+	queryProcessor	LoadQueryJoinAndFetchProcessor  (id=331)	
+	readerCollector	EntityLoadQueryDetails$EntityLoaderReaderCollectorImpl  (id=333)	
+	resultSetProcessor	ResultSetProcessorImpl  (id=337)	
+	rootReturn	EntityReturnImpl  (id=359)	
+	sqlStatement	"select item0_.id_ as id_1_1_0_, item0_.name as name2_1_0_, item0_.city as city3_1_0_ from Item item0_ where item0_.id_=?" (id=369)	
+
+
+/ Intermezzo
+
+/ we hadden set een b in	,
+	public AbstractLoadPlanBasedEntityLoader(
+			OuterJoinLoadable entityPersister,
+			SessionFactoryImplementor factory,
+			String[] uniqueKeyColumnNames,
+			Type uniqueKeyType,
+			QueryBuildingParameters buildingParameters) {
+->		super( factory );
+...
+		this.staticLoadQuery = BatchingLoadQueryDetailsFactory.makeEntityLoadQueryDetails(
+				plan,
+				uniqueKeyColumnNames,
+				buildingParameters,
+				factory
+		);
+
+/ we vielen hierin in  via	,
+Configuration.buildSessionFactory(ServiceRegistry) line: 1857	
+
+/ See bovenin dit block HIBERNATE DEBUG
+
+/ Einde Intermezzo
+
+/s
+EntityLoader(AbstractLoadPlanBasedLoader).executeLoad(SessionImplementor, QueryParameters, LoadQueryDetails, boolean, ResultTransformer) line: 101	
+		return executeLoad(
+				session,
+				queryParameters,
+				loadQueryDetails,
+				returnProxies,
+				forcedResultTransformer,
+				afterLoadActions
+		);
+/s
+EntityLoader(AbstractLoadPlanBasedLoader).executeLoad(SessionImplementor, QueryParameters, LoadQueryDetails, boolean, ResultTransformer, List<AfterLoadAction>) line: 119	
+			List results = null;
+			final String sql = loadQueryDetails.getSqlStatement();
+sql	"select item0_.id_ as id_1_1_0_, item0_.name as name2_1_0_, item0_.city as city3_1_0_ from Item item0_ where item0_.id_=?" (id=369)	
+
+			SqlStatementWrapper wrapper = null;
+			try {
+				wrapper = executeQueryStatement( sql, queryParameters, false, afterLoadActions, session );
+/s
+EntityLoader(AbstractLoadPlanBasedLoader).executeQueryStatement(String, QueryParameters, boolean, List<AfterLoadAction>, SessionImplementor) line: 189	
+		final PreparedStatement st = prepareQueryStatement( sql, queryParameters, limitHandler, scroll, session );
+/s
+EntityLoader(AbstractLoadPlanBasedLoader).prepareQueryStatement(String, QueryParameters, LimitHandler, boolean, SessionImplementor) line: 249	
+		final Dialect dialect = getFactory().getDialect();
+dialect	PostgreSQLDialect  (id=2780)	
+		final RowSelection selection = queryParameters.getRowSelection();
+null
+		final boolean useLimit = LimitHelper.useLimit( limitHandler, selection );
+false
+		final boolean hasFirstRow = LimitHelper.hasFirstRow( selection );
+false
+		final boolean useLimitOffset = hasFirstRow && useLimit && limitHandler.supportsLimitOffset();
+false
+		final boolean callable = queryParameters.isCallable();
+false
+		final ScrollMode scrollMode = getScrollMode( scroll, hasFirstRow, useLimitOffset, queryParameters );
+null
+		final PreparedStatement st = session.getTransactionCoordinator().getJdbcCoordinator()
+				.getStatementPreparer().prepareQueryStatement( sql, callable, scrollMode );
+/s
+StatementPreparerImpl.prepareQueryStatement(String, boolean, ScrollMode) line: 145	
+		else {
+			final PreparedStatement ps = new QueryStatementPreparationTemplate( sql ) {
+				public PreparedStatement doPrepare() throws SQLException {
+						return isCallable
+								? connection().prepareCall( sql )
+								: connection().prepareStatement( sql );
+				}
+			}.prepareStatement();
+
+/s
+StatementPreparerImpl.connection() line: 63	
+		return logicalConnection().getConnection();
+/s
+StatementPreparerImpl.logicalConnection() line: 67	
+		return jdbcCoordinator.getLogicalConnection();
+/s
+JdbcCoordinatorImpl.getLogicalConnection() line: 149	
+		return logicalConnection;
+this	JdbcCoordinatorImpl  (id=2751)	
+	logicalConnection	LogicalConnectionImpl  (id=2753)	
+		physicalConnection	Jdbc4Connection  (id=2762)	
+...
+			creatingURL	"jdbc:postgresql://localhost/foo" (id=2774)	
+
+
+/ connection() returns physicalConnection	,
+
+
+/t
+EntityLoader(AbstractLoadPlanBasedLoader).executeQueryStatement(String, QueryParameters, boolean, List<AfterLoadAction>, SessionImplementor) line: 202	
+		final PreparedStatement st = prepareQueryStatement( sql, queryParameters, limitHandler, scroll, session );
+/ D
+		return new SqlStatementWrapper( st, getResultSet( st, queryParameters.getRowSelection(), limitHandler, queryParameters.hasAutoDiscoverScalarTypes(), session ) );
+/s
+EntityLoader(AbstractLoadPlanBasedLoader).getResultSet(PreparedStatement, RowSelection, LimitHandler, boolean, SessionImplementor) line: 449	
+			ResultSet rs = session.getTransactionCoordinator().getJdbcCoordinator().getResultSetReturn().extract( st );
+/s
+ResultSetReturnImpl.extract(PreparedStatement) line: 80	
+				rs = statement.executeQuery();
+////////////////////////////////////////
+/ JDBC
+
+
+/t
+EntityLoader(AbstractLoadPlanBasedLoader).executeLoad(SessionImplementor, QueryParameters, LoadQueryDetails, boolean, ResultTransformer, List<AfterLoadAction>) line: 137	
+				wrapper = executeQueryStatement( sql, queryParameters, false, afterLoadActions, session );
+/ D
+wrapper	AbstractLoadPlanBasedLoader$SqlStatementWrapper  (id=466)	
+	resultSet	Jdbc4ResultSet  (id=452)	
+	statement	Jdbc4PreparedStatement  (id=469)	
+
+/ Heeft gedaan	,
+HibernateLog --> 13:10:24 DEBUG org.hibernate.SQL - select item0_.id_ as id_1_1_0_, item0_.name as name2_1_0_, item0_.city as city3_1_0_ from Item item0_ where item0_.id_=?
+Hibernate: select item0_.id_ as id_1_1_0_, item0_.name as name2_1_0_, item0_.city as city3_1_0_ from Item item0_ where item0_.id_=?
+HibernateLog --> 13:10:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+
+				results = loadQueryDetails.getResultSetProcessor().extractResults(
+						wrapper.getResultSet(),
+						session,
+						queryParameters,
+						new NamedParameterContext() {
+							@Override
+							public int[] getNamedParameterLocations(String name) {
+								return AbstractLoadPlanBasedLoader.this.getNamedParameterLocs( name );
+							}
+						},
+						returnProxies,
+						queryParameters.isReadOnly(),
+						forcedResultTransformer,
+						afterLoadActions
+				);
+			}
+/ we noteren alvast	,
+/ we zien 	,
+
+HibernateLog --> 13:13:40 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name2_1_0_] : [VARCHAR]) - [foo]
+HibernateLog --> 13:13:40 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([city3_1_0_] : [VARCHAR]) - [Foo2]
+
+/ we noteren alvast	,
+/ we zien 	, 
+/ calls
+	Item.setId
+	Item.setName
+	Item.setCity
+/s
+ResultSetProcessorImpl.extractResults(ResultSet, SessionImplementor, QueryParameters, NamedParameterContext, boolean, boolean, ResultTransformer, List<AfterLoadAction>) line: 140	
+
+		else {
+			maxRows = Integer.MAX_VALUE;
+
+		for ( count = 0; count < maxRows && resultSet.next(); count++ ) {
+//////////////////////////////////////
+/ JDBC
+			Object logicalRow = rowReader.readRow( resultSet, context );
+/s
+EntityLoadQueryDetails$EntityLoaderRowReader.readRow(ResultSet, ResultSetProcessingContextImpl) line: 232	
+			return super.readRow( resultSet, context );
+/s
+EntityLoadQueryDetails$EntityLoaderRowReader(AbstractRowReader).readRow(ResultSet, ResultSetProcessingContextImpl) line: 84	
+
+			// 	1) allow entity references to resolve identifiers (in 2 steps)
+/ TODO
+
+			// 2) allow entity references to resolve their non-identifier hydrated state and entity instance
+			for ( EntityReferenceInitializer entityReferenceInitializer : entityReferenceInitializers ) {
+				entityReferenceInitializer.hydrateEntityState( resultSet, context );
+/s
+EntityReferenceInitializerImpl.hydrateEntityState(ResultSet, ResultSetProcessingContextImpl) line: 251	
+		final Object entityInstance = optionalEntityInstance != null
+				? optionalEntityInstance
+				: context.getSession().instantiate( concreteEntityTypeName, entityKey.getIdentifier() );
+/s
+SessionImpl.instantiate(String, Serializable) line: 1379	
+		return instantiate( factory.getEntityPersister( entityName ), id );
+/s
+SessionImpl.instantiate(EntityPersister, Serializable) line: 1391	
+		if ( result == null ) {
+			result = persister.instantiate( id, this );
+/s
+SingleTableEntityPersister(AbstractEntityPersister).instantiate(Serializable, SessionImplementor) line: 4761	
+		return getEntityTuplizer().instantiate( id, session );
+/s
+PojoEntityTuplizer(AbstractEntityTuplizer).instantiate(Serializable, SessionImplementor) line: 739	
+		if ( id != null ) {
+			setIdentifier( result, id, session );
+/s
+PojoEntityTuplizer(AbstractEntityTuplizer).setIdentifier(Object, Serializable, SessionImplementor) line: 381	
+		else if ( idSetter != null ) {
+			idSetter.set( entity, id, getFactory() );
+/s
+BasicPropertyAccessor$BasicSetter.set(Object, Object, SessionFactoryImplementor) line: 68	
+				method.invoke( target, value );
+/ method=public void org.hibernate.book.hbm.Item.setId(java.lang.Long)
+...
+/ s 
+	Item.setId
+
+/t
+SessionImpl.instantiate(EntityPersister, Serializable) line: 1393	
+		if ( result == null ) {
+			result = persister.instantiate( id, this );
+/ D
+bids	HashSet<E>  (id=2949)	
+city	null	
+id	Long  (id=73)	
+name	null	
+
+/ t
+EntityReferenceInitializerImpl.hydrateEntityState(ResultSet, ResultSetProcessingContextImpl) line: 239	
+	final Object entityInstance = optionalEntityInstance != null
+				? optionalEntityInstance
+				: context.getSession().instantiate( concreteEntityTypeName, entityKey.getIdentifier() );
+/ D
+entityInstance	Item  (id=2941)	
+	bids	HashSet<E>  (id=2949)	
+	city	null	
+	id	Long  (id=73)	
+	name	null	
+
+
+		loadFromResultSet(
+				resultSet,
+				context,
+				entityInstance,
+				concreteEntityTypeName,
+				entityKey,
+				lockModeToAcquire
+		);
+/s
+EntityReferenceInitializerImpl.loadFromResultSet(ResultSet, ResultSetProcessingContext, Object, String, EntityKey, LockMode) line: 310	
+		TwoPhaseLoad.addUninitializedEntity(
+				entityKey,
+				entityInstance,
+				concreteEntityPersister,
+				lockModeToAcquire,
+				!context.getLoadPlan().areLazyAttributesForceFetched(),
+				context.getSession()
+		);
+/s
+TwoPhaseLoad.addUninitializedEntity(EntityKey, Object, EntityPersister, LockMode, boolean, SessionImplementor) line: 360	
+		session.getPersistenceContext().addEntity(
+				object,
+				Status.LOADING,
+				null,
+				key,
+				null,
+				lockMode,
+				true,
+				persister,
+				false,
+				lazyPropertiesAreUnFetched
+		);
+/s
+StatefulPersistenceContext.addEntity(Object, Status, Object[], EntityKey, Object, LockMode, boolean, EntityPersister, boolean, boolean) line: 462	
+		addEntity( entityKey, entity );
+		return addEntry(
+				entity,
+				status,
+				loadedState,
+				null,
+				entityKey.getIdentifier(),
+				version,
+				lockMode,
+				existsInDatabase,
+				persister,
+				disableVersionIncrement,
+				lazyPropertiesAreUnfetched
+		);
+/s
+StatefulPersistenceContext.addEntry(Object, Status, Object[], Object, Serializable, Object, LockMode, boolean, EntityPersister, boolean, boolean) line: 491	
+		final EntityEntry e = new EntityEntry(
+				status,
+				loadedState,
+				rowId,
+				id,
+				version,
+				lockMode,
+				existsInDatabase,
+				persister,
+				disableVersionIncrement,
+				lazyPropertiesAreUnfetched,
+				this
+		);
+
+		entityEntryContext.addEntityEntry( entity, e );
+/s
+
+
+/t
+EntityReferenceInitializerImpl.loadFromResultSet(ResultSet, ResultSetProcessingContext, Object, String, EntityKey, LockMode) line: 319	
+		TwoPhaseLoad.addUninitializedEntity(
+				entityKey,
+				entityInstance,
+				concreteEntityPersister,
+				lockModeToAcquire,
+				!context.getLoadPlan().areLazyAttributesForceFetched(),
+				context.getSession()
+		);
+/ D
+			values = concreteEntityPersister.hydrate(
+					resultSet,
+					id,
+					entityInstance,
+					(Loadable) entityReference.getEntityPersister(),
+					concreteEntityPersister == rootEntityPersister
+							? entityReferenceAliases.getColumnAliases().getSuffixedPropertyAliases()
+							: entityReferenceAliases.getColumnAliases().getSuffixedPropertyAliases( concreteEntityPersister ),
+					context.getLoadPlan().areLazyAttributesForceFetched(),
+					context.getSession()
+			);
+values	Object[2]  (id=2988)	
+	[0]	"foo" (id=2990)	
+	[1]	"Foo2" (id=2991)	
+/ TODO
+
+
+		TwoPhaseLoad.postHydrate(
+				concreteEntityPersister,
+				id,
+				values,
+				rowId,
+				entityInstance,
+				lockModeToAcquire,
+				!context.getLoadPlan().areLazyAttributesForceFetched(),
+				context.getSession()
+		);
+/s
+TwoPhaseLoad.postHydrate(EntityPersister, Serializable, Object[], Object, Object, LockMode, boolean, SessionImplementor) line: 99	
+		session.getPersistenceContext().addEntry(
+				object,
+				Status.LOADING,
+				values,
+				rowId,
+				id,
+				version,
+				lockMode,
+				true,
+				persister,
+				false,
+				lazyPropertiesAreUnFetched
+			);
+/s
+StatefulPersistenceContext.addEntry(Object, Status, Object[], Object, Serializable, Object, LockMode, boolean, EntityPersister, boolean, boolean) line: 491	
+
+		final EntityEntry e = new EntityEntry(
+				status,
+				loadedState,
+foo, Foo2
+				rowId,
+				id,
+				version,
+				lockMode,
+				existsInDatabase,
+				persister,
+				disableVersionIncrement,
+				lazyPropertiesAreUnfetched,
+				this
+		);
+
+		entityEntryContext.addEntityEntry( entity, e );
+entity	Item  (id=2941)	
+	bids	HashSet<E>  (id=2949)	
+	city	null	
+	id	Long  (id=73)	
+	name	null	
+
+/t
+EntityLoadQueryDetails$EntityLoaderRowReader(AbstractRowReader).readRow(ResultSet, ResultSetProcessingContextImpl) line: 120	
+
+		// 2) allow entity references to resolve their non-identifier hydrated state and entity instance
+		for ( EntityReferenceInitializer entityReferenceInitializer : entityReferenceInitializers ) {
+				entityReferenceInitializer.hydrateEntityState( resultSet, context );
+/ D
+		// 3) read the logical row
+		Object logicalRow = readLogicalRow( resultSet, context );
+logicalRow	Item  (id=2941)	
+	bids	HashSet<E>  (id=2949)	
+	city	null	
+	id	Long  (id=73)	
+	name	null	
+/ TODO
+
+		// 4) allow arrays, entities and collections after row callbacks
+		if ( hasEntityReferenceInitializers ) {
+			for ( EntityReferenceInitializer entityReferenceInitializer : entityReferenceInitializers ) {
+				entityReferenceInitializer.finishUpRow( resultSet, context );
+/ TODO
+
+		return logicalRow;
+
+/t
+ResultSetProcessorImpl.extractResults(ResultSet, SessionImplementor, QueryParameters, NamedParameterContext, boolean, boolean, ResultTransformer, List<AfterLoadAction>) line: 133	
+
+			Object logicalRow = rowReader.readRow( resultSet, context );
+/ D
+			loadResults.add( logicalRow );
+
+		rowReader.finishUp( context, afterLoadActionList );
+/s
+EntityLoadQueryDetails$EntityLoaderRowReader(AbstractRowReader).finishUp(ResultSetProcessingContextImpl, List<AfterLoadAction>) line: 215	
+...
+		// now finish loading the entities (2-phase load)
+		performTwoPhaseLoad( preLoadEvent, context, hydratedEntityRegistrations );
+/s
+EntityLoadQueryDetails$EntityLoaderRowReader(AbstractRowReader).performTwoPhaseLoad(PreLoadEvent, ResultSetProcessingContextImpl, List<HydratedEntityRegistration>) line: 244	
+...
+		for ( HydratedEntityRegistration registration : hydratedEntityRegistrations ) {
+			TwoPhaseLoad.initializeEntity(
+					registration.getInstance(),
+Item  (id=424)	
+	bids	HashSet<E>  (id=451)	
+	city	null	
+	id	Long  (id=217)	
+	name	null	
+					context.isReadOnly(),
+					context.getSession(),
+					preLoadEvent
+			);
+		}
+/s
+TwoPhaseLoad.initializeEntity(Object, boolean, SessionImplementor, PreLoadEvent) line: 144	
+/=
+	public static void initializeEntity(
+			final Object entity,
+			final boolean readOnly,
+			final SessionImplementor session,
+			final PreLoadEvent preLoadEvent) {
+entity	Item  (id=424)	
+	bids	HashSet<E>  (id=451)	
+	city	null	
+	id	Long  (id=217)	
+	name	null	
+...
+		doInitializeEntity( entity, entityEntry, readOnly, session, preLoadEvent );
+/s
+TwoPhaseLoad.doInitializeEntity(Object, EntityEntry, boolean, SessionImplementor, PreLoadEvent) line: 188	
+		final Object[] hydratedState = entityEntry.getLoadedState();
+hydratedState	Object[2]  (id=2988)	
+	[0]	"foo" (id=2990)	
+	[1]	"Foo2" (id=2991)	
+
+		persister.setPropertyValues( entity, hydratedState );
+/s
+SingleTableEntityPersister(AbstractEntityPersister).setPropertyValues(Object, Object[]) line: 4718	
+		getEntityTuplizer().setPropertyValues( object, values );
+/s
+...
+	Item.setName(String) line: 63	
+...
+	public void setCity(String city) {
+		this.city=city;
+	}
+
+/t
+EntityLoader(AbstractLoadPlanBasedLoader).executeLoad(SessionImplementor, QueryParameters, LoadQueryDetails, boolean, ResultTransformer, List<AfterLoadAction>) line: 155	
+
+				wrapper = executeQueryStatement( sql, queryParameters, false, afterLoadActions, session );
+				results = loadQueryDetails.getResultSetProcessor().extractResults(
+						wrapper.getResultSet(),
+						session,
+						queryParameters,
+						new NamedParameterContext() {
+							@Override
+							public int[] getNamedParameterLocations(String name) {
+								return AbstractLoadPlanBasedLoader.this.getNamedParameterLocs( name );
+							}
+						},
+						returnProxies,
+						queryParameters.isReadOnly(),
+						forcedResultTransformer,
+						afterLoadActions
+				);
+/t
+EntityLoader(AbstractLoadPlanBasedEntityLoader).load(Serializable, Object, SessionImplementor, LockOptions) line: 193	
+			final List results = executeLoad(
+					session,
+					qp,
+					staticLoadQuery,
+					false,
+					null
+			);
+/ D
+results	ArrayList<E>  (id=3090)	
+	elementData	Object[10]  (id=3206)	
+		[0]	Item  (id=2941)	
+			bids	HashSet<E>  (id=2949)	
+			city	"Foo2" (id=2991)	
+			id	Long  (id=73)	
+			name	"foo" (id=2990)	
+
+/t
+DefaultLoadEventListener.loadFromDatasource(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType) line: 509	
+		Object entity = persister.load(
+				event.getEntityId(),
+				event.getInstanceToLoad(),
+				event.getLockOptions(),
+				source
+		);
+/ D
+
+/ t
+DefaultLoadEventListener.onLoad(LoadEvent, LoadEventListener$LoadType) line: 145	
+				event.setResult( load( event, persister, keyToLoad, loadType ) );
+/ D
+
+/t
+JavassistLazyInitializer(AbstractLazyInitializer).initialize() line: 175	
+				target = session.immediateLoad( entityName, id );
+/ D
+
+
+/t
+JavassistLazyInitializer.invoke(Object, Method, Method, Object[]) line: 188	
+				Object target = getImplementation();
+/ D
+target	Item  (id=424)	
+	bids	HashSet<E>  (id=451)	
+	city	"Foo2" (id=536)	
+	id	Long  (id=217)	
+	name	"first" (id=428)	
+
+/ we zien	,
+proxy	Item_$$_jvst10c_0  (id=267)	
+	handler	JavassistLazyInitializer  (id=273)	
+		target	Item  (id=424)	
+ /TODO
+						returnValue = thisMethod.invoke( target, args );
+/ thisMethod=setName
+/ Hier was het om te doen	, we moesten eerst initialize	, 
+...
+/s
+Item.setName(String) line: 63	
+/ "bar"	, WAS "foo"	,
+
+/ 7	.
+
+		session.getTransaction().commit();
+
+/ weer een flush	,
+
+/ calls getters	,
+
+Hibernate: update Item set name=?, city=? where id_=?
+HibernateLog --> 17:24:09 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [fifth]
+HibernateLog --> 17:24:09 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [Foo2]
+HibernateLog --> 17:24:09 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+
+/ NOTES 
+
+/ 7	.
+ 
+package org.hibernate.loader.entity.plan;
+public abstract class AbstractLoadPlanBasedEntityLoader extends AbstractLoadPlanBasedLoader implements UniqueEntityLoader {
+
+/ 7	.
+
+		Item item2=(Item)session.load(Item.class,1l);
+item2
+	handler		JavassistLazyInitializer
+		id	Long
+		target 	null
+
+		item2.setName("foo");
+item2
+	handler		JavassistLazyInitializer
+		id	Long
+		initialized	true
+		target 	Item
+			city	"Foo2"	
+			id	Long
+			name	"foo"
+	
+/ 7	.
+
+		session = sessionFactory.openSession();
+		session.beginTransaction();
+
+		Item item3=(Item)session.load(Item.class,1l);
+          
+		session.getTransaction().commit();
+		session.close();
+		
+		item3.setName("baz");
+org.hibernate.LazyInitializationException: could not initialize proxy - no Session
+	at org.hibernate.proxy.AbstractLazyInitializer.initialize(AbstractLazyInitializer.java:165)
+	at org.hibernate.proxy.AbstractLazyInitializer.getImplementation(AbstractLazyInitializer.java:286)
+	at org.hibernate.proxy.pojo.javassist.JavassistLazyInitializer.invoke(JavassistLazyInitializer.java:185)
+	at org.hibernate.book.hbm.Item_$$_jvst4a8_0.setName(Item_$$_jvst4a8_0.java)
+	at org.hibernate.book.hbm.Main5.testBasicUsage(Main5.java:108)
+
+/ 7	. 
+
+/ Maar als we  item2 initialized hebben , (item2 is een proxy), gaat het OK	,
+
+		Item item2=(Item)session.load(Item.class,1l);
+        	item2.setName("bar");
+        
+		session.getTransaction().commit();
+		session.close();
+		
+		item2.setCity("Bar");
+
+/ OK	,
+/ item2 is initialized: in item2.handler.target=Item inst	,
+
+
+/ Einde NOTES 
+
+
+/ 7	.
+
+/ Als we in een session een Item 2x save, heeft de 2de save geen zin	,
+/ Als we het Item in een 2de session .save, dan volgt er een 2de insert	,
+
+$ vi Main5.java
+
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+
+		session.save(item); 
+		session.save(item);
+		item.setCity("Foo2");
+		
+		session.getTransaction().commit();
+		session.close();
+		
+		session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		session.save(item);
+        
+		session.getTransaction().commit();
+		session.close();
+
+
+/  we doen eerst	,
+		session.save(item); 
+		session.save(item); 
+
+/ In de 2de save	,
+
+		EntityEntry entry = event.getSession().getPersistenceContext().getEntry( event.getEntity() );
+		if ( entry!=null && entry.getStatus() != Status.DELETED ) {
+/ JA
+			return entityIsPersistent(event);
+		}
+		else {
+/ NEE
+			return entityIsTransient(event);
+/s
+DefaultSaveEventListener(DefaultSaveOrUpdateEventListener).entityIsPersistent(SaveOrUpdateEvent) line: 119	
+			Serializable requestedId = event.getRequestedId();
+null
+			Serializable savedId;
+			if ( requestedId == null ) {
+				savedId = entityEntry.getId();
+Long 
+	1
+/ Deze gaat de event in , later	,
+/ TODO (Waarom?)
+
+/ Dan de .save (item) in 2de session	,
+
+/ de item heeft een id	, maar hij is niet in de pc, en daar kijkt Hibernate naar	,
+
+DefaultSaveEventListener.performSaveOrUpdate(SaveOrUpdateEvent) line: 49	
+		EntityEntry entry = event.getSession().getPersistenceContext().getEntry( event.getEntity() );
+	if ( entry!=null && entry.getStatus() != Status.DELETED ) {
+/ NEE
+		else {
+			return entityIsTransient(event);
+...
+/s
+DefaultSaveEventListener(AbstractSaveEventListener).saveWithGeneratedId(Object, String, Object, EventSource, boolean) line: 118	
+		Serializable generatedId = persister.getIdentifierGenerator().generate( source, entity );
+/ Doet nu geen query ,	 maar geeft meteen 
+Long 
+	2
+
+/ 7	. 
+
+/ kijk naar	,
+		session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		Item item2=(Item)session.load(Item.class,1l);
+        	item2.setName("bar");
+        
+		session.getTransaction().commit(); // update id=1
+		session.close();
+		
+		item2.setCity("Bar"); // OK, item2 is initilized
+
+
+/ item2 is initialized	, 
+/ Nu item2.setCity buiten een session	,
+
+...
+/s
+JavassistLazyInitializer.invoke(Object, Method, Method, Object[]) line: 185	
+			if ( result == INVOKE_IMPLEMENTATION ) {
+				Object target = getImplementation();
+/s
+	public final Object getImplementation() {
+		initialize();
+/s
+JavassistLazyInitializer(AbstractLazyInitializer).initialize() line: 180	
+		if ( !initialized ) {
+/ NEE
+			else {
+				target = session.immediateLoad( entityName, id );
+/ NIET
+		else {
+			checkTargetState();
+/ NIETS
+
+/t
+JavassistLazyInitializer.invoke(Object, Method, Method, Object[]) line: 188	
+			if ( result == INVOKE_IMPLEMENTATION ) {
+				Object target = getImplementation();
+/ D
+						returnValue = thisMethod.invoke( target, args );
+/ thisMethod=public void org.hibernate.book.hbm.Item.setCity(java.lang.String)
+
+/ 7	.
+
+		session = sessionFactory.openSession();
+		session.beginTransaction();
+
+		Item item3=(Item)session.load(Item.class,1l);
+          
+->		session.getTransaction().commit();
+		session.close();
+
+/s
+DefaultFlushEventListener.onFlush(FlushEvent) line: 49	
+		if ( persistenceContext.getNumberOfManagedEntities() > 0 ||
+				persistenceContext.getCollectionEntries().size() > 0 ) {
+/  NEE
+/= pc.entityEntryContext.count=0
+
+/ .onFlush returns	,
+
+/ 7	.
+
+		session = sessionFactory.openSession();
+		session.beginTransaction();
+
+		Item item4=(Item)session.get(Item.class,1l);
+        
+		session.getTransaction().commit();
+		session.close();
+
+/s
+DefaultLoadEventListener.onLoad(LoadEvent, LoadEventListener$LoadType) line: 149	
+
+       public static final LoadType GET = new LoadType( "GET" )
+                        .setAllowNulls( true )
+                        .setAllowProxyCreation( false )
+                        .setCheckDeleted( true )
+                        .setNakedEntityReturned( false );
+
+			if ( loadType.isNakedEntityReturned() ) {
+/ NEE
+			}
+			else {
+				if ( event.getLockMode() == LockMode.NONE ) {
+/ JA
+					event.setResult( proxyOrLoad( event, persister, keyToLoad, loadType ) );
+/s
+DefaultLoadEventListener.proxyOrLoad(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType) line: 249	
+
+		if ( options.isAllowProxyCreation() ) {
+/ NEE
+/ want,	
+        public static final LoadType GET = new LoadType( "GET" )
+                        .setAllowNulls( true )
+                        .setAllowProxyCreation( false )
+                        .setCheckDeleted( true )
+                        .setNakedEntityReturned( false );
+
+		// return a newly loaded object
+		return load( event, persister, keyToLoad, options );
+/s
+DefaultLoadEventListener.load(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType) line: 198	
+/ 7	. 
+
+/ In Main6	,
+
+		Item item=new Item("foo","Foo");
+
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+
+		session.save(item); 
+		item.setCity("Foo2");
+		
+		session.getTransaction().commit(); // insert id=1, update
+		session.close();
+1,foo,Foo2
+		
+		session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		session.save(item); 
+        
+		session.getTransaction().commit(); // insert id=2
+		session.close();
+1,foo,Foo2
+2,foo,Foo2
+		
+		session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		Item item2=(Item)session.load(Item.class,1l);
+        	item2.setName("bar");
+/ initializes target in de proxy, en calls .setName erop via method.invoke
+        
+		session.getTransaction().commit(); // update id=1
+		session.close();
+1,bar,Foo2
+2,foo,Foo2
+		
+		item2.setCity("Bar"); 
+
+////////////////
+/ item2 is proxy, is initialized, de target (Item inst) wordt uit de proxy gehaald, en daarop wordt .setName called	,	
+
+
+/ we debug	,
+		item2.setCity("Bar"); 
+item2	Item_$$_jvst732_0  (id=2670)	
+/s
+Item_$$_jvst732_0.setCity(String) line: not available	
+/s
+JavassistLazyInitializer.invoke(Object, Method, Method, Object[]) line: 176	
+				result = this.invoke( thisMethod, args, proxy );
+			if ( result == INVOKE_IMPLEMENTATION ) {
+				Object target = getImplementation();
+/s
+JavassistLazyInitializer(AbstractLazyInitializer).getImplementation() line: 286	
+		initialize();
+/s
+JavassistLazyInitializer(AbstractLazyInitializer).initialize() line: 160	
+		if ( !initialized ) {
+/ NEE
+			else {
+/ NIET
+				target = session.immediateLoad( entityName, id );
+				initialized = true;
+				checkTargetState();
+/ Dit was eerder gedaan	, de proxy's target=Item inst	,
+		else {
+			checkTargetState();
+
+/t
+JavassistLazyInitializer(AbstractLazyInitializer).getImplementation() line: 286	
+	 	return target;
+	
+/t
+JavassistLazyInitializer.invoke(Object, Method, Method, Object[]) line: 176	
+				Object target = getImplementation();
+/ D
+target	Item  (id=2679)	
+						returnValue = thisMethod.invoke( target, args );
+/ thisMethod=public void org.hibernate.book.hbm.Item.setCity(java.lang.String), target=Item inst	,
+
+/ 7	. 
+
+/ .update	,
+
+
+ In Main6	,
+
+		Item item=new Item("foo","Foo");
+
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+
+		session.save(item); 
+item.id=1
+		item.setCity("Foo2");
+		
+		session.getTransaction().commit(); // insert id=1, update
+		session.close();
+/ insert, update	, 
+1,foo, Foo2
+		
+		session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		item.setName("bar");
+		session.save(item); 
+item.id=2
+		session.getTransaction().commit(); // insert id=2, bar, Foo2	,
+		session.close();
+/ insert, update	, 
+1,foo, Foo2
+2,bar, Foo2
+
+		session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		item.setCity("Bar");
+/ item.id=2
+		session.update(item);
+		item.setName("bar");
+        
+		session.getTransaction().commit(); // insert id=2
+		session.close();
+/ update	, 
+1,foo, Foo2
+2,bar, Bar 
+
+
+/ Een aantal gevallen	,
+
+/ een transient kunnen we niet update	, 
+
+		Item item2=new Item("foo","Bar");
+		session.update(item2);
+TransientObjectException(Throwable).printStackTrace() line: 634	
+
+/ een row die er niet is , kunnen we niet update	,
+
+		Item item2=new Item(7l,"foo","Bar");
+		session.update(item2);
+StaleStateException	,
+
+		Item item2=new Item(2l,"foo","Bar");
+		session.update(item2);
+/ OK
+
+/ Samenvatting
+
+/ See ook	,
+DefaultSaveEventListener(AbstractSaveEventListener).performSaveOrReplicate(Object, EntityKey, EntityPersister, boolean, Object, EventSource, boolean) line: 243	
+
+/ een update adds een dirty entry in de pc	, in deze entry zit loadedState=null, want deze update hoeft niet te vergl te worden met een latere update TODO 
+/ de key is de item	,  als we na de .update het item nog veranderen, met .setName bijv, gaat deze gewoon mee: de key is het item zelf	,
+
+/ een .save adds een dirty entry in pc, schedules een insert, 
+.commit schedules een update	 (als er is),
+
+/ een .update adds een dirty entry in pc, 
+.commit schedules een update	,
+
+/ in de pc is er key=entity:value=entry, in entity zijn recent values, in entry (dirty) misschien loadedValues	 = properties entity bij .save (insert).
+
+/ Einde  Samenvatting
+
+/ 13	.
+
+/ .update	,
+        
+
+/ item=1,foo, Foo2	,
+ /we gaan debug	,
+		item.setCity("Bar");
+/ item is GEEN proxy	,
+		session.update(item);
+		item.setName("bar");
+
+/s
+	private void fireUpdate(SaveOrUpdateEvent event) {
+			listener.onSaveOrUpdate( event );
+/s
+DefaultUpdateEventListener(DefaultSaveOrUpdateEventListener).onSaveOrUpdate(SaveOrUpdateEvent) line: 68	
+			event.setResultId( performSaveOrUpdate( event ) );
+/s
+DefaultUpdateEventListener.performSaveOrUpdate(SaveOrUpdateEvent) line: 45	
+		else {
+			entityIsDetached(event);
+/s
+DefaultUpdateEventListener(DefaultSaveOrUpdateEventListener).entityIsDetached(SaveOrUpdateEvent) line: 229
+		event.setRequestedId(
+				getUpdateId(
+						entity, persister, event.getRequestedId(), event.getSession()
+				)
+		);
+		performUpdate( event, entity, persister );
+/s
+DefaultUpdateEventListener(DefaultSaveOrUpdateEventListener).performUpdate(SaveOrUpdateEvent, Object, EntityPersister) line: 301	
+		final EntityKey key = source.generateEntityKey( event.getRequestedId(), persister );
+/ requested id hebben we zojuist set	,
+
+		source.getPersistenceContext().addEntity(
+				entity,
+				( persister.isMutable() ? Status.MANAGED : Status.READ_ONLY ),
+				null, // cachedState,
+				key,
+				persister.getVersion( entity ),
+				LockMode.NONE,
+				true,
+				persister,
+				false,
+				true // assume true, since we don't really know, and it doesn't matter
+		);
+/s
+		entityEntryContext.addEntityEntry( entity, e );
+/ adds dirty entry e achther key=entity in de pc	,
+
+/ 13	.
+
+/ .commit
+
+		session.getTransaction().commit();
+
+/s
+DefaultFlushEventListener.onFlush(FlushEvent) line: 55	
+
+/we gaan	,
+				flushEverythingToExecutions( event );
+				performExecutions( source );
+
+/ eerst	,
+				flushEverythingToExecutions( event );
+/s
+DefaultFlushEventListener(AbstractFlushingEventListener).flushEverythingToExecutions(FlushEvent) line: 84	
+			int entityCount = flushEntities( event, persistenceContext );
+/s
+DefaultFlushEventListener(AbstractFlushingEventListener).flushEntities(FlushEvent, PersistenceContext) line: 231	
+				final FlushEntityEvent entityEvent = new FlushEntityEvent( source, me.getKey(), entry );
+				for ( FlushEntityEventListener listener : flushListeners ) {
+					listener.onFlushEntity( entityEvent );
+/s
+DefaultFlushEntityEventListener.onFlushEntity(FlushEntityEvent) line: 152	
+		final Object entity = event.getEntity();
+/ Item inst, with most current properties	,
+
+		final Object[] values = getValues( entity, entry, mightBeDirty, session );
+/ most recent props uit entity=Item inst	,
+		event.setPropertyValues( values );
+
+		if ( isUpdateNecessary( event, mightBeDirty ) ) {
+			substitute = scheduleUpdate( event ) || substitute;
+
+/ eerst	,
+		if ( isUpdateNecessary( event, mightBeDirty ) ) {
+/s
+DefaultFlushEntityEventListener.isUpdateNecessary(FlushEntityEvent, boolean) line: 229	
+			dirtyCheck( event );
+/s
+DefaultFlushEntityEventListener.dirtyCheck(FlushEntityEvent) line: 544	
+
+		final Object entity = event.getEntity();
+		final Object[] values = event.getPropertyValues();
+/ meest recente props van entity=Item inst	,
+		final Object[] loadedState = entry.getLoadedState();
+null
+				cannotDirtyCheck = loadedState == null;
+				if ( !cannotDirtyCheck ) {
+/ NEE
+					// dirty check against the usual snapshot of the entity
+					dirtyProperties = persister.findDirty( values, loadedState, entity, session );
+/ NIET	,
+/ Dus bij .update GEEN dirty check	,
+
+		event.setDirtyProperties( dirtyProperties );
+null
+
+/t
+DefaultFlushEntityEventListener.isUpdateNecessary(FlushEntityEvent, boolean) line: 234	
+			dirtyCheck( event );
+/ D
+event	FlushEntityEvent  (id=231)	
+	dirtyCheckPossible	false	
+	dirtyProperties	null	
+
+			if ( isUpdateNecessary( event ) ) {
+/ JA	, want	,
+/ s
+	private boolean isUpdateNecessary(final FlushEntityEvent event, final boolean mightBeDirty) {
+			dirtyCheck( event );
+event	FlushEntityEvent  (id=2773)	
+	dirtyCheckPossible	false	
+	dirtyProperties	null	
+/ bij insert was dirtyProperties [1]	, waar 1 de index van de prop die overwritten is	,
+
+		if ( !event.isDirtyCheckPossible() ) {
+			return true;
+		}
+/ Dus het doet de update omdat de check niet possible is	,
+
+/t
+DefaultFlushEntityEventListener.isUpdateNecessary(FlushEntityEvent, boolean) line: 234	
+			if ( isUpdateNecessary( event ) ) {
+/ JA
+				return true;
+
+/t
+DefaultFlushEntityEventListener.onFlushEntity(FlushEntityEvent) line: 160	
+		if ( isUpdateNecessary( event, mightBeDirty ) ) {
+/ JA
+			substitute = scheduleUpdate( event ) || substitute;
+/s
+DefaultFlushEntityEventListener.scheduleUpdate(FlushEntityEvent) line: 257	
+	private boolean scheduleUpdate(final FlushEntityEvent event) {
+		final EntityEntry entry = event.getEntityEntry();
+		final Object entity = event.getEntity();
+		final Object[] values = event.getPropertyValues();
+/ bar, Bar	,
+/ NB. er staat event.property values, NIET entry.property values=null	,
+
+		// schedule the update
+		// note that we intentionally do _not_ pass in currentPersistentState!
+/ TODO
+		session.getActionQueue().addAction(
+				new EntityUpdateAction(
+						entry.getId(),
+						values,
+bar, Bar
+						dirtyProperties,
+						event.hasDirtyCollection(),
+						( status == Status.DELETED && !entry.isModifiableEntity() ?
+								persister.getPropertyValues( entity ) :
+								entry.getLoadedState() ),
+						entry.getVersion(),
+						nextVersion,
+						entity,
+						entry.getRowId(),
+						persister,
+						session
+				)
+		);
+
+/ we zien 	,
+session	SessionImpl  (id=174)	
+	actionQueue	ActionQueue  (id=2790)	
+		updates	ExecutableList<E>  (id=2802)	
+			executables	ArrayList<E>  (id=2803)	
+[EntityUpdateAction[org.hibernate.book.hbm.Item#1]]
+
+
+
+
+/ 7	. 
+
+/ .update een transient	, ERR	,
+
+		Item item9=new Item("gee","Gee");
+		session.update(item9);
+
+/s
+DefaultUpdateEventListener(DefaultSaveOrUpdateEventListener).entityIsDetached(SaveOrUpdateEvent) line: 238	
+		event.setRequestedId(
+				getUpdateId(
+						entity, persister, event.getRequestedId(), event.getSession()
+				)
+		);
+/s
+DefaultUpdateEventListener.getUpdateId(Object, EntityPersister, Serializable, SessionImplementor) line: 70	
+			return super.getUpdateId( entity, persister, requestedId, session );
+/s
+DefaultUpdateEventListener(DefaultSaveOrUpdateEventListener).getUpdateId(Object, EntityPersister, Serializable, SessionImplementor) line: 270	
+		Serializable id = persister.getIdentifier( entity, session );
+		if ( id == null ) {
+			// assume this is a newly instantiated transient object
+			// which should be saved rather than updated
+			throw new TransientObjectException(
+					"The given object has a null identifier: " +
+							persister.getEntityName()
+			);
+
+/ 7	.
+
+		Item item9=(Item)session.load(Item.class,1l);
+		item9.setCity("Bar");
+		session.update(item9);
+		item9.setName("bar");
+        
+		session.getTransaction().commit();
+
+/ OK	,
+/ we kunnen net zo goed een initialized proxy geven: item9 is proxy en er wordt handler.target ertussen gezet	, 
+
+/ 7	.
+
+/ .update sets item in pc	,
+/ . commit adds een update in action queue	,
+/ de 2de .update hieronder doet NIETS	,
+
+		item.setCity("Bar");
+		session.update(item);
+		item.setName("bar");
+		session.update(item);
+		item.setCity("Baz");
+
+/ we debug de 2de .update	,
+
+/ s
+SessionImpl.fireUpdate(SaveOrUpdateEvent) line: 739	
+		for ( SaveOrUpdateEventListener listener : listeners( EventType.UPDATE ) ) {
+			listener.onSaveOrUpdate( event );
+/s
+DefaultUpdateEventListener(DefaultSaveOrUpdateEventListener).onSaveOrUpdate(SaveOrUpdateEvent) line: 90	
+			event.setResultId( performSaveOrUpdate( event ) );
+/s
+DefaultUpdateEventListener.performSaveOrUpdate(SaveOrUpdateEvent) line: 46	
+		EntityEntry entry = event.getSession().getPersistenceContext().getEntry( event.getEntity() );
+/ NIET null	,
+		if ( entry!=null ) {
+/ JA
+				return entityIsPersistent(event);
+/ EN NIET,
+		else {
+			entityIsDetached(event);
+
+/s
+DefaultUpdateEventListener(DefaultSaveOrUpdateEventListener).entityIsPersistent(SaveOrUpdateEvent) line: 119	
+			Serializable requestedId = event.getRequestedId();
+null
+			if ( requestedId == null ) {
+/ JA
+				savedId = entityEntry.getId();
+Long 1
+			return savedId;
+
+/t
+DefaultUpdateEventListener(DefaultSaveOrUpdateEventListener).onSaveOrUpdate(SaveOrUpdateEvent) line: 90	
+			event.setResultId( performSaveOrUpdate( event ) );
+
+/ Dus de 2de .update doet NIETS	,
+
+/ 7	.
+
+		Item item9=(Item)session.load(Item.class,1l);
+LOAD
+		item9.setCity("Bar");
+IMMEDIATE_LOAD
+		session.update(item9);
+
+/ we debug de .update	,
+
+/ In 	,
+	public void onLoad(LoadEvent event, LoadEventListener.LoadType loadType) throws HibernateException {
+			if ( loadType.isNakedEntityReturned() ) {
+IMMEDIATE_LOAD
+				//do not return a proxy!
+				//(this option indicates we are initializing a proxy)
+				event.setResult( load( event, persister, keyToLoad, loadType ) );
+			}
+			else {
+LOAD, GET
+				//return a proxy if appropriate
+				if ( event.getLockMode() == LockMode.NONE ) {
+					event.setResult( proxyOrLoad( event, persister, keyToLoad, loadType ) );
+/s
+DefaultLoadEventListener.proxyOrLoad(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType) line: 270	
+			return createProxyIfNecessary( event, persister, keyToLoad, options, persistenceContext );
+/s
+DefaultLoadEventListener.createProxyIfNecessary(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType, PersistenceContext) line: 349	
+		Object proxy = persister.createProxy( event.getEntityId(), event.getSession() );
+/s
+PojoEntityTuplizer(AbstractEntityTuplizer).createProxy(Serializable, SessionImplementor) line: 771	
+		return getProxyFactory().getProxy( id, session );
+/s
+JavassistProxyFactory.getProxy(Serializable, SessionImplementor) line: 75	
+		return JavassistLazyInitializer.getProxy(
+				factory,
+				entityName,
+				persistentClass,
+				interfaces,
+				getIdentifierMethod,
+				setIdentifierMethod,
+				componentIdType,
+				id,
+				session,
+				overridesEquals
+		);
+
+/t
+DefaultLoadEventListener.createProxyIfNecessary(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType, PersistenceContext) line: 350	
+		Object proxy = persister.createProxy( event.getEntityId(), event.getSession() );
+/ D
+proxy	Item_$$_jvst348_0  (id=2726)	
+	handler	JavassistLazyInitializer  (id=2728)	
+		id	Long  (id=2646)	
+		target	Item  (id=2741)	
+
+/t
+Main6.testBasicUsage() line: 111	
+		Item item9=(Item)session.load(Item.class,1l);
+/ D
+		item9.setCity("Bar");
+/ IMMEDIATE_LOAD
+...
+/s
+EntityLoader(AbstractLoadPlanBasedLoader).executeQueryStatement(String, QueryParameters, boolean, List<AfterLoadAction>, SessionImplementor) line: 202	
+		return new SqlStatementWrapper( st, getResultSet( st, queryParameters.getRowSelection(), limitHandler, queryParameters.hasAutoDiscoverScalarTypes(), session ) );
+...
+/s
+EntityLoader(AbstractLoadPlanBasedLoader).executeLoad(SessionImplementor, QueryParameters, LoadQueryDetails, boolean, ResultTransformer, List<AfterLoadAction>) line: 138	
+				wrapper = executeQueryStatement( sql, queryParameters, false, afterLoadActions, session );
+/s
+EntityLoader(AbstractLoadPlanBasedLoader).getResultSet(PreparedStatement, RowSelection, LimitHandler, boolean, SessionImplementor) line: 449	
+			ResultSet rs = session.getTransactionCoordinator().getJdbcCoordinator().getResultSetReturn().extract( st );
+/s
+ResultSetReturnImpl.extract(PreparedStatement) line: 80	
+				rs = statement.executeQuery();
+...
+/t
+EntityLoader(AbstractLoadPlanBasedLoader).executeLoad(SessionImplementor, QueryParameters, LoadQueryDetails, boolean, ResultTransformer, List<AfterLoadAction>) line: 138	
+				wrapper = executeQueryStatement( sql, queryParameters, false, afterLoadActions, session );
+/ D
+				results = loadQueryDetails.getResultSetProcessor().extractResults(
+						wrapper.getResultSet(),
+						session,
+						queryParameters,
+						new NamedParameterContext() {
+							@Override
+							public int[] getNamedParameterLocations(String name) {
+								return AbstractLoadPlanBasedLoader.this.getNamedParameterLocs( name );
+							}
+						},
+						returnProxies,
+						queryParameters.isReadOnly(),
+						forcedResultTransformer,
+						afterLoadActions
+				);
+			}
+/s
+ResultSetProcessorImpl.extractResults(ResultSet, SessionImplementor, QueryParameters, NamedParameterContext, boolean, boolean, ResultTransformer, List<AfterLoadAction>) line: 126	
+		for ( count = 0; count < maxRows && resultSet.next(); count++ ) {
+			Object logicalRow = rowReader.readRow( resultSet, context );
+...
+/s
+EntityReferenceInitializerImpl.loadFromResultSet(ResultSet, ResultSetProcessingContext, Object, String, EntityKey, LockMode) line: 310	
+		TwoPhaseLoad.addUninitializedEntity(
+				entityKey,
+				entityInstance,
+				concreteEntityPersister,
+				lockModeToAcquire,
+				!context.getLoadPlan().areLazyAttributesForceFetched(),
+				context.getSession()
+		);
+entityInstance	Item  (id=2675)	
+	bids	HashSet<E>  (id=2695)	
+	city	null	
+	id	Long  (id=2696)	
+	name	null	
+/ Klopt, hij had al Item.setId gedaan	,
+/s
+TwoPhaseLoad.addUninitializedEntity(EntityKey, Object, EntityPersister, LockMode, boolean, SessionImplementor) line: 360	
+		session.getPersistenceContext().addEntity(
+				object,
+				Status.LOADING,
+				null,
+/=loadedState
+				key,
+				null,
+				lockMode,
+				true,
+				persister,
+				false,
+				lazyPropertiesAreUnFetched
+		);
+/s
+		entityEntryContext.addEntityEntry( entity, e );
+/s
+		dirty = true;
+this	EntityEntryContext  (id=2707)	
+
+/t
+EntityReferenceInitializerImpl.loadFromResultSet(ResultSet, ResultSetProcessingContext, Object, String, EntityKey, LockMode) line: 310	
+			values = concreteEntityPersister.hydrate(
+					resultSet,
+					id,
+					entityInstance,
+					(Loadable) entityReference.getEntityPersister(),
+					concreteEntityPersister == rootEntityPersister
+							? entityReferenceAliases.getColumnAliases().getSuffixedPropertyAliases()
+							: entityReferenceAliases.getColumnAliases().getSuffixedPropertyAliases( concreteEntityPersister ),
+					context.getLoadPlan().areLazyAttributesForceFetched(),
+					context.getSession()
+			);
+[bar, Baz]
+/ Haalt values uit de rs	,
+
+		TwoPhaseLoad.postHydrate(
+				concreteEntityPersister,
+				id,
+				values,
+				rowId,
+				entityInstance,
+				lockModeToAcquire,
+				!context.getLoadPlan().areLazyAttributesForceFetched(),
+				context.getSession()
+		);
+/ de values [bar,Baz] komen in de entry's loadedState, de entity blijft uninitialized TODO	,
+entityInstance	Item  (id=2675)	
+	bids	HashSet<E>  (id=2695)	
+	city	null	
+	id	Long  (id=2696)	
+	name	null	
+
+/t
+ResultSetProcessorImpl.extractResults(ResultSet, SessionImplementor, QueryParameters, NamedParameterContext, boolean, boolean, ResultTransformer, List<AfterLoadAction>) line: 140	
+		for ( count = 0; count < maxRows && resultSet.next(); count++ ) {
+			Object logicalRow = rowReader.readRow( resultSet, context );
+/ D
+		rowReader.finishUp( context, afterLoadActionList );
+...
+/s
+EntityLoadQueryDetails$EntityLoaderRowReader(AbstractRowReader).performTwoPhaseLoad(PreLoadEvent, ResultSetProcessingContextImpl, List<HydratedEntityRegistration>) line: 244	
+		for ( HydratedEntityRegistration registration : hydratedEntityRegistrations ) {
+			TwoPhaseLoad.initializeEntity(
+					registration.getInstance(),
+					context.isReadOnly(),
+					context.getSession(),
+					preLoadEvent
+			);
+/s
+		final EntityEntry entityEntry = persistenceContext.getEntry( entity );
+		doInitializeEntity( entity, entityEntry, readOnly, session, preLoadEvent );
+/s
+TwoPhaseLoad.doInitializeEntity(Object, EntityEntry, boolean, SessionImplementor, PreLoadEvent) line: 188	
+		persister.setPropertyValues( entity, hydratedState );
+/ calls Item.setName, .setCity	,
+
+
+/t
+Main6.testBasicUsage() line: 122	
+
+		session.update(item9);
+/ Doet NIETS	,
+...
+/s
+DefaultUpdateEventListener(DefaultSaveOrUpdateEventListener).onSaveOrUpdate(SaveOrUpdateEvent) line: 90	
+		else {
+			//initialize properties of the event:
+			final Object entity = source.getPersistenceContext().unproxyAndReassociate( object );
+entity	Item  (id=2707)	
+/ entity==object 
+			event.setEntity( entity );
+			event.setEntry( source.getPersistenceContext().getEntry( entity ) );
+			//return the id in the event object
+			event.setResultId( performSaveOrUpdate( event ) );
+/s
+DefaultUpdateEventListener.performSaveOrUpdate(SaveOrUpdateEvent) line: 51	
+		EntityEntry entry = event.getSession().getPersistenceContext().getEntry( event.getEntity() );
+			else {
+				return entityIsPersistent(event);
+/s
+			Serializable requestedId = event.getRequestedId();
+null
+			Serializable savedId;
+			if ( requestedId == null ) {
+				savedId = entityEntry.getId();
+Long 1
+			return savedId;
+
+/t
+Main6.testBasicUsage() line: 113	
+	session.update(item9);
+/ D
+
+
+/ 7	. 
+
+	Item item8=(Item)session.load(Item.class,1l);
+	session.update(item8);
+/ Doet NIETS	,
+
+	Item item8=(Item)session.load(Item.class,1l);
+	session.save(item8);
+/ ERR
+
+
+
+
+
+
+/ 7. 
+
+		Item item9=(Item)session.load(Item.class,1l);
+		session.update(item9);
+		session.getTransaction().commit();
+/ NIETS gebeurt er	,
+/ Klopt, er is niets in de pc	,
+
+/ 7	.
+
+/ SAMENVATTING
+
+		Item item=new Item("foo","Foo");
+		session.update(item); 
+/ ERR
+e	TransientObjectException  (id=45)	
+
+		Item item=new Item(7l,"foo","Foo");
+		session.update(item); 
+/ in pc	, 
+		item.setCity("Foo2");
+		session.getTransaction().commit();
+/ ERR
+e	StaleStateException  (id=130)	
+org.hibernate.StaleStateException: Batch update returned unexpected row count from update [0]; actual row count: 0; expected: 1
+
+/ item detached, dwz heeft id	, dwz. =new Item(1l,"foo","Foo"), en er is een row in tbl item met id=1	, 
+		item.setCity("Bar");
+		session.update(item);
+/ in pc	,
+		item.setName("bar");
+		session.update(item);
+/ NIETS
+		item.setCity("Baz");
+		session.getTransaction().commit();
+
+		Item item9=(Item)session.load(Item.class,1l);
+		item9.setCity("Bar");
+in pc	,
+		session.update(item9);
+		session.getTransaction().commit();
+		
+
+		Item item8=(Item)session.load(Item.class,1l);
+		session.update(item8);
+/ NIETS
+		item8.setName("bar");
+/ in pc	,
+		session.getTransaction().commit();
+
+/ 7	.
+
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+
+		Item item=new Item("foo","Foo");
+		session.save(item); 
+		item.setCity("Foo2");
+		
+		session.getTransaction().commit();
+		session.close();
+		
+		session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		item.setCity("Bar");
+		session.update(item);
+		item.setName("bar");
+		session.update(item);
+
+		session.getTransaction().commit();
+		session.close();
+		
+		session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		Item item1=new Item(1l,"gee","Gee");
+		session.update(item1);
+
+		session.getTransaction().commit();
+		session.close();
+		
+/ OK	, in table row 1 1,gee, Gee  
+
+
+/ 7	. 
+
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+
+		Item item=new Item("foo","Foo");
+		session.save(item); 
+		item.setCity("Foo2");
+		
+		session.getTransaction().commit();
+		session.close();
+		
+		session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		item.setCity("Bar");
+		session.update(item);
+		item.setName("bar");
+		session.update(item);
+		
+		Item item1=new Item(1l,"gee","Gee");
+		session.update(item1);
+/ ERR	,
+e	NonUniqueObjectException  (id=45)	
+org.hibernate.NonUniqueObjectException: A different object with the same identifier value was already associated with the session : [org.hibernate.book.hbm.Item#1]
+/ Er was er al een	,
+/ want	,
+/s
+DefaultUpdateEventListener(DefaultSaveOrUpdateEventListener).onSaveOrUpdate(SaveOrUpdateEvent) line: 90	
+		else {
+			//initialize properties of the event:
+			final Object entity = source.getPersistenceContext().unproxyAndReassociate( object );
+/ entity==object
+item1
+			event.setEntity( entity );
+			event.setEntry( source.getPersistenceContext().getEntry( entity ) );
+null
+			//return the id in the event object
+			event.setResultId( performSaveOrUpdate( event ) );
+/s
+DefaultUpdateEventListener.performSaveOrUpdate(SaveOrUpdateEvent) line: 55	
+
+		EntityEntry entry = event.getSession().getPersistenceContext().getEntry( event.getEntity() );
+null
+		if ( entry!=null ) {
+/ NEE
+				return entityIsPersistent(event);
+/ NIET
+			}
+		}
+		else {
+/ JA
+			entityIsDetached(event);		
+/s
+DefaultUpdateEventListener(DefaultSaveOrUpdateEventListener).entityIsDetached(SaveOrUpdateEvent) line: 238	
+		event.setRequestedId(
+				getUpdateId(
+						entity, persister, event.getRequestedId(), event.getSession()
+				)
+		);
+Long 1
+/ komt uit item1	,
+
+		performUpdate( event, entity, persister );
+/s
+DefaultUpdateEventListener(DefaultSaveOrUpdateEventListener).performUpdate(SaveOrUpdateEvent, Object, EntityPersister) line: 301	
+		final EntityKey key = source.generateEntityKey( event.getRequestedId(), persister );
+		source.getPersistenceContext().checkUniqueness( key, entity );
+/ s
+StatefulPersistenceContext.checkUniqueness(EntityKey, Object) line: 617	
+/=
+	public void checkUniqueness(EntityKey key, Object object) throws HibernateException {
+
+this	StatefulPersistenceContext  (id=53)	
+/= pc	,
+		final Object entity = getEntity( key );
+/s
+		return entitiesByKey.get( key );
+/ oude, die al in de pc is	,
+
+		if ( entity == object ) {
+/ NEE
+			throw new AssertionFailure( "object already associated, but no entry was found" );
+		}
+		if ( entity != null ) {
+/ JA
+			throw new NonUniqueObjectException( key.getIdentifier(), key.getEntityName() );
+		}
+
+
+
+
+/ 7	.
+
+		Item item1=(Item)session.load(Item.class, 1l);
+		session.save(item1);
+/ ERR
+org.hibernate.PersistentObjectException: uninitialized proxy passed to save()
+
+/ maar	,
+
+		Item item1=(Item)session.load(Item.class, 1l);
+		item1.setName("bar")
+		session.save(item1);
+/ OK
+
+/ 7	.
+
+/ Main4	,
+
+/ item is detached	,
+        Item item3=(Item)session.load(Item.class,1l);
+/ proxy	,
+        session.update(item); 
+/ item in pc	,
+        item3.setName("fourth");
+/ item3 is proxy en z'n target =item	, Hibernate IMMEDIATE_LOAD vindt obj in pc, gaat niet naar db, 	
+        item.setCity("Gee");
+    	session.getTransaction().commit();
+
+/ we gaan debug	,
+        item3.setName("fourth");
+...
+/s
+DefaultLoadEventListener.load(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType) line: 214	
+		Object entity = doLoad( event, persister, keyToLoad, options );
+/ Haalt entity uit pc, NIET uit db	,
+/ Voor het eerst bij ons	,
+/////////////////////////////////////
+/s
+DefaultLoadEventListener.doLoad(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType) line: 431	
+		Object entity = loadFromSessionCache( event, keyToLoad, options );
+item
+///////////////////////////////////////
+/ Hier komt nu iets uit: dat is de 1ste keer	,
+/ s
+DefaultLoadEventListener.loadFromSessionCache(LoadEvent, EntityKey, LoadEventListener$LoadType) line: 540	
+		SessionImplementor session = event.getSession();
+		Object old = session.getEntityUsingInterceptor( keyToLoad );
+/s
+SessionImpl.getEntityUsingInterceptor(EntityKey) line: 634	
+		final Object result = persistenceContext.getEntity(key);
+			return result;
+//////////////////
+/ Dit is dus uit de pc's entitiesByKey	,
+
+/t
+DefaultLoadEventListener.loadFromSessionCache(LoadEvent, EntityKey, LoadEventListener$LoadType) line: 545	
+		if ( old != null ) {
+			// this object was already loaded
+			EntityEntry oldEntry = session.getPersistenceContext().getEntry( old );
+...
+	return old;
+
+/t
+DefaultLoadEventListener.doLoad(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType) line: 431	
+		Object entity = loadFromSessionCache( event, keyToLoad, options );
+/ OK 
+			return entity;
+/t
+DefaultLoadEventListener.load(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType) line: 214	
+		return entity;
+/ t
+	event.set...(entity)
+/t
+	return event.getResult();
+/t
+JavassistLazyInitializer(AbstractLazyInitializer).initialize() line: 174	
+			else {
+				target = session.immediateLoad( entityName, id );
+
+						returnValue = thisMethod.invoke( target, args );
+/ Hier is het om te doen	,
+/s
+Item.setName(String) line: 63	
+/ sets item.name	,
+
+/ D
+item
+
+/ Intermezzo
+
+/ we waren in	,
+      	Item item3=(Item)session.load(Item.class,1l);
+        session.update(item); // no query, item is D, already in mem, -> in pc
+/ item in pc	,
+        item3.setName("fourth");// updates Item in pc, hier geen query, 
+/ item3=proxy, en z'n target=item	, dus item.name wordt set	,
+
+
+/ Einde Intermezzo
+
+/ 7	. 
+
+/ .get
+
+/ HIER HIER
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/ Einde HIBERNATE DEBUG
+
+
+
+/ ECLIPSE MAVEN
+
+/ Lees	,
+http://stackoverflow.com/questions/12199457/why-can-i-run-my-program-after-cleaning-in-eclipse-and-maven
+
+/ we start	,
+[eric@localhost eclipse-jee-test]$ eclipse/eclipse 
+
+/ we import getold2
+File, import..., Maven, existing maven projects
+/ select getold2
+
+/ select pom.xml, right click , maven clean
+/ Project, deselect Build automatically
+/ Dan inderdaad target/ rm in file system , 
+/ als we select Build automatically, dan doet 
+$ mvn clean compile
+/ en verschijnt target weer	, 
+
+/ select src/main/java 
+Main.java
+, right click en Debug as ...
+/ Dit hoeven we maar 1 keer te doen	, want	
+/ dan wordt er een Debug configuration create, en deze kunnen we vervolgens kiezen onder Run, Debug configurations	, Java Application, Main	, click Debug	,	
+
+//////////////////////////////
+/ we hoeven NIET,
+$ mvn assembly:assembly
+
+/ we hebben onder Debug Configurations	,
+
+Java Application
+	Main
+Maven Build
+	getold2
+/ TODO
+
+
+/ Einde ECLIPSE MAVEN
+
+/ HIBERNATE FETCHING AND CACHING
+
+
+
+/ Einde  HIBERNATE FETCHING AND CACHING
+
+
+
+/ HIBERNATE
+
+/ 7	. 
+
+/ auto
+
+$ vi hibernate.cfg.xml
+
+        <property name="hbm2ddl.auto">create</property>
+
+/ $ mvn clean assembly:assembly 
+/ creates NIET auto.* files in data/	,  sets hibernate.cfg.xml in de hsqldb-1.0-SNAPSHOT-jar-with-dependencies.jar	,
+
+[eric@localhost hsqldb]$ java -cp target/hsqldb-1.0-SNAPSHOT-jar-with-dependencies.jar org.hibernate.book.hbm.Main
+/ creates auto.* files in data/ WEL	,
+
+
+
+$ vi data/auto.script
+SET DATABASE UNIQUE NAME HSQLDB4641899D00
+SET DATABASE GC 0
+SET DATABASE DEFAULT RESULT MEMORY ROWS 0
+SET DATABASE EVENT LOG LEVEL 0
+SET DATABASE TRANSACTION CONTROL LOCKS
+SET DATABASE DEFAULT ISOLATION LEVEL READ COMMITTED
+SET DATABASE TRANSACTION ROLLBACK ON CONFLICT TRUE
+SET DATABASE TEXT TABLE DEFAULTS ''
+SET DATABASE SQL NAMES FALSE
+SET DATABASE SQL REFERENCES FALSE
+SET DATABASE SQL SIZE TRUE
+SET DATABASE SQL TYPES FALSE
+SET DATABASE SQL TDC DELETE TRUE
+SET DATABASE SQL TDC UPDATE TRUE
+SET DATABASE SQL TRANSLATE TTI TYPES TRUE
+SET DATABASE SQL CONCAT NULLS TRUE
+SET DATABASE SQL UNIQUE NULLS TRUE
+SET DATABASE SQL CONVERT TRUNCATE TRUE
+SET DATABASE SQL AVG SCALE 0
+SET DATABASE SQL DOUBLE NAN TRUE
+SET FILES WRITE DELAY 500 MILLIS
+SET FILES BACKUP INCREMENT TRUE
+SET FILES CACHE SIZE 10000
+SET FILES CACHE ROWS 50000
+SET FILES SCALE 32
+SET FILES LOB SCALE 32
+SET FILES DEFRAG 0
+SET FILES NIO TRUE
+SET FILES NIO SIZE 256
+SET FILES LOG TRUE
+SET FILES LOG SIZE 50
+CREATE USER SA PASSWORD DIGEST 'd41d8cd98f00b204e9800998ecf8427e'
+ALTER USER SA SET LOCAL TRUE
+CREATE SCHEMA PUBLIC AUTHORIZATION DBA
+ALTER SEQUENCE SYSTEM_LOBS.LOB_ID RESTART WITH 1
+SET DATABASE DEFAULT INITIAL SCHEMA PUBLIC
+GRANT USAGE ON DOMAIN INFORMATION_SCHEMA.SQL_IDENTIFIER TO PUBLIC
+GRANT USAGE ON DOMAIN INFORMATION_SCHEMA.YES_OR_NO TO PUBLIC
+GRANT USAGE ON DOMAIN INFORMATION_SCHEMA.TIME_STAMP TO PUBLIC
+GRANT USAGE ON DOMAIN INFORMATION_SCHEMA.CARDINAL_NUMBER TO PUBLIC
+GRANT USAGE ON DOMAIN INFORMATION_SCHEMA.CHARACTER_DATA TO PUBLIC
+GRANT DBA TO SA
+
+$ less data/auto.log
+/*C1*/SET SCHEMA SYSTEM_LOBS
+INSERT INTO BLOCKS VALUES(0,2147483647,0)
+COMMIT
+/*C2*/SET SCHEMA PUBLIC
+drop table Bid if exists
+drop table Item if exists
+create table Bid (id bigint not null, item_ bigint not null, primary key (id))
+create table Item (id_ bigint not null, name varchar(255), city varchar(255), primary key (id_))
+alter table Bid add constraint FK_1oe7ovx41gdrk9aw4qralynau foreign key (item_) references Item
+INSERT INTO ITEM VALUES(1,'first','Vlaardingen')
+INSERT INTO BID VALUES(1,1)
+INSERT INTO BID VALUES(2,1)
+COMMIT
+DISCONNECT
+
+
+$ vi hibernate.cfg.xml
+
+<!--
+        <property name="hbm2ddl.auto">create</property>
+-->
+
+[eric@localhost hsqldb]$ mvn clean assembly:assembly
+[eric@localhost hsqldb]$ java -cp target/hsqldb-1.0-SNAPSHOT-jar-with-dependencies.jar org.hibernate.book.hbm.Main
+
+$ less data/auto.script
+...
+CREATE SCHEMA PUBLIC AUTHORIZATION DBA
+/ Was er al
+
+SET SCHEMA PUBLIC
+CREATE MEMORY TABLE PUBLIC.BID(ID BIGINT NOT NULL PRIMARY KEY,ITEM_ BIGINT NOT NULL)
+CREATE MEMORY TABLE PUBLIC.ITEM(ID_ BIGINT NOT NULL PRIMARY KEY,NAME VARCHAR(255),CITY VARCHAR(255))
+ALTER TABLE PUBLIC.BID ADD CONSTRAINT FK_1OE7OVX41GDRK9AW4QRALYNAU FOREIGN KEY(ITEM_) REFERENCES PUBLIC.ITEM(ID_)
+/ Nieuw
+
+ALTER SEQUENCE SYSTEM_LOBS.LOB_ID RESTART WITH 1
+SET DATABASE DEFAULT INITIAL SCHEMA PUBLIC
+GRANT USAGE ON DOMAIN INFORMATION_SCHEMA.SQL_IDENTIFIER TO PUBLIC
+GRANT USAGE ON DOMAIN INFORMATION_SCHEMA.YES_OR_NO TO PUBLIC
+GRANT USAGE ON DOMAIN INFORMATION_SCHEMA.TIME_STAMP TO PUBLIC
+GRANT USAGE ON DOMAIN INFORMATION_SCHEMA.CARDINAL_NUMBER TO PUBLIC
+GRANT USAGE ON DOMAIN INFORMATION_SCHEMA.CHARACTER_DATA TO PUBLIC
+GRANT DBA TO SA
+/ Was er al	,
+
+SET SCHEMA SYSTEM_LOBS
+INSERT INTO BLOCKS VALUES(0,2147483647,0)
+SET SCHEMA PUBLIC
+INSERT INTO BID VALUES(1,1)
+INSERT INTO BID VALUES(2,1)
+INSERT INTO ITEM VALUES(1,'first','Vlaardingen')
+/ Nieuw	,
+
+
+$ less data/auto.log
+/*C3*/SET SCHEMA PUBLIC
+INSERT INTO ITEM VALUES(2,'first','Vlaardingen')
+INSERT INTO BID VALUES(3,2)
+INSERT INTO BID VALUES(4,2)
+COMMIT
+DISCONNECT
+/ Nieuw	, alles is nieuw	,
+
+
+[eric@localhost hsqldb]$ java -cp target/hsqldb-1.0-SNAPSHOT-jar-with-dependencies.jar org.hibernate.book.hbm.Main
+
+$ vi data/auto.script
+...
+GRANT DBA TO SA
+SET SCHEMA SYSTEM_LOBS
+INSERT INTO BLOCKS VALUES(0,2147483647,0)
+SET SCHEMA PUBLIC
+INSERT INTO BID VALUES(1,1)
+INSERT INTO BID VALUES(2,1)
+/ Was er al	,
+
+INSERT INTO BID VALUES(3,2)
+INSERT INTO BID VALUES(4,2)
+/ Nieuw	,
+
+INSERT INTO ITEM VALUES(1,'first','Vlaardingen')
+/ Was er al,
+
+INSERT INTO ITEM VALUES(2,'first','Vlaardingen')
+/ Nieuw	,
+
+$ vi data/auto.log
+/*C3*/SET SCHEMA PUBLIC
+INSERT INTO ITEM VALUES(3,'first','Vlaardingen')
+INSERT INTO BID VALUES(5,3)
+INSERT INTO BID VALUES(6,3)
+COMMIT
+DISCONNECT
+/ Helemaal nieuw	,
+
+/ 7	. 
+
+/ ant
+
+/ orig ant/data.log
+/ ERR
+
+alter table Bid drop constraint FK_1oe7ovx41gdrk9aw4qralynau;
+drop table Bid if exists;
+drop table Item if exists;
+create table Bid (id bigint not null, item_ bigint not null, primary key (id));
+create table Item (id_ bigint not null, name varchar(255), city varchar(255), primary key (id_));
+alter table Bid add constraint FK_1oe7ovx41gdrk9aw4qralynau foreign key (item_) references Item;
+
+/ we moeten 	,
+alter table Bid drop constraint FK_1oe7ovx41gdrk9aw4qralynau;
+/ RM
+set schema public
+/ ADD
+
+set schema public
+drop table Bid if exists
+drop table Item if exists
+create table Bid (id bigint not null, item_ bigint not null, primary key (id))
+create table Item (id_ bigint not null, name varchar(255), city varchar(255), primary key (id_))
+alter table Bid add constraint FK_1oe7ovx41gdrk9aw4qralynau foreign key (item_) references Item
+
+
+
+
+
+
+
+
+
+/ Einde HIBERNATE
+
+/ JAVA 
+
+/ 7	.
+
+/ threadlocal
+
+[eric@localhost Maven]$ pwd
+/home/eric/Devel/Java/Maven
+[eric@localhost Maven]$ mvn archetype:generate
+Define value for property 'groupId': : my.own.test
+Define value for property 'artifactId': : threadlocal
+Define value for property 'version':  1.0-SNAPSHOT: : 
+Define value for property 'package':  my.own.test: : 
+$ vi pom.xml
+
+ <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+$ vi $(find -name App.java)
+
+ackage my.own.test;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class App
+{
+    public static void main( String[] args ) {
+        for(int i=0;i<32;i++)new MyThread().start();
+    }
+}
+
+class MyThread extends Thread{
+        public void run(){
+               	Integer i=Foo.get();
+                System.out.println(getName()+": "+i);
+                i*=2;
+                System.out.println(getName()+": "+i);
+        }
+}
+
+class Foo{
+        private static final AtomicInteger nextId=new AtomicInteger(0);
+        private static final ThreadLocal<Integer>threadId=new  ThreadLocal<Integer>(){
+                @Override protected Integer initialValue(){
+                        return nextId.getAndIncrement();
+                }
+        };
+        public static int get(){
+                return threadId.get();
+        }
+}
+
+
+
+/ Einde JAVA
+

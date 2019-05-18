@@ -1,0 +1,144 @@
+/ QUICKSTARTS
+
+/ 7	.
+
+/ set b in jboss-helloworld's Generator.next
+
+/ Hij valt niet in b	,
+
+09:46:28,623 WARNING [javax.enterprise.resource.webcontainer.jsf.lifecycle] (http-localhost-127.0.0.1-8080-5) #{game.reset}: java.lang.IllegalStateException: JBAS016071: Singleton not set for ModuleClassLoader for Module "deployment.jboss-numberguess.war:main" from Service Module Loader. This means that you are trying to access a weld deployment with a Thread Context ClassLoader that is not associated with the deployment.: javax.faces.FacesException: #{game.reset}: java.lang.IllegalStateException: JBAS016071: Singleton not set for ModuleClassLoader for Module "deployment.jboss-numberguess.war:main" from Service Module Loader. This means that you are trying to access a weld deployment with a Thread Context ClassLoader that is not associated with the deployment.
+	at com.sun.faces.application.ActionListenerImpl.processAction(ActionListenerImpl.java:118) [jsf-impl-2.1.7-jbossorg-2.jar:]
+	at javax.faces.component.UICommand.broadcast(UICommand.java:315) [jboss-jsf-api_2.1_spec-2.0.1.Final.jar:2.0.1.Final]
+	at javax.faces.component.UIViewRoot.broadcastEvents(UIViewRoot.java:794) [jboss-jsf-api_2.1_spec-2.0.1.Final.jar:2.0.1.Final]
+	at javax.faces.component.UIViewRoot.processDecodes(UIViewRoot.java:935) [jboss-jsf-api_2.1_spec-2.0.1.Final.jar:2.0.1.Final]
+	at com.sun.faces.lifecycle.ApplyRequestValuesPhase.execute(ApplyRequestValuesPhase.java:78) [jsf-impl-2.1.7-jbossorg-2.jar:]
+	at com.sun.faces.lifecycle.Phase.doPhase(Phase.java:101) [jsf-impl-2.1.7-jbossorg-2.jar:]
+	at com.sun.faces.lifecycle.LifecycleImpl.execute(LifecycleImpl.java:118) [jsf-impl-2.1.7-jbossorg-2.jar:]
+	at javax.faces.webapp.FacesServlet.service(FacesServlet.java:593) [jboss-jsf-api_2.1_spec-2.0.1.Final.jar:2.0.1.Final]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:329) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:248) [jbossweb-7.0.13.Final.jar:]
+	at org.jboss.weld.servlet.ConversationPropagationFilter.doFilter(ConversationPropagationFilter.java:62) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:280) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:248) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:275) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:161) [jbossweb-7.0.13.Final.jar:]
+	at org.jboss.as.web.security.SecurityContextAssociationValve.invoke(SecurityContextAssociationValve.java:153) [jboss-as-web-7.1.1.Final.jar:7.1.1.Final]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:155) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:368) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:877) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:671) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:930) [jbossweb-7.0.13.Final.jar:]
+	at java.lang.Thread.run(Thread.java:745) [rt.jar:1.7.0_65]
+Caused by: javax.faces.el.EvaluationException: java.lang.IllegalStateException: JBAS016071: Singleton not set for ModuleClassLoader for Module "deployment.jboss-numberguess.war:main" from Service Module Loader. This means that you are trying to access a weld deployment with a Thread Context ClassLoader that is not associated with the deployment.
+	at javax.faces.component.MethodBindingMethodExpressionAdapter.invoke(MethodBindingMethodExpressionAdapter.java:102) [jboss-jsf-api_2.1_spec-2.0.1.Final.jar:2.0.1.Final]
+	at com.sun.faces.application.ActionListenerImpl.processAction(ActionListenerImpl.java:102) [jsf-impl-2.1.7-jbossorg-2.jar:]
+	... 23 more
+Caused by: java.lang.IllegalStateException: JBAS016071: Singleton not set for ModuleClassLoader for Module "deployment.jboss-numberguess.war:main" from Service Module Loader. This means that you are trying to access a weld deployment with a Thread Context ClassLoader that is not associated with the deployment.
+	at org.jboss.as.weld.services.ModuleGroupSingletonProvider$TCCLSingleton.get(ModuleGroupSingletonProvider.java:75) [jboss-as-weld-7.1.1.Final.jar:7.1.1.Final]
+	at org.jboss.weld.Container.instance(Container.java:54) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.jboss.weld.bean.AbstractProducerBean.checkReturnValue(AbstractProducerBean.java:224) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.jboss.weld.bean.AbstractProducerBean.create(AbstractProducerBean.java:300) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.jboss.weld.context.unbound.DependentContextImpl.get(DependentContextImpl.java:61) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.jboss.weld.manager.BeanManagerImpl.getReference(BeanManagerImpl.java:616) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.jboss.weld.manager.BeanManagerImpl.getReference(BeanManagerImpl.java:643) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.jboss.weld.bean.builtin.InstanceImpl.get(InstanceImpl.java:102) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.jboss.as.quickstarts.numberguess.Game.reset(Game.java:145) [classes:]
+	at org.jboss.as.quickstarts.numberguess.Game$Proxy$_$$_WeldClientProxy.reset(Game$Proxy$_$$_WeldClientProxy.java) [classes:]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) [rt.jar:1.7.0_65]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57) [rt.jar:1.7.0_65]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) [rt.jar:1.7.0_65]
+	at java.lang.reflect.Method.invoke(Method.java:606) [rt.jar:1.7.0_65]
+	at org.apache.el.parser.AstValue.invoke(AstValue.java:262) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.el.MethodExpressionImpl.invoke(MethodExpressionImpl.java:278) [jbossweb-7.0.13.Final.jar:]
+	at org.jboss.weld.util.el.ForwardingMethodExpression.invoke(ForwardingMethodExpression.java:39) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.jboss.weld.el.WeldMethodExpression.invoke(WeldMethodExpression.java:50) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at com.sun.faces.facelets.el.TagMethodExpression.invoke(TagMethodExpression.java:105) [jsf-impl-2.1.7-jbossorg-2.jar:]
+	at javax.faces.component.MethodBindingMethodExpressionAdapter.invoke(MethodBindingMethodExpressionAdapter.java:88) [jboss-jsf-api_2.1_spec-2.0.1.Final.jar:2.0.1.Final]
+	... 24 more
+
+09:46:28,644 ERROR [org.apache.catalina.core.ContainerBase.[jboss.web].[default-host].[/jboss-numberguess].[FacesServlet]] (http-localhost-127.0.0.1-8080-5) Servlet.service() for servlet FacesServlet threw exception: java.lang.IllegalStateException: JBAS016071: Singleton not set for ModuleClassLoader for Module "deployment.jboss-numberguess.war:main" from Service Module Loader. This means that you are trying to access a weld deployment with a Thread Context ClassLoader that is not associated with the deployment.
+	at org.jboss.as.weld.services.ModuleGroupSingletonProvider$TCCLSingleton.get(ModuleGroupSingletonProvider.java:75) [jboss-as-weld-7.1.1.Final.jar:7.1.1.Final]
+	at org.jboss.weld.Container.instance(Container.java:54) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.jboss.weld.bean.AbstractProducerBean.checkReturnValue(AbstractProducerBean.java:224) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.jboss.weld.bean.AbstractProducerBean.create(AbstractProducerBean.java:300) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.jboss.weld.context.unbound.DependentContextImpl.get(DependentContextImpl.java:61) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.jboss.weld.manager.BeanManagerImpl.getReference(BeanManagerImpl.java:616) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.jboss.weld.manager.BeanManagerImpl.getReference(BeanManagerImpl.java:643) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.jboss.weld.bean.builtin.InstanceImpl.get(InstanceImpl.java:102) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.jboss.as.quickstarts.numberguess.Game.reset(Game.java:145) [classes:]
+	at org.jboss.as.quickstarts.numberguess.Game$Proxy$_$$_WeldClientProxy.reset(Game$Proxy$_$$_WeldClientProxy.java) [classes:]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) [rt.jar:1.7.0_65]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57) [rt.jar:1.7.0_65]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) [rt.jar:1.7.0_65]
+	at java.lang.reflect.Method.invoke(Method.java:606) [rt.jar:1.7.0_65]
+	at org.apache.el.parser.AstValue.invoke(AstValue.java:262) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.el.MethodExpressionImpl.invoke(MethodExpressionImpl.java:278) [jbossweb-7.0.13.Final.jar:]
+	at org.jboss.weld.util.el.ForwardingMethodExpression.invoke(ForwardingMethodExpression.java:39) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.jboss.weld.el.WeldMethodExpression.invoke(WeldMethodExpression.java:50) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at com.sun.faces.facelets.el.TagMethodExpression.invoke(TagMethodExpression.java:105) [jsf-impl-2.1.7-jbossorg-2.jar:]
+	at javax.faces.component.MethodBindingMethodExpressionAdapter.invoke(MethodBindingMethodExpressionAdapter.java:88) [jboss-jsf-api_2.1_spec-2.0.1.Final.jar:2.0.1.Final]
+	at com.sun.faces.application.ActionListenerImpl.processAction(ActionListenerImpl.java:102) [jsf-impl-2.1.7-jbossorg-2.jar:]
+	at javax.faces.component.UICommand.broadcast(UICommand.java:315) [jboss-jsf-api_2.1_spec-2.0.1.Final.jar:2.0.1.Final]
+	at javax.faces.component.UIViewRoot.broadcastEvents(UIViewRoot.java:794) [jboss-jsf-api_2.1_spec-2.0.1.Final.jar:2.0.1.Final]
+	at javax.faces.component.UIViewRoot.processDecodes(UIViewRoot.java:935) [jboss-jsf-api_2.1_spec-2.0.1.Final.jar:2.0.1.Final]
+	at com.sun.faces.lifecycle.ApplyRequestValuesPhase.execute(ApplyRequestValuesPhase.java:78) [jsf-impl-2.1.7-jbossorg-2.jar:]
+	at com.sun.faces.lifecycle.Phase.doPhase(Phase.java:101) [jsf-impl-2.1.7-jbossorg-2.jar:]
+	at com.sun.faces.lifecycle.LifecycleImpl.execute(LifecycleImpl.java:118) [jsf-impl-2.1.7-jbossorg-2.jar:]
+	at javax.faces.webapp.FacesServlet.service(FacesServlet.java:593) [jboss-jsf-api_2.1_spec-2.0.1.Final.jar:2.0.1.Final]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:329) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:248) [jbossweb-7.0.13.Final.jar:]
+	at org.jboss.weld.servlet.ConversationPropagationFilter.doFilter(ConversationPropagationFilter.java:62) [weld-core-1.1.5.AS71.Final.jar:2012-02-10 15:31]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:280) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:248) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:275) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:161) [jbossweb-7.0.13.Final.jar:]
+	at org.jboss.as.web.security.SecurityContextAssociationValve.invoke(SecurityContextAssociationValve.java:153) [jboss-as-web-7.1.1.Final.jar:7.1.1.Final]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:155) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:368) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:877) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:671) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:930) [jbossweb-7.0.13.Final.jar:]
+	at java.lang.Thread.run(Thread.java:745) [rt.jar:1.7.0_65]
+
+09:46:28,660 ERROR [org.jboss.as.txn] (http-localhost-127.0.0.1-8080-5) JBAS010151: Unable to get transaction state: java.lang.IllegalStateException
+	at org.jboss.msc.value.InjectedValue.getValue(InjectedValue.java:47)
+	at org.jboss.as.txn.deployment.TransactionRollbackSetupAction.teardown(TransactionRollbackSetupAction.java:43)
+	at org.jboss.as.web.ThreadSetupBindingListener.unbind(ThreadSetupBindingListener.java:61) [jboss-as-web-7.1.1.Final.jar:7.1.1.Final]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:195) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:368) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:877) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:671) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:930) [jbossweb-7.0.13.Final.jar:]
+	at java.lang.Thread.run(Thread.java:745) [rt.jar:1.7.0_65]
+
+09:46:28,663 ERROR [org.apache.catalina.connector.CoyoteAdapter] (http-localhost-127.0.0.1-8080-5) An exception or error occurred in the container during the request processing: java.lang.RuntimeException: java.lang.IllegalStateException
+	at org.jboss.as.web.ThreadSetupBindingListener.unbind(ThreadSetupBindingListener.java:67) [jboss-as-web-7.1.1.Final.jar:7.1.1.Final]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:195) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:368) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:877) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:671) [jbossweb-7.0.13.Final.jar:]
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:930) [jbossweb-7.0.13.Final.jar:]
+	at java.lang.Thread.run(Thread.java:745) [rt.jar:1.7.0_65]
+Caused by: java.lang.IllegalStateException
+	at org.jboss.msc.value.InjectedValue.getValue(InjectedValue.java:47)
+	at org.jboss.as.connector.deployers.processors.CachedConnectionManagerSetupProcessor$CachedConnectionManagerSetupAction.teardown(CachedConnectionManagerSetupProcessor.java:83)
+	at org.jboss.as.web.ThreadSetupBindingListener.unbind(ThreadSetupBindingListener.java:61) [jboss-as-web-7.1.1.Final.jar:7.1.1.Final]
+	... 8 more
+
+
+/ 7     .
+
+/ unable to install breakpoint in org.jboss.as.quickstarts.greeter:web.CreateController$Proxy$_$$_WeldClientProxy due to missing line number attributes. Modify compiler options to generate line number options.
+
+Reason: absent line number information.
+
+
+/ Einde QUICKSTARTS

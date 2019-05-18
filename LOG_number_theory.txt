@@ -1,0 +1,51 @@
+/ IRELAND ROSEN
+
+/ (10)
+
+/ lees over norm ,	
+https://yutsumura.com/the-quadratic-integer-ring-zsqrt5-is-not-a-unique-factorization-domain-ufd/
+
+/ lees	,
+https://math.stackexchange.com/questions/1900977/method-to-determine-if-a-ring-is-a-ufd
+
+
+
+/ Einde IRELAND ROSEN
+
+/ MISC
+
+/ lees,
+https://math.stackexchange.com/questions/2053584/counterexample-about-ufd
+
+/ counter examples in algebra	,
+http://www.math.ucla.edu/~i707107/cealg.pdf
+
+/ lees	,
+http://www.maths.qmul.ac.uk/~raw/MTH5100/PIDnotED.pdf
+
+/ lees	,
+http://www.kurims.kyoto-u.ac.jp/EMIS/journals/NSJOM/Papers/38_1/NSJOM_38_1_137_154.pdf
+
+/ lees	,
+https://en.wikipedia.org/wiki/Unique_factorization_domain
+/ ring: Z/8Z is geen integral domain, dus ook een ufd	,
+/ ook: 2*4=0 -> 3^2=1, en 3 is prime elem	,
+/ groep: U(Z/8Z) 
+
+/ google 
+Z modulo n unique factorization domain
+/ lees	,
+https://math.stackexchange.com/questions/732004/are-integers-mod-n-a-unique-factorization-domain
+
+/ lees	,
+https://math.stackexchange.com/questions/1871637/irreducible-but-not-prime-element
+
+/ lees	,
+https://en.wikipedia.org/wiki/Irreducible_element
+
+/ lees	,
+https://en.wikipedia.org/wiki/Euclidean_domain
+
+
+
+/ Einde MISC

@@ -1,0 +1,462 @@
+/ 7	. 
+
+[eric@almond jee]$ pwd
+/home/eric/Devel/Eclipse/Neon/jee
+[eric@almond jee]$ ls
+eclipse  workspace-jsf		/ deze ws	,
+
+/ lees	,
+http://www.mkyong.com/tutorials/jsf-2-0-tutorials/
+
+/ we start met 	,
+http://www.mkyong.com/jsf2/jsf-2-0-hello-world-example/
+
+/ lees	,
+http://tomcat.apache.org/maven-plugin-2.2/executable-war-jar.html	/ embedded tomcat	, doe java -jar 
+
+/ lees	,
+http://maven.apache.org/guides/mini/guide-configuring-plugins.html
+
+/ lees	,
+http://help.eclipse.org/neon/index.jsp?topic=%2Forg.eclipse.jst.jsf.doc.user%2Fhtml%2Fgettingstarted%2Ftutorial%2FJSFTools_tutorial_JSF20.html
+
+/ 7	. 
+
+/ Lees	,
+
+http://stackoverflow.com/questions/6025998/difference-between-view-and-request-scope-in-managed-beans		<-
+http://stackoverflow.com/questions/8887140/jsf-request-scoped-bean-keeps-recreating-new-stateful-session-beans-on-every-req		<-	 (*)
+/ Geef : managed bean stateless session bean,	
+http://stackoverflow.com/questions/6793351/difference-between-a-managed-bean-and-a-session-bean (**)
+/->
+http://stackoverflow.com/questions/8626291/jsf-managed-bean-ejb-injection/8627413#8627413	 (***)
+
+/ Ad (*) Deze zochten we	,
+
+/ Ad (**)
+
+So, yes, you are basically right in your understanding that the JSF page should invoke the managed bean's action method which should in turn delegate the model and the action further to the business service and eventually handle the navigation outcome based on the result of the service call.
+
+<h:inputText value="#{registrationController.car.make}" />
+<h:inputText value="#{registrationController.car.model}" />
+<h:inputText value="#{registrationController.car.year}" />
+<h:commandButton value="Save" action="#{registrationController.save}" />
+
+/ managed bean	, 										/ Deze moet in @SessionScope	, als bijv login wilt hebben de hele tijd	,
+																											/ see (*) ? TODO
+@SessionScope															/ TODO
+$ vi RegistrationController.java 
+private Car car; 										/ model	,
+private @EJB CarFacade carFacade;		/ slsb	,
+
+public RegistrationController() {
+    this.car = new Car();
+}
+
+public String save() {
+    carFacade.create(car);
+    return "someoutcome";
+}
+
+/ Ad (***)
+
+<managed-bean>
+    <managed-bean-name>personManager</managed-bean-name>
+    <managed-bean-class>ejb.PersonManager</managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+</managed-bean>
+/=
+@ManagedBean
+@SessionScoped
+public class PersonManager {		/ constroller	,
+    // ...
+}
+
+n other words, you're registering the class as a JSF managed bean which is available in views by #{personManager}. This does not represent the same instance as is managed by the EJB container. You can and should not use faces-config.xml to register EJBs. There you use the annotations from the javax.ejb package for, such as @Stateless and @Stateful. That's all you need to register an EJB.
+
+/ Dus 	,
+
+/ view	,
+<h:form>
+    <h:inputText value="#{personManager.person.name}" />
+    ...
+    <h:commandButton value="Save" action="#{personManager.save}" />
+    <h:messages />
+</h:form>
+
+/ we zien in de view alleen de controller	, 
+
+/ controller	,
+@ManagedBean
+@ViewScoped
+public class PersonManager implements Serializable {		 /controller
+
+    private Person person;									/ model	,
+
+    @EJB
+    private PersonService personService;
+
+    @PostConstruct
+    public void init() {
+        person = new Person();
+    }
+
+    public void save() {
+        personService.create(person);												/ controller writes model	,
+        FacesContext.getCurrentInstance().addMessage(null,
+            new FacesMessage("Person successfully created, new ID is " + person.getId()));
+    }
+
+    // ...
+}
+
+/ model	,
+@Entity
+public class Person implements Serializable {
+
+    @Id
+    private Long id;
+
+    private String name;
+
+    // ...
+}
+
+/ service	,
+@Stateless
+public class PersonService {
+
+    @PersistenceContext
+    private EntityManager em;
+
+    public void create(Person person) {
+        em.persist(person);
+    }
+
+    // ...
+}
+
+/ 7	. 
+
+/ scala eclipse
+/ ws workspace-jsf
+[eric@almond workspace-jsf]$ unzip  ~/Downloads/jsf2-tcr-code-examples.zip 
+
+/ we import ch02	, we zien in eclipse
+jsfreg 			
+/ WH door in de pom: <build><finalName>jsfreg</finalName></build>
+
+/ Lees	, 
+http://www.mkyong.com/jsf2/jsf-2-0-hello-world-example/
+
+/ 13	. 
+
+/ voor in tomcat	, 
+
+$ vi pom.xml
+
+ <dependencies>
+	<dependency>
+	    <groupId>com.sun.faces</groupId>
+	    <artifactId>jsf-api</artifactId>
+	    <version>${jsf.version}</version>
+	</dependency>
+ 	<dependency>
+	    <groupId>com.sun.faces</groupId>
+	    <artifactId>jsf-impl</artifactId>
+	    <version>${jsf.version}</version>
+	</dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.1.0</version>
+      
+    </dependency>
+    <dependency>
+      <groupId>javax.el</groupId>
+      <artifactId>javax.el-api</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+  </dependencies>
+
+/ Deze hebben NIET als provided in de pom	,
+[eric@almond asm-study]$ ls ~/Devel/Java/Tomcat/apache-tomcat-8.5.11/webapps/jsfreg/WEB-INF/lib/
+javax.el-api-3.0.0.jar       jsf-api-2.2.8-23.jar
+javax.servlet-api-3.1.0.jar  jsf-impl-2.2.8-23.jar
+
+[eric@almond asm-study]$ ls ~/Devel/Java/Tomcat/apache-tomcat-8.5.11/webapps/jsfreg
+confirm.xhtml  done.xhtml  META-INF  register.xhtml  WEB-INF
+[eric@almond asm-study]$ ls ~/Devel/Java/Tomcat/apache-tomcat-8.5.11/webapps/jsfreg/WEB-INF/
+classes  lib  web.xml
+
+[eric@almond asm-study]$ ls ~/Devel/Java/Tomcat/apache-tomcat-8.5.11/webapps/jsfreg/WEB-INF/classes/com/jsfcompref/model/UserBean.class 
+
+[eric@almond apache-tomcat-8.5.11]$ bin/catalina.sh jpda run
+
+/ Geef	,
+http://localhost:8080/jsfreg/
+
+/ we maken een remote debug config , port 8000	,
+
+/ we kunnen b's set in jsf code	,
+
+/ probeer servlet-api.jar  en el-api.jar uit tomcat	, geef <scope>provided  in de pom
+/ TODO
+
+/ we zien geen servlets	, alleen een backing bean	,
+
+/ Kunnen we de front-end controller met @WebServlet annotate ipv in xml configure	?
+/ google: @webservlet faces servlet
+/ Lees	,
+https://stackoverflow.com/questions/14285866/jsf-2-0-and-custom-path-in-webservlet
+
+/ Lees	, 
+http://www.mkyong.com/tutorials/jsf-2-0-tutorials/
+/->
+http://www.mkyong.com/jsf2/jsf-2-0-hello-world-example/
+
+/ Lees over web.xml	,
+https://www.mkyong.com/web-development/the-web-xml-deployment-descriptor-examples/
+
+/ 13	. 
+
+/ Lees	,
+http://www.mkyong.com/tutorials/jsf-2-0-tutorials/
+->
+http://www.mkyong.com/jsf2/jsf-2-0-ajax-hello-world-example/ 
+
+/ 7	. 
+
+/ scala eclipse
+/ workspace-jsf
+/ proj mkyong-ajax
+
+$ vi pom.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project ...> 
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>my.own</groupId>
+  <artifactId>mkyong-ajax</artifactId>				
+  <version>2.0-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+ <build>
+   <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <version>3.6.1</version>
+      <configuration>
+           <source>1.8</source>
+           <target>1.8</target>
+         </configuration>
+     </plugin>
+    <plugin>
+          <groupId>org.apache.tomcat.maven</groupId>
+          <artifactId>tomcat7-maven-plugin</artifactId>
+          <version>2.2</version>
+          <configuration>
+                  <url>http://localhost:8080/manager/text</url>
+                  <server>tomcat</server>
+          </configuration>
+  	</plugin>
+	</plugins>
+</build>
+
+/ Note	,
+	• de artifactId geef de webapp's name: geef localhost:8080/<artifactId>
+	• WH NIET nodig is <configuration> van de tomcat7-maven-plugin	,
+		<port>8080</port>
+		<path>/${project.artifactId}</path> 
+ 
+/ Als we tomcat7:undeploy clean tomcat7:deploy	, zien we steeds plugins, ook 
+
+[INFO] --- tomcat7-maven-plugin:2.2:undeploy (default-cli) @ mkyong-ajax ---
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ mkyong-ajax-foo ---
+[INFO] >>> tomcat7-maven-plugin:2.2:deploy (default-cli) > package @ mkyong-ajax-foo >>>
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ mkyong-ajax-foo ---
+[INFO] --- maven-compiler-plugin:3.6.1:compile (default-compile) @ mkyong-ajax-foo ---
+[INFO] Compiling 1 source file to /home/eric/Devel/Eclipse/scala/workspace-jsf/mkyong-ajax/target/classes
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ mkyong-ajax-foo ---
+[INFO] --- maven-compiler-plugin:3.6.1:testCompile (default-testCompile) @ mkyong-ajax-foo ---
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ mkyong-ajax-foo ---
+[INFO] --- maven-war-plugin:2.2:war (default-war) @ mkyong-ajax-foo ---
+[INFO] Packaging webapp
+[INFO] Assembling webapp [mkyong-ajax] in [/home/eric/Devel/Eclipse/scala/workspace-jsf/mkyong-ajax/target/mkyong-ajax]
+[INFO] Processing war project
+[INFO] Copying webapp resources [/home/eric/Devel/Eclipse/scala/workspace-jsf/mkyong-ajax/src/main/webapp]
+[INFO] Webapp assembled in [43 msecs]
+[INFO] Building war: /home/eric/Devel/Eclipse/scala/workspace-jsf/mkyong-ajax/target/mkyong-ajax-foo.war
+[INFO] WEB-INF/web.xml already added, skipping
+[INFO] Deploying war to http://localhost:8080/mkyong-ajax
+Uploading: http://localhost:8080/manager/text/deploy?path=%2Fmkyong-ajax
+
+$ vi web.xml
+
+<?xml version='1.0' encoding='UTF-8'?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+    <display-name>JSFReg</display-name>
+    <description>Simple Registration Application</description>
+
+    <context-param>
+        <param-name>javax.faces.PROJECT_STAGE</param-name>
+        <param-value>Development</param-value>
+    </context-param>
+    
+
+    <!-- Faces Servlet -->
+  <servlet>
+    <servlet-name>Faces Servlet</servlet-name>
+    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+   <servlet-mapping>
+       <servlet-name>Faces Servlet</servlet-name>
+       <url-pattern>/faces/*</url-pattern>
+   </servlet-mapping>
+
+   <welcome-file-list>
+     <welcome-file>faces/hello.xhtml</welcome-file>
+   </welcome-file-list>
+
+</web-app>
+
+$ vi hello.xhtml
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+  <title>JSF and AJAX</title>
+</h:head>
+<h:body>
+  <h:form>
+	   <h:inputText id="name" value="#{helloBean.name}"></h:inputText>
+	   <h:commandButton value="Welcome Me">
+		 		<f:ajax execute="name" render="output" />
+	   </h:commandButton>
+	   <h2><h:outputText id="output" value="#{helloBean.sayWelcome}" /></h2>
+   </h:form>
+    	   
+</h:body>
+</html>
+
+/ we zien	, 
+		 		<f:ajax execute="name" render="output" />
+/ Door execute="name" wordt name als form data send	, 
+/ door render="output" verschijnt deze in de partial update	,   zoals target in wicket	,
+
+$ vi HelloBean.java
+
+@ManagedBean
+@SessionScoped
+public class HelloBean {
+    String name;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+    
+	public String getSayWelcome(){
+		if("".equals(name) || name==null){
+			return "";
+		}
+		else{
+			return "Ajax message: welcome "+name;
+		}
+	}
+}
+
+
+/ Geef	,
+http://localhost:8080/mkyong-ajax/
+
+/ we zien in Networks	,
+Request URL:http://localhost:8080/mkyong-ajax/
+Request Method:GET
+/ en de response in de HTML page	, 
+Request URL:http://localhost:8080/mkyong-ajax/faces/javax.faces.resource/jsf.js?ln=javax.faces&stage=Development
+Request Method:GET
+/ en de response is de js file	, 
+
+/ click submit	, 
+/ we zien in Networks	, 
+
+Request URL:http://localhost:8080/mkyong-ajax/faces/hello.xhtml
+Request Method:POST
+
+Form data
+j_idt5:j_idt5
+j_idt5:name:foo																										<-
+javax.faces.ViewState:-8382390354307053318:8027980406897991990
+javax.faces.source:j_idt5:j_idt6
+javax.faces.partial.event:click
+javax.faces.partial.execute:j_idt5:j_idt6 j_idt5:name
+javax.faces.partial.render:output
+javax.faces.behavior.event:action
+javax.faces.partial.ajax:true
+
+
+/ en de reponse	, 
+<?xml version='1.0' encoding='UTF-8'?>
+<partial-response id="j_id1">
+	<changes>
+		<update id="j_idt5:output"><![CDATA[
+			<span id="j_idt5:output">Ajax message: welcome eric</span>]]>
+		</update>
+		<update id="j_id1:javax.faces.ViewState:0"><![CDATA[
+			8439426652282679815:-4456136596427044702]]>
+		</update>
+	</changes>
+</partial-response>
+
+/ 7	. 
+
+[eric@almond jsf]$ pwd
+/home/eric/Devel/Java/jsf
+[eric@almond mojarra]$ git clone https://github.com/javaserverfaces/mojarra.git
+./impl/src/main/js/mojarra.js
+./impl/src/main/js/jsf.js
+./jsf-demo/basic-ajax/src/main/webapp/resources/javascript/aggregate.js
+...
+./test/servlet30/renderKit/src/main/webapp/resources/alibrary/script.js
+...
+./test/javaee8/localizedResources/src/main/webapp/resources/us/default/1_0/rafa.js
+...
+
+/ we zien dus maar 2 js files	, mojarra.js en jsf.js	, 
+
+/ 7	. 
+
+/ we import	, 
+/home/eric/Devel/Eclipse/scala/workspace-jsf/jsf2-tcr-code-examples/ch10/trainer-secondEdition/trainer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

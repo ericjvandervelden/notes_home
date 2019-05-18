@@ -1,0 +1,1422 @@
+/ See SCS-6338
+/ See DEBUG SCS-6338
+
+/ 7	. 
+
+/ install
+
+/ run eclipse ant task
+/ je moet 2017.01, mposcs kiezen	, 
+/ want hij kijkt naar mposcs-build.properties	,
+/ gens .project, .classpath, application.properties
+/ we moeten alleen application.properties edit	, 
+$ vi application.properties
+jboss.home=/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA							<-
+
+
+/ we import 2017.01
+/ we see	, 
+Project '2017.01' is missing required source folder: 'jnjedobe/jnjedobe/src/java'	2017.01		Build path	Build Path Problem
+/ This instance is not in svn anymore	, we must rm it from the build path	, source	, 
+
+/ / Intermezzo
+
+/ When deploy/start TODO, these are modified	, 
+/ libs/
+/ conf/application.properties
+/ deploy/tms.jar/
+/ deploy/tms.war/
+
+/ Einde Intermezzo
+
+/ Intermezzo
+
+/ WH RM
+
+/ Run the ant task	, 
+eclipse
+/ Geef
+2017.01
+bakker
+/ we zien in console	,
+Buildfile: /home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/base-framework/buildscripts/build.xml
+eclipse:
+     [echo]       You are about to generate Eclipse project files.
+     [echo]       These will overwrite the current files in: /home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/base-framework/..
+     [echo]       Are you sure you want to continue?
+     [echo]     
+-eclipse-gen:
+     [echo] Generating eclipse project files for project '2017.01' in: /home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/base-framework/..
+[propertyfile] Creating new property file: /home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/.settings/org.eclipse.jdt.core.prefs
+[propertyfile] Updating property file: /home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/application.properties
+     [echo]       Project files generated!
+     [echo]       Please edit /home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/base-framework/../application.properties and change the value of: jboss.home
+     [echo]     
+BUILD SUCCESSFUL
+Total time: 30 seconds
+/ WH NIET nodig	, 
+
+$ vi /home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/tntwillebroek/tntwillebroek-printer-applet/src/java/com/mpobjects/tntwillebroek/web/userinfo/file/EnterBarcodeApplet.java
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+/ we zien	, 
+Access restriction: The type XMLSerializer is not accessible due to restriction on required library /home/eric/Devel/Java/jdk1.6.0_45/jre/lib/rt.jar
+
+
+/ Einde Intermezzo
+
+/ Generate rebel.xml in base-framework/build/generate/java
+
+/ voor de zekerheid	, voor undelete change	, 
+[eric@localhost server]$ cp -a mposcs mposcs-trunk
+
+/ en gaan verder op mposcs	, 
+
+/ 7	. 
+
+/ SCS-6338
+
+/ workload-dashboard.view
+
+$ vi mposcs/mposcs-menu.xml
+<m:add path="planning.workloadDashboard" privilege="workload-dashboard.view" actionUrl="oms/workload-dashboard_view?assignable=true" index="2900" />
+
+$ vi oms-sitemap.xml
+<!-- Dashboard pipeline -->
+	<map:pipeline>
+			<!-- ******ORDER DASHBOARD*****-->
+			<map:match pattern="user-assigned_view">
+				<map:act type="setAttributes">
+					<map:parameter name="attributesType" value="request"/>
+				</map:act>
+				<map:call resource="dynatablePage">
+					<map:parameter name="xsp" value="xsp/user-assigned-list.xml"/>
+					<map:parameter name="xsl" value="xsl/user-assigned-list.xsl"/>
+				</map:call>
+			</map:match>
+			<map:match pattern="workload-dashboard_view">
+				<!-- an action should be called to make redirection by flow possible-->
+				<map:act type="setAttributes">
+					<map:parameter name="attributesType" value="session"/>
+				</map:act>
+				<map:read mime-type="text/html" type="jsp" src="jsp/workload-dashboard-view.jsp"/>
+			</map:match>
+
+$ vi file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/module/oms/war/oms/jsp/workload-dashboard-view.jsp 
+
+<%@taglib prefix="tmstags" tagdir="/WEB-INF/tags/oms/" %>
+
+<jsp:useBean id="myOrderDashboardView" scope="session" class="com.mpobjects.oms.view.dashboard.OrderDashboardView"/>
+	<% myOrderDashboardView.refreshDashboardQueryList(request); %>
+
+	<tmstags:order-dashboard-query-type queryList="${myOrderDashboardView.customerOrderQueryList}" queryTypeCaption="${cf:label('', 'shipmentOrder')}" submitUrl="dashboardQuery_show_customerOrder" assignable="true"/>
+
+	<div id="assignedOrdersArea"><b style="visibility:hidden;font-size:20px">Hid${formVO.systemId}</b><iframe id="assignedframe" class="assignedOrders"
+					src="user-assigned_view?refresh=true&daysback=${daysBackLoaded}" width="3000" height="700"/>
+				</iframe></div>
+
+/ Dus tmstags:order-dashboard-query-type is weer een tag	, 
+
+/ 1313	. 
+
+$ vi file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/module/oms/war/WEB-INF/tags/oms/order-dashboard-query-type.tag 
+
+<%@taglib uri="http://www.mp-objects.com/taglibs/mpo/oms" prefix="tms" %>
+
+	<table class="list dashboardquery">			
+		<tms:orderDashboardQueryTableBody queryList="${queryList}" queryTypeCaption="${queryTypeCaption}" processType="${processType}" assignable="${assignable}"/>
+	</table>
+
+$ vi file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/module/oms/war/WEB-INF/tld/oms.tld 	
+   <tag>
+        <name>orderDashboardQueryTableBody</name>
+        <tagclass>com.mpobjects.oms.view.taglib.dashboard.OrderDashboardQueryTableTag</tagclass>
+
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/module/oms/src/java/com/mpobjects/oms/view/taglib/dashboard/OrderDashboardQueryTableTag.java 
+// file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/module/oms/src/java/com/mpobjects/oms/view/taglib/dashboard/DashboardQueryTableBodyTag.java 
+
+
+/ er is ook	,
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/base-framework/core/war/WEB-INF/tld/mpo.tld 
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/base-framework/core/war/WEB-INF/tld/core-functions.tld 
+
+$ vi file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/module/oms/src/java/com/mpobjects/oms/view/taglib/dashboard/OrderDashboardQueryTableTag.java
+
+
+
+/ 1313	. 
+
+$ vi OrderDashboardView.java
+...
+
+$ vi file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/module/oms/war/oms/xsl/user-assigned-list.xsl 
+...
+$ vi file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/module/oms/war/oms/xsp/user-assigned-list.xml 
+        <xsp:logic>
+            ShipmentOrderAssignedUserView myView = new ShipmentOrderAssignedUserView(request);            
+            Map myList = myView.getAssignedOrders();            
+
+$ vi file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/module/oms/src/java/com/mpobjects/oms/view/shipmentorder/ShipmentOrderAssignedUserView.java 
+	public Map<Resource, Integer> getAssignedOrders() throws ShipmentOrderException {
+		Date myDate = Calendar.getInstance().getTime();
+		myDate.setDate(myDate.getDate() - new Integer(theDaysBack));
+		return MpoBeanFactory.getBean(ShipmentOrderDao.class).getAssignedShipmentOrderList(myDate);
+
+	}
+
+/ Edit Source Lookup path (in Launch config)
+/ add Project 2017.01
+/ TODO
+
+$ vi file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/module/oms/src/java/com/mpobjects/oms/view/dashboard/OrderDashboardView.java 
+/**
+ * This class is responsible for providing information from the model layer to the XSPs and JSPs
+ * 
+ * @deprecated replaced by new wicket StatusDashboardPage
+ */
+@Deprecated
+@SuppressWarnings("serial")
+public class OrderDashboardView implements Serializable {
+	...	
+
+/ TODO Wordt deze used	?
+$ vi file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/module/oms/war/oms/xsp/order-dashboard-workload-shipmentorder-list.xml 
+<?xml version="1.0" encoding="UTF-8"?>
+<?cocoon-process type="xsp"?>
+<xsp:page language="java" xmlns:xsp="http://apache.org/xsp" xmlns:esql="http://apache.org/cocoon/SQL/v2" xmlns:xsp-request="http://apache.org/xsp/request/2.0" xmlns:xsp-session="http://apache.org/xsp/session/2.0" xmlns:dynatable="http://mpobjects.com/xsp/dynatable/1.0" create-session="true">
+
+    <dynatable:initialize name="workload-dashboard-shipmentorder-list">
+        <xsp:logic>
+            myTable.addHiddenColumn("SYSTEMID");
+			...
+        </xsp:logic>
+    </dynatable:initialize>
+    <dynatable:populate>
+        <xsp:logic>
+            OrderDashboardView myView = new OrderDashboardView();
+            OrderDashboardQueryResultVO myResult = myView.getOrderDashboardQueryResultVO(request);
+			...
+
+/ 7	 
+
+/ configuration, administration, dashboard queries
+/=
+DashboardQueryPage
+
+$ vi file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2017.01/module/oms/src/java/com/mpobjects/oms/model/dashboard/dao/DashBoardQuery.standard.hbm.xml 
+<hibernate-mapping>
+    <class name="com.mpobjects.oms.model.dashboard.vo.DashboardQueryVO" table="DASHBOARD_QUERY">
+		...
+
+/ 7	. 
+
+/ we zien geen query.log in mposcs	, 
+
+[eric@localhost server]$ scp -r mposerv11:/local/apps/jboss-4.0.5.GA/server/mposcs .
+
+[eric@localhost server]$ ls
+mposcs				/ van test	,       		   
+mposcs-2017.01  	
+mposcs-trunk  		
+
+/ we start mposcs op de copy van test
+java.io.FileNotFoundException: /home/eric/Devel/Java/JBoss/jboss-shared/mpo-server-bindings.xml
+
+$ vi  conf/jboss-service.xml  
+   <mbean code="org.jboss.services.binding.ServiceBindingManager"
+     name="jboss.system:service=ServiceBindingManager">
+     <attribute name="ServerName">mposcs</attribute>
+     <attribute name="StoreURL">${jboss.home.dir}/../jboss-shared/mpo-server-bindings.xml</attribute>
+     <attribute name="StoreFactoryClassName">org.jboss.services.binding.XMLServicesStoreFactory</attribute>
+   </mbean>
+
+/ Bij ons is het altijd	, 
+   <mbean code="org.jboss.services.binding.ServiceBindingManager"
+     name="jboss.system:service=ServiceBindingManager">
+     <attribute name="ServerName">mpo</attribute>
+     <attribute name="StoreURL">/home/eric/Devel/Java/JBoss/mpo-server-bindings.xml</attribute>
+     <attribute name="StoreFactoryClassName">org.jboss.services.binding.XMLServicesStoreFactory</attribute>
+   </mbean>
+
+/ we maken daarom	, 
+[eric@localhost JBoss]$ mkdir jboss-shared
+$ cd jboss-shared
+[eric@localhost jboss-shared]$ ln -s ../mpo-server-bindings.xml 
+/ Kan niet started met config	, 
+
+[eric@localhost server]$ mv mposcs mposcs-from-test
+[eric@localhost server]$ mv mposcs-2017.01/ mposcs
+
+/ start 
+13:36:07,037 INFO  [Log4jService$URLWatchTimerTask] Configuring from URL: resource:log4j.xml
+log4j:ERROR Could not create an Appender. Reported error follows.
+java.lang.ClassNotFoundException: org.apache.log4j.appender.TimeAndSizeRollingAppender
+
+[eric@localhost conf]$ mv log4j.xml log4j.xml.from_anil
+[eric@localhost conf]$ mv log4j.xml.20170327 log4j.xml
+[eric@localhost conf]$ ls log4j*
+log4j.xml  			/ =  mposcs-trunk	, iets aangepast
+log4j.xml.from_anil   / ERR
+log4j.xml.from_test		/ ERR
+
+/ vergl log4j.xml met de log4j.xml uit geosco/	, niet veel anders	, 
+/ TODO
+
+/ 7	. 
+
+config, Admin,  dashboard queries
+order type: workload
+
+SELECT sho.* 
+FROM SHIPMENT_ORDER SHO 
+WHERE ${CUSTOMER_STATUS_CLAUSE} 
+AND  SHO.SYSTEM_ENTRY_DATE >  ${TODAY-${DAYS_BACK}} 
+AND sho.INCO_TERM_SYSTEMID <> 60070 
+AND (
+	select status_code 
+	from ORDER_STATUS OS 
+	where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID
+) < 9000
+
+SELECT sho.ASSIGNEE_SYSTEMID as grp, count(*) as c
+FROM SHIPMENT_ORDER SHO, CUSTOMER_STATUS CS
+WHERE SHO.CUSTOMER_STATUS_SYSTEMID = CS.SYSTEM_ID
+AND CS.ASSIGNABLE=1
+AND SHO.SYSTEM_ENTRY_DATE > '2017-03-22 23:59:59'
+AND SHO.ORGANIZATION_SYSTEMID  IN (5000, 10, 4000, 6000, 7000, 12000, 8000, 10000, 11000, 1, 9000, 13000, 1000) 
+GROUP BY grp
+
+/ 7	. 
+
+/ In ~/bin
+[eric@localhost bin]$ cat vs-test-2.sh 
+#!/usr/bin/bash
+ssh jboss@VS-test-2
+[eric@localhost bin]$ cat vs-test-3.sh 
+#!/usr/bin/bash
+ssh jboss@192.168.3.103
+
+[eric@localhost bin]$ vs-test-3.sh 
+jboss@192.168.3.103's password: jboss@mpo
+[eric@localhost bin]$ vs-test-2.sh 
+jboss@192.168.3.103's password: jboss@mpo
+
+/ MPO SCS DEMO: mposcs op mposerv11	,
+
+/ 7	. 
+
+-bash-4.2$ pwd
+/var/lib/pgsql/data/pg_log
+$ less	...
+
+/ 7	. 
+
+/ we update alle sho's door te set system_entry_date
+
+dsvcts=# \c mposcs2
+
+update shipment_order
+set system_entry_date=now()-interval'1 day'
+;
+UPDATE 2322
+mposcs2=# commit;
+COMMIT
+
+/ 7	. 
+
+mposcs2=# update shipment_order set reference4='R2A';
+UPDATE 2322
+mposcs2=# commit;
+COMMIT
+
+/ 7	. 
+
+mposcs2=# update customer_status  set assignable =1;
+UPDATE 37
+mposcs2=# commit;
+COMMIT
+
+mposcs2=# update customer_status  set visible=1;
+UPDATE 37
+mposcs2=# commit;
+COMMIT
+
+/ 7	. 
+
+/ we willen in de db  van 
+https://test-scs.mp-objects.com/scstest2/core/index_frameset
+
+                <xa-datasource-class>org.postgresql.xa.PGXADataSource</xa-datasource-class>
+                <xa-datasource-property name="ServerName">192.168.1.8</xa-datasource-property>
+                <xa-datasource-property name="PortNumber">5433</xa-datasource-property>
+                <xa-datasource-property name="DatabaseName">scstest2</xa-datasource-property>
+                <xa-datasource-property name="User">scstest</xa-datasource-property>
+                <xa-datasource-property name="Password">al5deewaoNgaavie3Oit6cheeWohdaYi</xa-datasource-property>
+
+$ mposerv8.sh
+eric@mposerv8:~$ PGPASSWORD=al5deewaoNgaavie3Oit6cheeWohdaYi psql -U scstest -h localhost -p 5433  scstest2
+/ login met 	,
+PDurr admin123@MPO 
+
+/ we probeerden een user te create	,
+/ create a user
+An error occurred when trying to save the changes.
+Could not execute JDBC batch update; SQL [insert into TMS_USER (USER_ID, USER_NAME, TIME_ZONE, USER_PASSWORD, USER_EMAIL_ADDRESS, IS_ENABLED, IS_INTERFACE_ACCOUNT, IS_DELETED, LAST_LOGIN, LAST_PASSWORD_UPDATE, USER_REFERENCE1, USER_REFERENCE2, LOGIN_ATTEMPT, GRACE_LOGIN, IS_FIRST_LOGIN, CHARGEABLE, LOCAL_ACCOUNT, RESET_TOK, RESET_TOK_TS, CREATED_BY, CREATED_ON, SYSTEM_ID) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]; constraint [null]; nested exception is org.hibernate.exception.ConstraintViolationException: Could not execute JDBC batch update
+/ TODO  
+
+/ we zien geen logging op vs-test-3	,  in mposcs2	,
+/ TODO
+
+/ we set b's in devtools	, sources
+mposcs2
+	oms
+		script
+workload-dashboard-view
+/s
+			jQuery(document).ready(function() {
+				mpobjects.dashboard.config.jsonSrc = "../wicket/?module=oms&wicketpage=dashboardqueries.OrderDashboardJsonResultPage";
+				jQuery('#daysBack').val(daysBackLoaded);
+				mpobjects.dashboard.refreshMarked();
+			});
+/ See DEBUG-6338
+
+/ Einde SCS-6338
+
+/ DEBUG SCS-6338
+
+/ 7	. 
+
+
+
+
+
+
+
+
+/ we se b in OrderDashboardView.refreshDashboardQueryList(HttpServletRequest) line: 191	
+
+/ we zien in devtools 2 query params	, 
+assignable:true
+emptySession:true
+
+/ stack	,
+/s
+	OrderDashboardView.refreshDashboardQueryList(HttpServletRequest) line: 191	
+	workload-dashboard-view.jsp line: 10	
+	workload_002ddashboard_002dview_jsp(HttpJspBase).service(HttpServletRequest, HttpServletResponse) line: 97	
+	workload_002ddashboard_002dview_jsp(HttpServlet).service(ServletRequest, ServletResponse) line: 810	
+	JspServletWrapper.service(HttpServletRequest, HttpServletResponse, boolean) line: 334	
+/ debug	, 
+/s
+OrderDashboardView.refreshDashboardQueryList(HttpServletRequest) line: 191	
+		int myDaysBack = getDaysBack(aRequest); // keep this here, makes sure daysback is
+/s
+OrderDashboardView.getDaysBack(HttpServletRequest) line: 95	
+		String myDaysBackString = aRequest.getParameter(PARAM_DAYS_BACK);
+null
+		if (myDaysBackString == null) {
+			myDaysBackString = (String) aRequest.getSession().getAttribute(PARAM_SESSION_DAYS_BACK);
+5
+		theProcessType = aRequest.getParameter(PROCESS_TYPE);
+null
+		isAssignable = BooleanUtils.isTrue(aRequest.getParameter(ASSIGNABLE));
+true
+			if (isAssignable) {
+				myList = MpoBeanFactory.getBean(DashboardQueryDAO.class).getWorkloadDashboardQueryList();
+/s
+DashboardQueryDAOImpl.getWorkloadDashboardQueryList() line: 178	
+		return getCustomOrderTypeDashboardQueryList(OrderType.WORKLOAD);
+/s
+DashboardQueryDAOImpl.getCustomOrderTypeDashboardQueryList(OrderType) line: 66	
+		return getHibernateTemplate().findByCriteria(
+				DetachedCriteria.forClass(DashboardQueryVO.class).add(Property.forName(TEST_FLAG).eq(false)).add(Property.forName(ORDER_TYPE).eq(aType)));	
+																					/ aType="WORKLOAD"
+/t
+OrderDashboardView.refreshDashboardQueryList(HttpServletRequest) line: 204	
+			if (isAssignable) {
+				myList = MpoBeanFactory.getBean(DashboardQueryDAO.class).getWorkloadDashboardQueryList();
+/d
+myList	java.util.ArrayList  (id=26045)	
+	[0]	com.mpobjects.oms.model.dashboard.vo.DashboardQueryVO  (id=26048)	
+		thePattern	java.util.regex.Pattern  (id=26051)	
+		theSQLDateFormat	java.text.SimpleDateFormat  (id=26054)	
+		customerStatusEntity	null	
+		dashboardType	"" (id=26063)	
+		daysBack	0	
+		entity	"SHIPMENT_ORDER" (id=26071)	
+		lastChangedBy	com.mpobjects.oms.model.user.Resource_$$_javassist_154  (id=26076)	
+		lastChangedOn	java.sql.Timestamp  (id=26082)	
+		name	"workload dashboard" (id=26090)	
+		normalQuery	"SELECT sho.* FROM SHIPMENT_ORDER SHO WHERE ${CUSTOMER_STATUS_CLAUSE} AND  SHO.SYSTEM_ENTRY_DATE >  ${TODAY-${DAYS_BACK}} AND sho.INCO_TERM_SYSTEMID <> 60070 AND (select status_code from ORDER_STATUS OS where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID) < 9000\nAND (\n    select status_code\n    from ORDER_STATUS OS\n    where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID\n) < 9000" (id=26095)	
+		orderType	com.mpobjects.oms.model.dashboard.vo.OrderType  (id=26037)	
+		organization	com.mpobjects.oms.model.entity.organization.Organization_$$_javassist_120  (id=26103)	
+		organization	null	
+		performanceMonitorService	null	
+		screen	"" (id=26117)	
+		sequenceNumber	0	
+		systemId	27250130	
+		testFlag	java.lang.Boolean  (id=26132)	
+		testStatus	com.mpobjects.oms.model.dashboard.vo.TestStatus  (id=26136)	
+
+/ we zien in postgresql log	,
+select ... 
+from DASHBOARD_QUERY this_ 
+where this_.ORGANIZATION_SYSTEMID in (
+	select uo.organization_systemid 
+	from user_organization uo 
+	where uo.user_systemid = $1) 
+and this_.IS_TEST=$2 
+and this_.ORDER_TYPE=$3
+DETAIL:  parameters: $1 = '27223886', $2 = 'f', $3 = 'WORKLOAD'
+
+
+			for (DashboardQueryVO myVO : myList) {
+				myVO.setDaysBack(myDaysBack);
+				if (isAssignable) {
+					if (OrderType.WORKLOAD.equals(myVO.getOrderType())) {
+						theCustomerOrderList.add(myVO);
+this	com.mpobjects.oms.view.dashboard.OrderDashboardView  (id=27659)	
+	theCustomerOrderList	java.util.ArrayList  (id=28970)	
+		[0]	com.mpobjects.oms.model.dashboard.vo.DashboardQueryVO  (id=28939)	
+
+/ Intermezzo
+
+public class OrderDashboardView implements Serializable {
+	public Collection<DashboardQueryVO> getCustomerOrderQueryList() {
+		return theCustomerOrderList;
+	}
+/ Dus theCustomerOrderList is in jsps bekend als customerOrderQueryList
+
+/ Einde Intermezzo
+
+
+/ 13	. 
+
+/ Shipment order op Workload Dashboard	,
+
+/c
+/s
+$ vi workload-dashboard-view.jsp
+<jsp:useBean id="myOrderDashboardView" scope="session" class="com.mpobjects.oms.view.dashboard.OrderDashboardView"/>
+	<% myOrderDashboardView.refreshDashboardQueryList(request); %>
+
+	<tmstags:order-dashboard-query-type queryList="${myOrderDashboardView.customerOrderQueryList}" queryTypeCaption="${cf:label('', 'shipmentOrder')}" submitUrl="dashboardQuery_show_customerOrder" assignable="true"/>
+
+/ we hadden al gezien dat myOrderDashboardView.customerOrderQueryList = myOrderDashboardView.getCustomerOrderQueryList()=myOrderDashboardView.theCustomerOrderList
+
+/ s
+order-dashboard-query-type.tag line: 15	
+	<table class="list dashboardquery">			
+		<tms:orderDashboardQueryTableBody queryList="${queryList}" queryTypeCaption="${queryTypeCaption}" processType="${processType}" assignable="${assignable}"/>
+this	org.apache.jsp.tag.web.oms.order_002ddashboard_002dquery_002dtype_tag  (id=29157)	
+	queryList	java.util.ArrayList  (id=28970)	
+[workload dashboard]
+/s
+OrderDashboardQueryTableTag.doTag() line: 53	
+		if (assignable) {
+			myCustomerStatusList = MpoBeanFactory.getBean(CustomerStatusService.class).getOrdered(true);
+/s
+CustomerStatusServiceImpl.getOrdered(boolean) line: 55	
+this	com.mpobjects.oms.model.customerstatus.service.CustomerStatusServiceImpl  (id=30374)	
+	theDAO	com.sun.proxy.$Proxy115  (id=30394)	/ com.mpobjects.oms.model.customerstatus.dao.CustomerStatusDaoImpl@284fcd12
+
+		Collection<CustomerStatusVo> myCustomerStatusList = getDAO().getInAscendingHierarchy();
+/s
+CustomerStatusDaoImpl.getInAscendingHierarchy() line: 41	
+		List<CustomerStatusVo> myCustomerStatusList = getHibernateTemplate().findByCriteria(
+				DetachedCriteria.forClass(type)		/ type=class com.mpobjects.oms.model.customerstatus.vo.CustomerStatusVo
+						.add(Property.forName(DELETED).eq(false))
+						.addOrder(Order.asc(HIERARCHY)));
+/ postgres log	,
+select ... 
+from CUSTOMER_STATUS this_ 
+where this_.IS_DELETED=$1 
+order by this_.HIERARCHY asc
+3259577 DETAIL:  parameters: $1 = 'f'
+
+		return myCustomerStatusList;
+myCustomerStatusList	java.util.ArrayList  (id=22010)	
+	[0]	com.mpobjects.oms.model.customerstatus.vo.CustomerStatusVo  (id=22093)	
+	[1]	com.mpobjects.oms.model.customerstatus.vo.CustomerStatusVo  (id=22095)	
+	[2]	com.mpobjects.oms.model.customerstatus.vo.CustomerStatusVo  (id=22096)	
+	[3]	com.mpobjects.oms.model.customerstatus.vo.CustomerStatusVo  (id=22097)	
+	[4]	com.mpobjects.oms.model.customerstatus.vo.CustomerStatusVo  (id=22099)	
+	[5]	com.mpobjects.oms.model.customerstatus.vo.CustomerStatusVo  (id=22101)	
+	[6]	com.mpobjects.oms.model.customerstatus.vo.CustomerStatusVo  (id=22102)	
+	[7]	com.mpobjects.oms.model.customerstatus.vo.CustomerStatusVo  (id=22104)	
+	[8]	com.mpobjects.oms.model.customerstatus.vo.CustomerStatusVo  (id=22105)	
+	[9]	com.mpobjects.oms.model.customerstatus.vo.CustomerStatusVo  (id=22107)	
+	[10]	com.mpobjects.oms.model.customerstatus.vo.CustomerStatusVo  (id=22108)	
+	[11]	com.mpobjects.oms.model.customerstatus.vo.CustomerStatusVo  (id=22110)	
+	[12]	com.mpobjects.oms.model.customerstatus.vo.CustomerStatusVo  (id=22111)	
+	[13]	com.mpobjects.oms.model.customerstatus.vo.CustomerStatusVo  (id=22113)	
+	[14]	com.mpobjects.oms.model.customerstatus.vo.CustomerStatusVo  (id=22115)	
+/t
+CustomerStatusServiceImpl.getOrdered(boolean) line: 56	
+		Collection<CustomerStatusVo> myCustomerStatusList = getDAO().getInAscendingHierarchy();
+/d
+		Collection<CustomerStatusVo> myAssignableCustomerStatusList = new ArrayList<CustomerStatusVo>();
+		for (CustomerStatusVo myCustomerStatusVo : myCustomerStatusList) {
+			if (myCustomerStatusVo.isAssignable()) {
+/n
+		return myAssignableCustomerStatusList;
+[]
+/t
+OrderDashboardQueryTableTag.doTag() line: 59	
+		if (assignable) {
+			myCustomerStatusList = MpoBeanFactory.getBean(CustomerStatusService.class).getOrdered(true);
+/d
+		myOutput.append("<tr><th class=\"list\">&nbsp;</th>");
+		myOutput.append("<th class=\"list\">Name</th>");
+		for (CustomerStatusVo myStatus : myCustomerStatusList) {
+/n
+		myOutput.append("<th class=\"list\">Last refresh</th>");
+		myOutput.append("<th class=\"list\">Days back</th></tr>");
+
+		if (assignable) {
+			myOutput.append("<tr><th class=\"list\">&nbsp;</th><th class=\"list\">&nbsp;</th>");
+			String myUnassignedText = ApplicationPropertyManager.getInstance().getModuleProperty("oms", "workloaddashboard.unassignedtext", "U");
+U
+			String myAssignedText = ApplicationPropertyManager.getInstance().getModuleProperty("oms", "workloaddashboard.assignedtext", "R");
+R
+			for (CustomerStatusVo myStatus : myCustomerStatusList) {
+/n
+			myOutput.append("<th class=\"list\">&nbsp;</th><th class=\"list\">&nbsp;</th></tr>");
+
+		for (Object myDashBoardQuery : theQueryList) {
+			DashboardQueryVO query = (DashboardQueryVO) myDashBoardQuery;
+				myDashBoardCountVO = MpoBeanFactory.getBean(DashboardCountDAO.class).getDashboardCount(query.getSystemId());
+/s
+DashboardCountDAOImpl.getDashboardCount(int) line: 20	
+		return (DashBoardCountVO) SharedCachePool.getInstance().getEntity(CACHE_NAME, getKey(aDashBoardQuerySystemId));
+aDashBoardQuerySystemId	27250130	
+/s
+SharedCachePool.getInstance() line: 214	
+					instance = new SharedCachePool();
+instance	com.mpobjects.util.dao.cache.SharedCachePool  (id=24441)	
+	globalCache	com.mpobjects.util.dao.cache.CacheManager  (id=24474)	
+	lockManager	com.mpobjects.util.dao.cache.LockManager  (id=24480)	
+	threadCache	java.lang.ThreadLocal  (id=24486)	
+	threadCaches	java.util.WeakHashMap  (id=24492)	
+	transactionAware	true	
+
+		return instance;
+/t
+DashboardCountDAOImpl.getDashboardCount(int) line: 20	
+		return (DashBoardCountVO) SharedCachePool.getInstance().getEntity(CACHE_NAME, getKey(aDashBoardQuerySystemId));
+/pd
+/s
+DashboardCountDAOImpl.getKey(int) line: 33	
+		return AuthenticationUtils.getResource() + "-" + aSystemId;
+/t
+DashboardCountDAOImpl.getDashboardCount(int) line: 20	
+		return (DashBoardCountVO) SharedCachePool.getInstance().getEntity(CACHE_NAME, getKey(aDashBoardQuerySystemId));
+/pd
+/s
+SharedCachePool.getEntity(String, Object) line: 337	
+		return getEntity(aCacheName, aKey, false);
+aCacheName	"dashboard-count" (id=25254)	
+aKey	"Resource:eric(systemId:27223886)-27250130" (id=25255)	
+/s
+SharedCachePool.getEntity(String, Object, boolean) line: 355	
+		CacheManager cm = getLocalCacheManager(false);
+		if (cm != null) {
+/n
+		EntityInterface result = null;
+		if (withWriteLock) {
+/n
+		} else {
+			result = globalCache.getEntity(aCacheName, aKey);
+/s
+CacheManager.getEntity(String, Object) line: 264	
+		Cache cache = getEntityCache(aCacheName, false);
+/s
+CacheManager.getEntityCache(String, boolean) line: 409	
+		Object elm = caches.getObject(aCacheName);
+null
+		return null;
+/t
+CacheManager.getEntity(String, Object) line: 265	
+		Cache cache = getEntityCache(aCacheName, false);
+/d
+null
+		return null;
+/t
+SharedCachePool.getEntity(String, Object, boolean) line: 379	
+		} else {
+			result = globalCache.getEntity(aCacheName, aKey);
+/d
+null
+/t
+OrderDashboardQueryTableTag.doTag() line: 101	
+			try {
+				myDashBoardCountVO = MpoBeanFactory.getBean(DashboardCountDAO.class).getDashboardCount(query.getSystemId());
+null
+			if (myDashBoardCountVO != null && myDashBoardCountVO.getLastRefreshDate() != null) {
+/n
+			for (CustomerStatusVo myStatus : myCustomerStatusList) {
+/n
+
+
+
+
+
+
+
+/ 7	. 
+
+/ we set b in ShipmentOrderAssignedUserView.getAssignedOrders()	, 
+/ Inderdaad, we vallen er in	,
+/ stack
+/s
+Daemon Thread [http-0.0.0.0-8080-1] (Suspended (breakpoint at line 45 in ShipmentOrderAssignedUserView))	
+	ShipmentOrderAssignedUserView.getAssignedOrders() line: 45	
+	user_assigned_list_xml.generate() line: 490	
+	ServerPagesGenerator.generate() line: 228	
+	...
+/ debug	, 
+ShipmentOrderAssignedUserView.getAssignedOrders() line: 45	
+		Date myDate = Calendar.getInstance().getTime();
+		myDate.setDate(myDate.getDate() - new Integer(theDaysBack));
+		return MpoBeanFactory.getBean(ShipmentOrderDao.class).getAssignedShipmentOrderList(myDate);
+/s
+ShipmentOrderDaoImpl.getAssignedShipmentOrderList(Date) line: 310	
+/ getTableName()=="SHIPMENT_ORDER"
+/ aDate=Wed Mar 22 10:58:06 CET 2017
+/ new SimpleDateFormat("yyyy-MM-dd 23:59:59").format(aDate) + "'"=2017-03-22 23:59:59
+
+		String aQuery = "SELECT * FROM " + getTableName()	
+				+ " SHO, CUSTOMER_STATUS CS WHERE SHO.CUSTOMER_STATUS_SYSTEMID = CS.SYSTEM_ID AND CS.ASSIGNABLE=1 AND SHO.SYSTEM_ENTRY_DATE > '"
+				+ new SimpleDateFormat("yyyy-MM-dd 23:59:59").format(aDate) + "'";
+		List<int[]> myList = executeCountAll(aQuery, ASSIGNEE_SYSTEMID);
+		Map<Resource, Integer> myValues = new HashMap<Resource, Integer>();
+		for (int[] values : myList) {
+			myValues.put(getResourceDAOInterface().getBySystemId(values[0]), values[1]);
+		}
+		return myValues;
+
+aQuery=
+SELECT * FROM SHIPMENT_ORDER SHO, CUSTOMER_STATUS CS WHERE SHO.CUSTOMER_STATUS_SYSTEMID = CS.SYSTEM_ID AND CS.ASSIGNABLE=1 AND SHO.SYSTEM_ENTRY_DATE > '2017-03-22 23:59:59'
+/s
+ShipmentOrderDaoImpl.executeCountAll(String, String) line: 252	
+
+		SQLStatement myStatement = new SQLStatement(aQuery);
+myStatement	com.mpobjects.common.db.SQLStatement  (id=24463)	
+	theExistingGroupByClause	null	
+	theFromClause	"SHIPMENT_ORDER SHO, CUSTOMER_STATUS CS" (id=24470)	
+	theGroupByClause	"" (id=24248)	
+	theOrderByClause	"" (id=24248)	
+	theQuery	"SELECT * FROM SHIPMENT_ORDER SHO, CUSTOMER_STATUS CS WHERE SHO.CUSTOMER_STATUS_SYSTEMID = CS.SYSTEM_ID AND CS.ASSIGNABLE=1 AND SHO.SYSTEM_ENTRY_DATE > '2017-03-22 23:59:59'" (id=24482)	
+	theSelectClause	"*" (id=24488)	
+	theWhereClause	"SHO.CUSTOMER_STATUS_SYSTEMID = CS.SYSTEM_ID AND CS.ASSIGNABLE=1 AND SHO.SYSTEM_ENTRY_DATE > '2017-03-22 23:59:59'" (id=24492)	
+
+		myStatement.setSelectClause("sho." + aGroupByColumName + " as grp, count(*) as c");
+myStatement	com.mpobjects.common.db.SQLStatement  (id=24463)	
+	theSelectClause	"sho.ASSIGNEE_SYSTEMID as grp, count(*) as c" (id=24786)	
+
+		String myWhereClause = myStatement.getWhereClause();
+SHO.CUSTOMER_STATUS_SYSTEMID = CS.SYSTEM_ID AND CS.ASSIGNABLE=1 AND SHO.SYSTEM_ENTRY_DATE > '2017-03-22 23:59:59'
+		List<QueryParameter> myConditions = new ArrayList<QueryParameter>();
+[]
+		myWhereClause = appendOrganizationClause(aQuery, myWhereClause, myConditions);
+/s
+ShipmentOrderDaoImpl.appendOrganizationClause(String, String, Collection<QueryParameter>) line: 1001	
+f (!aQuery.toUpperCase().matches("(?s).*WHERE.*ORGANIZATION_SYSTEMID=.*$")) {
+/j
+			StringBuilder myString = new StringBuilder("(");
+			int i = 0;
+			for (Integer myId : getOrganizationSystemids()) {
+/s
+ShipmentOrderDaoImpl.getOrganizationSystemids() line: 631	
+		return ResourceUtil.getResource().getOrganizationSystemids();
+/s
+Resource.getOrganizationSystemids() line: 454	
+		if (organizationSystemids == null) {
+/n
+			loadOrganizations();				/ TODO
+		}
+		return organizationSystemids;	/ [5000, 10, 4000, 6000, 7000, 12000, 8000, 10000, 11000, 1, 9000, 13000, 1000]
+/t
+ShipmentOrderDaoImpl.appendOrganizationClause(String, String, Collection<QueryParameter>) line: 1004	
+			for (Integer myId : getOrganizationSystemids()) {
+/d
+				if (i > 0) {
+					myString.append(", ");
+				}
+				myString.append("?");
+				aConditionList.add(new IntPosQueryParameter(i++, myId));
+			}
+			myString.append(")");
+			aWhereClause = aWhereClause + " AND " + "SHO.ORGANIZATION_SYSTEMID  IN " + myString.toString();
+		return aWhereClause;
+aWhereClause=
+SHO.CUSTOMER_STATUS_SYSTEMID = CS.SYSTEM_ID AND CS.ASSIGNABLE=1 AND SHO.SYSTEM_ENTRY_DATE > '2017-03-22 23:59:59' AND SHO.ORGANIZATION_SYSTEMID  IN (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+aConditionList=
+[0, 5000, 1, 10, 2, 4000, 3, 6000, 4, 7000, 5, 12000, 6, 8000, 7, 10000, 8, 11000, 9, 1, 10, 9000, 11, 13000, 12, 1000]
+
+/t
+ShipmentOrderDaoImpl.executeCountAll(String, String) line: 257	
+		myWhereClause = appendOrganizationClause(aQuery, myWhereClause, myConditions);
+/d
+		myStatement.setWhereClause(myWhereClause);
+		myStatement.setGroupByClause("grp");
+		SQLQuery query = getCurrentSession().createSQLQuery(myStatement.getQuery());
+
+/ Interemzzo
+
+this	com.mpobjects.oms.dao.shipmentorder.ShipmentOrderDaoImpl  (id=24382)	
+	hibernateTemplate	org.springframework.orm.hibernate3.HibernateTemplate  (id=25800)	
+
+
+@Transactional
+public abstract class BaseHibernateDAO<T> extends HibernateDaoSupport {
+	public Session getCurrentSession() {
+		return getHibernateTemplate().getSessionFactory().getCurrentSession();
+	}
+
+/ Einde Intermezzo
+
+		for (QueryParameter parameter : myConditions) {	/ [0, 5000, 1, 10, 2, 4000, 3, 6000, 4, 7000, 5, 12000, 6, 8000, 7, 10000, 8, 11000, 9, 1, 10, 9000, 11, 13000, 12, 1000]
+			parameter.setValue(query);
+		}
+query
+
+query	org.hibernate.impl.SQLQueryImpl  (id=26133)	
+	autoDiscoverTypes	false	
+	cacheable	false	
+	cacheMode	null	
+	cacheRegion	null	
+	callable	false	
+	collectionKey	null	
+	comment	"dynamic native SQL query" (id=26150)	
+	flushMode	null	
+	namedParameterLists	java.util.HashMap  (id=26152)	
+	namedParameters	java.util.HashMap  (id=26154)	
+	optionalEntityName	null	
+	optionalId	null	
+	optionalObject	null	
+	parameterMetadata	org.hibernate.engine.query.ParameterMetadata  (id=26157)	
+	queryReturnBuilders	null	
+	queryReturns	java.util.ArrayList  (id=26159)	
+	querySpaces	null	
+	queryString	"
+SELECT sho.ASSIGNEE_SYSTEMID as grp, count(*) as c 
+FROM SHIPMENT_ORDER SHO, CUSTOMER_STATUS CS 
+WHERE SHO.CUSTOMER_STATUS_SYSTEMID = CS.SYSTEM_ID 
+AND CS.ASSIGNABLE=1 
+AND SHO.SYSTEM_ENTRY_DATE > '2017-03-22 23:59:59' 
+AND SHO.ORGANIZATION_SYSTEMID  IN (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+GROUP BY grp" (id=25736)	
+	readOnly	null	
+	resultTransformer	null	
+	selection	org.hibernate.engine.RowSelection  (id=26163)	
+	session	org.hibernate.impl.SessionImpl  (id=26165)	
+	sessionCacheMode	null	
+	sessionFlushMode	null	
+	types	java.util.ArrayList  (id=26167)	
+	values	java.util.ArrayList  (id=26169)	
+[5000, 10, 4000, 6000, 7000, 12000, 8000, 10000, 11000, 1, 9000, 13000, 1000]
+
+		List<Object[]> myResultList = query.list();
+
+/ Intermezzo
+
+SELECT sho.ASSIGNEE_SYSTEMID as grp, count(*) as c
+FROM SHIPMENT_ORDER SHO, CUSTOMER_STATUS CS
+WHERE SHO.CUSTOMER_STATUS_SYSTEMID = CS.SYSTEM_ID
+AND CS.ASSIGNABLE=1
+AND SHO.SYSTEM_ENTRY_DATE > '2017-03-22 23:59:59'
+AND SHO.ORGANIZATION_SYSTEMID  IN (5000, 10, 4000, 6000, 7000, 12000, 8000, 10000, 11000, 1, 9000, 13000, 1000) 
+GROUP BY grp
+ grp | c 
+-----+---
+(0 rows)
+
+bakker20160224_t=# \c mposcs2
+
+/ 7	. 
+
+/ Nadat de page is loaded	, wordt js called
+$ vi workload-dashboard-view.jsp
+
+			jQuery(document).ready(function() {
+				mpobjects.dashboard.config.jsonSrc = "../wicket/?module=oms&wicketpage=dashboardqueries.OrderDashboardJsonResultPage";
+				jQuery('#daysBack').val(daysBackLoaded);
+				mpobjects.dashboard.refreshMarked();
+/n
+			});
+/ Als we Enter geven na mpobjects.dashboard.refreshMarked()	, dan vallen we in de server in	,
+/s
+OrderDashboardJsonResultPage.<init>(PageParameters) line: 37	
+		super(aParameters);
+aParameters= systemid = "[27250130]" daysBack = "[5]"
+/ TODO
+		if (aParameters != null) {
+			dashboardQuerySystemId = aParameters.getAsInteger("systemid", dashboardQuerySystemId);
+27250130
+			daysBack = aParameters.getAsInteger("daysBack", daysBack);
+5
+			setServletSessionAttribute(DashboardView.PARAM_SESSION_DAYS_BACK, "" + daysBack);
+/s
+OrderDashboardJsonResultPage(JsonResultPage).setServletSessionAttribute(String, Object) line: 139	
+		((ServletWebRequest) getRequest()).getHttpServletRequest().getSession().setAttribute(aAttribute, aValue);
+aAttribute	"dashboardDaysBack" (id=24238)	
+aValue	"5" (id=24239)	
+
+/c
+OrderDashboardJsonResultPage(JsonResultPage).onRender(MarkupStream) line: 133	
+		Response response = getResponse();
+		response.setContentType("application/json; charset=utf-8");
+		response.write(getJsonResult());
+/s
+OrderDashboardJsonResultPage(JsonResultPage).getJsonResult() line: 101	
+		DashboardQueryVO query = getQuery();
+/s
+OrderDashboardJsonResultPage.getQuery() line: 66	
+			return MpoBeanFactory.getBean(DashboardQueryDAO.class).getDashboardQuery(dashboardQuerySystemId);
+/s
+DashboardQueryDAOImpl.getDashboardQuery(int) line: 87	
+		return getBySystemId(aSystemId);
+/s
+DashboardQueryDAOImpl(GenericHibernateDAO).getBySystemId(int) line: 301	
+				return type.cast(getHibernateTemplate().load(type, aSystemId));
+/t
+OrderDashboardJsonResultPage(JsonResultPage).getJsonResult() line: 103	
+		DashboardQueryVO query = getQuery();
+/d
+query	DashboardQueryVO_$$_javassist_17  (id=24633)		/ handler, target is van javassist
+	handler	JavassistLazyInitializer  (id=24673)	
+		target	DashboardQueryVO  (id=24778)	
+			daysBack	0	
+			entity	"SHIPMENT_ORDER" (id=24812)	
+			name	"workload dashboard" (id=24634)	
+			normalQuery	"SELECT sho.* FROM SHIPMENT_ORDER SHO WHERE ${CUSTOMER_STATUS_CLAUSE} AND  SHO.SYSTEM_ENTRY_DATE >  ${TODAY-${DAYS_BACK}} AND sho.INCO_TERM_SYSTEMID <> 60070 AND (select status_code from ORDER_STATUS OS where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID) < 9000\nAND (\n    select status_code\n    from ORDER_STATUS OS\n    where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID\n) < 9000" (id=24830)	
+
+		DashboardService service = DashboardUtil.getDashboardService();
+/s
+DashboardUtil.getDashboardService() line: 16	
+		return MpoBeanFactory.getBean(DashboardService.class);
+/t
+OrderDashboardJsonResultPage(JsonResultPage).getJsonResult() line: 108	
+		DashboardService service = DashboardUtil.getDashboardService();
+/d
+service	DashboardServiceImpl  (id=26034)	
+	dashboardCountDAO	$Proxy139  (id=26038)	
+	dashboardQueryDAO	$Proxy138  (id=26042)	
+			DashBoardCountVO count = getCount(service, query);
+/s
+OrderDashboardJsonResultPage.getCount(DashboardService, DashboardQueryVO) line: 43	
+/=
+	protected DashBoardCountVO getCount(DashboardService aService, DashboardQueryVO aQuery) throws DashboardException {
+aQuery	DashboardQueryVO_$$_javassist_17  (id=25949)	
+	handler	JavassistLazyInitializer  (id=26006)	
+		target	DashboardQueryVO  (id=26722)	
+			orderType	OrderType  (id=26772)		WORKLOAD
+				name	"WORKLOAD" (id=26789)	
+				ordinal	8	
+
+		DashBoardCountVO count = aService.getOrderDashBoardCountVO(aQuery, daysBack, aQuery.getOrderType().name(), true);
+/s
+DashboardServiceImpl.getOrderDashBoardCountVO(DashboardQueryVO, int, String, boolean) line: 138	
+		if (!aRefresh) {
+/n
+		if ("workload".equalsIgnoreCase(anOrderType)) {
+			myVO = refreshOrderDashboardCountVO(aDashBoardQueryVO.getSystemId(), aDaysBack, getProcessType(aDashBoardQueryVO), true);
+/s
+DashboardServiceImpl.getProcessType(DashboardQueryVO) line: 214	
+/=
+	public String getProcessType(DashboardQueryVO aDashBoardQueryVO) {
+		return OrderType.CUSTOMER_STATUS.equals(aDashBoardQueryVO.getOrderType()) ? OrderProcess.OUTBOUND : OrderProcess.INBOUND;
+/n 
+aDashBoardQueryVO.getOrderType()==WORKLOAD	, dus INBOUND
+/t
+/s
+DashboardServiceImpl.refreshOrderDashboardCountVO(int, int, String, boolean) line: 328	
+		DashboardQueryVO myVO = dashboardQueryDAO.getDashboardQuery(aSystemId);
+myVO	DashboardQueryVO_$$_javassist_17  (id=25949)		/ per systemId	,
+
+		DashboardQueryRunner myRunner = DashboardQueryRunnerFactory.getInstance().getDashboardQueryRunner(myVO);
+/s
+DashboardQueryRunnerFactory.getDashboardQueryRunner(DashboardQueryVO) line: 34	
+		final OrderType orderType = aDashboardQueryVO.getOrderType();
+		switch (orderType) {
+			case CUSTOMER_STATUS:
+			case CUSTOMER_STATUS_INBOUND:
+			case WORKLOAD:
+				return new CustomerOrderDashboardQueryRunner(aDashboardQueryVO);
+/t
+DashboardServiceImpl.refreshOrderDashboardCountVO(int, int, String, boolean) line: 331	
+		DashboardQueryRunner myRunner = DashboardQueryRunnerFactory.getInstance().getDashboardQueryRunner(myVO);
+/d
+myRunner	CustomerOrderDashboardQueryRunner  (id=27643)	
+	$SWITCH_TABLE$com$mpobjects$oms$model$customerstatus$CustomerStatusEntity	null	
+	customerOrderDAO	null	
+	customerOrderLineDAO	null	
+	customerStatusService	null	
+	shipmentOrderDao	null	
+	theQueryVO	DashboardQueryVO_$$_javassist_17  (id=25949)	
+
+		DashBoardCountVO myCount = ((CustomerOrderDashboardQueryRunner) myRunner).refreshOrder(aProcessType, isAssignable);
+/s
+CustomerOrderDashboardQueryRunner.refreshOrder(String, boolean) line: 230	
+		DashBoardCountVO myCount = new DashBoardCountVO(getQueryVO(), new Date());
+/s
+/**
+ * A DashBoardCountVO is responsible for holding dashboard counts it is stored in cache. The cache is specific per user
+ * and per dashboard query
+ */
+@SuppressWarnings("serial")
+public class DashBoardCountVO extends ValueObject {
+	public DashBoardCountVO(DashboardQueryVO aDashboardQueryVO, Date aRefresDate) {
+		dashBoardQueryVO = aDashboardQueryVO;
+		daysBack = dashBoardQueryVO.getDaysBack();
+		lastRefreshDate = aRefresDate;
+	}
+/t
+CustomerOrderDashboardQueryRunner.refreshOrder(String, boolean) line: 230	
+		DashBoardCountVO myCount = new DashBoardCountVO(getQueryVO(), new Date());
+/d
+myCount	DashBoardCountVO  (id=27856)	
+	countMap	HashMap  (id=27859)	
+	dashBoardQueryVO	DashboardQueryVO_$$_javassist_17  (id=25949)	
+	daysBack	5	
+	lastRefreshDate	Date  (id=27872)		/ nu	,
+	performanceMonitorService	null	
+	systemId	0	
+
+			Collection<CustomerStatusVo> myCustomerStatusList = getCustomerStatusService().getAll();
+/s
+CustomerOrderDashboardQueryRunner.getCustomerStatusService() line: 361	
+		// TODO: use dependency injection
+		if (customerStatusService == null) {
+			customerStatusService = MpoBeanFactory.getBean(CustomerStatusService.class);
+/t
+/s
+CustomerStatusServiceImpl(AbstractService).getAll() line: 48	
+/=
+public class AbstractService<TypeVO extends EntityInterface, TypeDAO extends BaseDAOInterface<TypeVO>> implements AbstractServiceInterface<TypeVO, TypeDAO> {
+		return getDAO().getAll();
+
+/ intermezzo
+
+$ vi oms-service.sb.xml
+
+	<bean id="com.mpobjects.oms.model.customerstatus.service.CustomerStatusService" parent="transactionRequiredTemplate">
+		<property name="target">
+			<bean class="com.mpobjects.oms.model.customerstatus.service.CustomerStatusServiceImpl">
+				<property name="DAO" ref="com.mpobjects.oms.model.customerstatus.dao.CustomerStatusDao" />
+				<property name="customerOrderTriggerHandler" ref="com.mpobjects.oms.service.trigger.CustomerOrderTriggerHandler" />
+			</bean>
+		</property>
+	</bean>
+
+/ Einde intermezzo
+
+/s
+CustomerStatusDaoImpl(GenericHibernateDAO).getAll() line: 260	
+		return getAll(false);
+/s
+CustomerStatusDaoImpl(GenericHibernateDAO).getAll(boolean) line: 265	
+		if (aShowDeleted || !isDeletable()) {
+/n
+		} else {
+			DetachedCriteria myDetachedCriteria = DetachedCriteria.forClass(type);
+this	CustomerStatusDaoImpl  (id=28128)	
+	type	Class (com.mpobjects.oms.model.customerstatus.vo.CustomerStatusVo) (id=7830)	
+
+			myDetachedCriteria.add(Property.forName(DELETED).eq(false));
+			return getHibernateTemplate().findByCriteria(myDetachedCriteria);
+/t
+CustomerOrderDashboardQueryRunner.refreshOrder(String, boolean) line: 235	
+			Collection<CustomerStatusVo> myCustomerStatusList = getCustomerStatusService().getAll();
+/d
+this	CustomerOrderDashboardQueryRunner  (id=28577)	
+aProcessType	"INBOUND" (id=27117)	
+isAssignable	true	
+myCount	DashBoardCountVO  (id=28579)	
+myCustomerStatusList	ArrayList  (id=28816)	
+	[0]	CustomerStatusVo  (id=28820)	
+	[1]	CustomerStatusVo  (id=28821)	
+	[2]	CustomerStatusVo  (id=28822)	
+	[3]	CustomerStatusVo  (id=28823)	
+	[4]	CustomerStatusVo  (id=28824)	
+	[5]	CustomerStatusVo  (id=28825)	
+	[6]	CustomerStatusVo  (id=28826)	
+	[7]	CustomerStatusVo  (id=28828)	
+	[8]	CustomerStatusVo  (id=28829)	
+	[9]	CustomerStatusVo  (id=28830)	
+	[10]	CustomerStatusVo  (id=28831)	
+	[11]	CustomerStatusVo  (id=28832)	
+	[12]	CustomerStatusVo  (id=28833)	
+	[13]	CustomerStatusVo  (id=28834)	
+	[14]	CustomerStatusVo  (id=28835)	
+
+			Map<Integer, CustomerStatusVo> myStatusListWithoutDaysBackUsed = new HashMap<Integer, CustomerStatusVo>();
+			Map<Integer, CustomerStatusVo> myStatusListWithDaysBackUsed = new HashMap<Integer, CustomerStatusVo>();
+
+			for (CustomerStatusVo myCustomerStatus : myCustomerStatusList) {
+				if (myCustomerStatus.isAssignable() && myCustomerStatus.isVisible()) {
+					if (myCustomerStatus.isDaysBackUsed()) {
+						myStatusListWithDaysBackUsed.put(myCustomerStatus.getSystemId(), myCustomerStatus);
+					} else {
+						myStatusListWithoutDaysBackUsed.put(myCustomerStatus.getSystemId(), myCustomerStatus);
+
+myStatusListWithoutDaysBackUsed	HashMap  (id=29155)	
+	[0]	HashMap$Entry  (id=31742)	
+	[1]	HashMap$Entry  (id=31743)	
+	[2]	HashMap$Entry  (id=31744)	
+	[3]	HashMap$Entry  (id=31745)	
+	[4]	HashMap$Entry  (id=31746)	
+	[5]	HashMap$Entry  (id=31747)	
+	[6]	HashMap$Entry  (id=31748)	
+	[7]	HashMap$Entry  (id=31749)	
+	[8]	HashMap$Entry  (id=31750)	
+	[9]	HashMap$Entry  (id=31751)	
+	[10]	HashMap$Entry  (id=31752)	
+	[11]	HashMap$Entry  (id=31753)	
+myStatusListWithDaysBackUsed	HashMap  (id=29156)	
+	[0]	HashMap$Entry  (id=31737)	
+	[1]	HashMap$Entry  (id=31738)	
+	[2]	HashMap$Entry  (id=31739)	
+
+			List<int[]> myResults = null;
+			if (myStatusListWithDaysBackUsed.size() > 0) {
+				myResults = getShipmentOrderDao().execQueryCountAll(
+					getQueryAll(myStatusListWithDaysBackUsed.values(), true, false),
+					ShipmentOrderDao.CUSTOMER_STATUS_SYSTEMID);
+/s
+CustomerOrderDashboardQueryRunner.getShipmentOrderDao() line: 369	
+		// TODO: use dependency injection
+		if (shipmentOrderDao == null) {
+			shipmentOrderDao = MpoBeanFactory.getBean(ShipmentOrderDao.class);
+/t
+/s
+CustomerOrderDashboardQueryRunner.getQueryAll(Collection<CustomerStatusVo>, boolean, boolean) line: 160	
+/=
+	public String getQueryAll(Collection<CustomerStatusVo> myStatusList, boolean isDaysBackUsed, boolean isAssigned) {
+myStatusList	HashMap$Values  (id=31835)	
+	[0]	CustomerStatusVo  (id=28820)	
+	[1]	CustomerStatusVo  (id=28825)	
+	[2]	CustomerStatusVo  (id=28832)	
+isDaysBackUsed	true	
+isAssigned	false	
+		List<Integer> myStatusArrayList = new ArrayList<Integer>();
+		for (CustomerStatusVo myCustomerStatusVo : myStatusList) {
+			myStatusArrayList.add(myCustomerStatusVo.getSystemId());
+		}
+[700, 600, 27244546]
+		String myStatusListString = myStatusArrayList.toString().replace('[', '(').replace(']', ')');
+(700, 600, 27244546)
+		return getQueryVO().getBaseQuery()
+				.concat(assignableClause(isAssigned))
+				.replaceAll(CUSTOMER_STATUS_CLAUSE_REGEX, " SHO.CUSTOMER_STATUS_SYSTEMID IN " + myStatusListString);
+/s
+DashboardQueryVO.getBaseQuery() line: 234	
+		return getBaseQuery(getDaysBack());
+/s
+DashboardQueryVO.getBaseQuery(int) line: 250	
+this	DashboardQueryVO  (id=28699)	
+	normalQuery	"SELECT sho.* FROM SHIPMENT_ORDER SHO WHERE ${CUSTOMER_STATUS_CLAUSE} AND  SHO.SYSTEM_ENTRY_DATE >  ${TODAY-${DAYS_BACK}} AND sho.INCO_TERM_SYSTEMID <> 60070 AND (select status_code from ORDER_STATUS OS where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID) < 9000\nAND (\n    select status_code\n    from ORDER_STATUS OS\n    where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID\n) < 9000" (id=28743)	
+
+		if (!StringUtils.isNull(normalQuery)) {
+			String myDateString = theSQLDateFormat.format(new Date());
+2017-03-29 23:59:59		/ nu	,
+			transformWorkingDays();
+/ NIETS	, want GEEN WEEKDAYS in normalQuery	,
+			String myInbetweenQuery = normalQuery.replaceAll(DAYS_BACK_PARAMETER, new Integer(daysBack).toString());
+SELECT sho.* FROM SHIPMENT_ORDER SHO WHERE ${CUSTOMER_STATUS_CLAUSE} AND  SHO.SYSTEM_ENTRY_DATE >  ${TODAY-5} AND sho.INCO_TERM_SYSTEMID <> 60070 AND (select status_code from ORDER_STATUS OS where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID) < 9000
+AND (
+    select status_code
+    from ORDER_STATUS OS
+    where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID
+) < 9000
+			myInbetweenQuery = myInbetweenQuery.replaceAll(TODAY_PARAMETER, "'" + myDateString + "'");
+/ NIETS	, 
+			return replaceDateExpressions(myInbetweenQuery);
+/s
+DashboardQueryVO.replaceDateExpressions(String) line: 171	
+	private static Pattern thePattern = Pattern.compile("\\$\\{TODAY[ ]*?[\\-|\\+][ ]*?[0-9]+\\}");
+
+		Matcher m = thePattern.matcher(aQuery);
+		StringBuffer myReplaceBuffer = new StringBuffer();
+
+		while (m.find()) {
+			String myGroup = m.group();
+${TODAY-5}
+			if (myGroup.indexOf("-") > -1) {
+				mySign = "-";
+				myMultiplier = -1;
+			}
+			long myDays = 0;
+			if (mySign != null) {
+				myDays = new Long(myGroup.substring(myGroup.indexOf(mySign) + 1, myGroup.indexOf("}")).trim()).longValue();
+5
+			long myOffset = myMultiplier * myDays * 86400L * 1000L; 	/ milliseconden
+/ 86400=24*60*60 is seconden in een dag	,
+
+			Date myDate = new Date(new Date().getTime() + myOffset);
+Fri Mar 24 15:08:14 CET 2017
+
+			String myDateString = "'" + theSQLDateFormat.format(myDate) + "'";
+'2017-03-24 23:59:59'
+			m.appendReplacement(myReplaceBuffer, myDateString);	
+		m.appendTail(myReplaceBuffer);
+
+		String myReturnQueryString = myReplaceBuffer.toString();
+SELECT sho.* FROM SHIPMENT_ORDER SHO WHERE ${CUSTOMER_STATUS_CLAUSE} AND  SHO.SYSTEM_ENTRY_DATE >  '2017-03-24 23:59:59' AND sho.INCO_TERM_SYSTEMID <> 60070 AND (select status_code from ORDER_STATUS OS where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID) < 9000
+AND (
+    select status_code
+    from ORDER_STATUS OS
+    where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID
+) < 9000
+/ TODO
+		return myReturnQueryString;
+/t
+CustomerOrderDashboardQueryRunner.getQueryAll(Collection<CustomerStatusVo>, boolean, boolean) line: 166	
+		return getQueryVO().getBaseQuery()
+/d
+				.concat(assignableClause(isAssigned))
+				.replaceAll(CUSTOMER_STATUS_CLAUSE_REGEX, " SHO.CUSTOMER_STATUS_SYSTEMID IN " + myStatusListString);
+/s
+CustomerOrderDashboardQueryRunner.assignableClause(boolean) line: 333	
+		return " AND SHO.ASSIGNEE_SYSTEMID is "
+				.concat(isAssigned ? "not" : "")	/ /n
+				.concat(" null ");
+/t
+CustomerOrderDashboardQueryRunner.getQueryAll(Collection<CustomerStatusVo>, boolean, boolean) line: 166	
+		return getQueryVO().getBaseQuery()
+				.concat(assignableClause(isAssigned))
+/d
+				.replaceAll(CUSTOMER_STATUS_CLAUSE_REGEX, " SHO.CUSTOMER_STATUS_SYSTEMID IN " + myStatusListString);
+/ replaces   ${CUSTOMER_STATUS_CLAUSE} door SHO.CUSTOMER_STATUS_SYSTEMID IN (700, 600, 27244546) 
+/t
+CustomerOrderDashboardQueryRunner.refreshOrder(String, boolean) line: 250	
+				myResults = getShipmentOrderDao().execQueryCountAll(getQueryAll(myStatusListWithDaysBackUsed.values(), true, false),
+						ShipmentOrderDao.CUSTOMER_STATUS_SYSTEMID);
+/pd
+/s
+ShipmentOrderDaoImpl.execQueryCountAll(String, String) line: 203	/	 package com.mpobjects.oms.dao.shipmentorder;
+	public List<int[]> execQueryCountAll(String aSQLQuery, String aGroupByColumName) {
+aGroupByColumName	"CUSTOMER_STATUS_SYSTEMID" (id=32602)	
+aSQLQuery=
+SELECT sho.* FROM SHIPMENT_ORDER SHO WHERE  SHO.CUSTOMER_STATUS_SYSTEMID IN (700, 600, 27244546) AND  SHO.SYSTEM_ENTRY_DATE >  '2017-03-24 23:59:59' AND sho.INCO_TERM_SYSTEMID <> 60070 AND (select status_code from ORDER_STATUS OS where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID) < 9000
+AND (
+    select status_code
+    from ORDER_STATUS OS
+    where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID
+) < 9000 
+AND SHO.ASSIGNEE_SYSTEMID is  null 
+
+/ Intermezzo
+
+SELECT sho.* 
+FROM SHIPMENT_ORDER SHO 
+WHERE  SHO.CUSTOMER_STATUS_SYSTEMID IN (700, 600, 27244546) 	-- customer status where daysbackused =false TODO
+AND  SHO.SYSTEM_ENTRY_DATE >  '2017-03-24 23:59:59' 
+AND sho.INCO_TERM_SYSTEMID <> 60070 
+AND (
+	select status_code 
+	from ORDER_STATUS OS 
+	where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID
+) < 9000
+AND SHO.ASSIGNEE_SYSTEMID is  null
+
+
+/ Einde Intermezzo
+
+		SQLStatement myStatement = new SQLStatement(aSQLQuery);
+		myStatement.setSelectClause("sho." + aGroupByColumName + " as grp, count(*) as c");
+
+SELECT sho.CUSTOMER_STATUS_SYSTEMID as grp, count(*) as c FROM SHIPMENT_ORDER SHO WHERE SHO.CUSTOMER_STATUS_SYSTEMID IN (700, 600, 27244546) AND  SHO.SYSTEM_ENTRY_DATE >  '2017-03-24 23:59:59' AND sho.INCO_TERM_SYSTEMID <> 60070 AND (select status_code from ORDER_STATUS OS where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID) < 9000
+AND (
+    select status_code
+    from ORDER_STATUS OS
+    where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID
+) < 9000 
+		String myWhereClause = myStatement.getWhereClause();
+
+		boolean shouldAddOrganizationClause = !ORGANIZATION_PATTERN.matcher(aSQLQuery).matches();
+true
+		if (shouldAddOrganizationClause) {
+			myWhereClause += " and sho.ORGANIZATION_SYSTEMID IN (:organization) ";
+		}
+
+		myStatement.setWhereClause(myWhereClause);
+		myStatement.setGroupByClause("grp");
+
+SELECT sho.CUSTOMER_STATUS_SYSTEMID as grp, count(*) as c FROM SHIPMENT_ORDER SHO WHERE SHO.CUSTOMER_STATUS_SYSTEMID IN (700, 600, 27244546) AND  SHO.SYSTEM_ENTRY_DATE >  '2017-03-24 23:59:59' AND sho.INCO_TERM_SYSTEMID <> 60070 AND (select status_code from ORDER_STATUS OS where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID) < 9000
+AND (
+    select status_code
+    from ORDER_STATUS OS
+    where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID
+) < 9000 AND SHO.ASSIGNEE_SYSTEMID is  null and sho.ORGANIZATION_SYSTEMID IN (:organization)  GROUP BY grp
+
+		SQLQuery myQuery = getCurrentSession().createSQLQuery(myStatement.getQuery());
+
+		if (shouldAddOrganizationClause) {
+			myQuery.setParameterList("organization", ResourceUtil.getResource().getOrganizations());
+		}
+
+myQuery	SQLQueryImpl  (id=33417)	
+	namedParameterLists	HashMap  (id=33423)	
+		[0]	HashMap$Entry  (id=33450)	
+			key	"organization" (id=33454)	
+			value	TypedValue  (id=33455)	
+				entityMode	EntityMode  (id=33466)	
+				type	ManyToOneType  (id=33467)	
+				value	ArrayList  (id=33468)	
+					[0]	Organization_$$_javassist_120  (id=33474)	/ SystemId:5000	Id:GEODIS	Description:GEODIS Global
+					[1]	Organization_$$_javassist_120  (id=33475)	/ SystemId:10	Id:IBM	Description:IBM 
+					[2]	Organization_$$_javassist_120  (id=33476)	/ SystemId:4000	Id:LOGISTICS	Description:Geodis Logistics	
+					[3]	Organization_$$_javassist_120  (id=33477)	
+					[4]	Organization_$$_javassist_120  (id=33478)	
+					[5]	Organization_$$_javassist_120  (id=33479)	
+					[6]	Organization_$$_javassist_120  (id=33481)	
+					[7]	Organization_$$_javassist_120  (id=33482)	
+					[8]	Organization_$$_javassist_120  (id=33484)	
+					[9]	Organization_$$_javassist_120  (id=33486)	
+					[10]	Organization_$$_javassist_120  (id=33487)	
+					[11]	Organization_$$_javassist_120  (id=33489)	
+					[12]	Organization_$$_javassist_120  (id=33491)	
+myQuery SQLQueryImpl
+SQLQueryImpl(
+SELECT sho.CUSTOMER_STATUS_SYSTEMID as grp, count(*) as c 
+FROM SHIPMENT_ORDER SHO 
+WHERE SHO.CUSTOMER_STATUS_SYSTEMID IN (700, 600, 27244546) 
+AND  SHO.SYSTEM_ENTRY_DATE >  '2017-03-25 23:59:59' 
+AND sho.INCO_TERM_SYSTEMID <> 60070 
+AND (
+	select status_code 
+	from ORDER_STATUS OS 
+	where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID
+) < 9000
+AND (
+    select status_code
+    from ORDER_STATUS OS
+    where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID
+) < 9000 
+AND SHO.ASSIGNEE_SYSTEMID is  null 
+and sho.ORGANIZATION_SYSTEMID IN (:organization)  
+GROUP BY grp
+)
+
+/q
+		List<Object[]> myResultList = myQuery.list();
+/ In myQuery.namedParameterLists staan dus proxies naar organizaties. Hoe worden dat system ids?
+/ TODO
+
+/ intermezzo
+
+/ we maken zelf	, 
+
+SELECT sho.CUSTOMER_STATUS_SYSTEMID as grp, count(*) as c
+FROM SHIPMENT_ORDER SHO
+WHERE SHO.CUSTOMER_STATUS_SYSTEMID IN (700, 600, 27244546)
+AND  SHO.SYSTEM_ENTRY_DATE >  '2017-03-25 23:59:59'
+AND sho.INCO_TERM_SYSTEMID <> 60070
+AND (
+    select status_code
+    from ORDER_STATUS OS
+    where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID
+) < 9000
+AND (
+    select status_code
+    from ORDER_STATUS OS
+    where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID
+) < 9000
+AND SHO.ASSIGNEE_SYSTEMID is  null
+and sho.ORGANIZATION_SYSTEMID IN (5000,10,4000,6000,7000,12000,8000,10000,11000,1,9000,13000,1000) 
+GROUP BY grp
+;
+ERROR:  operator does not exist: character varying < integer
+LINE 10: ) < 9000
+HINT:  No operator matches the given name and argument type(s). You might need to add explicit type casts.
+
+/ we zien	, 
+mposcs2=# \d order_status
+              Table "public.order_status"
+       Column       |         Type          | Modifiers 
+--------------------+-----------------------+-----------
+ status_code        | character varying(5)  | 
+
+/ we doen	, 
+
+SELECT sho.CUSTOMER_STATUS_SYSTEMID as grp, count(*) as c
+FROM SHIPMENT_ORDER SHO
+WHERE SHO.CUSTOMER_STATUS_SYSTEMID IN (700, 600, 27244546)
+AND  SHO.SYSTEM_ENTRY_DATE >  '2017-03-25 23:59:59'
+AND sho.INCO_TERM_SYSTEMID <> 60070
+AND (
+    select cast(status_code as smallint)
+    from ORDER_STATUS OS
+    where os.SYSTEM_ID = sho.STATUS_CODE_SYSTEMID
+) < 9000
+AND SHO.ASSIGNEE_SYSTEMID is  null
+and sho.ORGANIZATION_SYSTEMID IN (5000,10,4000,6000,7000,12000,8000,10000,11000,1,9000,13000,1000) 
+GROUP BY grp
+;
+ grp | c  
+-----+----
+ 600 | 36
+(1 row)
+
+/ Einde intermezzo
+
+/ Einde DEBUG SCS-6338
+
+/ DATABASE
+
+[eric@localhost bin]$ vs-test-3.sh 
+jboss@192.168.3.103's password: jboss@mpo
+
+jboss@vs-test-3:~$  less /local/apps/jboss-4.0.5.GA/server/scstest2/deploy/postgres-ds.xml 
+                <xa-datasource-property name="ServerName">192.168.1.8</xa-datasource-property>
+                <xa-datasource-property name="PortNumber">5433</xa-datasource-property>
+                <xa-datasource-property name="DatabaseName">scstest2</xa-datasource-property>
+                <xa-datasource-property name="User">scstest</xa-datasource-property>
+                <xa-datasource-property name="Password">al5deewaoNgaavie3Oit6cheeWohdaYi</xa-datasource-property>
+
+/ Ga naar mposerv8	, 
+$ mposerv8 
+eric@mposerv8:~$ PGPASSWORD=al5deewaoNgaavie3Oit6cheeWohdaYi psql -U scstest -p 5433 -h localhost scstest2
+
+/ of op laptop	, 
+[eric@localhost local]$ PGPASSWORD=eric987@MPO psql -U eric -p 5433 -h mposerv8 scstest2
+/ OK
+
+
+/ Einde DATABASE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

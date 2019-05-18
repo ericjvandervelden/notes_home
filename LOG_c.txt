@@ -1,0 +1,92 @@
+/ ENCODING
+
+/ 7	. 
+
+/ lees  ,
+https://www.quora.com/How-character-encoding-is-integrated-in-operating-systems
+
+https://stackoverflow.com/questions/43834315/printing-a-unicode-symbol-in-c
+-> enc.c
+
+https://www.cprogramming.com/tutorial/unicode.html
+
+/	7	. 
+
+[eric@almond enc]$ pwd
+/home/eric/Devel/C/C/enc
+[eric@almond enc]$ ls
+enc2.c  enc3.c  enc.c  enc.txt
+
+/ in enc3 zien we 0x03c0 in het geheugen	, en in de file enc.txt zien we utf-8	,
+/ maar in enc3 gaat print naar screen ERR	, we zien ?
+
+$ vi enc3.c
+
+#include <stdio.h>
+#include <wchar.h>
+#include <locale.h>
+int main(){
+  //setlocale(LC_CTYPE,"");
+  setlocale(LC_CTYPE,"en_US.UTF-8");
+  wchar_t pi[10];
+  FILE*in;
+  in=fopen("enc.txt","r");
+  fgetws(pi,10,in);
+  fclose(in);
+  return(0);
+}
+
+
+/ 7	. 
+
+$ vi enc4.c
+
+#include <stdio.h>
+#include <wchar.h>
+#include <locale.h>
+#include<string.h>
+int main(){
+  setlocale(LC_CTYPE,"");
+  //setlocale(LC_CTYPE,"en_US.UTF-8");
+  char pi[10];
+  FILE*in;
+  in=fopen("enc.txt","r");
+  fscanf(in,"%s",&pi); // of fgets(pi,10,in);
+  fclose(in);
+  printf("%s\n",pi);
+
+  char pi2[10];
+  strcpy(pi2,"π");
+  printf("%s\n",pi2);
+
+  char pi3[10];
+  scanf("%s",&pi3);
+  printf("%s\n",pi3);
+
+  return(0);
+}
+
+/ als we debug	,
+
+20		scanf("%s",&pi3);
+(gdb) 
+π												/ ik heb c^shift+u 3c0 gedaan	,
+21		printf("%s\n",pi3);
+(gdb) x/16xw pi3
+0x7fffffffd95a:	0x000080cf	0x07200000	0x80cf0040	0x05a00000
+0x7fffffffd96a:	0x00000040	0xda0080cf	0x7fffffff	0x2f200000
+0x7fffffffd97a:	0x00000060	0x07200000	0x00000040	0x288a0000
+0x7fffffffd98a:	0x7ffff7a2	0x00010000	0x00000000	0xda680000
+
+/ we zien 3 keer utf8 cf80	, 
+
+/ dus scanf	, strcpy printf van/naar een char[] werken met utf-8
+
+
+/ we zien utf-8 in memory	, 0xcf80	 
+
+
+
+
+/ Einde ENCODING
+

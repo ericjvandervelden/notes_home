@@ -1,0 +1,13 @@
+/ lees	over instead of,
+https://technet.microsoft.com/en-us/library/ms175521(v=sql.105).aspx
+
+https://en.wikipedia.org/wiki/Multiplicative_group_of_integers_modulo_n
+
+/ 7	. 
+
+/ cte
+
+/ recursive cte
+https://technet.microsoft.com/nl-nl/library/ms186243(v=sql.105).aspx
+
+

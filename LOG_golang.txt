@@ -1,0 +1,244 @@
+/ lees	,
+https://github.com/GoClipse/goclipse/blob/latest/documentation/UserGuide.md#user-guide
+/ Ze install WH goclipse in C/C++ eclipse	,
+
+/ 7	. 
+
+[eric@almond work3]$ pwd
+/home/eric/Devel/Golang/work3
+[eric@almond work3]$ find
+./src/hello/main.go
+[eric@almond work3]$ go build hello
+can't load package: package hello: no buildable Go source files in /home/eric/Devel/Golang/work2/src/hello
+[eric@almond work3]$ env | grep GO
+GOPATH=/home/eric/Devel/Golang/work2
+
+/ lees	,
+https://unix.stackexchange.com/questions/368944/what-is-the-difference-between-env-setenv-export-and-when-to-use
+Trying to understand .bashrc, env, and export
+Difference between environment variables and exported environment variables in bash
+What is the difference in usage between shell variables and environment variables?
+bash setenv command is not found
+
+[eric@almond work3]$ GOPATH=$(pwd)
+[eric@almond work3]$ go build hello
+[eric@almond work3]$ ls
+hello  src
+[eric@almond work3]$ ./hello 
+hello, world!
+
+/ lees	,
+LOG_2_nov_2015.txt:6465	, 
+
+/ 	7 .
+
+/ kijk,
+https://www.youtube.com/watch?v=5bYO60-qYOI / sameer ajmani
+
+tour.golang.org
+
+golang.org/wiki/learn
+/ bijv	,
+http://yourbasic.org/algorithms/your-basic-int/
+
+play.golang.org
+
+google.golang.org
+/ bijv	,
+https://godoc.org/google.golang.org/grpc
+
+golang.org/project
+
+/ 7	. 
+
+/ Kijk	, 
+https://www.youtube.com/watch?v=nhmAyZNlECw / Hightower	, self contained appl	, gcloud	, ...
+https://www.youtube.com/watch?v=kOa_llowQ1c&feature=push-u-sub&attr_tag=rJmM6--a2-ItyAlZ-6 / Hightower	, kubernetes	, git	,
+
+
+/ 7	. 
+
+[eric@almond work3]$ GOPATH=$(pwd)
+[eric@almond work3]$ find
+./src/hello/main.go
+[eric@almond work3]$ cat src/hello/main.go 
+package main 
+import "fmt"
+func main(){
+	fmt.Printf("hello, world!\n")
+}
+[eric@almond work3]$ go build hello
+[eric@almond work3]$ ./hello 
+hello, world!
+
+/ 7	. 
+
+/ Met go build kunnen je packages build	, of files	,
+
+[eric@almond work4]$ find
+.
+./src
+./src/welcome
+./src/welcome/hello.go
+
+[eric@almond work4]$ go build welcome
+[eric@almond work4]$ ./welcome 
+Hello π
+
+[eric@almond work4]$ go build src/welcome/hello.go 
+[eric@almond work4]$ ./hello 
+Hello π
+
+/ 13	. 
+
+[eric@almond work4]$ cat src/welcome/sandbox.go 
+package main
+import ("fmt";"time")
+func main(){
+	fmt.Println("The time is ",time.Now());
+}
+
+/ herinner	,
+
+[eric@almond work4]$ cat src/welcome/hello.go 
+package main
+import "fmt"
+func main(){
+	fmt.Println("Hello π")
+}
+
+[eric@almond work4]$ go build welcome 
+# welcome
+src/welcome/sandbox.go:3: main redeclared in this block
+	previous declaration at src/welcome/hello.go:3
+
+[eric@almond work4]$ go build src/welcome/sandbox.go 
+[eric@almond work4]$ ./sandbox 
+The time is  2018-03-19 22:02:22.948904712 +0100 CET
+
+/ 13	. 
+
+/ we veranderen package 	,
+
+[eric@almond work4]$ cat src/welcome/sandbox.go 
+package foo 
+import ("fmt";"time")
+func main(){
+	fmt.Println("The time is ",time.Now());
+}
+
+[eric@almond work4]$ go build welcome 
+can't load package: package welcome: found packages main (hello.go) and foo (sandbox.go) in /home/eric/Devel/Golang/work4/src/welcome
+
+/ 13	. 
+
+[eric@almond work4]$ cat src/welcome/sandbox.go 
+package foo 
+import ("fmt";"time")
+func main(){
+	fmt.Println("The time is ",time.Now());
+}
+[eric@almond work4]$ vi src/welcome/hello.go 
+[eric@almond work4]$ go build welcome 
+can't load package: package welcome: found packages bar (hello.go) and foo (sandbox.go) in /home/eric/Devel/Golang/work4/src/welcome
+
+/ WH moet je in src/welcome de package main noemen	,
+/ TODO
+
+/ 13	. 
+
+/ Als we go build src/main/sandbox.go	, dan moet sandbox.go een main fct hebben	,
+[eric@almond work4]$ cat src/welcome/sandbox.go 
+package main 
+import ("fmt";"time")
+func foo(){
+	fmt.Println("The time is ",time.Now());
+}
+
+[eric@almond work4]$ go build src/welcome/sandbox.go 
+# command-line-arguments
+runtime.main_main·f: relocation target main.main not defined
+runtime.main_main·f: undefined: "main.main"
+
+/ 13	. 
+
+/ ook als we een package build	, moet er een main fct zijn	,
+
+[eric@almond work4]$ cat src/welcome/hello.go 
+package main 
+import "fmt"
+func bar(){
+	fmt.Println("Hello π")
+}
+[eric@almond work4]$ cat src/welcome/sandbox.go 
+package main 
+import ("fmt";"time")
+func foo(){
+	fmt.Println("The time is ",time.Now());
+}
+[eric@almond work4]$ go build welcome
+# welcome
+runtime.main_main·f: relocation target main.main not defined
+runtime.main_main·f: undefined: "main.main"
+
+/ 13	. 
+
+/ lees	,
+https://tour.golang.org/basics/1
+
+Every Go program is made up of packages.
+Programs start running in package main.
+
+/ als we in hello.go package welcome ipv package main	, en we doen go build welcome, dan verschijnt er niets	, ook niet als we go build src/welcome/hello.go	,
+
+/ we zien in de src van go	,
+[eric@almond go]$ ls src/math/rand/
+example_test.go  normal.go     rand.go       regress_test.go  zipf.go
+exp.go           race_test.go  rand_test.go  rng.go
+/ als deze hebben package rand 	, maar het zijn geen running programs	, 
+
+/ 13	. 
+
+/ let op verschil fmt.Println en fmt.Printf	,
+
+$ vi src/welcome/imports.go
+
+package main
+import ("fmt"
+  "math")
+func main(){
+  fmt.Println("Now you have %g problems",math.Sqrt(7))
+  fmt.Printf("Now you have %g problems.\n", math.Sqrt(7))
+}
+
+[eric@almond work4]$ go build src/welcome/imports.go 
+[eric@almond work4]$ ./imports 
+Now you have %g problems 2.6457513110645907
+Now you have 2.6457513110645907 problems.
+
+/ we zien dat fmt.Println %g NIET substitutes	,
+/ TODO
+
+/ 13	. 
+
+[eric@almond work4]$ cat src/welcome/multiple-results.go 
+package main
+import "fmt"													/ GEEN 'fmt'
+func swap(s,t string)(string,string){	/ GEEN (string;string) of string,string
+	return t,s
+}
+func main(){
+	a,b:=swap("hello","world")	/ GEEN =
+	fmt.Println(a,b)
+}
+
+[eric@almond work4]$ go build src/welcome/multiple-results.go 
+[eric@almond work4]$ ./multiple-results 
+world hello
+
+/ 13	. 
+
+/ 7	. 
+
+/ kijk	,
+https://www.youtube.com/watch?v=SzgRMrrbTnM	 / concurrency	,

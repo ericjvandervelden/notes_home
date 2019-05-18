@@ -1,0 +1,7 @@
+/ 7	. 
+
+/ lees	,
+https://docs.fedoraproject.org/quick-docs/en-US/installing-chromium-or-google-chrome-browsers.html
+/ lees	,
+https://www.hiroom2.com/2017/12/03/fedora-27-google-chrome-en/
+/ hoe te install een .rpm	: met dnf install

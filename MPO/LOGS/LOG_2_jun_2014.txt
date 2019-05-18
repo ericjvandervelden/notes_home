@@ -1,0 +1,2868 @@
+/ POSTGRESQL
+
+/ 7	. 
+
+foo=> begin;
+foo=> create table itm(id_ int,name_ varchar(32),city_ varchar(32));
+foo=> insert into itm values(1,'first','y'),(2,'second','y');
+foo=> commit;
+/ of rollback;
+
+/ wat is de isol level?
+foo=> show transaction_isolation ;
+/ of	,
+foo=> select current_setting('transaction_isolation');
+-----------------------
+ read committed
+(1 row)
+/ dit is dus de default	,
+
+
+foo=> set transaction isolation level repeatable read;
+foo=> begin;
+/ of
+foo=> begin transaction isolation level repeatable read;
+
+
+
+
+/ 7	.
+
+/ In de manual	,
+http://www.postgresql.org/docs/9.2/interactive/index.html
+
+/ in I. tutorial	, 3. Advanced features	, 3.4 Transactions	,
+
+/ In II. the SQL Language,	 13. Concurrency control	, 
+
+/ we lezen 13.2	,
+/ in postgres: 
+/ read uncommitted bestaat niet, = read committed	,
+/ repeatable read heeft geen phantom reads	,
+
+/ lees	,
+http://www.postgresql.org/docs/9.2/static/sql-select.html#SQL-FOR-UPDATE-SHARE
+
+[eric@localhost eclipse-jee]$ psql -U foo foo
+
+/ 7	. 
+
+/ read committed	, 
+
+/ unrepeatable read	,
+
+/ we doen de update in W2	, we lezen unrepeatable in W1	,
+
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | Y
+   2 | fourth | Y
+(2 rows)
+
+/ W1
+
+/ 1
+foo=> begin\g
+BEGIN
+/ 3
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | Y
+   2 | fourth | Y
+(2 rows)
+/ 6	
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | a
+   2 | fourth | a
+(2 rows)
+
+/ W2
+
+/ 2	.
+foo=> begin\g
+BEGIN
+/ 4
+foo=> update item set city='a'\g
+UPDATE 2
+/ 5
+foo=> commit\g
+COMMIT
+
+/ 7	. 
+
+/ read committed
+
+/ dirty reads NIET	,
+
+/ we update in W2	, we lezen in W1	,
+
+/ W1
+
+foo=> begin\g
+BEGIN
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | Y
+   2 | fourth | Y
+(2 rows)
+
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | Y
+   2 | fourth | Y
+(2 rows)
+
+/ W2
+
+foo=> begin\g
+BEGIN
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | Y
+   2 | fourth | Y
+(2 rows)
+
+foo=> update item set city='a'\g
+UPDATE 2
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | a
+   2 | fourth | a
+(2 rows)
+
+
+
+/ 7	.
+
+/ read committed	,
+
+/ write locks
+
+/ W1
+
+
+=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | a
+   2 | fourth | a
+(2 rows)
+
+/1
+foo=> begin\g
+BEGIN
+/3
+foo=> update item set city='X'\g
+UPDATE 2
+/3
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | X
+   2 | fourth | X
+(2 rows)
+/5
+foo=> commit\g
+COMMIT
+/ 7	.
+oo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | X
+   2 | fourth | X
+(2 rows)
+/ 9
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | Y
+   2 | fourth | Y
+(2 rows)
+
+
+/ W2
+
+/ 2
+foo=> begin\g
+BEGIN
+/4
+foo=> update item set city='Y'\g
+/ HANGS
+/ 6
+/ LOOPT DOOR	,
+UPDATE 2
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | Y
+   2 | fourth | Y
+(2 rows)
+/ 8
+foo=> commit\g
+COMMIT
+
+/ als we bij 5 rollback	, dan zien we daarna in W1 buiten tr 'a'	, in W2's tr valt hij door, en zien we 'Y', als we in W2 commit, zien we in W2 buiten tr 'Y', en in W1 buiten tr 'Y'	,
+
+ 
+/ 7	.
+
+foo=> begin\g
+BEGIN
+foo=> set transaction isolation level repeatable read 
+/ we kunnen TAB	,
+
+/ W1
+
+/ repeatable read	,
+
+/ Geen unrepeatable read bij 6	,
+
+/ lees in W1, update in W2 
+
+/ 1
+foo=> begin\g
+BEGIN
+foo=> set transaction isolation level repeatable read \g
+SET
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | Y
+   2 | fourth | Y
+(2 rows)
+/ 6
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | Y
+   2 | fourth | Y
+(2 rows)
+
+/ 7
+foo=> commit\g
+/ of	,
+foo=> rollback\g
+COMMIT
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | a
+   2 | fourth | a
+(2 rows)
+
+/ W2
+
+/ 2
+foo=> begin\g
+BEGIN
+foo=> set transaction isolation level repeatable read \g
+SET
+/ 3
+foo=> update item set city='a'\g
+UPDATE 2
+/4
+foo=> commit \g
+COMMIT
+/5
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | a
+   2 | fourth | a
+(2 rows)
+
+/ in W1 bij 6 zien we dus geen 'a', zoals bij read committed	, 
+
+/ 7	.
+
+/ we lezen op	,
+http://www.postgresql.org/docs/9.2/interactive/transaction-iso.html
+
+hen you select the level Read Uncommitted you really get Read Committed, and phantom reads are not possible in the PostgreSQL implementation of Repeatable Read, so the actual isolation level might be stricter than what you select. 
+
+/ Klopt	,
+
+/ we lezen in W1, insert in W2,
+
+/ W1
+
+/ 1
+foo=> begin\g
+BEGIN
+foo=> set transaction isolation level repeatable read \g
+SET
+/ 3
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | a
+   2 | fourth | a
+(2 rows)
+/ 7
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | a
+   2 | fourth | a
+(2 rows)
+
+foo=> rollback\g
+ROLLBACK
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | a
+   2 | fourth | a
+   3 | third  | b
+(3 rows)
+
+
+/ W2
+
+/ 2
+foo=> begin\g
+BEGIN
+foo=> set transaction isolation level repeatable read \g
+SET
+/4
+foo=> insert into item values(3,'third','b')\g
+INSERT 0 1
+/5
+foo=> commit\g
+COMMIT
+/6
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | a
+   2 | fourth | a
+   3 | third  | b
+(3 rows)
+
+
+/ we zien bij 7	. geen phantom reads	,
+
+/ Ook als we in W2 een delete doen, zien we deze in de tr in W1 niet	, 
+
+/ W1
+
+/ 1
+foo=> begin\g
+BEGIN
+foo=> set transaction isolation level repeatable read \g
+SET
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | a
+   2 | fourth | a
+   3 | third  | b
+(3 rows)
+/5
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | a
+   2 | fourth | a
+   3 | third  | b
+(3 rows)
+/ 6
+foo=> rollback\g
+ROLLBACK
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | a
+   2 | fourth | a
+(2 rows)
+
+/ W2
+
+/2
+foo=> begin\g
+BEGIN
+foo=> set transaction isolation level repeatable read \g
+SET
+/3
+foo=> delete from item where city='b'\g
+DELETE 1
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | a
+   2 | fourth | a
+(2 rows)
+/4
+foo=> commit\g
+COMMIT
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | a
+   2 | fourth | a
+(2 rows)
+
+/ we zien bij 5 dus geen phantom reads	,
+
+
+
+/ Einde POSTGRESQL
+
+/ POSTGRESQL ROLES PRIVILEGES  
+
+/ 7	.
+
+[eric@localhost Book]$ sudo -u postgres vi /var/lib/pgsql/data/pg_hba.conf
+
+# "local" is for Unix domain socket connections only
+local   all            postgres                                 peer
+local   all             eric                                    peer
+local   all             all                                     md5
+# IPv4 local connections:
+host    all             all             127.0.0.1/32           md5
+# IPv6 local connections:
+host    all             all             ::1/128                md5
+
+[eric@localhost Book]$ sudo -i -u postgres pg_ctl reload
+server signaled
+
+
+[eric@localhost Book]$ psql -U mpopostgres mpo
+Password for user mpopostgres: mpopostgres@mpo
+mpo=> \q
+
+local   all             all                                     md5
+[eric@localhost Book]$ psql -U foo
+
+host    all             all             127.0.0.1/32           md5
+[eric@localhost Book]$ psql -U foo foo -h 127.0.0.1
+
+host    all             all             ::1/128                md5
+[eric@localhost Book]$ psql -U foo foo -h localhost
+
+/ 7	.
+
+[eric@localhost Book]$ sudo -u postgres psql<<X
+> create role sas login createdb password 'sas'
+> X
+CREATE ROLE
+/ OK, na role moet meteen de role name, 
+[eric@localhost Book]$ psql -U sas foo
+Password for user sas: 
+foo=> \q
+[eric@localhost Book]$ sudo -u postgres psql<<X
+drop role sas
+> X
+DROP ROLE
+
+/ 7	.
+
+[eric@localhost Book]$ sudo -u postgres psql<<X
+> drop user eric
+> X
+ERROR:  role "eric" cannot be dropped because some objects depend on it
+DETAIL:  owner of database eric
+
+[eric@localhost Book]$ sudo -u postgres psql<<X
+drop database eric
+> X
+DROP DATABASE
+[eric@localhost Book]$ sudo -u postgres psql<<X
+drop user eric
+X
+DROP ROLE
+
+/ 13.	
+
+/ eric is not the owner of database eric	, but postgres is	,
+
+[eric@localhost Book]$ sudo -u postgres psql<<X
+create role eric login createdb
+> X
+CREATE ROLE
+[eric@localhost Book]$ sudo -u postgres psql<<X
+create database eric
+> X
+CREATE DATABASE
+[eric@localhost Book]$ sudo -u postgres psql<<X
+drop user eric
+X
+DROP ROLE
+
+/ 13	.
+
+/ eric creates database eric	,
+
+[eric@localhost Book]$ createdb
+[eric@localhost Book]$ psql<<X         
+\l                  
+X
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   
+-----------+----------+----------+-------------+-------------+-----------------------
+ eric      | eric     | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+
+/ of, 
+
+[eric@localhost Book]$ psql template1 <<X
+drop database eric
+X
+DROP DATABASE
+[eric@localhost Book]$ psql template1 <<X
+create database eric
+> X
+CREATE DATABASE
+
+/ we moeten connect met een andere db	, postgres of template1	, om eric te drop/create	,
+
+/ Maar ook kan met createdb	,
+
+[eric@localhost Book]$ sudo -u postgres psql<<X
+> create role bar login createdb password 'bar'
+> X
+CREATE ROLE
+[eric@localhost Book]$ createdb -U bar bar
+Password: 
+[eric@localhost Book]$ dropdb -U bar bar
+Password: 
+
+[eric@localhost Book]$ psql -U bar postgres <<X
+create database bar
+X
+Password for user bar: 
+CREATE DATABASE
+
+
+/ 7	.
+
+/ HIER HIER
+
+/ privileges
+
+/ De owner van een database mag schemas create/drop, 	we zien onder \dp niets , 
+/ de ownner van een database kan grants doen	, aan een andere user	, deze zien we wel onder \dp	, de grants van de owner zien we dan ook meteen	,
+
+/ als user bar connect met  db foo	, dan kan hij in schema public een table create	, update	, maar bestaande tables gemaakt door foo kan bar niet lezen	,  
+/ user bar in schema my (gemaakt door foo) geen table create, tenzij user foo user bar grants	,
+/ user foo kan user bar niet grant op public schema	,  
+
+/ Intermezzo
+
+foo=> select current_database()\g
+ current_database 
+------------------
+ foo
+(1 row)
+foo=> select current_user\g
+ current_user 
+--------------
+ bar
+(1 row)
+
+
+baz=> \c baz bar
+Password for user bar: 
+You are now connected to database "baz" as user "bar".
+baz=> select current_user\g
+ current_user 
+--------------
+ bar
+(1 row)
+
+/ als we er geen user achter set	, dan log we in als baz	,
+
+
+/ Einde Intermezzo
+
+/ 13	.
+
+/ W1
+[eric@localhost Book]$ psql -U foo foo
+Password for user foo: 
+foo=> grant all on table x to bar\g
+GRANT
+
+/ W2
+[eric@localhost Book]$ psql -U bar foo
+Password for user bar: 
+psql (9.3.4)
+Type "help" for help.
+foo=> select*from x\g
+/ OK
+
+/ W1
+foo=> revoke all on table x from bar\g
+REVOKE
+
+/ W2
+foo=> select*from x\g
+ERROR:  permission denied for relation x
+
+/ W1
+foo=> grant all on table x to bar\g
+GRANT
+
+/ W2
+foo=> insert into x values('eric'),('saskia')\g
+INSERT 0 2
+
+/ W1
+
+foo=> \dp
+                                   Access privileges
+ Schema |        Name        |   Type   | Access privileges | Column access privileges 
+--------+--------------------+----------+-------------------+--------------------------
+ public | bid                | table    |                   | 
+...
+ public | x                  | table    | foo=arwdDxt/foo  +| 
+        |                    |          | bar=arwdDxt/foo   | 
+
+
+/ In de index zien we bij grant
+Privileges
+http://www.postgresql.org/docs/9.3/interactive/ddl-priv.html
+GRANT
+http://www.postgresql.org/docs/9.3/interactive/sql-grant.html
+
+/ Ga naar de GRANT	,
+/ we zien 	,
+rolename=xxxx -- privileges granted to a role
+        =xxxx -- privileges granted to PUBLIC
+
+            r -- SELECT ("read")
+            w -- UPDATE ("write")
+            a -- INSERT ("append")
+            d -- DELETE
+            D -- TRUNCATE
+            x -- REFERENCES
+            t -- TRIGGER
+            X -- EXECUTE
+            U -- USAGE
+            C -- CREATE
+            c -- CONNECT
+            T -- TEMPORARY
+      arwdDxt -- ALL PRIVILEGES (for tables, varies for other objects)
+            * -- grant option for preceding privilege
+
+        /yyyy -- role that granted this privilege
+
+
+/ Dus	,
+        |                    |          | bar=arwdDxt/foo   | 
+/ foo granted to bar 
+insert
+select
+update
+delete
+truncate
+references
+trigger
+
+/ 13	.
+
+/ W1
+foo=> revoke all on table x  from bar\g
+REVOKE
+foo=> grant all on all tables in schema public to bar\g
+GRANT
+foo=> \dp
+                                   Access privileges
+ Schema |        Name        |   Type   | Access privileges | Column access privileges 
+--------+--------------------+----------+-------------------+--------------------------
+ public | bid                | table    | foo=arwdDxt/foo  +| 
+        |                    |          | bar=arwdDxt/foo   | 
+ public | bids               | table    | foo=arwdDxt/foo  +| 
+        |                    |          | bar=arwdDxt/foo   | 
+ public | events             | table    | foo=arwdDxt/foo  +| 
+        |                    |          | bar=arwdDxt/foo   | 
+ public | hibernate_sequence | sequence |                   | 
+ public | item               | table    | foo=arwdDxt/foo  +| 
+        |                    |          | bar=arwdDxt/foo   | 
+ public | item_bid           | table    | foo=arwdDxt/foo  +| 
+        |                    |          | bar=arwdDxt/foo   | 
+ public | items              | table    | foo=arwdDxt/foo  +| 
+        |                    |          | bar=arwdDxt/foo   | 
+ public | x                  | table    | foo=arwdDxt/foo  +| 
+        |                    |          | bar=arwdDxt/foo   | 
+
+foo=> revoke all on all tables in schema public from bar\g
+REVOKE
+
+/ 13	.
+
+/ grant on database
+/ een user kan dan een schema create	,
+
+/ W1
+$ psql -U foo foo
+
+/ W2
+$ psql -U bar foo
+/ lukt	,
+/ TODO
+
+/ W1
+
+=> create schema your\g
+CREATE SCHEMA
+/ Kan, foo is owner van database foo	,
+
+/ W2
+foo=> create schema his\g
+ERROR:  permission denied for database foo
+
+/ W1
+foo=> grant all on database foo to bar\g
+GRANT
+
+/ W2
+foo=> create schema his\g
+CREATE SCHEMA
+
+
+o=> create table his.x(s varchar(32))\g
+CREATE TABLE
+foo=> \dt his.*
+       List of relations
+ Schema | Name | Type  | Owner 
+--------+------+-------+-------
+ his    | x    | table | bar
+
+/ 13	.
+
+/ a schema is part of a database	, but the owner can be any user (TODO which can login the db) 
+/ u foo creates db foo, u bar creates db bar, u bar login db foo	,
+/ u foo creates in db foo sch my	, dan is my onzichtbaar in db bar, but is is in db foo (for bar also)	,
+/ u bar creates sch her in db foo	, u bar can create tbl in sch her	, but foo can not	, unless user bar grants to foo	,
+
+/ lees 
+http://www.postgresql.org/docs/9.3/static/sql-grant.html
+
+CREATE
+For databases, allows new schemas to be created within the database.
+
+For schemas, allows new objects to be created within the schema. To rename an existing object, you must own the object and have this privilege for the containing schema.
+
+For tablespaces, allows tables, indexes, and temporary files to be created within the tablespace, and allows databases to be created that have the tablespace as their default tablespace. (Note that revoking this privilege will not alter the placement of existing objects.)
+
+CONNECT
+Allows the user to connect to the specified database. This privilege is checked at connection startup (in addition to checking any restrictions imposed by pg_hba.conf).
+
+/ 13	.
+
+/ u foo 	,
+foo=> grant all on database foo to baz\g
+GRANT
+/ Dan zien we een regel	,
+foo=> \l+
+ foo       | foo      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =Tc/foo              +| 7594 kB | pg_default | 
+           |          |          |             |             | foo=CTc/foo          +|         |            | 
+           |          |          |             |             | bar=CTc/foo          +|         |            | 
+           |          |          |             |             | baz=CTc/foo           |         |          
+
+/ TODO (=Tc/foo)
+
+/ Ook	,
+
+/ u foo	,
+foo=> revoke all on database foo from baz\g
+REVOKE
+foo=> grant temporary on database foo to baz\g
+GRANT
+
+foo       | foo      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =Tc/foo              +| 7594 kB | pg_default | 
+           |          |          |             |             | foo=CTc/foo          +|         |            | 
+           |          |          |             |             | bar=CTc/foo          +|         |            | 
+           |          |          |             |             | baz=T/foo             |         |            | 
+
+/ u baz
+foo=> create schema its\g
+ERROR:  permission denied for database foo
+
+/ u foo
+foo=> grant create on database foo to baz\g
+GRANT
+
+/ u baz
+foo=> create schema its\g
+CREATE SCHEMA
+
+/ 13. 
+
+/ u foo
+foo=>  revoke create on schema my from baz\g
+REVOKE
+foo=> \dn+
+                          List of schemas
+  Name  |  Owner   |  Access privileges   |      Description       
+--------+----------+----------------------+------------------------
+ my     | foo      | foo=UC/foo          +| 
+        |          | bar=UC/foo          +| 
+        |          | baz=U/foo            | 
+
+/ u baz
+foo=> create table my.a(i int)\g
+ERROR:  permission denied for schema my
+
+/ u foo
+foo=> grant create on schema my to baz\g
+
+/ u baz
+foo=> create table my.b(i int)\g
+CREATE TABLE
+
+/ ook	,
+
+/ u foo
+foo=> revoke usage on schema my from baz\g
+REVOKE
+
+/ u baz
+foo=> select*from my.t\g
+ERROR:  permission denied for schema my
+
+/u foo
+foo=> grant usage on schema my to baz\g
+GRANT
+
+/ u baz
+LINE 1: select*from my.t
+                    ^
+foo=> select*from my.t\g
+ i 
+---
+(0 rows)
+
+/ 13	. 
+
+/ ALLE PRIVILEGES
+
+/ 137
+
+/ all privileges on schema = UC: usage, create	 (tbl)
+
+/ u foo
+foo=> grant all on database nut to baz\g
+foo=> revoke connect on database nut from baz\g
+
+foo=> \l+
+ nut       | foo      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =Tc/foo              +| 6586 kB | pg_default | 
+           |          |          |             |             | foo=CTc/foo          +|         |            | 
+           |          |          |             |             | baz=CT/foo            |         |            | 
+ 
+/ Toch kan baz connect db nut	,
+
+/ Q ERICJ
+/ Wat is c = connect
+/ TODO
+
+/ 137
+
+/ u foo
+foo=> grant  all on schema my to baz\g
+GRANT
+foo=> \dn+
+  Name  |  Owner   |  Access privileges   |      Description       
+--------+----------+----------------------+------------------------
+ my     | foo      | foo=UC/foo          +| 
+        |          | baz=UC/foo           | 
+
+/ 137
+
+/u bar
+foo=> grant all on my.d to foo\g
+GRANT
+foo=> \dp my.*
+                          Access privileges
+ Schema | Name | Type  | Access privileges | Column access privileges 
+--------+------+-------+-------------------+--------------------------
+ my     | d    | table | baz=arwdDxt/baz  +| 
+        |      |       | foo=arwdDxt/baz   | 
+
+
+
+
+/ 13	. 
+
+/ u foo is owner db foo, u foo is owner sch my, u baz is owner tbl my.d
+/ then u foo cannot select*from my.d , unless
+
+/ u baz
+foo=> grant select on my.d to foo\g
+GRANT
+
+/ u foo
+foo=> select*from my.d\g
+ i 
+---
+(0 rows)
+
+
+
+
+
+
+ 
+
+
+/ 13	.
+
+/ privileges on schema	,
+
+/ user foo has created schema my	,
+/ als user foo user bar grants on schema my, kan user bar tables create in  
+
+foo=> create schema my
+foo-> \g
+CREATE SCHEMA
+foo=> grant all on schema my to bar\g
+GRANT
+
+/ W2
+
+foo=> select current_user\g
+ current_user 
+--------------
+ bar
+(1 row)
+
+foo=> create table my.y(s varchar(32))\g
+CREATE TABLE
+foo=> insert into my.y values('foo'),('bar')\g
+INSERT 0 2
+
+/ W1
+
+foo=>  \dn+
+                          List of schemas
+  Name  |  Owner   |  Access privileges   |      Description       
+--------+----------+----------------------+------------------------
+ my     | foo      | foo=UC/foo          +| 
+        |          | bar=UC/foo           | 
+ public | postgres | postgres=UC/postgres+| standard public schema
+        |          | =UC/postgres         | 
+
+/ U=usage
+/ C=create
+
+foo=> revoke all on schema my from bar\g
+REVOKE
+
+/ W2
+foo=> insert into my.y values('foo'),('bar')\g
+ERROR:  permission denied for schema my
+
+/ 13	, 
+
+/ initieel zijn de access privileges column  leeg	, als de owner van de database een grant doet, dan worden access privileges zichtbaar, en als hij daarna revoke doet, blijven de access privileges van zichzelf zichtbaar	,
+
+/ we maken andere user	,
+[eric@localhost Book]$ sudo -u postgres psql<<X
+create user baz login createdb password 'baz'
+> X
+ERROR:  role "baz" already exists
+[eric@localhost Book]$ psql -U baz postgres <<X
+> create database baz
+> X
+Password for user baz: 
+CREATE DATABASE
+
+/ W3
+[eric@localhost Book]$ psql -U baz baz
+Password for user baz: 
+baz=> create table x(s varchar(32))\g
+CREATE TABLE
+baz=> \dp
+                          Access privileges
+ Schema | Name | Type  | Access privileges | Column access privileges 
+--------+------+-------+-------------------+--------------------------
+ public | x    | table |                   | 
+(1 row)
+baz=> grant all on table x to bar\g
+GRANT
+baz=> \dp
+                          Access privileges
+ Schema | Name | Type  | Access privileges | Column access privileges 
+--------+------+-------+-------------------+--------------------------
+ public | x    | table | baz=arwdDxt/baz  +| 
+        |      |       | bar=arwdDxt/baz   | 
+(1 row)
+
+baz=> revoke all on table x from bar\g
+REVOKE
+baz=> \dp
+                          Access privileges
+ Schema | Name | Type  | Access privileges | Column access privileges 
+--------+------+-------+-------------------+--------------------------
+ public | x    | table | baz=arwdDxt/baz   | 
+(1 row)
+
+/ 13	. 
+
+/ privileges on database	,	
+
+/ W1
+
+foo=> grant all on database foo to bar\g
+GRANT
+oo=> \l+
+                                                                    List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   |  Size   | Tablespace |             
+   Description                 
+-----------+----------+----------+-------------+-------------+-----------------------+---------+------------+-------------
+-------------------------------
+ foo       | foo      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =Tc/foo              +| 7578 kB | pg_default | 
+           |          |          |             |             | foo=CTc/foo          +|         |            | 
+           |          |          |             |             | bar=CTc/foo           |         |            | 
+
+C=create
+T=temporary
+c=connect
+
+
+
+
+
+
+
+
+
+
+/ 7	.
+
+/ Restant van eerst	,
+
+/ Lees	,
+http://www.postgresql.org/docs/8.1/static/role-attributes.html
+
+/ create user	,
+
+[eric@localhost Book]$ sudo -u postgres psql <<X
+\du
+X
+
+                              List of roles
+  Role name  |                   Attributes                   | Member of 
+-------------+------------------------------------------------+-----------
+ eric        | Create DB                                      | {}
+ foo         | Create DB                                      | {}
+ mpopostgres | Create DB                                      | {}
+ postgres    | Superuser, Create role, Create DB, Replication | {}
+
+[eric@localhost Book]$ sudo -u postgres  createuser --help
+...
+
+[eric@localhost Book]$ sudo -u postgres  createuser -P -d bar
+
+Enter password for new role: bar
+Enter it again: 
+[eric@localhost Book]$ sudo -u postgres  dropuser bar
+[eric@localhost Book]$ sudo -u postgres  psql <<X
+\h create user
+X
+...
+
+/ of	,
+[eric@localhost Book]$ sudo -u postgres  psql
+postgres=# create user bar createdb password 'bar'\g
+CREATE ROLE
+postgres=#  drop user bar\g
+DROP ROLE
+
+/ create user = create role login	,
+
+/ als we een role create, zonder login, kunnen we niet ermee inlog	,
+
+[eric@localhost Book]$ sudo -u postgres  psql<<X
+> create role bar createdb password 'bar'
+> X
+CREATE ROLE
+[eric@localhost Book]$ sudo -u bar  psql
+sudo: unknown user: bar
+sudo: unable to initialize policy plugin
+
+/ 7	.
+
+$ sudo -i
+#
+
+$ sudo -iu postgres
+/ ook login, maar dan als postgres	,
+/ /var/lib/pgsql is home van postgres user	, 
+[eric@localhost deploy]$ sudo -i less /etc/passwd |grep postgres
+postgres:x:26:26:PostgreSQL Server:/var/lib/pgsql:/bin/bash
+
+[eric@localhost deploy]$ sudo -iu postgres less /var/lib/pgsql/.bash_profile
+[ -f /etc/profile ] && source /etc/profile
+PGDATA=/var/lib/pgsql/data
+export PGDATA
+
+/ Dus als we pg_ctl reload	, moeten we login als postgres	, want dan wordt PGDATA export	, en die heeft pg_ctl nodig	,
+
+[eric@localhost deploy]$ sudo -iu postgres pg_ctl reload
+server signaled
+/ OK
+
+[eric@localhost deploy]$ sudo -iu postgres vi /var/lib/pgsql/data/postgresql.conf
+log_statement = 'all'                   # none, ddl, mod, all
+[eric@localhost deploy]$ sudo -iu postgres pg_ctl reload
+server signaled
+
+
+/ lees	,
+[root@localhost pgsql]# pwd
+/var/lib/pgsql
+$ vi initdb.log
+
+Success. You can now start the database server using:
+
+    /usr/bin/postgres -D /var/lib/pgsql/data
+or
+    /usr/bin/pg_ctl -D /var/lib/pgsql/data -l logfile start
+/ TODO
+
+/ we zien	,
+[eric@localhost merge2]$  ps ajx | grep postgres
+    1 27743 27739 27739 ?           -1 S       26   0:16 /usr/bin/postgres -D /var/lib/pgsql/data -p 5432
+...
+
+/ 7	. 
+
+/ u foo en u bar connect db foo	,
+
+/ u foo, u bar
+foo=> \dn+ *.*
+                                     List of schemas
+        Name        |  Owner   |  Access privileges   |           Description            
+--------------------+----------+----------------------+----------------------------------
+ her                | bar      |                      | 
+ his                | bar      |                      | 
+ information_schema | postgres | postgres=UC/postgres+| 
+                    |          | =U/postgres          | 
+ its                | baz      |                      | 
+ my                 | foo      | foo=UC/foo          +| 
+                    |          | bar=UC/foo          +| 
+                    |          | baz=UC/foo           | 
+ pg_catalog         | postgres | postgres=UC/postgres+| system catalog schema
+                    |          | =U/postgres          | 
+ pg_temp_1          | postgres |                      | 
+ pg_toast           | postgres |                      | reserved schema for TOAST tables
+ pg_toast_temp_1    | postgres |                      | 
+ public             | postgres | postgres=UC/postgres+| standard public schema
+                    |          | =UC/postgres         | 
+ your               | foo      |                      | 
+(11 rows)
+
+/ u foo, u bar	,
+foo=> \dt my.*
+       List of relations
+ Schema | Name | Type  | Owner 
+--------+------+-------+-------
+ my     | a    | table | bar
+ my     | b    | table | baz
+ my     | d    | table | baz
+ my     | t    | table | baz
+ my     | y    | table | bar
+(5 rows)
+foo=> \z my.*
+                          Access privileges
+ Schema | Name | Type  | Access privileges | Column access privileges 
+--------+------+-------+-------------------+--------------------------
+ my     | a    | table |                   | 
+ my     | b    | table |                   | 
+ my     | d    | table | baz=arwdDxt/baz  +| 
+        |      |       | foo=arwdDxt/baz   | 
+ my     | t    | table |                   | 
+ my     | y    | table |                   | 
+(5 rows)
+
+/ u foo
+foo=> select * from information_schema.tables where table_name='y'\g
+ table_catalog | table_schema | table_name | table_type | self_referencing_column_name | reference_generation | user_defin
+ed_type_catalog | user_defined_type_schema | user_defined_type_name | is_insertable_into | is_typed | commit_action 
+---------------+--------------+------------+------------+------------------------------+----------------------+-----------
+----------------+--------------------------+------------------------+--------------------+----------+---------------
+(0 rows)
+
+/ u bar
+foo=> select * from information_schema.tables where table_name='y'\g
+ table_catalog | table_schema | table_name | table_type | self_referencing_column_name | reference_generation | user_defin
+ed_type_catalog | user_defined_type_schema | user_defined_type_name | is_insertable_into | is_typed | commit_action 
+---------------+--------------+------------+------------+------------------------------+----------------------+-----------
+----------------+--------------------------+------------------------+--------------------+----------+---------------
+ foo           | my           | y          | BASE TABLE |                              |                      |           
+                |                          |                        | YES                | NO       | 
+ foo           | public       | y          | BASE TABLE |                              |                      |           
+                |                          |                        | YES                | NO       | 
+(2 rows)
+
+
+/ 7	.
+
+/ u foo connect db foo
+foo=> create schema me\g
+CREATE SCHEMA
+foo=> alter schema me owner to bar\g
+ERROR:  must be member of role "bar"
+
+/ u postgres	,
+foo=# grant bar to foo\g
+GRANT ROLE
+/ dan inherits foo van bar	,
+foo=> create database me owner bar\g
+CREATE DATABASE
+
+/ inherit is de default	, dus u foo inherits	, dus als we grant bar to fook dan grant we privileges van bar to foo	, en set owner to bar is 1 daarvan	,
+
+[eric@localhost Book]$  sudo -u postgres psql<<X
+> alter role bar createrole\g
+> X
+ALTER ROLE
+
+foo=> \du
+                              List of roles
+  Role name  |                   Attributes                   | Member of 
+-------------+------------------------------------------------+-----------
+ bar         | Create role, Create DB                         | {}
+ baz         | Create DB                                      | {}
+ eric        | Create DB                                      | {}
+ foo         | Create DB                                      | {}
+ mpopostgres | Create DB                                      | {}
+ postgres    | Superuser, Create role, Create DB, Replication | {}
+
+[eric@localhost Book]$  sudo -u postgres psql<<X
+create role jungle inherit\g
+> grant jungle to foo\g
+> grant jungle to bar
+> X
+CREATE ROLE
+GRANT ROLE
+GRANT ROLE
+
+foo=> \du
+                              List of roles
+  Role name  |                   Attributes                   | Member of 
+-------------+------------------------------------------------+-----------
+ bar         | Create role, Create DB                         | {jungle}
+ baz         | Create DB                                      | {}
+ eric        | Create DB                                      | {}
+ foo         | Create DB                                      | {jungle}
+ jungle      | Cannot login                                   | {}
+ mpopostgres | Create DB                                      | {}
+ postgres    | Superuser, Create role, Create DB, Replication | {}
+
+/ u postgres 	,
+foo=# alter schema me owner to foo\g
+ALTER SCHEMA
+foo=# drop schema me\g
+DROP SCHEMA
+foo=# drop role jungle
+foo-# \g
+DROP ROLE
+
+
+/ VANAF HIER POSTGRESQL PRIVILEGES
+
+/ 7	. 
+
+/ als we de schemas willen list in een db	,  connect dan met de db	,
+
+
+/ 7	. 
+
+/ we zien dat de pg_catalog schema in verschillende dbs verschillen	, net als de information_schema  schema	,
+/ het hangt niet van de u af	,
+
+/ u foo or u bar connect to db foo	, u baz connects to db baz	,
+
+/ u foo of u bar,
+foo=> select count(*)from pg_class\g
+ count 
+-------
+   319
+(1 row)
+
+/ u baz 
+baz=> select count(*)from pg_class\g
+ count 
+-------
+   293
+(1 row)
+
+/ en	,
+
+foo=> select count(*)from information_schema.schemata \g
+ count 
+-------
+     2
+(1 row)
+
+baz=> select count(*)from information_schema.schemata \g
+ count 
+-------
+     0
+(1 row)
+
+
+
+
+/ 7	. 
+
+/ list schemas in database	,
+
+/ u bar connected to db foo	,
+
+foo=> \dn
+  List of schemas
+  Name  |  Owner   
+--------+----------
+ her    | bar
+ his    | bar
+ its    | baz
+ my     | foo
+ public | postgres
+ your   | foo
+(6 rows)
+/ we zien alle schemas in db foo	,
+
+foo=> select schema_name from information_schema.schemata\g
+ schema_name 
+-------------
+ his
+ her
+(2 rows)
+/ alleen van u bar	, 
+
+/ list tables in schema	,
+
+foo=> \dt her.*
+       List of relations
+ Schema | Name | Type  | Owner 
+--------+------+-------+-------
+ her    | x    | table | bar
+
+
+
+
+
+/ Einde POSTGRESQL ROLES PRIVILEGES 
+
+
+
+
+
+/ POSTGRESQL DUMP RESTORE
+
+/ 7	.
+
+
+[eric@localhost Book]$ pg_dump -U foo -b -v -f foo.dump foo
+-b	: blobs
+/ TODO
+-v	: verbose
+-f 	: output file
+[eric@localhost Book]$ pg_dump -U foo -b -v -C -f foo2.dump foo
+-C 	: create 
+
+$ vi foo2.dump
+
+CREATE DATABASE foo WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
+ALTER DATABASE foo OWNER TO foo;
+\connect foo
+
+
+/ waarom template0	?
+
+/ Lees	,
+http://www.postgresql.org/docs/9.3/static/manage-ag-templatedbs.html
+
+There is a second standard system database named template0. This database contains the same data as the initial contents of template1, that is, only the standard objects predefined by your version of PostgreSQL. template0 should never be changed after the database cluster has been initialized. By instructing CREATE DATABASE to copy template0 instead of template1, you can create a "virgin" user database that contains none of the site-local additions in template1. This is particularly handy when restoring a pg_dump dump: the dump script should be restored in a virgin database to ensure that one recreates the correct contents of the dumped database, without conflicting with objects that might have been added to template1 later on.
+
+
+/ 7	. 
+
+/ u foo
+foo=> \l
+...
+ mpo       | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ nut       | foo      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =Tc/foo              +
+           |          |          |             |             | foo=CTc/foo          +
+           |          |          |             |             | baz=CT/foo
+
+/ u baz heeft C op db nut, dus kan u baz een sch create in db nut	,
+
+nut=> \c nut baz
+Password for user baz: 
+You are now connected to database "nut" as user "baz".
+nut=> create schema me\g
+CREATE SCHEMA
+nut=> grant all on schema me to foo\g
+GRANT
+nut=> \c nut foo
+Password for user foo: 
+You are now connected to database "nut" as user "foo".
+nut=> create table me.x(i int)\g
+CREATE TABLE
+nut=> insert into me.x values(7),(13)\g
+INSERT 0 2
+
+/ 7	. 
+
+/ goo -> gee
+
+/ u foo owns db goo, u bar owns sch me, u foo owns tbl me.x	, 
+
+[eric@localhost Book]$ pg_dump -U foo -v -f gee.dump gee
+
+[eric@localhost Book]$ psql -U foo -d goo -f gee.dump 
+Password for user foo: 
+psql: FATAL:  database "goo" does not exist
+
+[eric@localhost Book]$ psql -U foo<<X
+> create database goo
+> X
+Password for user foo: 
+CREATE DATABASE
+
+psql: FATAL:  database "goo" does not exist
+[eric@localhost Book]$ psql -U foo -d goo -f gee.dump 
+Password for user foo: 
+
+CREATE SCHEMA
+psql:gee.dump:24: ERROR:  must be member of role "bar"
+...
+CREATE EXTENSION
+psql:gee.dump:40: ERROR:  must be owner of extension plpgsql
+...
+psql:gee.dump:91: WARNING:  no privileges could be revoked for "public"
+REVOKE
+psql:gee.dump:92: WARNING:  no privileges could be revoked for "public"
+REVOKE
+psql:gee.dump:93: WARNING:  no privileges were granted for "public"
+GRANT
+psql:gee.dump:94: WARNING:  no privileges were granted for "public"
+GRANT
+
+/ u foo	,
+gee=> drop database  goo\g
+DROP DATABASE
+
+/ u postgres	,
+gee=# alter role foo createrole\g
+ALTER ROLE
+
+/ u foo
+gee=> grant bar to foo\g
+GRANT ROLE
+
+GRANT ROLE
+gee=> \du
+...
+ foo         | Create role, Create DB                         | {bar}
+
+[eric@localhost Book]$ psql -U foo<<X
+> create database goo\g
+> X
+Password for user foo: 
+CREATE DATABASE
+
+[eric@localhost Book]$ psql -U foo -d goo -f gee.dump 
+Password for user foo: 
+
+/ u foo is owner van db goo, daarom moeten we -U foo	,
+/ TODOD
+
+CREATE SCHEMA
+psql:gee.dump:24: ERROR:  must be member of role "bar"
+/is RM	,
+
+/ Maar beter is de restore als postgres te doen	,
+
+[eric@localhost Book]$ sudo -u postgres psql -d goo -f gee.dump 
+/ No ERR	,
+
+/ 13	.
+
+/ met -C
+[eric@localhost Book]$ pg_dump -U foo -v -C -f goo.dump goo
+
+$ vi goo.dump
+
+CREATE DATABASE goo WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
+ALTER DATABASE goo OWNER TO foo;
+
+
+/ u foo
+gee=>  drop database goo\g
+DROP DATABASE
+
+[eric@localhost Book]$ sudo -u postgres psql -f goo.dump 
+/OK
+
+/ 13. 	
+
+[eric@localhost Book]$ pg_dump -U foo -v -F c  -f gee_c.dump gee
+
+/ u foo
+gee=> create database goo\g
+CREATE DATABASE
+
+[eric@localhost Book]$ sudo -u postgres pg_restore -d goo -v gee_c.dump 
+
+/ 13	.
+
+/ pg_restore -C
+
+/ moeilijk met hulp db 	,
+
+[eric@localhost Book]$ pg_dump -U foo -v -F t  -f goo_t.dump goo
+/ zonder -C
+
+/ u foo
+gee=> drop database goo\g
+DROP DATABASE
+gee=> create database goo2\g
+CREATE DATABASE
+
+[eric@localhost Book]$ sudo -u postgres pg_restore -d goo2 -C -v goo_t.dump 
+
+/ 13. 
+
+/ dump multiple schema	, but maybe not all	,
+
+/ u bar maakt 2nd sch you in  db gee , en u foo maakt tbl x in sch you 
+
+/ u foo
+gee=> grant all on database gee to bar\g
+GRANT
+
+/ u  bar
+gee=> create schema you\g
+CREATE SCHEMA
+gee=> grant all on schema you to foo\g
+GRANT
+
+gee=> create table you.y(i int)\g
+CREATE TABLE
+gee=> insert into you.y values(7),(13)\g
+INSERT 0 2
+
+
+[eric@localhost Book]$ pg_dump -U foo -v -n you -f gee_me.dump gee
+
+/ u foo
+gee=> drop database goo\g
+DROP DATABASE
+gee=> create database goo\g
+CREATE DATABASE
+
+[eric@localhost Book]$ sudo -u postgres psql -d goo -f gee_me.dump 
+
+/ u foo
+
+goo=> \dn+
+                          List of schemas
+  Name  |  Owner   |  Access privileges   |      Description       
+--------+----------+----------------------+------------------------
+ public | postgres | postgres=UC/postgres+| standard public schema
+        |          | =UC/postgres         | 
+ you    | bar      | bar=UC/bar          +| 
+        |          | foo=UC/bar           | 
+(2 rows)
+
+
+
+/ Einde POSTGRESQL DUMP RESTORE
+
+/ POSTGRESQL TRANSACTIONS
+
+/ 13	.
+
+foo=> begin\g
+BEGIN
+foo=> set transaction isolation level repeatable read\g
+SET
+foo=> select current_setting('transaction_isolation')
+/ of	,
+foo=> show transaction_isolation\g
+foo-> \g
+ current_setting 
+-----------------
+ repeatable read
+(1 row)
+
+/ we moeten de isol level na begin set	, ander is de isol level na begin gewoon weer de default, read committed	,
+/ en we moeten het meteen doen	,
+
+/ the first tr is long, the second short,	
+
+/ 13	.
+
+/ rr	,
+
+col!=0         x=1/col
+  1             1       0		
+|-------------------|------------------------
+		    c/r
+
+
+----|--X--|----------------------------------
+       0  c
+ 
+/ rc	,
+
+  1             0       0		
+|-------------------|------------------------
+
+
+----|--X--|----------------------------------
+       0  c
+
+
+////////////////////////////////////
+/ als de bovenste tr doet	,
+if col != 0 then {...; x=1/col;...}	, dan probleem in rc	, je moet in rc steeds controleren , bij rr zal er bij einde tr een rollback plaatsvinden op contraint dat col!=0
+
+/ als je acties doet in de bovenste tr, na de 2de read (Y of a), en je hebt constraints op je table, dan zal hij bij einde tr rollback/commit	,
+/ bij rc moet je zelf steeds controleren of aan een condition wordt voldaan	, 
+
+/ stel Y=1, a=0	,
+
+/ als de korte tr rollback, dan maakt rc, rr niet uit	,
+/ rr	,
+
+  Y             Y       Y		
+|-------------------|------------------------
+		    c/r
+
+
+----|--X--|----------------------------------
+       a  r
+ 
+/ rc	,
+
+  Y             Y       Y		
+|-------------------|------------------------
+
+
+----|--X--|----------------------------------
+       a  c
+
+
+/ 7	. 
+
+/ rc: no dirty, yes non repeatable	, yes phantom reads	,
+
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ we hoeven alleen de read kant rr te set	,
+
+/ 13	, no dirty	,	non repeatable	,
+
+
+/ W1
+
+foo=> begin\g
+
+/ W2
+
+foo=> begin\g
+
+foo=> update item set city='a'\g
+UPDATE 3
+
+/ W1
+
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ no drity reads	,
+
+/ W2
+foo=> commit\g
+COMMIT
+
+/ W1
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | a
+   2 | third  | a
+   3 | fourth | a
+(3 rows)
+
+/ but non repeatable read	,
+
+/ 13	. 
+
+/ non dirty, phantom read	,
+
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ W1 
+foo=> begin\g
+BEGIN
+
+/ W2 
+foo=> begin\g
+BEGIN
+
+foo=> insert into item values(4,'fifth','Y')\g
+INSERT 0 1
+
+/ W1
+
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ no dirty reads	,
+
+/ W2
+foo=> commit\g
+COMMIT
+
+/ W1
+oo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+   4 | fifth  | Y
+(4 rows)
+
+/ phantom read
+
+/ W2
+foo=> begin\g
+BEGIN
+foo=> delete from item where id_=4\g
+DELETE 1
+
+/ W1
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+   4 | fifth  | Y
+(4 rows)
+
+/ W2
+foo=> commit\g
+COMMIT
+
+/ W1
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ phantom read
+
+
+/ 7	. 
+
+/ rr
+
+/ W1
+foo=> begin\g
+BEGIN
+foo=> set transaction isolation level repeatable read\g
+SET
+
+/ W2
+foo=> begin\g
+BEGIN
+
+foo=> update item set city='a'\g
+UPDATE 3
+
+/ W1
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ W2
+foo=> commit\g
+COMMIT
+
+/ W1
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ repeatable read	,
+
+foo=> commit\g
+/ or	,
+foo=> rollback\g
+COMMIT
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | a
+   2 | third  | a
+   3 | fourth | a
+(3 rows)
+
+/ 13	. 
+
+/ no phantom reads	, 
+
+/ W1
+foo=> begin\g
+BEGIN
+foo=> set transaction isolation level repeatable read\g
+SET
+
+/ W2
+foo=> begin\g
+BEGIN
+foo=> insert into item values(4,'fifth','Y')\g
+INSERT 0 1
+
+/ W1
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ W2
+foo=> commit\g
+COMMIT
+
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ no phantom read	,
+foo=> rollback\g
+ROLLBACK
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+   4 | fifth  | Y
+(4 rows)
+
+/ 13	.
+
+/ rr	, delete -> no phantom reads	,
+
+/ W1
+foo=> begin\g
+BEGIN
+foo=> set transaction isolation level repeatable read\g
+SET
+
+/ W2
+foo=> begin\g
+BEGIN
+foo=> delete from item where id_=4\g
+DELETE 1
+
+/ W1
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+   4 | fifth  | Y
+(4 rows)
+
+/ W2
+foo=> commit\g
+COMMIT
+
+/ W1
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+   4 | fifth  | Y
+(4 rows)
+
+/ no phantom reads
+
+foo=> commit\g
+COMMIT
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+
+ 
+
+
+
+
+
+/ Einde POSTGRESQL TRANSACTIONS
+
+/ FIREBIRD
+
+[eric@localhost hibernate-book]$ sudo yum install firebird-superserver.x86_64 
+
+(1/4): firebird-filesystem-2.5.2.26539.0-8.fc20.x86_64.rpm                                      |  11 kB  00:00:00     
+(2/4): firebird-2.5.2.26539.0-8.fc20.x86_64.rpm                                                 | 649 kB  00:00:00     
+(3/4): firebird-libfbclient-2.5.2.26539.0-8.fc20.x86_64.rpm                                     | 322 kB  00:00:00     
+(4/4): firebird-superserver-2.5.2.26539.0-8.fc20.x86_64.rpm                                     | 2.7 MB  00:00:00     
+
+[root@localhost ~]# systemctl enable firebird-superserver.service 
+ln -s '/usr/lib/systemd/system/firebird-superserver.service' '/etc/systemd/system/multi-user.target.wants/firebird-superserver.service'
+[root@localhost ~]# systemctl start firebird-superserver.service 
+/ OK
+
+[eric@localhost Firebird]$ ps ajx | grep -i firebird
+    1 24735 24735 24734 ?           -1 S      989   0:00 /usr/sbin/fbguard -pidfile /run/firebird/default.pid -daemon -forever
+
+/ we lezen	,
+http://www.firebirdsql.org/file/documentation/reference_manuals/user_manuals/html/qsg25.html
+
+[eric@localhost Firebird]$ sudo ls -l /usr/lib64/firebird/
+total 16
+lrwxrwxrwx. 1 root root   35 Jun  5 08:37 bin -> /usr/lib64/firebird/bin-superserver
+drwxr-xr-x. 2 root root 4096 Jun  5 08:37 bin-superserver
+drwxr-xr-x. 2 root root 4096 Jun  5 08:37 intl
+drwxr-xr-x. 2 root root 4096 Jun  5 08:37 plugins-superserver
+drwxr-xr-x. 2 root root 4096 Jun  5 08:37 UDF
+
+[eric@localhost Firebird]$ sudo ls -l /usr/lib64/firebird/bin-superserver/
+total 3456
+-rwxr-xr-x. 1 root root   2952 Aug  8  2013 fb_config
+-rwxr-xr-x. 1 root root 144536 Aug  8  2013 fbsvcmgr
+-rwxr-xr-x. 1 root root 136688 Aug  8  2013 fbtracemgr
+-rwxr-xr-x. 1 root root 373416 Aug  8  2013 gbak
+-rwxr-xr-x. 1 root root 463192 Aug  8  2013 gdef
+-rwxr-xr-x. 1 root root 166408 Aug  8  2013 gfix
+-rwxr-xr-x. 1 root root 513696 Aug  8  2013 gpre
+-rwxr-xr-x. 1 root root 300064 Aug  8  2013 gsec
+-rwxr-xr-x. 1 root root  15704 Aug  8  2013 gsplit
+-rwxr-xr-x. 1 root root 287896 Aug  8  2013 gstat
+-rwxr-xr-x. 1 root root 381944 Aug  8  2013 isql
+-rwxr-xr-x. 1 root root 279264 Aug  8  2013 nbackup
+-rwxr-xr-x. 1 root root 440552 Aug  8  2013 qli
+
+[eric@localhost Firebird]$ repoquery -l firebird
+/etc/firebird
+/etc/firebird/aliases.conf
+/etc/firebird/fbintl.conf
+/etc/firebird/fbtrace.conf
+/etc/firebird/firebird.conf
+/etc/logrotate.d/firebird
+/etc/tmpfiles.d
+/etc/tmpfiles.d/firebird.conf
+/usr/bin/fb_config
+/usr/bin/fbsvcmgr
+/usr/bin/fbtracemgr
+/usr/bin/gbak
+/usr/bin/gdef
+/usr/bin/gfix
+/usr/bin/gpre
+/usr/bin/gsec
+/usr/bin/gsplit
+/usr/bin/gstat-fb
+/usr/bin/isql-fb
+/usr/bin/nbackup
+/usr/bin/qli
+/usr/lib64/firebird
+/usr/lib64/firebird/UDF
+/usr/lib64/firebird/UDF/fbudf.so
+/usr/lib64/firebird/UDF/fbudf.sql
+/usr/lib64/firebird/UDF/ib_udf.so
+/usr/lib64/firebird/UDF/ib_udf.sql
+/usr/lib64/firebird/UDF/ib_udf2.sql
+/usr/lib64/firebird/intl
+/usr/lib64/firebird/intl/fbintl
+/usr/lib64/firebird/intl/fbintl.conf
+/usr/lib64/libib_util.so
+/usr/sbin/fb_lock_print
+/usr/sbin/fbguard
+/usr/share/doc/firebird
+/usr/share/doc/firebird/IDPLicense.txt
+/usr/share/doc/firebird/IPLicense.txt
+/usr/share/doc/firebird/README.Fedora
+/var/lib/firebird
+/var/lib/firebird/data
+/var/lib/firebird/data/employee.fdb
+/var/lib/firebird/system/de_DE.msg
+/var/lib/firebird/system/firebird.msg
+/var/lib/firebird/system/fr_FR.msg
+/var/lib/firebird/system/help.fdb
+/var/lib/firebird/system/security2.fdb
+/var/log/firebird
+/var/log/firebird/firebird.log
+/var/run/firebird
+/var/run/firebird/fb_guard
+
+[eric@localhost Firebird]$ ls -l /usr/bin/isql-fb
+lrwxrwxrwx. 1 root root 28 Jun  5 08:37 /usr/bin/isql-fb -> /usr/lib64/firebird/bin/isql
+
+
+[eric@localhost Firebird]$ top -b -n1 | grep firebird
+24735 firebird  20   0   26620    448    240 S   0.0  0.0   0:00.00 fbguard
+24736 firebird  20   0  100416   3572   1528 S   0.0  0.0   3:57.76 fbserver
+
+[eric@localhost Firebird]$ sudo -u firebird gsec -user sysdba -pass masterkey
+GSEC> ?
+/ of
+GSEC> help
+     displaying all users:
+       display
+     displaying one user:
+       display <name>
+
+[eric@localhost Firebird]$ sudo -u firebird gsec -user sysdba -pass masterkey -add billyboy -pw sekrit66
+
+[eric@localhost Firebird]$ sudo -u firebird gsec -user billyboy -pass sekrit66
+GSEC> display
+BILLYBOY                            0     0             
+
+[eric@localhost Firebird]$ isql-fb 
+Use CONNECT or CREATE DATABASE to specify a database
+SQL> 
+
+eric@localhost Firebird]$ isql-fb -?
+usage:    isql [options] [<database>]
+	-a(ll)                  extract metadata incl. legacy non-SQL tables
+	-b(ail)                 bail on errors (set bail on)
+...
+
+[eric@localhost Firebird]$ sudo locate employee.fdb
+/var/lib/firebird/data/employee.fdb
+
+/ omdat de db employee al bestaat, doen we connect	,
+
+[eric@localhost Firebird]$ isql-fb 
+SQL> connect /var/lib/firebird/data/employee.fdb user sysdba password masterkey;
+Database:  /var/lib/firebird/data/employee.fdb, User: sysdba
+
+SQL> show tables;
+       COUNTRY                                CUSTOMER                       
+       DEPARTMENT                             EMPLOYEE                       
+       EMPLOYEE_PROJECT                       JOB                            
+       PROJECT                                PROJ_DEPT_BUDGET               
+       SALARY_HISTORY                         SALES    
+
+SQL> select*from country;
+
+COUNTRY         CURRENCY   
+=============== ========== 
+USA             Dollar     
+England         Pound      
+Canada          CdnDlr     
+Switzerland     SFranc     
+Japan           Yen        
+Italy           Lira       
+France          FFranc     
+Germany         D-Mark     
+Australia       ADollar    
+Hong Kong       HKDollar   
+Netherlands     Guilder    
+Belgium         BFranc     
+Austria         Schilling  
+Fiji            FDollar    
+
+/ we kunnen 	,
+[eric@localhost Firebird]$ chmod o+w .
+
+$ isql-fb
+SQL> create database 'first.fdb' user 'sysdba' password 'masterkey';
+SQL> connect first.fdb user sysdba password masterkey;
+Database:  first.fdb, User: sysdba
+SQL>  select*from rdb$relations;
+...
+
+[eric@localhost Firebird]$ ls -l
+total 660
+-rw-rw----. 1 firebird firebird 675840 Jun 16 16:34 first.fdb
+
+/ doc van insert	,
+/ ga naar	,
+http://www.firebirdsql.org/en/reference-manuals/
+/ en kies onder Reference material	,
+http://www.firebirdsql.org/file/documentation/reference_manuals/reference_material/html/langrefupd25.html
+
+[eric@localhost Firebird]$ sudo -u firebird gbak -b -user sysdba -password masterkey first.fdb first.bak
+[eric@localhost Firebird]$ sudo -u firebird mv first.fdb /tmp
+[eric@localhost Firebird]$ sudo -u firebird gbak -rep -user sysdba -password masterkey first.bak first.fdb 
+[eric@localhost Firebird]$ ls -l
+total 696
+-rw-r--r--. 1 firebird firebird   2048 Jun 17 09:02 first.bak
+-rw-rw----. 1 firebird firebird 708608 Jun 17 09:03 first.fdb
+
+[eric@localhost Dsvfms]$ sudo -u firebird gbak -rep -user sysdba -password masterkey dsvfms.fdb_20140615-220001.fbk dsvfms.fdb
+
+
+/ 7	. 
+
+[eric@localhost tmp]$ sudo bash ~/Downloads/jdk-6u45-linux-x64-rpm.bin 
+Unpacking...
+Checksumming...
+Extracting...
+UnZipSFX 5.50 of 17 February 2002, by Info-ZIP (Zip-Bugs@lists.wku.edu).
+  inflating: jdk-6u45-linux-amd64.rpm  
+  inflating: sun-javadb-common-10.6.2-1.1.i386.rpm  
+  inflating: sun-javadb-core-10.6.2-1.1.i386.rpm  
+  inflating: sun-javadb-client-10.6.2-1.1.i386.rpm  
+  inflating: sun-javadb-demo-10.6.2-1.1.i386.rpm  
+  inflating: sun-javadb-docs-10.6.2-1.1.i386.rpm  
+  inflating: sun-javadb-javadoc-10.6.2-1.1.i386.rpm  
+Preparing...                          ################################# [100%]
+	package jdk-2000:1.7.0_55-fcs.x86_64 (which is newer than jdk-2000:1.6.0_45-fcs.x86_64) is already installed
+	file /etc/init.d/jexec from install of jdk-2000:1.6.0_45-fcs.x86_64 conflicts with file from package jdk-2000:1.7.0_55-fcs.x86_64
+Installing JavaDB
+Preparing...                          ################################# [100%]
+Updating / installing...
+   1:sun-javadb-common-10.6.2-1.1     ################################# [ 17%]
+   2:sun-javadb-core-10.6.2-1.1       ################################# [ 33%]
+   3:sun-javadb-client-10.6.2-1.1     ################################# [ 50%]
+   4:sun-javadb-demo-10.6.2-1.1       ################################# [ 67%]
+   5:sun-javadb-docs-10.6.2-1.1       ################################# [ 83%]
+   6:sun-javadb-javadoc-10.6.2-1.1    ################################# [100%]
+ 
+Done.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/ Einde FIREBIRD
+
+/ KEEPASS
+
+/ Ga naar	,
+http://keepass.info/
+
+/ Doe	,
+[eric@localhost Firebird]$ sudo yum install keepass
+
+
+
+
+/ Einde KEEPASS
+
+/ ING
+
+/ extra wachtwoord bij credit card	,
+
+Bedrag:	EUR 30.99
+Datum:	14:06:11
+Kaartnummer:	XXXX XXXX XXXX 0633
+Voer hieronder uw MasterCard® SecureCode™ in. Deze bevat minimaal 8 en maximaal 12 tekens. Gebruik minimaal 1 cijfer en 1 letter en geen spaties.
+Kies uw SecureCode: vlWalnoot27
+Bevestig uw SecureCode: vlWalnoot27
+
+Maak uw welkomsttekst aan. Bij betaling met de MasterCard SecureCode verschijnt deze in beeld. Gebeurt dit niet of wijkt deze af, stop dan de betaling en neem direct contact op met onze Klantenservice, 0900 0933 (10 cent per minuut) of +31 20 561 16 19 vanuit het buitenland.
+Kies uw welkomsttekst: Johannes Cornelis	
+Beantwoord één van de vragen uit de lijst. Wanneer u uw SecureCode vergeten bent, zal deze vraag u ter controle opnieuw gesteld worden en dient u exact hetzelfde antwoord te geven, inclusief hoofd-/kleine letters, spaties en leestekens.
+
+Beantwoord de geheime vraag:
+Wat is achternaam van uw moeder?
+Poot
+
+/ Einde ING
+
+/ PACKT
+
+ericjvandervelden@gmail.com
+vlWalnoot27
+/ Einde PACKT
+
+/ INTERMAX
+
+[root@localhost ~]# sudo yum install xterm glibc.i686 libgcc.i686 libstdc++.i686 glibc-devel.i686 gtk2.i686 libSM.i686 
+/ we moeten i686 code install	,
+
+[eric@localhost Intermax]$ pwd
+/home/eric/Devel/Intermax
+[eric@localhost Intermax]$ tar -xvzf ~/Downloads/forticlientsslvpn_linux_4.4.2297.tar.gz 
+
+vanderveldene
+h^Zgcyr&Q
+
+/ in 1ste window	,
+[eric@localhost forticlientsslvpn]$ sudo ./forticlientsslvpn_cli --server 80.95.170.62:443 --vpnuser vanderveldene 
+password:
+/ In 2de window	,
+[eric@localhost forticlientsslvpn]$ ssh vanderveldene@192.168.171.1
+password:
+[vanderveldene@scs-application-p ~]$ sudo su - jboss
+[jboss@scs-application-p ~]$ ls
+bin				 geodis
+carcon				 geodis.stack2.log
+commons-beanutils-1.9.1.jar	 geodis.stack3.log
+dsvcts				 geodis.stack4.log
+dsvcts.20140526-135418.hprof.gz  geodis.stack.log
+dsvfms				 Mail
+dsvfms.20140523-101012.hprof.gz  mpo
+dsvfms.histo.log		 mposcs
+dsvoms				 releases
+[jboss@scs-application-p dsvfms]$ ls log/server.log
+server.log                server.log.2014-05-01.gz  server.log.2014-05-23.gz
+server.log.2014-04-10.gz  server.log.2014-05-02.gz  server.log.2014-05-24.gz
+...
+
+/ See ProductItemDAOImpl	,
+	@Override
+	public void evictProductItem(ProductItemVO aProductItemVO) {
+
+		if (getHibernateTemplate().getSessionFactory().getCurrentSession().isConnected()) {
+			for (PackedItemVO myPackedItemVO : aProductItemVO.getPackedItemList()) {
+->				Hibernate.initialize(myPackedItemVO);
+				getHibernateTemplate().getSessionFactory().getCurrentSession().evict(myPackedItemVO);
+			}
+			Hibernate.initialize(aProductItemVO);
+			getHibernateTemplate().getSessionFactory().getCurrentSession().evict(aProductItemVO);
+		}
+	}
+
+/ De code is	,
+2014-06-13 15:29:04,658 ERROR [com.mpobjects.oms.util.shipmentorderprice.PriceTypeUtils] (JMS SessionPool Worker-1:) failed to lazily initialize a collection of role: com.mpobjects.oms.model.shipmentorderpricepa 
+rt.vo.ShipmentOrderPricePartVO.costPartSet, no session or session was closed 
+org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role: com.mpobjects.oms.model.shipmentorderpricepart.vo.ShipmentOrderPricePartVO.costPartSet, no session or session was clos 
+ed 
+        at org.hibernate.collection.AbstractPersistentCollection.throwLazyInitializationException(AbstractPersistentCollection.java:358) 
+        at org.hibernate.collection.AbstractPersistentCollection.throwLazyInitializationExceptionIfNotConnected(AbstractPersistentCollection.java:350) 
+        at org.hibernate.collection.AbstractPersistentCollection.initialize(AbstractPersistentCollection.java:343) 
+        at org.hibernate.collection.AbstractPersistentCollection.read(AbstractPersistentCollection.java:86) 
+        at org.hibernate.collection.PersistentSet.iterator(PersistentSet.java:163) 
+        at java.util.AbstractCollection.addAll(AbstractCollection.java:320) 
+        at com.mpobjects.oms.model.CostValue.append(CostValue.java:117) 
+        at com.mpobjects.oms.util.shipmentorderprice.PriceTypeState.add(PriceTypeState.java:70) 
+        at com.mpobjects.oms.util.shipmentorderprice.PriceTypeUtils.createPriceTypeState(PriceTypeUtils.java:56) 
+        at com.mpobjects.dsvfms.view.report.DsvFmsBerekeningsformulierExcelCreator.createRowsForShipmentOrder(DsvFmsBerekeningsformulierExcelCreator.java:290)
+        at com.mpobjects.dsvfms.view.report.DsvFmsBerekeningsformulierExcelCreator.createInvoiceDetails(DsvFmsBerekeningsformulierExcelCreator.java:156) 
+        at com.mpobjects.dsvfms.view.report.DsvFmsBerekeningsformulierExcelCreator.writeBytes(DsvFmsBerekeningsformulierExcelCreator.java:102) 
+        at com.mpobjects.oms.model.report.vo.ReportFillerCustomExcel.buildReport(ReportFillerCustomExcel.java:67) 
+        at com.mpobjects.oms.service.report.ReportGenerationServiceImpl.generate(ReportGenerationServiceImpl.java:73) 
+        at sun.reflect.GeneratedMethodAccessor4410.invoke(Unknown Source) 
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) 
+        at java.lang.reflect.Method.invoke(Method.java:622) 
+
+
+/ De site is	,
+https://scs.mp-objects.com/dsvfms/core/index_frameset
+/ login:
+/ Heb ik nog niet	,
+/ TODO
+
+/ PRODUCTIE DATABASE DSVFMS
+
+/ CREATE INSTANCE
+
+/ 1ste window
+[eric@localhost forticlientsslvpn]$ sudo ./forticlientsslvpn_cli --server 80.95.170.62:443 --vpnuser vanderveldene 
+Password for VPN:
+/ 2de window	,
+[eric@localhost Dsvfms]$ scp vanderveldene@192.168.171.1:/backup/mpo-backup/db/dsvfms.fdb_20140615-220001.fbk.gz .
+vanderveldene@192.168.171.1's password:
+
+[eric@localhost Dsvfms]$ ls
+dsvfms.fdb_20140615-220001.fbk.gz
+
+[eric@localhost Dsvfms]$ sudo chown firebird.firebird dsvfms.fdb_20140615-220001.fbk.gz 
+
+[eric@localhost Dsvfms]$ chmod o+w .
+
+$ sudo -u firebird cp dsvfms.fdb_20140615-220001.fbk.gz dsvfms.fdb_20140615-220001.fbk.gz.cp
+
+[eric@localhost Dsvfms]$ sudo -u firebird gzip -d dsvfms.fdb_20140615-220001.fbk.gz 
+
+[eric@localhost Dsvfms]$ ls -l
+total 21103712
+-rw-r--r--. 1 firebird firebird 15397171200 Jun 17 09:36 dsvfms.fdb_20140615-220001.fbk
+-rw-r--r--. 1 eric     eric      6213018392 Jun 17 09:27 dsvfms.fdb_20140615-220001.fbk.gz.cp
+
+[eric@localhost Dsvfms]$ sudo -u firebird gbak -rep -user sysdba -password masterkey dsvfms.fdb_20140615-220001.fbk dsvfms.fdb
+/ of	,
+[eric@localhost Dsvfms]$ gbak -c -v -rep -n -user sysdba -password masterkey dsvfms.fdb_20140615-220001.fbk dsvfms.fdb
+/ -rep is al er al een db staat	,
+gbak: ERROR:validation error for column CURRENCY_SYSTEMID, value "*** null ***"
+gbak: ERROR:warning -- record could not be restored
+gbak:Exiting before completion due to errors
+/ Daarom doen we er -n bij	,
+/ -v kan ook	,
+
+http://system.mp-objects.com/instances/
+https://system.mp-objects.com/svn/tms
+
+$ svn co https://system.mp-objects.com/svn/tms/patches/2013.04.01/dsvfms/
+
+[eric@localhost workspace]$ cp 2014.01/.project dsvfms/
+[eric@localhost workspace]$ cp 2014.01/.classpath dsvfms/
+[eric@localhost workspace]$ cp 2014.01/application.properties dsvfms/
+
+/ 7	.
+
+/ add Ant file icon
+dsvfms
+	base-framework
+		buildscripts
+			build.xml
+
+/ right click build-base
+	Run as 
+		External tools configuration
+			JRE
+				Working directory
+					Other: ${workspace_loc:dsvfms/base-framework}
+
+/ 7	.
+
+/ select project dsvfms
+Project
+	properties
+'		Workspace libraries
+			Add libary: Library container-project folder
+next
+browse
+dsvfms
+	base-framework
+		core	
+			lib
+				jar
+OK
+Search files in subfolders: check
+
+/ 7	. 
+
+/ CREATE INSTANCE
+
+/ Voortaan	,
+[eric@localhost server]$ pwd
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server
+[eric@localhost server]$ ls
+all  default  dsvfms  minimal  mpo
+/ copy bijv mpo en doe in eclipse clean build	,
+
+/ Nu hebben we	,
+
+[eric@localhost workspace]$ cp 2014.01/.
+./          ../         .classpath  .project    .svn/       
+[eric@localhost workspace]$ cp 2014.01/.project dsvfms/
+[eric@localhost workspace]$ cp 2014.01/.classpath dsvfms/
+[eric@localhost workspace]$ cp 2014.01/application.properties dsvfms/
+[eric@localhost workspace]$ cd /home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvfms/
+[eric@localhost dsvfms]$ ls
+conf  deploy  lib
+[eric@localhost dsvfms]$ cd conf
+[eric@localhost conf]$ ls
+application.properties        language_fr.properties     language_us.properties
+export                        language_it.properties     language_waen.properties
+jmsbrokers                    language_mdten.properties  language_waus.properties
+language_cn.properties        language_nl.properties     library-checksum.properties
+language_de.properties        language_noren.properties  oldlanguage_nl.properties
+language_dowen.properties     language_rren.properties   shipmentorder-msg-email-transformer.xslt
+language_dsvomsen.properties  language_scsen.properties  shipmentorder-msg-translation.properties
+language_en.properties        language_tosen.properties
+language_fmsen.properties     language_tr.properties
+[eric@localhost conf]$ cd ..
+[eric@localhost dsvfms]$ ls
+conf  deploy  lib
+[eric@localhost dsvfms]$ cd ../mpo
+[eric@localhost mpo]$ ls
+conf  data  deploy  lib  log  tmp  work
+[eric@localhost mpo]$ cd conf
+[eric@localhost conf]$ ls
+application.properties        language_fr.properties       language_waus.properties
+export                        language_isben.properties    library-checksum.properties
+jboss-minimal.xml             language_it.properties       local_application.properties
+jboss-service.xml             language_mdten.properties    log4j.dtd
+jboss-service.xml~            language_nl.properties       log4j.xml
+jmsbrokers                    language_nmcpben.properties  login-config.xml
+jndi.properties               language_noren.properties    oldlanguage_nl.properties
+language_cn.properties        language_rren.properties     props
+language_de.properties        language_scsen.properties    standardjaws.xml
+language_dowen.properties     language_tosen.properties    standardjbosscmp-jdbc.xml
+language_dsvomsen.properties  language_tr.properties       standardjboss.xml
+language_en.properties        language_us.properties       xmdesc
+language_fmsen.properties     language_waen.properties
+[eric@localhost conf]$ cp -R jboss-minimal.xml jboss-service.xml jndi.properties log4j.dtd log4j.xml login-config.xml props standardj* xmdesc ../../dsvfms/conf/
+[eric@localhost conf]$ cd ../deploy/
+[eric@localhost deploy]$ ls
+bsh-deployer.xml                hsqldb-ds.xml            jboss-ha-xa-jdbc.rar   jboss-xa-jdbc.rar        mail-ra.rar             mpo-schedule-service.xml  tms.jar
+cache-invalidation-service.xml  http-invoker.sar         jbossjca-service.xml   jms                      mail-service.xml        postgres-ds.xml           tms.war
+client-deployer-service.xml     jboss-aop.deployer       jboss-local-jdbc.rar   jmx-console.war          management              postgres-ds.xml.bak       uuid-key-generator.sar
+ear-deployer.xml                jboss-bean.deployer      jbossweb-tomcat55.sar  jmx-invoker-service.xml  monitoring-service.xml  properties-service.xml
+ejb-deployer.xml                jboss-ha-local-jdbc.rar  jbossws14.sar          jsr88-service.xml        mpo-management.sar      sqlexception-service.xml
+[eric@localhost deploy]$ cd ..
+[eric@localhost mpo]$ cp -R deploy ../dsvfms/deploy-1
+[eric@localhost mpo]$ cd ../dsvfms/
+[eric@localhost dsvfms]$ cp deploy/tms.
+tms.jar  tms.war/ 
+[eric@localhost dsvfms]$ cp deploy/tms.* deploy-1/
+cp: omitting directory ‘deploy/tms.war’
+[eric@localhost dsvfms]$ cp -R deploy/tms.* deploy-1/
+[eric@localhost dsvfms]$ ls
+conf  deploy  deploy-1  lib
+[eric@localhost dsvfms]$ ls deploy
+mpo-management.sar  tms.jar  tms.war
+[eric@localhost dsvfms]$ mv deploy/mpo-management.sar deploy-1/
+[eric@localhost dsvfms]$ ls
+conf  deploy  deploy-1  lib
+[eric@localhost dsvfms]$ rm -rf deploy
+[eric@localhost dsvfms]$ mv deploy-1/ deploy
+[eric@localhost dsvfms]$ ls
+conf  deploy  lib
+[eric@localhost dsvfms]$ cd deploy/
+[eric@localhost deploy]$ ls
+bsh-deployer.xml                hsqldb-ds.xml            jboss-ha-xa-jdbc.rar   jboss-xa-jdbc.rar        mail-ra.rar             mpo-schedule-service.xml  tms.jar
+cache-invalidation-service.xml  http-invoker.sar         jbossjca-service.xml   jms                      mail-service.xml        postgres-ds.xml           tms.war
+client-deployer-service.xml     jboss-aop.deployer       jboss-local-jdbc.rar   jmx-console.war          management              postgres-ds.xml.bak       uuid-key-generator.sar
+ear-deployer.xml                jboss-bean.deployer      jbossweb-tomcat55.sar  jmx-invoker-service.xml  monitoring-service.xml  properties-service.xml
+ejb-deployer.xml                jboss-ha-local-jdbc.rar  jbossws14.sar          jsr88-service.xml        mpo-management.sar      sqlexception-service.xml
+[eric@localhost deploy]$ rm postgres-ds.xml*
+[eric@localhost deploy]$ ls
+bsh-deployer.xml                ejb-deployer.xml    jboss-bean.deployer      jboss-local-jdbc.rar   jms                      mail-ra.rar             mpo-management.sar        tms.jar
+cache-invalidation-service.xml  hsqldb-ds.xml       jboss-ha-local-jdbc.rar  jbossweb-tomcat55.sar  jmx-console.war          mail-service.xml        mpo-schedule-service.xml  tms.war
+client-deployer-service.xml     http-invoker.sar    jboss-ha-xa-jdbc.rar     jbossws14.sar          jmx-invoker-service.xml  management              properties-service.xml    uuid-key-generator.sar
+ear-deployer.xml                jboss-aop.deployer  jbossjca-service.xml     jboss-xa-jdbc.rar      jsr88-service.xml        monitoring-service.xml  sqlexception-service.xml
+
+
+/ 7	.
+
+[eric@localhost server]$ ssh jboss@mposerv11
+password: jboss@mpo
+/ test/appl server
+
+[eric@localhost server]$ ssh jboss@mposerv8
+password: jboss@mpo
+/ test/database server
+
+[eric@localhost server]$ ssh servicemix@mposerv13
+password: jboss@mpo
+/ test/integrateie server
+
+[eric@localhost server]$ ssh jboss@mposerv11
+password: jboss@mpo
+jboss@mposerv11:~$ vi dsvfms/deploy/firebird-ds.xml 
+
+/ en set neer	,
+[eric@localhost server]$ find dsvfms/ -name "firebird*"
+dsvfms/deploy/firebird-ds.xml
+
+$ sudo yum install squirrel
+Installing:
+ squirrel                     x86_64                2.2.5-4.fc20                fedora                 17 k
+Installing for dependencies:
+ squirrel-libs                x86_64                2.2.5-4.fc20                fedora                138 k
+/ TODO
+
+/ We doen	,
+[eric@localhost DB]$ java -jar ~/Downloads/squirrel-sql-3.5.3-standard.jar 
+squirrel-sql-3.5.3
+
+
+$ sudo yum install pgadmin3
+Running transaction
+  Installing : wxBase-2.8.12-9.fc20.x86_64                                                                  1/3 
+  Installing : wxGTK-2.8.12-9.fc20.x86_64                                                                   2/3 
+  Installing : pgadmin3-1.18.0-1.fc20.x86_64                                                                3/3 
+  Verifying  : wxBase-2.8.12-9.fc20.x86_64                                                                  1/3 
+  Verifying  : pgadmin3-1.18.0-1.fc20.x86_64                                                                2/3 
+  Verifying  : wxGTK-2.8.12-9.fc20.x86_64     
+
+/ 7	.
+
+/ om mpo test db te download	,
+[eric@localhost LOGS]$ ssh jboss@mposerv8
+jboss@mposerv8's password:jboss@mpo
+[13:30:26] jboss@mposerv8 ~:
+> pg_dump ...
+/ en haal op met scp	,
+	
+	
+
+
+
+/ Einde PRODUCTIE DATABASE DSVFMS
+
+/ OPEN IN CHROME
+
+https://system.mp-objects.com/jira/secure/TempoUserBoard!timesheet.jspa
+http://system.mp-objects.com/instances/#
+https://system.mp-objects.com/svn/tms/patches/2013.04.01/dsvfms/
+http://localhost:8080/tms/core/index_frameset
+https://scs.mp-objects.com/dsvfms/core/index_frameset
+
+
+/ Einde OPEN IN CHROME
+
+
+/ Einde INTERMAX
+
+/ TEST
+
+https://test.scs.mp-objects.com/mpo/core/index_frameset
+all-admin
+admin123@MPO
+
+/ Einde TEST
+
+/ TICKET WICKET
+
+/ hover over configuration, master data, messages	,
+/ we zien	,
+wicketpage=messagereport.MessagePage	,
+/ we zien ook een tooltip: alert-messaging.list
+
+/ we komen eerst op het form met het filter	, 
+com/mpobjects/oms/view/wicket/messagereport/MessagePage.java 
+/ See  7	.
+
+/ op deze page zien we een button 	, click, dan komen we op alertmessaging	, de root in de call stack is wicket	,
+/ See 77	.
+
+/ 7	.
+
+package com.mpobjects.oms.view.wicket.messagereport;
+public class MessagePage extends VOEditPage<Message> {
+	public MessagePage() {
+		super();
+/c
+public abstract class VOEditPage<T extends ValueObject> extends VOSelectPage<T> implements VOEditFormCallback {
+	public VOEditPage() {
+		super();
+/c
+public abstract class VOSelectPage<T extends ValueObject> extends VOListPage<T> {
+
+	public VOSelectPage() {
+		super();
+/c
+public VOListPage() {
+...
+		setDataProperties();
+/c
+public class MessagePage extends VOEditPage<Message> {
+	protected void setDataProperties() {
+		super.setDataProperties();
+/s
+public abstract class VOListPage<T extends ValueObject> extends BaseContextPage {
+	protected void setDataProperties() {
+		dataProperties = new EvoDataProperties();
+/ =
+	cancelConfirm	false	
+	codeCaseSensitive	false	
+	codeFieldSize	-1	
+	codeFilterSize	10	
+	codeMaxLength	10	
+	codeUpperCaseOnly	false	
+	descriptionFilterSize	50	
+	descriptionMaxLength	100	
+	descriptionRequired	true	
+	entityNameModel	ResourceModel  (id=13983) 			/ van Wicket	,	
+		defaultValue	null	
+		resourceKey	"entityName" (id=13591)	
+
+		dataProperties.setEntityNameModel(wrap(new ResourceModel("entityName")));
+/ dataProperties=
+...
+	entityNameModel	ResourceModel$AssignmentWrapper  (id=14001)	
+		component	MessagePage  (id=13976)	
+		defaultValue	null	
+		resourceKey	"entityName" (id=13591)	
+
+/t
+	protected void setDataProperties() {
+		super.setDataProperties();
+/ D
+		dataProperties.setCodeMaxLength(20);
+		dataProperties.setCodeFilterSize(4);
+		dataProperties.setDescriptionMaxLength(50);
+		dataProperties.setDescriptionRequired(true);
+		dataProperties.setCancelConfirm(true);
+dataProperties	EvoDataProperties  (id=13978)	
+	cancelConfirm	true	
+	codeCaseSensitive	false	
+	codeFieldSize	-1	
+	codeFilterSize	4	
+	codeMaxLength	20	
+	codeUpperCaseOnly	false	
+	descriptionFilterSize	50	
+	descriptionMaxLength	50	
+	descriptionRequired	true	
+	descriptionFilterSize	50	
+	descriptionRequired	true	
+	entityNameModel	ResourceModel$AssignmentWrapper  (id=14001)	
+		component	MessagePage  (id=13976)	
+		defaultValue	null	
+		resourceKey	"entityName" (id=13591)	
+		this$0	ResourceModel  (id=14000)	
+
+/t
+	public VOListPage() {
+...
+		setDataProperties();
+/ D
+		createPage();
+/s
+public class MessagePage extends VOEditPage<Message> {
+	protected void createPage() {
+		super.createPage();
+/ s
+public abstract class VOEditPage<T extends ValueObject> extends VOSelectPage<T> implements VOEditFormCallback {
+		createEditInterface();
+		super.createPage();
+
+/t
+public class MessagePage extends VOEditPage<Message> {
+		super.createPage();
+/ D
+		editPage = new MessageEditFormPage(this, daoWrapper, dataProperties);
+/s
+public class MessageEditFormPage extends VOEditFormPage<Message> {
+	public MessageEditFormPage(VOEditFormCallback aCallback, BeanWrapper<? extends BaseDAOInterface<Message>> aDaoWrapper, EvoDataProperties aDataProperties) {
+		super(aCallback, aDaoWrapper, aDataProperties);
+/s
+	public VOEditFormPage(VOEditFormCallback aCallback, BeanWrapper<? extends BaseDAOInterface<T>> aDaoWrapper, EvoDataProperties aDataProperties) {
+...
+		createPage();
+/ TODO
+
+
+	
+
+
+/ 77	.
+
+/ click configuration, master data, messages	,
+
+/ we zien een form	, dit is WH	,
+com/mpobjects/oms/view/wicket/alertmessaging/MessageTabEditPanel.html 
+
+com/mpobjects/oms/view/wicket/alertmessaging/MessageTabEditPanel.java 
+/ Hier staat de size van de description field	,
+
+/ click op button op message page	,
+/ c
+package com.mpobjects.oms.view.wicket.alertmessaging;
+public class MessageReportTabPanel extends Panel {
+	public void createTabs() {
+...
+				myMessageTabEditPanel = new MessageTabEditPanel(panelId, new WebComponentEventSwitchBoard(), myPanelBuilder, new BeanWrapper<MessageDAO>(MessageDAO.class), dataProperties);
+/ c
+public class MessageTabEditPanel extends VOEditPanel {
+	public MessageTabEditPanel(String aId, WebComponentEventSwitchBoard aWebComponentEventSwitchBoard,FormActionsPanelBuilder<Message> aFormActionsPanelBuilder, BeanWrapper<? extends EnumeratedValueObjectDAOInterface<Message>> aDaoWrapper, EvoDataProperties aDataProperties) {
+		super(aId, aWebComponentEventSwitchBoard, aFormActionsPanelBuilder, aDaoWrapper, aDataProperties);
+/c
+	public VOEditPanel(String id, WebComponentEventSwitchBoard webComponentEventSwitchBoard, FormActionsPanelBuilder<T> formActionsPanelBuilder, BeanWrapper<? extends BaseDAOInterface<T>> aDaoWrapper, EvoDataProperties aDataProperties) {
+...
+		createPanel(tempModel);
+/c
+	protected void createPanel(GenericCompountPropertyModel<T> aModel) {
+			super.createPanel(aModel);
+/c
+	protected void createPanel(GenericCompountPropertyModel<T> model) {
+		setForm(form);
+/c
+package com.mpobjects.oms.view.wicket.alertmessaging;
+public class MessageTabEditPanel extends VOEditPanel {
+	protected void setForm(GenericForm aForm) {
+		codeField.add(StringValidator.maximumLength(dataProperties.getCodeMaxLength())).add(new GenericFormComponentBehavior());
+dataProperties	EvoDataProperties  (id=13530)	
+	cancelConfirm	true	
+	codeCaseSensitive	false	
+	codeFieldSize	-1	
+	codeFilterSize	4	
+	codeMaxLength	20	
+	codeUpperCaseOnly	false	
+	descriptionFilterSize	50	
+	descriptionMaxLength	50	
+	descriptionRequired	true	
+	entityNameModel	ResourceModel$AssignmentWrapper  (id=13549)	
+
+/ later	,
+
+public class MessageTabEditPanel extends VOEditPanel {
+	public MessageTabEditPanel(String aId, WebComponentEventSwitchBoard aWebComponentEventSwitchBoard, FormActionsPanelBuilder<Message> aFormActionsPanelBuilder, BeanWrapper<? extends EnumeratedValueObjectDAOInterface<Message>> aDaoWrapper, EvoDataProperties aDataProperties) {
+		super(aId, aWebComponentEventSwitchBoard, aFormActionsPanelBuilder, aDaoWrapper, aDataProperties);
+/c
+	public VOEditPanel(String id, WebComponentEventSwitchBoard webComponentEventSwitchBoard, FormActionsPanelBuilder<T> formActionsPanelBuilder, BeanWrapper<? extends BaseDAOInterface<T>> aDaoWrapper, EvoDataProperties aDataProperties) {
+		super(id, null, webComponentEventSwitchBoard, null, formActionsPanelBuilder, aDaoWrapper);
+/ c
+	public GenericFormPanel(final String id, BaseWebComponent parent, final WebComponentEventSwitchBoard aWebComponentEventSwitchBoard, final T anObject, FormActionsPanelBuilder<T> formActionsPanelBuilder, BeanWrapper<? extends BaseDAOInterface<T>> aDaoWrapper) { 
+			myObject = daoWrapper.getBean().createNewObject();
+/ daoWrapper=com.mpobjects.view.wicket.util.BeanWrapper@7e5ff58e[type=interface com.mpobjects.oms.dao.alertmessaging.MessageDAO,beanName=<null>]
+/ de bean is een proxy naar	,
+com.mpobjects.oms.dao.alertmessaging.MessageDAOImpl@1b794627
+/c
+package com.mpobjects.util.dao;
+public class GenericHibernateDAO<Type extends EntityInterface> extends BaseHibernateDAO<Type> implements HibernateDAOInterface<Type> {
+this	MessageDAOImpl  (id=15950)	
+public Type createNewObject() {
+		try {
+			return type.newInstance();
+type	Class<T> (com.mpobjects.oms.model.entity.alertmessaging.Message) (id=8797)	
+/ Dit is gewoon Java	,
+
+/ Intermezzo
+
+$ vi com/mpobjects/oms/dao/alertmessaging/Message.standard.hbm.xml 
+
+<hibernate-mapping>
+	<class name="com.mpobjects.oms.model.entity.alertmessaging.Message"
+		table="TMS_MESSAGE">
+
+/ Einde Intermezzo
+
+/t
+	public GenericFormPanel(final String id, BaseWebComponent parent, final WebComponentEventSwitchBoard aWebComponentEventSwitchBoard, final T anObject, FormActionsPanelBuilder<T> formActionsPanelBuilder, BeanWrapper<? extends BaseDAOInterface<T>> aDaoWrapper) {
+			myObject = daoWrapper.getBean().createNewObject();
+/ D
+
+/ 7	. 
+
+/ we zijn op het form, dus	,
+
+/ click Save	,
+
+Description	,
+'aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffffgggggggggg' is longer than the maximum of 50 characters.
+
+Subject	,
+Field 'subject' is required.
+
+To Address	,
+Field 'toAddress' is required.
+
+Body
+Field 'Body" is required.
+
+/ we set 
+'To Address' 'ericj' 	, 
+'subject' 'eric's subject' ,
+Description 'aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee'	,
+Body 'ericj'
+
+/ dan zien we 	,
+mpo=>  select*from tms_message;
+26632592+++EMAIL+++ericj's subject+++aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee+++ericj's body+++ericj++++++++++++++++++ericj+++0+++0+++
+
+
+ 
+/ Einde TICKET WICKET
+
+/ POSTGRESQL
+
+/ lees	,
+http://postgresql.1045698.n5.nabble.com/What-is-field-separator-td2091525.html
+
+[eric@localhost Book]$  psql -A -F $'\t' -U foo  foo
+
+/ we veranderen de field sep in TAB	, we moeten ook -A geven	, 
+/ als we ook -t geven, dan geen headers, 	maar dat willen we wel	,
+
+/ we kunnen ook	, in psql
+foo=> \pset fieldsep ?
+foo=> \pset format unaligned 
+
+
+
+
+
+/ Einde POSTGRESQL
+
+/ POSTGRESQL
+
+/ Book (19)
+
+foo=> select*from pg_available_extensions\g
+  name   | default_version | installed_version |           comment            
+---------+-----------------+-------------------+------------------------------
+ plpgsql | 1.0             | 1.0               | PL/pgSQL procedural language
+(1 row)
+
+foo=> select pg_catalog.pg_describe_object(d.classid,d.objid,0) as description
+foo-> from pg_catalog.pg_depend as d
+foo-> inner join pg_extension as e on d.refobjid=e.oid
+foo-> where d.refclassid='pg_catalog.pg_extension'::pg_catalog.regclass
+foo-> and deptype='e' and e.extname='fuzzystrmatch'\g
+
+
+
+
+/ Einde POSTGRESQL
+
+/ HIBERNATE
+
+/ We doownload van	,
+http://jpwh.org/examples/
+[eric@localhost hibernate-book]$ pwd
+/home/eric/Devel/Java/Hibernate/hibernate-book2
+[eric@localhost hibernate-book]$ unzip  ~/Downloads/jpwh-2e-examples-20131217.zip 
+
+
+/ Einde HIBERNATE

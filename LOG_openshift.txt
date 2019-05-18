@@ -1,0 +1,142 @@
+/ 7	. 
+
+/ video
+https://www.youtube.com/watch?v=wvsoUqZR8IE&t=2939s
+
+/ we gingen naar	,
+https://www.openshift.com/
+/ clicked 'sign up for free'	,
+/ clicked 'login with github'	,
+/ filled in , 
+/ we kunnen onze github id vinden met	,
+https://api.github.com/users/ericjvandervelden
+/ maar hij stond al ingevuld	,
+/ we komen op 	,
+https://www.openshift.com/devpreview/register.html
+/ er staat dat we 30 dagen moeten wachten	, 
+Running OpenShift Origin on your local machine is fast and easy.
+/ OpenShift Origin=https://github.com/openshift/origin/
+/ er staat, met of zonder docker	,
+/ we doen met docker,	
+/ willen ook proberen later met Vagrant	, en VMs	,
+/ TODO
+/ download van
+https://github.com/openshift/origin/releases/tag/v1.3.1
+$ ls -ltr ~/Downloads
+-rw-rw-r--. 1 eric eric    19536498 Dec  2 22:33 openshift-origin-client-tools-v1.3.1-dad658de7465ba8a234a4fb40b5b446a45a4cee1-linux-64bit.tar.gz
+-rw-rw-r--. 1 eric eric    62380573 Dec  2 22:36 openshift-origin-server-v1.3.1-dad658de7465ba8a234a4fb40b5b446a45a4cee1-linux-64bit.tar.gz
+
+[eric@almond openshift]$ pwd
+/home/eric/Devel/openshift
+eric@almond openshift]$ tar xvzf ~/Downloads/openshift-origin-client-tools-v1.3.1-dad658de7465ba8a234a4fb40b5b446a45a4cee1-linux-64bit.tar.gz 
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.security.selinux'
+openshift-origin-client-tools-v1.3.1-dad658de7465ba8a234a4fb40b5b446a45a4cee1-linux-64bit/oc
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.security.selinux'
+openshift-origin-client-tools-v1.3.1-dad658de7465ba8a234a4fb40b5b446a45a4cee1-linux-64bit/README.md
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.security.selinux'
+openshift-origin-client-tools-v1.3.1-dad658de7465ba8a234a4fb40b5b446a45a4cee1-linux-64bit/LICENSE
+
+[eric@almond openshift]$ ls openshift-origin-client-tools-v1.3.1-dad658de7465ba8a234a4fb40b5b446a45a4cee1-linux-64bit/
+LICENSE  oc  README.md
+/ we set deze dir in ~/.bash_profile	,
+
+/ in de README.md zien we	,
+https://docs.openshift.org/latest/getting_started/administrators.html
+/ nl	,
+* For a quick install of Origin, see the [Getting Started Install guide](https://docs.openshift.org/latest/getting_started/administrators.html).
+* For an advanced installation using [Ansible](https://github.com/openshift/openshift-ansible), follow the [Advanced Installation guide](https://docs.openshift.org/latest/install_config/install/advanced_install.html)
+* To build and run from source, see [CONTRIBUTING.adoc](CONTRIBUTING.adoc)
+
+
+/ we geven ook in google	,
+install openshift on fedora
+https://fedoraproject.org/wiki/OpenShift_Origin#Installation.2C_Configuration.2C_and_Documentation
+/ onderin zien we links	,
+Official documentation
+https://docs.openshift.org/latest/welcome/index.html
+
+/ maar op	,
+https://www.openshift.com/devpreview/register.html
+
+[eric@almond openshift]$ oc cluster up --version=v1.3.1
+-- Checking OpenShift client ... OK
+-- Checking Docker client ... OK
+-- Checking Docker version ... OK
+-- Checking for existing OpenShift container ... OK
+-- Checking for openshift/origin:v1.3.1 image ... 
+   Pulling image openshift/origin:v1.3.1
+   Pulled 0/3 layers, 3% complete
+   Pulled 0/3 layers, 22% complete
+   Pulled 0/3 layers, 42% complete
+   Pulled 1/3 layers, 64% complete
+   Pulled 1/3 layers, 80% complete
+   Pulled 2/3 layers, 86% complete
+   Pulled 2/3 layers, 99% complete
+   Pulled 3/3 layers, 100% complete
+   Extracting
+   Image pull complete
+-- Checking Docker daemon configuration ... FAIL
+   Error: did not detect an --insecure-registry argument on the Docker daemon
+   Solution:
+
+     Ensure that the Docker daemon is running with the following argument:
+     	--insecure-registry 172.30.0.0/16
+
+/ lees	,
+https://github.com/openshift/origin/tree/master/examples/sample-app#docker-changes
+
+/ nu doen we,	
+    1 31905 31905 31905 ?           -1 Ssl      0  44:36 /usr/bin/docker daemon -H fd://
+
+To do this, you need to add "--insecure-registry 172.30.0.0/16" to the Docker daemon invocation, eg:
+
+$ docker -d --insecure-registry 172.30.0.0/16
+
+If you are running Docker as a service via systemd, you can add this argument to the options value in /etc/sysconfig/docker
+
+/ lees	,
+https://docs.docker.com/engine/installation/linux/fedora/
+/ we hebben vroeger inderdaad	,
+[eric@almond Docker2]$ sudo systemctl restart docker
+/ we zien de link	'to customize your Systemd Docker daemon options.
+/ lees	,
+https://docs.docker.com/engine/admin/systemd/
+
+drwxr-xr-x. 32 root root 20480 Jul 24 08:29 /lib/systemd/system
+/= WH
+drwxr-xr-x. 32 root root 20480 Jul 24 08:29 /usr/lib/systemd/system
+
+/ defaults, should not be edited	,
+[eric@almond openshift]$ cat /lib/systemd/system/docker.service 
+[Unit]
+Description=Docker Application Container Engine
+Documentation=https://docs.docker.com
+After=network.target docker.socket
+Requires=docker.socket
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/docker daemon -H fd://
+MountFlags=slave
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=infinity
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
+
+/ 13	. 
+https://mail.google.com/mail/u/0/#search/openshift/158c11f6d127a5c0
+/ link naar webinar	,
+
+
+
+
+
+
+
+
+
+
+

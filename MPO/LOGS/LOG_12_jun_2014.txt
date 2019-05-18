@@ -1,0 +1,1159 @@
+/ GOOGLE 2-STEP AUTH
+
+
+Your app password for iPhone
+pmks dqki eaig mydn
+
+How to use it
+Open “Settings” on your iPhone.
+Select “Mail, Contacts, Calendars”.
+Select your Google Account from the list of available accounts.
+Edit your account information and replace your password with the 16-character password shown above.
+Just like your normal password, this app password grants complete access to your Google Account. You won't need to remember it, so don't write it down or share it with anyone.
+
+
+
+/ Einde GOOGLE 2-STEP AUTH
+/ POSTGRES COMMANDS
+
+
+foo=> \q
+[eric@localhost caveatemptor-native-061211]$ psql -U foo
+Password for user foo: 
+foo=> \?
+General
+  \h [NAME]              help on syntax of SQL commands, * for all commands
+
+foo=> \h create role
+Command:     CREATE ROLE
+Syntax:
+CREATE ROLE name [ [ WITH ] option [ ... ] ]
+where option can be:
+      SUPERUSER | NOSUPERUSER
+    | CREATEDB | NOCREATEDB
+...
+
+
+
+
+
+
+
+
+/ Einde POSTGRES COMMANDS
+
+
+/ POSTGRESQL CREATE ROLES 
+
+/ 7	.
+
+/ create roles	, 
+
+[eric@localhost Book]$ psql -U foo
+Password: 
+foo=> create role grp createdb createrole\g
+CREATE ROLE
+
+foo=> \du
+                              List of roles
+  Role name  |                   Attributes                   | Member of 
+-------------+------------------------------------------------+-----------
+ grp         | Create role, Create DB, Cannot login           | {}
+ postgres    | Superuser, Create role, Create DB, Replication | {}
+
+foo=> create role usr login password 'usr'\g
+CREATE ROLE
+foo=> grant grp to usr\g
+GRANT ROLE
+foo=> \du
+                              List of roles
+  Role name  |                   Attributes                   | Member of 
+-------------+------------------------------------------------+-----------
+ grp         | Create role, Create DB, Cannot login           | {}
+ postgres    | Superuser, Create role, Create DB, Replication | {}
+ usr         |                                                | {grp}
+
+/ W2
+foo=> \c foo usr
+Password for user usr: 
+
+foo=>  create database db\g
+ERROR:  permission denied to create database
+
+/ omdat => grant grp to usr	,
+foo=> set role grp\g
+SET
+foo=> select current_user\g
+ current_user 
+--------------
+ grp
+(1 row)
+
+foo=> create database db\g
+CREATE DATABASE
+
+/ Because	,
+"The role attributes LOGIN, SUPERUSER, CREATEDB, and CREATEROLE can be thought of as special privileges, but they are never inherited as ordinary privileges on database objects are. You must actually SET ROLE to a specific role having one of these attributes in order to make use of the attribute."
+
+
+foo=> \l
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   
+-----------+----------+----------+-------------+-------------+-----------------------
+ db        | grp      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+
+
+/ u grp 
+foo=> \c db
+You are now connected to database "db" as user "usr".
+
+/ u usr	,
+db=> create schema me\g
+CREATE SCHEMA
+
+/ usr inherits create schema from grp in db db	,
+
+/ u usr	,
+db=> \c foo
+You are now connected to database "foo" as user "usr".
+foo=> drop database db\g
+DROP DATABASE
+
+foo=> \c foo foo
+Password for user foo: 
+You are now connected to database "foo" as user "foo".
+=> drop role usr\g
+DROP ROLE
+foo=> drop role grp\g
+DROP ROLE
+
+
+/ Einde POSTGRESQL CREATE ROLES 
+
+/ POSTGRESQL CONFIG FILES
+
+[eric@localhost Book]$ sudo locate pg_hba.conf
+/var/lib/pgsql/data/pg_hba.conf
+[eric@localhost Book]$ sudo less /var/lib/pgsql/data/pg_hba.conf
+/ edit	,
+[eric@localhost Book]$ sudo -iu postgres pg_ctl reload
+server signaled
+
+/ Einde POSTGRESQL CONFIG FILES
+
+/ POSTGRES ACCESS PRIVILEGES
+
+/ read	,
+http://www.postgresql.org/docs/9.3/static/sql-grant.html
+
+/ 7	. 
+
+/ we zien privileges	,
+foo=> \l	/ databases
+foo=> \dn+	/ schemas in current db	,
+foo=> \z my.*	/ tables  in schema my	, \z = \z public.*
+
+/ \dt gives owner of tables	,
+
+/ to list the schemas in a db       ,  connect to the db        ,
+
+/ 7	.
+
+/ Which access privileges are there?
+
+/ priveleges on db	,
+
+
+foo=> \l
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   
+-----------+----------+----------+-------------+-------------+-----------------------
+ foo       | foo      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =Tc/foo              +
+           |          |          |             |             | foo=CTc/foo          +
+           |          |          |             |             | bar=CTc/foo
+
+/ so r public can connect (c) to db foo, r public can create temp tbl	, 
+/ u foo, u bar can create a schema in db foo (C), u baz cannot create schema in db foo	,
+
+/ 13. 	db foo	, u baz, T	, 
+
+/ In W2	,
+foo=> \c foo baz
+Password for user baz: 
+
+foo=> create temp table ttbl(i int)\g
+CREATE TABLE
+foo=> \dt pg_temp_3.*
+        List of relations
+  Schema   | Name | Type  | Owner 
+-----------+------+-------+-------
+ pg_temp_8 | ttbl | table | baz
+(1 row)
+foo=> select*from ttbl\g
+ i 
+---
+(0 rows)
+/ Like public schema, pg_temp_3  schema need not to be set in front	,
+
+/ u foo
+foo=> revoke TEMPORARY on DATABASE foo from public\g
+REVOKE
+
+foo=> \l
+                                 List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   
+-----------+----------+----------+-------------+-------------+-----------------------
+ foo       | foo      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/foo               +
+           |          |          |             |             | foo=CTc/foo          +
+           |          |          |             |             | bar=CTc/foo
+
+
+/ u baz
+foo=> \c foo
+/ now pg_temp_8 is empty	, 
+foo=> create temp table ttbl(i int)\g
+ERROR:  permission denied for schema pg_temp_8
+
+foo=> grant TEMPORARY on DATABASE foo to public\g
+GRANT
+
+/ u foo	,
+foo=> revoke CREATE on DATABASE foo from public\g
+REVOKE
+
+
+
+
+/ 13	. 
+
+/ privileges on schema	,
+
+/ sch public	, 
+
+/ public (schema): public does not mean that another user can use a owner' table	,
+
+/ U: use granted tables	,
+
+/ r public can create and use granted tables in public scheme	, because 
+foo=> \dn+
+                          List of schemas
+  Name  |  Owner   |  Access privileges   |      Description       
+--------+----------+----------------------+------------------------
+ public | postgres | postgres=UC/postgres+| standard public schema
+        |          | =UC/postgres         | 
+
+/ What use means can be seen with \z	, the privs on de tbls	,
+
+foo=> select current_user\g
+ current_user 
+--------------
+ baz
+(1 row)
+
+/u baz
+foo=> create table public.tbl(i int)\g
+CREATE TABLE
+
+/ u foo
+foo=> select*from public.tbl\g
+ERROR:  permission denied for relation tbl
+
+/ u baz
+foo=> grant all on table public.tbl to foo\g
+GRANT
+
+GRANT
+foo=> \z 
+                                   Access privileges
+ Schema |        Name        |   Type   | Access privileges | Column access privileges 
+--------+--------------------+----------+-------------------+--------------------------
+ public | tbl                | table    | baz=arwdDxt/baz  +| 
+        |                    |          | foo=arwdDxt/baz   | 
+
+
+/ u foo
+foo=> select*from public.tbl\g
+ i 
+---
+(0 rows)
+
+/ u  baz
+foo=> revoke all on table public.tbl from foo\g
+REVOKE
+foo=> \z public.*
+                                   Access privileges
+ Schema |        Name        |   Type   | Access privileges | Column access privileges 
+--------+--------------------+----------+-------------------+--------------------------
+ public | tbl                | table    | baz=arwdDxt/baz   | 
+
+
+foo=> drop table tbl\g
+DROP TABLE
+
+/ Lees in docs, sql-commands	, grant	,
+http://www.postgresql.org/docs/9.3/static/sql-commands.html
+
+            r -- SELECT ("read")
+            w -- UPDATE ("write")
+            a -- INSERT ("append")
+            d -- DELETE
+            D -- TRUNCATE
+            x -- REFERENCES
+            t -- TRIGGER
+            X -- EXECUTE
+            U -- USAGE
+            C -- CREATE
+            c -- CONNECT
+            T -- TEMPORARY
+      arwdDxt -- ALL PRIVILEGES (for tables, varies for other objects)
+            * -- grant option for preceding privilege
+
+
+
+
+/ 13. 	schema my	, u baz	, UC 
+
+/ a user can create tables, but that does not mean aut. that he can use them	,
+
+/ U: use granted tables	,
+
+C: create
+U: select, ... granted tbls	,
+
+foo=> \dn+
+                          List of schemas
+  Name  |  Owner   |  Access privileges   |      Description       
+--------+----------+----------------------+------------------------
+ my     | foo      | foo=UC/foo          +| 
+        |          | bar=UC/foo          +| 
+        |          | baz=UC/foo           | 
+
+/ u foo
+foo=> revoke create on schema my from bar\g
+REVOKE
+
+foo=> \dn+
+                          List of schemas
+  Name  |  Owner   |  Access privileges   |      Description       
+--------+----------+----------------------+------------------------
+ my     | foo      | foo=UC/foo          +| 
+        |          | bar=UC/foo           +| 
+        |          | baz=U/foo           | 
+
+foo=> \c foo baz
+Password for user baz: 
+You are now connected to database "foo" as user "baz".
+
+foo=> create table my.tbl(i int)\g
+ERROR:  permission denied for schema my
+
+foo=> grant create on schema my to baz\g
+GRANT
+foo=> revoke usage on schema my from baz\g
+REVOKE
+foo=> \dn+
+                          List of schemas
+  Name  |  Owner   |  Access privileges   |      Description       
+--------+----------+----------------------+------------------------
+ my     | foo      | foo=UC/foo          +| 
+        |          | bar=UC/foo           +| 
+        |          | baz=C/foo           | 
+
+foo=> \c foo baz
+Password for user baz: 
+foo=> create table my.tbl(i int)\g
+CREATE TABLE
+foo=> insert into my.tbl values(7),(13)\g
+ERROR:  permission denied for schema my
+
+/ So u baz can create a tbl but not use the tbl	,
+
+foo=> grant usage on schema my to baz\g
+GRANT
+
+/ u baz 
+foo=> select*from my.tbl\g
+ i  
+----
+  7
+ 13
+(2 rows)
+
+foo=> drop table my.tbl\g
+DROP TABLE
+
+
+/ 13	. tbl 
+
+
+oo=> \z my.*
+                          Access privileges
+ Schema | Name | Type  | Access privileges | Column access privileges 
+--------+------+-------+-------------------+--------------------------
+ my     | a    | table |                   | 
+ my     | b    | table |                   | 
+ my     | d    | table | baz=arwdDxt/baz  +| 
+        |      |       | foo=arwdDxt/baz   | 
+ my     | t    | table |                   | 
+ my     | tbl  | table |                   | 
+ my     | y    | table |                   | 
+(6 rows)
+
+a (append)	: insert
+r (read)	: select	
+w (write)	: update
+d (delete)	: delete
+D (truncate)	: truncate
+x 		: references
+t		: trigger
+
+
+
+
+
+/  7	. 
+
+foo=> \dnS+
+                                     List of schemas
+        Name        |  Owner   |  Access privileges   |           Description            
+--------------------+----------+----------------------+----------------------------------
+ his                | bar      |                      | 
+ information_schema | postgres | postgres=UC/postgres+| 
+                    |          | =U/postgres          | 
+ its                | baz      |                      | 
+ me                 | bar      | bar=UC/bar          +| 
+                    |          | foo=UC/bar           | 
+ my                 | foo      | foo=UC/foo          +| 
+                    |          | bar=UC/foo          +| 
+                    |          | baz=UC/foo           | 
+ pg_catalog         | postgres | postgres=UC/postgres+| system catalog schema
+                    |          | =U/postgres          | 
+ pg_temp_1          | postgres |                      | 
+ pg_toast           | postgres |                      | reserved schema for TOAST tables
+ pg_toast_temp_1    | postgres |                      | 
+ public             | postgres | postgres=UC/postgres+| standard public schema
+                    |          | =UC/postgres         | 
+ your               | foo      |                      | 
+(11 rows)
+
+
+/ every db has a pg_catalog schema, information_schema,  they differ per db	, (result query does not depend on the user)	,
+
+/ u foo or u bar connect to db foo      , u baz connects to db baz      ,
+
+/ u foo of u bar,
+foo=> select count(*)from pg_class\g
+ count
+-------
+   319
+(1 row)
+
+/ u baz
+baz=> select count(*)from pg_class\g
+ count
+-------
+   293
+(1 row)
+
+/ en    ,
+foo=> select count(*)from information_schema.schemata \g
+ count
+-------
+     2
+(1 row)
+
+baz=> select count(*)from information_schema.schemata \g
+ count
+-------
+     0
+(1 row)
+
+
+/ 7. 
+
+/ u bar creates sch her in db foo, u foo creates tbl walnut in sch her	,
+
+
+/ u foo	, is owner db foo	,
+foo=> create schema her\g
+CREATE SCHEMA
+foo=> drop schema her\g
+DROP SCHEMA
+
+foo=> revoke all on database foo from bar\g
+REVOKE
+/ u bar
+foo=> create schema her\g
+ERROR:  permission denied for database foo
+/ u foo
+foo=> grant all on database foo to bar\g
+GRANT
+foo=> \l
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   
+-----------+----------+----------+-------------+-------------+-----------------------
+ foo       | foo      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =Tc/foo              +
+           |          |          |             |             | foo=CTc/foo          +
+           |          |          |             |             | bar=CTc/foo
+
+/u bar
+foo=> create schema her\g
+CREATE SCHEMA
+
+/ u foo
+foo=> create table her.walnut(i int)\g
+ERROR:  permission denied for schema her
+/ u bar
+foo=> grant all on schema her to foo\g
+GRANT
+oo=> \dn+
+                          List of schemas
+  Name  |  Owner   |  Access privileges   |      Description       
+--------+----------+----------------------+------------------------
+ her    | bar      | bar=UC/bar          +| 
+        |          | foo=UC/bar           | 
+
+/ u foo
+foo=> create table her.walnut(i int)\g
+CREATE TABLE
+foo=> insert into her.walnut values (7),(13)\g
+INSERT 0 2
+
+/ u bar	,
+foo=> drop schema her cascade\g
+/ OK
+/ TODO ( foo is owner her.walnut)
+
+/ Einde POSTGRES ACCESS PRIVILEGES
+
+/ POSTGRESQL DUMP 
+
+/ Remember:
+/ restore as u postgres	, then all privileges OK, except for the database itself	,
+
+/ we dump db gee, restore in goo	,
+
+foo=> \c gee foo
+You are now connected to database "gee" as user "foo".
+
+gee=> \l
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   
+-----------+----------+----------+-------------+-------------+-----------------------
+ gee       | foo      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =Tc/foo              +
+           |          |          |             |             | foo=CTc/foo          +
+           |          |          |             |             | bar=CTc/foo
+
+
+gee=> \dn+
+                          List of schemas
+  Name  |  Owner   |  Access privileges   |      Description       
+--------+----------+----------------------+------------------------
+ me     | bar      | bar=UC/bar          +| 
+        |          | foo=UC/bar           | 
+ public | postgres | postgres=UC/postgres+| standard public schema
+        |          | =UC/postgres         | 
+ you    | bar      | bar=UC/bar          +| 
+        |          | foo=UC/bar           | 
+
+gee=> \dt me.*
+       List of relations
+ Schema | Name | Type  | Owner 
+--------+------+-------+-------
+ me     | x    | table | foo
+(1 row)
+
+/ 7	.
+
+[eric@localhost Book]$ pg_dump -U foo -v -f gee.dump gee
+/ or	,
+[eric@localhost Book]$ sudo -u postgres pg_dump -v -f gee.dump gee
+Password:
+
+[eric@localhost Book]$ psql -U foo<<X
+> create database goo
+> X
+Password for user foo: 
+CREATE DATABASE
+
+[eric@localhost Book]$ sudo -u postgres psql -d goo -f gee.dump
+/ OK
+
+goo=> \l
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   
+-----------+----------+----------+-------------+-------------+-----------------------
+ gee       | foo      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =Tc/foo              +
+           |          |          |             |             | foo=CTc/foo          +
+           |          |          |             |             | bar=CTc/foo
+ goo       | foo      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+
+/ ERR
+/ We are missing the privileges to u bar	,
+
+goo=> \dn+
+                          List of schemas
+  Name  |  Owner   |  Access privileges   |      Description       
+--------+----------+----------------------+------------------------
+ me     | bar      | bar=UC/bar          +| 
+        |          | foo=UC/bar           | 
+ public | postgres | postgres=UC/postgres+| standard public schema
+        |          | =UC/postgres         | 
+ you    | bar      | bar=UC/bar          +| 
+        |          | foo=UC/bar           | 
+(3 rows)
+
+o=> \dt me.*
+       List of relations
+ Schema | Name | Type  | Owner 
+--------+------+-------+-------
+ me     | x    | table | foo
+(1 row)
+
+/ 7	.
+
+/ correct by hand	,
+gee=> select current_user\g
+ current_user 
+--------------
+ foo
+
+gee=> grant all on database goo to bar\g
+GRANT
+gee=> \l
+           |          |          |             |             | bar=CTc/foo
+ gee       | foo      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =Tc/foo              +
+           |          |          |             |             | foo=CTc/foo          +
+           |          |          |             |             | bar=CTc/foo
+ goo       | foo      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =Tc/foo              +
+           |          |          |             |             | foo=CTc/foo          +
+           |          |          |             |             | bar=CTc/foo
+
+[eric@localhost Book]$ pg_dump -U foo -v -C -f goo.dump goo
+Password: foo
+
+[eric@localhost Book]$ psql -U foo <<X
+drop database goo
+X
+Password for user foo: 
+DROP DATABASE
+
+[eric@localhost Book]$ sudo -u postgres psql -f goo.dump
+/ OK
+
+/ Still ERR,	 
+/ u bar has no privileges on db goo	, 
+
+goo=> \l
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   
+-----------+----------+----------+-------------+-------------+-----------------------
+ gee       | foo      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =Tc/foo              +
+           |          |          |             |             | foo=CTc/foo          +
+           |          |          |             |             | bar=CTc/foo
+ goo       | foo      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+
+/ 7	. 
+
+/ pg_restore	,
+
+[eric@localhost Book]$ pg_dump -U foo -v -F c  -f gee_c.dump gee
+
+/ u foo
+gee=> create database goo\g
+CREATE DATABASE
+
+[eric@localhost Book]$ sudo -u postgres pg_restore -d goo -v gee_c.dump
+
+/ 7	. 
+
+/ pg_restore -C
+
+/ the -C is on pg_restore	, not on pg_dump	,
+
+/ moeilijk,  met hulp db  ,
+
+[eric@localhost Book]$ pg_dump -U foo -v -F t  -f goo_t.dump goo
+/ zonder -C
+
+/ u foo
+gee=> drop database goo\g
+DROP DATABASE
+gee=> create database goo2\g
+CREATE DATABASE
+
+[eric@localhost Book]$ sudo -u postgres pg_restore -d goo2 -C -v goo_t.dump
+
+/ 7	.
+
+
+/ dump a few schemas 	,
+
+/ u bar creates 2nd sch you in  db gee , en u foo creates tbl y in sch you
+
+/ u foo
+gee=> grant all on database gee to bar\g
+GRANT
+
+/ u  bar
+gee=> create schema you\g
+CREATE SCHEMA
+gee=> grant all on schema you to foo\g
+GRANT
+
+gee=> create table you.y(i int)\g
+CREATE TABLE
+gee=> insert into you.y values(7),(13)\g
+INSERT 0 2
+
+[eric@localhost Book]$ pg_dump -U foo -v -n you -f gee_you.dump gee
+
+/ u foo
+gee=> drop database goo\g
+DROP DATABASE
+gee=> create database goo\g
+CREATE DATABASE
+
+[eric@localhost Book]$ sudo -u postgres psql -d goo -f gee_you.dump
+
+/ u foo
+goo=> \dn+
+                          List of schemas
+  Name  |  Owner   |  Access privileges   |      Description
+--------+----------+----------------------+------------------------
+ public | postgres | postgres=UC/postgres+| standard public schema
+        |          | =UC/postgres         |
+ you    | bar      | bar=UC/bar          +|
+        |          | foo=UC/bar           |
+(2 rows)
+
+/ So goo has only 1 scheme , next to public and the system schemes	,
+
+/ 7	. 
+
+/ TMP
+
+[eric@localhost Book]$ sudo -u postgres pg_dump  -f /tmp/gee.dump gee
+[eric@localhost Book]$ sudo -u postgres psql<<X
+> drop database goo2\g
+> create database goo2 owner foo\g
+> X
+DROP DATABASE
+CREATE DATABASE
+[eric@localhost Book]$ sudo -u postgres psql -d goo2 -f gee.dump 
+
+[eric@localhost Book]$ sudo -u postgres pg_dumpall -f /tmp/roles.dump -r
+
+
+
+/  Einde POSTGRESQL DUMP 
+
+/ POSTGRESQL TRANSACTIONS DEMO
+
+
+/ 7	. 
+
+/ In Postgresql: read_uncommitted gives read_committed
+	in repeatable read no phantom reads
+
+/ 7	. 
+
+/ open 2 windows, in db foo as u foo	,
+
+/ in W2 we update, in W1 we read	, rc is default, only in W1 we have to set rr	,
+
+/  7	. 
+
+/ What we are going to do	,
+
+foo=> begin\g
+BEGIN
+foo=> set transaction isolation level repeatable read\g
+SET
+foo=> select current_setting('transaction_isolation')
+/ of    ,
+foo=> show transaction_isolation\g
+foo-> \g
+ current_setting
+-----------------
+ repeatable read
+(1 row)
+
+ we moeten de isol level na begin set  , ander is de isol level na begin gewoon weer de default, read committed        ,
+/ en we moeten het meteen doen  ,
+
+/ 7.	
+
+/ Why rr	?
+
+/ the first tr is long, the second short,
+
+
+/ rr    ,
+
+col!=0         x=1/col
+  1             1       0
+|-------------------|------------------------
+                    c/r
+
+
+----|--X--|----------------------------------
+       0  c
+
+/ rc    ,
+
+  1             0       0
+|-------------------|------------------------
+
+
+----|--X--|----------------------------------
+       0  c
+
+
+////////////////////////////////////
+/ als de upper tr does       ,
+if col != 0 then {...; x=1/col;...}     , then problem in rc    ; You have to check often in rc , with rr only once and there will be a rollback when the tr ends, on the constraint that col!=0 if this constraint is there on th column col ,
+
+/ if the short tr rollback, rr en rc are the same	,
+
+/ RM	,
+/ / als je acties doet in de bovenste tr, na de 2de read (Y of a), en je hebt constraints op je table, dan zal hij bij einde tr rollback/commit   ,
+
+
+/ 7	. 
+
+/ rc: no dirty reads, yes non repeatable read, yes phantom reads
+/ rr: no dirty reads, repeatable read, no phantom reads
+
+/ 7	.
+
+/ rc: no dirty, yes non repeatable	, yes phantom reads	,
+
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ we hoeven alleen de read kant rr te set	,
+
+/ 13 rc: no dirty	, yes non repeatable	,
+
+
+/ W1
+
+foo=> begin\g
+
+/ W2
+
+foo=> begin\g
+
+foo=> update item set city='a'\g
+UPDATE 3
+
+/ W1
+
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ no drity reads	,
+
+/ W2
+foo=> commit\g
+COMMIT
+
+/ W1
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | a
+   2 | third  | a
+   3 | fourth | a
+(3 rows)
+
+/  a non repeatable read	,
+
+/ 13	. 
+
+/ rc: non dirty, phantom read	,
+
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ W1 
+foo=> begin\g
+BEGIN
+
+/ W2 
+foo=> begin\g
+BEGIN
+
+foo=> insert into item values(4,'fifth','Y')\g
+INSERT 0 1
+
+/ W1
+
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ no dirty reads	,
+
+/ W2
+foo=> commit\g
+COMMIT
+
+/ W1
+oo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+   4 | fifth  | Y
+(4 rows)
+
+/ phantom read
+
+/ W2
+foo=> begin\g
+BEGIN
+foo=> delete from item where id_=4\g
+DELETE 1
+
+/ W1
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+   4 | fifth  | Y
+(4 rows)
+
+/ W2
+foo=> commit\g
+COMMIT
+
+/ W1
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ phantom read
+
+
+/ 7	. 
+
+/ rr
+
+/ W1
+foo=> begin\g
+BEGIN
+foo=> set transaction isolation level repeatable read\g
+SET
+
+/ W2
+foo=> begin\g
+BEGIN
+
+foo=> update item set city='a'\g
+UPDATE 3
+
+/ W1
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ W2
+foo=> commit\g
+COMMIT
+
+/ W1
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ repeatable read	,
+
+foo=> commit\g
+/ or	,
+foo=> rollback\g
+COMMIT
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | a
+   2 | third  | a
+   3 | fourth | a
+(3 rows)
+
+/ 13	. 
+
+/ no phantom reads	, 
+
+/ W1
+foo=> begin\g
+BEGIN
+foo=> set transaction isolation level repeatable read\g
+SET
+
+/ W2
+foo=> begin\g
+BEGIN
+foo=> insert into item values(4,'fifth','Y')\g
+INSERT 0 1
+
+/ W1
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ W2
+foo=> commit\g
+COMMIT
+
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+/ no phantom read	,
+
+foo=> rollback\g
+ROLLBACK
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+   4 | fifth  | Y
+(4 rows)
+
+/ 13	.
+
+/ rr	, delete -> no phantom reads	,
+
+/ W1
+foo=> begin\g
+BEGIN
+foo=> set transaction isolation level repeatable read\g
+SET
+
+/ W2
+foo=> begin\g
+BEGIN
+foo=> delete from item where id_=4\g
+DELETE 1
+
+/ W1
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+   4 | fifth  | Y
+(4 rows)
+
+/ W2
+foo=> commit\g
+COMMIT
+
+/ W1
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+   4 | fifth  | Y
+(4 rows)
+
+/ no phantom reads
+
+foo=> commit\g
+COMMIT
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | second | Y
+   2 | third  | Y
+   3 | fourth | Y
+(3 rows)
+
+
+ 
+
+
+
+
+
+
+
+
+/ Einde POSTGRESQL TRANSACTIONS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

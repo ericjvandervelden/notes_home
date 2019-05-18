@@ -1,0 +1,73 @@
+/ 7	. 
+
+/ 13	. 
+
+public class GoAndClearFilter extends GoFilter
+
+        protected void onClearSubmit(final Button button)
+        {
+                Form<Object> form = (Form<Object>)button.getForm();
+                form.setDefaultModelObject(WicketObjects.cloneObject(originalState));
+        }
+
+}
+
+/ we zien dat een controller mth de model writes van een form in dit geval	,
+
+/ 13	. 
+
+[eric@almond wicket]$ find wicket-examples/ -name "*.java" | xargs grep onSubmit
+
+
+[eric@almond wicket]$ less wicket-examples/src/main/java/org/apache/wicket/examples/repeater/FormPage.java
+
+                        SubmitLink removeLink = new SubmitLink("remove", form)
+                        {
+                                @Override
+                                public void onSubmit()
+                                {
+                                        Contact contact = (Contact)ActionPanel.this.getDefaultModelObject();
+                                        info("Removed contact " + contact);
+                                        DatabaseLocator.getDatabase().delete(contact);
+                                }
+                        };
+
+
+/ 13	. 
+
+[eric@almond wicket]$ find -name "*.java" | xargs grep LoadableDetachableModel
+
+        @Override
+        protected Contact load()
+        {
+                // loads contact from the database
+                return getContactsDB().get(id);
+        }
+
+/ load wordt used in getObject	, 
+
+/ jsf boek (92) De model wordt initialized in z'n ctor	, 
+/ Dat is bij een LoadableDetachableModel misschien ook het geval: load doet dat	,
+
+/ 7	. 
+
+/ Onthoud: een controller writes de model	,
+
+/ Als we filter, dan het FilterForm is een Form, en die updates de models van de text fields, en verder niets: onSubmit is leeg,
+
+/ Dan komen we in:
+
+GridViewPage$1(AbstractRepeater).onBeforeRender() line: 124     
+                onPopulate();
+/s
+GridViewPage$1(RefreshingView<T>).onPopulate() line: 93 
+                Iterator<IModel<T>> models = getItemModels();
+                Iterator<Item<T>> items = getItemReuseStrategy().getItems(newItemFactory(), models,
+                        getItems());
+                removeAll();
+                addItems(items);
+
+/ onBeforeRender is WH een controller fct, want eerst schrijft de controller de model, omdat wat er in het model staat wordt rendered, dus daarom is WH onBeforeRender een controller fct, 
+/ WH maakt onBeforeRender de "model van de table"	, die dan vervolgens used wordt voor render	, de "model van de table" bestaat misschien niet echt, maar voor elke row wordt er een model gemaakt (een DetachableLoadableModel)  	, en voor elk Label (cell) ook , een PropertyModel	, waarin de property in de column zit (is een PropertyColumn)	, 
+/ elke rji is dus request scoped (DetachableLoadableModel), en dat is wel logisch: als je opnieuw filter).	
+

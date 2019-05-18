@@ -1,0 +1,5 @@
+/ geef in google	,
+erlang x86_64 assembly
+/ lees	over erlang -> asm,
+http://www.erlang-factory.com/upload/presentations/630/erllvm_euc12.pdf
+https://www.erlang-solutions.com/blog/how-to-analyse-a-beam-core-dump.html?utm_source=Reddit&utm_medium=redditeerlang&utm_campaign=BlogBeamCore

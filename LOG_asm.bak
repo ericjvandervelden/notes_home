@@ -1,0 +1,278 @@
+/ 7	. 
+
+/ Lees	, 
+http://stackoverflow.com/questions/26564083/how-to-use-asm-library-in-maven-project
+https://www.javacodegeeks.com/2012/02/manipulating-java-class-files-with-asm.html
+
+<dependency>
+    <groupId>org.ow2.asm</groupId>
+    <artifactId>asm</artifactId>
+    <version>5.2</version>
+</dependency>
+/ of	, 
+<dependency>
+    <groupId>org.ow2.asm</groupId>
+    <artifactId>asm-all</artifactId>
+    <version>5.2</version>
+</dependency>
+
+/ TODO Wat is het verschil	? 
+
+/ Maar we nemen asm-debug-all	, anders kunnen we niet debug	, 
+/ 7	. 
+
+/ ws workspace-wicket7_5
+
+/ we maken een gradle proj asm-study
+
+$ vi build.gradle
+
+dependencies {
+    compile 'org.ow2.asm:asm-debug-all:5.2'			/ deze voegen we toe	, 
+
+    // Use JUnit test framework
+    testCompile 'junit:junit:4.12'
+}
+
+/ Als we de build.gradle edit, moeten we in eclipse	, 
+/ right click project, Gradle, Refresh gradle project	, 
+
+/ Dan kent hij ClassVisitor in .java files	, 
+
+/ Lees	, 
+https://www.javacodegeeks.com/2012/02/manipulating-java-class-files-with-asm.html
+
+$ vi FirstTest.java
+
+public class FirstTest {
+
+	@Test
+	public void testClassVisitor()throws IOException{
+		ClassVisitor visitor=new ClassVisitor(Opcodes.ASM5) {
+			@Override
+			public void visit(int version, int access, String name,
+					String signature, String superName, String[] interfaces) {
+				super.visit(version, access, name, signature, superName, interfaces);
+			}
+			@Override
+			public void visitOuterClass(String owner, String name, String desc) {
+				super.visitOuterClass(owner, name, desc);
+			}
+			@Override
+			public AnnotationVisitor visitAnnotation(String desc,
+					boolean visible) {
+				return super.visitAnnotation(desc, visible);
+			}
+			@Override
+			public void visitAttribute(Attribute attr) {
+				super.visitAttribute(attr);
+			}
+			@Override
+			public FieldVisitor visitField(int access, String name,
+					String desc, String signature, Object value) {
+				return super.visitField(access, name, desc, signature, value);
+			}
+			@Override
+			public void visitEnd() {
+				super.visitEnd();
+			}
+			@Override
+			public MethodVisitor visitMethod(int access, String name,
+					String desc, String signature, String[] exceptions) {
+				return super.visitMethod(access, name, desc, signature, exceptions);
+			}
+			@Override
+			public void visitSource(String source, String debug) {
+				super.visitSource(source, debug);
+			}
+			
+			
+		};
+		InputStream is=FirstTest.class.getResourceAsStream("/java/lang/String.class");		/ precies zo	, 
+		ClassReader reader=new ClassReader(is);
+		reader.accept(visitor, 0);
+	}
+}
+
+/ we vallen in b's	, 
+/s
+			public void visit(int version, int access, String name,											/ visit class
+					String signature, String superName, String[] interfaces) {
+this	FirstTest$1  (id=34)																	/= visitor	,
+version	51							/ java 7
+access	49							/ WH public final
+name	"java/lang/String" (id=36)	
+signature	"Ljava/lang/Object;Ljava/io/Serializable;Ljava/lang/Comparable<Ljava/lang/String;>;Ljava/lang/CharSequence;" (id=41)	
+superName	"java/lang/Object" (id=42)	
+interfaces	String[3]  (id=43)	
+	[0]	"java/io/Serializable" (id=52)	
+	[1]	"java/lang/Comparable" (id=53)	
+	[2]	"java/lang/CharSequence" (id=54)	
+/ want, 	
+public final class String
+    implements java.io.Serializable, Comparable<String>, CharSequence {
+
+/ lees	, 
+https://en.wikipedia.org/wiki/Java_class_file
+
+/c
+			@Override
+			public void visitSource(String source, String debug) {
+this	FirstTest$1  (id=34)	
+source	"String.java" (id=51)	
+debug	null	
+
+
+/c
+			@Override
+			public FieldVisitor visitField(int access, String name,
+					String desc, String signature, Object value) {
+this	FirstTest$1  (id=34)	
+access	18					/ WH private final
+name	"value" (id=67)	
+desc	"[C" (id=68)	
+signature	null	
+value	null	
+/ want	, 
+    private final char value[];
+
+/c
+			@Override
+			public FieldVisitor visitField(int access, String name,
+					String desc, String signature, Object value) {
+this	FirstTest$1  (id=34)	
+access	2	
+name	"hash" (id=71)	
+desc	"I" (id=72)	
+signature	null	
+value	null	
+/ want, 
+    private int hash; // Default to 0
+
+/c
+			@Override
+			public FieldVisitor visitField(int access, String name,
+					String desc, String signature, Object value) {
+this	FirstTest$1  (id=34)	
+access	26	
+name	"serialVersionUID" (id=77)	
+desc	"J" (id=78)	
+signature	null	
+value	Long  (id=79)	
+/ want	, 
+    private static final long serialVersionUID = -6849794470754667710L;
+
+
+/c
+			@Override
+			public FieldVisitor visitField(int access, String name,
+					String desc, String signature, Object value) {
+this	FirstTest$1  (id=34)	
+access	26	
+name	"serialPersistentFields" (id=87)	
+desc	"[Ljava/io/ObjectStreamField;" (id=88)	
+signature	null	
+value	null	
+/ want	, 
+    private static final ObjectStreamField[] serialPersistentFields =
+            new ObjectStreamField[0];
+/ we geloven het	, 
+
+/c
+			@Override
+			public MethodVisitor visitMethod(int access, String name,
+					String desc, String signature, String[] exceptions) {
+				return super.visitMethod(access, name, desc, signature, exceptions);
+this	FirstTest$1  (id=34)	
+access	1	
+name	"<init>" (id=113)	
+desc	"()V" (id=114)	
+signature	null	
+exceptions	null	
+/ want	, 
+    public String() {
+        this.value = new char[0];
+    }
+
+/c
+			@Override
+			public MethodVisitor visitMethod(int access, String name,
+					String desc, String signature, String[] exceptions) {
+				return super.visitMethod(access, name, desc, signature, exceptions);
+/want	, 
+this	FirstTest$1  (id=34)	
+access	1	
+name	"<init>" (id=113)	
+desc	"([BLjava/nio/charset/Charset;)V" (id=144)	
+signature	null	
+exceptions	null	
+
+/c
+			@Override
+			public MethodVisitor visitMethod(int access, String name,
+					String desc, String signature, String[] exceptions) {
+this	FirstTest$1  (id=34)	
+access	1	
+name	"length" (id=159)	
+desc	"()I" (id=160)	
+signature	null	
+exceptions	null	
+/ want,
+    public int length() {
+        return value.length;
+    }
+/ we geloven het 	, 
+
+/ 7	. 
+
+$ vi FirstTest.java
+
+public class FirstTest {
+	@Test
+	public void testMethodVisitor()throws IOException{
+		InputStream is=FirstTest.class.getResourceAsStream("/java/lang/String.class");
+		ClassReader reader=new ClassReader(is);
+		reader.accept(new MethodPrinterVisitor(Opcodes.ASM5), 0);
+	}
+	
+	private static class MethodPrinterVisitor extends ClassVisitor{
+		public MethodPrinterVisitor(int api) {
+			super(api);
+		}
+
+		@Override
+		public MethodVisitor visitMethod(int access, String name, String desc,
+				String signature, String[] exceptions) {
+			MethodVisitor visitor=new MethodVisitor(Opcodes.ASM5) {
+			};
+			InstructionAdapter adapter=new InstructionAdapter(visitor){
+				public void visitInsn(int opcode) {
+					System.out.println(opcode);
+					super.visitInsn(opcode);
+				}
+			};
+			return adapter;
+		}
+	}
+}
+
+/ Als we de test run	, krijgen we een error	, 
+/ Geef in browser	, 
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace-wicket7_5/asm-study/build/reports/tests/test/classes/first.FirstTest.html#testMethodVisitor
+Failed tests
+FirstTest.testMethodVisitor
+/ click on it	, we zien de stack trace	, 
+
+/ set b's	, 
+/s
+FirstTest$MethodPrinterVisitor.visitMethod(int, String, String, String, String[]) line: 82	
+			MethodVisitor visitor=new MethodVisitor(Opcodes.ASM5) {
+			};
+			InstructionAdapter adapter=new InstructionAdapter(Opcodes.ASM5,visitor){			<-
+				public void visitInsn(int opcode) {
+					System.out.println(opcode);
+					super.visitInsn(opcode);
+				}
+			};
+/ we moeten de ctor	,
+			InstructionAdapter adapter=new InstructionAdapter(Opcodes.ASM5,visitor){			<-

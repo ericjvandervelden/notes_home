@@ -1,0 +1,217 @@
+SCS-3032
+SCS-3975
+SCS-4480 / Vreemd: views price_type was er al	,
+SCS-4418 / Het script [eric@localhost SCS-4418]$ ./exec_update_mpo_scs_patch.sh ERR, updates NIET mpo_scs_patch	 TODO
+			/ er moet een check script achter	,
+SCS-2703
+SCS-3443
+SCS-2694
+
+
+[jboss@scs-application-p releases]$ deploy-dsvfms.sh /local/apps/releases/tms-dsvfms-23688-2015.03_build4254.zip /local/apps/jboss-4.0.5.GA/server/dsvfms
+[jboss@scs-application-p releases]$ dsvfms start track
+
+[jboss@scs-application-p lib]$ awk '{print $NF}' ~/LOG_must_be_removed.txt  | xargs ls -ltr
+-rw-rwxr--+ 1 jboss      jboss        67942 Oct 12  2013 wicket-devutils-1.4.19.jar
+-rw-rwxr--+ 1 jboss      jboss       224984 Oct 12  2013 wicket-datetime-1.4.19.jar
+-rw-rwxr--+ 1 jboss      jboss        44184 Oct 12  2013 wicket-auth-roles-1.4.19.jar
+-rw-rwxr--+ 1 jboss      jboss       231173 Oct 12  2013 spring-tx.jar
+-rw-rwxr--+ 1 jboss      jboss       192376 Oct 12  2013 spring-jms_mpo.jar
+-rw-rwxr--+ 1 jboss      jboss       335487 Oct 12  2013 spring-jdbc.jar
+-rw-rwxr--+ 1 jboss      jboss       476894 Oct 12  2013 spring-context.jar
+-rw-rwxr--+ 1 jboss      jboss        15279 Oct 12  2013 slf4j-api-1.4.2.jar
+-rw-rwxr--+ 1 jboss      jboss       363721 Oct 12  2013 hibernate-annotations.jar
+-rw-rwxr--+ 1 jboss      jboss        83613 Oct 12  2013 commons-io.jar
+-rw-rwxr--+ 1 jboss      jboss       114926 Oct 12  2013 aspectjrt.jar
+-rw-rwxr--+ 1 jboss      jboss        38517 Oct 12  2013 activemq-pool-5.3.0.jar
+-rw-rwxr--+ 1 jboss      jboss      1590120 Oct 12  2013 wiquery-1.2.3.jar
+-rw-rwxr--+ 1 jboss      jboss        29380 Oct 12  2013 wicket-spring-1.4.19.jar
+-rw-rwxr--+ 1 jboss      jboss      1181901 Oct 12  2013 wicket-extensions-1.4.19.jar
+-rw-rwxr--+ 1 jboss      jboss      1967611 Oct 12  2013 wicket-1.4.19.jar
+-rw-rwxr--+ 1 jboss      jboss       149694 Oct 12  2013 spring-webmvc-portlet.jar
+-rw-rwxr--+ 1 jboss      jboss       402348 Oct 12  2013 spring-webmvc.jar
+-rw-rwxr--+ 1 jboss      jboss       194585 Oct 12  2013 spring-web.jar
+-rw-rwxr--+ 1 jboss      jboss         8929 Oct 12  2013 spring-tomcat-weaver.jar
+-rw-rwxr--+ 1 jboss      jboss       180952 Oct 12  2013 spring-test.jar
+-rw-rwxr--+ 1 jboss      jboss       377872 Oct 12  2013 spring-orm.jar
+-rw-rwxr--+ 1 jboss      jboss       285603 Oct 12  2013 spring-core.jar
+-rw-rwxr--+ 1 jboss      jboss        96867 Oct 12  2013 spring-context-support.jar
+-rw-rwxr--+ 1 jboss      jboss       488068 Oct 12  2013 spring-beans.jar
+-rw-rwxr--+ 1 jboss      jboss        20615 Oct 12  2013 spring-aspects.jar
+-rw-rwxr--+ 1 jboss      jboss       325755 Oct 12  2013 spring-aop.jar
+-rw-rwxr--+ 1 jboss      jboss         5527 Oct 12  2013 spring-agent.jar
+-rw-rwxr--+ 1 jboss      jboss         8620 Oct 12  2013 slf4j-log4j12-1.4.2.jar
+-rw-rwxr--+ 1 jboss      jboss         9593 Oct 12  2013 log4j-over-slf4j-1.4.2.jar
+-rw-rwxr--+ 1 jboss      jboss       459663 Oct 12  2013 javassist.jar
+-rw-rwxr--+ 1 jboss      jboss      2198080 Oct 12  2013 hibernate3.jar
+-rw-rwxr--+ 1 jboss      jboss       263854 Oct 12  2013 ehcache-1.5.0.jar
+-rw-rwxr--+ 1 jboss      jboss        62103 Oct 12  2013 commons-pool.jar
+-rw-rw-r--+ 1 jboss      jboss        58160 Oct 12  2013 commons-codec-1.4.jar
+-rw-rwxr--+ 1 jboss      jboss      1657010 Oct 12  2013 bcprov-jdk16-139.jar
+-rw-rwxr--+ 1 jboss      jboss      1545023 Oct 12  2013 aspectjweaver.jar
+-rw-rwxr--+ 1 jboss      jboss       444689 Oct 12  2013 antlr.jar
+-rw-rwxr--+ 1 jboss      jboss        85474 Oct 12  2013 activemq-ra-5.3.0.jar
+-rw-rwxr--+ 1 jboss      jboss      2923854 Oct 12  2013 activemq-core-5.3.0.jar
+-rw-rwxr--+ 1 jboss      jboss       102631 Oct 12  2013 activeio-core-3.1.2.jar
+-rw-rw-r--+ 1 raminosoat raminosoat   37780 Dec  5  2013 joda-time-hibernate-1.2.jar
+-rw-rw-r--+ 1 raminosoat raminosoat  573912 Dec  5  2013 joda-time-2.2.jar
+-rw-rw-r--+ 1 raminosoat raminosoat  421601 Dec  5  2013 quartz-1.6.0.jar
+-rw-rw-r--+ 1 raminosoat raminosoat  277122 Mar 10  2014 commons-lang-2.4.jar
+-rw-r--r--+ 1 raminosoat raminosoat  853581 Apr 18  2014 jaybird-2.2.4.jar
+
+/ eric kan /home/jboss/LOG_missing.txt niet lezen	. 
+/ TODO
+[jboss@scs-application-p ~]$ cp -a /home/vanderveldene/Downloads .
+
+[jboss@scs-application-p Downloads]$ awk '{print $NF}' ../LOG_missing.txt  | xargs ls -tlr
+-rw-r--r-- 1 jboss jboss 1037753 May 27 11:25 activemq-broker-5.10.2.jar
+-rw-r--r-- 1 jboss jboss  102578 May 27 11:25 activeio-core-3.1.4.jar
+-rw-r--r-- 1 jboss jboss  547398 May 27 11:25 activemq-kahadb-store-5.10.2.jar
+-rw-r--r-- 1 jboss jboss 1178428 May 27 11:25 activemq-client-5.10.2.jar
+-rw-r--r-- 1 jboss jboss  443432 May 27 11:25 antlr-2.7.6.jar
+-rw-r--r-- 1 jboss jboss  162823 May 27 11:25 activemq-spring-5.10.2.jar
+-rw-r--r-- 1 jboss jboss  147874 May 27 11:25 activemq-protobuf-1.1.jar
+-rw-r--r-- 1 jboss jboss  685482 May 27 11:25 activemq-openwire-legacy-5.10.2.jar
+-rw-r--r-- 1 jboss jboss 1850391 May 27 11:25 aspectjweaver-1.7.4.jar
+-rw-r--r-- 1 jboss jboss  284220 May 27 11:25 commons-lang-2.6.jar
+-rw-r--r-- 1 jboss jboss  185140 May 27 11:25 commons-io-2.4.jar
+-rw-r--r-- 1 jboss jboss   36888 May 27 11:25 commons-csv-1.1.jar
+-rw-r--r-- 1 jboss jboss  263965 May 27 11:25 commons-codec-1.9.jar
+-rw-r--r-- 1 jboss jboss 2902942 May 27 11:25 bcprov-jdk15on-1.52.jar
+-rw-r--r-- 1 jboss jboss   79576 May 27 11:25 disruptor-3.3.0.jar
+-rw-r--r-- 1 jboss jboss  100625 May 27 11:25 commons-pool-1.5.7.jar
+-rw-r--r-- 1 jboss jboss  412739 May 27 11:25 commons-lang3-3.3.2.jar
+-rw-r--r-- 1 jboss jboss 8908872 May 27 11:25 ehcache-2.10.0.jar
+-rw-r--r-- 1 jboss jboss   50150 May 27 11:25 hawtbuf-1.10.jar
+-rw-r--r-- 1 jboss jboss  367201 May 27 11:25 esapi-2.0.1.jar
+-rw-r--r-- 1 jboss jboss  258837 May 27 11:25 jackson-core-2.6.0.jar
+-rw-r--r-- 1 jboss jboss   46968 May 27 11:25 jackson-annotations-2.6.0.jar
+-rw-r--r-- 1 jboss jboss  100884 May 27 11:25 hibernate-jpa-2.0-api-1.0.0.Final.jar
+-rw-r--r-- 1 jboss jboss 4167612 May 27 11:25 hibernate3.6.10.mpo.1.jar
+-rw-r--r-- 1 jboss jboss  633312 May 27 11:25 javassist-3.12.0.GA.jar
+-rw-r--r-- 1 jboss jboss 1160720 May 27 11:25 jackson-databind-2.6.0.jar
+-rw-r--r-- 1 jboss jboss  258278 May 27 11:25 not-yet-commons-ssl-0.3.9.jar
+-rw-r--r-- 1 jboss jboss  152481 May 27 11:25 kahadb-5.3.0.jar
+-rw-r--r-- 1 jboss jboss   10899 May 27 11:25 jta-1.1.jar
+-rw-r--r-- 1 jboss jboss   29691 May 27 11:25 joda-time-hibernate-1.3.jar
+-rw-r--r-- 1 jboss jboss  581571 May 27 11:25 joda-time-2.3.jar
+-rw-r--r-- 1 jboss jboss  681941 May 27 11:25 jaybird-full-2.1.6.jar
+-rw-r--r-- 1 jboss jboss  574134 May 27 11:25 openws-1.5.1.jar
+-rw-r--r-- 1 jboss jboss 1413174 May 27 11:25 opensaml-2.6.1.jar
+-rw-r--r-- 1 jboss jboss   51440 May 27 11:25 spring-aspects-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  338657 May 27 11:25 spring-aop-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss    9753 May 27 11:25 slf4j-log4j12-1.6.1.jar
+-rw-r--r-- 1 jboss jboss   25496 May 27 11:25 slf4j-api-1.6.1.jar
+-rw-r--r-- 1 jboss jboss   38022 May 27 11:25 rtcalltree-0.1.0-SNAPSHOT.jar
+-rw-r--r-- 1 jboss jboss  449135 May 27 11:25 quartz-1.8.6.jar
+-rw-r--r-- 1 jboss jboss  642829 May 27 11:25 postgresql-9.4-1200.jdbc4.jar
+-rw-r--r-- 1 jboss jboss  128645 May 27 11:26 spring-context-support-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  868300 May 27 11:26 spring-context-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  614471 May 27 11:26 spring-beans-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  385637 May 27 11:26 spring-orm-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  206363 May 27 11:26 spring-jms-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  405997 May 27 11:26 spring-jdbc-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  196571 May 27 11:26 spring-expression-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  885640 May 27 11:26 spring-core-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  347466 May 27 11:26 spring-security-web-3.2.8.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  228048 May 27 11:26 spring-security-saml2-core-1.0.1.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  371663 May 27 11:26 spring-security-core-3.2.8.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  407664 May 27 11:26 spring-security-config-3.2.8.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  449505 May 27 11:26 velocity-1.7.jar
+-rw-r--r-- 1 jboss jboss  632369 May 27 11:26 spring-web-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  242545 May 27 11:26 spring-tx-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  458362 May 27 11:26 spring-test-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss   44186 May 27 11:26 wicket-auth-roles-1.4.23.jar
+-rw-r--r-- 1 jboss jboss 1971178 May 27 11:26 wicket-1.4.23.jar
+-rw-r--r-- 1 jboss jboss 1182325 May 27 11:26 wicket-extensions-1.4.23.jar
+-rw-r--r-- 1 jboss jboss  224987 May 27 11:26 wicket-datetime-1.4.23.jar
+-rw-r--r-- 1 jboss jboss  131202 May 27 11:26 xbean-spring-3.18.jar
+-rw-r--r-- 1 jboss jboss 1732138 May 27 11:26 wiquery-1.2.3.2-20150604.122120-1.jar
+-rw-r--r-- 1 jboss jboss  670437 May 27 11:26 xmltooling-1.4.1.jar
+-rw-r--r-- 1 jboss jboss  639643 May 27 11:26 xmlsec-1.5.6.jar
+
+[jboss@scs-application-p dsvfms]$ ls -1 lib | awk '{count++}END{print count}'
+252
+[jboss@scs-application-p dsvfms]$ cp -a lib ~/libBackup/
+
+[jboss@scs-application-p lib]$ awk '{print $NF}' ~/LOG_must_be_removed.txt | xargs -I % rm -f %
+/ check	,
+[jboss@scs-application-p lib]$ awk '{print $NF}' ~/LOG_must_be_removed.txt | xargs ls -1
+ls: activeio-core-3.1.2.jar: No such file or directory
+ls: activemq-core-5.3.0.jar: No such file or directory
+
+[jboss@scs-application-p Downloads]$ find -name "*.jar" | xargs -I % cp -a % /local/apps/jboss-4.0.5.GA/server/dsvfms/lib
+/ check
+[jboss@scs-application-p lib]$ awk '{print $NF}' ~/LOG_missing.txt | xargs -I % ls -1 %
+activeio-core-3.1.4.jar
+activemq-broker-5.10.2.jar
+activemq-client-5.10.2.jar
+activemq-kahadb-store-5.10.2.jar
+...
+/ Ze zijn er allemaal,
+
+patch-364-fix-party-org-fk.sql
+patch-389_productid_unique_constraint_drop.sql
+...
+patch-459-price_cost_translation_privileges$firebird.sq
+
+/ Nu eerst	,
+[eric@localhost DEPOY_TASKS]$ ./exec_deferred_events.sh 
+
+/ 7	. 
+
+[eric@localhost GENERATOR]$ pwd
+/home/eric/Devel/Firebird/scripts/dsvfms/prod/GENERATOR
+[eric@localhost GENERATOR]$ cat idgen.txt 
+select gen_id(sysid_Consignment, (select max(SYSTEM_ID) from CONSIGNMENT) - gen_id(sysid_Consignment, 0)) from MON$DATABASE;
+select gen_id(sysid_CustomerOrder, (select max(SYSTEM_ID) from CUSTOMER_ORDER) - gen_id(sysid_CustomerOrder, 0)) from MON$DATABASE;
+select gen_id(sysid_CustomerOrderLine, (select max(SYSTEM_ID) from CUSTOMER_ORDER_LINE) - gen_id(sysid_CustomerOrderLine, 0)) from MON$DATABASE;
+select gen_id(sysid_EntityLog, (select max(SYSTEM_ID) from OMS_ENTITY_LOG) - gen_id(sysid_EntityLog, 0)) from MON$DATABASE;
+select gen_id(sysid_PackedItem, (select max(SYSTEM_ID) from TMS_PACKED_ITEM) - gen_id(sysid_PackedItem, 0)) from MON$DATABASE;
+select gen_id(sysid_ProductItem, (select max(SYSTEM_ID) from TMS_PRODUCT_ITEM) - gen_id(sysid_ProductItem, 0)) from MON$DATABASE;
+select gen_id(sysid_ProductItemCost, (select max(SYSTEM_ID) from PRODUCT_ITEM_COST_PART) - gen_id(sysid_ProductItemCost, 0)) from MON$DATABASE;
+select gen_id(sysid_ServiceAction, (select max(SYSTEM_ID) from SERVICE_ACTION) - gen_id(sysid_ServiceAction, 0)) from MON$DATABASE;
+select gen_id(sysid_ServiceOrder, (select max(SYSTEM_ID) from SERVICE_ORDER) - gen_id(sysid_ServiceOrder, 0)) from MON$DATABASE;
+select gen_id(sysid_ServiceOrderPricePart, (select max(SYSTEM_ID) from SERVICE_ORDER_PRICE_PART) - gen_id(sysid_ServiceOrderPricePart, 0)) from MON$DATABASE;
+select gen_id(sysid_ShipmentItem, (select max(SYSTEM_ID) from SHIPMENT_ITEM) - gen_id(sysid_ShipmentItem, 0)) from MON$DATABASE;
+select gen_id(sysid_ShipmentItemCostPart, (select max(SYSTEM_ID) from SHIPMENT_ITEM_COST_PART) - gen_id(sysid_ShipmentItemCostPart, 0)) from MON$DATABASE;
+select gen_id(sysid_ShipmentOrder, (select max(SYSTEM_ID) from SHIPMENT_ORDER) - gen_id(sysid_ShipmentOrder, 0)) from MON$DATABASE;
+select gen_id(sysid_ShipmentOrderCostPart, (select max(SYSTEM_ID) from SHIPMENT_ORDER_COST_PART) - gen_id(sysid_ShipmentOrderCostPart, 0)) from MON$DATABASE;
+select gen_id(sysid_ShipmentOrderPricePart, (select max(SYSTEM_ID) from SHIPMENT_ORDER_PRICE_PART) - gen_id(sysid_ShipmentOrderPricePart, 0)) from MON$DATABASE;
+select gen_id(sysid_XmlDocumentID, (select max(SYSTEM_ID) from XML_DOCUMENTID) - gen_id(sysid_XmlDocumentID, 0)) from MON$DATABASE;
+select gen_id(sysid_Container, (select max(SYSTEM_ID) from CONTAINER) - gen_id(sysid_Container, 0)) from MON$DATABASE;
+select gen_id(sysid_ShipmentOrderParty, (select max(SYSTEM_ID) from SHIPMENT_ORDER_PARTY) - gen_id(sysid_ShipmentOrderParty, 0)) from MON$DATABASE;
+select gen_id(sysid_ServiceOrderParty, (select max(SYSTEM_ID) from SERVICE_ORDER_PARTY) - gen_id(sysid_ServiceOrderParty, 0)) from MON$DATABASE;
+select gen_id(sysid_CustomerOrderParty, (select max(SYSTEM_ID) from CUSTOMER_ORDER_PARTY) - gen_id(sysid_CustomerOrderParty, 0)) from MON$DATABASE;
+select gen_id(sysid_CustomerOrderLineParty, (select max(SYSTEM_ID) from CUSTOMER_ORDER_LINE_PARTY) - gen_id(sysid_CustomerOrderLineParty, 0)) from MON$DATABASE;
+select gen_id(sysid_ServiceOrderCost, (select max(SYSTEM_ID) from SERVICE_ORDER_COST) - gen_id(sysid_ServiceOrderCost, 0)) from MON$DATABASE;
+
+
+--select gen_id(sysid_BookedCapacity, (select max(SYSTEM_ID) from BOOKED_CAPACITY) - gen_id(sysid_BookedCapacity, 0)) from MON$DATABASE;
+--select gen_id(sysid_CapacityBucket, (select max(SYSTEM_ID) from CAPACITY_BUCKET) - gen_id(sysid_CapacityBucket, 0)) from MON$DATABASE;
+--select gen_id(sysid_CtpRebookOrder, (select max(SYSTEM_ID) from CTP_REBOOK_ORDER) - gen_id(sysid_CtpRebookOrder, 0)) from MON$DATABASE;
+
+
+select gen_id(sysid_CustomerInvoiceLine, (select max(SYSTEM_ID) from CUSTOMER_INVOICE_LINE) - gen_id(sysid_CustomerInvoiceLine, 0)) from MON$DATABASE;
+select gen_id(sysid_CustomerInvoiceHeader, (select max(SYSTEM_ID) from CUSTOMER_INVOICE_HEADER) - gen_id(sysid_CustomerInvoiceHeader, 0)) from MON$DATABASE;
+select gen_id(sysid_CustomerInvoiceDetail, (select max(SYSTEM_ID) from CUSTOMER_INVOICE_DETAIL) - gen_id(sysid_CustomerInvoiceDetail, 0)) from MON$DATABASE;
+
+select gen_id(sysid_Event, (select max(SYSTEM_ID) from EVENT_EVENT) - gen_id(sysid_Event, 0)) from MON$DATABASE;
+select gen_id(sysid_DeferredEventIdentifier, (select max(SYSTEM_ID) from DEFERRED_EVENT_IDENTIFIER) - gen_id(sysid_DeferredEventIdentifier, 0)) from MON$DATABASE;
+select gen_id(sysid_DeferredEventValue, (select max(SYSTEM_ID) from DEFERRED_EVENT_VALUE) - gen_id(sysid_DeferredEventValue, 0)) from MON$DATABASE;
+select gen_id(sysid_DeferredEvent, (select max(SYSTEM_ID) from DEFERRED_EVENT) - gen_id(sysid_DeferredEvent, 0)) from MON$DATABASE;
+
+select gen_id(sysid_IFaceMsgTrace, (select max(SYSTEM_ID) from IFACE_MSG_TRACE) - gen_id(sysid_IFaceMsgTrace, 0)) from MON$DATABASE;
+select gen_id(sysid_InterfaceTriggerEvent, (select max(SYSTEM_ID) from INTERFACE_TRIGGER_EVENT) - gen_id(sysid_InterfaceTriggerEvent, 0)) from MON$DATABASE;
+
+select gen_id(sysid_InvoiceDetail, (select max(SYSTEM_ID) from INVOICE_DETAIL) - gen_id(sysid_InvoiceDetail, 0)) from MON$DATABASE;
+select gen_id(sysid_InvoiceHeader, (select max(SYSTEM_ID) from INVOICE_HEADER) - gen_id(sysid_InvoiceHeader, 0)) from MON$DATABASE;
+select gen_id(sysid_InvoiceLine, (select max(SYSTEM_ID) from INVOICE_LINE) - gen_id(sysid_InvoiceLine, 0)) from MON$DATABASE;
+
+
+
+awk '!/--/{print gensub(/(.+)sysid_(.+),(.+)/,"SET GENERATOR SYSID_S\\2 TO 143830867;","g")}' idgen.txt
+
+/ Eigenlijk moeten we dit doen	, maar we doen dit,	
+
+

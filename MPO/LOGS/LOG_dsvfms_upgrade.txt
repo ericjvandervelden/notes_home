@@ -1,0 +1,1236 @@
+
+/ Lees in LOG_new.txt
+/ DEPLOY DSVFMS ON TEST/ACC/PROD
+
+/ DATABASE RESTORE
+
+/ 7	. 
+
+/ op acc	,
+
+[eric@localhost bin]$ cat dsvfms-ssh-a.sh 
+#!/bin/bash
+ssh "vanderveldene@application-a.intermax.mp-objects.com"
+
+[eric@localhost bin]$ cat dsvfms-db-a.sh 
+#!/bin/bash
+isql-fb -u sysdba -p +qjweLrf database-a.intermax.mp-objects.com:/local/apps/firebird/dsvfms.fdb
+
+[eric@localhost bin]$ cat dsvfms-ssh-db-a.sh 
+#!/bin/bash
+ssh "vanderveldene@database-a.intermax.mp-objects.com"
+
+
+[eric@localhost bin]$ cat dsvfms-ssh-a.sh 
+[vanderveldene@application-a ~]$ less /local/apps/jboss-4.0.5.GA/server/dsvfms/deploy/firebird-ds.xml 
+     <connection-url>jdbc:firebirdsql://192.168.173.20//local/apps/firebird/dsvfms.fdb?defaultResultSetHoldable=true&amp;columnLabelForName=true</connection-url>
+     <driver-class>org.firebirdsql.jdbc.FBDriver</driver-class>
+     <user-name>SYSDBA</user-name>
+     <password>+qjweLrf</password>
+
+[eric@localhost bin]$ host database-a.intermax.mp-objects.com
+database-a.intermax.mp-objects.com has address 192.168.173.20
+/ Inderdaad	, 192.168.173.20 is database-a	,
+
+[eric@localhost bin]$ dsvfms-ssh-db-a.sh 
+[vanderveldene@database-a ~]$ ls /backup/mpo-backup/db/
+carconserver.fdb_20160520-000007.fbk.gz  dsvfms.fdb_20160520-002445.fbk.gz        geodis.fdb_20160520-040334.fbk.gz
+...
+
+/ 7	.  
+
+/ op test	,
+
+[eric@localhost bin]$ cat dsvfms-ssh-t.sh 
+#!/bin/bash
+ssh mposerv11 "$@"
+
+[eric@localhost bin]$ cat dsvfms-ssh-db-t.sh 
+#!/bin/bash
+ssh mposerv8
+
+[eric@localhost bin]$ cat dsvfms-db-t.sh 
+#!/bin/bash
+isql-fb -u sysdba -p masterkey mposerv8:/local/apps/firebird/dsvfms.fdb
+
+
+/ 7	.  
+
+/ op prod	,
+
+[eric@localhost bin]$ cat dsvfms-ssh-p.sh 
+#!/bin/bash
+ssh vanderveldene@scs-application-p.intermax.mp-objects.com
+
+[eric@localhost bin]$ cat dsvfms-db-p.sh 
+#!/bin/bash
+isql-fb -u sysdba -p masterkey "scs-application-p.intermax.mp-objects.com:/local/apps/firebird/dsvfms.fdb" "$@"
+
+
+[eric@localhost bin]$ dsvfms-ssh-p.sh 
+[vanderveldene@scs-application-p ~]$ less /local/apps/jboss-4.0.5.GA/server/dsvfms/deploy/firebird-ds.xml 
+
+[eric@localhost bin]$ scp vanderveldene@scs-application-p.intermax.mp-objects.com:/backup/mpo-backup/db/dsvfms.fdb_20160523-220002.fbk.gz /home/eric/DB_TAP/Firebird/Dsvfms/
+[eric@localhost bin]$ scp /home/eric/DB_TAP/Firebird/Dsvfms/dsvfms.fdb_20160523-220002.fbk.gz  eric@mposerv8:Downloads/dsvfms
+
+eric@mposerv8:~$ gunzip Downloads/dsvfms/dsvfms.fdb_20160523-220002.fbk.gz 
+eric@mposerv8:~$ ls Downloads/dsvfms/
+dsvfms.fdb_20160523-220002.fbk
+eric@mposerv8:~$ gbak -c -v -user sysdba -password masterkey Downloads/dsvfms/dsvfms.fdb_20160523-220002.fbk /local/apps/firebird/dsvfms/dsvfms.fdb_20160523-220002.fdb
+
+
+/ 7	.  
+
+[eric@localhost tmp]$ pwd
+/home/eric/DB_TAP/Firebird/Dsvfms/tmp
+[eric@localhost tmp]$ chmod o+w .
+/ TODO ( in /home/eric/DB_TAP/Firebird/Dsvfms/tmp wel)	,
+[eric@localhost tmp]$ ls -l
+-rw-r--r--. 1 eric     eric     23396217344 May 24 12:52 dsvfms.fdb_20160523-220002.fbk
+[eric@localhost tmp]$ gbak -rep -v -user sysdba -password masterkey dsvfms.fdb_20160523-220002.fbk dsvfms.fdb_20160523-220002.fdb
+[eric@localhost tmp]$ ls -l
+-rw-r--r--. 1 eric     eric     23396217344 May 24 12:52 dsvfms.fdb_20160523-220002.fbk
+-rw-rw----. 1 firebird firebird     		May 24 15:48 dsvfms.fdb_20160523-220002.fdb
+
+/ 7	.  
+
+/ bestaande dump	, 
+eric@mposerv8:~$ isql-fb -u sysdba -p masterkey localhost:/local/apps/firebird/dsvfms-20160522.fdb 
+/ vergeet localhost: niet	, en hele path name	,
+
+/ als we NIET localhost: 
+ eric@mposerv8:~$ isql-fb -u sysdba -p masterkey /local/apps/firebird/dsvfms-20160522.fdb Statement failed, SQLSTATE = HY000
+Can't access lock files' directory /tmp/firebird
+
+/ 7	. 
+
+/ op mposerv8
+
+eric@mposerv8:~$ gbak -rep -user sysdba -password masterkey Downloads/dsvfms/dsvfms.fdb_20160523-220002.fbk localhost:/home/INTERNAL/eric/dsvfms.fdb_20160523-220002.fdb
+/ MORGENOCHTEND
+/ probeer morgen in /home/INTERNAL/eric met chmod o+w	, of niet
+
+/ we moeten in de target	 localhost:<hele path>/<db name>.fdb
+
+eric@mposerv8:~$ gbak -rep -user sysdba -password masterkey Downloads/dsvfms/dsvfms.fdb_20160523-220002.fbk localhost:/local/apps/firebird/dsvfms.fdb_20160523-220002.fdb
+/ OK
+
+/ 7	.  
+
+/ forticlient	,
+server: 80.95.170.62 :443
+user: vanderveldene
+password: HA65Fs8LTTCK 
+
+/ Einde DATABASE RESTORE
+
+/ FILES 
+
+/ build , jar files in lib/	,
+
+/ 7	. 
+
+/ build	,
+
+/ 2015.03, rev. 23370 	, acc -> test
+
+[eric@localhost bin]$ scp vanderveldene@application-a.intermax.mp-objects.com:/local/apps/releases/tms-dsvfms-23370-2015.03_build4141.zip /home/eric/Downloads/
+[eric@localhost bin]$ scp /home/eric/Downloads/tms-dsvfms-23370-2015.03_build4141.zip eric@mposerv11:Downloads2
+
+/ dan op test,	
+jboss@mposerv11:~$ cp /home/INTERNAL/eric/Downloads2/tms-dsvfms-23370-2015.03_build4141.zip releases
+
+/ ook naar prod	,
+
+[eric@localhost SCS-4418]$ dsvfms-scp-to-p.sh Downloads2 ~/Downloads/tms-dsvfms-23370-2015.03_build4141.zip 
+
+
+/ 7. 	
+
+/ jar's	,
+
+/ In LOG_new.txt	, 
+
+/ MUST_BE_REMOVED
+
+[eric@localhost bin]$ echo $(ssh vanderveldene@application-a.intermax.mp-objects.com "awk '/MUST_BE_REMOVED/ && /.jar/ && / 14:57:31/{print \$8}' /local/apps/jboss-4.0.5.GA/server/dsvfms/log/server.log")
+activeio-core-3.1.2.jar activemq-core-5.3.0.jar activemq-pool-5.3.0.jar activemq-ra-5.3.0.jar antlr.jar aspectjrt.jar aspectjweaver.jar bcprov-jdk16-139.jar commons-codec-1.4.jar commons-io.jar commons-lang-2.4.jar commons-pool.jar ehcache-1.5.0.jar hibernate-annotations.jar hibernate3.jar javassist.jar jaybird-2.2.4.jar joda-time-2.2.jar joda-time-hibernate-1.2.jar log4j-over-slf4j-1.4.2.jar quartz-1.6.0.jar slf4j-api-1.4.2.jar slf4j-log4j12-1.4.2.jar spring-agent.jar spring-aop.jar spring-aspects.jar spring-beans.jar spring-context-support.jar spring-context.jar spring-core.jar spring-jdbc.jar spring-jms_mpo.jar spring-orm.jar spring-test.jar spring-tomcat-weaver.jar spring-tx.jar spring-web.jar spring-webmvc-portlet.jar spring-webmvc.jar wicket-1.4.19.jar wicket-auth-roles-1.4.19.jar wicket-datetime-1.4.19.jar wicket-devutils-1.4.19.jar wicket-extensions-1.4.19.jar wicket-spring-1.4.19.jar wiquery-1.2.3.jar
+
+/ op prod	,
+
+[vanderveldene@scs-application-p lib]$ _list=( activeio-core-3.1.2.jar activemq-core-5.3.0.jar activemq-pool-5.3.0.jar activemq-ra-5.3.0.jar antlr.jar aspectjrt.jar aspectjweaver.jar bcprov-jdk16-139.jar commons-codec-1.4.jar commons-io.jar commons-lang-2.4.jar commons-pool.jar ehcache-1.5.0.jar hibernate-annotations.jar hibernate3.jar javassist.jar jaybird-2.2.4.jar joda-time-2.2.jar joda-time-hibernate-1.2.jar log4j-over-slf4j-1.4.2.jar quartz-1.6.0.jar slf4j-api-1.4.2.jar slf4j-log4j12-1.4.2.jar spring-agent.jar spring-aop.jar spring-aspects.jar spring-beans.jar spring-context-support.jar spring-context.jar spring-core.jar spring-jdbc.jar spring-jms_mpo.jar spring-orm.jar spring-test.jar spring-tomcat-weaver.jar spring-tx.jar spring-web.jar spring-webmvc-portlet.jar spring-webmvc.jar wicket-1.4.19.jar wicket-auth-roles-1.4.19.jar wicket-datetime-1.4.19.jar wicket-devutils-1.4.19.jar wicket-extensions-1.4.19.jar wicket-spring-1.4.19.jar wiquery-1.2.3.jar )
+[vanderveldene@scs-application-p lib]$ echo ${#_list[@]}
+46
+[vanderveldene@scs-application-p lib]$ _list2=($(ls ${_list[@]}))
+[vanderveldene@scs-application-p lib]$ echo ${#_list2[@]}
+46
+/ Dus de MUST_BE_REMOVED zijn allemaal aanwezig op prod	, 
+
+/ Beter	,
+[vanderveldene@scs-application-p lib]$ comm -3 <(awk '{gsub(/ /,"\n");print}' <(echo ${_list[*]}) | sort) <(awk '{gsub(/ /,"\n");print}' <(echo ${_list2[*]})| sort)
+
+/ Intermezzo
+
+[vanderveldene@scs-application-p lib]$ _list2=($(ls ${_list[@]}))
+/ we moeten $(ls ...) doen	, want
+[vanderveldene@scs-application-p lib]$ _list2=(ls ${_list[@]})
+/ is _list + ls	, en hebben we geen ls exec	, alleen in de lijst erbij set	, 
+
+
+/ Einde Intermezzo
+
+
+/ MISSING	,
+
+[eric@localhost bin]$ echo $(ssh vanderveldene@application-a.intermax.mp-objects.com "awk '/MISSING/ && /.jar/ && / 14:57:31/{print \$8}' /local/apps/jboss-4.0.5.GA/server/dsvfms/log/server.log")
+activeio-core-3.1.4.jar activemq-broker-5.10.2.jar activemq-client-5.10.2.jar activemq-kahadb-store-5.10.2.jar activemq-openwire-legacy-5.10.2.jar activemq-protobuf-1.1.jar activemq-spring-5.10.2.jar antlr-2.7.6.jar aspectjweaver-1.7.4.jar bcprov-jdk15on-1.52.jar commons-codec-1.9.jar commons-csv-1.1.jar commons-io-2.4.jar commons-lang-2.6.jar commons-lang3-3.3.2.jar commons-pool-1.5.7.jar disruptor-3.3.0.jar ehcache-2.10.0.jar esapi-2.0.1.jar hawtbuf-1.10.jar hibernate-jpa-2.0-api-1.0.0.Final.jar hibernate3.6.10.mpo.1.jar jackson-annotations-2.6.0.jar jackson-core-2.6.0.jar jackson-databind-2.6.0.jar javassist-3.12.0.GA.jar jaybird-full-2.1.6.jar joda-time-2.3.jar joda-time-hibernate-1.3.jar jta-1.1.jar kahadb-5.3.0.jar not-yet-commons-ssl-0.3.9.jar opensaml-2.6.1.jar openws-1.5.1.jar postgresql-9.4-1200.jdbc4.jar quartz-1.8.6.jar rtcalltree-0.1.0-SNAPSHOT.jar slf4j-api-1.6.1.jar slf4j-log4j12-1.6.1.jar spring-aop-3.2.14.RELEASE.jar spring-aspects-3.2.14.RELEASE.jar spring-beans-3.2.14.RELEASE.jar spring-context-3.2.14.RELEASE.jar spring-context-support-3.2.14.RELEASE.jar spring-core-3.2.14.RELEASE.jar spring-expression-3.2.14.RELEASE.jar spring-jdbc-3.2.14.RELEASE.jar spring-jms-3.2.14.RELEASE.jar spring-orm-3.2.14.RELEASE.jar spring-security-config-3.2.8.RELEASE.jar spring-security-core-3.2.8.RELEASE.jar spring-security-saml2-core-1.0.1.RELEASE.jar spring-security-web-3.2.8.RELEASE.jar spring-test-3.2.14.RELEASE.jar spring-tx-3.2.14.RELEASE.jar spring-web-3.2.14.RELEASE.jar velocity-1.7.jar wicket-1.4.23.jar wicket-auth-roles-1.4.23.jar wicket-datetime-1.4.23.jar wicket-extensions-1.4.23.jar wiquery-1.2.3.2-20150604.122120-1.jar xbean-spring-3.18.jar xmlsec-1.5.6.jar xmltooling-1.4.1.jar
+
+/ op test	,
+
+/ Antwoord	,
+/ so the MISSED are all in lib/ on test	,
+/ in Downloads zitten precies alle MISSED jar's die we nodig hebben	,
+
+eric@mposerv11:/local/apps/jboss-4.0.5.GA/server/dsvfms/lib$ pwd
+/local/apps/jboss-4.0.5.GA/server/dsvfms/lib
+eric@mposerv11:/local/apps/jboss-4.0.5.GA/server/dsvfms/lib$ _list=( activeio-core-3.1.4.jar activemq-broker-5.10.2.jar activemq-client-5.10.2.jar activemq-kahadb-store-5.10.2.jar activemq-openwire-legacy-5.10.2.jar activemq-protobuf-1.1.jar activemq-spring-5.10.2.jar antlr-2.7.6.jar aspectjweaver-1.7.4.jar bcprov-jdk15on-1.52.jar commons-codec-1.9.jar commons-csv-1.1.jar commons-io-2.4.jar commons-lang-2.6.jar commons-lang3-3.3.2.jar commons-pool-1.5.7.jar disruptor-3.3.0.jar ehcache-2.10.0.jar esapi-2.0.1.jar hawtbuf-1.10.jar hibernate-jpa-2.0-api-1.0.0.Final.jar hibernate3.6.10.mpo.1.jar jackson-annotations-2.6.0.jar jackson-core-2.6.0.jar jackson-databind-2.6.0.jar javassist-3.12.0.GA.jar jaybird-full-2.1.6.jar joda-time-2.3.jar joda-time-hibernate-1.3.jar jta-1.1.jar kahadb-5.3.0.jar not-yet-commons-ssl-0.3.9.jar opensaml-2.6.1.jar openws-1.5.1.jar postgresql-9.4-1200.jdbc4.jar quartz-1.8.6.jar rtcalltree-0.1.0-SNAPSHOT.jar slf4j-api-1.6.1.jar slf4j-log4j12-1.6.1.jar spring-aop-3.2.14.RELEASE.jar spring-aspects-3.2.14.RELEASE.jar spring-beans-3.2.14.RELEASE.jar spring-context-3.2.14.RELEASE.jar spring-context-support-3.2.14.RELEASE.jar spring-core-3.2.14.RELEASE.jar spring-expression-3.2.14.RELEASE.jar spring-jdbc-3.2.14.RELEASE.jar spring-jms-3.2.14.RELEASE.jar spring-orm-3.2.14.RELEASE.jar spring-security-config-3.2.8.RELEASE.jar spring-security-core-3.2.8.RELEASE.jar spring-security-saml2-core-1.0.1.RELEASE.jar spring-security-web-3.2.8.RELEASE.jar spring-test-3.2.14.RELEASE.jar spring-tx-3.2.14.RELEASE.jar spring-web-3.2.14.RELEASE.jar velocity-1.7.jar wicket-1.4.23.jar wicket-auth-roles-1.4.23.jar wicket-datetime-1.4.23.jar wicket-extensions-1.4.23.jar wiquery-1.2.3.2-20150604.122120-1.jar xbean-spring-3.18.jar xmlsec-1.5.6.jar xmltooling-1.4.1.jar )
+eric@mposerv11:~/Downloads/2015.03$ echo ${#_list[*]}
+65
+eric@mposerv11:/local/apps/jboss-4.0.5.GA/server/dsvfms/lib$ _list2=( $(ls ${_list[*]}))
+eric@mposerv11:/local/apps/jboss-4.0.5.GA/server/dsvfms/lib$ comm -3 <(awk '{gsub(/ /,"\n");print}' <(echo ${_list[@]}) | sort) <(awk '{gsub(/ /,"\n");print}' <(echo ${_list2[@]}) | sort)
+eric@mposerv11:/local/apps/jboss-4.0.5.GA/server/dsvfms/lib$
+/ so the MISSED are all in lib/ on test	,
+
+/ Hoe zit het in de Download dirs	?
+
+/ op laptop	, cp jaybird over naar test,	
+[eric@localhost lib]$ dsvfms-scp-to-t.sh jaybird-full-2.1.6.jar Downloads
+
+/ op test	,
+eric@mposerv11:~/Downloads$ pwd
+/home/INTERNAL/eric/Downloads
+eric@mposerv11:~/Downloads$ _list=( activeio-core-3.1.4.jar activemq-broker-5.10.2.jar activemq-client-5.10.2.jar activemq-kahadb-store-5.10.2.jar activemq-openwire-legacy-5.10.2.jar activemq-protobuf-1.1.jar activemq-spring-5.10.2.jar antlr-2.7.6.jar aspectjweaver-1.7.4.jar bcprov-jdk15on-1.52.jar commons-codec-1.9.jar commons-csv-1.1.jar commons-io-2.4.jar commons-lang-2.6.jar commons-lang3-3.3.2.jar commons-pool-1.5.7.jar disruptor-3.3.0.jar ehcache-2.10.0.jar esapi-2.0.1.jar hawtbuf-1.10.jar hibernate-jpa-2.0-api-1.0.0.Final.jar hibernate3.6.10.mpo.1.jar jackson-annotations-2.6.0.jar jackson-core-2.6.0.jar jackson-databind-2.6.0.jar javassist-3.12.0.GA.jar jaybird-full-2.1.6.jar joda-time-2.3.jar joda-time-hibernate-1.3.jar jta-1.1.jar kahadb-5.3.0.jar not-yet-commons-ssl-0.3.9.jar opensaml-2.6.1.jar openws-1.5.1.jar postgresql-9.4-1200.jdbc4.jar quartz-1.8.6.jar rtcalltree-0.1.0-SNAPSHOT.jar slf4j-api-1.6.1.jar slf4j-log4j12-1.6.1.jar spring-aop-3.2.14.RELEASE.jar spring-aspects-3.2.14.RELEASE.jar spring-beans-3.2.14.RELEASE.jar spring-context-3.2.14.RELEASE.jar spring-context-support-3.2.14.RELEASE.jar spring-core-3.2.14.RELEASE.jar spring-expression-3.2.14.RELEASE.jar spring-jdbc-3.2.14.RELEASE.jar spring-jms-3.2.14.RELEASE.jar spring-orm-3.2.14.RELEASE.jar spring-security-config-3.2.8.RELEASE.jar spring-security-core-3.2.8.RELEASE.jar spring-security-saml2-core-1.0.1.RELEASE.jar spring-security-web-3.2.8.RELEASE.jar spring-test-3.2.14.RELEASE.jar spring-tx-3.2.14.RELEASE.jar spring-web-3.2.14.RELEASE.jar velocity-1.7.jar wicket-1.4.23.jar wicket-auth-roles-1.4.23.jar wicket-datetime-1.4.23.jar wicket-extensions-1.4.23.jar wiquery-1.2.3.2-20150604.122120-1.jar xbean-spring-3.18.jar xmlsec-1.5.6.jar xmltooling-1.4.1.jar )
+
+eric@mposerv11:~/Downloads$ _list2=( $(ls ${_list[*]}))
+eric@mposerv11:~/Downloads$ echo ${#_list2[*]}
+65
+eric@mposerv11:~/Downloads$  comm -3 <(awk '{gsub(/ /,"\n");print}' <(echo ${_list[@]}) | sort) <(awk '{gsub(/ /,"\n");print}' <(echo ${_list2[@]}) | sort)
+eric@mposerv11:~/Downloads$ 
+/ OK
+/ dus op test in Downloads zitten precies alle jar's die we nodig hebben	,
+
+/ 7	. 
+
+/ MISSING naar prod	,
+
+[eric@localhost lib]$ dsvfms-ssh-p.sh "mkdir Downloads"
+[eric@localhost lib]$ dsvfms-ssh-p.sh "mkdir Downloads/dsvfms"
+
+
+
+
+/ Einde FILES
+
+/ SCRIPTS IN BIN 
+
+/ 7	. 
+
+[eric@localhost bin]$ vi comm_2_lists.sh
+/ TODO
+
+/ 7	. 
+
+/ def	,
+[eric@localhost bin]$ cat  dsvfms-scp-to-p.sh 
+#!/bin/bash
+if [ "$#" -ne 2 ]
+then
+	echo "Give <list> <dir on server>."
+	exit 7
+fi
+scp "$1" vanderveldene@scs-application-p.intermax.mp-objects.com:"$2"
+
+/ call	,  let op "" om list	,
+[eric@localhost lib]$ dsvfms-scp-to-p.sh "${_list2[*]}" Downloads
+
+
+/ 7	. 
+
+/ cp jars naar test	,
+
+$ vi dsvfms-scp-to-t.sh
+
+if [ "$#" -le 2 ]
+then
+    echo "Give <dir on server> <list>."
+    exit 7
+fi
+dir=$1
+shift
+scp "$@" mposerv11:"$dir"
+
+/ Geef	,
+[eric@localhost lib]$ pwd
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvfms/lib
+$ list=( activeio-core-3.1.4.jar activemq-broker-5.10.2.jar activemq-client-5.10.2.jar activemq-kahadb-store-5.10.2.jar activemq-openwire-legacy-5.10.2.jar activemq-protobuf-1.1.jar activemq-spring-5.10.2.jar antlr-2.7.6.jar aspectjweaver-1.7.4.jar bcprov-jdk15on-1.52.jar commons-codec-1.9.jar commons-csv-1.1.jar commons-io-2.4.jar commons-lang-2.6.jar commons-lang3-3.3.2.jar commons-pool-1.5.7.jar disruptor-3.3.0.jar ehcache-2.10.0.jar esapi-2.0.1.jar hawtbuf-1.10.jar hibernate-jpa-2.0-api-1.0.0.Final.jar hibernate3.6.10.mpo.1.jar jackson-annotations-2.6.0.jar jackson-core-2.6.0.jar jackson-databind-2.6.0.jar javassist-3.12.0.GA.jar jaybird-full-2.1.6.jar joda-time-2.3.jar joda-time-hibernate-1.3.jar jta-1.1.jar kahadb-5.3.0.jar not-yet-commons-ssl-0.3.9.jar opensaml-2.6.1.jar openws-1.5.1.jar postgresql-9.4-1200.jdbc4.jar quartz-1.8.6.jar rtcalltree-0.1.0-SNAPSHOT.jar slf4j-api-1.6.1.jar slf4j-log4j12-1.6.1.jar spring-aop-3.2.14.RELEASE.jar spring-aspects-3.2.14.RELEASE.jar spring-beans-3.2.14.RELEASE.jar spring-context-3.2.14.RELEASE.jar spring-context-support-3.2.14.RELEASE.jar spring-core-3.2.14.RELEASE.jar spring-expression-3.2.14.RELEASE.jar spring-jdbc-3.2.14.RELEASE.jar spring-jms-3.2.14.RELEASE.jar spring-orm-3.2.14.RELEASE.jar spring-security-config-3.2.8.RELEASE.jar spring-security-core-3.2.8.RELEASE.jar spring-security-saml2-core-1.0.1.RELEASE.jar spring-security-web-3.2.8.RELEASE.jar spring-test-3.2.14.RELEASE.jar spring-tx-3.2.14.RELEASE.jar spring-web-3.2.14.RELEASE.jar velocity-1.7.jar wicket-1.4.23.jar wicket-auth-roles-1.4.23.jar wicket-datetime-1.4.23.jar wicket-extensions-1.4.23.jar wiquery-1.2.3.2-20150604.122120-1.jar xbean-spring-3.18.jar xmlsec-1.5.6.jar xmltooling-1.4.1.jar )
+
+[eric@localhost lib]$ _list2=($(ls ${_list[*]}))
+
+[eric@localhost lib]$ dsvfms-ssh-t.sh "mkdir Downloads3"
+[eric@localhost lib]$ dsvfms-scp-to-t.sh Downloads3 ${_list2[@]}
+/ OK
+
+
+
+/ Einde SCRIPTS IN BIN 
+
+
+
+/ SCRIPTS FOR DEPLOYTASKS
+
+/ 7	. 
+
+/ op test	,
+/ maak scripts voor test-20160523, 	dwz zorg dat we naar de juiste db write	,
+
+[eric@localhost dsvfms]$ cp -a  test-20160209 test-20160523/
+[eric@localhost dsvfms]$ pwd
+/home/eric/Devel/Firebird/scripts/dsvfms
+[eric@localhost dsvfms]$ for  f in $(find test-20160523/ -name "*.sh" );do awk '{gsub(/dsvfms-20160209.fdb/,"dsvfms.fdb_20160523-220002.fdb");print}' $f >my; mv my $f;done
+
+/ 7	.; 
+
+/ op test	,
+/ verander datums die deferred events rm ,
+
+[eric@localhost dsvfms]$ vi test-20160523/SCS-4418/exec_deferred_events.sh 
+
+#!/usr/bin/bash
+isql-fb -u sysdba -p masterkey mposerv8:/local/apps/firebird/dsvfms.fdb_20160523-220002.fdb <<SQL
+
+delete from deferred_event_value dev where dev.DEFERRED_EVENT_SYSTEMID in (select SYSTEM_ID from DEFERRED_EVENT where created_on_date < '2016-05-14' and status = 'UNMATCHED');
+delete from DEFERRED_EVENT_IDENTIFIER dei where dei.DEFERRED_EVENT_SYSTEMID in (select SYSTEM_ID from DEFERRED_EVENT where created_on_date < '2016-05-14' and status = 'UNMATCHED');
+delete from deferred_event where created_on_date < '2016-05-14' and status = 'UNMATCHED';
+
+commit;
+SQL
+
+ 7	. 
+
+/ create prod-scripts , door die van test-20160523 aan te passen	,
+
+[eric@localhost dsvfms]$ pwd
+/home/eric/Devel/Firebird/scripts/dsvfms
+[eric@localhost dsvfms]$ cp -a test-20160523/ prod
+[eric@localhost dsvfms]$ for f in $(find prod -name "*.sh");do cat $f | awk '{gsub(/mposerv8/,"scs-application-p.intermax.mp-objects.com");print}' | awk '{gsub(/dsvfms.fdb_20160523-220002.fdb/,"dsvfms.fdb");print}' >tmp;mv tmp $f;done
+
+/ op tst, dat is mposerv11	,
+$ vi deploy/firebird-ds.xml
+        <connection-url>jdbc:firebirdsql://192.168.1.8//local/apps/firebird/dsvfms.fdb_20160523-220002.fdb?no_result_set_tracking&amp;defaultResultSetHoldable=true&amp;columnLabelForName=true</connection-url>
+
+/ 7	. 
+
+/ rm jars op prod	,
+
+/ als jboss	,
+rm 
+activeio-core-3.1.2.jar activemq-core-5.3.0.jar activemq-pool-5.3.0.jar activemq-ra-5.3.0.jar antlr.jar aspectjrt.jar aspectjweaver.jar bcprov-jdk16-139.jar commons-codec-1.4.jar commons-io.jar commons-lang-2.4.jar commons-pool.jar ehcache-1.5.0.jar hibernate-annotations.jar hibernate3.jar javassist.jar jaybird-2.2.4.jar joda-time-2.2.jar joda-time-hibernate-1.2.jar log4j-over-slf4j-1.4.2.jar quartz-1.6.0.jar slf4j-api-1.4.2.jar slf4j-log4j12-1.4.2.jar spring-agent.jar spring-aop.jar spring-aspects.jar spring-beans.jar spring-context-support.jar spring-context.jar spring-core.jar spring-jdbc.jar spring-jms_mpo.jar spring-orm.jar spring-test.jar spring-tomcat-weaver.jar spring-tx.jar spring-web.jar spring-webmvc-portlet.jar spring-webmvc.jar wicket-1.4.19.jar wicket-auth-roles-1.4.19.jar wicket-datetime-1.4.19.jar wicket-devutils-1.4.19.jar wicket-extensions-1.4.19.jar wicket-spring-1.4.19.jar wiquery-1.2.3.jar
+
+
+/ 7	. 
+
+/ cp jars naar prod	,
+
+[eric@localhost bin]$ cat  dsvfms-scp-to-p.sh 
+#!/bin/bash
+
+if [ "$#" -le 2 ]
+then
+	echo "Give <dir on server> <list>."
+	exit 7
+fi
+dir=$1
+shift
+scp $@ vanderveldene@scs-application-p.intermax.mp-objects.com:$dir
+
+[eric@localhost lib]$ pwd
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvfms/lib
+$ list=( activeio-core-3.1.4.jar activemq-broker-5.10.2.jar activemq-client-5.10.2.jar activemq-kahadb-store-5.10.2.jar activemq-openwire-legacy-5.10.2.jar activemq-protobuf-1.1.jar activemq-spring-5.10.2.jar antlr-2.7.6.jar aspectjweaver-1.7.4.jar bcprov-jdk15on-1.52.jar commons-codec-1.9.jar commons-csv-1.1.jar commons-io-2.4.jar commons-lang-2.6.jar commons-lang3-3.3.2.jar commons-pool-1.5.7.jar disruptor-3.3.0.jar ehcache-2.10.0.jar esapi-2.0.1.jar hawtbuf-1.10.jar hibernate-jpa-2.0-api-1.0.0.Final.jar hibernate3.6.10.mpo.1.jar jackson-annotations-2.6.0.jar jackson-core-2.6.0.jar jackson-databind-2.6.0.jar javassist-3.12.0.GA.jar jaybird-full-2.1.6.jar joda-time-2.3.jar joda-time-hibernate-1.3.jar jta-1.1.jar kahadb-5.3.0.jar not-yet-commons-ssl-0.3.9.jar opensaml-2.6.1.jar openws-1.5.1.jar postgresql-9.4-1200.jdbc4.jar quartz-1.8.6.jar rtcalltree-0.1.0-SNAPSHOT.jar slf4j-api-1.6.1.jar slf4j-log4j12-1.6.1.jar spring-aop-3.2.14.RELEASE.jar spring-aspects-3.2.14.RELEASE.jar spring-beans-3.2.14.RELEASE.jar spring-context-3.2.14.RELEASE.jar spring-context-support-3.2.14.RELEASE.jar spring-core-3.2.14.RELEASE.jar spring-expression-3.2.14.RELEASE.jar spring-jdbc-3.2.14.RELEASE.jar spring-jms-3.2.14.RELEASE.jar spring-orm-3.2.14.RELEASE.jar spring-security-config-3.2.8.RELEASE.jar spring-security-core-3.2.8.RELEASE.jar spring-security-saml2-core-1.0.1.RELEASE.jar spring-security-web-3.2.8.RELEASE.jar spring-test-3.2.14.RELEASE.jar spring-tx-3.2.14.RELEASE.jar spring-web-3.2.14.RELEASE.jar velocity-1.7.jar wicket-1.4.23.jar wicket-auth-roles-1.4.23.jar wicket-datetime-1.4.23.jar wicket-extensions-1.4.23.jar wiquery-1.2.3.2-20150604.122120-1.jar xbean-spring-3.18.jar xmlsec-1.5.6.jar xmltooling-1.4.1.jar )
+
+[eric@localhost lib]$ _list2=($(ls ${_list[*]}))
+[eric@localhost lib]$ dsvfms-ssh-t.sh "mkdir Downloads"
+[eric@localhost lib]$ dsvfms-scp-to-p.sh Downloads ${_list2[@]}
+[eric@localhost lib]$ dsvfms-ssh-p.sh "wc <(ls Downloads2)"
+     65      65    1720 /dev/fd/63
+/ OK
+
+/ cp als jboss de jars in vanderveldene's Downloads naar lib/
+
+/ 7	. 
+
+[eric@localhost lib]$ dsvfms-ssh-p.sh "mkdir Downloads2"
+[eric@localhost lib]$ _list3=($(find ~/Downloads/ -type f | grep hsqldb | grep xml))
+[eric@localhost lib]$ dsvfms-scp-to-p.sh Downloads2 ${_list3[@]}
+hsqldb-jdbc-state-service.xml                                                                100% 3706     3.6KB/s   00:00    
+hsqldb-jdbc2-service.xml                                                                     100% 5438     5.3KB/s   00:00    
+
+[eric@localhost dsvfms]$ dsvfms-scp-to-p.sh Downloads2 deploy/jbossweb-tomcat55.sar/catalina.jar
+[eric@localhost dsvfms]$ dsvfms-ssh-p.sh "md5sum Downloads2/catalina.jar"
+a62c6aa65f92cb76c3f0509fd37d5d03  Downloads2/catalina.jar
+/ OK	,
+
+
+
+/ SCRIPTS FOR DEPLOYTASKS
+
+/ OEFENEN SCRIPTS
+
+/ 7	. 
+
+[eric@localhost tmp]$  pwd
+/home/eric/tmp
+
+[eric@localhost tmp]$ cat srcawk/1.sh 
+mposerv8:/local/apps/firebird/dsvfms-20160209.fdb
+[eric@localhost tmp]$ cat srcawk/2.sh 
+mposerv8:/local/apps/firebird/dsvfms-20160209.fdb
+
+[eric@localhost tmp]$ for  f in $(find srcawk/ -name "*.sh" );do awk '{gsub(/dsvfms/,"dsvcts");print}' $f >my; mv my $f;done
+
+[eric@localhost tmp]$ cat srcawk/1.sh 
+mposerv8:/local/apps/firebird/dsvcts-20160209.fdb
+[eric@localhost tmp]$ cat srcawk/2.sh 
+mposerv8:/local/apps/firebird/dsvcts-20160209.fdb
+
+[eric@localhost tmp]$ for  f in $(find srcawk/ -name "*.sh" );do awk '{gsub(/dsvcts/,"dsvfms");print}' $f >my; mv my $f;done
+/ herstel	,
+
+/ sub replaces wel alle lines	, maar alleen de 1ste match op de line,	
+/ gsub replaces alle lines	, en ook alle match op de line,	
+
+/ Ook	,
+[eric@localhost tmp]$ for  f in $(find srcawk/ -name "*.sh" );do awk '{print gensub(/dsvcts/,"dsvfms","g")}' $f >my; mv my $f;done
+
+/ 7	. 
+
+/ Voor 1 file	,
+
+[eric@localhost tmp]$ awk '{gsub(/dsvfms.fdb_20160523-220002.fdb/,"dsvfms.fdb");print}' <(awk '{gsub(/mposerv8/,"scs-application-p.intermax.mp-objects.com");print}' srcawk/3.sh )
+/ OK
+[eric@localhost tmp]$ cat srcawk/3.sh  | awk '{gsub(/mposerv8/,"scs-application-p.intermax.mp-objects.com");print}' | awk '{gsub(/dsvfms.fdb_20160523-220002.fdb/,"dsvfms.fdb");print}'
+/ OK
+
+/ Voor alle files,	
+
+[eric@localhost tmp]$ find srcawk/ -name "*.sh" | xargs cat | awk '{gsub(/mposerv8/,"scs-application-p.intermax.mp-objects.com");print}'  | awk '{gsub(/dsvfms/,"dsvcts");print}'
+
+/ Maar hoe nu de name van de file  onthouden	, en >tmp;mv tmp filename	,
+/ TODO
+/ See 
+find srcawk/ -type f -printf "%f\n"	
+/ , of 
+find srcawk -type f -exec basename {} \';
+
+/ workaround	,
+
+[eric@localhost tmp]$ for f in $(find srcawk/ -name "*.sh"); do cat $f | awk '{gsub(/mposerv8/,"scs-application-p.intermax.mp-objects.com");print}' | awk '{gsub(/dsvfms/,"dsvcts");print}' >tmp; mv  tmp $f;done
+
+/ 7	. 
+
+[eric@localhost tmp]$ list="some string with words"
+[eric@localhost tmp]$ list=( $list )
+[eric@localhost tmp]$ echo ${#list[@]}
+4
+[eric@localhost tmp]$ echo ${list[2]}
+with
+
+/ we kunnen ook	,
+[eric@localhost tmp]$ list=( some string with words )
+
+/ 7	. 
+
+/ IFS 
+
+/ Lees	,
+http://www.tldp.org/LDP/abs/html/internalvariables.html
+
+/ 13	. 
+
+/ Less	, 
+http://www.tldp.org/LDP/abs/html/quotingvar.html#WEIRDVARS
+/ TODO
+
+[eric@localhost tmp]$ echo "$IFS" | cat -te
+ ^I$
+$
+$ man cat
+       -e     equivalent to -vE
+       -E, --show-ends
+              display $ at end of each line
+       -t     equivalent to -vT
+       -T, --show-tabs
+              display TAB characters as ^I
+       -v, --show-nonprinting
+              use ^ and M- notation, except for LFD and TAB
+
+/ TODO (positional parameters)
+
+/ 13	. 
+
+[eric@localhost tmp]$ var1="a+b+c"
+[eric@localhost tmp]$ IFS=+
+[eric@localhost tmp]$ echo $var1
+a b c
+
+[eric@localhost tmp]$ echo "$IFS" | cat -te
++$
+/ Klopt	,
+[eric@localhost tmp]$ IFS=$' \t\n'
+/ Herstel,	
+[eric@localhost tmp]$ echo "$IFS" | cat -te
+ ^I$
+$
+
+/ 13	. 
+
+[eric@localhost tmp]$ _list="1 2 3"
+[eric@localhost tmp]$ sed 's/1/10/g' $_list
+sed: can't read 1: No such file or directory
+sed: can't read 2: No such file or directory
+sed: can't read 3: No such file or directory
+[eric@localhost tmp]$ sed 's/1/10/g' <(echo $_list)
+10 2 3
+[eric@localhost tmp]$ sed 's/ /\n/g' <(echo $_list)
+1
+2
+3
+[eric@localhost tmp]$ awk '{gsub(/ /,"\n");print}' <(echo $_list)
+1
+2
+3
+
+[eric@localhost tmp]$ _list=( $_list )
+/ maak een array	x
+/ als we een array hebben,	 moeten we  er eerst een string van maken	,
+[eric@localhost tmp]$ awk '{gsub(/ /,"\n");print}' <(echo ${_list[@]})
+1
+2
+3
+
+
+
+
+
+/ 7	. 
+
+/ set
+
+/ Lees	, 
+http://www.tldp.org/LDP/abs/html/internal.html#SETREF
+
+/ 7	. 
+
+/ verschil $* en $@	, 
+
+[eric@localhost tmp]$ cat 1.sh
+s=( "$*" )
+a=( "$@" )
+echo ${#s[*]}
+echo ${#a[*]}
+
+[eric@localhost tmp]$ ./1.sh eric saskia
+1
+2
+
+
+[eric@localhost tmp]$ cat 2.sh
+for s in "$*";do echo $s;done
+echo "*******"
+for s in "$@";do echo $s;done
+
+[eric@localhost tmp]$ ./2.sh eric saskia
+eric saskia
+*******
+eric
+saskia
+
+/ 7	. 
+
+/ we kunnen een list geven als $1	, maar dan moeten het argument ""	,
+
+[eric@localhost bin]$ cat dsvfms-scp-to-p.sh 
+#!/bin/bash
+echo scp "$1" vanderveldene@scs-application-p.intermax.mp-objects.com:"$2"
+
+[eric@localhost lib]$ dsvfms-scp-to-p.sh "${_list[*]}" Downloads/dsvfms
+/ Let op dat je "${_list[*]}"	, 
+
+/ 7	. 
+
+/ Haal 1ste van list en onthoud als dir	,
+
+$ vi 3.sh
+
+if [ "$#" -lt 2 ]
+then
+    echo "Give dir list"
+    exit 7
+fi
+dir="$1"
+shift
+echo "$#"
+echo "$dir"
+echo "$@"
+
+[eric@localhost tmp]$ ./3.sh 1 2 3 4 
+3
+1
+2 3 4
+
+/ of	,
+
+[eric@localhost tmp]$ _list=(1 2 3 4)
+[eric@localhost tmp]$ ./3.sh ${_list[*]}
+3
+1
+2 3 4
+
+/ 7	. 
+
+/ Laaste elem in array	,
+
+[eric@localhost tmp]$ _list=(1 2 3 4)
+[eric@localhost tmp]$ echo ${#_list[*]}
+4
+[eric@localhost tmp]$ echo $((${#_list[*]}-1 ))
+3
+[eric@localhost tmp]$ echo ${_list[$((${#_list[*]}-1 ))]}
+4
+
+
+
+/ 7	. 
+
+/ Lees	,
+http://stackoverflow.com/questions/1215538/extract-parameters-before-last-parameter-in
+http://stackoverflow.com/questions/20398499/remove-last-argument-from-argument-list-of-shell-script-bash
+http://unix.stackexchange.com/questions/198787/is-there-a-way-of-reading-the-last-element-of-an-array-with-bash
+http://stackoverflow.com/questions/1853946/getting-the-last-argument-passed-to-a-shell-script
+
+$ vi 4.sh
+
+#!/bin/bash
+if [ "$#" -lt 2 ]
+then
+    echo "Give list dir"
+    exit 7
+fi
+len=$(($#-1))
+echo $len
+dir=${@:1:$len}
+echo $dir
+
+s=( "$@" )
+a=( $@ )
+t=( "$*" )
+b=( $* )
+echo "***"
+echo ${#s[@]}
+echo "***"
+echo ${#a[@]}
+echo "***"
+echo ${#t[@]}
+echo "***"
+echo ${#b[@]}
+echo "***"
+echo ${#s[*]}
+echo "***"
+echo ${#a[*]}
+echo "***"
+echo ${#t[*]}
+echo "***"
+echo ${#b[*]}
+echo "***"
+for s in $@;do echo $s;done
+echo "***"
+for s in "$@";do echo $s;done
+echo "***"
+for s in $*;do echo $s;done
+echo "***"
+for s in "$*";do echo $s;done
+
+/ TODO
+/ Vergl ${_list[*]} en ${_list[@]}
+/ MAANDAGOCHTEND
+
+/ 7	. 
+
+$ vi 4.sh
+
+len=$(($#-1))
+echo $len
+dir="${@: -1}"
+echo $dir
+dir2=${!#}
+echo $dir2
+list=${@:1:$len}
+echo $list
+
+/ we kunnen de last arg met ${@: -1} of met ${!#}
+
+/ wat ook nog kan is	,
+last=$BASH_ARGV
+
+/ probeer ook,	
+/ Lees,	
+http://stackoverflow.com/questions/20398499/remove-last-argument-from-argument-list-of-shell-script-bash
+set -- "${@:1:$(($#-1))}"
+"${@:0:$#}"
+
+
+/ 7	. 
+
+
+
+
+
+ 
+
+/ Einde OEFENEN SCRIPTS
+
+/ FILES RESTANT
+
+  568  _list2=( $(ls 2015.03/) )
+eric@mposerv11:~/Downloads$ echo ${#_list2[@]}
+64
+/ er is er 1 te weinig	, 
+/ voor comm moeten we lines maken	, net als $ls -1	,
+
+
+eric@mposerv11:~/Downloads$ awk '{gsub(/ /,"\n");print}' <(echo ${_list[@]})
+activeio-core-3.1.4.jar
+...
+eric@mposerv11:~/Downloads$ comm <(awk '{gsub(/ /,"\n");print}' <(echo ${_list[@]})) <(awk '{gsub(/ /,"\n");print}' <(echo ${_list2[@]}))
+...
+		hawtbuf-1.10.jar
+	hibernate3.6.10.mpo.1.jar
+		hibernate-jpa-2.0-api-1.0.0.Final.jar
+comm: file 1 is not in sorted order
+hibernate3.6.10.mpo.1.jar
+		jackson-annotations-2.6.0.jar
+		jackson-core-2.6.0.jar
+		jackson-databind-2.6.0.jar
+		javassist-3.12.0.GA.jar
+jaybird-full-2.1.6.jar
+		joda-time-2.3.jar
+		joda-time-hibernate-1.3.jar
+...
+cl1 cl2 cl3
+/ cl1: alleen wat de 1ste file heeft,	
+/ cl2: alleen wat de 2de file heeft,	
+/ cl3: wat beide hebben	,
+
+/ We moeten sort	,
+ 
+eric@mposerv11:~/Downloads$ comm <(awk '{gsub(/ /,"\n");print}' <(echo ${_list[@]}) | sort) <(awk '{gsub(/ /,"\n");print}' <(echo ${_list2[@]}) | sort)
+		jackson-databind-2.6.0.jar
+		javassist-3.12.0.GA.jar
+jaybird-full-2.1.6.jar
+		joda-time-2.3.jar
+		joda-time-hibernate-1.3.jar
+
+/ 	7	.
+
+/ op laptop	, in dsvfms/lib 	,
+
+[eric@localhost lib]$  _list=( activeio-core-3.1.4.jar activemq-broker-5.10.2.jar activemq-client-5.10.2.jar activemq-kahadb-store-5.10.2.jar activemq-openwire-legacy-5.10.2.jar activemq-protobuf-1.1.jar activemq-spring-5.10.2.jar antlr-2.7.6.jar aspectjweaver-1.7.4.jar bcprov-jdk15on-1.52.jar commons-codec-1.9.jar commons-csv-1.1.jar commons-io-2.4.jar commons-lang-2.6.jar commons-lang3-3.3.2.jar commons-pool-1.5.7.jar disruptor-3.3.0.jar ehcache-2.10.0.jar esapi-2.0.1.jar hawtbuf-1.10.jar hibernate-jpa-2.0-api-1.0.0.Final.jar hibernate3.6.10.mpo.1.jar jackson-annotations-2.6.0.jar jackson-core-2.6.0.jar jackson-databind-2.6.0.jar javassist-3.12.0.GA.jar jaybird-full-2.1.6.jar joda-time-2.3.jar joda-time-hibernate-1.3.jar jta-1.1.jar kahadb-5.3.0.jar not-yet-commons-ssl-0.3.9.jar opensaml-2.6.1.jar openws-1.5.1.jar postgresql-9.4-1200.jdbc4.jar quartz-1.8.6.jar rtcalltree-0.1.0-SNAPSHOT.jar slf4j-api-1.6.1.jar slf4j-log4j12-1.6.1.jar spring-aop-3.2.14.RELEASE.jar spring-aspects-3.2.14.RELEASE.jar spring-beans-3.2.14.RELEASE.jar spring-context-3.2.14.RELEASE.jar spring-context-support-3.2.14.RELEASE.jar spring-core-3.2.14.RELEASE.jar spring-expression-3.2.14.RELEASE.jar spring-jdbc-3.2.14.RELEASE.jar spring-jms-3.2.14.RELEASE.jar spring-orm-3.2.14.RELEASE.jar spring-security-config-3.2.8.RELEASE.jar spring-security-core-3.2.8.RELEASE.jar spring-security-saml2-core-1.0.1.RELEASE.jar spring-security-web-3.2.8.RELEASE.jar spring-test-3.2.14.RELEASE.jar spring-tx-3.2.14.RELEASE.jar spring-web-3.2.14.RELEASE.jar velocity-1.7.jar wicket-1.4.23.jar wicket-auth-roles-1.4.23.jar wicket-datetime-1.4.23.jar wicket-extensions-1.4.23.jar wiquery-1.2.3.2-20150604.122120-1.jar xbean-spring-3.18.jar xmlsec-1.5.6.jar xmltooling-1.4.1.jar )
+
+[eric@localhost lib]$ _list2=($(ls ${_list[*]}))
+
+
+[eric@localhost lib]$ comm -3 <(awk '{gsub(/ /,"\n");print}' <(echo ${_list[*]})| sort) <(awk '{gsub(/ /,"\n");print}'  <(echo ${_list2[*]})| sort)
+[eric@localhost lib]$ wc <(awk '{gsub(/ /,"\n");print}'  <(echo ${_list2[*]}) | sort)
+
+/ 13	. 
+
+[eric@localhost lib]$ echo ${_list[*]}
+activeio-core-3.1.4.jar activemq-broker...
+/ WH is ${_list[*]} een string	, 
+/ TODO
+
+[eric@localhost lib]$ ls -1  ${_list[*]}
+activeio-core-3.1.4.jar
+...
+/ OK
+[eric@localhost lib]$ wc <(ls -1 ${_list[*]})
+     65      65    1720 /dev/fd/63
+
+[eric@localhost lib]$ _list2=( $(ls ${_list[*]}))
+/ voor comm	, 
+/ =( moet	, = ( is ERR	,
+
+[eric@localhost lib]$ comm -3 <(awk '{gsub(/ /,"\n");print}' <(echo ${_list[*]}) | sort) <(awk '{gsub(/ /,"\n");print}' <(echo ${_list2[*]}) | sort)
+[eric@localhost lib]$ 
+//////////////////////
+
+/ Intermezzo
+
+/ dit hoeft NIET	,
+[eric@localhost lib]$ wc <(ls -1 $(echo ${_list[*]}))
+     65      65    1720 /dev/fd/63
+
+[eric@localhost lib]$ _list2=( $(ls $(echo ${_list[*]})) )
+/ voor comm	,
+/ elke entty op 1 regel	,
+
+/ Let op dat we NIET doen	, anders is echo ook in de list	: acho activemq-...
+[eric@localhost lib]$ _list2=( echo $(ls $(echo ${_list[*]})) )
+
+/ Einde Intermezzo
+
+/ Dus onze lijst is in dsvfms/lib	,
+
+/ Einde FILES RESTANT
+
+/ OEFENEN POSTGRES
+
+/ 7	. 
+
+/ in cost_type minder lines als in rate_component_type , met rct_group='COST'
+
+/ Geef in google	,
+postgres difference between two tables
+
+/ Lees	,
+http://dba.stackexchange.com/questions/72641/checking-whether-two-tables-have-identical-content-in-postgresql
+
+foo=> CREATE TABLE a (i INT);
+CREATE TABLE
+foo=> INSERT INTO a VALUES (1), (3);
+INSERT 0 2
+foo=> CREATE TABLE b (i INT);
+CREATE TABLE
+foo=> INSERT INTO b VALUES (1), (2);
+INSERT 0 2
+foo=> (TABLE a EXCEPT TABLE b)
+foo-> UNION ALL
+foo-> (TABLE b EXCEPT TABLE a) ;
+ i 
+---
+ 3
+ 2
+(2 rows)
+
+
+
+
+
+/ Einde OEFENEN POSTGRES
+
+/ DEPLOY TASKS
+
+/ See LOG_new.txt
+/ of	,
+https://system.mp-objects.com/xwiki/bin/view/Technology/Deployment+dsvfms+2015.03+to+test
+
+/ Einde DEPLOY TASKS
+
+/ PATCHES
+
+jboss@mposerv11:~$ cp /home/INTERNAL/eric/Downloads2/tms-dsvfms-23370-2015.03_build4141.zip releases
+jboss@mposerv11:~$ deploy-dsvfms.sh /local/apps/releases/tms-dsvfms-23370-2015.03_build4141.zip /local/apps/jboss-4.0.5.GA/server/dsvfms/
+jboss@mposerv11:~$ dsvfms start track
+
+
+/ Lees	,
+https://system.mp-objects.com/xwiki/bin/view/Technology/Deployment+dsvfms+2015.03+to+test
+
+7	. 
+
+patch-364-fix-party-org-fk.sql:
+
+
+/ 7	. 
+
+/ patch-389_productid_unique_constraint_drop.sql:
+
+
+/ 7	. 
+
+/ patch-390-customer-order-line-detail.sql
+
+/ 7	. 
+
+ms/patch-391-customer-order-created-by.sql
+
+/ 7	. 
+
+oms/patch-396-entity-log-blob$postgresql.sql
+
+/ 7	.
+
+/ MAANDAGOCHTEND
+/ on test, as jboss	,
+$ dsvfms start track	
+
+016-05-27 18:07:32,901 INFO  [com.mpobjects.dbpatch.DataBasePatcher] (main:) Executing patch [oms/patch-411-create_resource_binary.sql] ...
+2016-05-27 18:07:33,128 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-411-create
+_resource_binary.sql]: 
+2016-05-27 18:07:33,128 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) ALTER TABLE RESOURCE_BINARY ADD CONSTRAINT FK_RB_R FOREIGN KEY(RESOU
+RCE_SYSTEMID) REFERENCES CTP_RESOURCE(SYSTEM_ID)
+2016-05-27 18:07:33,128 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.firebirdsql.jdbc.FBSQLException: GDS Exception. 335544351. unsuc
+cessful metadata update
+Table CTP_RESOURCE not found
+
+
+
+
+
+/ Einde PATCHES 
+
+/ DATABASE OEFENEN
+
+/ firebird	,
+SQL> select cast('Now' as date) from rdb$database;
+       CAST 
+=========== 
+2016-05-30  
+SQL> select cast('Now' as timestamp) from rdb$database;
+
+                     CAST 
+========================= 
+2016-05-30 10:56:55.4290  
+
+
+[eric@localhost SCS-4418]$ pwd
+/home/eric/Devel/Firebird/scripts/dsvfms/test-20160523/SCS-4418
+[eric@localhost SCS-4418]$ cat exec_deferred_events.sh 
+
+#!/usr/bin/bash
+date="'$(date +%F -d "14 days ago")'"
+isql-fb -u sysdba -p masterkey mposerv8:/local/apps/firebird/dsvfms.fdb_20160523-220002.fdb <<SQL
+
+delete from deferred_event_value dev where dev.DEFERRED_EVENT_SYSTEMID in (select SYSTEM_ID from DEFERRED_EVENT where created_on_date < $date and status = 'UNMATCHED');
+delete from DEFERRED_EVENT_IDENTIFIER dei where dei.DEFERRED_EVENT_SYSTEMID in (select SYSTEM_ID from DEFERRED_EVENT where created_on_date < $date and status = 'UNMATCHED');
+delete from deferred_event where created_on_date < $date and status = 'UNMATCHED';
+
+commit;
+SQL
+
+/ we moeten "" in	, aners wordt niet expand	,
+date="'$(date +%F -d "14 days ago")'"
+
+/ we moeten NIET "" in here doc	, 
+/ QUOTES IN BASH
+/ TODO
+
+isql-fb -u sysdba -p masterkey scs-application-p.intermax.mp-objects.com:/local/apps/firebird/dsvfms.fdb <<SQL
+isql-fb -u sysdba -p masterkey mposerv8:/local/apps/firebird/dsvfms.fdb_20160523-220002.fdb <<SQL
+
+
+
+/ Einde DATABASE OEFENEN
+
+/ DSVFMS UPGRAGE ON PRODUCTION
+
+/ 7	. 
+
+/ Het script 
+[eric@localhost SCS-4418]$ ./exec_update_mpo_scs_patch.sh
+/  ERR, updates NIET mpo_scs_patch	 
+/ TODO
+/ er moet een check script achter	,
+/ TODO
+
+/ 7	. 
+
+[jboss@scs-application-p releases]$ deploy-dsvfms.sh /local/apps/releases/tms-dsvfms-23688-2015.03_build4254.zip /local/apps/jboss-4.0.5.GA/server/dsvfms
+[jboss@scs-application-p releases]$ dsvfms start track
+
+[jboss@scs-application-p lib]$ awk '{print $NF}' ~/LOG_must_be_removed.txt  | xargs ls -ltr
+-rw-rwxr--+ 1 jboss      jboss        67942 Oct 12  2013 wicket-devutils-1.4.19.jar
+-rw-rwxr--+ 1 jboss      jboss       224984 Oct 12  2013 wicket-datetime-1.4.19.jar
+-rw-rwxr--+ 1 jboss      jboss        44184 Oct 12  2013 wicket-auth-roles-1.4.19.jar
+-rw-rwxr--+ 1 jboss      jboss       231173 Oct 12  2013 spring-tx.jar
+-rw-rwxr--+ 1 jboss      jboss       192376 Oct 12  2013 spring-jms_mpo.jar
+-rw-rwxr--+ 1 jboss      jboss       335487 Oct 12  2013 spring-jdbc.jar
+-rw-rwxr--+ 1 jboss      jboss       476894 Oct 12  2013 spring-context.jar
+-rw-rwxr--+ 1 jboss      jboss        15279 Oct 12  2013 slf4j-api-1.4.2.jar
+-rw-rwxr--+ 1 jboss      jboss       363721 Oct 12  2013 hibernate-annotations.jar
+-rw-rwxr--+ 1 jboss      jboss        83613 Oct 12  2013 commons-io.jar
+-rw-rwxr--+ 1 jboss      jboss       114926 Oct 12  2013 aspectjrt.jar
+-rw-rwxr--+ 1 jboss      jboss        38517 Oct 12  2013 activemq-pool-5.3.0.jar
+-rw-rwxr--+ 1 jboss      jboss      1590120 Oct 12  2013 wiquery-1.2.3.jar
+-rw-rwxr--+ 1 jboss      jboss        29380 Oct 12  2013 wicket-spring-1.4.19.jar
+-rw-rwxr--+ 1 jboss      jboss      1181901 Oct 12  2013 wicket-extensions-1.4.19.jar
+-rw-rwxr--+ 1 jboss      jboss      1967611 Oct 12  2013 wicket-1.4.19.jar
+-rw-rwxr--+ 1 jboss      jboss       149694 Oct 12  2013 spring-webmvc-portlet.jar
+-rw-rwxr--+ 1 jboss      jboss       402348 Oct 12  2013 spring-webmvc.jar
+-rw-rwxr--+ 1 jboss      jboss       194585 Oct 12  2013 spring-web.jar
+-rw-rwxr--+ 1 jboss      jboss         8929 Oct 12  2013 spring-tomcat-weaver.jar
+-rw-rwxr--+ 1 jboss      jboss       180952 Oct 12  2013 spring-test.jar
+-rw-rwxr--+ 1 jboss      jboss       377872 Oct 12  2013 spring-orm.jar
+-rw-rwxr--+ 1 jboss      jboss       285603 Oct 12  2013 spring-core.jar
+-rw-rwxr--+ 1 jboss      jboss        96867 Oct 12  2013 spring-context-support.jar
+-rw-rwxr--+ 1 jboss      jboss       488068 Oct 12  2013 spring-beans.jar
+-rw-rwxr--+ 1 jboss      jboss        20615 Oct 12  2013 spring-aspects.jar
+-rw-rwxr--+ 1 jboss      jboss       325755 Oct 12  2013 spring-aop.jar
+-rw-rwxr--+ 1 jboss      jboss         5527 Oct 12  2013 spring-agent.jar
+-rw-rwxr--+ 1 jboss      jboss         8620 Oct 12  2013 slf4j-log4j12-1.4.2.jar
+-rw-rwxr--+ 1 jboss      jboss         9593 Oct 12  2013 log4j-over-slf4j-1.4.2.jar
+-rw-rwxr--+ 1 jboss      jboss       459663 Oct 12  2013 javassist.jar
+-rw-rwxr--+ 1 jboss      jboss      2198080 Oct 12  2013 hibernate3.jar
+-rw-rwxr--+ 1 jboss      jboss       263854 Oct 12  2013 ehcache-1.5.0.jar
+-rw-rwxr--+ 1 jboss      jboss        62103 Oct 12  2013 commons-pool.jar
+-rw-rw-r--+ 1 jboss      jboss        58160 Oct 12  2013 commons-codec-1.4.jar
+-rw-rwxr--+ 1 jboss      jboss      1657010 Oct 12  2013 bcprov-jdk16-139.jar
+-rw-rwxr--+ 1 jboss      jboss      1545023 Oct 12  2013 aspectjweaver.jar
+-rw-rwxr--+ 1 jboss      jboss       444689 Oct 12  2013 antlr.jar
+-rw-rwxr--+ 1 jboss      jboss        85474 Oct 12  2013 activemq-ra-5.3.0.jar
+-rw-rwxr--+ 1 jboss      jboss      2923854 Oct 12  2013 activemq-core-5.3.0.jar
+-rw-rwxr--+ 1 jboss      jboss       102631 Oct 12  2013 activeio-core-3.1.2.jar
+-rw-rw-r--+ 1 raminosoat raminosoat   37780 Dec  5  2013 joda-time-hibernate-1.2.jar
+-rw-rw-r--+ 1 raminosoat raminosoat  573912 Dec  5  2013 joda-time-2.2.jar
+-rw-rw-r--+ 1 raminosoat raminosoat  421601 Dec  5  2013 quartz-1.6.0.jar
+-rw-rw-r--+ 1 raminosoat raminosoat  277122 Mar 10  2014 commons-lang-2.4.jar
+-rw-r--r--+ 1 raminosoat raminosoat  853581 Apr 18  2014 jaybird-2.2.4.jar
+
+/ eric kan /home/jboss/LOG_missing.txt niet lezen	. 
+/ TODO
+[jboss@scs-application-p ~]$ cp -a /home/vanderveldene/Downloads .
+
+[jboss@scs-application-p Downloads]$ awk '{print $NF}' ../LOG_missing.txt  | xargs ls -tlr
+-rw-r--r-- 1 jboss jboss 1037753 May 27 11:25 activemq-broker-5.10.2.jar
+-rw-r--r-- 1 jboss jboss  102578 May 27 11:25 activeio-core-3.1.4.jar
+-rw-r--r-- 1 jboss jboss  547398 May 27 11:25 activemq-kahadb-store-5.10.2.jar
+-rw-r--r-- 1 jboss jboss 1178428 May 27 11:25 activemq-client-5.10.2.jar
+-rw-r--r-- 1 jboss jboss  443432 May 27 11:25 antlr-2.7.6.jar
+-rw-r--r-- 1 jboss jboss  162823 May 27 11:25 activemq-spring-5.10.2.jar
+-rw-r--r-- 1 jboss jboss  147874 May 27 11:25 activemq-protobuf-1.1.jar
+-rw-r--r-- 1 jboss jboss  685482 May 27 11:25 activemq-openwire-legacy-5.10.2.jar
+-rw-r--r-- 1 jboss jboss 1850391 May 27 11:25 aspectjweaver-1.7.4.jar
+-rw-r--r-- 1 jboss jboss  284220 May 27 11:25 commons-lang-2.6.jar
+-rw-r--r-- 1 jboss jboss  185140 May 27 11:25 commons-io-2.4.jar
+-rw-r--r-- 1 jboss jboss   36888 May 27 11:25 commons-csv-1.1.jar
+-rw-r--r-- 1 jboss jboss  263965 May 27 11:25 commons-codec-1.9.jar
+-rw-r--r-- 1 jboss jboss 2902942 May 27 11:25 bcprov-jdk15on-1.52.jar
+-rw-r--r-- 1 jboss jboss   79576 May 27 11:25 disruptor-3.3.0.jar
+-rw-r--r-- 1 jboss jboss  100625 May 27 11:25 commons-pool-1.5.7.jar
+-rw-r--r-- 1 jboss jboss  412739 May 27 11:25 commons-lang3-3.3.2.jar
+-rw-r--r-- 1 jboss jboss 8908872 May 27 11:25 ehcache-2.10.0.jar
+-rw-r--r-- 1 jboss jboss   50150 May 27 11:25 hawtbuf-1.10.jar
+-rw-r--r-- 1 jboss jboss  367201 May 27 11:25 esapi-2.0.1.jar
+-rw-r--r-- 1 jboss jboss  258837 May 27 11:25 jackson-core-2.6.0.jar
+-rw-r--r-- 1 jboss jboss   46968 May 27 11:25 jackson-annotations-2.6.0.jar
+-rw-r--r-- 1 jboss jboss  100884 May 27 11:25 hibernate-jpa-2.0-api-1.0.0.Final.jar
+-rw-r--r-- 1 jboss jboss 4167612 May 27 11:25 hibernate3.6.10.mpo.1.jar
+-rw-r--r-- 1 jboss jboss  633312 May 27 11:25 javassist-3.12.0.GA.jar
+-rw-r--r-- 1 jboss jboss 1160720 May 27 11:25 jackson-databind-2.6.0.jar
+-rw-r--r-- 1 jboss jboss  258278 May 27 11:25 not-yet-commons-ssl-0.3.9.jar
+-rw-r--r-- 1 jboss jboss  152481 May 27 11:25 kahadb-5.3.0.jar
+-rw-r--r-- 1 jboss jboss   10899 May 27 11:25 jta-1.1.jar
+-rw-r--r-- 1 jboss jboss   29691 May 27 11:25 joda-time-hibernate-1.3.jar
+-rw-r--r-- 1 jboss jboss  581571 May 27 11:25 joda-time-2.3.jar
+-rw-r--r-- 1 jboss jboss  681941 May 27 11:25 jaybird-full-2.1.6.jar
+-rw-r--r-- 1 jboss jboss  574134 May 27 11:25 openws-1.5.1.jar
+-rw-r--r-- 1 jboss jboss 1413174 May 27 11:25 opensaml-2.6.1.jar
+-rw-r--r-- 1 jboss jboss   51440 May 27 11:25 spring-aspects-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  338657 May 27 11:25 spring-aop-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss    9753 May 27 11:25 slf4j-log4j12-1.6.1.jar
+-rw-r--r-- 1 jboss jboss   25496 May 27 11:25 slf4j-api-1.6.1.jar
+-rw-r--r-- 1 jboss jboss   38022 May 27 11:25 rtcalltree-0.1.0-SNAPSHOT.jar
+-rw-r--r-- 1 jboss jboss  449135 May 27 11:25 quartz-1.8.6.jar
+-rw-r--r-- 1 jboss jboss  642829 May 27 11:25 postgresql-9.4-1200.jdbc4.jar
+-rw-r--r-- 1 jboss jboss  128645 May 27 11:26 spring-context-support-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  868300 May 27 11:26 spring-context-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  614471 May 27 11:26 spring-beans-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  385637 May 27 11:26 spring-orm-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  206363 May 27 11:26 spring-jms-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  405997 May 27 11:26 spring-jdbc-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  196571 May 27 11:26 spring-expression-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  885640 May 27 11:26 spring-core-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  347466 May 27 11:26 spring-security-web-3.2.8.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  228048 May 27 11:26 spring-security-saml2-core-1.0.1.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  371663 May 27 11:26 spring-security-core-3.2.8.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  407664 May 27 11:26 spring-security-config-3.2.8.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  449505 May 27 11:26 velocity-1.7.jar
+-rw-r--r-- 1 jboss jboss  632369 May 27 11:26 spring-web-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  242545 May 27 11:26 spring-tx-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss  458362 May 27 11:26 spring-test-3.2.14.RELEASE.jar
+-rw-r--r-- 1 jboss jboss   44186 May 27 11:26 wicket-auth-roles-1.4.23.jar
+-rw-r--r-- 1 jboss jboss 1971178 May 27 11:26 wicket-1.4.23.jar
+-rw-r--r-- 1 jboss jboss 1182325 May 27 11:26 wicket-extensions-1.4.23.jar
+-rw-r--r-- 1 jboss jboss  224987 May 27 11:26 wicket-datetime-1.4.23.jar
+-rw-r--r-- 1 jboss jboss  131202 May 27 11:26 xbean-spring-3.18.jar
+-rw-r--r-- 1 jboss jboss 1732138 May 27 11:26 wiquery-1.2.3.2-20150604.122120-1.jar
+-rw-r--r-- 1 jboss jboss  670437 May 27 11:26 xmltooling-1.4.1.jar
+-rw-r--r-- 1 jboss jboss  639643 May 27 11:26 xmlsec-1.5.6.jar
+
+[jboss@scs-application-p dsvfms]$ ls -1 lib | awk '{count++}END{print count}'
+252
+[jboss@scs-application-p dsvfms]$ cp -a lib ~/libBackup/
+
+[jboss@scs-application-p lib]$ awk '{print $NF}' ~/LOG_must_be_removed.txt | xargs -I % rm -f %
+/ check	,
+[jboss@scs-application-p lib]$ awk '{print $NF}' ~/LOG_must_be_removed.txt | xargs ls -1
+ls: activeio-core-3.1.2.jar: No such file or directory
+ls: activemq-core-5.3.0.jar: No such file or directory
+
+[jboss@scs-application-p Downloads]$ find -name "*.jar" | xargs -I % cp -a % /local/apps/jboss-4.0.5.GA/server/dsvfms/lib
+/ check
+[jboss@scs-application-p lib]$ awk '{print $NF}' ~/LOG_missing.txt | xargs -I % ls -1 %
+activeio-core-3.1.4.jar
+activemq-broker-5.10.2.jar
+activemq-client-5.10.2.jar
+activemq-kahadb-store-5.10.2.jar
+...
+/ Ze zijn er allemaal,
+
+/ 7	. 
+
+[eric@localhost GENERATOR]$ pwd
+/home/eric/Devel/Firebird/scripts/dsvfms/prod/GENERATOR
+[eric@localhost GENERATOR]$ ls
+exec_generators.sh  idgen.txt
+
+[eric@localhost GENERATOR]$ head exec_generators.sh 
+#!/usr/bin/bash
+
+# OK, maar we doen het niet zo
+
+isql-fb -u sysdba -p masterkey scs-application-p.intermax.mp-objects.com:/local/apps/firebird/dsvfms.fdb <<SQL
+
+	select gen_id(sysid_Consignment, (select max(SYSTEM_ID) from CONSIGNMENT) - gen_id(sysid_Consignment, 0)) from MON$DATABASE;
+...
+SQL
+/ We moeten in een script $ door \$ vervangen	, dus MON\$DATABASE	?
+/ TODO
+
+/ Alle select's komen uit	,
+
+[eric@localhost GENERATOR]$ cat idgen.txt 
+select gen_id(sysid_Consignment, (select max(SYSTEM_ID) from CONSIGNMENT) - gen_id(sysid_Consignment, 0)) from MON$DATABASE;
+select gen_id(sysid_CustomerOrder, (select max(SYSTEM_ID) from CUSTOMER_ORDER) - gen_id(sysid_CustomerOrder, 0)) from MON$DATABASE;
+...
+--select gen_id(sysid_BookedCapacity, (select max(SYSTEM_ID) from BOOKED_CAPACITY) - gen_id(sysid_BookedCapacity, 0)) from MON$DATABASE;
+--select gen_id(sysid_CapacityBucket, (select max(SYSTEM_ID) from CAPACITY_BUCKET) - gen_id(sysid_CapacityBucket, 0)) from MON$DATABASE;
+--select gen_id(sysid_CtpRebookOrder, (select max(SYSTEM_ID) from CTP_REBOOK_ORDER) - gen_id(sysid_CtpRebookOrder, 0)) from MON$DATABASE;
+
+select gen_id(sysid_CustomerInvoiceLine, (select max(SYSTEM_ID) from CUSTOMER_INVOICE_LINE) - gen_id(sysid_CustomerInvoiceLine, 0)) from MON$DATABASE;
+select gen_id(sysid_CustomerInvoiceHeader, (select max(SYSTEM_ID) from CUSTOMER_INVOICE_HEADER) - gen_id(sysid_CustomerInvoiceHeader, 0)) from MON$DATABASE;
+...
+
+/ Eigenlijk moeten we deze allemaal doen	, maar we doen het volgende	, 
+
+SQL> select*from key_generator;
+KEY_REFERENCE                                      SEQUENCE_NUMBER 
+================================================== =============== 
+SYSTEM_ID                                                143830866 
+
+/ we +1 143830866	, dus 143830867	, 
+/ en we geven alle gen's deze system_id
+
+/ we hebben een aantal al gedraaid om de manier hierboven	,
+
+[eric@localhost GENERATOR]$ awk '!/--/{print gensub(/(.+)sysid_(.+),(.+)/,"SET GENERATOR SYSID_S\\2 TO 143830867;","g")}' idgen.txt >idgen_simple.txt
+[eric@localhost GENERATOR]$ cat idgen_simple.txt 
+...
+/ MORGENOCHTEND
+
+/ 7	. 
+
+/ ./module/oms/src/sql/patch/patch-472-cost-comp-entity-type.sql
+
+SQL> select distinct rate_type from rate_agreement;
+
+RATE_TYPE                      
+============================== 
+<null>                         
+SERVICE_ORDER                  
+SHIPMENT_ORDER                 
+SHIPMENT_ORDER_PROPERTIES     
+
+UPDATE COST_COMPONENT_SPECIFICATION SET ENTITY_TYPE = 'SERVICE_ORDER' WHERE RATE_AGREEMENT_SYSTEMID IN (
+SELECT SYSTEM_ID FROM RATE_AGREEMENT where RATE_TYPE like 'SERVICE_ORDER%'
+);
+UPDATE COST_COMPONENT_SPECIFICATION SET ENTITY_TYPE = 'SHIPMENT_ORDER' WHERE RATE_AGREEMENT_SYSTEMID IN (
+SELECT SYSTEM_ID FROM RATE_AGREEMENT where RATE_TYPE like 'SHIPMENT_ORDER%'
+);
+UPDATE COST_COMPONENT_SPECIFICATION SET ENTITY_TYPE = 'CUSTOMER_ORDER_LINE' WHERE RATE_AGREEMENT_SYSTEMID IN (
+SELECT SYSTEM_ID FROM RATE_AGREEMENT where RATE_TYPE like 'CUSTOMER_ORDER_LINE%'
+); 
+
+SQL> SELECT count(SYSTEM_ID) FROM RATE_AGREEMENT where RATE_TYPE like 'SERVICE_ORDER%';
+
+       COUNT 
+============ 
+         609 
+SQL> SELECT count(SYSTEM_ID) FROM RATE_AGREEMENT where RATE_TYPE like 'SHIPMENT_ORDER%';
+
+       COUNT 
+============ 
+         644 
+SQL> SELECT count(SYSTEM_ID) FROM RATE_AGREEMENT where RATE_TYPE like 'CUSTOMER_ORDER_LINE%';
+
+       COUNT 
+============ 
+           0 
+
+SQL> select count(*) from COST_COMPONENT_SPECIFICATION where ENTITY_TYPE = 'SERVICE_ORDER';
+
+       COUNT 
+============ 
+        6276 
+SQL> select count(*) from COST_COMPONENT_SPECIFICATION where ENTITY_TYPE = 'SHIPMENT_ORDER';
+
+       COUNT 
+============ 
+           0 
+SQL> select count(*) from COST_COMPONENT_SPECIFICATION where ENTITY_TYPE = 'CUSTOMER_ORDER_LINE';
+
+       COUNT 
+============ 
+           0 
+
+SQL> select distinct  ENTITY_TYPE from COST_COMPONENT_SPECIFICATION;
+
+ENTITY_TYPE                      
+================================ 
+SERVICE_ORDER      
+
+
+UPDATE COST_COMPONENT_SPECIFICATION SET ENTITY_TYPE = 'SERVICE_ORDER' WHERE RATE_AGREEMENT_SYSTEMID IN (
+SELECT SYSTEM_ID FROM RATE_AGREEMENT where RATE_TYPE like 'SERVICE_ORDER%'
+
+SQL> select distinct RATE_AGREEMENT_SYSTEMID from COST_COMPONENT_SPECIFICATION where ENTITY_TYPE = 'SERVICE_ORDER';
+SQL> select count(RATE_AGREEMENT_SYSTEMID) from COST_COMPONENT_SPECIFICATION where ENTITY_TYPE = 'SERVICE_ORDER';
+6276
+
+select count(*) from COST_COMPONENT_SPECIFICATION WHERE RATE_AGREEMENT_SYSTEMID IN ( SELECT SYSTEM_ID FROM RATE_AGREEMENT where RATE_TYPE = 'SERVICE_ORDER');
+      COUNT 
+============ 
+        2556 
+
+select count(*) from COST_COMPONENT_SPECIFICATION WHERE RATE_AGREEMENT_SYSTEMID IN ( SELECT SYSTEM_ID FROM RATE_AGREEMENT where RATE_TYPE = 'SHIPMENT_ORDER');
+      COUNT 
+============ 
+        3709 
+
+SQL> select count(*) from COST_COMPONENT_SPECIFICATION WHERE RATE_AGREEMENT_SYSTEMID IN ( SELECT SYSTEM_ID FROM RATE_AGREEMENT where RATE_TYPE = SHIPMENT_ORDER_PROPERTIES');
+
+       COUNT 
+============ 
+          11 
+SQL> select count(*) from COST_COMPONENT_SPECIFICATION WHERE RATE_AGREEMENT_SYSTEMID IN ( SELECT SYSTEM_ID FROM RATE_AGREEMENT where RATE_TYPE is null);
+
+       COUNT 
+============ 
+           0 
+
+SQL> select first 1 * from COST_COMPONENT_SPECIFICATION WHERE RATE_AGREEMENT_SYSTEMID IN ( SELECT SYSTEM_ID FROM RATE_AGREEMENT where RATE_TYPE like 'SHIPMENT_ORDER');
+
+   SYSTEM_ID NAME                                               DESCRIPTION                                                                                          PARAMETER_SYSTEMID ORDER_RATE_PART_SYSTEMID  SEQUENCE_NR RATE_AGREEMENT_SYSTEMID RATE_PLUS_MODE                   CORRECTION_TYPE                                    ENTITY_TYPE                      EVALUATION_OBJECTIVE                     CALCULATION_TYPE                         
+============ ================================================== =============================================================================== ================== ======================== ============ ======================= ================================ ================================================== ================================ ======================================== ======================================== 
+    12246289 RC-FREIGHT                                         FREIGHT                                                                                                        12246288                  1124923       <null>                12246199 NONE                             ADD                                                SERVICE_ORDER                    PRICE                                    POSTCALCULATED                       
+
+

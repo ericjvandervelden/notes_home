@@ -1,0 +1,5374 @@
+/ 7	 .
+
+/ (xviii)
+[eric@almond geron]$ pwd
+/home/eric/Devel/python/geron
+[eric@almond geron]$ git clone https://github.com/ageron/handson-ml.git
+
+/ lees	,
+https://github.com/ageron/handson-ml
+/ TODO
+
+/ 7	. 
+
+/ (44)
+
+[eric@almond handson-ml]$ find -name "*housing*"
+./datasets/housing
+./datasets/housing/housing.tgz
+./datasets/housing/housing.csv
+
+/ in ipython kun je ook van dir wisselen, en kijken waar je bent	,
+
+In [853]: cd ../../geron/
+/home/eric/Devel/python/geron
+
+In [854]: ls
+handson-ml/
+
+In [855]: cd handson-ml/
+/home/eric/Devel/python/geron/handson-ml
+
+In [856]: ls
+01_the_machine_learning_landscape.ipynb              docker/
+02_end_to_end_machine_learning_project.ipynb         extra_autodiff.ipynb
+03_classification.ipynb                              extra_capsnets-cn.ipynb
+04_training_linear_models.ipynb                      extra_capsnets.ipynb
+05_support_vector_machines.ipynb                     extra_gradient_descent_comparison.ipynb
+06_decision_trees.ipynb                              extra_tensorflow_reproducibility.ipynb
+07_ensemble_learning_and_random_forests.ipynb        future_encoders.py
+08_dimensionality_reduction.ipynb                    images/
+09_up_and_running_with_tensorflow.ipynb              index.ipynb
+10_introduction_to_artificial_neural_networks.ipynb  LICENSE
+11_deep_learning.ipynb                               math_linear_algebra.ipynb
+12_distributed_tensorflow.ipynb                      ml-project-checklist.md
+13_convolutional_neural_networks.ipynb               README.md
+14_recurrent_neural_networks.ipynb                   requirements.txt
+15_autoencoders.ipynb                                tensorflow_graph_in_jupyter.py
+16_reinforcement_learning.ipynb                      tools_matplotlib.ipynb
+book_equations.ipynb                                 tools_numpy.ipynb
+datasets/                                            tools_pandas.ipynb
+
+In [857]: housing=pd.read_csv("datasets/housing/housing.csv")
+
+In [872]: type(housing)
+Out[872]: pandas.core.frame.DataFrame
+In [871]: housing.shape
+Out[871]: (20640, 10)
+
+In [858]: housing.head()
+Out[858]: 
+   longitude  latitude       ...         median_house_value  ocean_proximity
+0    -122.23     37.88       ...                   452600.0         NEAR BAY
+1    -122.22     37.86       ...                   358500.0         NEAR BAY
+2    -122.24     37.85       ...                   352100.0         NEAR BAY
+3    -122.25     37.85       ...                   341300.0         NEAR BAY
+4    -122.25     37.85       ...                   342200.0         NEAR BAY
+
+/ je kunt tab ook in "..."	, ook in :
+
+In [860]: housing["ocean_proximity"].value_counts()
+Out[860]: 
+<1H OCEAN     9136
+INLAND        6551
+NEAR OCEAN    2658
+NEAR BAY      2290
+ISLAND           5
+Name: ocean_proximity, dtype: int64
+
+/ 1313	. 
+
+/ we zien met deze regel van elke numeric column of housing een hist	, 
+/ alleen van ocean_proximity, die een string is	, niet	, 
+
+In [862]:  housing.hist(bins=50,figsize=(20,15))
+
+/ we zien op (48) de hists	,
+
+/ 13	. 
+
+In [870]: def split_train_test(data,ratio):
+     ...:     idxs=np.random.permutation(len(data))
+     ...:     test_set_size=int(len(data)*ratio)
+     ...:     test_idxs=idxs[:test_set_size]
+     ...:     train_idxs=idxs[test_set_size:]
+     ...:     return data.iloc[train_idxs],data.iloc[test_idxs]
+     ...: 
+     ...: 
+/ we shuffle eerst	,en dan vlg de ratio kiezen we de train_set en test_set:
+
+/ Intermezzo
+
+In [867]: len(housing)
+Out[867]: 20640
+
+In [869]: np.random.permutation(10)
+Out[869]: array([8, 4, 2, 1, 5, 7, 3, 0, 6, 9])
+
+/ 1313	. 
+
+/ create small df	,
+
+In [879]: ser1=pd.Series(np.random.randint(0,10,size=10))
+/ of	,
+In [879]: ser1=pd.Series(np.random.randint(0,10,10))
+In [880]: ser1
+Out[880]: 
+0    2
+1    1
+2    2
+3    3
+4    5
+5    8
+6    2
+7    3
+8    3
+9    3
+dtype: int64
+
+In [883]: ser2=pd.Series(np.random.randn(10))
+
+In [884]: ser2
+Out[884]: 
+0   -0.270085
+1    0.803046
+2    1.591045
+3   -0.857786
+4    0.769506
+5   -0.745735
+6    0.995354
+7   -0.251477
+8    1.132051
+9    1.082489
+dtype: float64
+
+In [885]: ser3=pd.Series(np.random.randint(0,10,10))
+
+In [886]: ser4=pd.Series(np.random.randn(10))
+
+In [889]: df=pd.DataFrame({'ser1':ser1,'ser2':ser2,'ser3':ser3,'ser4':ser4})
+/ vergeet {...} niet	,
+
+In [890]: train_set,test_set=split_train_test(df,.2)
+
+In [891]: train_set
+Out[891]: 
+   ser1      ser2  ser3      ser4
+7     3 -0.251477     5 -0.050440
+1     5  0.803046     4  1.516699
+2     6  1.591045     8 -1.273329
+9     1  1.082489     4 -0.051692
+8     7  1.132051     5  0.483305
+5     7 -0.745735     7 -0.667048
+0     0 -0.270085     3 -0.192250
+4     0  0.769506     5 -0.447267
+
+In [892]: test_set
+Out[892]: 
+   ser1      ser2  ser3      ser4
+3     5 -0.857786     8 -0.869948
+6     6  0.995354     9 -0.128427
+
+/ Einde Intermezzo
+
+In [894]:  train_set,test_set=split_train_test(housing,.2)
+
+In [895]: len(train_set)
+Out[895]: 16512
+
+In [896]: len(test_set)
+Out[896]: 4128
+
+/ 13	.
+
+/ sklearn heeft ook zo'n fct	,
+
+In [898]: train_set,test_set=train_test_split(housing,test_size=.2,random_state=42)
+
+In [899]: len(train_set)
+Out[899]: 16512
+
+In [900]: len(test_set)
+Out[900]: 4128
+
+/ 13	. 
+
+/ /1.5 en naar boven afronden	op int	, 
+/ nieuwe column	,
+In [905]: housing['income_cat']=np.ceil(housing['median_income']/1.5)
+In [906]: housing['income_cat'].head()
+Out[906]: 
+0    6.0
+1    6.0
+2    5.0
+3    4.0
+4    3.0
+Name: income_cat, dtype: float64
+
+In [915]: housing.shape
+Out[915]: (20640, 11)
+
+
+In [907]: housing['income_cat'].where(housing['income_cat']<5,5.0,inplace=True)
+/=
+In [907]: housing['income_cat'].where(housing['income_cat']<5,other=5.0,inplace=True)
+
+In [908]: housing['income_cat'].head()
+Out[908]: 
+0    5.0
+1    5.0
+2    5.0
+3    4.0
+4    3.0
+Name: income_cat, dtype: float64
+
+/ 13	. 
+
+In [913]: from sklearn.model_selection import StratifiedShuffleSplit
+split=StratifiedShuffleSplit(n_splits=1,test_size=.2,random_state=42)
+
+In [919]: for training_idx,test_idx in split.split(housing,housing['income_cat']):
+          	strat_train_set=housing.loc[training_idx]
+          	strat_test_set=housing.loc[test_idx]
+
+/////////////////////////////////
+/ het 2de arg van .split is de category waarvan je de verhouding wilt bewaren	, dus strat_train_set en strat_test_set hebben dezelfde verhouding van income_cat als housing	,
+          
+In [920]: strat_train_set.shape
+Out[920]: (16512, 11)
+
+In [921]: strat_test_set.shape
+Out[921]: (4128, 11)
+
+In [922]: train_set.shape
+Out[922]: (16512, 10)
+
+In [923]: test_set.shape
+Out[923]: (4128, 10)
+
+/ 13	.
+
+////////////////////////////////////
+
+/ stratified betekent:
+/ de strat_training_set en de strat_test_set hebben dezelfde verhouding van income_cat als housing:
+
+In [1059]: housing['income_cat'].value_counts()/len(housing)
+Out[1059]: 
+3.0    0.350581
+2.0    0.318847
+4.0    0.176308
+5.0    0.114438
+1.0    0.039826
+Name: income_cat, dtype: float64
+
+In [1060]: strat_train_set['income_cat'].value_counts()/len(strat_train_set)
+Out[1060]: 
+3.0    0.350594
+2.0    0.318859
+4.0    0.176296
+5.0    0.114402
+1.0    0.039850
+Name: income_cat, dtype: float64
+
+In [1061]: strat_test_set['income_cat'].value_counts()/len(strat_test_set)
+Out[1061]: 
+3.0    0.350533
+2.0    0.318798
+4.0    0.176357
+5.0    0.114583
+1.0    0.039729
+Name: income_cat, dtype: float64
+
+/////////////////////////////////////////
+
+In [1062]: for set_ in (strat_train_set,strat_test_set):
+      ...:     set_.drop('income_cat',axis=1,inplace=True)
+      ...:     
+
+In [1063]: strat_train_set.shape
+Out[1063]: (16512, 10)
+
+/ inplace=True zorgt ervoor dat de kolom er afgaat	,
+/ anders blijft data2 onveranderd, en krijgen we een copy terug, zonder column 17	,
+/ misschien wordt data2=copy bij inplace=True
+
+
+/ 13	. 
+
+/ (53)
+
+In [1064]: housing_t=strat_train_set.copy()
+
+In [1066]: housing_t.plot(kind='scatter',x='longitude',y='latitude',alpha=.1)
+/ OK	,
+
+In [1068]: housing_t.plot(kind='scatter',x='longitude',y='latitude',alpha=.4,s=housing_t['populatio
+      ...: n']/100,label='population',figsize=(10,7),c='median_house_value',cmap=plt.get_cmap('jet'
+      ...: ),colorbar=True,)
+
+/ lees over ,
+https://www.investopedia.com/terms/c/correlationcoefficient.asp
+https://en.wikipedia.org/wiki/Pearson_correlation_coefficient
+https://en.wikipedia.org/wiki/Coefficient_of_determination
+
+/ 13	. 
+
+/ we hebben een strat_train_set en strat_test_set	,
+/ entries uit housing zitten in de een of in de ander	,
+
+/ let op: 1 en 2 hier zijn explicite indexes	, 
+
+In [1100]: strat_train_set['longitude'][1]
+Out[1100]: -122.22
+In [1101]: strat_train_set['longitude'][2]
+KeyError: 2
+
+/ housing_t = strat_train_set, zonder de income_cat kolom	,
+
+/ let op: 1 en 2 hier zijn explicite indexes	, 
+
+In [1106]: housing_t['longitude'][1]
+Out[1106]: -122.22
+In [1106]: housing_t['longitude'][2]
+KeyError: 2
+
+/ misschien iets duidelijkere explicit indexes	,
+
+In [1227]:  strat_train_set.loc[10274]
+Out[1227]: 
+longitude               -117.88
+latitude                  33.85
+housing_median_age           18
+total_rooms                2705
+total_bedrooms              713
+population                 2726
+households                  674
+median_income            2.7759
+median_house_value       200000
+ocean_proximity       <1H OCEAN
+Name: 10274, dtype: object
+
+In [1228]:  strat_train_set.loc[10273]
+/ ERR	,
+In [1229]:  strat_test_set.loc[10273]
+Out[1229]: 
+longitude               -117.86
+latitude                  33.87
+housing_median_age           19
+total_rooms                1591
+total_bedrooms              279
+population                  891
+households                  237
+median_income            5.6573
+median_house_value       216000
+ocean_proximity       <1H OCEAN
+Name: 10273, dtype: object
+
+In [1231]: housing_t['longitude'][10274]
+Out[1231]: -117.88
+
+In [1232]: housing_t.loc[10274,'longitude']
+Out[1232]: -117.88
+
+
+/ 13	. 
+ 
+In [1197]: plt.hist(housing_t['median_house_value'])
+/=
+In [1236]: scatter_matrix(housing_t[['median_house_value']]) 
+/ freqs	,
+/ in beide gevallen staat langs de verticale as staat ook 'median_house_value'	, misleidend	,
+
+In [1238]: scatter_matrix(housing_t[['median_house_value','median_income' ]]) 
+/ we zien het verband tussen 'median_house_value' en 'median_income'
+/ het verband tussen 'median_house_value' en zichzelf is de freq hist van 'median_house_value' 	, ipv. de identiteit	,
+
+/ 13	. 
+
+/ (45) Each row represents one district	,
+
+In [1240]: housing_t['households']
+Out[1240]: 
+10275     509.0
+20601      88.0
+20138     257.0
+18028     238.0
+...
+/ WH aantal huishoudens in het district	,
+
+In [1241]: housing_t['rooms_per_household']=housing_t['total_rooms']/ housing_t['households']
+
+In [1242]: housing_t['bedrooms_per_room']=housing_t['total_bedrooms']/ housing_t['total_rooms']
+
+In [1243]: housing_t['population_per_household']=housing_t['population']/ housing_t['households']
+
+In [1245]: corr_m.index
+Out[1245]: 
+Index(['longitude', 'latitude', 'housing_median_age', 'total_rooms',
+       'total_bedrooms', 'population', 'households', 'median_income',
+       'median_house_value', 'rooms_per_household', 'bedrooms_per_room',
+       'population_per_household'],
+      dtype='object')
+
+In [1246]: corr_m.columns
+Out[1246]: 
+Index(['longitude', 'latitude', 'housing_median_age', 'total_rooms',
+       'total_bedrooms', 'population', 'households', 'median_income',
+       'median_house_value', 'rooms_per_household', 'bedrooms_per_room',
+       'population_per_household'],
+      dtype='object')
+
+In [1247]: corr_m['median_house_value'].sort_values(ascending=False)
+Out[1247]: 
+median_house_value          1.000000
+median_income               0.688883
+rooms_per_household         0.157620
+total_rooms                 0.137469
+housing_median_age          0.107144
+households                  0.069177
+total_bedrooms              0.053544
+population                 -0.023797
+population_per_household   -0.026888
+longitude                  -0.043236
+latitude                   -0.145570
+bedrooms_per_room          -0.255870
+Name: median_house_value, dtype: float64
+
+/ (60)
+
+In [1261]: housing_t=strat_train_set.drop('median_house_value',axis=1)
+In [1261]: housing_l=strat_train_set['median_house_value'].copy()     
+
+/ Dit moeten we NIET doen, maakt alle entries NaN
+In [1269]: housing_t['total_bedrooms']=np.NaN                         
+
+In [1299]: housing_t['total_bedrooms'].isnull().head()
+Out[1299]: 
+10275    False
+20601    False
+20138    False
+18028    False
+16289    False
+Name: total_bedrooms, dtype: bool
+
+In [1300]: housing_t[housing_t['total_bedrooms'].isnull()].head()
+Out[1300]: 
+       longitude  latitude       ...         median_income  ocean_proximity
+13069    -121.30     38.58       ...                2.6471           INLAND
+2028     -119.75     36.71       ...                1.4577           INLAND
+13311    -117.61     34.08       ...                4.7147           INLAND
+6590     -118.18     34.19       ...               15.0001        <1H OCEAN
+17825    -121.88     37.40       ...                5.3400        <1H OCEAN
+
+[5 rows x 9 columns]
+
+/ let op de (...),
+In [1302]: (housing_t[housing_t['total_bedrooms'].isnull()])['total_bedrooms'].head()
+Out[1302]: 
+13069   NaN
+2028    NaN
+13311   NaN
+6590    NaN
+17825   NaN
+Name: total_bedrooms, dtype: float64
+
+/ 13	. 
+
+/ (61)
+
+In [1309]: len(housing_t)
+Out[1309]: 16512
+In [1308]: len(housing_t[housing_t['total_bedrooms'].isnull()])
+/=
+In [1313]: len(housing_t['total_bedrooms'].isna())
+Out[1308]: 168
+
+/ let op	, dit is een Series met True en False	,
+In [1310]: len(housing_t['total_bedrooms'].isnull())
+Out[1310]: 16512
+
+In [1317]: len(housing_t[housing_t['total_bedrooms'].notnull()])
+/=
+In [1318]: len(housing_t[housing_t['total_bedrooms'].notna()])
+Out[1317]: 16344
+
+/ de 3 mog	,
+
+In [1322]: len(housing_t.dropna(subset=['total_bedrooms']))
+Out[1322]: 16344
+/ housing_t zelf is onveranderd	,
+
+In [1323]: housing_t.drop('total_bedrooms',axis=1).columns
+Out[1323]: 
+Index(['longitude', 'latitude', 'housing_median_age', 'total_rooms',
+       'population', 'households', 'median_income', 'ocean_proximity'],
+      dtype='object')
+
+In [1332]: m=housing_t['total_bedrooms'].median()
+In [1333]: m
+Out[1333]: 436.0
+In [1331]: (housing_t['total_bedrooms'])[housing_t['total_bedrooms'].fillna(m).isna()]
+Out[1331]: Series([], Name: total_bedrooms, dtype: float64)
+/ of	,
+In [1339]: len((housing_t['total_bedrooms'])[housing_t['total_bedrooms'].fillna(m)])
+Out[1339]: 16512
+/ net als	,
+In [1341]: len((housing_t['total_bedrooms'])[housing_t['total_bedrooms'].isna()])
+Out[1341]: 168
+
+/ nu gaan we inderdaad alle NaN vervangen door de median,
+In [1342]: housing_t['total_bedrooms'].fillna(m,inplace=True)
+/ check	,
+In [1343]: len((housing_t['total_bedrooms'])[housing_t['total_bedrooms'].isna()])
+Out[1343]: 0
+
+/ 13	.
+
+/ Imputer
+
+In [1344]: from sklearn.preprocessing import Imputer
+In [1346]: housing_n=housing_t.drop('ocean_proximity',axis=1)
+
+In [1352]:  imputer.fit(housing_n)
+Out[1352]: Imputer(axis=0, copy=True, missing_values='NaN', strategy='median', verbose=0)
+
+In [1353]: imputer.statistics_
+Out[1353]: 
+array([-118.49  ,   34.25  ,   29.    , 2128.5   ,  436.    , 1167.    ,
+        410.    ,    3.5341])
+/=
+In [1354]: housing_n.median().values
+Out[1354]: 
+array([-118.49  ,   34.25  ,   29.    , 2128.5   ,  436.    , 1167.    ,
+        410.    ,    3.5341])
+
+In [1360]: X=imputer.transform(housing_n)                    
+In [1360]: housing_n[housing_n['total_bedrooms'].isna()]
+Out[1360]: 
+Empty DataFrame
+Columns: [longitude, latitude, housing_median_age, total_rooms, total_bedrooms, population, households, median_income]
+Index: []
+
+/ check	,
+In [1359]: len(housing_t[housing_t['total_bedrooms'].isna()])
+Out[1359]: 168
+
+/ 1313	. 
+
+/ X is een numpy array	,
+
+In [1362]: type(housing_n)
+Out[1362]: pandas.core.frame.DataFrame
+In [1361]: type(X)
+Out[1361]: numpy.ndarray
+In [1363]: housing_tr=pd.DataFrame(X,columns=housing_n.columns)
+
+/ 13	 	,
+
+/ (62)
+
+/ Imputer(stratagy='median').fit berekent de median,	per column,
+/ .transform vult de median in de missing values in, per column	,
+
+/ 13	. 
+
+/ (63)
+
+
+In [1675]: from future_encoders import OrdinalEncoder  
+In [1675]: housing_c=housing_t[['ocean_proximity']]    
+In [1367]: housing_c_e=encoder.fit_transform(housing_c)
+
+
+/ Intermezzo
+
+In [1675]: housing_c=housing_t[['ocean_proximity']]    
+In [1683]: type(housing_c)
+Out[1683]: pandas.core.frame.DataFrame
+In [1684]: housing_c.shape
+Out[1684]: (16512, 1)
+In [1373]: type(housing_c_e)
+Out[1373]: numpy.ndarray
+In [1698]: housing_c_e.shape
+Out[1698]: (16512, 1)
+In [1701]: housing_c_e[:10]
+Out[1701]: 
+array([[0.],
+       [1.],
+       [0.],
+       [0.],
+       [1.],
+       [0.],
+       [4.],
+       [0.],
+       [4.],
+       [1.]])
+/ bij een np array a is a[:2] de 1ste 2 rijen	, en =a[:2,:]	, 
+/ a[:,:2] zijn de 1ste 2 columns, maar toont ze als rijen	,
+
+/ eerst deden we , voor LabelEncoder uit sklearn.preprocessing	,
+In [1675]: housing_c=housing_t['ocean_proximity']    
+In [1683]: type(housing_c)
+Out[1683]: pandas.core.series.Series
+In [1684]: housing_c.shape
+Out[1684]: (16512,)
+In [1373]: type(housing_c_e)
+Out[1373]: numpy.ndarray
+In [1698]: housing_c_e.shape
+Out[1698]: (16512,)
+In [1372]: housing_c_e[:10]
+Out[1372]: array([0, 1, 0, 0, 1, 0, 4, 0, 4, 1])
+
+
+/ Einde Intermezzo
+
+
+/ check,
+In [1376]: type(housing_c)
+Out[1376]: pandas.core.series.Series
+In [1375]: housing_c[:10]							/ implicit index	,
+Out[1375]: 
+10275     <1H OCEAN
+20601        INLAND
+20138     <1H OCEAN
+18028     <1H OCEAN
+16289        INLAND
+4622      <1H OCEAN
+15280    NEAR OCEAN
+17228     <1H OCEAN
+14268    NEAR OCEAN
+1229         INLAND
+Name: ocean_proximity, dtype: object
+
+In [1722]: encoder.categories_
+Out[1722]: 
+[array(['<1H OCEAN', 'INLAND', 'ISLAND', 'NEAR BAY', 'NEAR OCEAN'],
+       dtype=object)]
+/ Hier kun je WH zien dat <1h ocean 0 is	, en near ocean 4	,
+
+/ 1313	. 
+
+/ handig als je de len niet kent	,
+In [1388]: housing_c_e.reshape(-1,1)
+Out[1388]: 
+array([[0],
+       [1],
+       [0],
+       ...,
+       [0],
+       [0],
+       [0]])
+
+
+In [1725]: from future_encoders import OneHotEncoder
+In [1379]: encoder=OneHotEncoder()
+In [1384]: housing_c_1hot=encoder.fit_transform(housing_c)
+In [1389]: housing_c_1hot
+Out[1389]: 
+<16512x5 sparse matrix of type '<class 'numpy.float64'>'
+	with 16512 stored elements in Compressed Sparse Row format>
+In [1395]: type(housing_c_1hot.toarray())
+Out[1395]: numpy.ndarray
+In [1394]: housing_c_1hot.toarray()[:10]
+Out[1394]: 
+array([[1., 0., 0., 0., 0.],
+       [0., 1., 0., 0., 0.],
+       [1., 0., 0., 0., 0.],
+       [1., 0., 0., 0., 0.],
+       [0., 1., 0., 0., 0.],
+       [1., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 1.],
+       [1., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 1.],
+       [0., 1., 0., 0., 0.]])
+
+/ of meteen array	,
+
+In [1733]: encoder=OneHotEncoder(sparse=False)
+
+In [1734]: housing_c_1hot=encoder.fit_transform(housing_c)
+
+In [1735]: housing_c_1hot
+Out[1735]: 
+array([[1., 0., 0., 0., 0.],
+       [0., 1., 0., 0., 0.],
+       [1., 0., 0., 0., 0.],
+       ...,
+       [1., 0., 0., 0., 0.],
+       [1., 0., 0., 0., 0.],
+       [1., 0., 0., 0., 0.]])
+
+
+/ 1313	. 
+
+/ TO RM	,
+
+/ alt,
+
+/ LabelBinarizer ipv LabelEncoder & OneHotEncoder	,
+
+In [1396]: from sklearn.preprocessing import LabelBinarizer
+In [1397]: encoder=LabelBinarizer()
+In [1398]: housing_c_1hot2=encoder.fit_transform(housing_c)
+
+In [1401]: type(housing_c_1hot2)
+Out[1401]: numpy.ndarray
+/ dus .head() kan niet	,
+In [1400]: housing_c_1hot2[:5]
+Out[1400]: 
+array([[1, 0, 0, 0, 0],
+       [0, 1, 0, 0, 0],
+       [1, 0, 0, 0, 0],
+       [1, 0, 0, 0, 0],
+       [0, 1, 0, 0, 0]])
+
+/ als je een scipy sparse matrix wilt,
+In [1402]: encoder=LabelBinarizer(sparse_output=True)
+In [1403]: housing_c_1hot2=encoder.fit_transform(housing_c)
+In [1404]: type(housing_c_1hot2)
+Out[1404]: scipy.sparse.csr.csr_matrix
+
+/ Einde TO RM
+
+/ 13	. 
+
+/ in CombinedAttributesAdder staat X[:,rooms_ix]	,
+/ X=housing_t.values is een numpy array	,
+
+rooms_ix,bedrooms_ix,population_ix,household_ix=3,4,5,6 betekent:
+rooms_ix=3, bedrooms_ix=4, ...
+
+/ 1 voor 1 op mekaar delen:
+In [1434]: housing_t.values[:,3]/ housing_t.values[:,6]
+Out[1434]: 
+array([4.50294695481336, 5.0227272727272725, 4.809338521400778, ...,
+       4.938356164383562, 5.172881355932203, 2.9446460980036298],
+      dtype=object)
+
+
+/ Intermezzo
+
+/ we hadden dat verkeerd opgevat, maar dit kan ook:
+In [1425]: type(housing_t.values)
+Out[1425]: numpy.ndarray
+In [1427]: housing_t.values[:,(3,4,5,6)]
+Out[1427]: 
+array([[2292.0, 531.0, 2197.0, 509.0],
+       [442.0, 103.0, 413.0, 88.0],
+       [1236.0, 282.0, 1079.0, 257.0],
+       ...,
+       [1442.0, 285.0, 859.0, 292.0],
+       [3052.0, 587.0, 1373.0, 590.0],
+       [3245.0, 1190.0, 3906.0, 1102.0]], dtype=object)
+/ we zien 4 columns	,
+
+In [1426]: housing_t.columns
+Out[1426]: 
+Index(['longitude', 'latitude', 'housing_median_age', 'total_rooms',
+       'total_bedrooms', 'population', 'households', 'median_income',
+       'ocean_proximity'],
+      dtype='object')
+
+In [1432]: housing_t[['total_rooms','total_bedrooms','population','households']].head(5)
+Out[1432]: 
+       total_rooms  total_bedrooms  population  households
+10275       2292.0           531.0      2197.0       509.0
+20601        442.0           103.0       413.0        88.0
+20138       1236.0           282.0      1079.0       257.0
+18028       1484.0           244.0       664.0       238.0
+16289       3308.0           766.0      3201.0       720.0
+
+/ Einde Intermezzo
+
+/ 13	. 
+
+In [1436]: housing_n.columns
+Out[1436]: 
+Index(['longitude', 'latitude', 'housing_median_age', 'total_rooms',
+       'total_bedrooms', 'population', 'households', 'median_income'],
+      dtype='object')
+In [1446]: type(housing_n.columns)
+Out[1446]: pandas.core.indexes.base.Index
+
+In [1437]: list(housing_n)
+Out[1437]: 
+['longitude',
+ 'latitude',
+ 'housing_median_age',
+ 'total_rooms',
+ 'total_bedrooms',
+ 'population',
+ 'households',
+ 'median_income']
+In [1447]: type(list(housing_n))
+Out[1447]: list
+
+/ 13	. 
+
+
+/ (65)
+
+/ maken zelf een transformer, CombinedAttributesAdder, die een fit method die niets doen	, alleen transform	,
+
+In [1439]: from sklearn.base import BaseEstimator,TransformerMixin
+
+In [1440]: rooms_ix,bedrooms_ix,population_ix,household_ix=3,4,5,6
+
+In [1445]: class CombinedAttributesAdder(BaseEstimator,TransformerMixin):
+      ...:     def __init__(self,add_bedrooms_per_room=True):
+      ...:         self. add_bedrooms_per_room= add_bedrooms_per_room
+      ...:     def fit(self,X,y=None):
+      ...:         return self
+      ...:     def transform(self,X,y=None):
+      ...:         rooms_per_household=X[:,rooms_ix]/X[:,household_ix]
+      ...:         population_per_household=X[:,population_ix]/X[:,household_ix]
+      ...:         if self.add_bedrooms_per_room:
+      ...:             bedrooms_per_room=X[:,bedrooms_ix]/X[:,rooms_ix]
+      ...:             return np.c_[X,rooms_per_household,population_per_household,bedrooms_per_roo
+      ...: m]
+      ...:         else:
+      ...:              return np.c_[X,rooms_per_household,population_per_household]
+      ...:      
+
+In [1448]: attr_adder=CombinedAttributesAdder(add_bedrooms_per_room=False)
+In [1449]: housing_extra_attribs=attr_adder.transform(housing_t.values)
+In [1450]: housing_extra_attribs
+Out[1450]: 
+array([[-117.87, 33.86, 28.0, ..., '<1H OCEAN', 4.50294695481336,
+        4.31630648330059],
+       [-121.57, 39.13, 30.0, ..., 'INLAND', 5.0227272727272725,
+        4.693181818181818],
+       [-119.05, 34.4, 50.0, ..., '<1H OCEAN', 4.809338521400778,
+        4.198443579766537],
+       ...,
+       [-118.3, 34.25, 44.0, ..., '<1H OCEAN', 4.938356164383562,
+        2.941780821917808],
+       [-121.91, 37.31, 46.0, ..., '<1H OCEAN', 5.172881355932203,
+        2.3271186440677964],
+       [-118.3, 34.09, 29.0, ..., '<1H OCEAN', 2.9446460980036298,
+        3.544464609800363]], dtype=object)
+
+/ we zien na de cat column 'ocean proximity' 2 nieuwe columns,
+
+/ check,
+
+In [1452]: type(housing_extra_attribs)
+Out[1452]: numpy.ndarray
+In [1453]: housing_extra_attribs.shape
+Out[1453]: (16512, 11)
+
+In [1457]: type(housing_t)
+Out[1457]: pandas.core.frame.DataFrame
+/ heeft geen .shape property	,
+In [1454]: list(housing_t)
+Out[1454]: 
+['longitude',
+ 'latitude',
+ 'housing_median_age',
+ 'total_rooms',
+ 'total_bedrooms',
+ 'population',
+ 'households',
+ 'median_income',
+ 'ocean_proximity']
+In [1456]: len(list(housing_t))
+Out[1456]: 9
+
+/ Dus er zijn er 2 bijgekomen	,
+
+/ 13	. 
+
+In [1743]: list(housing_t.columns)+['rooms_per_household','population_per_household']
+Out[1743]: 
+['longitude',
+ 'latitude',
+ 'housing_median_age',
+ 'total_rooms',
+ 'total_bedrooms',
+ 'population',
+ 'households',
+ 'median_income',
+ 'ocean_proximity',
+ 'rooms_per_household',
+ 'population_per_household']
+/ een list	,
+
+In [1748]: housing_extra_attribs_df=pd.DataFrame(housing_extra_attribs,columns=list(housing_t.columns)+['rooms_per_household','population_per_household'])
+
+
+
+
+
+/ 13	.
+
+/ wat in het boek housing is, is bij ons housing_t	,
+
+/ 13	. 
+
+housing_t=strat_training_set	,
+housing_n=housing_t - cat column 'ocean proximity'	,
+housing_tr=housing_n als df	,
+housing_extra_attribs is met CombinedAttributesAdder	, maar straks maken we housing_n_tr, met pipeline, en CombinedAttributesAdder zit daar ook in,  
+
+
+
+
+/ 13	. 
+
+/ (66)
+
+/ maak voorlopige pipeline	,
+
+In [1460]: num_pipeline=Pipeline([('imputer',Imputer(strategy='median')),('attrs_adder',CombinedAtt
+      ...: ributesAdder()),('std_scaler',StandardScaler()),])
+
+In [1461]: housing_n_tr=num_pipeline.fit_transform(housing_n)
+
+/ Intermezzo
+
+/ check of er nan zijn in een numpy array	,
+
+In [1473]: a=np.array([1,np.nan,np.nan,3]).reshape(-1,2)
+
+In [1474]: a
+Out[1474]: 
+array([[ 1., nan],
+       [nan,  3.]])
+
+In [1475]: np.isnan(a)
+Out[1475]: 
+array([[False,  True],
+       [ True, False]])
+
+In [1476]: a[np.isnan(a)]
+Out[1476]: array([nan, nan])
+
+/ Einde Intermezzo
+
+/ check	,
+
+/ housing_n_tr is een numpy array	,
+
+/ er is geen NaN aanwezig	,
+In [1478]: housing_n_tr[np.isnan(housing_n_tr)]
+Out[1478]: array([], dtype=float64)
+
+/ er zijn 3 columns bij de numeric columns gekomen	,
+In [1485]: housing_n.shape
+Out[1485]: (16512, 8)
+In [1483]: housing_n_tr.shape
+Out[1483]: (16512, 11)
+
+In [1488]: from scipy import stats
+
+In [1489]: stats.describe(housing_n_tr)
+Out[1489]: 
+DescribeResult(nobs=16512, 
+
+minmax=(array([-2.38882062, -1.44226796, -2.19979892, -1.21353137, -1.28328644, -1.24881284, -1.30935998, -1.77325748, -1.90146056, -0.21815169, -2.60128946]), 
+				array([  2.54099722,   2.95997974,   1.86370231,  16.29972619, 14.17112788,  30.05377726,  14.67961106,   5.85593807, 56.66621216, 113.54238637,  25.55688534])), 
+
+mean=array([ 2.68669669e-15, -1.35496696e-15, -5.59414702e-18,  5.42739841e-17, 2.47433426e-18, -7.46603468e-17,  4.88412067e-17,  1.07579750e-19, 1.09301026e-16,  1.16589555e-17,  3.48773551e-16]), 
+variance=array([1.00006057, 1.00006057, 1.00006057, 1.00006057, 1.00006057, 1.00006057, 1.00006057, 1.00006057, 1.00006057, 1.00006057, 1.00006057]), 
+
+skewness=array([-3.02867417e-01,  4.73394341e-01,  5.97665716e-02,  4.11783932e+00, 3.49134330e+00,  5.31542962e+00,  3.43725828e+00,  1.66648079e+00, 1.83983385e+01,  9.90975780e+01,  3.92730861e+00]), 
+
+kurtosis=array([-1.32264374e+00, -1.11154703e+00, -7.92527525e-01,  3.17951661e+01,
+        2.24419379e+01,  8.53198128e+01,  2.28714211e+01,  5.11854257e+00,
+        7.47281247e+02,  1.06130117e+04,  5.01948243e+01]))
+
+In [1499]: len(stats.describe(housing_n_tr).mean)
+Out[1499]: 11
+/ klopt	,
+
+/ we zien per column een mean 0	, en var 1	,
+
+/ 1313	. 
+
+/ Intermezzo
+
+/ .describe geeft alles per column,	
+
+In [1490]: a=np.array([-2,3,4,-3]).reshape(-1,2)
+Out[1491]: 
+array([[-2,  3],
+       [ 4, -3]])
+
+In [1495]: stats.describe(a)
+Out[1495]: DescribeResult(nobs=2, minmax=(array([-2, -3]), array([4, 3])), mean=array([1., 0.]), variance=array([18., 18.]), skewness=array([0., 0.]), kurtosis=array([-2., -2.]))
+
+/ Einde Intermezzo
+
+/ 13	. 
+
+/ (67)
+
+/ Vanwege FeatureUnion moeten beide pipelines met DataFrameSelector beginnen	, 
+/ Met het alt ColumnTransformer ipv FeatureUnion hoeft dat niet meer	,
+/ het arg van de pipeline's .fit_transform is housing_t en dat is een DataFrame	, 
+
+In [1501]: class DataFrameSelector(BaseEstimator,TransformerMixin):
+      ...:     def __init__(self,attribute_names):
+      ...:         self.attribute_names=attribute_names
+      ...:     def fit(self,X,y=None):
+      ...:         return self
+      ...:     def transform(self,X):
+      ...:         return X[self.attribute_names].values
+      ...:     
+
+/ Intermezzo
+
+In [1505]: type(housing_t)
+Out[1505]: pandas.core.frame.DataFrame
+/ en aan een df kun je column names geven	,
+
+In [1506]: housing_t[['longitude','latitude']].head()
+Out[1506]: 
+       longitude  latitude
+10275    -117.87     33.86
+20601    -121.57     39.13
+20138    -119.05     34.40
+18028    -121.94     37.24
+16289    -121.30     37.92
+
+/ neem de list van columns van housing_n	, en geef die aan housing_t	, 
+
+In [1524]: housing_t[list(housing_n)]                                 
+
+/ maar dit is housing_n	,
+
+/ herinner	,
+In [1593]: housing_n=housing_t.drop('ocean_proximity',axis=1)   
+/ housing_tr is result van Imputer(strategy='median'), deze heeft geen nans meer in 'total_bedrooms' column	,
+
+In [1525]: housing_t[list(housing_n)]==housing_n
+/ zo te zien allemaal Trues	,
+/ maar dat is niet zo	,
+/ maar hoe check we dat?
+
+/ lees	,
+https://stackoverflow.com/questions/21448225/getting-indices-of-true-values-in-a-boolean-list
+
+/ we zien de verschillen in de 'total_bedrooms' column	,
+In [1529]: np.where(housing_t[list(housing_n)]!=housing_n)
+Out[1529]: 
+(array([   75,    94,   144,   395,   405,   434,   517,   533,   559,
+          601,   752,   845,  1066,  1283,  1286,  1428,  1564,  1611,
+         1775,  1798,  1834,  1914,  2042,  2076,  2160,  2206,  2422,
+         2527,  2818,  2962,  2994,  3069,  3212,  3258,  3347,  3379,
+         3453,  3460,  3475,  3680,  3738,  3828,  3878,  3950,  4007,
+         4105,  4126,  4190,  4337,  4359,  4376,  4450,  4487,  4588,
+         4701,  4912,  4930,  5004,  5079,  5153,  5342,  5355,  5381,
+         5413,  5522,  5554,  5635,  5715,  5933,  5954,  6174,  6195,
+         6247,  6292,  6346,  6396,  6409,  6499,  6574,  6912,  6914,
+         6970,  7253,  7382,  7460,  7518,  7817,  7903,  8007,  8264,
+         8327,  8418,  8613,  8690,  9502,  9658,  9769, 10139, 10257,
+        10281, 10352, 10355, 10472, 10760, 10933, 10964, 11006, 11022,
+        11092, 11185, 11317, 11366, 11377, 11457, 11616, 11873, 12132,
+        12146, 12314, 12349, 12491, 12534, 12558, 12844, 12850, 12916,
+        12935, 13155, 13193, 13229, 13323, 13513, 13522, 13552, 13595,
+        13614, 13651, 13663, 13683, 13967, 14127, 14273, 14288, 14313,
+        14336, 14402, 14415, 14467, 14668, 14669, 14807, 14857, 14920,
+        14921, 15033, 15121, 15204, 15664, 15757, 15841, 15932, 16168,
+        16294, 16297, 16320, 16321, 16365, 16501]),
+ array([4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+        4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+        4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+        4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+        4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+        4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+        4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+        4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]))
+
+In [1531]: housing_t['total_bedrooms'].isna()
+Out[1531]: 
+10275    False
+...
+5687     False
+20267     True
+7682     False
+...
+
+In [1604]: len(np.where(housing_n['total_bedrooms'].isna())[0])
+Out[1604]: 168
+In [1605]: len(np.where(housing_t['total_bedrooms'].isna())[0])
+Out[1605]: 168
+/ dit komt omdat nan != nan	,
+In [1607]: housing_t.iloc[75,4]
+Out[1607]: nan
+In [1608]: housing_n.iloc[75,4]
+Out[1608]: nan
+In [1609]: housing_t.iloc[75,4]==housing_t.iloc[75,4]
+Out[1609]: False
+/////////////////////////////////////////////////////////////////////////////////////////
+In [1622]: np.array_equal(np.where(housing_t.isna()),np.where(housing_n.isna()))
+Out[1622]: True
+In [1629]: np.array_equal(housing_t[housing_n.columns],housing_n)
+Out[1629]: False
+/ Dit loopt om dezelfde reden fout: nan!=nan	,
+/ het enigste wat we kunnen doen is de .isna()'s vergl, want die bestaan uit True en False, en die kun je wel met elkaar vergelijken	,
+In [1628]: np.setdiff1d(housing_t[housing_n.columns],housing_n)
+Out[1628]: 
+array([nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan,
+       nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan,
+       nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan,
+       nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan,
+       nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan,
+       nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan,
+       nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan,
+       nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan,
+       nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan,
+       nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan,
+       nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan,
+       nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan,
+       nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan])
+////////////////////////////////////////////////
+
+/ 1313	. 
+
+In [1616]: a=np.array([True,False,False,True]).reshape(-1,2)
+
+/ in numpy moet je bij axis=0 de collapsing axis	,dus kijk je in de columns	,
+/ net andersom als bij pandas	,
+/ TODO
+
+
+In [1632]: a
+Out[1632]: 
+array([[ True, False],
+       [ True, False]])
+
+In [1633]: np.all(a)
+Out[1633]: False
+
+In [1634]: np.all(a,axis=1)
+Out[1634]: array([False, False])
+
+In [1635]: np.all(a,axis=0)
+Out[1635]: array([ True, False])
+
+In [1636]: np.any(a,axis=1)
+Out[1636]: array([ True,  True])
+
+/ 1313	 .
+
+/ in dezelfde stack overflow	,
+
+In [1545]: [i for i, x in enumerate(states) if x]
+Out[1545]: [4, 5, 7]
+/ TODO
+
+
+/ Einde Intermezzo
+
+/ 13	. 
+
+/ (66)
+
+/ als laatste hadden we dus	,
+
+/ maak voorlopige pipeline	,
+
+In [1460]: num_pipeline=Pipeline([('imputer',Imputer(strategy='median')),('attrs_adder',CombinedAtt
+      ...: ributesAdder()),('std_scaler',StandardScaler()),])
+
+In [1461]: housing_n_tr=num_pipeline.fit_transform(housing_n)
+
+/ nu de definitieve pipilines	,
+
+In [1637]: num_attribs=list(housing_n)
+In [1638]: cat_attribs=['ocean_proximity']
+
+/ Vanwege FeatureUnion moeten beide pipelines met DataFrameSelector beginnen	, 
+/ Met het alt ColumnTransformer ipv FeatureUnion hoeft dat niet meer	,
+/ het arg van de pipeline's .fit_transform is housing_t en dat is een DataFrame	, 
+
+In [1640]: num_pipeline=Pipeline([('selector',DataFrameSelector(num_attribs)),('imputer',Imputer(strategy='median')),('attrs_adder',CombinedAttributesAdder()),('std_scaler',StandardScaler()),])
+
+n [1750]: cat_pipeline=Pipeline([('selector',DataFrameSelector(cat_attribs)),('cat_encoder',OneHotEncoder(sparse=False))])
+
+In [1642]: from sklearn.pipeline import FeatureUnion
+
+In [1643]: full_pipeline=FeatureUnion(transformer_list=[('num_pipeline',num_pipeline),('cat_pipeline',cat_pipeline),])
+
+In [1644]: housing_p=full_pipeline.fit_transform(housing_t)
+
+In [1753]: housing_p
+Out[1753]: 
+array([[ 0.84450121, -0.82473693, -0.04853356, ...,  0.        ,
+         0.        ,  0.        ],
+       [-1.00168564,  1.64070891,  0.11081943, ...,  0.        ,
+         0.        ,  0.        ],
+       [ 0.25571729, -0.5721106 ,  1.70434932, ...,  0.        ,
+         0.        ,  0.        ],
+       ...,
+       [ 0.62994436, -0.64228458,  1.22629035, ...,  0.        ,
+         0.        ,  0.        ],
+       [-1.17133524,  0.78926462,  1.38564334, ...,  0.        ,
+         0.        ,  0.        ],
+       [ 0.62994436, -0.71713683,  0.03114293, ...,  0.        ,
+         0.        ,  0.        ]])
+
+
+/ Intermezzo 
+
+/ lees	,
+
+eric@almond handson-ml]$ pwd
+/home/eric/Devel/python/geron/handson-ml
+$ jupyter notebook
+/ we zien in browser	,
+http://localhost:8888/notebooks/tree
+/ kies het notebook dat je wilt lezen	,
+http://localhost:8888/notebooks/02_end_to_end_machine_learning_project.ipynb
+
+/ 7	.
+
+/ alternatief	,
+
+/ 13	. 
+
+/ ipv CombinedAttributesAdder: FunctionTransformer	,
+
+In [1768]: from sklearn.preprocessing import FunctionTransformer
+In [1769]: help(FunctionTransformer)
+ |  Parameters
+ |  ----------
+ |  func : callable, optional default=None
+ |      The callable to use for the transformation. This will be passed
+ |      the same arguments as transform, with args and kwargs forwarded.
+ |      If func is None, then func will be the identity function.
+
+/ het 1ste arg van FunctionTransformer is zoals transform	,
+
+def add_extra_features(X, add_bedrooms_per_room=True):
+    rooms_per_household = X[:, rooms_ix] / X[:, household_ix]
+    population_per_household = X[:, population_ix] / X[:, household_ix]
+    if add_bedrooms_per_room:
+        bedrooms_per_room = X[:, bedrooms_ix] / X[:, rooms_ix]
+        return np.c_[X, rooms_per_household, population_per_household,
+                     bedrooms_per_room]
+    else:
+        return np.c_[X, rooms_per_household, population_per_household]
+
+In [1773]: attr_adder_alt = FunctionTransformer(add_extra_features, validate=False,
+      ...:                                  kw_args={"add_bedrooms_per_room": False})
+      ...:       
+
+In [1774]: housing_extra_attribs_alt = attr_adder_alt.fit_transform(housing_t.values)
+
+In [1775]: housing_extra_attribs_alt
+Out[1775]: 
+array([[-117.87, 33.86, 28.0, ..., '<1H OCEAN', 4.50294695481336,
+        4.31630648330059],
+       [-121.57, 39.13, 30.0, ..., 'INLAND', 5.0227272727272725,
+        4.693181818181818],
+       [-119.05, 34.4, 50.0, ..., '<1H OCEAN', 4.809338521400778,
+        4.198443579766537],
+       ...,
+       [-118.3, 34.25, 44.0, ..., '<1H OCEAN', 4.938356164383562,
+        2.941780821917808],
+       [-121.91, 37.31, 46.0, ..., '<1H OCEAN', 5.172881355932203,
+        2.3271186440677964],
+       [-118.3, 34.09, 29.0, ..., '<1H OCEAN', 2.9446460980036298,
+        3.544464609800363]], dtype=object)
+
+In [1776]: housing_extra_attribs_alt = pd.DataFrame(
+      ...:     housing_extra_attribs_alt,
+      ...:     columns=list(housing_t.columns)+["rooms_per_household", "population_per_household"])
+      ...:  
+
+In [1777]: housing_extra_attribs_alt.head()
+Out[1777]: 
+  longitude latitude           ...            rooms_per_household population_per_household
+0   -117.87    33.86           ...                        4.50295                  4.31631
+1   -121.57    39.13           ...                        5.02273                  4.69318
+2   -119.05     34.4           ...                        4.80934                  4.19844
+3   -121.94    37.24           ...                        6.23529                  2.78992
+4    -121.3    37.92           ...                        4.59444                  4.44583
+
+[5 rows x 11 columns]
+
+/ FunctionTransformer doet niets met de cat column 'ocean_proximity'	, dus we kunnen deze toepassen op heel housing_t	, en het result heeft 9+2=11 columns	, (want de default is False, dus er komt geen 3de kolom bij)
+
+/ 13	. 
+
+/ num pipeline	,
+
+In [1782]: num_pipeline_alt = Pipeline([
+      ...:         ('imputer', Imputer(strategy="median")),
+      ...:         ('attribs_adder', FunctionTransformer(add_extra_features, validate=False)),
+      ...:         ('std_scaler', StandardScaler()),
+      ...:     ])
+
+/ we hebben hier itt hierboven bij de oef housing_extra_attribs_alt niet  
+      ...:                                  kw_args={"add_bedrooms_per_room": False})
+/ dus er komen 3 columns bij	,
+
+/ de Imputer kan alleen op housing_n	, FunctionTransformer kan op housing_t	, want die gebruikt de cat column niet	, dus deze pipeline kan alleen op housing_n	,
+
+/ dus in totaal 8+3=11 columns,	
+
+/ 13	. 
+
+/ alleen resultaat van num	,
+
+In [1783]: housing_num_tr_alt = num_pipeline_alt.fit_transform(housing_n)
+In [1784]: housing_num_tr_alt
+Out[1784]: 
+array([[ 0.84450121, -0.82473693, -0.04853356, ..., -0.38320306,
+         0.11361593,  0.28225234],
+       [-1.00168564,  1.64070891,  0.11081943, ..., -0.16739639,
+         0.14811788,  0.30367359],
+       [ 0.25571729, -0.5721106 ,  1.70434932, ..., -0.25599289,
+         0.10282589,  0.22665626],
+       ...,
+       [ 0.62994436, -0.64228458,  1.22629035, ..., -0.20242628,
+        -0.0122183 , -0.25527205],
+       [-1.17133524,  0.78926462,  1.38564334, ..., -0.10505418,
+        -0.06848902, -0.33912717],
+       [ 0.62994436, -0.71713683,  0.03114293, ..., -1.03019125,
+         0.04295583,  2.41512989]])
+
+In [1846]: housing_num_tr_alt.shape
+Out[1846]: (16512, 11)
+
+/ 13	. 
+
+/ de OneHotEncoder geeft 5 columns,	 see boven	,
+/ hij pakt de cat input column, en geeft 5 columns terug	, dus in het antwoord zit de input cat column niet	,
+/ dus de full_pipeline(_alt) geeft 11+5=16 columns,	
+
+/ want nogmaals: housing_t heeft er 9	, waarvan er 8 numeric,	daar komen er 3 bij	, de cat column geeft 5 columns,	
+
+/ 13	. 
+
+/ met ColumnTransformer ipv FeatureUnion hoeven we niet meer een DataFrameSelector te maken die de columns uit de df haalt: het arg housing_t van .fit_transform hier vlak onder , is een DataFrame	,
+/ de DataFrameSelector moest in de num pipeline en in de cat pipeline als 1ste 	,
+
+In [1789]: full_pipeline_alt = ColumnTransformer([
+      ...:         ("num", num_pipeline_alt, num_attribs),
+      ...:         ("cat", OneHotEncoder(), cat_attribs),
+      ...:     ])
+      ...:     
+
+/ je geeft de columns op waarop de pipeline werkt, 
+      ...:         ("num", num_pipeline_alt, num_attribs),
+/ dus de num pipeline werkt alleen op de num_attribs	, dat zijn de columns behalve de cat column	,
+
+In [1790]: housing_p_alt = full_pipeline_alt.fit_transform(housing_t)
+
+In [1791]: housing_p_alt
+Out[1791]: 
+array([[ 0.84450121, -0.82473693, -0.04853356, ...,  0.        ,
+         0.        ,  0.        ],
+       [-1.00168564,  1.64070891,  0.11081943, ...,  0.        ,
+         0.        ,  0.        ],
+       [ 0.25571729, -0.5721106 ,  1.70434932, ...,  0.        ,
+         0.        ,  0.        ],
+       ...,
+       [ 0.62994436, -0.64228458,  1.22629035, ...,  0.        ,
+         0.        ,  0.        ],
+       [-1.17133524,  0.78926462,  1.38564334, ...,  0.        ,
+         0.        ,  0.        ],
+       [ 0.62994436, -0.71713683,  0.03114293, ...,  0.        ,
+         0.        ,  0.        ]])
+
+In [1842]: housing_p_alt.shape
+Out[1842]: (16512, 16)
+
+/ 7	. 
+
+/ (69)
+
+/ Herinnner	, de targets, de labels: 
+In [1261]: housing_l=strat_train_set['median_house_value'].copy()     
+
+In [1795]: lin_reg.fit(housing_p_alt,housing_l)
+Out[1795]: LinearRegression(copy_X=True, fit_intercept=True, n_jobs=1, normalize=False)
+
+In [1829]: some_data=housing_t.iloc[:5]
+
+In [1830]: some_data
+Out[1830]: 
+       longitude  latitude       ...         median_income  ocean_proximity
+10275    -117.87     33.86       ...                3.4856        <1H OCEAN
+20601    -121.57     39.13       ...                1.5694           INLAND
+20138    -119.05     34.40       ...                2.6991        <1H OCEAN
+18028    -121.94     37.24       ...                4.6750        <1H OCEAN
+16289    -121.30     37.92       ...                1.7694           INLAND
+[5 rows x 9 columns]
+
+In [1831]: some_labels=housing_l.iloc[:5]
+
+In [1832]: some_labels
+Out[1832]: 
+10275    142800.0
+20601     57900.0
+20138    181300.0
+18028    245300.0
+16289     73900.0
+Name: median_house_value, dtype: float64
+
+In [1833]: some_data_p=full_pipeline_alt.transform(some_data)
+
+In [1834]: some_data_p
+Out[1834]: 
+array([[ 0.84450121, -0.82473693, -0.04853356, -0.15631878, -0.01220643,
+         0.67606966,  0.02634094, -0.20234886, -0.38320306,  0.11361593,
+         0.28225234,  1.        ,  0.        ,  0.        ,  0.        ,
+         0.        ],
+       [-1.00168564,  1.64070891,  0.11081943, -1.01039882, -1.03866349,
+        -0.88910371, -1.08060805, -1.2105463 , -0.16739639,  0.14811788,
+         0.30367359,  0.        ,  1.        ,  0.        ,  0.        ,
+         0.        ],
+       [ 0.25571729, -0.5721106 ,  1.70434932, -0.6438369 , -0.60937421,
+        -0.30479572, -0.63625086, -0.61616124, -0.25599289,  0.10282589,
+         0.22665626,  1.        ,  0.        ,  0.        ,  0.        ,
+         0.        ],
+       [-1.18630432,  0.75651676,  0.5092019 , -0.52934401, -0.70050824,
+        -0.66889154, -0.68620818,  0.423447  ,  0.33604711, -0.02612113,
+        -0.77997873,  1.        ,  0.        ,  0.        ,  0.        ,
+         0.        ],
+       [-0.8669639 ,  1.0746388 , -0.04853356,  0.31273275,  0.55138565,
+         1.55691835,  0.5811301 , -1.10531747, -0.34521438,  0.12547378,
+         0.28042752,  0.        ,  1.        ,  0.        ,  0.        ,
+         0.        ]])
+
+In [1835]: some_data_p.shape
+Out[1835]: (5, 16)
+
+/ Intermezzo
+
+/ full_pipeline_alt.transform of .fit_transform?
+
+In [1857]: some_data_p=full_pipeline_alt.transform(some_data)
+
+In [1858]: some_data_p2=full_pipeline_alt.fit_transform(some_data)
+
+In [1859]: some_data_p==some_data_p2
+Out[1859]: 
+array([[ True,  True,  True,  True,  True,  True,  True,  True,  True,
+         True,  True,  True,  True],
+       [ True,  True,  True,  True,  True,  True,  True,  True,  True,
+         True,  True,  True,  True],
+       [ True,  True,  True,  True,  True,  True,  True,  True,  True,
+         True,  True,  True,  True],
+       [ True,  True,  True,  True,  True,  True,  True,  True,  True,
+         True,  True,  True,  True],
+       [ True,  True,  True,  True,  True,  True,  True,  True,  True,
+         True,  True,  True,  True]])
+
+
+/ Einde Intermezzo
+
+/ herinner	,
+In [1904]:  encoder
+Out[1904]: 
+OneHotEncoder(categories='auto', dtype=<class 'numpy.float64'>,
+       handle_unknown='error', sparse=False)
+In [1905]: encoder.categories_
+Out[1905]: 
+[array(['<1H OCEAN', 'INLAND', 'ISLAND', 'NEAR BAY', 'NEAR OCEAN'],
+       dtype=object)]
+
+/ Intermezzo
+
+/ 13	. 
+
+////////////////////////////////////////////////////////////////////////////
+/ we moeten doen: .transform en niet .fit_transform op de pipeline	,
+
+/ met .tranform geeft OneHotEncoder altijd 5 columns, waarvan er 1 een 1	,
+/ met .fit_tranform geeft OneHotEncoder altijd het aantal columns dat nodig is om die gevallen te encode	,
+
+In [1986]: housing_t[:7]
+Out[1986]: 
+       longitude  latitude       ...         median_income  ocean_proximity
+10275    -117.87     33.86       ...                3.4856        <1H OCEAN
+20601    -121.57     39.13       ...                1.5694           INLAND
+20138    -119.05     34.40       ...                2.6991        <1H OCEAN
+18028    -121.94     37.24       ...                4.6750        <1H OCEAN
+16289    -121.30     37.92       ...                1.7694           INLAND
+4622     -118.32     34.07       ...               11.2185        <1H OCEAN
+15280    -117.30     33.06       ...                3.1940       NEAR OCEAN
+
+/ we zien 3 mog	, dus geeft OneHotEncoder 3 columns:
+
+In [1987]: some_data=housing_t[:7]
+In [1988]: some_data_p=full_pipeline_alt.fit_transform(some_data)
+In [1989]: some_data_p.shape
+Out[1989]: (7, 14)
+/ housing_t heeft 9 columns, de 8 num columns komen er 3 bij: 11	, 
+/ de cat column -> 3 columns, dus 14	, 
+
+/ 13	.
+
+/ google,
+dataframe where column equals
+/ lees	,
+https://stackoverflow.com/questions/17071871/select-rows-from-a-dataframe-based-on-values-in-a-column-in-pandas
+
+/ je kunt	met True/False,
+
+mask = df['A'] == 'foo'
+df.loc[pos]
+/=
+df[pos]
+
+     A      B  C   D
+0  foo    one  0   0
+2  foo    two  2   4
+4  foo    two  4   8
+6  foo    one  6  12
+7  foo  three  7  14
+
+/ of met implicit indexes	,
+
+mask = df['A'] == 'foo'
+pos = np.flatnonzero(mask)
+df.iloc[pos]
+
+     A      B  C   D
+0  foo    one  0   0
+2  foo    two  2   4
+4  foo    two  4   8
+6  foo    one  6  12
+7  foo  three  7  14
+
+/ we passen toe	,
+
+In [1944]: b=housing_t['ocean_proximity']=='ISLAND'
+In [1944]: b
+Out[1944]: 
+10275    False
+20601    False
+...
+/ een ser	,
+
+In [1948]: i=np.flatnonzero(b)
+In [1949]: i
+Out[1949]: array([ 6597,  7693, 13008, 14779])
+
+In [1950]: housing_t[b]
+/=
+In [1951]: housing_t.loc[b]
+/=
+In [1952]: housing_t.iloc[i]
+Out[1952]: 
+      longitude  latitude       ...         median_income  ocean_proximity
+8317    -118.32     33.34       ...                2.7361           ISLAND
+8316    -118.32     33.33       ...                3.3906           ISLAND
+8315    -118.33     33.34       ...                2.8333           ISLAND
+8314    -118.32     33.35       ...                2.1579           ISLAND
+[4 rows x 9 columns]
+
+/ ilocs zijn non-inclusief, dus	,
+
+In [1956]: some_data=housing_t.iloc[:6597]
+In [1957]: some_data_p=full_pipeline_alt.fit_transform(some_data)
+In [1958]: some_data_p.shape
+Out[1958]: (6597, 15)
+
+In [1959]: some_data=housing_t.iloc[:6598]
+In [1960]: some_data_p=full_pipeline_alt.fit_transform(some_data)
+In [1961]: some_data_p.shape
+Out[1961]: (6598, 16)
+
+/ Einde Intermezzo
+
+/////////////////////////////////////////////////////////////////////////
+/ (69)
+
+/ als we een subset hebben moeten we .fit op de hele set	, en kunnen .transform op de subset	, en dan is prepared subset geschikt voor lin reg	, want die hebben we .fit met housing_p	(housing_t prepared)	,
+
+In [2033]: some_data=housing_t[:5]
+In [2039]: some_data
+Out[2039]: 
+       longitude  latitude       ...         median_income  ocean_proximity
+10275    -117.87     33.86       ...                3.4856        <1H OCEAN
+20601    -121.57     39.13       ...                1.5694           INLAND
+20138    -119.05     34.40       ...                2.6991        <1H OCEAN
+18028    -121.94     37.24       ...                4.6750        <1H OCEAN
+16289    -121.30     37.92       ...                1.7694           INLAND
+
+
+/ als we full_pipeline.transform willen doen op een subset van housing_t	, dan moeten we de full_pipeline wel .fit op de hele housing_t	, anders kent hij bepaalde values niet van de cat column 'ocean_proximity'	, en is het aantal columns van OneHotEncoder te klein	,
+
+In [2030]: full_pipeline_alt.fit(housing_t)
+In [2033]: some_data=housing_t[:5]                       
+In [2033]: some_data_p=full_pipeline_alt.transform(some_data)
+In [2034]: some_data_p.shape
+Out[2034]: (5, 16)
+
+/ we doen expres verkeerd: we .fit om some_data	, en doen daarna .transform op heel housing_t:  
+In [2037]: full_pipeline_alt.fit(some_data)      
+In [2037]: full_pipeline_alt.transform(housing_t)
+ValueError: Found unknown categories ['ISLAND' 'NEAR BAY' 'NEAR OCEAN'] in column 0 during transform
+/ Deze cats waren in some_data niet aanwezig	,
+
+/ we kunnen dus wel .fit_transform doen op some_data, maar dan is het aantal columns te klein voor lin_reg hieronder	,
+
+In [2037]: some_data_p=full_pipeline_alt.fit_transform(some_data)
+In [2038]: some_data_p.shape
+Out[2038]: (5, 13)
+
+/////////////////////////////////////////////////////////////////////////
+
+/ we doen dus uiteindelijk	,
+
+In [2030]: full_pipeline_alt.fit(housing_t)
+In [2033]: some_data=housing_t[:5]                       
+In [2033]: some_data_p=full_pipeline_alt.transform(some_data)
+In [2034]: some_data_p.shape
+Out[2034]: (5, 16)
+
+In [1965]: lin_reg=LinearRegression()
+In [1966]: lin_reg.fit(housing_p_alt,housing_l)
+Out[1966]: LinearRegression(copy_X=True, fit_intercept=True, n_jobs=1, normalize=False)
+In [2046]: lin_reg.predict(some_data_p)
+Out[2046]: 
+array([172713.58885788,  43130.16935351, 195014.22158132, 268919.62476372,
+        44875.4698183 ])
+
+In [2048]: list(some_labels)
+Out[2048]: [142800.0, 57900.0, 181300.0, 245300.0, 73900.0]
+
+/ dit was training op de hele data	, en voorspellingen/evaluaties  op 5 trainingsdata	,
+
+/ .fit= train	, = bepaal lin verband	,
+
+/ 13	. 
+
+/ .predict = evaluate	, in dit geval op de hele set	, dus lin_rmse is de minimale rmse die er is	, het de lin verband met de kleinste mse	,
+
+In [2049]: from sklearn.metrics import mean_squared_error
+In [2050]: housing_predictions=lin_reg.predict(housing_p_alt)
+In [2051]: lin_mse=mean_squared_error(housing_l,housing_predictions)
+In [2052]: lin_rmse=np.sqrt(lin_mse)
+In [2053]: lin_rmse
+Out[2053]: 68284.24083518104
+
+/ underfit	, grote mse	,
+
+/ 13	. 
+
+In [2054]: from sklearn.tree import DecisionTreeRegressor
+In [2055]: tree_reg=DecisionTreeRegressor()
+In [2056]: tree_reg.fit(housing_p_alt,housing_l)
+Out[2056]: 
+DecisionTreeRegressor(criterion='mse', max_depth=None, max_features=None,
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=None, splitter='best')
+
+/ evaluatie op hele training set!
+In [2058]: housing_predictions=tree_reg.predict(housing_p_alt)
+
+/ ter illustratie	,
+/ result	, vergl met targets	, voor de 1ste 10 results,
+In [2062]: type(housing_predictions)
+Out[2062]: numpy.ndarray
+In [2063]: housing_predictions[:10]
+Out[2063]: 
+array([142800.,  57900., 181300., 245300.,  73900., 500001., 276300.,
+       383100.,  86500., 100900.])
+In [2066]: type(housing_l[:10])
+Out[2066]: pandas.core.series.Series
+In [2067]: housing_l[:10].values
+Out[2067]: 
+array([142800.,  57900., 181300., 245300.,  73900., 500001., 276300.,
+       383100.,  86500., 100900.])
+
+In [2068]: tree_mse=mean_squared_error(housing_l,housing_predictions)
+In [2069]: tree_rmse=np.sqrt(tree_mse)
+In [2070]: tree_rmse
+Out[2070]: 0.0
+
+/ weer het beste verband, want je eval op de hele set	,heeft dit keer mse=0	,
+
+/ WH overfit	, mse=0	,
+
+/ 13	. 
+
+/ cross_val_score verdeelt housing_p_alt en housing_l in hieronder 10 subsets, uses 9 voor training en 1 voor evaluation	, en doet dat dus 10 keer	. 
+/ we krijgen een array terug met 10 antwoorden, dat zijn de mse op elk van de 10 subsets, waarbij steeds de andere 9 voor training worden used	,
+
+/ cross_val_score doet .fit op de 9 training folds, en .predict op de 1 eval fold	, en dat 10 keer	, 
+/ iedere fold heeft zo een mse
+
+In [2071]: from sklearn.model_selection import cross_val_score
+In [2073]: scores=cross_val_score(tree_reg,housing_p_alt,housing_l,scoring='neg_mean_squared_error',cv=10)
+In [2074]: tree_rmse_scores=np.sqrt(-scores)
+
+In [2080]: def display_scores(scores):
+      ...:     print('scores: ',scores)
+      ...:     print('mean: ',scores.mean())
+      ...:     print('std: ',scores.std())
+      ...:     
+
+
+/ de scores zelf	,
+In [2076]: scores
+Out[2076]: 
+array([-5.09000497e+09, -5.29680681e+09, -5.04787361e+09, -4.88928447e+09,
+       -4.98175878e+09, -4.87733391e+09, -5.36055603e+09, -5.42235038e+09,
+       -4.48328914e+09, -4.97861980e+09])
+In [2086]: scores.mean()
+Out[2086]: -5091090253.63534
+In [2087]: scores.std()
+Out[2087]: 275530095.84288913
+
+/ mse van de scores	per fold	, en hun gemiddelde en std	,
+In [2084]: display_scores(tree_rmse_scores)
+scores:  [72153.79129239 71722.44131158 71948.7212142  69876.67792209
+ 73089.35775227 69544.65784696 73935.18742514 72705.41251774
+ 66858.94622567 71415.22567314]
+mean:  71325.04191811835
+std:  1956.6933878355865
+
+/ dit is in alle 10 de gevallen slechter dan de lin reg (die op de hele housing_t	si	,TODO),
+In [2053]: lin_rmse
+Out[2053]: 68284.24083518104
+
+/ 13	. 
+
+/ we doen de mse op de 10 folds ook met lin reg	,
+
+In [2088]: lin_scores=cross_val_score(lin_reg,housing_p_alt,housing_l,scoring='neg_mean_squared_error',cv=10)
+/ let op lin_reg als 1ste arg	,
+
+In [2089]: lin_rmse_scores=np.sqrt(-lin_scores)
+
+In [2091]: display_scores(lin_rmse_scores)
+scores:  [68816.92050905 69919.6105217  66113.14067776 67981.42224765
+ 68715.57149727 69992.34941025 67163.97848562 70841.91062928
+ 66611.37068257 68651.01821515]
+mean:  68480.72928763038
+std:  1456.3942894476634
+/ we zien de 10 mse's	,
+/ van de Decision Tree was de mean mse = 71325.04191811835, en is dus meer als die van Lin reg	, dus Decision Tree is overfitting	,
+
+/ 13	. 
+
+/ 1313	. 
+
+/ train the model op de hele set	,
+
+In [2093]: forest_reg=RandomForestRegressor()
+In [2094]: forest_reg.fit(housing_p_alt,housing_l)
+Out[2094]: 
+RandomForestRegressor(bootstrap=True, criterion='mse', max_depth=None,
+           max_features='auto', max_leaf_nodes=None,
+           min_impurity_decrease=0.0, min_impurity_split=None,
+           min_samples_leaf=1, min_samples_split=2,
+           min_weight_fraction_leaf=0.0, n_estimators=10, n_jobs=1,
+           oob_score=False, random_state=None, verbose=0, warm_start=False)
+
+In [2095]: housing_predictions=forest_reg.predict(housing_p_alt)
+In [2096]: forest_mse=mean_squared_error(housing_l,housing_predictions)
+In [2100]: forest_mse=np.sqrt(forest_mse)
+In [2101]: forest_mse
+Out[2101]: 22484.989094859655
+
+In [2098]: type(housing_predictions)
+Out[2098]: numpy.ndarray
+In [2099]: len(housing_predictions)
+Out[2099]: 16512
+
+/ 1313	. 
+
+/ valideer op 10 folds, en train dan op de 9 andere folds, steeds	,
+
+In [2103]: forest_mse_scores=cross_val_score(forest_reg,housing_p_alt,housing_l,scoring='neg_mean_squared_error',cv=10)
+In [2104]: forest_rmse_scores=np.sqrt(-forest_mse_scores)
+In [2105]: display_scores(forest_rmse_scores)
+scores:  [50800.3997725  55981.81018528 50426.87994907 54272.38649747
+ 52884.43215223 50573.98632917 51295.18646939 54608.92718931
+ 53094.94179294 54208.75900318]
+mean:  52814.7709340545
+std:  1857.1563120403728
+/ over de 10 folds is de mean mse groter dan die van het geheel, de training set	, dus de model is overfitting de training set	,
+
+/ 13	. 
+
+/ (72)
+
+/ grid search
+
+In [2106]: from sklearn.model_selection import GridSearchCV
+
+In [2107]: param_grid=[{'n_estimators':[3,10,30],'max_features':[2,4,6,8]},
+      ...: {'bootstrap':[False],'n_estimators':[3,10],'max_features':[2,3,4]},]
+
+/ we zien 3*4+2*3=18 combinaties van parameters	, 
+
+In [2108]: forest_reg=RandomForestRegressor()
+
+In [2109]: grid_search=GridSearchCV(forest_reg,param_grid,cv=5,scoring='neg_mean_squared_error')
+
+/ we hebben 5 folds, dus 5 keer train (supervise) met 4 training subsets, en 1 predict met 1 subset	,
+/ dus 5*18=90 keer train (met 4 subsets)
+
+
+In [2110]: grid_search.fit(housing_p_alt,housing_l)
+Out[2110]: 
+GridSearchCV(cv=5, error_score='raise',
+       estimator=RandomForestRegressor(bootstrap=True, criterion='mse', max_depth=None,
+           max_features='auto', max_leaf_nodes=None,
+           min_impurity_decrease=0.0, min_impurity_split=None,
+           min_samples_leaf=1, min_samples_split=2,
+           min_weight_fraction_leaf=0.0, n_estimators=10, n_jobs=1,
+           oob_score=False, random_state=None, verbose=0, warm_start=False),
+       fit_params=None, iid=True, n_jobs=1,
+       param_grid=[{'n_estimators': [3, 10, 30], 'max_features': [2, 4, 6, 8]}, {'bootstrap': [False], 'n_estimators': [3, 10], 'max_features': [2, 3, 4]}],
+       pre_dispatch='2*n_jobs', refit=True, return_train_score='warn',
+       scoring='neg_mean_squared_error', verbose=0)
+
+/ Dit duurde een tijd	,
+
+In [2111]: grid_search.best_params_
+Out[2111]: {'max_features': 8, 'n_estimators': 30}
+
+In [2112]: grid_search.best_estimator_
+Out[2112]: 
+RandomForestRegressor(bootstrap=True, criterion='mse', max_depth=None,
+           max_features=8, max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           n_estimators=30, n_jobs=1, oob_score=False, random_state=None,
+           verbose=0, warm_start=False)
+
+n [2113]: cvres=grid_search.cv_results_
+
+In [2114]: cvres
+...
+ 'mean_test_score': array([-4.10782430e+09, -3.12439306e+09, -2.80843918e+09, -3.67686918e+09,
+        -2.84213633e+09, -2.57176999e+09, -3.57300293e+09, -2.76838607e+09,
+        -2.51724023e+09, -3.42325963e+09, -2.71257263e+09, -2.51432213e+09,
+        -4.05458286e+09, -2.91609786e+09, -3.52645318e+09, -2.76706136e+09,
+        -3.49718205e+09, -2.65456415e+09]),
+/ 18 combinaties van params, en die worden elk 5 keer trained en predicted	, en die 5 hebben een gemiddelde -mse, 
+
+In [2119]: for neg_mse,params in zip(cvres['mean_test_score'],cvres['params']):
+      ...:     print(np.sqrt(-neg_mse),params)
+      ...:     
+      ...:     
+64092.310781740365 {'max_features': 2, 'n_estimators': 3}
+55896.2705451708 {'max_features': 2, 'n_estimators': 10}
+52994.70896736824 {'max_features': 2, 'n_estimators': 30}
+60637.19302063633 {'max_features': 4, 'n_estimators': 3}
+53311.690387952716 {'max_features': 4, 'n_estimators': 10}
+50712.62164226172 {'max_features': 4, 'n_estimators': 30}
+59774.60104533629 {'max_features': 6, 'n_estimators': 3}
+52615.45466513347 {'max_features': 6, 'n_estimators': 10}
+50172.10611937599 {'max_features': 6, 'n_estimators': 30}
+58508.62863878732 {'max_features': 8, 'n_estimators': 3}
+52082.36394467496 {'max_features': 8, 'n_estimators': 10}
+50143.01672776454 {'max_features': 8, 'n_estimators': 30}												<-
+63675.606437957664 {'bootstrap': False, 'max_features': 2, 'n_estimators': 3}
+54000.90613058845 {'bootstrap': False, 'max_features': 2, 'n_estimators': 10}
+59383.94715723234 {'bootstrap': False, 'max_features': 3, 'n_estimators': 3}
+52602.864564197516 {'bootstrap': False, 'max_features': 3, 'n_estimators': 10}
+59136.97699768542 {'bootstrap': False, 'max_features': 4, 'n_estimators': 3}
+51522.46258173481 {'bootstrap': False, 'max_features': 4, 'n_estimators': 10}
+
+In [2126]: pd.DataFrame(grid_search.cv_results_)
+Out[2126]: 
+    mean_fit_time  std_fit_time       ...         mean_train_score  std_train_score
+0        0.064471      0.001977       ...            -1.097657e+09     6.772559e+07
+1        0.208322      0.005485       ...            -5.936198e+08     1.681072e+07
+2        0.631169      0.002891       ...            -4.327915e+08     1.402757e+06
+3        0.106821      0.006461       ...            -9.592798e+08     1.503407e+07
+4        0.345536      0.005040       ...            -5.228916e+08     7.774133e+06
+5        1.047230      0.011591       ...            -3.920578e+08     5.139552e+06
+6        0.147108      0.005725       ...            -9.376669e+08     1.159459e+07
+7        0.478480      0.003243       ...            -5.045838e+08     6.249556e+06
+8        1.459857      0.011431       ...            -3.860199e+08     8.065705e+06
+9        0.188540      0.003966       ...            -8.880014e+08     2.537841e+07
+10       0.621746      0.012012       ...            -4.929849e+08     7.946795e+06
+11       1.863335      0.026361       ...            -3.853838e+08     7.895666e+06
+12       0.099704      0.002041       ...            -3.191656e+03     6.383312e+03
+13       0.326911      0.003821       ...            -1.958516e+02     3.754018e+02
+14       0.136111      0.002264       ...             0.000000e+00     0.000000e+00
+15       0.441703      0.006165       ...            -7.570507e+02     1.513980e+03
+16       0.168047      0.006178       ...             0.000000e+00     0.000000e+00
+17       0.560047      0.008602       ...             0.000000e+00     0.000000e+00
+
+[18 rows x 23 columns]
+
+In [2128]: pd.DataFrame(grid_search.cv_results_).columns
+Out[2127]: 
+Index(['mean_fit_time', 'std_fit_time', 'mean_score_time', 'std_score_time',
+       'param_max_features', 'param_n_estimators', 'param_bootstrap', 'params',
+       'split0_test_score', 'split1_test_score', 'split2_test_score',
+       'split3_test_score', 'split4_test_score', 'mean_test_score',
+       'std_test_score', 'rank_test_score', 'split0_train_score',
+       'split1_train_score', 'split2_train_score', 'split3_train_score',
+       'split4_train_score', 'mean_train_score', 'std_train_score'],
+      dtype='object')
+
+
+/ 13	 .
+
+/ (75)
+
+In [2122]: grid_search.best_estimator_
+Out[2122]: 
+RandomForestRegressor(bootstrap=True, criterion='mse', max_depth=None,
+           max_features=8, max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           n_estimators=30, n_jobs=1, oob_score=False, random_state=None,
+           verbose=0, warm_start=False)
+
+In [2120]: feature_importances=grid_search.best_estimator_.feature_importances_
+In [2121]: feature_importances
+Out[2121]: 
+array([7.60368362e-02, 6.76841757e-02, 4.05282350e-02, 1.48041290e-02,
+       1.56183485e-02, 1.52628461e-02, 1.41967509e-02, 3.54152721e-01,
+       5.35736827e-02, 1.11747087e-01, 6.93669140e-02, 1.03441167e-02,
+       1.50512713e-01, 1.76055236e-04, 1.59921313e-03, 4.39617600e-03])
+/ TODO
+
+/ 13	. 
+
+/ (75)
+
+/ herinnner	,
+In [1789]: full_pipeline_alt = ColumnTransformer([
+      ...:         ("num", num_pipeline_alt, num_attribs),
+      ...:         ("cat", OneHotEncoder(), cat_attribs),
+      ...:     ])
+      ...:     
+
+In [2131]: extra_attribs=["rooms_per_hhold","pop_per_hhold","bedrooms_per_room"]
+In [2131]: cat_encoder=full_pipeline_alt.named_transformers_["cat"]             
+In [2129]: cat_encoder
+Out[2129]: 
+OneHotEncoder(categories='auto', dtype=<class 'numpy.float64'>,
+       handle_unknown='error', sparse=True)
+
+In [2138]: cat_encoder.categories_
+Out[2138]: 
+[array(['<1H OCEAN', 'INLAND', 'ISLAND', 'NEAR BAY', 'NEAR OCEAN'],
+       dtype=object)]
+In [2139]: cat_one_host_attribs=list(cat_encoder.categories_[0])
+In [2140]: cat_one_host_attribs
+Out[2140]: ['<1H OCEAN', 'INLAND', 'ISLAND', 'NEAR BAY', 'NEAR OCEAN']
+
+In [2141]: attributes=num_attribs+extra_attribs+cat_one_host_attribs
+In [2142]: attributes
+Out[2142]: 
+['longitude',
+ 'latitude',
+ 'housing_median_age',
+ 'total_rooms',
+ 'total_bedrooms',
+ 'population',
+ 'households',
+ 'median_income',
+ 'rooms_per_hhold',
+ 'pop_per_hhold',
+ 'bedrooms_per_room',
+ '<1H OCEAN',
+ 'INLAND',
+ 'ISLAND',
+ 'NEAR BAY',
+ 'NEAR OCEAN']
+
+In [2144]: sorted(zip(feature_importances,attributes),reverse=True)
+Out[2144]: 
+[(0.35415272118193986, 'median_income'),
+ (0.15051271291489626, 'INLAND'),
+ (0.11174708657717038, 'pop_per_hhold'),
+ (0.07603683621891438, 'longitude'),
+ (0.06936691404189932, 'bedrooms_per_room'),
+ (0.06768417570785669, 'latitude'),
+ (0.053573682740724125, 'rooms_per_hhold'),
+ (0.04052823500382874, 'housing_median_age'),
+ (0.015618348519020237, 'total_bedrooms'),
+ (0.01526284614550673, 'population'),
+ (0.01480412899872138, 'total_rooms'),
+ (0.01419675087821421, 'households'),
+ (0.010344116709203495, '<1H OCEAN'),
+ (0.0043961759998499585, 'NEAR OCEAN'),
+ (0.001599213126228197, 'NEAR BAY'),
+ (0.00017605523602605137, 'ISLAND')]
+
+/ (76)
+
+/ herinner	,
+In [1261]: housing_t=strat_train_set.drop('median_house_value',axis=1)
+In [1261]: housing_l=strat_train_set['median_house_value'].copy()     
+
+In [2150]: X_test=strat_test_set.drop('median_house_value',axis=1)
+
+In [2151]: X_test
+Out[2151]: 
+       longitude  latitude       ...         median_income  ocean_proximity
+5784     -118.25     34.15       ...                3.6875        <1H OCEAN
+...
+In [2152]: y_test=strat_test_set['median_house_value'].copy()
+In [2153]: X_test_p=full_pipeline_alt.transform(X_test)
+In [2154]: final_predictions=final_model.predict(X_test_p)
+In [2155]: final_mse=mean_squared_error(final_predictions,y_test)
+In [2156]: final_mse
+Out[2156]: 2294701901.2169595
+In [2157]: mean_squared_error(y_test,final_predictions)
+Out[2157]: 2294701901.2169595
+In [2158]: final_mse=mean_squared_error(y_test,final_predictions)
+In [2159]: final_rmse=np.sqrt(final_mse)
+In [2161]: final_rmse
+Out[2161]: 47903.046888657926
+
+/ 13	. 
+
+/ lees	,
+http://localhost:8888/notebooks/02_end_to_end_machine_learning_project.ipynb
+/ afmaken	, 
+/ TODO
+
+/ 7	. 
+
+/ (83)
+
+/ lees,
+http://localhost:8888/notebooks/03_classification.ipynb
+
+In [2754]: from sklearn.datasets import fetch_openml 
+In [2754]: mnist=fetch_mldata('MNIST original')      
+/ ERR	,
+/ lees	,
+https://stackoverflow.com/questions/51301570/fetch-mldata-how-to-manually-set-up-mnist-dataset-when-source-server-is-down
+->
+https://github.com/amplab/datascience-sp14/blob/master/lab7/mldata/mnist-original.mat
+/ klik Download	,
+/ we download in	,
+[eric@almond handson-ml]$ cd ~/scikit_learn_data/mldata/
+[eric@almond mldata]$ ls
+mnist-original.mat
+
+In [2750]: from sklearn.datasets import get_data_home
+In [2751]: get_data_home()
+Out[2751]: '/home/eric/scikit_learn_data'
+
+/ nu kunnen we	,
+
+In [2754]: mnist=fetch_mldata('MNIST original')
+
+In [2755]: mnist
+Out[2755]: 
+{'DESCR': 'mldata.org dataset: mnist-original',
+ 'COL_NAMES': ['label', 'data'],
+ 'target': array([0., 0., 0., ..., 9., 9., 9.]),
+ 'data': array([[0, 0, 0, ..., 0, 0, 0],
+        [0, 0, 0, ..., 0, 0, 0],
+        [0, 0, 0, ..., 0, 0, 0],
+        ...,
+        [0, 0, 0, ..., 0, 0, 0],
+        [0, 0, 0, ..., 0, 0, 0],
+        [0, 0, 0, ..., 0, 0, 0]], dtype=uint8)}
+
+In [2762]: X,y=mnist['data'],mnist['target']
+In [2762]: X.shape
+Out[2762]: (70000, 784)
+In [2763]: y.shape
+Out[2763]: (70000,)
+
+In [2764]: some_digit=X[36000]
+In [2765]: type(some_digit)
+Out[2765]: numpy.ndarray
+In [2766]: len(some_digit)
+Out[2766]: 784
+
+In [2788]: some_digit
+Out[2788]: 
+array([  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,  86, 131, 225, 225, 225,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,  13,  73, 197, 253, 252, 252, 252, 252,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         4,  29,  29, 154, 187, 252, 252, 253, 252, 252, 233, 145,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,  29, 252, 253, 252, 252, 252, 252, 253, 204, 112,  37,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0, 169, 253, 255, 253, 228, 126,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,  98, 243, 252, 253, 252, 246, 130,  38,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,  98, 240, 252, 252, 253, 252, 252,
+       252, 221,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0, 225, 252, 252, 236, 225,
+       223, 230, 252, 252,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 146, 252, 157,
+        50,   0,   0,  25, 205, 252,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,  26, 207, 253,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,  29,  19,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,  73, 205, 252,  79,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 120, 215, 209,
+       175,   0,   0,   0,   0,   0,   0,   0,  19, 209, 252, 220,  79,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 174,
+       252, 252, 239, 140,   0,   0,   0,   0,   0,  29, 104, 252, 249,
+       177,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0, 174, 252, 252, 223,   0,   0,   0,   0,   0,   0, 174, 252,
+       252, 223,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0, 141, 241, 253, 146,   0,   0,   0,   0, 169, 253,
+       255, 253, 253,  84,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0, 178, 252, 154,  85,  85, 210, 225,
+       243, 252, 215, 121,  27,   9,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,  66, 208, 220, 252, 253,
+       252, 252, 214, 195,  31,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  19,  37,
+        84, 146, 223, 114,  28,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0], dtype=uint8)
+
+In [2768]: plt.figure()
+In [2772]: import matplotlib as mpl
+In [2773]: plt.imshow(some_digit_image,cmap=mpl.cm.binary,interpolation='nearest')
+/ we zien een 5	,
+In [2774]: y[36000]
+Out[2774]: 5.0
+
+In [2775]: X_train,X_test,y_train,y_test=X[:60000],X[60000:],y[:60000],y[60000:]
+/ X, y zijn filled arrays, dus dit zijn geen declaraties of zoiets, maar gedeelten van de data	,
+
+In [2776]: shuffle_index=np.random.permutation(60000)
+In [2777]: X_train,y_train=X_train[shuffle_index],y_train[shuffle_index]
+In [2778]: X_train
+Out[2778]: 
+array([[0, 0, 0, ..., 0, 0, 0],
+       [0, 0, 0, ..., 0, 0, 0],
+       [0, 0, 0, ..., 0, 0, 0],
+       ...,
+       [0, 0, 0, ..., 0, 0, 0],
+       [0, 0, 0, ..., 0, 0, 0],
+       [0, 0, 0, ..., 0, 0, 0]], dtype=uint8)
+In [2779]: y_train
+Out[2779]: array([4., 2., 8., ..., 8., 9., 0.])		/ de cijfers	,
+
+In [2802]: X_train.shape
+Out[2802]: (60000, 784)
+/ Dus elke entry is een (784,) numpy array, die je kunt reshape naar een 28x28 array	,
+
+In [2780]: y_train_5=(y_train==5)
+In [2781]: y_test_5=(y_test==5)
+In [2782]: y_train_5
+Out[2782]: array([False, False, False, ..., False, False, False])
+
+In [2789]: sgd_clf.predict([some_digit])
+Out[2789]: array([ True])
+
+In [2790]: from sklearn.base import clone
+In [2791]: skfolds=StratifiedKFold(n_splits=3,random_state=42)
+
+In [2793]: for train_index,test_index in skfolds.split(X_train,y_train_5):
+/ y_train_5 is nodig omdat StratifiedKFold wil in iedere fold de verhouding True:False zoals die in y_train_5 is hebben 	, 
+
+/ Intermezzo
+
+In [2794]: for train_index,test_index in skfolds.split(X_train,y_train_5):
+      ...:         print("%s %s"%(train_index,test_index))
+      ...:         print("%s %s"%(len(train_index),len(test_index)))
+      ...:         
+      ...:     
+[19933 19934 19935 ... 59997 59998 59999] [    0     1     2 ... 20577 20578 20579]
+40000 20000
+[    0     1     2 ... 59997 59998 59999] [19933 19934 19935 ... 40003 40004 40005]
+40000 20000
+[    0     1     2 ... 40003 40004 40005] [39886 39898 39942 ... 59997 59998 59999]
+40000 20000
+
+/ Einde Intermezzo
+
+In [2844]: for train_index,test_index in skfolds.split(X_train,y_train_5):
+      ...:     #print("%s %s"%(train_index,test_index))               
+      ...:     #print("%s %s"%(len(train_index),len(test_index)))     
+      ...:     clone_clf=clone(sgd_clf)                               
+      ...:     X_train_folds=X_train[train_index]                     
+      ...:     #print("shape X_train_folds: %s"%(X_train_folds.shape))
+      ...:     y_train_folds=y_train_5[train_index]                   
+      ...:     #print("shape y_train_folds: %s"%(y_train_folds.shape))
+      ...:     X_test_folds=X_train[test_index]                     
+      ...:     #print("shape X_test_folds: %s"%(X_test_folds.shape)) # ERR	, TODO
+      ...:     y_test_folds=y_train_5[test_index]                   
+      ...:     #print("shape y_test_folds: %s"%(y_test_folds.shape)) # OK
+      ...:     clone_clf.fit(X_train_folds,y_train_folds)           
+      ...:     y_preds=clone_clf.predict(X_test_folds)              
+      ...:     #print("shape y_preds: %s"%(y_preds.shape))          
+      ...:     #print("type y_preds: %s"%(type(y_preds)))           
+      ...:     #print("shape y_preds: %s"%(y_preds.shape))          
+      ...:     #print("type y_test_folds: %s"%(type(y_test_folds))) 
+      ...:     #print("shape y_test_folds: %s"%(y_test_folds.shape))
+      ...:     n_correct=sum(y_preds==y_test_folds)
+      ...:     print(n_correct/len(y_preds))
+
+0.9534
+0.9551
+0.95855
+
+/ we willen de fct voor use	,
+/ doe in vi	,
+:.,+10s/^\s*...:\s*/^I/
+
+for train_index,test_index in skfolds.split(X_train,y_train_5):
+	clone_clf=clone(sgd_clf)                               
+	X_train_folds=X_train[train_index]                     
+	y_train_folds=y_train_5[train_index]                   
+	X_test_folds=X_train[test_index]                     
+	y_test_folds=y_train_5[test_index]                   
+	clone_clf.fit(X_train_folds,y_train_folds)           
+	y_preds=clone_clf.predict(X_test_folds)              
+	n_correct=sum(y_preds==y_test_folds)
+	print(n_correct/len(y_preds))
+/ we zien geen scores	, .predict geeft True of False	,
+
+/ 13	.
+
+/ (83)
+
+In [2845]: from sklearn.model_selection import cross_val_score
+In [2846]: cross_val_score(sgd_clf,X_train,y_train_5,cv=3,scoring='accuracy')
+Out[2846]: array([0.9534 , 0.9551 , 0.95855])
+
+In [2849]: cross_val_score(sgd_clf,X_train,y_train_5,cv=3,scoring='foo')
+ValueError: 'foo' is not a valid scoring value. Valid options are ['accuracy', 'adjusted_mutual_info_score', 'adjusted_rand_score', 'average_precision', 'completeness_score', 'explained_variance', 'f1', 'f1_macro', 'f1_micro', 'f1_samples', 'f1_weighted', 'fowlkes_mallows_score', 'homogeneity_score', 'mutual_info_score', 'neg_log_loss', 'neg_mean_absolute_error', 'neg_mean_squared_error', 'neg_mean_squared_log_error', 'neg_median_absolute_error', 'normalized_mutual_info_score', 'precision', 'precision_macro', 'precision_micro', 'precision_samples', 'precision_weighted', 'r2', 'recall', 'recall_macro', 'recall_micro', 'recall_samples', 'recall_weighted', 'roc_auc', 'v_measure_score']
+
+/ 13	. 
+
+In [2849]: from sklearn.model_selection import cross_val_predict
+In [2850]: y_train_p=cross_val_predict(sgd_clf,X_train,y_train_5,cv=3)
+In [2851]: y_train_p
+Out[2851]: array([False, False,  True, ..., False, False, False])
+In [2852]: type(y_train_p)
+Out[2852]: numpy.ndarray
+In [2853]: y_train_p.shape
+Out[2853]: (60000,)
+/ Dus er worden 3 keer een training set en een test set gemaakt	,
+/ ieder element zit een een test set	,
+/ er wordt een prediction op dit element gemaakt, in vlak daarvoor is het model getraind op de andere 2 subsets, de subsets waar dat element niet inzit	,
+
+					predictions
+--------- -------- 		-------
+training	test		 		training
+
+predictions
+--------- -------- 		-------
+test 			training 		training
+
+											predictions
+--------- -------- 		-------
+training	training		test	
+
+/ dus y_train_p zijn predictions	,
+
+In [3152]: confusion_matrix(y_train_5,y_train_p)
+Out[3152]: 
+array([[53281,  1298],
+       [ 1361,  4060]])
+
+/ y_train_5 zijn de actuals	,
+
+/ 13	 
+
+In [3153]: from sklearn.metrics import precision_score,recall_score
+
+In [3154]: precision_score(y_train_5,y_train_p)
+Out[3154]: 0.757745427398283
+In [3155]: recall_score(y_train_5,y_train_p)
+Out[3155]: 0.7489393100903893
+
+/ klopt	, 
+
+
+array([[53281,  1298],	| 54579 actual = False
+       [ 1361,  4060]]) | 5421	actual = True
+----------------------+ +
+        54642		5358
+		pred=False	pred=True
+
+
+/ precision=4060/5358
+/ recall=4060/5421
+
+In [3159]: len(y_train_5[y_train_5==False])
+Out[3159]: 54579
+In [3158]: len(y_train_5[y_train_5==True])
+Out[3158]: 5421
+
+In [3160]: len(y_train_p[y_train_p==False])
+Out[3160]: 54642
+In [3161]: len(y_train_p[y_train_p==True])
+Out[3161]: 5358
+
+/ 1313	,
+
+In [3163]: f1_score(y_train_5,y_train_p)
+Out[3163]: 0.7533166341961222
+
+/ 13	.  
+
+/ (88) 
+
+/ fig-3.3	, 
+
+/ 1313	. 
+
+/ confusion_matrix:
+
+tn		fn
+fp		tp
+
+/ als de threshold links , dan confusion_matrix:
+
+	8739		26
+					555555
+
+/ als de threshold in het midden, dan confusion_matrix:
+
+	87392		6
+	55			5555
+
+/ als de threshold 1 digit rechts van het midden, dan confusion_matrix:
+
+	87392		6
+	555			555
+
+/ als de threshold rechts, dan confusion_matrix:
+
+	873926
+	555			555
+
+/ de linker kolom zijn de negatives, de rechterkolom de positives van de predictions	,
+/ als de thresholds toeneemt, verhuisen elements van rechts naar links (op de zelfde hoogste, want ze blijven actual of niet,)
+/ als de thresholds toeneemt, wordt de recalls kleiner, en de preditions iha groter	,
+/ de precisions zijn: .75, .8, .75, 1
+/ de recalls zijn: 1, .67, .5, .5
+
+/ dus de precisons stijgen niet altijd	, de recalls dalen altijd	,
+
+/ precisions is het aantal echte onder de positieve die het model vindt	,
+/ recalls is het aantal positieve die het model vindt	onder de echte,
+
+/ 13	. 
+
+/ (88)
+
+/ herinner	,
+In [2764]: some_digit=X[36000]
+In [2765]: type(some_digit)
+Out[2765]: numpy.ndarray
+In [2766]: len(some_digit)
+Out[2766]: 784
+In [2788]: some_digit
+Out[2788]: 
+array([  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,  86, 131, 225, 225, 225,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,  13,  73, 197, 253, 252, 252, 252, 252,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         4,  29,  29, 154, 187, 252, 252, 253, 252, 252, 233, 145,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,  29, 252, 253, 252, 252, 252, 252, 253, 204, 112,  37,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0, 169, 253, 255, 253, 228, 126,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,  98, 243, 252, 253, 252, 246, 130,  38,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,  98, 240, 252, 252, 253, 252, 252,
+       252, 221,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0, 225, 252, 252, 236, 225,
+       223, 230, 252, 252,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 146, 252, 157,
+        50,   0,   0,  25, 205, 252,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,  26, 207, 253,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,  29,  19,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,  73, 205, 252,  79,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 120, 215, 209,
+       175,   0,   0,   0,   0,   0,   0,   0,  19, 209, 252, 220,  79,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 174,
+       252, 252, 239, 140,   0,   0,   0,   0,   0,  29, 104, 252, 249,
+       177,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0, 174, 252, 252, 223,   0,   0,   0,   0,   0,   0, 174, 252,
+       252, 223,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0, 141, 241, 253, 146,   0,   0,   0,   0, 169, 253,
+       255, 253, 253,  84,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0, 178, 252, 154,  85,  85, 210, 225,
+       243, 252, 215, 121,  27,   9,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,  66, 208, 220, 252, 253,
+       252, 252, 214, 195,  31,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  19,  37,
+        84, 146, 223, 114,  28,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0], dtype=uint8)
+
+In [3167]: y_scores=sgd_clf.decision_function([some_digit])
+In [3168]: y_scores
+Out[3168]: array([29063.71887923])
+In [3169]: y_some_digit_p=(y_scores>0)
+In [3170]: y_some_digit_p
+Out[3170]: array([ True])
+In [3171]: y_some_digit_p=(y_scores>200000)
+In [3172]: y_some_digit_p
+Out[3172]: array([False])
+
+/ 1313	. 
+
+/ (88)
+
+In [3176]: y_scores=cross_val_predict(sgd_clf,X_train,y_train_5,cv=3,method='decision_function')
+
+In [3279]: sgd_clf.decision_function([X_train[0]])
+Out[3279]: array([-375039.88279384])
+In [3285]: y_scores[0]
+Out[3285]: -687837.5405794351
+In [3294]: np.where(y_scores==sgd_clf.decision_function([X_train[0]])[0])
+Out[3294]: (array([], dtype=int64),)
+/ TODO
+
+/ 1313	. 
+
+In [3264]: sgd_clf.decision_function([X_train[36000]])
+Out[3264]: array([-718295.64111861])
+
+In [3265]: y_scores[36000]
+Out[3265]: -1092529.3720231291
+
+In [3266]: np.where(X_train[36000])
+/ TODO
+
+/ 1313	. 
+
+In [3180]: from sklearn.metrics import precision_recall_curve
+In [3181]: precisions,recalls,thresholds=precision_recall_curve(y_train_5,y_scores)
+
+In [3186]: y_train_5.shape
+Out[3186]: (60000,)
+In [3187]: y_scores.shape
+Out[3187]: (60000,)
+In [3184]: precisions.shape
+Out[3184]: (59281,)
+In [3185]: recalls.shape
+Out[3185]: (59281,)
+In [3193]: thresholds.shape
+Out[3193]: (59280,)
+/ TODO
+
+/ daarom halen ze er 1 af van precisions, recalls: precisions[:-1], recalls[:-1],
+
+In [3192]: thresholds
+Out[3192]: 
+array([-1994070.31467055, -1993613.45701855, -1993321.71427356, ...,
+        1434451.60798168,  1443992.50121995,  1639185.87068352])
+In [3188]: precisions[:-1]
+Out[3188]: 
+array([0.09144583, 0.0914305 , 0.09143204, ..., 1.        , 1.        ,
+       1.        ])
+In [3195]:  recalls[:-1]
+Out[3195]: 
+array([1.00000000e+00, 9.99815532e-01, 9.99815532e-01, ...,
+       5.53403431e-04, 3.68935621e-04, 1.84467810e-04])
+
+In [3190]: plt.figure()
+In [3191]: def plot_precision_recall_vs_threshold(precisions,recalls,thresholds):
+      ...:     plt.plot(thresholds,precisions[:-1],'b--')
+      ...:     plt.plot(thresholds,recalls[:-1],'g-')
+      ...:     
+In [3194]: plot_precision_recall_vs_threshold(precisions,recalls,thresholds)
+/ we zien dat precisions stijgt naar 1, maar rechtsboven ineens naar beneden gaat, en weer omhoog	naar 1	,
+
+/ 131313	. 
+
+/ thresholds rondom 0	,
+
+In [3218]: thresholds[(thresholds>0)&(thresholds<300)]
+Out[3218]: array([242.81327886])
+
+In [3219]: thresholds[(thresholds>-300)&(thresholds<0)]
+Out[3219]: array([-255.94542144, -252.28572518, -187.16102307,  -11.84706035])
+
+/ met np.where vind je de index waar het is	,
+
+In [3229]: np.where((thresholds>0)&(thresholds<300))
+Out[3229]: (array([53657]),)
+In [3230]: thresholds[53657]
+Out[3230]: 242.813278864611
+/ klopt	,
+
+In [3231]: thresholds.shape
+Out[3231]: (59280,)
+/ dus dat is aan de rechterkant	,
+
+/ np. where geeft een tuple van arrays	,
+
+/ je kunt de min index waar thresholds>0 ook zo vinden	,
+
+In [3237]: min(np.where(thresholds>0)[0])
+Out[3237]: 53657
+
+/ (90)
+
+In [3243]: plt.figure()
+In [3244]: plt.plot(recalls,precisions)
+/ OK	,
+
+/ (90)
+
+/ we gaan op zoek naar 90% precision	, 
+/ kijk weer in fig-3.4, niet in fig-3.5	,
+/ maar we kunnen ook	,
+
+In [3248]: np.where(precisions>.9)
+Out[3248]: (array([56137, 56138, 56139, ..., 59278, 59279, 59280]),)
+
+In [3249]: min( np.where(precisions>.9)[0])
+Out[3249]: 56137
+
+
+/ 7	. 
+
+/ (93)
+
+/ multiclass	,
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/ 7	. 
+
+/ (108)
+
+/ Normal equation	,
+
+/ 13	. 
+
+/ we doen het eerst zelf, met numpy	,
+
+In [493]: X=2*np.random.rand(10,1)
+In [3430]: X
+Out[3430]: 
+array([[0.70100382],
+       [0.09877757],
+       [1.97943422],
+       [1.38939361],
+       [0.43289509],
+       [1.53568981],
+       [1.07318829],
+       [1.85190467],
+       [1.78222697],
+       [0.99768507]])
+In [495]: y=4+3*X+np.random.randn(10,1)
+In [3434]: y
+Out[3434]: 
+array([[5.45957196],
+       [7.02518498],
+       [9.84683121],
+       [4.62643509],
+       [6.44088957],
+       [5.88734866],
+       [8.75985277],
+       [4.88214574],
+       [7.73816679],
+       [9.75997865]])
+In [497]: X_b=np.c_[np.ones((10,1),dtype=int),X]
+In [497]: X_b 
+array([[1.        , 0.70100382],
+       [1.        , 0.09877757],
+       [1.        , 1.97943422],
+       [1.        , 1.38939361],
+       [1.        , 0.43289509],
+       [1.        , 1.53568981],
+       [1.        , 1.07318829],
+       [1.        , 1.85190467],
+       [1.        , 1.78222697],
+       [1.        , 0.99768507]])
+/ transposed van matrix, verm met deze rijen  = inproduct met columns van de matrix	,
+
+In [503]: X_b.T
+Out[503]: 
+array([[1.        , 1.        , 1.        , 1.        , 1.        ,
+        1.        , 1.        , 1.        , 1.        , 1.        ],
+       [0.70100382, 0.09877757, 1.97943422, 1.38939361, 0.43289509,
+        1.53568981, 1.07318829, 1.85190467, 1.78222697, 0.99768507]])
+
+/ .dot = matrix verm	,
+
+In [504]: X_b.T.dot(X_b)
+Out[504]: 
+array([[10.        , 11.84219912],
+       [11.84219912, 17.64847165]])
+
+In [505]: np.linalg.inv(X_b.T.dot(X_b))
+Out[505]: 
+array([[ 0.4868942 , -0.32670806],
+       [-0.32670806,  0.27588462]])
+
+In [506]: theta_best=np.linalg.inv(X_b.T.dot(X_b)).dot(X_b.T).dot(y)
+
+In [507]: theta_best
+Out[507]: 
+array([[5.29527492],
+       [2.29329463]])
+
+/ 1313	. 
+
+In [511]: X_new=np.array([[0],[2]])
+In [513]: X_new
+Out[513]: 
+array([[0],
+       [2]])
+/ zo kan je dus ook een (2,1) matrix maken = staande vector, dus ook	, 
+/ TODO
+
+In [512]: X_new_b=np.c_[np.ones((2,1)),X_new]
+In [514]: X_new_b
+Out[514]: 
+array([[1., 0.],
+       [1., 2.]])
+/ voor inproduct met w	,
+
+In [521]: y_predict=X_new_b.dot(theta_best)
+In [522]: y_predict
+Out[522]: 
+array([[5.29527492],
+       [9.88186418]])
+
+In [524]: plt.plot(X_new,y_predict,"r-")
+/ we zien de lijn	,
+
+In [526]: plt.plot(X,y,"b.")
+/ we zien de training data	,
+
+In [527]: plt.axis([0,2,0,15])
+/ TODO
+/ we schalen de assen	,
+
+/ 13	. 
+
+/ Normal Equation
+
+/ met sklearn	,
+
+In [528]: from sklearn.linear_model import LinearRegression
+
+In [529]: lin_reg=LinearRegression()
+
+In [530]: lin_reg
+Out[530]: LinearRegression(copy_X=True, fit_intercept=True, n_jobs=1, normalize=False)
+
+In [531]: X
+Out[531]: 
+array([[0.70100382],
+       [0.09877757],
+       [1.97943422],
+       [1.38939361],
+       [0.43289509],
+       [1.53568981],
+       [1.07318829],
+       [1.85190467],
+       [1.78222697],
+       [0.99768507]])
+
+In [532]: y
+Out[532]: 
+array([[ 8.52582035],
+       [ 5.25927597],
+       [10.04162855],
+       [ 8.53190079],
+       [ 6.36899853],
+       [ 9.62816073],
+       [ 7.16732227],
+       [10.01345175],
+       [ 8.45700798],
+       [ 6.11683394]])
+
+In [533]: lin_reg.fit(X,y)
+Out[533]: LinearRegression(copy_X=True, fit_intercept=True, n_jobs=1, normalize=False)
+
+In [534]: lin_reg.intercept_,lin_reg.coef_
+Out[534]: (array([5.29527492]), array([[2.29329463]]))
+
+In [536]: X_new
+Out[536]: 
+array([[0],
+       [2]])
+
+In [535]: lin_reg.predict(X_new)
+Out[535]: 
+array([[5.29527492],
+       [9.88186418]])
+
+/ (115)
+
+
+/ 13	. 
+
+/ nog een keer Normal Equation
+
+/ (109)
+
+In [590]: X=2*np.random.randn(100,1)
+
+In [591]: y=4+3*X+np.random.randn(100,1)
+
+In [592]: X_b=np.c_[np.ones((100,1)),X]
+
+In [593]: theta_best=np.linalg.inv(X_b.T.dot(X_b)).dot(X_b.T).dot(y)
+
+In [594]: theta_best
+Out[594]: 
+array([[4.00610992],
+       [3.05714363]])
+
+/ 13	. 
+
+/ GD
+
+In [595]: eta=.1
+
+
+In [597]: m=100
+
+In [609]: theta_init=np.random.randn(2,1)
+In [611]: theta_init
+Out[611]: 
+array([[0.5789438 ],
+       [0.14432365]])
+
+In [596]: n_iter=1000
+/ of 100	,
+
+In [610]: theta=theta_init
+In [601]: for i in range(n_iter):
+     ...:     grad=2/m*X_b.T.dot(X_b.dot(theta)-y)
+     ...:     theta=theta-eta*grad
+     ...:     
+
+In [602]: theta
+Out[602]: 
+array([[4.00610992],
+       [3.05714363]])
+/ Precies gelijk aan de theta_best vlg Normal Equation
+
+/ 1313	. 
+
+/ als we n_iter=10 nemen, dan een ander antwoord	,
+
+In [621]: theta=theta_init
+
+In [622]: n_iter=10
+
+In [623]: for i in range(n_iter):
+     ...:     grad=2/m*X_b.T.dot(X_b.dot(theta)-y)
+     ...:     theta=theta-eta*grad
+     ...:     
+     ...:     
+
+In [624]: theta
+Out[624]: 
+array([[3.64443052],
+       [3.06540705]])
+
+/ 1313	. 
+
+/ andere learning rates	,
+
+In [625]: eta=.02
+
+/ 131313	. 
+
+/ bij n_iter=1000 zien we geen verschil	, 
+/ maar voor n_iter=100, maar vooral bij 10 is theta te klein	, 
+
+In [631]: n_iter=100
+
+In [632]: theta=theta_init
+
+In [633]: for i in range(n_iter):
+     ...:     grad=2/m*X_b.T.dot(X_b.dot(theta)-y)
+     ...:     theta=theta-eta*grad
+     ...:     
+     ...:     
+
+In [634]: 
+
+In [634]: theta
+Out[634]: 
+array([[3.94916971],
+       [3.05845364]])
+
+/ 131313	.
+
+n [635]: n_iter=10
+
+In [636]: theta=theta_init
+
+In [637]: for i in range(n_iter):
+     ...:     grad=2/m*X_b.T.dot(X_b.dot(theta)-y)
+     ...:     theta=theta-eta*grad
+     ...:     
+     ...:     
+
+In [638]: theta
+Out[638]: 
+array([[1.75536049],
+       [2.37293863]])
+
+/ 1313	. 
+
+In [657]: eta=.5
+
+/ 131313	. 
+
+In [646]: n_iter=1000
+
+In [647]: theta=theta_init
+
+In [658]: for i in range(n_iter):
+     ...:     grad=2/m*X_b.T.dot(X_b.dot(theta)-y)
+     ...:     theta=theta-eta*grad
+     ...:     
+     ...:     
+/home/eric/miniconda3/bin/ipython:3: RuntimeWarning: invalid value encountered in subtract
+  # -*- coding: utf-8 -*-
+
+In [659]: theta
+Out[659]: 
+array([[nan],
+       [nan]])
+
+/ 131313	. 
+
+In [661]: n_iter=100
+
+In [663]: theta=theta_init
+
+In [664]: for i in range(n_iter):
+     ...:     grad=2/m*X_b.T.dot(X_b.dot(theta)-y)
+     ...:     theta=theta-eta*grad
+     ...:     
+     ...:     
+
+In [665]: theta
+Out[665]: 
+array([[-2.88757532e+34],
+       [-1.25276702e+36]])
+
+/ 13	.
+
+/ meer trainings data	,
+
+/ 1313	. 
+
+/ Normal Equation nog steeds snel	,
+
+In [684]: theta_best=np.linalg.inv(X_b.T.dot(X_b)).dot(X_b.T).dot(y)
+
+In [685]: theta_best
+Out[685]: 
+array([[2.99948824],
+       [3.99939837]])
+
+/ 1313	. 
+
+/ DE
+
+/ duurt een paar sec	, die 1000 iter	, 
+
+
+In [666]: X=2*np.random.rand(1000000,1)
+
+In [667]: y=3+4*X+np.random.randn(1000000,1)
+
+In [670]: eta=.1
+
+In [671]: n_iter=1000
+
+In [672]: m=1000000
+
+In [673]: theta=theta_init
+
+In [682]: for i in range(n_iter):
+     ...:     grad=2/m*X_b.T.dot(X_b.dot(theta)-y)
+     ...:     theta=theta-eta*grad
+     ...:     
+     ...:     
+/ duurt een paar sec	,
+
+In [683]: theta
+Out[683]: 
+array([[2.99948824],
+       [3.99939837]])
+
+/ 13	. 
+
+/ SD
+
+/ (118)
+
+/ Intermezzo
+
+In [697]: X_b[2,:]
+/=
+In [698]: X_b[2]
+Out[727]: array([1.        , 1.53346397])
+
+In [728]: X_b[2,:].shape
+/=
+In [728]: X_b[2].shape
+Out[729]: (2,)
+
+/ andere shape	,
+In [731]: X_b[2:3]
+Out[731]: array([[1.        , 1.53346397]])
+In [730]: X_b[2:3].shape
+Out[730]: (1, 2)
+
+
+/ in het boek doen ze X_b[random_index:random_index+1]	, maar X_b[random_index] of X_b[random_index,:] is ook OK	,
+
+/ Einde Intermezzo
+
+/ je wilt beginnen met eta=.1 en je wilt 50 rondes doen	, 
+/ in iedere ronde doe je het aantal waarnemingen m keer de gradient berekenen, in de hoop dat je alle waarnemingen 1 keer krijgt
+
+/ het boek doet random een waarneming kiezen, en niet gewoon ze alle m aflopen, want dat is goed om uit locale minima te springen!
+/ op (119) staat hier wel iets over, en shuffle ze de trainings data, (die ze instances noemen)	, WH bij het begin van iedere epoch (ronde)	,
+/ TODO
+
+/ stel je doet 10 rondes	,
+/ in de 1ste ronde is eta:
+5/50, ..., 50/50+m-1
+/ in de 2de ronde:
+5/50+m, ..., 5/50+2*m,
+/ in de 10de ronde	, 
+5/50+9*m, ...	, 5/50+10*m-1
+
+/ 1313	.
+
+/ zelf, 
+
+In [710]: def learning_rate(t):
+     ...:     return 5/(50+t)
+
+In [711]: theta_init=np.random.randn(2,1)
+In [712]: theta=theta_init
+
+In [713]: n_rounds=10
+
+In [732]: n_training=100
+
+In [735]: X=2*np.random.rand(100,1)
+
+In [736]: X=2*np.random.rand(n_training,1)
+
+In [737]: y=3+4*X+np.random.randn(n_training,1)
+
+In [738]: X_b=np.c_[np.ones((n_training,1)),X]
+
+In [746]: for r in range(n_rounds):
+     ...:     for i in range(n_training):
+     ...:         idx=np.random.randint(n_training)
+     ...:         xi=X_b[idx:idx+1]
+     ...:         yi=y[idx:idx+1]
+     ...:         grad=2*xi.T.dot(xi.dot(theta)-yi)
+     ...:         eta=learning_rate(e*n_training+i)
+     ...:         theta=theta-eta*grad
+
+In [758]: theta
+Out[758]: 
+array([[3.06038824],
+       [3.82253285]])
+
+/ 1313	. 
+
+/ met sklearn	,
+
+In [759]: from sklearn.linear_model import SGDRegressor
+In [762]: sgd=SGDRegressor(n_iter=50,penalty=None,eta0=.1)
+In [764]: sgd.fit(X,y.ravel())
+Out[764]: 
+SGDRegressor(alpha=0.0001, average=False, epsilon=0.1, eta0=0.1,
+       fit_intercept=True, l1_ratio=0.15, learning_rate='invscaling',
+       loss='squared_loss', max_iter=None, n_iter=50, penalty=None,
+       power_t=0.25, random_state=None, shuffle=True, tol=None, verbose=0,
+       warm_start=False)
+In [765]: sgd.intercept_
+Out[765]: array([2.45227965])
+In [766]: sgd.coef_
+Out[766]: array([4.25160327])
+
+In [760]: help(SGDRegressor)
+|  learning_rate : string, optional
+ |      The learning rate schedule:
+ |  
+ |      - 'constant': eta = eta0
+ |      - 'optimal': eta = 1.0 / (alpha * (t + t0)) [default]
+ |      - 'invscaling': eta = eta0 / pow(t, power_t)
+
+/ 13	. 
+
+/ Logistic Regression
+
+/ fig 4-23	,
+
+/ lees	,
+http://localhost:8888/notebooks/04_training_linear_models.ipynb
+
+/ (137)
+
+n [3451]: iris
+Out[3451]: 
+{'data': array([[5.1, 3.5, 1.4, 0.2],
+        [4.9, 3. , 1.4, 0.2],
+        [4.7, 3.2, 1.3, 0.2],
+...
+ 'target': array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+...
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]),
+ 'target_names': array(['setosa', 'versicolor', 'virginica'], dtype='<U10'),
+ 'DESCR': '...:Attribute Information:\n        - sepal length in cm\n        - sepal width in cm\n        - petal length in cm\n        - petal width in cm\n        - class:\n                - Iris-Setosa\n                - Iris-Versicolour\n                - Iris-Virginica\n    :Summary Statistics:\n\n    ==
+
+X=iris['data'][:,3:] # petal width	,
+y=(iris['target']==2) # [True, False, ...]
+y=y.astype(int)		# [1,0,...]
+
+/ X=iris['data'][:,3:] heeft shape (150,1), X=iris['data'][:,3] heeft shape (150,)
+
+In [3506]: X.shape
+Out[3506]: (150, 1)
+In [3501]:  X
+Out[3501]: 
+array([[0.2],
+       [0.2],
+...
+       [2. ],
+       [2.3],
+       [1.8]])
+In [3505]: y.shape
+Out[3505]: (150,)
+In [3503]: y
+Out[3503]: 
+array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+...
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+
+log_reg=LogisticRegression()
+log_reg.fit(X,y)
+In [3510]: log_reg.coef_
+Out[3510]: array([[2.61727777]])
+In [3511]: log_reg.intercept_
+Out[3511]: array([-4.2209364])
+/ TODO
+
+In [3732]: X.shape
+Out[3732]: (150, 1)
+In [3733]: X[:,0].shape
+Out[3733]: (150,)
+
+In [3730]: min(X[:,0])
+Out[3730]: 0.1
+In [3731]: max(X[:,0])
+Out[3731]: 2.5
+
+/ daarom 	,
+X_new=np.linspace(0,3,1000)		# (1000,)
+X_new=X_new.reshape(-1,1)
+In [3513]:  X_new.shape
+Out[3513]: (1000, 1)
+n [3514]: X_new
+Out[3514]: 
+array([[0.        ],
+       [0.003003  ],
+       [0.00600601],
+...
+       [2.996997  ],
+       [3.        ]])
+
+y_proba=log_reg.predict_proba(X_new)
+In [3509]:  y_proba
+Out[3509]: 
+array([[0.98552764, 0.01447236], 	# kans niet-virginica, kans virginica	,
+       [0.98541511, 0.01458489],
+       [0.98530171, 0.01469829],
+       ...,
+       [0.02620686, 0.97379314],
+       [0.02600703, 0.97399297],
+       [0.02580868, 0.97419132]])
+/ de 1ste kolom is de kans dat het geen virginica is, en 2de de kans dat het er wel een is	, dat zie je ook als je naar X en y kijkt, de eerst entries hebben een kleine petal width, en het zijn geen virginicas	, de laatste entries hebben een grote petal width, en zijn wel virginicas	. X_new en y_proba zijn ook zo	, 
+
+/ samen 1	,
+In [3517]: y_proba[:,0]+y_proba[:,1]
+Out[3517]: 
+array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+       1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+...
+
+In [3525]: len(X_new)
+Out[3525]: 1000
+In [3524]: len(y_proba[:,1])
+Out[3524]: 1000
+In [3524]: len(y_proba[:,1]>=.5)
+Out[3524]: 1000 									# logisch, array met True, False; even lang als y_proba zelf	,
+In [3745]: len(y_proba[y_proba[:,1]>=.5])
+Out[3745]: 462
+
+In [3518]:  y_proba[:,1]>=.5
+Out[3518]: 
+array([False, False, False, False, False, False, False, False, False,
+       False, False, False, False, False, False, False, False, False,
+...
+        True,  True,  True,  True,  True,  True,  True,  True,  True,
+        True])
+
+In [3521]: len(X_new[y_proba[:,1]>=.5])
+Out[3521]: 462
+/ bijna de helft	,
+/ deze worden besloten, dat het virginicas zijn	, see boek Eq 4-15 (135)
+
+In [3519]: X_new[y_proba[:,1]>=.5]
+Out[3519]: 
+array([[1.61561562],
+       [1.61861862],
+...
+       [2.996997  ],
+       [3.        ]])
+
+In [3528]: X_new[y_proba[:,1]>=.5][0]
+Out[3528]: array([1.61561562])
+/ de 1ste	,
+In [3529]: decision_boundary=X_new[y_proba[:,1]>=.5][0]
+In [3755]: decision_boundary
+Out[3755]: array([1.61561562])
+
+
+/ we keren terug naar training data	,
+
+In [3533]: len(X)
+Out[3533]: 150
+In [3532]: len(X[y==0])
+Out[3532]: 100
+In [3531]: X[y==0]
+Out[3531]: 
+array([[0.2],
+       [0.2],
+...
+       [1.1],
+       [1.3]])
+
+In [3535]: len(y)
+Out[3535]: 150
+In [3536]: len(y[y==0])
+Out[3536]: 100
+In [3534]:  y[y==0]
+Out[3534]: 
+array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+...
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+
+In [3746]: plt.figure()
+
+In [3538]: plt.plot(X[y==0],y[y==0],'bs')
+In [3539]: plt.plot(X[y==1],y[y==1],'g^')
+/ we zien horizontaal (petal width) op y=0 blauwe vierkantjes, en op y=1 niveau groene driehoekjes	, dit is je training data	,
+/ Het niveau y=0 of 1 had misschien niet echt gehoeven, we geven de class al aan met blauwe rechthoekjes of groen driehoekjes	,
+/ TODO
+
+help(plt.plot)
+b blue
+g green
+s square
+^ triangle up marker	,
+
+In [3545]: plt.plot([decision_boundary,decision_boundary],[0,1],'k:')
+/ je wilt een verticale lijn bij decision_boundary ~ 1.6, de dimensies van x en y moeten hetzelfde, vandaar dat er [decision_boundary,decision_boundary] staat	, 
+/ in jupyter staat [-1,2] ipv [0,1]
+/ TODO
+
+In [3545]: plt.plot(X_new,y_proba[:,1],'g-')
+In [3546]: plt.plot(X_new,y_proba[:,0],'b--')
+
+In [3552]: decision_boundary
+Out[3552]: array([1.61561562])
+In [3551]: log_reg.predict([[1.7],[1.5],[1.6],[1.62]])
+/ of	,
+In [3556]: log_reg.predict(np.array([1.7,1.5,1.6,1.62]).reshape(-1,1))
+Out[3556]: array([1, 0, 0, 1])
+
+/ 13	. 
+
+/ Logistic Regression
+
+/ fig 4-24 in boek	,
+
+/ lees	,
+http://localhost:8888/notebooks/04_training_linear_models.ipynb
+
+In [3561]: X=iris['data'][:,(2,3)]          
+In [3560]: X
+Out[3560]: 
+array([[1.4, 0.2],
+       [1.4, 0.2],
+...
+       [5.4, 2.3],
+       [5.1, 1.8]])
+
+In [3562]: y=(iris['target']==2).astype(int)
+In [3562]: y
+Out[3562]: 
+array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+...
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+
+In [3563]: log_reg=LogisticRegression(C=10**10,random_state=42)
+/=
+In [3563]: log_reg=LogisticRegression(solver='liblinear',C=10**10,random_state=42)
+
+/ solver='liblinear' is default	,
+/ TODO
+    C : float, optional (default=1.0)
+        Inverse of regularization strength; must be a positive float.
+        Like in support vector machines, smaller values specify stronger
+        regularization.
+
+In [3567]: log_reg.fit(X,y)
+In [3658]: log_reg.coef_
+Out[3658]: array([[ 5.7528683 , 10.44455633]])
+In [3659]: log_reg.intercept_
+Out[3659]: array([-45.26062435])
+
+In [3696]: min(X[:,0])
+Out[3696]: 1.0
+In [3697]: max(X[:,0])
+Out[3697]: 6.9
+In [3698]: min(X[:,1])
+Out[3698]: 0.1
+In [3699]: max(X[:,1])
+Out[3699]: 2.5
+
+x0,x1=np.meshgrid(
+    np.linspace(2.9,7,500).reshape(-1,1),
+    np.linspace(.8,2.7,200).reshape(-1,1),
+)
+In [3577]: x0
+Out[3577]: 
+array([[2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ],
+       [2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ],
+       [2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ],
+       ...,
+       [2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ],
+       [2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ],
+       [2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ]])
+In [3578]: x1
+Out[3578]: 
+array([[0.8       , 0.8       , 0.8       , ..., 0.8       , 0.8       ,
+        0.8       ],
+       [0.80954774, 0.80954774, 0.80954774, ..., 0.80954774, 0.80954774,
+        0.80954774],
+       [0.81909548, 0.81909548, 0.81909548, ..., 0.81909548, 0.81909548,
+        0.81909548],
+       ...,
+       [2.68090452, 2.68090452, 2.68090452, ..., 2.68090452, 2.68090452,
+        2.68090452],
+       [2.69045226, 2.69045226, 2.69045226, ..., 2.69045226, 2.69045226,
+        2.69045226],
+       [2.7       , 2.7       , 2.7       , ..., 2.7       , 2.7       ,
+        2.7       ]])
+
+In [3579]:  x0.shape
+Out[3579]: (200, 500)
+/ 200 keer dezelfde 500
+In [3616]: x1.shape
+Out[3616]: (200, 500)
+/ 200 keer een andere 500
+In [3580]: x0.ravel().shape
+Out[3580]: (100000,)
+In [3581]: X_new=np.c_[x0.ravel(),x1.ravel()]
+In [3582]: X_new.shape
+Out[3582]: (100000, 2)
+In [3583]: X_new
+Out[3583]: 
+array([[2.9       , 0.8       ],
+       [2.90821643, 0.8       ],
+       [2.91643287, 0.8       ],
+       ...,
+       [6.98356713, 2.7       ],
+       [6.99178357, 2.7       ],
+       [7.        , 2.7       ]])
+/ 100000 grid punten	,  
+/ zo zijn de punten in X ook	: (petal length, petal width)	,
+
+/ X_new gaat in deze volgorde:
+...
+. . . . . . .			# dan deze rij, vlnr	,
+. . . . . . .  		# eerst deze rij 500 lang	vlnr	,
+
+In [3704]: X_new[0]
+Out[3704]: array([2.9, 0.8])
+In [3705]: X_new[499]
+Out[3705]: array([7. , 0.8])
+In [3706]: X_new[500]
+Out[3706]: array([2.9       , 0.80954774])
+...
+
+In [3585]: y_proba=log_reg.predict_proba(X_new)
+/ 100000 kansen op niet/wel virginica	, 
+/ X_new is zoals X	,
+/ y=0 of 1	,  je kunt dit zien als de kans op virginica	,
+/ y_proba=[.6,.4] bijv: kans op non-virginica, kans op virginica 
+
+In [3586]: y_proba
+Out[3586]: 
+array([[0.89405713, 0.10594287], # kans op niet-virginica	, kans op virginica	,
+       [0.89402576, 0.10597424],
+       [0.89399438, 0.10600562],
+       ...,
+       [0.05487767, 0.94512233],
+       [0.05486049, 0.94513951],
+       [0.05484332, 0.94515668]])
+
+In [3587]: len(X)
+Out[3587]: 150
+
+In [3672]: plt.figure(figsize=(10,4))                          
+
+
+/ Intermezzo 
+
+In [3590]: X[y==0]
+Out[3590]: 
+array([[1.4, 0.2],
+       [1.4, 0.2],
+...
+       [3. , 1.1],
+       [4.1, 1.3]])
+
+/ niet	,
+In [3591]: X[y==0][0]
+Out[3591]: array([1.4, 0.2])
+
+/ wel	,
+In [3592]: X[y==0,0]
+Out[3592]: 
+array([1.4, 1.4, 1.3, 1.5, 1.4, 1.7, 1.4, 1.5, 1.4, 1.5, 1.5, 1.6, 1.4,
+       1.1, 1.2, 1.5, 1.3, 1.4, 1.7, 1.5, 1.7, 1.5, 1. , 1.7, 1.9, 1.6,
+       1.6, 1.5, 1.4, 1.6, 1.6, 1.5, 1.5, 1.4, 1.5, 1.2, 1.3, 1.5, 1.3,
+       1.5, 1.3, 1.3, 1.3, 1.6, 1.9, 1.4, 1.6, 1.4, 1.5, 1.4, 4.7, 4.5,
+       4.9, 4. , 4.6, 4.5, 4.7, 3.3, 4.6, 3.9, 3.5, 4.2, 4. , 4.7, 3.6,
+       4.4, 4.5, 4.1, 4.5, 3.9, 4.8, 4. , 4.9, 4.7, 4.3, 4.4, 4.8, 5. ,
+       4.5, 3.5, 3.8, 3.7, 3.9, 5.1, 4.5, 4.5, 4.7, 4.4, 4.1, 4. , 4.4,
+       4.6, 4. , 3.3, 4.2, 4.2, 4.2, 4.3, 3. , 4.1])
+
+In [3594]: (X[y==0,0],X[y==0,1])
+Out[3594]: 
+(array([1.4, 1.4, 1.3, 1.5, 1.4, 1.7, 1.4, 1.5, 1.4, 1.5, 1.5, 1.6, 1.4,
+...
+        4.6, 4. , 3.3, 4.2, 4.2, 4.2, 4.3, 3. , 4.1]),
+ array([0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1,
+...
+        1.4, 1.2, 1. , 1.3, 1.2, 1.3, 1.3, 1.1, 1.3]))
+
+In [3595]: X[y==0]
+Out[3595]: 
+array([[1.4, 0.2],
+       [1.4, 0.2],
+...
+       [3. , 1.1],
+       [4.1, 1.3]])
+
+/ dit kan, maar is niet goed,	
+In [3602]: plt.plot(X[y==0],'bs')             
+
+/ Einde Intermezzo 
+
+/ we doen	,
+In [3601]: plt.plot(X[y==0,0],X[y==0,1],'bs')  	# y==0 is niet-virginica
+In [3604]: plt.plot(X[y==1,0],X[y==1,1],'g^')		# y==1 is virginica
+
+In [3621]: y_proba[:,1] # de kansen op virginica in alle X_new roosterpunten= petal length, petal_width	,
+Out[3621]: 
+array([0.10594287, 0.10597424, 0.10600562, ..., 0.94512233, 0.94513951,
+       0.94515668])
+In [3709]: X_new.shape
+Out[3709]: (100000, 2)
+In [3622]: y_proba[:,1].shape
+Out[3622]: (100000,)
+/ kansen op virginica	op alle
+
+/ de vorm van het rooster	,
+////////////////////////////
+/ X_new is 1 lang array	, maar volgt het rooster	,
+In [3623]: x0.shape
+Out[3623]: (200, 500)
+In [3710]: x0
+Out[3710]: 
+array([[2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ],
+       [2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ],
+       [2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ],
+       ...,
+       [2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ],
+       [2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ],
+       [2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ]])
+In [3711]: x1
+Out[3711]: 
+array([[0.8       , 0.8       , 0.8       , ..., 0.8       , 0.8       ,
+        0.8       ],
+       [0.80954774, 0.80954774, 0.80954774, ..., 0.80954774, 0.80954774,
+        0.80954774],
+       [0.81909548, 0.81909548, 0.81909548, ..., 0.81909548, 0.81909548,
+        0.81909548],
+       ...,
+       [2.68090452, 2.68090452, 2.68090452, ..., 2.68090452, 2.68090452,
+        2.68090452],
+       [2.69045226, 2.69045226, 2.69045226, ..., 2.69045226, 2.69045226,
+        2.69045226],
+       [2.7       , 2.7       , 2.7       , ..., 2.7       , 2.7       ,
+        2.7       ]])
+
+
+In [3624]: zz=y_proba[:,1].reshape(x0.shape)
+In [3625]: zz.shape
+Out[3625]: (200, 500)
+In [3626]: contour=plt.contour(x0,x1,zz,cmap=plt.cm.brg)
+/ kans op virginica	, op onderste lijn in de kans .15, op de bovenste .9	,
+In [3637]: plt.clabel(contour,inline=1,fontsize=12)
+/ we zien de getallen bij de lijnen .15, ..., .9
+
+In [3681]: log_reg.coef_
+Out[3681]: array([[ 5.7528683 , 10.44455633]])
+In [3682]: log_reg.intercept_
+Out[3682]: array([-45.26062435])
+left_right = np.array([2.9, 7])
+In [3630]: boundary=-(log_reg.coef_[0][0]*left_right+log_reg.intercept_[0])/ log_reg.coef_[0][1]
+In [3684]: boundary
+Out[3684]: array([2.73609576, 0.47781314])
+
+
+In [3712]: plt.plot(left_right,boundary,'k--')
+
+
+plt.axis([2.9, 7, 0.8, 2.7])
+/ OK	,
+
+/ 13	. 
+
+/ Logistic Regression
+
+/ zelf voorbeeld	,
+
+/ (137)
+
+X=np.array([[1,0],[0,1]])
+y=np.array([1,0])
+log_reg=LogisticRegression()
+log_reg.fit(X,y)
+log_reg.coef_
+Out[3784]: array([[ 0.40105812, -0.40105812]])
+log_reg.intercept_
+Out[3785]: array([0.])
+log_reg.predict_proba(X)
+Out[3788]:
+array([[0.40105814, 0.59894186],    # WH kans t=0, kans op t=1
+       [0.59894186, 0.40105814]])
+
+x0,x1=np.meshgrid(
+    np.linspace(-2,2,10).reshape(-1,1),
+    np.linspace(-2,2,10).reshape(-1,1),
+)
+X_new=np.c_[x0.ravel(),x1.ravel()]
+y_proba=log_reg.predict_proba(X_new)
+
+plt.figure()
+plt.plot(X[y==0,0],X[y==0,1],'bs')              
+plt.plot(X[y==1,0],X[y==1,1],'g^')
+
+zz=y_proba[:,1].reshape(x0.shape)
+contour=plt.contour(x0,x1,zz,cmap=plt.cm.brg)
+plt.clabel(contour,inline=1,fontsize=12)
+/ we zien countour lijnen, 45 graden, en .6 gaat door 1,0 en .4 gaat door 0,1 , en .7, .8 verder naar rechtsonder, en .3, .2 verder naar linksboven, door 0,0 gaat .5 ,
+
+left_right = np.array([-2,2])
+boundary=-(log_reg.coef_[0][0]*left_right+log_reg.intercept_[0])/ log_reg.coef_[0][1]
+plt.plot(left_right,boundary,'k--')
+/= contour line door 0,0, kans op t=1 is .5 
+
+/ 13	. 
+
+/ Logistic Regression
+
+/ zelf voorbeeld	,
+
+/ (137)
+
+
+X=np.array([[1,0],[2,0],[0,1],[0,2]])
+y=np.array([1,1,0,0])
+log_reg=LogisticRegression()
+log_reg.fit(X,y)
+log_reg.coef_
+Out[3811]: array([[ 0.71483308, -0.71483308]])
+log_reg.intercept_
+Out[3785]: array([0.])
+log_reg.predict_proba(X)
+Out[3788]:
+array([[0.32853179, 0.67146821],	# kans t=1 is .67 in 1,0
+       [0.1931507 , 0.8068493 ],	# kans t=1 in 2,0 is .8
+       [0.67146821, 0.32853179],	# kans t=1 in 0,1 is .32
+       [0.8068493 , 0.1931507 ]]) # kans t=1 in 0,2 is .19
+
+x0,x1=np.meshgrid(
+    np.linspace(-2,2,10).reshape(-1,1),
+    np.linspace(-2,2,10).reshape(-1,1),
+)
+X_new=np.c_[x0.ravel(),x1.ravel()]
+y_proba=log_reg.predict_proba(X_new)
+
+plt.figure()
+plt.plot(X[y==0,0],X[y==0,1],'bs')              
+plt.plot(X[y==1,0],X[y==1,1],'g^')
+
+zz=y_proba[:,1].reshape(x0.shape)
+contour=plt.contour(x0,x1,zz,cmap=plt.cm.brg)
+plt.clabel(contour,inline=1,fontsize=12)
+/ we zien countour lijnen, 45 graden, 
+/ 1,0 ligt tussen .6 en .75 
+/ 2,0 ligt tussen .75 en .9 
+/ 0,1 ligt tussen .45 en .3 
+/ 0,2 ligt tussen .3 en .15
+
+
+left_right = np.array([-2,2])
+boundary=-(log_reg.coef_[0][0]*left_right+log_reg.intercept_[0])/ log_reg.coef_[0][1]
+plt.plot(left_right,boundary,'k--')
+/= contour line door 0,0, kans op t=1 is .5
+
+/ 13	. 
+
+/ Logistic Regression
+
+/ zelf voorbeeld	,
+
+/ (137)
+
+X=np.array([[1,0],[0,1],[-1,0],[0,-1]])
+y=np.array([1,0,0,1])
+log_reg=LogisticRegression()
+log_reg.fit(X,y)
+log_reg.coef_
+Out[3831]: array([[ 0.67482829, -0.67482829]])
+log_reg.intercept_
+Out[3785]: array([0.])
+log_reg.predict_proba(X)
+Out[3788]:
+array([[0.33741655, 0.66258345],
+       [0.66258345, 0.33741655],
+       [0.66258345, 0.33741655],
+       [0.33741655, 0.66258345]])
+
+
+x0,x1=np.meshgrid(
+    np.linspace(-2,2,10).reshape(-1,1),
+    np.linspace(-2,2,10).reshape(-1,1),
+)
+X_new=np.c_[x0.ravel(),x1.ravel()]
+y_proba=log_reg.predict_proba(X_new)
+
+plt.figure()
+plt.plot(X[y==0,0],X[y==0,1],'bs')              
+plt.plot(X[y==1,0],X[y==1,1],'g^')
+
+zz=y_proba[:,1].reshape(x0.shape)
+contour=plt.contour(x0,x1,zz,cmap=plt.cm.brg)
+plt.clabel(contour,inline=1,fontsize=12)
+/ we zien countour lijnen, 45 graden, 
+/ 1,0 en 0,-1 ligt tussen .6 en .75 
+/ 0,1 en -1,0 ligt tussen .45 en .3 
+
+left_right = np.array([-2,2])
+boundary=-(log_reg.coef_[0][0]*left_right+log_reg.intercept_[0])/ log_reg.coef_[0][1]
+plt.plot(left_right,boundary,'k--')
+/= contour line door 0,0, kans op t=1 is .5
+
+/ 13	. 
+
+/ lees,
+https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html
+User guide
+->
+https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+
+
+
+/ 13	. 
+
+/ Logistic Regression
+
+/ zelf voorbeeld	,
+/ ander solver	,
+
+/ (137)
+
+X=np.array([[1,0],[0,1],[-1,0],[0,-1]])
+y=np.array([1,0,0,1])
+log_reg=LogisticRegression('lbsfg')
+log_reg.fit(X,y)
+ValueError: Unsupported set of arguments: The combination of penalty='lbsfg' and loss='logistic_regression' is not supported, Parameters: penalty='lbsfg', loss='logistic_regression', dual=False
+
+
+/ 13	. 
+
+/ Logistic Regression
+
+/ zelf voorbeeld	,
+/ deze kan alg niet aan	, 
+
+/ (137)
+
+
+X=np.array([[1,0],[0,1],[-1,0],[0,-1]])
+y=np.array([1,0,1,0])
+log_reg=LogisticRegression()
+log_reg.fit(X,y)
+log_reg.coef_
+Out[3849]: array([[0., 0.]])
+log_reg.intercept_
+Out[3785]: array([0.])
+log_reg.predict_proba(X)
+Out[3788]:
+array([[0.5, 0.5],
+       [0.5, 0.5],
+       [0.5, 0.5],
+       [0.5, 0.5]])
+
+x0,x1=np.meshgrid(
+    np.linspace(-2,2,10).reshape(-1,1),
+    np.linspace(-2,2,10).reshape(-1,1),
+)
+X_new=np.c_[x0.ravel(),x1.ravel()]
+y_proba=log_reg.predict_proba(X_new)
+
+plt.figure()
+plt.plot(X[y==0,0],X[y==0,1],'bs')              
+plt.plot(X[y==1,0],X[y==1,1],'g^')
+
+zz=y_proba[:,1].reshape(x0.shape)
+contour=plt.contour(x0,x1,zz,cmap=plt.cm.brg)
+/home/eric/miniconda3/lib/python3.6/site-packages/matplotlib/contour.py:1173: UserWarning: No contour levels were found within the data range.
+  warnings.warn("No contour levels were found"
+
+
+
+/ SCIKIT-LEARN.ORG 
+
+/ 13	. 
+
+/ lees	,
+https://scikit-learn.org/stable/modules/cross_validation.html
+
+
+In [962]: iris.data.shape
+Out[962]: (150, 4)
+
+In [963]: iris.target.shape
+Out[963]: (150,)
+
+In [961]: iris.data[:5]
+Out[961]: 
+array([[5.1, 3.5, 1.4, 0.2],
+       [4.9, 3. , 1.4, 0.2],
+       [4.7, 3.2, 1.3, 0.2],
+       [4.6, 3.1, 1.5, 0.2],
+       [5. , 3.6, 1.4, 0.2]])
+
+In [964]: iris.target
+Out[964]: 
+array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2])
+
+/ 1313	. 
+
+/ kfold	,
+
+In [990]: I=np.arange(10)
+In [991]: I
+Out[991]: array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+In [1008]: kfold=KFold(n_splits=5,random_state=0)
+
+In [1009]: for train_index,test_index in kfold.split(I):
+      ...:     print("%s %s"%(train_index,test_index))
+      ...:     
+[2 3 4 5 6 7 8 9] [0 1]
+[0 1 4 5 6 7 8 9] [2 3]
+[0 1 2 3 6 7 8 9] [4 5]
+[0 1 2 3 4 5 8 9] [6 7]
+[0 1 2 3 4 5 6 7] [8 9]
+
+/ we onderstrepen de test set	,
+
+0 1 2 3 4 5 6 7 8 9
+---
+    ---
+        ---
+            ---
+                ---
+
+/ 131313	.
+
+/ we nemen iets kleiner voorbeeld	,
+In [1011]: X=np.array([[0,0],[-1,-1],[-2,-2],[1,1],[2,2],[3,3]])
+In [1012]: y=np.array([0,0,0,1,1,1])
+
+/ we split op X:
+In [1013]: kfold=KFold(n_splits=3,random_state=0)               
+In [1014]: for train,test in kfold.split(X):
+           		print("%s %s"%(train,test))
+      ...:     
+[2 3 4 5] [0 1]
+[0 1 4 5] [2 3]
+[0 1 2 3] [4 5]
+
+/ je kunt dan	,
+In [1023]: for train,test in kfold.split(X):
+      ...:               print("%s %s"%(train,test))
+      ...:               X_train, X_test, y_train, y_test = X[train], X[test], y[train], y[test]
+      ...:               print("%s\n%s\n%s\n%s\n"%(X_train,X_test,y_train,y_test))
+      ...:               
+      ...: 
+[2 3 4 5] [0 1]
+[[-2 -2]
+ [ 1  1]
+ [ 2  2]
+ [ 3  3]]
+[[ 0  0]
+ [-1 -1]]
+[0 1 1 1]
+[0 0]
+
+[0 1 4 5] [2 3]
+[[ 0  0]
+ [-1 -1]
+ [ 2  2]
+ [ 3  3]]
+[[-2 -2]
+ [ 1  1]]
+[0 0 1 1]
+[0 1]
+
+[0 1 2 3] [4 5]
+[[ 0  0]
+ [-1 -1]
+ [-2 -2]
+ [ 1  1]]
+[[2 2]
+ [3 3]]
+[0 0 0 1]
+[1 1]
+
+/ 1313	. 
+
+/ repeated kfold	,
+
+In [1037]: X
+Out[1037]: 
+array([[ 0,  0],
+       [-1, -1],
+       [-2, -2],
+       [ 1,  1],
+       [ 2,  2],
+       [ 3,  3]])
+In [1038]: y
+Out[1038]: array([0, 0, 0, 1, 1, 1])
+
+In [1039]: rkfold=RepeatedKFold(n_splits=3,random_state=0,n_repeats=2)
+In [1040]: for train,test in rkfold.split(X):
+      ...:               print("%s %s"%(train,test))
+      ...:         
+[0 1 3 4] [2 5]
+[0 2 4 5] [1 3]
+[1 2 3 5] [0 4]
+[0 2 4 5] [1 3]
+[1 2 3 5] [0 4]
+[0 1 3 4] [2 5]
+/ different splits in each repetition?
+/ TODO
+
+/ 1313	 .
+
+/ shufflesplit	,
+
+In [1037]: X
+Out[1037]: 
+array([[ 0,  0],
+       [-1, -1],
+       [-2, -2],
+       [ 1,  1],
+       [ 2,  2],
+       [ 3,  3]])
+In [1038]: y
+Out[1038]: array([0, 0, 0, 1, 1, 1])
+
+In [1041]: ss=ShuffleSplit(n_splits=3,test_size=.5,random_state=0)
+In [1042]: for train,test in ss.split(X):
+      ...:               print("%s %s"%(train,test))
+      ...:         
+[3 0 4] [5 2 1]
+[0 2 5] [1 3 4]
+[2 4 0] [3 5 1]
+
+In [1043]: ss=ShuffleSplit(n_splits=3,test_size=1/3,random_state=0)
+In [1044]: for train,test in ss.split(X):
+      ...:               print("%s %s"%(train,test))
+      ...:         
+[1 3 0 4] [5 2]
+[4 0 2 5] [1 3]
+[1 2 4 0] [3 5]
+
+/ 1313	. 
+
+/ stratifiedkfold	,
+
+StratifiedKFold is a variation of k-fold which returns stratified folds: each set contains approximately the same percentage of samples of each target class as the complete set.
+
+/ each set betekent: training set en test set	,
+/ we moeten nu in de .split fct ook y geven	, 
+
+In [1048]: X
+Out[1048]: 
+array([[ 0,  0],
+       [-1, -1],
+       [-2, -2],
+       [ 1,  1],
+       [ 2,  2],
+       [ 3,  3]])
+
+In [1049]: y
+Out[1049]: array([0, 0, 0, 1, 1, 1])
+
+In [1045]: skf=StratifiedKFold(n_splits=3,random_state=0)
+In [1047]: for train,test in skf.split(X,y):
+      ...:               print("%s %s"%(train,test))
+      ...:               
+      ...:         
+[1 2 4 5] [0 3]
+[0 2 3 5] [1 4]
+[0 1 3 4] [2 5]
+/ dus [1 2 4 5]  heeft 2 0's en 2 1's
+/ en [0 3] heeft 1 0's en 1 1's
+
+/ 1313	.
+
+/ stratified shuffle split	,
+
+
+
+/ 13	. 
+
+/ in voorbeelden hieronder hebben we,	
+
+In [940]:  Z=np.array([[1, 2], [3, 4], [5, 6], [7, 8], [3, 4], [5, 6]])
+In [941]: Z.shape
+Out[941]: (6, 2)
+In [942]: Z
+Out[942]: 
+array([[1, 2],
+       [3, 4],
+       [5, 6],
+       [7, 8],
+       [3, 4],
+       [5, 6]])
+
+In [943]: t=np.array([1, 2, 1, 2, 1, 2])
+In [944]: t.shape
+Out[944]: (6,)
+
+
+/ 13	. 
+
+/ lees	,
+https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.ShuffleSplit.html
+
+In [945]: rs = ShuffleSplit(n_splits=5, test_size=.25, random_state=0)
+In [946]: rs.get_n_splits(Z)
+Out[946]: 5
+
+In [948]: for train_index, test_index in rs.split(Z):
+     ...: ...    print("TRAIN:", train_index, "TEST:", test_index)
+     ...:    
+TRAIN: [1 3 0 4] TEST: [5 2]
+TRAIN: [4 0 2 5] TEST: [1 3]
+TRAIN: [1 2 4 0] TEST: [3 5]
+TRAIN: [3 4 1 0] TEST: [5 2]
+TRAIN: [3 5 1 0] TEST: [2 4]
+
+
+
+
+/ 13	. 
+
+/ kfold	,
+
+/ lees	,
+https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.KFold.html
+
+In [949]: from sklearn.model_selection import KFold
+In [950]: kf = KFold(n_splits=2)
+
+In [953]: for train_index, test_index in kf.split(Z):
+     ...:     print("TRAIN:", train_index, "TEST:", test_index)
+     ...:     X_train, X_test = X[train_index], X[test_index]
+     ...:     y_train, y_test = y[train_index], y[test_index]
+     ...:     
+TRAIN: [3 4 5] TEST: [0 1 2]
+TRAIN: [0 1 2] TEST: [3 4 5]
+
+In [954]: kf = KFold(n_splits=3)
+
+In [955]: for train_index, test_index in kf.split(Z):
+     ...:     print("TRAIN:", train_index, "TEST:", test_index)
+     ...:     X_train, X_test = X[train_index], X[test_index]
+     ...:     y_train, y_test = y[train_index], y[test_index]
+     ...:     
+TRAIN: [2 3 4 5] TEST: [0 1]
+TRAIN: [0 1 4 5] TEST: [2 3]
+TRAIN: [0 1 2 3] TEST: [4 5]
+
+
+
+/ Einde SCIKIT-LEARN.ORG
+
+/ NUMPY PANDAS 
+
+/ 13	. 
+
+/ pd.Series: slice implicit index is [,> en slice explicit index is [,]	,
+
+In [1157]: ser2
+Out[1157]: 
+7     12342
+13      801
+dtype: int64
+
+In [1158]: ser2[7:13]
+Out[1158]: Series([], dtype: int64)
+
+In [1159]: ser2.loc[7:13]
+Out[1159]: 
+7     12342
+13      801
+dtype: int64
+
+In [1160]: ser2[0:1]
+/=
+In [1161]: ser2.iloc[0:1]
+Out[1160]: 
+7    12342
+dtype: int64
+
+
+/ 13	. 
+
+/ hoe rij en column in df	,
+/ Name is is rij of column index naam	, 
+
+In [1134]:  ser2=pd.Series({7:12342,13:801})
+In [1135]:  ser3=pd.Series({7:7987,13:79})
+In [1144]: data2=pd.DataFrame({14:ser2,17:ser3})
+
+In [1145]: data2
+Out[1145]: 
+       14    17
+7   12342  7987
+13    801    79
+
+/ rij	,
+In [1146]: data2.iloc[0]
+/=
+In [1147]: data2.loc[7]
+Out[1146]: 
+14    12342
+17     7987
+Name: 7, dtype: int64
+
+/ kolom	,
+In [1148]: data2[14]
+Out[1148]: 
+7     12342
+13      801
+Name: 14, dtype: int64
+
+In [1149]: data2[0]
+/ ERR	,
+
+/ 13	 .
+
+/ let op verschil:
+/ kolom	, 
+In [1183]: data2[17]
+/ rij	,
+In [1184]: data2.loc[7]
+
+In [1181]: data2
+Out[1181]: 
+       14    17
+7   12342  7987
+13    801    79
+
+/ kolom	, 
+In [1183]: data2[17]
+Out[1183]: 
+7     7987
+13      79
+Name: 17, dtype: int64
+
+/ rij	,
+In [1184]: data2.loc[7]
+Out[1184]: 
+14    12342
+17     7987
+Name: 7, dtype: int64
+
+
+/ 13	. 
+
+/ implicit index: slice is tot aan	, explicit index: slice is tot en met	,  
+
+In [1162]: data2
+Out[1162]: 
+       14    17
+7   12342  7987
+13    801    79
+
+In [1165]: data2.iloc[0]
+/=
+In [1166]: data2.iloc[0,:]
+Out[1166]: 
+14    12342
+17     7987
+Name: 7, dtype: int64
+
+/ tot aan 1,
+In [1167]: data2.iloc[0,:1]
+Out[1167]: 
+14    12342
+Name: 7, dtype: int64
+
+/ tot aan 0	, geen dus	,
+In [1176]: data2.iloc[:0]
+Out[1176]: 
+Empty DataFrame
+Columns: [14, 17]
+Index: []
+
+/ tot en met 7	,
+In [1173]: data2.loc[:7]
+Out[1173]: 
+      14    17
+7  12342  7987
+
+In [1174]: data2.loc[:7,17]
+Out[1174]: 
+7    7987
+Name: 17, dtype: int64
+
+In [1179]: data2.loc[:7,:14]
+Out[1179]: 
+      14
+7  12342
+
+In [1187]: data2.ix[:13,:17]
+.ix is deprecated. Please use
+.loc for label based indexing or
+.iloc for positional indexing
+
+/ 13	. 
+
+/ we kunnen	,
+/ eerst column	, dan row	,
+In [1193]: data2[17][7]
+Out[1193]: 7987
+
+/ maar we doen	,
+/ eerst row, 
+In [1194]: data2.loc[7,17]
+Out[1194]: 7987
+
+/ 13	. 
+
+In [1211]: strat_test_set
+Out[1211]: 
+       longitude  latitude       ...         median_house_value  ocean_proximity
+5784     -118.25     34.15       ...                   209600.0        <1H OCEAN
+378      -122.17     37.74       ...                    92500.0         NEAR BAY
+11018    -117.80     33.77       ...                   349500.0        <1H OCEAN
+...
+
+In [1204]: strat_test_set.iloc[1]
+Out[1204]: 
+longitude              -122.17
+latitude                 37.74
+housing_median_age          34
+total_rooms               1223
+total_bedrooms             281
+population                 824
+households                 280
+median_income           2.2917
+median_house_value       92500
+ocean_proximity       NEAR BAY
+Name: 378, dtype: object
+
+In [1205]: strat_test_set.loc[378,'longitude']
+Out[1205]: -122.17
+
+In [1209]: strat_test_set.iloc[1,0]
+Out[1209]: -122.17
+
+In [1222]: strat_test_set['longitude'][378]
+Out[1222]: -122.17
+
+/ 7		.
+
+/ lees	,
+https://docs.scipy.org/doc/numpy/reference/generated/numpy.dot.html
+
+If a is an N-D array and b is a 1-D array, it is a sum product over the last axis of a and b.
+
+If a is an N-D array and b is an M-D array (where M>=2), it is a sum product over the last axis of a and the second-to-last axis of b:
+
+/ 13	. 
+
+In [1796]: X = np.array([[1, 1], [1, 2], [2, 2], [2, 3]])
+In [1797]: X
+Out[1797]: 
+array([[1, 1],
+       [1, 2],
+       [2, 2],
+       [2, 3]])
+In [1806]: X.shape
+Out[1806]: (4, 2)
+
+/ 1313	. 
+
+In [1804]: y=np.array([1,2])
+In [1805]: y
+Out[1805]: array([1, 2])
+In [1807]: y.shape
+Out[1807]: (2,)
+/ y ligt, dus de laatste as is de hor.as	,
+
+In [1808]:  np.dot(X,y)
+Out[1808]: array([3, 5, 6, 8])
+
+/ 1313	. 
+
+In [1809]: z=np.array([[1],[2]])
+/ of, 
+In [1820]: z=np.array([1,2]).reshape(2,1)
+In [1828]: z.shape
+Out[1828]: (2, 1)
+In [1810]: z
+Out[1810]: 
+array([[1],
+       [2]])
+/ z staat	, dus de laatste as is de vert. as	,
+
+In [1811]: np.dot(X,z)
+Out[1811]: 
+array([[3],
+       [5],
+       [6],
+       [8]])
+
+/ 13	. 
+
+In [1814]: X
+Out[1814]: 
+array([[1, 1],
+       [1, 2],
+       [2, 2],
+       [2, 3]])
+
+In [1812]: Y=np.array([[1,2,3],[4,5,6]])
+
+In [1813]: Y
+Out[1813]: 
+array([[1, 2, 3],
+       [4, 5, 6]])
+
+In [1816]: np.dot(X,Y)
+Out[1816]: 
+array([[ 5,  7,  9],
+       [ 9, 12, 15],
+       [10, 14, 18],
+       [14, 19, 24]])
+
+/ Einde NUMPY PANDAS 
+
+/ NUMPY SCIPY
+/ DISTRIBUTIONS
+
+/ 7	. 
+
+/ standard deviation en standard error	,
+
+/ sem=std van het gemiddelde 	,
+
+/ lees	,
+https://github.com/pandas-dev/pandas/issues/6897
+
+/ lees,
+https://en.wikipedia.org/wiki/Standard_error
+
+/ als varX=s^2, en X1,...,Xn zijn net als X verdeeld, en T=X1+...+Xn, dan is varT=n*s^2, dus var(T/n)=(s^2)/n	, dus std van gemiddelde T = s/sqrt(n)	,
+
+/ in groene stat boek(32) S=1/(n-1)* som kwadraten van de verschillen, dat is de standaard deviation 
+/ standaard error = S/sqrt(n)
+
+/ numpy.std berekent de standard deviation, je kunt ddof=0 of 1 nemen: S=1/n*som ... of S=1/n-1 * som ...
+/ ddof betekent: delta degrees of freedom	,
+
+/ 7	. 
+
+/ voorbeeld van sem	,
+
+/ numpy . std met ddof=0 of 1	, 
+
+In [2189]: se
+Out[2189]: 
+0    1
+1    0
+2    1
+dtype: int64
+In [2192]: np.std(se)
+Out[2192]: 0.4714045207910317
+
+/ klopt, mean=2/3	, verschil met mean = [1/3,2/3,1/3]	, som kwadraten= 1/9+4/9+1/9=6/9
+/ zij nemen ddof=0 default, dus (6/9)/3=2/9, sqrt(2/9)=.47...
+
+/ maar zie stat boek(32) ddof=1	, 
+
+In [2196]: np.std(se,ddof=1)
+Out[2196]: 0.5773502691896258
+In [2195]: np.std(se,ddof=1)**2
+Out[2195]: 0.3333333333333334
+
+/ klopt	, (6/9)/2=1/3, en sqrt(1/3)=.57...
+
+/ 13	,
+
+/ stats.sem=np.std(ddof=1)/sqrt(n)	, dus in np.std doe je 1/n-1, en je deelt door sqrt(n)	,
+
+In [2199]: stats.sem(se)
+Out[2199]: 0.33333333333333337
+/=
+In [2201]: np.std(se,ddof=1)/np.sqrt(3)
+Out[2201]: 0.33333333333333337
+
+/ 7	. 
+
+/ lees, waar je alle distr kunt vinden, zoals norm, chi2	, t	,
+https://docs.scipy.org/doc/scipy/reference/stats.html
+
+/ 7	. 
+
+/ norm	,
+
+/ lees,	
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html
+
+
+In [2202]: from scipy.stats import norm
+In [2203]: fig,ax=plt.subplots(1,1)
+/ we zien assenstelstel van [0,1]x[0,1]
+
+In [2204]: mean,var,skew,kurt=norm.stats(moments='mvsk')
+In [2205]: mean
+Out[2205]: array(0.)
+In [2206]: var
+Out[2206]: array(1.)
+In [2207]: skew
+Out[2207]: array(0.)
+In [2208]: kurt
+Out[2208]: array(0.)
+/ TODO
+
+/ 13	. 
+
+In [2576]: norm.ppf(.01)
+Out[2576]: -2.3263478740408408
+In [2577]: norm.ppf(.99)
+Out[2577]: 2.3263478740408408
+
+
+In [2209]: x=np.linspace(norm.ppf(.01),norm.ppf(.99),101)
+/ norm.ppf=inverse van norm.cdf=cumulative df	, dus norm.ppf(.99) is values waar norm.pdf=.99	, met loc=0 en scale=1	,
+
+In [2217]: ax.plot(x,norm.pdf(x),'r-',lw=5,alpha=.6,label='norm pdf')
+Out[2217]: [<matplotlib.lines.Line2D at 0x7fbefac8ceb8>]
+/ mooi, het assenstelsel is aangepast, ongeveer [-3,3]x[0,.4]
+/ 'r-' betekent WH rood, lw=line width	,
+
+/ 13	. 
+
+/ we kunnen ook norm()	,
+
+In [2219]: rv=norm()
+In [2221]: ax.plot(x,rv.pdf(x),'k-',lw=2,label='frozen pdf')
+Out[2221]: [<matplotlib.lines.Line2D at 0x7fbefac7ac88>]
+
+/ 13	. 
+
+In [2222]: vals=norm.ppf([.001,.5,.999])
+In [2224]: vals
+Out[2224]: array([-3.09023231,  0.        ,  3.09023231])
+In [2225]: np.allclose([.001,.5,.999],norm.cdf(vals))
+Out[2225]: True
+
+/ 13	. 
+
+/ random values vlg normal distr	,
+
+
+In []: plt.figure() 
+
+In [2226]: r=norm.rvs(size=1000)
+
+In [2928]: r
+Out[2928]: 
+array([-1.34377419, -1.45004778,  0.04683801, -0.79524324, -1.03421746,
+        1.53728758, -0.70322914,  0.28348129,  0.70218569,  1.25834158,
+...
+
+In [2937]: type(r)
+Out[2937]: numpy.ndarray
+In [2935]: r.min()
+Out[2935]: -3.4420713643940983
+In [2936]: r.max()
+Out[2936]: 2.4535387588020554
+
+In [2930]: v=plt.hist(r)
+In [2931]: v
+(array([ 1.,  1.,  1.,  9., 20., 29., 15., 13.,  8.,  3.]),
+ array([-3.44207136, -2.85251035, -2.26294934, -1.67338833, -1.08382732,
+        -0.4942663 ,  0.09529471,  0.68485572,  1.27441673,  1.86397775,
+         2.45353876]),
+
+/ hij doet WH ook weer bins [,>, dus als r.max() een 
+
+/ plt.hist maakt default 10 bins	, hij kijkt naar r.min en r.max en verdeeld deze in 10 bins	: 
+
+In [2972]: [n for n in range(0,11)]
+Out[2972]: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+In [2947]: [r.min()+n*d for n in range(0,11)]
+Out[2947]: 
+[-3.4420713643940983,
+ -2.852510352074483,
+ -2.2629493397548677,
+ -1.6733883274352523,
+ -1.083827315115637,
+ -0.4942663027960217,
+ 0.09529470952359365,
+ 0.684855721843209,
+ 1.2744167341628243,
+ 1.8639777464824396,
+ 2.453538758802055]
+
+In [2949]: v
+Out[2949]: 
+(array([0.01696177, 0.01696177, 0.01696177, 0.15265596, 0.33923546,
+        0.49189141, 0.25442659, 0.22050305, 0.13569418, 0.05088532]),
+ array([-3.44207136, -2.85251035, -2.26294934, -1.67338833, -1.08382732,
+        -0.4942663 ,  0.09529471,  0.68485572,  1.27441673,  1.86397775,
+         2.45353876]),
+
+/ 1313	. 
+
+In [2966]: r=norm.rvs(size=10)
+In [2967]: r
+Out[2967]: 
+array([-0.46918446, -0.66342427,  0.46240139,  1.01807475,  0.72733739,
+        0.42837616,  0.97151509, -0.73975397, -0.47216554,  0.82262837])
+
+In [2968]: v= plt.hist(r)
+In [2969]: v
+Out[2969]: 
+(array([2., 2., 0., 0., 0., 0., 2., 0., 2., 2.]),
+ array([-0.73975397, -0.5639711 , -0.38818823, -0.21240535, -0.03662248,
+         0.13916039,  0.31494326,  0.49072613,  0.66650901,  0.84229188,
+         1.01807475]),
+
+/ we zien 2 values in de laatste bin: 1.01807475, 0.97151509	, 
+/ dus de laatste ook	, maar bij binom waren de bins van de vorm [,> en hier niet?
+/ TODO
+
+
+
+/ 13	. 
+
+/ samenvattend	,
+
+In [2570]: plt.figure()
+In [2572]: rn=norm.rvs(size=100)
+
+In [2573]: plt.hist(rn,density=True)
+Out[2573]: 
+(array([0.0209339 , 0.14653728, 0.25120677, 0.39774405, 0.39774405,
+        0.37681015, 0.35587626, 0.08373559, 0.0209339 , 0.04186779]),
+ array([-2.24724362, -1.76954948, -1.29185535, -0.81416122, -0.33646708,
+         0.14122705,  0.61892118,  1.09661532,  1.57430945,  2.05200358,
+         2.52969772]),
+ <a list of 10 Patch objects>)
+
+In [2576]: norm.ppf(.01)
+Out[2576]: -2.3263478740408408
+In [2577]: norm.ppf(.99)
+Out[2577]: 2.3263478740408408
+In [2578]: x=np.linspace(norm.ppf(.01),norm.ppf(.99),100)
+In [2579]: plt.plot(x,norm.pdf(x),'r-',lw=5)
+
+
+/ 7	. 
+
+/ chi2	,
+
+/ lees,
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.chi2.html#scipy.stats.chi2
+
+/ chi^2_n is som van n N(0,1) verdelingen  (n vrijheidsgraden)
+/ t_n is quotient van N(0,1) verdeling / sqrt ( chi^2_n / n) 	 (n vrijheidsgraden)	,
+
+/ lees groene stat boek st 4.29 (127)
+/ TODO
+
+/ df=degree of freedom	,
+
+In [2248]: mean,var,skew,kurt=chi2.stats(df,moments='mvsk')
+In [2249]: mean,var,skew,kurt
+Out[2249]: (array(55.), array(110.), array(0.38138504), array(0.21818182))
+
+/ 13	. 
+
+/ vanaf 3 gaat grafiek stijgen bij 0	,
+
+In [2983]: plt.figure()                                        
+In [2285]: df=2
+In [2287]: x=np.linspace(chi2.ppf(.01,df),chi2.ppf(.99,df),101)
+In [2982]: plt.plot(x,chi2.pdf(x,df))
+
+In [2285]: df=3
+In [2287]: x=np.linspace(chi2.ppf(.01,df),chi2.ppf(.99,df),101)
+In [2982]: plt.plot(x,chi2.pdf(x,df))
+
+
+/ 7	. 
+
+/ lees	,
+https://docs.scipy.org/doc/scipy-0.15.1/reference/index.html
+
+/ we zien bovenin tutorials, en onderaan reference	,
+
+/ lees	,
+https://docs.scipy.org/doc/scipy-0.15.1/reference/tutorial/stats.html
+
+/ lees,	
+https://docs.scipy.org/doc/scipy-0.15.1/reference/stats.html
+
+/ we zien continuous en discrete distributions:
+binom
+geom
+nbinom
+
+/ 7	. 
+
+/ t	,
+
+/ lees	,
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.t.html#scipy.stats.t
+
+In [2233]: from scipy.stats import t
+
+In [2986]: df=2
+In [2987]: m=t.ppf(.01,df)
+In [2988]: M=t.ppf(.99,df)
+In [2989]: m
+Out[2989]: -6.9645567187558575
+In [2990]: M
+Out[2990]: 6.964556718755855
+In [2991]: x=np.linspace(m,M,100)
+
+In [2992]: plt.figure()
+In [2993]: plt.plot(x,t.pdf(x,df))
+
+In [2997]: r=t.rvs(df,size=100)
+In [3001]: plt.hist(r,density=True)
+Out[3001]: 
+(array([0.00586268, 0.02345071, 0.01758803, 0.19933103, 0.2872712 ,
+        0.04103874, 0.        , 0.00586268, 0.        , 0.00586268]),
+ array([-7.25749583, -5.55179054, -3.84608524, -2.14037995, -0.43467466,
+         1.27103064,  2.97673593,  4.68244122,  6.38814652,  8.09385181,
+         9.7995571 ]),
+/ we zien terug:
+In [3002]: r.min()
+Out[3002]: -7.257495829261276
+In [3003]: r.max()
+Out[3003]: 9.799557104688686
+
+
+/ 7	 
+
+/ binom	,
+
+/ lees	,
+https://docs.scipy.org/doc/scipy-0.15.1/reference/generated/scipy.stats.binom.html#scipy.stats.binom
+
+/ bij een cont. dist heb je een pdf: probability density function	,
+/ bij een discrete dist heet het een pmf: probability mass function	,
+/ in beide gevallen heb je de cumulative density function: cdf en z'n inverse: ppf: Percent point function (inverse of cdf — percentiles)	, hier heet de cumulalitve function bij discrete distr dus weer density function	,
+
+In [2301]: n,p=5,.4
+In [2302]: x=np.arange(binom.ppf(.01,n,p),binom.ppf(1,n,p))
+In [2303]: x
+Out[2303]: array([0., 1., 2., 3., 4.])
+In [2304]: ax.plot(x,binom.pmf(x,n,p),'bo',ms=8,label='binom pmf')
+/ we zien 5 punten	,
+In [2305]: ax.vlines(x,0,binom.pmf(x,n,p),colors='b',lw=5,alpha=.5)
+/ we zien 5 staven	,
+
+/ frozen	, 
+In [2306]: rv=binom(n,p)
+In [2307]: ax.vlines(x,0,rv.pmf(x),colors='k',linestyles='-',lw=1,label='frozen pmf')
+
+/ random	,
+
+In [2308]: fig,ax=plt.subplots(1,1)
+In [2309]: r=binom.rvs(n,p,size=1000)
+In [2310]: ax.hist(r,density=True,histtype='stepfilled',alpha=.2)
+Out[2310]: 
+(array([0.152, 0.   , 0.484, 0.   , 0.708, 0.   , 0.484, 0.   , 0.144,
+        0.028]),
+ array([0. , 0.5, 1. , 1.5, 2. , 2.5, 3. , 3.5, 4. , 4.5, 5. ]),
+ <a list of 1 Patch objects>)
+/ we zien 
+
+/ 13	. 
+
+/ lees	,
+https://gist.github.com/galeone/a3e4d773bc6c4cbc9b18e9940e246a00
+/ over bins: geef ze expliciet op, ipv aantal	,
+
+/ samenvattend	,
+
+In [2580]: plt.figure()
+In [2588]: x
+Out[2588]: array([0, 1, 2, 3, 4, 5])
+In [2624]: binom.pmf(x,5,.5)
+Out[2624]: array([0.03125, 0.15625, 0.3125 , 0.3125 , 0.15625, 0.03125])
+In [2589]: plt.plot(x,binom.pmf(x,n,p),'bo',ms=8)
+
+In [2581]: rb=binom.rvs(5,.5,size=100)
+In [2582]: v=plt.hist(rb,bins=[0,1,2,3,4,5,6],density=True)
+In [2583]: v
+Out[2583]: 
+(array([0.03, 0.14, 0.29, 0.31, 0.2 , 0.03]),
+ array([0, 1, 2, 3, 4, 5, 6]),
+
+/ 13	. 
+
+In [2663]: plt.figure()
+In [2664]: binom.cdf([0,1,2,3,4,5],5,.5)
+Out[2664]: array([0.03125, 0.1875 , 0.5    , 0.8125 , 0.96875, 1.     ])
+In [2665]: plt.plot(binom.cdf([0,1,2,3,4,5],5,.5))
+/ OK	,
+
+/ 13	. 
+
+In [2681]: binom.cdf(3,5,.5)
+Out[2681]: 0.8125
+In [2684]: binom.cdf(2.9,5,.5)
+Out[2684]: 0.5
+In [2685]: binom.cdf(2,5,.5)
+Out[2685]: 0.5
+
+/ de cdf is een [,> step fct	,
+/ logisch	, cdf(2)=.5 en cdf(3)=.8125 en de cdf(2.9)=cdf(2) want de enigste uitkomsten zijn 2 en 3	, en voor 3, zeg 2.9 is cumulatief 2 	, want tussen 2 en 2.9 gebeurt niets,	
+
+/ de ppf is een <,] fct	, 
+In [2696]: binom.ppf(.1875,5,.5)
+Out[2696]: 1.0
+In [2698]: binom.ppf(.1876,5,.5)
+Out[2698]: 2.0
+In [2697]: binom.ppf(.49,5,.5)
+Out[2697]: 2.0
+/ TODO
+
+/ 7	. 
+
+/ lees	,
+https://en.wikipedia.org/wiki/Binomial_distribution
+https://en.wikipedia.org/wiki/Geometric_distribution
+https://en.wikipedia.org/wiki/Negative_binomial_distribution
+
+/ bernoulli experiment=success/failure experiment=muntje gooien
+
+/ een aantal successen bij n experimenten met succeskans p is bin(n,p) verdeeld
+/ een aantal experimenten tot aan het 1ste succes met succeskans p is geom(p) verdeeld = een aantal mislukkingen + 1 tot aan het 1ste succes met succeskans p 
+/ een aantal mislukkingen voorafgaand aan het nde succes met succeskans p is nbinom(n,p) verdeeld
+
+/ binom(k,n,p)= kans op k successen bij n experimenten met succeskans p 
+/ geom(k,p)=kans op k experimenten totdat 1ste succes met succeskans p=kans op k-1 mislukkelingen totaan 1ste succes	,
+/ nbinom(k,n,p)=kans op k mislukkelingen tot nde succes met succeskans p	, 
+
+/ dus geom(3,.5) = kans op 2 mislukkelingen voor 1ste succes bij succeskans .5	,
+
+/ nbinom(2,3,.5) = kans op 2 mislukkelingen voor 3de succes bij succeskans .5	,
+
+/ 7	. 
+
+/ geom	,
+
+/ lees	,
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.geom.html#scipy.stats.geom
+
+/ hier: geom.pmf(k)=kans dat de kde experiment het 1ste succes is	, = (1-p)^(k-1)*p	, k>=1
+/ in blauwe kans boek(70): geom.pmf(k+1)=kans op k mislukkelingen voor 1ste succes= (1-p)^k*p	,	k>=0	,
+
+In [3008]: v=geom.pmf([1,2,3,4,5,6,7,8,9,10],.5)
+In [3010]: v
+Out[3010]: 
+array([0.5       , 0.25      , 0.125     , 0.0625    , 0.03125   ,
+       0.015625  , 0.0078125 , 0.00390625, 0.00195312, 0.00097656])
+In [3009]: plt.plot(v)
+/ hij print .5 boven 1	, .25 boven 2	, ...
+
+In [2662]: geom.cdf([1,2,3,4,5,6,7,8,9,10],.5)
+Out[2662]: 
+array([0.5       , 0.75      , 0.875     , 0.9375    , 0.96875   ,
+       0.984375  , 0.9921875 , 0.99609375, 0.99804688, 0.99902344])
+
+In [2667]: plt.plot(geom.pmf([1,2,3,4,5,6,7,8,9,10],.5))
+In [2668]: plt.plot(geom.pmf([1,2,3,4,5,6,7,8,9,10],.4))
+In [2669]: plt.plot(geom.pmf([1,2,3,4,5,6,7,8,9,10],.3))
+In [2670]: plt.plot(geom.pmf([1,2,3,4,5,6,7,8,9,10],.2))
+/ allemaal dalend	,
+In [2699]: geom.ppf(1,.5)
+Out[2699]: inf
+In [2701]: geom.ppf(.999,.5)
+Out[2701]: 10.0
+In [2702]: geom.ppf(.9985,.5)
+Out[2702]: 10.0
+In [2703]: geom.ppf(.998,.5)
+Out[2703]: 9.0
+/ we zien weer dat ppf en <,] fct is	,
+
+/ 7	. 
+
+/ nbinom	, 
+
+/ negatief binomial	,
+
+In [3026]: n=3				# aantal successen	,
+In [3027]: p=.4				# succes kans
+In [3028]: m=nbinom.ppf(.01,n,p)
+In [3029]: M=nbinom.ppf(.99,n,p)
+In [3047]: x=np.arange(m,M+1)			# M+1 is will, het stopt nooit	,
+In [3050]: v=nbinom.pmf(x,n,p)
+In [3051]: v
+Out[3051]: 
+array([0.064     , 0.1152    , 0.13824   , 0.13824   , 0.124416  ,
+       0.10450944, 0.08360755, 0.06449725, 0.04837294, 0.03547349,
+       0.02554091, 0.01811083, 0.01267758, 0.00877679, 0.00601837,
+       0.00409249])
+
+/ bijv k=2	, dus 2 mislukkingen voor de 3 successen	, 
+/ dan is .6^2 * .4^3 keer aantal rijtjes  met k mislukkingen en n-1 successen (want de laatste is succes) = (k+n-1) boven k = 4 boven 2	,
+
+/ 7	. 
+
+/ poisson	,
+
+/ stel er komen gemiddeld 5 gesprekken per uur binnen. 
+/ wat is de kans op 0 gesprekken per uur, 1, 2, ...
+/ de kans op 4 of 5 gesprekken is het grootst	,
+
+/ lees,
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.poisson.html
+
+In [3067]: mu=5
+In [3068]: m=poisson.ppf(.01,mu)
+In [3069]: M=poisson.ppf(.99,mu)
+In [3070]: m
+Out[3070]: 1.0
+In [3071]: M
+Out[3071]: 11.0
+In [3072]: x=np.arange(m,M+1)
+
+In [3073]: plt.figure()
+In [3075]: plt.plot(x,poisson.pmf(x,mu),'o')
+In [3079]: plt.vlines(x,0,poisson.pmf(x,mu))
+/ moet allebei	,
+
+In [3086]: r=poisson.rvs(mu,size=1000)
+In [3087]: plt.hist(r,density=True)
+/ TODO
+
+/ 13	. 
+
+/ vergl met binom(n,p)	, n*p -> oneindig	,
+
+In [3088]: plt.figure()
+In [3102]:  mu
+Out[3102]: 5
+In [3090]: x
+Out[3090]: array([ 1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9., 10., 11.])
+In [3089]: plt.plot(x,poisson.pmf(x,mu),'o')
+
+In [3093]: v1=binom.pmf(x,10,.5)
+In [3097]: plt.plot(x,v1,'o')
+In [3098]: v2=binom.pmf(x,100,.05)
+In [3099]: plt.plot(x,v2,'o')
+/ het verschil tussen poisson(5) en binom(100,.05) is al heel klein	,
+
+/ 7	. 
+
+/ in python heb je de lambda operator	,
+
+In [3132]: f=lambda x:x**2
+In [3133]: f(5)
+Out[3133]: 25
+
+/ bij de expon moeten we zelf met een lambda schalen	,
+
+
+/ 7	 
+
+/ geom en expon	,
+
+/ bij discrete distribution we use: x=np.arange
+/ bij continuous distribution we use: x=np.linspace	,
+
+/ we use geom zoals in het blauwe boek: geom(k,p)=(1-p)^k * p
+
+In [3113]: plt.figure()
+
+/ 13	. 
+
+In [3107]: p=.5
+In [3108]: M=geom.ppf(.99,p)
+7.0
+In [3109]: x=np.arange(0,M)
+In [3111]: v=geom.pmf(x+1,p)
+In [3112]: v
+Out[3112]: 
+array([0.5      , 0.25     , 0.125    , 0.0625   , 0.03125  , 0.015625 ,
+       0.0078125])
+In [3114]: plt.plot(x,v)
+/ boven 0 staat geom(1,p)	,
+
+/ 13	. 
+
+In [3115]: p=.05
+In [3116]: M=geom.ppf(.99,p)
+90.0
+In [3117]: x=np.arange(0,M)
+In [3119]: v=geom.pmf(x+1,p)
+In [3120]: plt.plot(x,v)
+
+/ 1313	. 
+
+In [3139]: x=np.linspace(0,1,100)
+In [3140]: v=l*expon.pdf(l*x)
+
+In [3142]:   y=np.arange(0,100)
+In [3148]: w=geom.pmf(y+1,.05)
+
+In [3150]: v[:10]
+Out[3150]: 
+array([5.        , 4.75374563, 4.51961951, 4.2970243 , 4.08539211,
+       3.88418298, 3.69288357, 3.51100583, 3.33808573, 3.17368209])
+
+In [3151]: w[:10]
+Out[3151]: 
+array([0.05      , 0.0475    , 0.045125  , 0.04286875, 0.04072531,
+       0.03868905, 0.03675459, 0.03491686, 0.03317102, 0.03151247])
+
+/ klopt, er is nog een term 1/n	, dat dx is	,
+/ TODO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+/ Einde NUMPY SCIPY
+/ Einde DISTRIBUTIONS
+
+/ MATPLOTLIB
+
+/ 7	. 
+
+/ je kunt niet zomaar plt.hist, of plt.plot doen, je moet eerst plt.subplots, of plt.figure doen	, 
+
+/ 13	. 
+
+In [2336]: data=np.random.randn(1000)
+
+In [2341]: fig,ax=plt.subplots(1,1)
+In [2342]: plt.hist(data)
+
+/ 13	. 
+
+In [2346]: plt.figure()
+/ we zien een assenstelsel	,
+In [2347]: plt.plot(x,np.sin(x),'-')
+
+/ 13	. 
+
+In [2351]: plt.figure()
+/ we zien een assenstelsel	,
+In [2353]: plt.plot(x,x)
+/ OK	,
+In [2354]: ax=plt.axes()
+/ deprecated	,
+In [2355]: ax.plot(x,1-x)
+/ OK	,
+
+/ 13	. 
+
+In [2364]: fig=plt.figure()
+In [2365]: plt.plot(x,x)
+/ OK	,
+
+/ 7	. 
+
+/ hist	,
+
+/ 13	. 
+
+/ norm,	
+
+In [2369]: fig=plt.figure()
+/ we zien assenstelsel,
+In [2371]: data=np.random.randn(1000)
+In [2371]: plt.hist(data)            
+/ we zien histogram, values tot boven 200	,
+
+In [2369]: fig=plt.figure()
+In [2371]: plt.hist(data,density=True)
+/ we zien histogram, values tot aan .35	, dus nu is hist als een density	, 
+
+In [2379]: rn=norm.rvs(size=1000)            
+/ WH net als np.random.randn	,
+In [2378]: plt.hist(rn,density=True,alpha=.2)
+/ we zien zo ongeveer dezelfde histogram	,
+
+In [2870]: x=np.linspace(norm.ppf(.01),norm.ppf(.99),1000)
+In [2871]: plt.plot(x,norm.pdf(x))
+
+/ data, rn, x alle numpy arrays	,
+
+
+/ 13	. 
+
+/ binom	,
+
+/ 1313	. 
+
+In [2418]: binom.pmf([0,1,2,3,4,5],5,.4)
+Out[2418]: array([0.07776, 0.2592 , 0.3456 , 0.2304 , 0.0768 , 0.01024])
+In [2404]:  binom.cdf([0,1,2,3,4,5],5,.4)
+Out[2404]: array([0.07776, 0.33696, 0.68256, 0.91296, 0.98976, 1.     ])
+
+In [2429]: binom.cdf(0,5,.4)
+Out[2429]: 0.07775999999999998
+In [2430]: binom.cdf(1,5,.4)
+Out[2430]: 0.33696
+In [2431]: binom.cdf(.5,5,.4)
+Out[2431]: 0.07775999999999998
+
+/ dus de cumul distr is een step function, [,>	, de normale step fct	,
+/ de inverse ppf is dat dan ook	,
+
+/ let op	,
+In [2425]: binom.ppf(.33696,5,.4)
+Out[2425]: 1.0
+In [2427]: binom.ppf(.33697,5,.4)
+Out[2427]: 2.0
+In [2894]: binom.ppf(.68255,5,.4)
+Out[2894]: 2.0
+In [2893]: binom.ppf(.68256,5,.4)
+Out[2893]: 3.0
+
+/ 1313	. 
+
+In [2897]: x=[0,1,2,3,4,5]
+In [2898]: plt.plot(x,binom.pmf(x,5,.4),'o')
+/ als je 'o' niet doet, zijn de punten verbonden met lijnstukken,	
+
+
+
+In [2428]: binom.ppf(binom.cdf([0,1,2,3,4,5],5,.4),5,.4)
+Out[2428]: array([0., 1., 2., 3., 4., 5.])
+
+/ 1313	. 
+
+In [2910]: rb=binom.rvs(5,.5,size=100)
+In [2911]: [len(rb[rb==n])/len(rb) for n in [0,1,2,3,4,5]]
+Out[2911]: [0.04, 0.18, 0.28, 0.29, 0.2, 0.01]
+
+In [2914]: v=plt.hist(rb,bins=[0,1,2,3,4,5,6],density=True)
+In [2915]: v
+(array([0.04, 0.18, 0.28, 0.29, 0.2 , 0.01]),
+/ hetzelfde	,
+
+/ met bins maken ze WH de bins [0,1),[1,2),...,[5,6)
+/ als we bins=[0,1,2,3,4,5] missen de laatste bin	,
+/ de values zitten op 0,1,2,3,4,5. En 5 zit alleen in de [5,6) bin. Dus daarom moeten we bins=[0,1,2,3,4,5,6]	,
+
+In [2916]: v=plt.hist(rb,bins=[0,1,2,3,4,5,5.5],density=True)
+In [2917]: v
+(array([0.04, 0.18, 0.28, 0.29, 0.2 , 0.02]),
+
+In [2918]: v=plt.hist(rb,bins=[0,2,4,6],density=True)
+In [2919]: v
+Out[2919]: 
+(array([0.11 , 0.285, 0.105]),
+
+In [2920]: [len(rb[rb==n]) for n in [0,1,2,3,4,5,6]]
+Out[2920]: [4, 18, 28, 29, 20, 1, 0]
+
+
+
+
+/ Einde MATPLOTLIB
+
+/ BISHOP
+
+/ (208)
+
+def logreg(w):
+	s1=expit(w[0]+w[1])
+	s2=1-expit(w[0]-w[1])
+	d=s1*s2
+	r1=-s2+s1
+	r2=-s2-s1
+	return (r1/d,r2/d) 
+
+/ met (1,1) en met (1 en (-1
+def logreg2(w):
+	a1=w[0]+w[1]
+	a2=w[0]-w[1]
+	y1=expit(a1)
+	y2=expit(a2)
+	t=-y1*(1-y1)**2+y2**2*(1-y2)
+	n=-y1*(1-y1)**2-y2**2*(1-y2)
+	d=2*y1*(1-y1)*y2*(1-y2)
+	t=t/d
+	n=n/d
+	return (t,n)
+
+phi=np.array([[1,1],[1,-1]])
+def logreg(w):
+	y=np.array([expit(w[0]+w[1]),expit(w[0]-w[1])]).reshape(-1,1)
+	t=np.array([1,0]).reshape(-1,1)
+	gradE=phi.dot(y-t)
+	s=expit(w[0]+w[1])
+	t=expit(w[0]-w[1])
+ 	Rinv=np.array([1/(s*(1-s)),0,0,1/(t*(1-t))]).reshape(2,2)
+	Hinv=(phi/2).dot(Rinv).dot(phi/2)
+	r=tuple2column(w)-Hinv.dot(gradE)
+	return column2tuple(r)
+
+def tuple2column(w):
+	return np.array([w[0],w[1]]).reshape(-1,1)
+
+def column2tuple(c):
+	return (c[:,0][0],c[:,0][1])
+
+def logreg(w):
+	y=np.array([expit(w[0]+w[1]),expit(w[0]-w[1])]).reshape(-1,1)
+	t=np.array([1,0]).reshape(-1,1)
+	gradE=phi.dot(y-t)
+	s=expit(w[0]+w[1])
+	t=expit(w[0]-w[1])
+ 	R=np.array([s*(1-s),0,0,t*(1-t)]).reshape(2,2)
+	H=phi.T.dot(R).dot(phi)
+	r=tuple2column(w)-np.linalg.inv(H).dot(gradE)
+	return column2tuple(r)
+
+def fphi(a):
+
+
+
+
+def logreg(w):
+	w0=w[0]
+	w1=w[1]
+	w=tuple2column(w)
+	s=expit(w0+w1)
+	u=expit(w0-w1)
+	y=tuple2column((s,u))
+	t=tuple2column((1,0))
+	gradE=phi.dot(y-t)
+ 	R=np.array([s*(1-s),0,0,u*(1-u)]).reshape(2,2)
+	z=phi.dot(w)-np.linalg.inv(R).dot(y-t)
+	H=phi.T.dot(R).dot(phi)
+	v=np.linalg.inv(H).dot(phi.T).dot(R).dot(z)
+	return column2tuple(v)
+
+/ 13	. 
+
+
+
+In [4099]: a=np.array([.5,.75,1,1.25,1.5])
+In [4153]: b=-a[::-1]
+In [4157]: b
+Out[4157]: array([-1.5 , -1.25, -1.  , -0.75, -0.5 ])
+In [4156]: [a,b][::-1]	 # == [b,a]
+Out[4156]: 
+[array([-1.5 , -1.25, -1.  , -0.75, -0.5 ]),
+ array([0.5 , 0.75, 1.  , 1.25, 1.5 ])]
+In [4159]: c=np.concatenate([a,b][::-1])
+In [4124]: c
+Out[4124]: 
+array([-1.5 , -1.25, -1.  , -0.75, -0.5 ,  0.5 ,  0.75,  1.  ,  1.25,
+        1.5 ])
+In [4165]: t=np.concatenate([np.zeros(len(a)),np.ones(len(b))]).reshape(-1,1)
+In [4166]: t
+Out[4166]: 
+array([[1.],
+       [1.],
+       [1.],
+       [1.],
+       [1.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.]])
+
+
+In [4133]: phi=np.c_[np.ones((len(c),1)),c]
+In [4134]: phi
+Out[4134]: 
+array([[ 1.  , -1.5 ],
+       [ 1.  , -1.25],
+       [ 1.  , -1.  ],
+       [ 1.  , -0.75],
+       [ 1.  , -0.5 ],
+       [ 1.  ,  0.5 ],
+       [ 1.  ,  0.75],
+       [ 1.  ,  1.  ],
+       [ 1.  ,  1.25],
+       [ 1.  ,  1.5 ]])
+
+In [4139]: w=np.array([1,1]).reshape(-1,1)
+In [4140]: phi.dot(w)
+Out[4140]: 
+array([[-0.5 ],
+       [-0.25],
+       [ 0.  ],
+       [ 0.25],
+       [ 0.5 ],
+       [ 1.5 ],
+       [ 1.75],
+       [ 2.  ],
+       [ 2.25],
+       [ 2.5 ]])
+In [4148]: y=expit(phi.dot(w))		 # !
+In [4149]: y
+Out[4149]: 
+array([[0.37754067],
+       [0.4378235 ],
+       [0.5       ],
+       [0.5621765 ],
+       [0.62245933],
+       [0.81757448],
+       [0.8519528 ],
+       [0.88079708],
+       [0.90465054],
+       [0.92414182]])
+
+In [4170]: y*(1-y)
+Out[4170]: 
+array([[0.23500371],
+       [0.24613408],
+       [0.25      ],
+       [0.24613408],
+       [0.23500371],
+       [0.14914645],
+       [0.12612923],
+       [0.10499359],
+       [0.08625794],
+       [0.07010372]])
+
+/ Intermezzo
+
+/ je kunt a*(1-a) voor numpy arrays	, welke shape dan ook	,
+/ voor lists kan het niet	,
+
+In [4175]: a=np.array([1,2,3,4])
+In [4178]: a.shape
+Out[4178]: (4,)
+In [4177]: a*(1-a)
+Out[4177]: array([  0,  -2,  -6, -12])
+
+In [4179]: a=a.reshape(1,-1)
+In [4180]: a.shape
+Out[4180]: (1, 4)
+In [4182]: a*(1-a)
+Out[4182]: array([[  0,  -2,  -6, -12]])
+
+In [4183]: a=a.reshape(-1,1)
+In [4185]: a*(1-a)
+Out[4185]: 
+array([[  0],
+       [ -2],
+       [ -6],
+       [-12]])
+
+/ Einde Intermezzo
+
+/ Intermezzo
+
+/ np.diag werkt op lists, np.array met shape (n,)	, niet op shape (n,1) of (1,n)
+
+/ oplossing	,
+In [4209]: w.shape
+Out[4209]: (2, 1)
+In [4210]: w
+Out[4210]: 
+array([[1],
+       [1]])
+In [4208]: w[:,0].shape
+Out[4208]: (2,)
+In [4212]: w[:,0]
+Out[4212]: array([1, 1])
+In [4213]: np.diag(w[:,0])
+Out[4213]: 
+array([[1, 0],
+       [0, 1]])
+
+/ Einde Intermezzo
+
+/ Intermezzo
+
+/ voor .dot hoeven we niet per se y als (n,1) te maken	, (n,) is ook goed, en het antwoord is dan ook van die vorm	, (2,) in dit geval	, 
+/ TODO
+
+In [4225]: phi.T.dot(y)
+Out[4225]: 
+array([[6.87911671],
+       [2.0991224 ]])
+In [4227]: phi.T.dot(y[:,0])
+Out[4227]: array([6.87911671, 2.0991224 ])
+
+/ Hieronder	,
+
+In [4233]: phi.T.dot(y[:,0]-t[:,0])
+Out[4233]: array([1.87911671, 7.0991224 ])
+
+In [4234]: phi.T.dot(y-t)
+Out[4234]: 
+array([[1.87911671],
+       [7.0991224 ]])
+
+
+
+/ Einde Intermezzo
+
+def init():
+	global a,b,c,t,phi,w,y
+	a=np.array([.5,.75,1,1.25,1.5])
+	b=-a[::-1]
+	c=np.concatenate([a,b][::-1]) 
+	t=np.concatenate([np.zeros(len(a)),np.ones(len(b))]).reshape(-1,1)
+	phi=np.c_[np.ones((len(c),1)),c]
+	w=np.array([1,1])
+	y=expit(phi.dot(w))
+
+def init2():
+	global a,b,c,t,phi,w,y
+	a=np.array([[1,1],[1,0],[1,-1]])
+	b=-a[::-1]
+	c=np.concatenate([a,b][::-1]) 
+	t=np.concatenate([np.zeros(len(a)),np.ones(len(b))]).reshape(-1,1)
+	phi=np.c_[np.ones((len(c),1)),c]
+	w=np.ones(1+a.shape[1])
+	y=expit(phi.dot(w))
+
+# w is een (n,)	, return ook (n,)
+def logreg(w):
+	w=w.reshape(-1,1)
+	y=expit(phi.dot(w))
+	gradE=phi.T.dot(y-t)
+	R=np.diag((y*(1-y))[:,0])
+	H=phi.T.dot(R).dot(phi)
+	z=phi.dot(w)-np.linalg.inv(R).dot(y-t)
+	v=np.linalg.inv(H).dot(phi.T).dot(R).dot(z)
+	return v[:,0]
+
+/ doe	,
+init()
+# pas evt a aan	, a=np.array([1])
+w=logreg(w)
+
+
+/ Einde BISHOP
+
+/ SKLEARN SOURCE
+
+/ lees,
+https://github.com/scikit-learn/scikit-learn
+
+/ ga naar,	
+http://www.liclipse.com/download.html
+/ click	,
+LiClipse 5.2.4 Linux (64 bits)
+/ lees	,
+Native Linux Install
+
+
+sklearn/linear_model/logistic.py:class LogisticRegression(BaseEstimator, LinearClassifierMixin,
+
+
+
+/ Einde SKLEARN SOURCE

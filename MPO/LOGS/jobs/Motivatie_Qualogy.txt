@@ -1,0 +1,17 @@
+Beste Robbi,
+
+Ik heb belangstelling voor een rol als Java ontwikkelaar, maar ook als Data Scientist.
+
+Ik werk nu als Java developer op het gebied van logistiek. Ik heb wiskunde gestudeerd, en bestudeer het nog steeds in mijn vrije tijd. Ik vind het jammer dat ik in mijn huidige werk geen wiskunde gebruik en als data scientist kan dat, denk ik. Maar ik wil ook altijd programmeur blijven. 
+
+In mijn huidige werk heb ik me vooral verdiept in Wicket en heb dat redelijk onder de knie gekregen. Zo was ik de eerste op de zaak die Wicket tests heeft gemaakt! Daarom zou is daarmee willen beginnen bij u, naast Spring en Hibernate. In mijn vrije tijd oefen ik ook met CDI(Weld) en JSF. Ik zie ernaar uit om ook hiermee bij u te gaan werken, en om testen te gaan maken met Arquillian. Na verloop van tijd zou ik dan ook data science programma's willen gaan maken. Thuis oefen ik met R, en neem statistiek door. 
+
+Voordat ik bij mijn huidige werkgever begon, oefende ik met AngularJS (versie 1). Later heb ik ook geoefend met AngularJS 2.
+
+Ik zie ernaar uit om met u kennis te maken.  
+
+Met vriendelijke groet, 
+
+Eric J. Van der Velden.
+
+

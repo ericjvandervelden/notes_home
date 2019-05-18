@@ -1,0 +1,15 @@
+[eric@localhost server]$ stacktrace.sh 2144 2194 ~/LOGS/LOG_NIP_45.txt
+    at com.mpobjects.mpo.integration.jms.JmsMpoListener.onMessage(JmsMpoListener.java:65)
+    at com.mpobjects.util.sap.link.IncomingLink.handle(IncomingLink.java:89)
+    at com.mpobjects.util.sap.link.IncomingXmlMessageLink.unMarshalFrom(IncomingXmlMessageLink.java:158)
+    at com.mpobjects.util.sap.link.IncomingLink.postMessage(IncomingLink.java:143)
+    at com.mpobjects.util.sap.control.MessageSwitch.handleMessage(MessageSwitch.java:306)
+    at com.mpobjects.util.sap.control.MessageSwitch.forwardDataMessage(MessageSwitch.java:1198)
+    at com.mpobjects.util.sap.control.MessageConsumer.handle(MessageConsumer.java:108)
+    at com.mpobjects.util.sap.control.IncomingMessageDemultiplexer.process(IncomingMessageDemultiplexer.java:123)
+    at com.mpobjects.oms.model.shipmentorder.util.ShipmentOrderMsgConsumer.process(ShipmentOrderMsgConsumer.java:56)
+    at com.mpobjects.oms.model.shipmentorder.xml.AbstractShipmentOrderMsgProcessor.process(AbstractShipmentOrderMsgProcessor.java:266)
+    at com.mpobjects.mpo.model.shipmentorder.xml.MpoShipmentOrderMsgProcessor.processUpdate(MpoShipmentOrderMsgProcessor.java:68)
+    at com.mpobjects.mpo.model.shipmentorder.xml.MpoShipmentOrderMsgProcessor.processOriginal(MpoShipmentOrderMsgProcessor.java:56)
+    at com.mpobjects.oms.model.service.ShipmentOrderServiceImpl.createShipmentOrder(ShipmentOrderServiceImpl.java:878)
+

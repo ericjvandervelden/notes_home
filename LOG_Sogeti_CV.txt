@@ -1,0 +1,102 @@
+Algemeen:
+
+Eric is een Java developer en ook een wiskundige. Hij heeft in zijn laatste functie ervaring opgedaan met Wicket, Spring, Hibernate, PostgreSQL en jQuery. Daarnaast schreef hij unit testen met JUnit, Mockito en WicketTester. Ook gebruikte hij Svn, Ant en Maven. In functies daarvoor werkte hij onder andere met Drupal(PHP), Sybase(C) en Java Swing. Hij is analytisch, volhoudend, en krijgt voldoening uit het helpen van anderen. Zijn vrije tijd gebruikt hij om bij te blijven. Dat kan van alles zijn: Docker, PostgreSQL en Angular bijvoorbeeld, maar ook wiskunde (getaltheorie en meetkunde voor versleuteling, en statistiek). Ook hardlopen in de polder tussen Vlaardingen en Schipluiden vind hij leuk. 
+ 
+Kennis:
+
+Hij heeft in de avonduren aan de Rijksuniversiteit te Leiden zijn propaedeuse Informatica gehaald, en voor het overige heeft hij alles thuis geleerd en tijdens het werk. Hij heeft twee Sun certificaten gehaald, SCJP en SCBCD. Eerder haalde hij zijn doctoraal Wiskunde, ook in Leiden.
+
+Vooropleiding:
+
+26 augustus 1988:
+Doctoraal wiskunde aan de Faculteit der Wiskunde en Natuurwetenschappen
+van de Rijksuniversiteit te Leiden
+
+10 februari 1998:
+Lerarenbevoegdheid in wiskunde aan de Faculteit der Technische Wiskunde en
+Informatica van de Technische Universiteit Delft
+
+28 augustus 1992:
+Propaedeuse Informatica aan de Faculteit der Wiskunde en
+Natuurwetenschappen van de Rijksuniversiteit te Leiden
+
+Aanvullende cursussen
+23 Sep. 2009:
+Sun Certified Programmer for the Java 2 Platform, Standard Edition 6.0 (SCJP)
+30 Sep. 2009:
+Sun Certified Business Component Developer Java EE Platform 5 (SCBCD) 
+
+Werkervaring:
+
+01-05-2014 - 31-05-2017
+MP Objects, Rotterdam:
+Eric's werkzaamheden waren onderhoud verrichten (bugs fixen, database schema’s aanpassen), changes implementeren en unit- en integratietests maken. De applicatie, SCS genaamd, is een logistiek programma dat bepaalt in welke vrachtwagen, boot of vliegtuig dozen vervoerd worden, bijvoorbeeld voor Wehkamp of Geodis (Frankrijk), en door welke transporteur. Als op het kantoor de consultants (de mensen van de business) een fout in het programma vonden, dan moest hij deze met een debugger opsporen en repareren. Daarnaast moest hij ook nieuwe functionaliteiten toevoegen, zoals het maken van nieuwe pagina’s in de GUI, of bestaande aanpassen, of het maken van nieuwe services en het bewaren van data in de database. Hij heeft daarmee ervaring opgedaan met het maken van Hibernate bindings, queries en transacties, en met het maken van Spring beans, en met het maken van GUIs met Wicket. Denk daarbij aan tabellen, die in een form staan, omdat je wilt sorteren of filteren op een bepaalde kolom, of aan modal dialogs en natuurlijk aan buttons, links, etc. Het waren vrijwel allemaal AJAX componenten: Wicket is weliswaar een server-side framework,
+maar het heeft ook een groot client-side gedeelte Daarnaast maakte ik tests, voor Wicket is er WicketTester, die de rol van Tomcat overneemt, zodat je de tests naast de applicatie kunt draaien.
+Trefwoorden: 
+Java, SQL, JavaScript, Wicket & WicketTester, Spring, Hibernate, Mockito, jQuery, ActiveMQ, PostgreSQL, Maven, UNIX scripting
+
+December 2011 - Februari 2014
+Leger des Heils (via Gideon IT), Almere:
+Eric's werkzaamheden waren het beheren van alle sites van het Leger des Heils in Nederland (ongeveer 70 sites): de hoofdsite, de korps sites (ongeveer 50), de W&G sites (Jeudgzorg, daklozenopvang), de Reshare site (kleding distributie) en de webwinkel. Ook moest hij nieuwe korps en W&G sites maken en heeft hij IDeal 3 geïmplementereerd (voor de webwinkel). Daarnaast moest hij de RHEL machines waar alle sites op draaiden beheren: backups en replicaties maken van de sites en de databases, updaten van RHEL, PHP (voor IDeal 3). Hij deed het allemaal alleen.  Hij werkte op het Hoofdkwartier. Mensen van het Leger vanuit het hele land belde hem op om aanpassingen te doen of fouten uit de sites te halen. Hij gebruikte XDebug hiervoor. Hij deed zoveel mogelijk met Drush. Met rsync maakte hij de replicaties en had de sites altijd werkend op twee RHEL machines. Gewoonlijk is er een tussenpartij die IDeal in orde maakt, maar bij het Leger des Heils was deze er niet, en moest hij het zelf doen. Sleutels en certificaten maakte hij met OpenSSL, en moest ddarvoor de Drupal module voor IDeal aanpassen. Ook hiervoor moest hij de code debuggen met XDebug. Voor Reshare heeft hij met Google Maps een kaart geprogrammeerd die de locaties van de containers weergaf. Verder heeft hij een formulier gemaakt, over meerdere pagina’s, waarbij de mogelijk moest zijn om op elke pagina uit het formulier te gaan. Hij moest hiervoor de Drupal module aanpassen (met hook_form_alter).
+Trefwoorden:
+PHP, SQL, JavaScript, Drupal & Drush, Xdebug, MySQL, UNIX scripting, Google Maps, OpenSSL, RHEL, DirectAdmin
+
+October 2010 - December 2011
+Technico Automatisering B.V., Zoeterwoude:
+Eric heeft  een storingsmonitor (een GUI) voor een PLC machine gemaakt met jQueryUI, jqGrid en PHP. Om telegrammen in ASCII te versturen naar een zogenaamde Kardex machine, maakte hij een GUI met Java Swing. Hij heeft een Delphi GUI omgeschreven naar JavaScript, in jQuery. Ook heeft hij een besturing gemaakt naar een andere PLC machine, in PHP met sockets, en met MySQL.
+Trefwoorden:
+PHP, SQL, JavaScript, Java, RXTX (serial port), jQuery, jQueryUI, jqGrid (jQuery plugin), Java Swing, MySQL
+
+October 2008 - October 2009
+E.Novation, Capelle aan den IJssel:
+Eric werkte aan ATIS, een webapplicatie voor DRSH Zuiveringsslib N.V., Dordrecht. Hij programmeerde hiervoor met Struts2 en JDBC. Daarnaast werkte hij aan Digitaal Journaal, voor Rijkswaterstaat. Dit was een webapplicatie waar alles mee kon worden geregistreerd wat er op de Nederlandse rivieren gebeurt. Hiervoor programmeerde hij met Struts2, jQuery en Hibernate.
+Trefwoorden:
+Java, JavaScript, SQL (HQL), Spring, Struts2, jQuery, JDBC, Hibernate
+
+September 2001 - October 2001
+CMG, Rotterdam:
+Trefwoorden:
+Java
+
+Februari 1998 - Augustus 2001
+Fortisbank (MeesPierson) , Amsterdam:
+Eric onderhield Bash scripts die een onderdeel uitmaakten van een text based menu in een risk management systeem. Hij onderhield ook C programma’s in het risk management systeem. Hij maakte SQL queries voor rapporten zoals het berekenen van gemiddelden over bepaalde perioden voor bepaalde groepen van effecten, etc. Ook maakte hij met Java Swing en JDBC een GUI, waarmee handelaren hun positities konden bijhouden.
+Trefwoorden:
+C, Java, SQL, Java Swing, JDBC, Sybase
+
+Augustus 1995 - Juli 1997
+Fioretticollege, Lisse
+Eric gaf wiskunde onderwijs op de middelbare school
+Trefwoorden:
+Onderwijs
+
+October 1994 - Juli 1995
+College Het Hoge Land, Leiden
+Eric gaf wiskunde onderwijs op de middelbare school
+Trefwoorden:
+Onderwijs
+
+September 1992 - Juli 1993
+h.a.v.o Rotterdamse dag/-avondscholengemeenschap voor v.v.o, en m.a.v.o, Rotterdam
+Eric gaf wiskunde onderwijs op de middelbare school
+Trefwoorden:
+Onderwijs
+
+Januari 1991 - Juli 1992
+S.G. voor VWO en HAVO, “Christelijk Lyceum”, Alphen a/d Rijn
+Eric gaf wiskunde onderwijs op de middelbare school
+Trefwoorden:
+Onderwijs
+
+
+September 1988 - November 1990
+Rijksuniversiteit te Leiden
+Eric was AIO aan de faculteit der Wiskunde en Natuurwetenschappen (afdeling Wiskunde en Informatica) en deed onderzoek binnen de groep “Applied Mathematics” naar een klasse van partiële differentiaalvergelijkingen. Ook gaf hij onderwijs aan eerstejaarsstudenten wis- en natuurkunde, scheikunde, informatica en gezondheidswetenschappen.
+Trefwoorden: 
+Wetenschappelijk onderwijs
+
+September 1984 - Februari 1987
+Rijksuniversiteit te Leiden
+Eric was student-assistent aan de faculteit der Wiskunde en Natuurwetenschappen (afdeling Wiskunde en
+Informatica) en gaf onderwijs aan eerstejaarsstudenten wis- en natuurkunde, scheikunde, informatica en gezondheidswetenschappen.
+

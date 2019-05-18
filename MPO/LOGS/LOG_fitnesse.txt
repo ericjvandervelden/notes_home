@@ -1,0 +1,67 @@
+[eric@localhost workspace]$ pwd
+/home/eric/Devel/Java/Eclipse/eclipse-jee/workspace
+[eric@localhost workspace]$ cd fitnesse-commons/src/main/java/com/mpobjects/scs/fitnesse/commons/general/
+[eric@localhost general]$ cp -a /home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace-wicket7_7/io/src/main/java/scs_6323/* .
+[eric@localhost general]$ cd /home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/fitnesse-commons
+[eric@localhost fitnesse-commons]$ svn commit -m "SCS-6323 Refactored tailer listener with wait&notify"
+
+[eric@localhost fitnesse-commons]$ svn log https://system.mp-objects.com/svn/test-environment/trunk/fitnesse-commons | less
+----------------------------------------------------------------------
+r361 | eric | 2017-04-12 08:26:52 +0200 (Wed, 12 Apr 2017) | 1 line
+SCS-6323 Refactored tailer listener with wait&notify
+
+[eric@localhost fitnesse-commons]$ svn log --verbose -r r361
+------------------------------------------------------------------------
+r361 | eric | 2017-04-12 08:26:52 +0200 (Wed, 12 Apr 2017) | 1 line
+Changed paths:
+   M /trunk/fitnesse-commons/src/main/java/com/mpobjects/scs/fitnesse/commons/general/JmsCommunicator.java
+
+SCS-6323 Refactored tailer listener with wait&notify
+------------------------------------------------------------------------
+
+/ De nieuwe files moeten we eerst add	, 
+
+[eric@localhost fitnesse-commons]$ svn add src/main/java/com/mpobjects/scs/fitnesse/commons/general/BooleanHolder.java 
+A         src/main/java/com/mpobjects/scs/fitnesse/commons/general/BooleanHolder.java
+[eric@localhost fitnesse-commons]$ svn add src/main/java/com/mpobjects/scs/fitnesse/commons/general/Waiter.java 
+A         src/main/java/com/mpobjects/scs/fitnesse/commons/general/Waiter.java
+[eric@localhost fitnesse-commons]$ svn add src/main/java/com/mpobjects/scs/fitnesse/commons/general/FileTailerListener.java 
+A         src/main/java/com/mpobjects/scs/fitnesse/commons/general/FileTailerListener.java
+
+[eric@localhost fitnesse-commons]$ svn commit -m "SCS-6323 Refactored tailer listener with wait&notify"
+Adding         src/main/java/com/mpobjects/scs/fitnesse/commons/general/BooleanHolder.java
+Adding         src/main/java/com/mpobjects/scs/fitnesse/commons/general/FileTailerListener.java
+Adding         src/main/java/com/mpobjects/scs/fitnesse/commons/general/Waiter.java
+Transmitting file data ...
+Committed revision 362.
+
+[eric@localhost fitnesse-commons]$ svn log https://system.mp-objects.com/svn/test-environment/trunk/fitnesse-commons | less
+------------------------------------------------------------------------
+r362 | eric | 2017-04-12 08:53:05 +0200 (Wed, 12 Apr 2017) | 1 line
+
+SCS-6323 Refactored tailer listener with wait&notify
+
+[eric@localhost fitnesse-commons]$ svn log --verbose -r r362
+------------------------------------------------------------------------
+r362 | eric | 2017-04-12 08:53:05 +0200 (Wed, 12 Apr 2017) | 1 line
+Changed paths:
+   A /trunk/fitnesse-commons/src/main/java/com/mpobjects/scs/fitnesse/commons/general/BooleanHolder.java
+   A /trunk/fitnesse-commons/src/main/java/com/mpobjects/scs/fitnesse/commons/general/FileTailerListener.java
+   A /trunk/fitnesse-commons/src/main/java/com/mpobjects/scs/fitnesse/commons/general/Waiter.java
+
+SCS-6323 Refactored tailer listener with wait&notify
+------------------------------------------------------------------------
+
+/ of doe in 1 keer	, 
+[eric@localhost fitnesse-commons]$ svn log --verbose https://system.mp-objects.com/svn/test-environment/trunk/fitnesse-commons | less
+------------------------------------------------------------------------
+r362 | eric | 2017-04-12 08:53:05 +0200 (Wed, 12 Apr 2017) | 1 line
+Changed paths:
+   A /trunk/fitnesse-commons/src/main/java/com/mpobjects/scs/fitnesse/commons/general/BooleanHolder.java
+   A /trunk/fitnesse-commons/src/main/java/com/mpobjects/scs/fitnesse/commons/general/FileTailerListener.java
+   A /trunk/fitnesse-commons/src/main/java/com/mpobjects/scs/fitnesse/commons/general/Waiter.java
+
+SCS-6323 Refactored tailer listener with wait&notify
+
+
+

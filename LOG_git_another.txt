@@ -1,0 +1,31 @@
+/ Als je nieuw maven proj hebt create, right click project, team, share project	, en kies het project als waar de repository komt , de .git file en ... TODO
+
+project right click , add to index -> naar staging in Git staging view,
+
+/ als we in het build path J2SE[1.5] edit, 	en in drop-down list J2SE[1.8] kiezen	, en als we vervolgens in Staging View onder Unstaged Changes op .classpath click, zien we compare window  en zien we verschil	,
+
+local: .classpath
+...
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+
+index .classpath
+...
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+
+/ click Add to index op het project, dan alles in 1 keer	, 
+
+/ in package explorer, click ^	, Filters... en uncheck .* resources	, we zien ook .classpath, .settings
+/ .settings wil je niet version control	, deze blijft * behouden als je Add to index project	,
+
+/ in Git staging view zien we ook +, waarmee we kunnen stage	, 
+/ project, right click Commit	, TODO doet dat iets?
+/ in Git staging view, Commit message ... en click commit button	, we zien [<project> master]	, eerst stond er [<project> NO-HEAD]
+

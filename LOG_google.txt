@@ -1,0 +1,56 @@
+/ Lees	,
+https://myaccount.google.com/intro/security#signin
+
+/ google,
+google verification code change phone number
+/ lees,
+https://support.google.com/accounts/answer/6051686?hl=en
+/ we komen op	,
+https://myaccount.google.com/intro
+
+/ 7	. 
+
+/ Als we de 2-ste verification code hebben ingevuld, komen we op	,
+https://accounts.google.com/b/0/SmsAuthInterstitial?continue=https%3A%2F%2Fwww.google.com%2F&sarp=1&hl=en
+/ we zien page, met overzicht, we willen backup phone toevoegen	, click 'Update now', 
+https://myaccount.google.com/signinoptions/two-step-verification/enroll-welcome?hl=en
+/ click 'GET STARTED' 
+/ we moeten wachtwoord geven: 
+https://myaccount.google.com/signinoptions/two-step-verification?hl=en&rapt=AEjHL4POB6JaCZzGqWoH6HGoX1fPP6eR3INe8_7HOxt-iY5q9BC_baaVxKILQrtIKO85CWdKwTcQcT4BOgRQob5EiKiaQBMF4g&pmr=1
+
+/ we zien optie om niet meer die 2-step verification codes in te moeten typen, maar SMS is vervangen door een Google prompt	,
+
+/ dit zijn mijn backup codes	,
+
+8389 9337	
+2542 3572
+5512 9033	
+2447 1316
+0783 8213	
+1761 0645
+2288 2983	
+9917 7646
+1372 9655
+8813 3836
+
+/ 13	. 
+
+/ we hebben sogeti's 06-15322687 als backup phone gegeven	, 
+
+/ 13	. 
+
+/ op deze laptop we log out en weer in	, 
+/ we kregen geen 2-step authentication code	, niet nodig	,
+/ TODO
+
+/ 7	.
+
+/ SAMSUNG GALAXY EDGE 7
+
+Instellingen
+	Google
+		Beveiliging
+
+/ geef telefoonnummer
+*#100#
+/ je ziet je eigen telefoonnummer	,

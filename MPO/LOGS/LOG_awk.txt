@@ -1,0 +1,93 @@
+/ 7	. 
+
+[eric@localhost conf]$ cat /tmp/systemids 
+{organization=[SystemId:5000    Id:GEODIS   Description:GEODIS Global, SystemId:10  Id:IBM  Description:IBM, SystemId:4000  Id:LOGISTICS    Description:Geodis Logistics, SystemId:6000 Id:LOG_EMEA Description:Logisics EMEA, SystemId:7000    Id:LOG_EMEA_FR  Description:Logistics France, SystemId:12000    Id:LOG_EMEA_FR_CT_PSA   Description:Organization for PSA CT, SystemId:8000  Id:SCO  Description:Supply Chain Optimisization, SystemId:10000 Id:SCO_APAC Description:APAC organization for SCO, SystemId:11000   Id:SCO_APAC_JP  Description:Japan Country for SCO, SystemId:1   Id:SCO_APAC_JP_SPO_IBM  Description:Geodis APAC for SPO IBM in Japan, SystemId:9000 Id:SCO_WW   Description:SCO WORLDWIDE, SystemId:13000   Id:SCO_WW_BP    Description:BP Organization, SystemId:1000  Id:SYSTEM   Description:SYSTEM]}
+
+/ Lees de getallen eruit	, 
+
+/ google: awk print only numbers
+
+/ Lees  ,
+http://stackoverflow.com/questions/16618371/using-awk-to-grab-only-numbers-from-a-string
+
+[eric@localhost conf]$ cat /tmp/systemids  | grep -o '[0-9]\+'
+5000
+10
+4000
+6000
+7000
+12000
+8000
+10000
+11000
+1
+9000
+13000
+1000
+
+/ Omdat we print	, is OFS onnodig	, er zijn  geen meerdere fields	,
+[eric@localhost conf]$ cat /tmp/systemids  | awk -F '[^0-9]+' '{OFS=","; for(i=1; i<=NF; ++i) if ($i != "") print $i}'
+5000
+10
+4000
+6000
+7000
+12000
+8000
+10000
+11000
+1
+9000
+13000
+1000
+/ wel als we	,
+[eric@localhost conf]$ cat /tmp/systemids  | awk  'BEGIN{FS="[^0-9]+";OFS=","}{for(i=1; i<=NF; ++i) if ($i != "")print $i,$i}'
+5000,5000
+10,10
+4000,4000
+6000,6000
+7000,7000
+12000,12000
+8000,8000
+10000,10000
+11000,11000
+1,1
+9000,9000
+13000,13000
+1000,1000
+
+
+/ Oef	, 
+/ we print NF	, en maak de numbers juist de field sep	, 
+[eric@localhost conf]$ cat /tmp/systemids  | awk -F '[0-9]+' '{print NF}{for(i=1; i<=NF; ++i) if ($i != "") print($i)}'
+14
+{organization=[SystemId:
+    Id:GEODIS   Description:GEODIS Global, SystemId:
+  Id:IBM  Description:IBM, SystemId:
+  Id:LOGISTICS    Description:Geodis Logistics, SystemId:
+ Id:LOG_EMEA Description:Logisics EMEA, SystemId:
+    Id:LOG_EMEA_FR  Description:Logistics France, SystemId:
+    Id:LOG_EMEA_FR_CT_PSA   Description:Organization for PSA CT, SystemId:
+  Id:SCO  Description:Supply Chain Optimisization, SystemId:
+ Id:SCO_APAC Description:APAC organization for SCO, SystemId:
+   Id:SCO_APAC_JP  Description:Japan Country for SCO, SystemId:
+   Id:SCO_APAC_JP_SPO_IBM  Description:Geodis APAC for SPO IBM in Japan, SystemId:
+ Id:SCO_WW   Description:SCO WORLDWIDE, SystemId:
+   Id:SCO_WW_BP    Description:BP Organization, SystemId:
+  Id:SYSTEM   Description:SYSTEM]}
+0
+
+[eric@localhost conf]$ cat /tmp/systemids  | awk -F '[^0-9]+' '{for(i=1; i<=NF; ++i) if ($i != "") printf($i)}'
+500010400060007000120008000100001100019000130001000[eric@localhost conf]$ 
+
+/ Lees	, 
+https://www.gnu.org/software/gawk/manual/html_node/Basic-Printf.html#Basic-Printf
+The output separator variables OFS and ORS have no effect on printf statements. 
+
+/ we set de , in de printf	, maar dan begint ook met , 
+/ TODO
+/ we voegen \n in door extra {print}
+[eric@localhost conf]$ cat /tmp/systemids  | awk  'BEGIN{FS="[^0-9]+";OFS=","}{for(i=1; i<=NF; ++i) if ($i != "")printf ",%s",$i}END{print}'
+,5000,10,4000,6000,7000,12000,8000,10000,11000,1,9000,13000,1000
+[eric@localhost conf]$ 
+

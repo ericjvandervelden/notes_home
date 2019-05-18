@@ -1,0 +1,1000 @@
+  281  sudo docker images | awk '/<none>'
+  282  sudo docker images | awk '/<none>/'
+  283  sudo docker images | awk '/<none>/{print $3}'
+  284  sudo docker images | awk '/<none>/{print $3}' | echo 
+  285  sudo docker images | awk '/<none>/{print $3}' | xargs
+  286  sudo docker images | awk '/<none>/{print $3}' | xargs echo 
+  287  sudo docker images | awk '/<none>/{print $3}' | xargs sudo docker rmi 
+  288  stop-all-containers 
+  289  rm-all-containers 
+  290  sudo docker images | awk '/<none>/{print $3}' | xargs sudo docker rmi 
+  291  sudo docker images
+  292  sudo docker images | awk '/pingpong/'
+  293  sudo docker run -d -p 8080:8080 --name pingpong my/pingpong
+  294  curl http://localhost:8080/ping
+  295  vi Dockerfile 
+  296  sudo docker build --rm -t my/pingpong .
+  297  sudo docker run -d -p 8080:8080 --name pingpong my/pingpong
+  298  stop-all-containers 
+  299  sudo docker run -d -p 8080:8080 --name pingpong my/pingpong
+  300  rm-all-containers 
+  301  sudo docker run -d -p 8080:8080 --name pingpong my/pingpong
+  302  curl http://localhost:8080/ping
+  303  stop-all-containers 
+  304  rm-all-containers 
+  305  sudo docker run -d -p 8080:8080 --name pingpong my/pingpong java PingPong
+  306  curl http://localhost:8080/ping
+  307  pwd
+  308  vi Dockerfile 
+  309  sudo docker run -d -p 8080:8080 --name pingpong my/pingpong java PingPong
+  310  stop-all-containers 
+  311  rm-all-containers 
+  312  exit
+  313  sudo docker exec -it pingpong bash
+  314  exit
+  315  cd Devel/Logs/
+  316  vi LOG_2_nov_2015.txt 
+  317  exit
+  318  ps ajxf
+  319   kill -9 4652
+  320  sudo  kill -9 4652
+  321  sudo docker exec -it /bin/bash
+  322  sudo docker exec -it misc /bin/bash
+  323  stop-all-containers 
+  324  sudo docker exec -it misc /bin/bash
+  325  stop-all-containers 
+  326  rm-all-containers 
+  327  sudo docker exec -it misc /bin/bash
+  328  host almond.nuts.org
+  329  ping almond.nuts.org
+  330  ping 69.172.201.208
+  331  sudo docker exec -it misc /bin/bash
+  332  sudo docker stop misc
+  333  sudo docker rm misc
+  334  sudo docker exec -it misc /bin/bash
+  335  exit
+  336  sudo docker build --rm -t misc .
+  337  sudo docker run --rm --name misc misc 
+  338  sudo docker run --rm --name misc -t misc 
+  339  stop-all-containers 
+  340  rm-all-containers 
+  341  sudo docker run --rm --name misc -t misc 
+  342  stop-all-containers 
+  343  rm-all-containers 
+  344  sudo docker run --rm --name misc -t misc 
+  345  rm-all-containers 
+  346  stop-all-containers 
+  347  sudo docker run --rm --name misc misc 
+  348  sudo docker run --rm --name misc -t $(hostname)
+  349  sudo docker run --rm --name misc -t misc $(hostname)
+  350  sudo docker run --rm --name misc -t misc ping $(hostname)
+  351  stop-all-containers 
+  352  rm-all-containers 
+  353  sudo docker run --rm --name misc -t misc ping $(hostname)
+  354  ifconfig 
+  355  sudo docker run --rm --name misc -t misc ping $(hostname)
+  356  clear
+  357  stop-all-containers 
+  358  rm-all-containers 
+  359  sudo docker run --rm --name misc -t misc hostname
+  360  sudo docker ps -a
+  361  sudo docker run --rm --name misc -t misc --entryname hostname
+  362  sudo docker run --rm --name misc -t misc --entrypoint hostname
+  363  sudo docker run --rm --name misc -t  --entrypoint hostname misc
+  364  sudo docker build --rm -t misc .
+  365  sudo docker run --rm --name misc -t misc
+  366  sudo docker build --rm -t misc .
+  367  sudo docker run --rm --name misc -t misc
+  368  stop-all-containers 
+  369  rm-all-containers 
+  370  sudo docker run --rm --name misc -t misc hostname
+  371  sudo docker ps -a
+  372  sudo docker run --rm --name misc -t misc
+  373  sudo docker ps -a
+  374  sudo docker exec -ti misc 
+  375  sudo docker exec -ti misc bash
+  376  sudo docker run --rm --name misc -t misc
+  377   stop-all-containers 
+  378  rm-all-containers 
+  379  sudo docker run --rm --name misc -t misc
+  380  sudo docker ps -a
+  381  sudo docker run --rm --name misc -t misc -c 3
+  382  stop-all-containers 
+  383  rm-all-containers 
+  384  sudo docker run --rm --name misc -t misc -c 3
+  385  sudo docker build --rm -t misc .
+  386  sudo docker run --rm --name misc -t misc
+  387   sudo docker ps a-
+  388   sudo docker ps -a
+  389  sudo docker build --rm -t misc .
+  390  sudo docker run --rm --name misc -t misc
+  391   sudo docker ps -a
+  392  sudo docker run --rm --name misc -t misc
+  393  sudo docker build --rm -t misc .
+  394  sudo docker run --rm --name misc -t misc
+  395  sudo docker build --rm -t misc .
+  396  sudo docker run --rm --name misc -t misc
+  397  sudo docker build --rm -t misc .
+  398  sudo docker run --rm --name misc -t misc
+  399  stop-all-containers 
+  400  sudo docker ps -a
+  401  rm-all-containers 
+  402  exit
+  403  cd 
+  404  cd Devel/Docker2
+  405  cd my
+  406  ls
+  407  ls mytraining/
+  408  mkdir misc
+  409  vi mytraining/postgres/
+  410  vi mytraining/postgres/Dockerfile
+  411  cd misc/
+  412  pwd
+  413  sudo docker images 
+  414  vi Dockerfile
+  415  exit
+  416  cd Devel/Logs/
+  417  vi LOG_2_nov_2015.txt 
+  418  exit
+  419  cd Devel/Logs/
+  420  vi LOG_2_nov_2015.txt 
+  421  exit
+  422  sudo dnf update --help
+  423  sudo dnf update --refresh
+  424  exit
+  425  cd Devel/Logs/
+  426  vi LOG_2_nov_2015.txt 
+  427  ls -ltr
+  428  exit
+  429  history 
+  430  sudo dnf list available *node*
+  431  sudo dnf list available nodejs
+  432  sudo dnf list available nvm
+  433  sudo dnf list available *nvm*
+  434  man curl
+  435  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.2/install.sh | bash
+  436  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.2/install.sh 
+  437   cd 
+  438  ls
+  439  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.2/install.sh | bash
+  440  exit
+  441  node -v
+  442  nvm 
+  443  nvm use 5.5
+  444  node -v
+  445  exit
+  446  node -v
+  447  nvm run 5.5 --version
+  448  nvm run 5.5
+  449  exit
+  450  node -v
+  451  nvm use 5.5
+  452  npm --help
+  453  npm --version
+  454  exit
+  455  cd 
+  456  cd Devel/Node/
+  457  mkdir videos/ryan_dahl
+  458  mkdir videos/ryan_dahl -p 
+  459  cd videos/ryan_dahl/
+  460  pwd
+  461  node -v
+  462  nvm use 5.5
+  463  node -v
+  464  node
+  465  ls
+  466  vi hello-world.js
+  467  node hello-world.js 
+  468  cat hello-world.js 
+  469  vi web-server.js
+  470  cat web-server.js 
+  471  node web-server.js 
+  472  vi web-server.js
+  473  node web-server.js 
+  474  vi web-server.js
+  475  node web-server.js 
+  476  vi web-server.js
+  477  node hello-world.js 
+  478  node web-server.js 
+  479  vi web-server.js
+  480  node web-server.js 
+  481  vi web-server.js
+  482  node web-server.js 
+  483  vi web-server.js
+  484  node web-server.js 
+  485  vi web-server.js
+  486  node web-server.js 
+  487  vi web-server.js
+  488  node web-server.js 
+  489  vi web-server.js
+  490  node web-server.js 
+  491  vi web-server.js
+  492  node web-server.js 
+  493  vi web-server.js
+  494  node web-server.js 
+  495  cat web-server.js 
+  496  exit
+  497  curl http://localhost:8000
+  498  curl -i http://localhost:8000
+  499  ab
+  500  ab -n 100 -c 100 http://localhost:8000
+  501  ab -n 100 -c 100 http://localhost:8000/
+  502  curl -i http://localhost:8000
+  503  ab -n 100 -c 100 http://localhost:8000
+  504  ab -n 100 -c 100 http://localhost:8000/
+  505  ab -n 10 -c 10 http://localhost:8000/
+  506  man ab
+  507  ab -n 1 -c 1 http://localhost:8000/
+  508  curl -i http://localhost:8000
+  509  ab -n 1 -c 1 http://localhost:8000/
+  510  ab -n 100 -c 100 http://localhost:8000/
+  511  exit
+  512  cd 
+  513  cat ~/.bash_profile 
+  514  less ~/.bashrc
+  515  cat ~/.bashrc
+  516  ls ~/.nvm
+  517  nvm
+  518  nvm install 5.5
+  519  node
+  520  node --help
+  521   node -v
+  522  which node
+  523  ls
+  524  cd Devel/
+  525  ls
+  526  mkdir Node
+  527  cd Node/
+  528  ls
+  529  node
+  530  exit
+  531  cd Devel/Logs/
+  532  vi LOG_2_nov_2015.txt 
+  533  exit
+  534  grep MIXAL -r *
+  535  vi LOG_7_aug_2015.txt
+  536  exit
+  537  cd Devel/Logs/
+  538  vi LOG_2_nov_2015.txt 
+  539  exit
+  540  sudo dnf install mdk
+  541  mixasm hello
+  542  mixvm -r hello
+  543  mixasm hello
+  544  mixvm -r hello
+  545  mixasm for3
+  546  mixvm -r for3
+  547  mixasm for3a
+  548  mixvm -r for3a
+  549  vi for3a.mixal 
+  550  less for3.mixal
+  551  cat hello.mixal
+  552  cat for5
+  553  cat for5.mix 
+  554  cat for5.mixal
+  555  mixasm for5
+  556  mixvm -r for5
+  557  mixvm for5
+  558  mixasm for5
+  559  mixvm 
+  560  mixvm -r for5
+  561  mixasm arr2
+  562  mixvm -r arr2
+  563  mixasm arr2
+  564  mixvm -r arr2
+  565  mixasm arr2
+  566  mixvm -r arr2
+  567  mixasm arr2
+  568  mixasm for6a
+  569  mixvm for6a
+  570  mixvm -r for7a
+  571  vi for7a.mixal
+  572  mixasm for7c
+  573  mixvm -r for7c
+  574  mixasm for7a
+  575  mixvm -r for7a
+  576  mixvm -for7a
+  577  mixvm for7a
+  578  mixasm for7a
+  579  mixvm -r for7a
+  580  mixvm for7a
+  581  mixasm for9
+  582  mixvm for9
+  583  mixasm for9
+  584  mixvm for9
+  585  mixasm for9;mixvm for9
+  586  cd ..
+  587  cd Manual/
+  588  mixasm for9;mixvm for9
+  589  mixasm for9a;mixvm -r for9a
+  590  mixasm for9a
+  591  mixvm -r for9a
+  592  mixasm for9a
+  593  mixvm -r for9a
+  594  mixvm  for9a
+  595  mixvm -r for9a
+  596  mixvm  for9a
+  597  mixasm for9a
+  598  mixvm  for9a
+  599  exit
+  600  gdb
+  601  cd ..
+  602  ls
+  603  cd ..
+  604  ls
+  605  cd Asm/
+  606  ls
+  607  vi add.c
+  608  exit
+  609  vi add.s
+  610  ls
+  611  man gcc
+  612  cp add.c foo.c
+  613  gcc -S foo.c 
+  614  ls -ltr
+  615  rm foo.s
+  616  gcc -S foo.c -o bar.s
+  617  ls -ltr
+  618  vi bar.s
+  619  vi fun2.c
+  620  vi fun.c
+  621  exit
+  622  gcc -g bar.s
+  623  gdb a.out
+  624  gcc -S fun.c
+  625  gcc -g fun.s
+  626  less fun.s
+  627  ls
+  628  cat add.c 
+  629  cp add.c square.c
+  630  vi square.c 
+  631  gcc -S square.c 
+  632  vi square.
+  633  vi square.s
+  634  exit
+  635  gdb a.out
+  636  exit
+  637  cd 
+  638  cd Devel/
+  639  ls
+  640  cd MIX/
+  641  ls
+  642  cd Manual/
+  643  ls
+  644  locate *.mixal
+  645  less /home/eric/Devel/MIX/Manual/for7a.mixal
+  646  vi hello.mix
+  647  vi hello.mixal
+  648  vi for3.mix
+  649  vi for3.mixal
+  650  ls
+  651  less for2.mixal
+  652  cp for3.mixal for3a.mixal
+  653  vi for3a.mixal 
+  654  mixasm for3a.mixal 
+  655  vi for3a.mixal 
+  656  ls
+  657  less add.mix
+  658  less add.mixal
+  659  vi add.mixal
+  660  rm .add.mixal.swp 
+  661  vi add.mixal
+  662  mixvm -h
+  663  mixvm hello
+  664  cat for5.mixal
+  665  ls
+  666  vi for5.mixal
+  667  vi pr_with_sub.mixal 
+  668  vi max.mixal
+  669  vi max2.mixal
+  670  rm .max2.mixal.swp 
+  671  vi max2.mix
+  672  vi max2.mixal
+  673  grep CHAR -r *
+  674  vi for6.mix
+  675  vi for6.mixal
+  676  vi for6a.mixal
+  677  vi arr.mixal 
+  678  ls
+  679  cp arr.mixal arr2.mixal
+  680  vi arr2.mixal 
+  681  mixasm arr
+  682  mixvm -r arr
+  683  vi arr2.mixal 
+  684  cat for6.mixal
+  685  mixvm for6
+  686  mixvm -r for6
+  687  vi for6a.mixal
+  688  mixvm -r for6a
+  689  vi for6a.mixal
+  690  rm .for7a.mixal.swp 
+  691  vi for7a.mixal
+  692  vi for7c.mixal 
+  693  rm .for7c.mixal.swp 
+  694  ls
+  695  vi for7c.mixal 
+  696  vi for7a.mixal
+  697  vi for9.mixal
+  698  cp -a for9.mixal for9a.mixal
+  699  vi for9a.mixal 
+  700  exit
+  701  ls -ltr
+  702  vi LOG_2_nov_2015.txt 
+  703  exit
+  704  cd Devel/Logs/
+  705  ls -ltr
+  706  vi LOG_7_aug_2015.txt
+  707  exit
+  708  cd ../MIX/
+  709  ls
+  710  cd Manual/
+  711  ls
+  712  ls -ltr
+  713  vi for9.mixal
+  714  vi for9a.mix
+  715  cp for9a.mixal  for9a_2.mixal
+  716  vi for9a_2.mixal 
+  717  mv for9a_2.mixal for9_2.mixal
+  718  cp for9a.mixal  for9a_2.mixal
+  719  vi for9a_2.mixal 
+  720  ls -ltr
+  721  vi for9a.mixal
+  722  cp for9a.mixal  for9a_2.mixal
+  723  vi for9a_2.mixal 
+  724  less for9_2.mixal 
+  725  vi for9.mixal
+  726  vi for9_2.mixal 
+  727  vi for9a.mixal 
+  728  vi for9a_2.mixal 
+  729  vi for9_2.mixal 
+  730  mv for9_2.mixal for9a_2.mixal
+  731  cp for9.mixal for9_2.mixal
+  732  mixasm for9a_2.mixal 
+  733  mixvm -r for9a_2.mixal 
+  734  mixvm -r for9a_2
+  735  mixvm for9a_2
+  736  mixasm for9a_2.mixal 
+  737  mixvm -r for9a_2.mixal 
+  738  mixvm -r for9a_2
+  739  mixvm  for9a_2
+  740  vi for9a_2.mix
+  741  vi for9a_2.mixal
+  742  mixasm for9a_2.mixal 
+  743  mixvm  -r for9a_2
+  744   mixasm jump
+  745  mixvm jump
+  746   mixasm jump
+  747  mixvm jump
+  748   mixasm jump
+  749  mixvm jump
+  750   mixasm jump
+  751  mixvm jump
+  752   mixasm jump
+  753  mixvm jump
+  754   mixasm jump
+  755  mixvm jump
+  756   mixasm jump
+  757  mixvm jump
+  758  vi for9a_2.mix
+  759  vi for9a_2.mixal
+  760  ls
+  761  vi pr_with_sub.mixal 
+  762  vi reg_to_reg.mixal
+  763  vi in.mixal
+  764  vi literallist.mixal
+  765  vi in.mix
+  766  vi in.mixal
+  767  mixasm pr_with_sub_2.mix
+  768  ls
+  769  mixasm pr_with_sub_2
+  770  mixvm -r pr_with_sub_2
+  771  mixasm pr_with_sub_2
+  772  mixvm -r pr_with_sub_2
+  773  w
+  774  exit
+  775  mixasm pr_with_sub_2.mixal 
+  776  mixvm pr_with_sub_2.mixal 
+  777  mixvm pr_with_sub_2
+  778  grep PRINTER -r *
+  779  exit
+  780  java -version
+  781  which java
+  782  ls -l /usr/bin/java
+  783  ls -l /etc/alternatives/java
+  784  ls /usr/lib/jvm
+  785  ls -l /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.65-3.b17.fc21.x86_64
+  786  ls -l /usr/lib/jvm/jre
+  787    exit
+  788  less for9a_2.mixal
+  789  vi  for9a_2.mixal
+  790  ls
+  791  vi jump.mixal
+  792  vi jump.mixal 
+  793  cp jump.mixal loop.mixal
+  794  vi loop.mixal 
+  795  cp loop.mixal loop_2.mixal
+  796  vi loop2
+  797  vi loop_2.mixal 
+  798  vi jump.mixal
+  799  cp jump.mixal jump_2.mixal
+  800  vi jump_2.mixal 
+  801  vi for9a_2.mixal
+  802  less loop.mixal
+  803  mixasm reg_to_reg.mixal 
+  804  mixvm reg_to_reg
+  805  mixasm reg_to_reg.mixal 
+  806  mixvm reg_to_reg
+  807  mixasm reg_to_reg.mixal 
+  808  mixvm reg_to_reg
+  809  mixasm reg_to_reg.mixal 
+  810  mixvm reg_to_reg
+  811  mixasm reg_to_reg.mixal 
+  812  mixvm reg_to_reg
+  813  mixasm in.mixal 
+  814  mixvm -r in
+  815  mixvm in
+  816  mixasm in.mixal 
+  817  mixvm in
+  818  mixasm in
+  819  mixvm in
+  820  mixasm pr_with_sub_2.mixal
+  821  mixasm tmp
+  822  mixvm tmp
+  823  mixasm tmp
+  824  mixvm tmp
+  825  mixasm tmp
+  826  mixvm tmp
+  827  mixasm tmp
+  828  mixvm tmp
+  829  vi pr_with_sub_2.mix
+  830  vi pr_with_sub_2.mixal 
+  831  exit
+  832  mixasm for9a_2
+  833  mixvm -r for9a_2
+  834  mixasm loop.mixal 
+  835  mixvm loop
+  836  mixasm loop_2
+  837  mvxvm loop_2
+  838  mixvm loop_2
+  839  mixasm loop_2
+  840  mixasm -r loop_2
+  841  mixvm -r loop_2
+  842  mixasm loop9a_2
+  843  mixasm for9a_2
+  844  mixvm -r for9a_2
+  845  mixvm for9a_2
+  846  mixvm -r for9a_2
+  847  mixasm for9a_2
+  848  mixvm -r for9a_2
+  849  ls
+  850  vi pr_with_sub_2.mixal 
+  851  vi tmp.mixal 
+  852  exit
+  853  gcc arr.c 
+  854  gdb a.out
+  855  gcc arr.c 
+  856  gcc -g arr.c 
+  857  gcc arr.c 
+  858  gcc -g arr.c 
+  859  gdb a.out
+  860  gcc -S arr.c 
+  861  vi arr.s
+  862  exit
+  863  cd 
+  864  cd Devel/
+  865  ls
+  866  cd Asm/
+  867  ls
+  868  vi arr.c
+  869  grep malloc -r *
+  870  vi arr.c
+  871  gcc arr.c 
+  872  vi arr.c
+  873  gcc arr.c 
+  874  vi arr.c
+  875  exit
+  876  cd ../MIX/Manual/
+  877  ls
+  878  vi pr_with_sub_2.mix
+  879  vi pr_with_sub_2.mixal
+  880  pwd
+  881  ls
+  882  exit
+  883  cd 
+  884  cd Devel/Golang/
+  885  ls
+  886  cd work/
+  887  ls
+  888  cd src/
+  889  ls
+  890  go install my/my_hello
+  891  head ../bin/my_hello
+  892  ls
+  893  ls my/
+  894  mkdir my/basics1
+  895  ../bin/my_hello
+  896  mv my/my_hello/hello.go my/my_hello/main.go
+  897  go install my/my_hello
+  898  ../bin/my_hello
+  899  my_hello
+  900  go tool compile -S my/my_hello
+  901  go tool compile -S my/my_hello/main.go 
+  902  ls ..
+  903  ls ../ibn
+  904  ls ../bin
+  905  ls
+  906  cd ../
+  907  cd ..
+  908  ls
+  909  mkdir work2
+  910  mkdir work2/src
+  911  mv work/src/my/ work2/src/
+  912  vi ~/.bash_profile 
+  913  . ~/.bash_profile 
+  914  echo $GOPATH
+  915  rm work/bin/my_hello*
+  916  mr work/bin/hello 
+  917  rm work/bin/hello 
+  918  cd work2/src/
+  919  go install my/my_hello
+  920  ls ..
+  921  ls ../../work2/bin
+  922  pwd
+  923  ls ../../work/bin
+  924  ls ../bin/
+  925  pd
+  926  pwd
+  927  . ~/.bash_profile
+  928  wpd
+  929  cat package.json 
+  930  exit
+  931  vi ks2.R 
+  932  exit
+  933  cd 
+  934  ls
+  935  cd Devel/
+  936  ls
+  937  cd Gradle/
+  938  ls
+  939  ls Java/
+  940  ls -ltr ~/Downloads/
+  941  ls -ltr ~/Downloads/ | grep gradle
+  942  unzip -l ~/Downloads/gradle-2.13-bin.zip 
+  943  echo $GRADLE_HOME
+  944  vi ~/.bash_profile 
+  945  unzip  ~/Downloads/gradle-2.13-bin.zip 
+  946  vi ~/.bash_profile 
+  947  wpd
+  948  pwd
+  949  ls
+  950  mv gradle-2.13/ Java/
+  951  cd Java/
+  952  ls
+  953  cd gradle-2.13/
+  954  ls
+  955  pwd
+  956  vi ~/.bash_profile 
+  957  . ~/.bash_profile 
+  958  which gradle
+  959  cd ..
+  960  cat ~/.bash_profile 
+  961  gradle
+  962  ls
+  963  gradle
+  964  ls
+  965  cd my
+  966  ls
+  967  gradlew
+  968  gradle wrapper
+  969  ls
+  970  ./gradlew 
+  971  ls
+  972  ls -ltr
+  973  rm -rf gradle gradlew gradlew.bat 
+  974  ls
+  975  ls ch6.6
+  976  vi ch6.6/build.gradle 
+  977  mkdir ch5
+  978  cd ch5
+  979  pwd
+  980  gradle wrapper
+  981  ls
+  982  vi build.properties
+  983  find
+  984  gradle --help
+  985  gradle -v
+  986  which gradle
+  987  vi ~/.bash_profile 
+  988  echo $PATH
+  989  vi ~/.bashrc
+  990  vi ~/.bash_profile 
+  991  gradle -v
+  992  . ~/.bash_profile 
+  993  gradle -v
+  994  echo $PATJH
+  995  echo $PATH
+  996  vi ~/.bash_profile 
+  997  PATH=
+  998  echo $PATH
+  999  vi ~/.bash_profile 
+ 1000  exit
+ 1001  cd 
+ 1002  cd Devel/Gradle/Java/my
+ 1003  echo $PATH
+ 1004  . ~/.bash_profile 
+ 1005  echo $PATH
+ 1006  gradle -v
+ 1007  find
+ 1008  cd ch5/
+ 1009  find
+ 1010  ls
+ 1011  cat build.properties 
+ 1012  mv build.properties build.gradle
+ 1013  gradlew
+ 1014  cat build.gradle 
+ 1015  gradlew
+ 1016  ./gradlew
+ 1017   ls
+ 1018  find
+ 1019  gradlew tasks
+ 1020  ./gradlew tasks
+ 1021  which gradle
+ 1022  vi build.gradle 
+ 1023  ./gradlew
+ 1024  ls
+ 1025  ls gradle/wrapper/gradle-wrapper.properties 
+ 1026  less gradle/wrapper/gradle-wrapper.properties 
+ 1027  ls
+ 1028  cd ../
+ 1029  ls
+ 1030  mkdir ch14
+ 1031  cd ch14
+ 1032  vi build.gradle
+ 1033  ls ../ch6
+ 1034  ls ../ch5/
+ 1035  ../ch5/gradlew 
+ 1036  ls
+ 1037  cd ..
+ 1038  ls
+ 1039  ls ch6.6/
+ 1040  ls ch5
+ 1041  find ch5/gradle/
+ 1042  jar tvf ch5/gradle/wrapper/gradle-wrapper.jar
+ 1043  ls
+ 1044  cd ch14
+ 1045  ls
+ 1046  vi build.gradle 
+ 1047  gradle -q hello
+ 1048  ../ch5/gradlew -q hello
+ 1049  cat build.gradle 
+ 1050  cd ..
+ 1051  mkdir ch44
+ 1052  cd ch44/
+ 1053  pwd
+ 1054  cd ../../
+ 1055  ls
+ 1056  gradlels
+ 1057  ls
+ 1058  gradle wrapper
+ 1059  ls
+ 1060  ls -ltr
+ 1061  rm .gradle/ gradle gradlew gradlew.bat  -rf
+ 1062  ls
+ 1063  cd my/ch44
+ 1064  ls
+ 1065  gradle wrapper
+ 1066  ls
+ 1067  vi build.gradle
+ 1068  cd ../../
+ 1069  ls
+ 1070  unzip -l  ~/Downloads/gradle-2.13-all.zip 
+ 1071  rm -rf gradle-2.13/
+ 1072  unzip  ~/Downloads/gradle-2.13-all.zip 
+ 1073  ls gradle-2.13
+ 1074  ls gradle-2.13/samples/java/quickstart/
+ 1075  find gradle-2.13/samples/java/quickstart/
+ 1076   cp -a gradle-2.13/samples/java/quickstart/* my/ch44
+ 1077  cd my/ch44
+ 1078  ls
+ 1079  (cd ../../;pwd)
+ 1080  find src
+ 1081  cat src/main/java/org/gradle/Person.java 
+ 1082  find
+ 1083  cat ./src/test/resources/org/gradle/test-resource.xml
+ 1084  cat ./src/test/java/org/gradle/PersonTest.java
+ 1085  cat ./src/main/resources/org/gradle/resource.xml
+ 1086  vi build.gradle 
+ 1087  ls
+ 1088  gradle build
+ 1089  find
+ 1090  jar tvf /build/libs/ch44-1.0.jar
+ 1091  jar tvf build/libs/ch44-1.0.jar
+ 1092  vi ./build/reports/tests/classes/org.gradle.PersonTest.html
+ 1093   less build.gradle 
+ 1094  vi build.gradle 
+ 1095  gradle build
+ 1096  gradle clean build
+ 1097  vi build.gradle 
+ 1098  gradle properties
+ 1099   ls
+ 1100  less build.gradle 
+ 1101  gradle uploadArchives
+ 1102  ls
+ 1103  ls repos/
+ 1104  gradle eclipse
+ 1105  find
+ 1106  ls -ltr
+ 1107   less .project 
+ 1108  less .classpath 
+ 1109  less build.gradle 
+ 1110  ls
+ 1111  cd ..
+ 1112  ls
+ 1113  mkdir quickstart
+ 1114  mv ch44/* quickstart/
+ 1115  mv quickstart/ ch44
+ 1116  cd ch44
+ 1117  ls
+ 1118  cd quickstart/
+ 1119  ls
+ 1120  cd ..
+ 1121  pwd
+ 1122  sudo su -
+ 1123  dnf --help
+ 1124  passwd --help
+ 1125  adduser --help
+ 1126  sudo adduser --help
+ 1127   docker build --help
+ 1128  docker ps -a
+ 1129  ls /
+ 1130  ls /home/eric/
+ 1131  docker volume inspect 
+ 1132  docker volume ls
+ 1133  docker ps -a
+ 1134  docker volume ls
+ 1135  docker inspect fd
+ 1136   docker volume inspect fd
+ 1137   docker volume inspect /fd
+ 1138   docker volume ls
+ 1139  docker history fd
+ 1140  docker history my/fedora-volume
+ 1141  docker volume ls
+ 1142  docker volume ls -a
+ 1143  docker volume ls
+ 1144  docker volume inspect 
+ 1145  docker volume inspect  --help
+ 1146  docker volume inspect 583f84c92037b301fc6fd39c8291d61ff3af0b10b5125d7427f3a11e15f9993a
+ 1147  docker volume inspect 
+ 1148  docker volume ls
+ 1149  docker volume inspect 871e8425133438284efba63e8f02c860ea0018a1d745c87d33b91b35dca6e92f
+ 1150  docker volume ls
+ 1151  docker volume --hep
+ 1152  docker volume rm myvol2 
+ 1153  docker volume ls
+ 1154  docker volume rm myvol2 
+ 1155  docker volume ls
+ 1156  docker run --help
+ 1157   stop-all-containers 
+ 1158  rm-all-containers 
+ 1159  docker volume ls
+ 1160  docker ps 
+ 1161  docker ps  -a
+ 1162  docker volume ls
+ 1163  docker ps  -a
+ 1164  docker rm vol
+ 1165  docker volume ls
+ 1166  docker volume ls -f dangling=true
+ 1167  docker volume ls 
+ 1168  docker volume ls -f dangling=true
+ 1169  docker volume ls
+ 1170  docker volume ls | awk 'NR>1{print $2}'
+ 1171  docker volume ls | awk 'NR>1{print $2}' | xargs docker volume rm
+ 1172  docker ps -a
+ 1173  docker rm vol
+ 1174  docker volume ls | awk 'NR>1{print $2}' | xargs docker volume rm
+ 1175  docker volume ls
+ 1176  docker volume ls -f dangling=true
+ 1177  docker volume ls 
+ 1178  docker volume ls -f dangling=true
+ 1179  docker ps
+ 1180  docker ps -a
+ 1181  docker volume ls -f dangling=true
+ 1182  docker volume ls
+ 1183  docker volume ls -f dangling=true
+ 1184  docker volume ls | awk 'NR>1{print $2}' | xargs docker volume rm
+ 1185  docker ps -a
+ 1186  docker rm -v vol
+ 1187  docker volume ls
+ 1188  docker rm --help
+ 1189  docker exec -ti pg2 bash
+ 1190  docker ps -a
+ 1191  docker stop pg1 pg2
+ 1192  docker rm pg1 pg2
+ 1193  docker ps -a
+ 1194  docker exec -ti pg1 bash
+ 1195  docker ps -a
+ 1196  docker stop pg1
+ 1197  docker rm pg1
+ 1198  docker ps -a
+ 1199  ls ~
+ 1200  ls ~/src
+ 1201  ls ~/dst
+ 1202  ls ~/Devel/
+ 1203  ls /home/eric/tmp/
+ 1204  ls /home/eric/tmp/fd -ld
+ 1205  docker volume ls
+ 1206  docker volume ls -f dangling=true
+ 1207  docker volume --help
+ 1208  docker volume rm f9d547f209bce32c3a7e0bc3bc0ed24222196654dd96ed01a32516c6dd0fa469
+ 1209  docker volume ls
+ 1210  docker volume --help
+ 1211  docker volume inspect dc92883777575f178142e010f422be4799e14065474eb475f6dda19102026778 
+ 1212  docker run --volumes-from pgdata -v /home/eric/tmp/pgdata:/backup my/fedora_postgres tar cvf /backup/backup.tar /pgd
+ 1213  docker ps -a
+ 1214  docker rm 3988d4522304
+ 1215  docker run --name pg1 --volumes-from pgdata -v /home/eric/tmp/pgdata:/backup my/fedora_postgres tar cvf /backup/backup.tar /pgdata
+ 1216  ls -ld /home/eric/tmp/pgdata/
+ 1217  ls -ld /home/eric/tmp/pgdata/backup.tar 
+ 1218  sudo  /home/eric/tmp/pgdata/backup.tar 
+ 1219  tar tvf /home/eric/tmp/pgdata/backup.tar 
+ 1220  docker ps -a
+ 1221  docker volume ls
+ 1222  docker start -it pg1 bash
+ 1223  docker start -i pg1 bash
+ 1224  docker ps -a
+ 1225  docker stop gp1
+ 1226  docker stop pg1
+ 1227  docker ps -a
+ 1228  docker start -i pg1 bash
+ 1229  docker start -i pg1
+ 1230  docker ps -a
+ 1231  docker exec -it pg1 bash
+ 1232  sudo su - postgres
+ 1233  docker inspect pg
+ 1234  docker exec -it pg bash
+ 1235  docker run --rm --name cli --link pg:cli postgres psql -U postgres cli
+ 1236  docker exec -it pg bash
+ 1237  rm-exited-containers 
+ 1238  docker run --rm --name cli --link pg:cli postgres psql -U postgres -h cli
+ 1239  docker exec -it pg bash
+ 1240  docker run --rm --name cli --link pg:cli postgres psql -U postgres -h cli
+ 1241  docker ps -a
+ 1242  docker run --rm --name cli --link pg:cli -ti postgres psql -U postgres -h cli
+ 1243  docker volume ls
+ 1244  socker exec -it pg bash
+ 1245  docker exec -it pg bash
+ 1246  docker run --rm --name fd fedora bash
+ 1247  docker run --rm --name fd -ti  fedora bash
+ 1248  docker run --name pg --rm -ti my/fedora-locale2 bash
+ 1249  docker ps -a
+ 1250  docker exec -ti pg bash
+ 1251  docker run --rm --name fd my/fedora-locale bash
+ 1252  docker run --rm --name fd -ti my/fedora-locale bash
+ 1253  docker run --rm --name fd-ssh -ti my/fedora-sshd bash
+ 1254  docker ps -a
+ 1255  docker stop fd-sshd
+ 1256  docker ps -a
+ 1257  docker run --rm --name fd-ssh -ti my/fedora-sshd bash
+ 1258  docker ps -a
+ 1259  docker stop fd-sshd 
+ 1260  docker exec -ti fd-sshd bash
+ 1261  docker stop fd-sshd 
+ 1262  docker exec -ti fd-sshd bash
+ 1263  docker ps -a
+ 1264  docker stop fd-sshd 
+ 1265  docker run --name fd-sshd2  --rm --net bridge my/fedora-sshd
+ 1266  docker run --name fd-sshd2  --rm --net bridge my/fedora-sshd bash
+ 1267  docker run --name fd-sshd2  --rm --net bridge -ti my/fedora-sshd bash
+ 1268  docker stop fd-sshd 
+ 1269  docker run --name fd-sshd2  --rm --net my-bridge-2 -ti my/fedora-sshd bash
+ 1270  docker stop fd-sshd 
+ 1271  docker run --name fd-sshd2  --rm --net my-bridge -ti my/fedora-sshd bash
+ 1272  docker stop fd-sshd 
+ 1273  docker exec -ti pg exec
+ 1274  docker exec -ti pg bash
+ 1275  pwd
+ 1276  sudo su - postgres
+ 1277  pw
+ 1278  pwd
+ 1279  pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+ 1280  history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Gradle_Java_my_ch44.txt

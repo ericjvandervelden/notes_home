@@ -1,0 +1,183 @@
+/ 7	. 
+
+/ eclipse-jee-test	,
+
+/ we zijn in workspace-wicket7_8	,
+
+/ In Debug perspective	, ga naar Breakpoints tab	, en right click in het panel	, we zien Import breakpoints en Export breakpoints
+/ We export naar	, 
+/home/eric/Devel/LOGS/breakpoints/workspace-wicket7_8.bkpt 
+
+/ we maken een nieuwe ws	, workspace-wicket7_8a	, 
+/ we kunnen Import breakpoints	, ook als we nog geen project hebben	, 
+
+/ we maken een project in de default location 	, deze komt in workspace	, /home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace-wicket7_8a
+
+/ daarom doen we	,
+[eric@localhost Wicket]$ pwd
+/home/eric/Devel/Java/Wicket
+[eric@localhost Wicket]$ cp -a wicket-examples-step-by-step/ /home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace-wicket7_8a
+
+/ we import deze	, als Maven project	, 
+
+/ we maken run config
+Maven build
+name: wicket-examples-step-by-step-deploy
+base dir: 														/ via Browse workspace
+goals: tomcat7:undeploy clean tomcat7:deploy
+
+Remote Java Application
+name: wicket-examples-step-by-step-remote-debug
+project: wicket-examples-step-by-step
+host: localhost
+port: 9966
+
+[eric@localhost apache-tomcat-8.0.28]$ bin/catalina.sh jpda run
+
+
+/ deploy met wicket-examples-step-by-step-deploy
+
+http://localhost:9090/wicket-examples-step-by-step/repeater/filtermy3a?5
+/ OK
+http://localhost:9090/wicket-examples-step-by-step/repeater/filtermy3b
+/ ERR
+/ TODO
+
+/ debug ook OK
+
+/ 7	. 
+
+/ we maken ws workspace-wicket7_7a	,
+
+/ we copy de breakpoints van workspace-wicket7_7	,  
+/ we import in eclipse wicket-examples-step-by-step   van workspace-wicket7_8a
+/ maak deploy config	,  
+name: wicket-examples-step-by-step-deploy
+base dir: ${workspace_loc:/wicket-examples-step-by-step}	/ als we browse workspace, staat hij er inderdaad bij	, maar hij is er niet in de workspace	, maar we zien deze entry omdat we het project hebben import	,  
+
+en remote debug config	,  
+/ 
+
+
+/ we cp servlets/ proj in deze ws	, van ws wicket7_7	, 
+/ we maken deploy config	, maar geen remote debug config	, 
+
+/ we maken server config	, en debug gewoon	, 
+name: Tomcat v7.0 Server at localhost (2)
+runtime environment: Apache Tomcat v7.0 (2)
+Configuration path: /Servers/Tomcat v7.0 Server at localhost (2)-config
+
+Open launch configuration: 
+name: Tomcat v7.0 Server at localhost (2)
+Server
+Server: Tomcat v7.0 Server at localhost (2)
+runtime environment: Apache Tomcat v7.0 (2)
+Hostname : localhost
+
+Arguments
+Program arguments
+start
+VM arguments
+-Dcatalina.base="/home/eric/Devel/Java/Tomcat/apache-tomcat-7.0.76-src/output/build" -Dcatalina.home="/home/eric/Devel/Java/Tomcat/apache-tomcat-7.0.76-src/output/build" -Dwtp.deploy="/home/eric/Devel/Java/Tomcat/apache-tomcat-7.0.76-src/output/build/wtpwebapps" -Djava.endorsed.dirs="/home/eric/Devel/Java/Tomcat/apache-tomcat-7.0.76-src/output/build/endorsed"
+Working directory:
+Default
+
+Classpath: 
+Bootstrap entries: 
+JRE
+User entries:
+bootstrap.jar
+tomcat-juli.jar
+tools.jar
+
+Source:
+servlets
+apache-tomcat-7.0.76-src
+
+/ Lees LOG_wicket_table.txt
+/ DESERIALIZE PAGE
+
+/ 7	. 
+
+/ In workspace workspace 	, 
+/ proj hibernate_xml_N_1_bidir_a zit al al in workspace,
+/ we zien 	,
+LazyInitializationException in /hibernate_xml_N_1_bidir_a	, 
+/ in dit project zijn geen breakpoints	, 
+
+/ we maken workspace-hibernate	,
+/ en we import de breakpoints van workspace er in	, 
+
+/ en put alles er in,  van	,
+
+/home/eric/Devel/Java/Testing/junitbook2/ch17-dbunit
+/home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace/hibernate_xml_N_1_bidir_a
+/home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace/hibernate_xml_N_1_3_6_10_Final
+/ Deze 3  doen we met de hand	,
+
+/home/eric/Devel/Java/Ehcache/hibernate_xml_1_N_bidir
+/home/eric/Devel/Java/Ehcache/hibernate_xml_1_N_bidir_ehcache
+/home/eric/Devel/Java/Ehcache/hibernate_xml_1_N_bidir_join_ehcache
+/home/eric/Devel/Java/Ehcache/hibernate_xml_1_N_ehcache
+/home/eric/Devel/Java/Ehcache/hibernate_xml_1_N_idgen_ehcache
+/home/eric/Devel/Java/Ehcache/hibernate_xml_1_N_join_ehcache
+/home/eric/Devel/Java/Ehcache/hibernate_xml_1_N_list_bidir_ehcache
+/home/eric/Devel/Java/Ehcache/hibernate_xml_component_ehcache
+/home/eric/Devel/Java/Ehcache/hibernate_xml_M_N_bidir_ehcache
+/home/eric/Devel/Java/Ehcache/hibernate_xml_M_N_ehcache
+/home/eric/Devel/Java/Ehcache/hibernate_xml_N_1_bidir
+/home/eric/Devel/Java/Ehcache/hibernate_xml_N_1_bidir_ehcache
+/home/eric/Devel/Java/Ehcache/hibernate_xml_N_1_bidir_fetch_coll_ehcache
+/home/eric/Devel/Java/Ehcache/hibernate_xml_N_1_bidir_fetch_ehcache
+/home/eric/Devel/Java/Ehcache/hibernate_xml_N_1_bidir_join_ehcache
+/home/eric/Devel/Java/Ehcache/hibernate_xml_N_1_ehcache
+/home/eric/Devel/Java/Ehcache/hibernate_xml_N_1_join_ehcache
+/home/eric/Devel/Java/Ehcache/hibernate_xml_N_1_list_bidir_ehcache
+
+
+
+/ we maken een script daarvoor	, 
+
+$ vi /tmp/ws.bash
+
+#/usr/bin/bash
+cp -a \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_1_N_bidir \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_1_N_bidir_ehcache \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_1_N_bidir_join_ehcache \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_1_N_ehcache \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_1_N_idgen_ehcache \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_1_N_join_ehcache \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_1_N_list_bidir_ehcache \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_component_ehcache \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_M_N_bidir_ehcache \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_M_N_ehcache \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_N_1_bidir \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_N_1_bidir_ehcache \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_N_1_bidir_fetch_coll_ehcache \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_N_1_bidir_fetch_ehcache \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_N_1_bidir_join_ehcache \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_N_1_ehcache \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_N_1_join_ehcache \
+/home/eric/Devel/Java/Ehcache/hibernate_xml_N_1_list_bidir_ehcache \
+ \
+/home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace-hibernate
+
+/ Kijk ook naar	, 
+[eric@localhost junitbook2]$ pwd
+/home/eric/Devel/Java/Testing/junitbook2
+[eric@localhost workspace]$ pwd
+/home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace
+
+
+
+/ 13	.
+
+
+
+
+
+
+
+
+

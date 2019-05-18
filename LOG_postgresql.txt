@@ -1,0 +1,4233 @@
+/ Lees LOG_2_nov_2015.txt over psql autocommit off in ~/.psqlrc
+/ Lees LOG_31_jan_2015.txt over 
+$ sudo su - postgres -c psql  	/ kan altijd
+# create role eric ...
+# create database eric ...
+/ TODO
+/ See SERIAL
+/ See SQL WAL
+
+/ 7	. 
+
+/ session	,
+
+[eric@almond Postgres]$ psql -E -U eric 
+
+
+eric=> select*from s;
+ j | name 
+---+------
+ 1 | foo
+ 2 | bar
+(2 rows)
+
+eric=> drop table s;
+DROP TABLE
+eric=> commit ;
+COMMIT
+eric=> create table s(j int primary key nextval('s_j_seq'));
+ERROR:  syntax error at or near "nextval"
+LINE 1: create table s(j int primary key nextval('s_j_seq'));
+                                         ^
+eric=> \?
+General
+  \copyright             show PostgreSQL usage and distribution terms
+  \g [FILE] or ;         execute query (and send results to file or |pipe)
+  \gset [PREFIX]         execute query and store results in psql variables
+  \h [NAME]              help on syntax of SQL commands, * for all commands
+  \q                     quit psql
+  \watch [SEC]           execute query every SEC seconds
+
+Query Buffer
+  \e [FILE] [LINE]       edit the query buffer (or file) with external editor
+  \ef [FUNCNAME [LINE]]  edit function definition with external editor
+  \p                     show the contents of the query buffer
+  \r                     reset (clear) the query buffer
+  \s [FILE]              display history or save it to file
+  \w FILE                write query buffer to file
+
+Input/Output
+  \copy ...              perform SQL COPY with data stream to the client host
+  \echo [STRING]         write string to standard output
+  \i FILE                execute commands from file
+  \ir FILE               as \i, but relative to location of current script
+  \o [FILE]              send all query results to file or |pipe
+  \qecho [STRING]        write string to query output stream (see \o)
+
+Informational
+  (options: S = show system objects, + = additional detail)
+  \d[S+]                 list tables, views, and sequences
+  \d[S+]  NAME           describe table, view, sequence, or index
+  \da[S]  [PATTERN]      list aggregates
+  \db[+]  [PATTERN]      list tablespaces
+  \dc[S+] [PATTERN]      list conversions
+  \dC[+]  [PATTERN]      list casts
+  \dd[S]  [PATTERN]      show object descriptions not displayed elsewhere
+  \ddp    [PATTERN]      list default privileges
+  \dD[S+] [PATTERN]      list domains
+  \det[+] [PATTERN]      list foreign tables
+  \des[+] [PATTERN]      list foreign servers
+  \deu[+] [PATTERN]      list user mappings
+  \dew[+] [PATTERN]      list foreign-data wrappers
+  \df[antw][S+] [PATRN]  list [only agg/normal/trigger/window] functions
+  \dF[+]  [PATTERN]      list text search configurations
+  \dFd[+] [PATTERN]      list text search dictionaries
+  \dFp[+] [PATTERN]      list text search parsers
+  \dFt[+] [PATTERN]      list text search templates
+  \dg[+]  [PATTERN]      list roles
+  \di[S+] [PATTERN]      list indexes
+  \dl                    list large objects, same as \lo_list
+  \dL[S+] [PATTERN]      list procedural languages
+  \dm[S+] [PATTERN]      list materialized views
+  \dn[S+] [PATTERN]      list schemas
+  \do[S]  [PATTERN]      list operators
+  \dO[S+] [PATTERN]      list collations
+  \dp     [PATTERN]      list table, view, and sequence access privileges
+  \drds [PATRN1 [PATRN2]] list per-database role settings
+  \ds[S+] [PATTERN]      list sequences
+  \dt[S+] [PATTERN]      list tables
+  \dT[S+] [PATTERN]      list data types
+  \du[+]  [PATTERN]      list roles
+  \dv[S+] [PATTERN]      list views
+  \dE[S+] [PATTERN]      list foreign tables
+  \dx[+]  [PATTERN]      list extensions
+  \dy     [PATTERN]      list event triggers
+  \l[+]   [PATTERN]      list databases
+eric=> \df?
+Invalid command \df?. Try \? for help.
+eric=> \?
+General
+  \copyright             show PostgreSQL usage and distribution terms
+  \g [FILE] or ;         execute query (and send results to file or |pipe)
+  \gset [PREFIX]         execute query and store results in psql variables
+  \h [NAME]              help on syntax of SQL commands, * for all commands
+  \q                     quit psql
+  \watch [SEC]           execute query every SEC seconds
+
+Query Buffer
+  \e [FILE] [LINE]       edit the query buffer (or file) with external editor
+  \ef [FUNCNAME [LINE]]  edit function definition with external editor
+  \p                     show the contents of the query buffer
+  \r                     reset (clear) the query buffer
+  \s [FILE]              display history or save it to file
+  \w FILE                write query buffer to file
+
+Input/Output
+  \copy ...              perform SQL COPY with data stream to the client host
+  \echo [STRING]         write string to standard output
+  \i FILE                execute commands from file
+  \ir FILE               as \i, but relative to location of current script
+  \o [FILE]              send all query results to file or |pipe
+  \qecho [STRING]        write string to query output stream (see \o)
+
+Informational
+  (options: S = show system objects, + = additional detail)
+  \d[S+]                 list tables, views, and sequences
+  \d[S+]  NAME           describe table, view, sequence, or index
+  \da[S]  [PATTERN]      list aggregates
+  \db[+]  [PATTERN]      list tablespaces
+  \dc[S+] [PATTERN]      list conversions
+  \dC[+]  [PATTERN]      list casts
+  \dd[S]  [PATTERN]      show object descriptions not displayed elsewhere
+  \ddp    [PATTERN]      list default privileges
+  \dD[S+] [PATTERN]      list domains
+  \det[+] [PATTERN]      list foreign tables
+  \des[+] [PATTERN]      list foreign servers
+  \deu[+] [PATTERN]      list user mappings
+  \dew[+] [PATTERN]      list foreign-data wrappers
+  \df[antw][S+] [PATRN]  list [only agg/normal/trigger/window] functions
+  \dF[+]  [PATTERN]      list text search configurations
+  \dFd[+] [PATTERN]      list text search dictionaries
+  \dFp[+] [PATTERN]      list text search parsers
+  \dFt[+] [PATTERN]      list text search templates
+  \dg[+]  [PATTERN]      list roles
+  \di[S+] [PATTERN]      list indexes
+  \dl                    list large objects, same as \lo_list
+  \dL[S+] [PATTERN]      list procedural languages
+  \dm[S+] [PATTERN]      list materialized views
+eric=> \df
+********* QUERY **********
+SELECT n.nspname as "Schema",
+  p.proname as "Name",
+  pg_catalog.pg_get_function_result(p.oid) as "Result data type",
+  pg_catalog.pg_get_function_arguments(p.oid) as "Argument data types",
+ CASE
+  WHEN p.proisagg THEN 'agg'
+  WHEN p.proiswindow THEN 'window'
+  WHEN p.prorettype = 'pg_catalog.trigger'::pg_catalog.regtype THEN 'trigger'
+  ELSE 'normal'
+ END as "Type"
+FROM pg_catalog.pg_proc p
+     LEFT JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+WHERE pg_catalog.pg_function_is_visible(p.oid)
+      AND n.nspname <> 'pg_catalog'
+      AND n.nspname <> 'information_schema'
+ORDER BY 1, 2, 4;
+**************************
+
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+eric=> rollback ;
+ROLLBACK
+eric=> \df
+********* QUERY **********
+SELECT n.nspname as "Schema",
+  p.proname as "Name",
+  pg_catalog.pg_get_function_result(p.oid) as "Result data type",
+  pg_catalog.pg_get_function_arguments(p.oid) as "Argument data types",
+ CASE
+  WHEN p.proisagg THEN 'agg'
+  WHEN p.proiswindow THEN 'window'
+  WHEN p.prorettype = 'pg_catalog.trigger'::pg_catalog.regtype THEN 'trigger'
+  ELSE 'normal'
+ END as "Type"
+FROM pg_catalog.pg_proc p
+     LEFT JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+WHERE pg_catalog.pg_function_is_visible(p.oid)
+      AND n.nspname <> 'pg_catalog'
+      AND n.nspname <> 'information_schema'
+ORDER BY 1, 2, 4;
+**************************
+
+                       List of functions
+ Schema | Name | Result data type | Argument data types | Type 
+--------+------+------------------+---------------------+------
+(0 rows)
+
+eric=> \df generate_series
+********* QUERY **********
+SELECT n.nspname as "Schema",
+  p.proname as "Name",
+  pg_catalog.pg_get_function_result(p.oid) as "Result data type",
+  pg_catalog.pg_get_function_arguments(p.oid) as "Argument data types",
+ CASE
+  WHEN p.proisagg THEN 'agg'
+  WHEN p.proiswindow THEN 'window'
+  WHEN p.prorettype = 'pg_catalog.trigger'::pg_catalog.regtype THEN 'trigger'
+  ELSE 'normal'
+ END as "Type"
+FROM pg_catalog.pg_proc p
+     LEFT JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+WHERE p.proname ~ '^(generate_series)$'
+  AND pg_catalog.pg_function_is_visible(p.oid)
+ORDER BY 1, 2, 4;
+**************************
+
+                                                               List of functions
+   Schema   |      Name       |         Result data type          |                        Argument data types         
+                |  Type  
+------------+-----------------+-----------------------------------+----------------------------------------------------
+----------------+--------
+ pg_catalog | generate_series | SETOF bigint                      | bigint, bigint                                     
+                | normal
+ pg_catalog | generate_series | SETOF bigint                      | bigint, bigint, bigint                             
+                | normal
+ pg_catalog | generate_series | SETOF integer                     | integer, integer                                   
+                | normal
+ pg_catalog | generate_series | SETOF integer                     | integer, integer, integer                          
+                | normal
+ pg_catalog | generate_series | SETOF timestamp without time zone | timestamp without time zone, timestamp without time
+ zone, interval | normal
+ pg_catalog | generate_series | SETOF timestamp with time zone    | timestamp with time zone, timestamp with time zone,
+ interval       | normal
+(6 rows)
+
+eric=> select generate_series(1,7);
+ generate_series 
+-----------------
+               1
+               2
+               3
+               4
+               5
+               6
+               7
+(7 rows)
+
+eric=> select generate_series(1,7,3);
+ generate_series 
+-----------------
+               1
+               4
+               7
+(3 rows)
+
+eric=> select generate_series(1,7,2);
+ generate_series 
+-----------------
+               1
+               3
+               5
+               7
+(4 rows)
+
+eric=> select generate_series(1,8,2);
+ generate_series 
+-----------------
+               1
+               3
+               5
+               7
+(4 rows)
+
+eric=> select generate_series('2016-01-01','2016-02-01');
+ERROR:  function generate_series(unknown, unknown) is not unique
+LINE 1: select generate_series('2016-01-01','2016-02-01');
+               ^
+HINT:  Could not choose a best candidate function. You might need to add explicit type casts.
+eric=> select generate_series('2016-01-01'::date,'2016-02-01');
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+eric=> rollback ;
+ROLLBACK
+eric=> select generate_series('2016-01-01'::date,'2016-02-01');
+ERROR:  function generate_series(date, unknown) does not exist
+LINE 1: select generate_series('2016-01-01'::date,'2016-02-01');
+               ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+eric=> rollback ;
+ROLLBACK
+eric=> select generate_series(3,7,4);
+ generate_series 
+-----------------
+               3
+               7
+(2 rows)
+
+eric=> select generate_series('2016-01-01','2016-02-01','1 day');
+ERROR:  function generate_series(unknown, unknown, unknown) is not unique
+LINE 1: select generate_series('2016-01-01','2016-02-01','1 day');
+               ^
+HINT:  Could not choose a best candidate function. You might need to add explicit type casts.
+eric=> select generate_series(3,7,4);
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+eric=> rollback ;
+ROLLBACK
+eric=> select generate_series('2016-01-01'::date,'2016-02-01','1 day');
+    generate_series     
+------------------------
+ 2016-01-01 00:00:00+01
+ 2016-01-02 00:00:00+01
+ 2016-01-03 00:00:00+01
+ 2016-01-04 00:00:00+01
+ 2016-01-05 00:00:00+01
+ 2016-01-06 00:00:00+01
+ 2016-01-07 00:00:00+01
+ 2016-01-08 00:00:00+01
+ 2016-01-09 00:00:00+01
+ 2016-01-10 00:00:00+01
+ 2016-01-11 00:00:00+01
+ 2016-01-12 00:00:00+01
+ 2016-01-13 00:00:00+01
+ 2016-01-14 00:00:00+01
+ 2016-01-15 00:00:00+01
+ 2016-01-16 00:00:00+01
+ 2016-01-17 00:00:00+01
+ 2016-01-18 00:00:00+01
+ 2016-01-19 00:00:00+01
+ 2016-01-20 00:00:00+01
+ 2016-01-21 00:00:00+01
+ 2016-01-22 00:00:00+01
+ 2016-01-23 00:00:00+01
+ 2016-01-24 00:00:00+01
+ 2016-01-25 00:00:00+01
+ 2016-01-26 00:00:00+01
+ 2016-01-27 00:00:00+01
+ 2016-01-28 00:00:00+01
+ 2016-01-29 00:00:00+01
+ 2016-01-30 00:00:00+01
+ 2016-01-31 00:00:00+01
+ 2016-02-01 00:00:00+01
+(32 rows)
+
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=> select generate_series('2016-01-01','2016-02-01','1 day');
+ERROR:  function generate_series(unknown, unknown, unknown) is not unique
+LINE 1: select generate_series('2016-01-01','2016-02-01','1 day');
+               ^
+HINT:  Could not choose a best candidate function. You might need to add explicit type casts.
+eric=> select generate_series('2016-01-01'::date,'2016-02-01','15 day');
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+eric=> rollback ;
+ROLLBACK
+eric=> select generate_series('2016-01-01'::date,'2016-02-01','15 days');
+    generate_series     
+------------------------
+ 2016-01-01 00:00:00+01
+ 2016-01-16 00:00:00+01
+ 2016-01-31 00:00:00+01
+(3 rows)
+
+eric=> select generate_series('2016-01-01'::timestamp,'2016-02-01','15 days');
+   generate_series   
+---------------------
+ 2016-01-01 00:00:00
+ 2016-01-16 00:00:00
+ 2016-01-31 00:00:00
+(3 rows)
+
+eric=> select generate_series('2016-01-01'::timestamp,'2016-01-03','10 hours');
+   generate_series   
+---------------------
+ 2016-01-01 00:00:00
+ 2016-01-01 10:00:00
+ 2016-01-01 20:00:00
+ 2016-01-02 06:00:00
+ 2016-01-02 16:00:00
+(5 rows)
+
+eric=> select now()
+eric-> ;
+              now              
+-------------------------------
+ 2016-08-28 14:15:34.817093+02
+(1 row)
+
+eric=> \set
+AUTOCOMMIT = 'off'
+ECHO_HIDDEN = 'on'
+PROMPT1 = '%/%R%# '
+PROMPT2 = '%/%R%# '
+PROMPT3 = '>> '
+VERBOSITY = 'default'
+VERSION = 'PostgreSQL 9.4.8 on x86_64-redhat-linux-gnu, compiled by gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6), 64-bit'
+DBNAME = 'eric'
+USER = 'eric'
+PORT = '5432'
+ENCODING = 'UTF8'
+LASTOID = '0'
+eric=> select now();
+              now              
+-------------------------------
+ 2016-08-28 14:15:34.817093+02
+(1 row)
+
+eric=> show
+eric-> 
+eric-> ;
+ERROR:  syntax error at or near ";"
+LINE 2: ;
+        ^
+eric=> show timezone;
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+eric=> rollback ;
+ROLLBACK
+eric=> show timezone;
+     TimeZone     
+------------------
+ Europe/Amsterdam
+(1 row)
+
+eric=> select now();
+              now              
+-------------------------------
+ 2016-08-28 14:34:58.603202+02
+(1 row)
+
+eric=> select now();
+              now              
+-------------------------------
+ 2016-08-28 14:34:58.603202+02
+(1 row)
+
+eric=> select now();
+              now              
+-------------------------------
+ 2016-08-28 14:34:58.603202+02
+(1 row)
+
+eric=> select*from pg_settings;
+                name                 |      setting       | unit |                             category                
+              |                                                          short_desc                                    
+                       |                                                                                               
+                                                                             extra_desc                                
+                                                                                                                       
+                      |  context   | vartype |        source        | min_val |   max_val    |                         
+           enumvals                                    |     boot_val      |     reset_val      | sourcefile | sourceli
+ne 
+-------------------------------------+--------------------+------+-----------------------------------------------------
+--------------+--------------------------------------------------------------------------------------------------------
+-----------------------+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------
+----------------------+------------+---------+----------------------+---------+--------------+-------------------------
+-------------------------------------------------------+-------------------+--------------------+------------+---------
+---
+ allow_system_table_mods             | off                |      | Developer Options                                   
+              | Allows modifications of the structure of system tables.                                                
+                       |                                                                                               
+                                                                                                                       
+                                                                                                                       
+                      | postmaster | bool    | default              |         |              |                         
+                                                       | off               | off                |            |         
+  
+ application_name                    | psql               |      | Reporting and Logging / What to Log                 
+              | Sets the application name to be reported in statistics and logs.                                       
+                       |                                                                                               
+                                                                                                                       
+                                                                                                                       
+                      | user       | string  | client               |         |              |                         
+                                                       |                   | psql               |            |         
+  
+ archive_command                     | (disabled)         |      | Write-Ahead Log / Archiving                         
+              | Sets the shell command that will be called to archive a WAL file.                                      
+                       |                                                                                               
+                                                                                                                       
+                                                                                                                       
+                      | sighup     | string  | default              |         |              |                         
+                                                       |                   |                    |            |         
+  
+ archive_mode                        | off                |      | Write-Ahead Log / Archiving                         
+              | Allows archiving of WAL files using archive_command.                                                   
+                       |                                                                                               
+eric=> select name from pg_settings;
+                name                 
+-------------------------------------
+ allow_system_table_mods
+ application_name
+ archive_command
+ archive_mode
+ archive_timeout
+ array_nulls
+ authentication_timeout
+ autovacuum
+ autovacuum_analyze_scale_factor
+ autovacuum_analyze_threshold
+ autovacuum_freeze_max_age
+ autovacuum_max_workers
+ autovacuum_multixact_freeze_max_age
+ autovacuum_naptime
+ autovacuum_vacuum_cost_delay
+ autovacuum_vacuum_cost_limit
+ autovacuum_vacuum_scale_factor
+ autovacuum_vacuum_threshold
+ autovacuum_work_mem
+ backslash_quote
+ bgwriter_delay
+ bgwriter_lru_maxpages
+ bgwriter_lru_multiplier
+ block_size
+ bonjour
+ bonjour_name
+ bytea_output
+ check_function_bodies
+ checkpoint_completion_target
+ checkpoint_segments
+ checkpoint_timeout
+ checkpoint_warning
+ client_encoding
+ client_min_messages
+ commit_delay
+ commit_siblings
+ constraint_exclusion
+ cpu_index_tuple_cost
+ cpu_operator_cost
+ cpu_tuple_cost
+ cursor_tuple_fraction
+ data_checksums
+ DateStyle
+ db_user_namespace
+ deadlock_timeout
+ debug_assertions
+ debug_pretty_print
+ debug_print_parse
+ debug_print_plan
+ debug_print_rewritten
+ default_statistics_target
+ default_tablespace
+eric=> select name from pg_settings where name like '%time%';
+          name          
+------------------------
+ archive_timeout
+ authentication_timeout
+ autovacuum_naptime
+ checkpoint_timeout
+ deadlock_timeout
+ integer_datetimes
+ lc_time
+ lock_timeout
+ log_timezone
+ statement_timeout
+ timezone_abbreviations
+ wal_receiver_timeout
+ wal_sender_timeout
+(13 rows)
+
+eric=> select *from pg_settings where name like '%time%';
+          name          |     setting      | unit |                           category                           |     
+                                    short_desc                                         |             extra_desc        
+      |  context  | vartype |       source       | min_val |  max_val   | enumvals | boot_val |    reset_val     | sour
+cefile | sourceline 
+------------------------+------------------+------+--------------------------------------------------------------+-----
+---------------------------------------------------------------------------------------+-------------------------------
+------+-----------+---------+--------------------+---------+------------+----------+----------+------------------+-----
+-------+------------
+ archive_timeout        | 0                | s    | Write-Ahead Log / Archiving                                  | Forc
+es a switch to the next xlog file if a new file has not been started within N seconds. |                               
+      | sighup    | integer | default            | 0       | 1073741823 |          | 0        | 0                |     
+       |           
+ authentication_timeout | 60               | s    | Connections and Authentication / Security and Authentication | Sets
+ the maximum allowed time to complete client authentication.                           |                               
+      | sighup    | integer | default            | 1       | 600        |          | 60       | 60               |     
+       |           
+ autovacuum_naptime     | 60               | s    | Autovacuum                                                   | Time
+ to sleep between autovacuum runs.                                                     |                               
+      | sighup    | integer | default            | 1       | 2147483    |          | 60       | 60               |     
+       |           
+ checkpoint_timeout     | 300              | s    | Write-Ahead Log / Checkpoints                                | Sets
+ the maximum time between automatic WAL checkpoints.                                   |                               
+      | sighup    | integer | default            | 30      | 3600       |          | 300      | 300              |     
+       |           
+ deadlock_timeout       | 1000             | ms   | Lock Management                                              | Sets
+ the time to wait on a lock before checking for deadlock.                              |                               
+      | superuser | integer | default            | 1       | 2147483647 |          | 1000     | 1000             |     
+       |           
+ integer_datetimes      | on               |      | Preset Options                                               | Date
+times are integer based.                                                               |                               
+      | internal  | bool    | default            |         |            |          | on       | on               |     
+       |           
+ lc_time                | en_US.UTF-8      |      | Client Connection Defaults / Locale and Formatting           | Sets
+ the locale for formatting date and time values.                                       |                               
+      | user      | string  | configuration file |         |            |          | C        | en_US.UTF-8      |     
+       |           
+ lock_timeout           | 0                | ms   | Client Connection Defaults / Statement Behavior              | Sets
+ the maximum allowed duration of any wait for a lock.                                  | A value of 0 turns off the tim
+eout. | user      | integer | default            | 0       | 2147483647 |          | 0        | 0                |     
+       |           
+ log_timezone           | Europe/Amsterdam |      | Reporting and Logging / What to Log                          | Sets
+ the time zone to use in log messages.                                                 |                               
+      | sighup    | string  | configuration file |         |            |          | GMT      | Europe/Amsterdam |     
+       |           
+ statement_timeout      | 0                | ms   | Client Connection Defaults / Statement Behavior              | Sets
+ the maximum allowed duration of any statement.                                        | A value of 0 turns off the tim
+eout. | user      | integer | default            | 0       | 2147483647 |          | 0        | 0                |     
+       |           
+ timezone_abbreviations | Default          |      | Client Connection Defaults / Locale and Formatting           | Sele
+cts a file of time zone abbreviations.                                                 |                               
+      | user      | string  | default            |         |            |          |          | Default          |     
+       |           
+ wal_receiver_timeout   | 60000            | ms   | Replication / Standby Servers                                | Sets
+ the maximum wait time to receive data from the primary.                               |                               
+      | sighup    | integer | default            | 0       | 2147483647 |          | 60000    | 60000            |     
+       |           
+ wal_sender_timeout     | 60000            | ms   | Replication / Sending Servers                                | Sets
+ the maximum time to wait for WAL replication.                                         |                               
+      | sighup    | integer | default            | 0       | 2147483647 |          | 60000    | 60000            |     
+       |           
+(13 rows)
+
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=>  select now()::timestamp
+eric-> ;
+            now             
+----------------------------
+ 2016-08-28 14:34:58.603202
+(1 row)
+
+eric=>  select now();
+              now              
+-------------------------------
+ 2016-08-28 14:34:58.603202+02
+(1 row)
+
+eric=>  select now()::timestamp with timezone;
+ERROR:  syntax error at or near "with timezone"
+LINE 1: select now()::timestamp with timezone;
+                                ^
+eric=>  select now()::timestamp;
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+eric=> rollback ;
+ROLLBACK
+eric=>  select now()::timestamp;
+            now             
+----------------------------
+ 2016-08-28 14:43:19.844146
+(1 row)
+
+eric=>  select now();
+              now              
+-------------------------------
+ 2016-08-28 14:43:19.844146+02
+(1 row)
+
+eric=>  SELECT now() AT TIME ZONE current_setting('TimeZone');
+          timezone          
+----------------------------
+ 2016-08-28 14:43:19.844146
+(1 row)
+
+eric=>  SELECT current_setting('TimeZone');
+ current_setting  
+------------------
+ Europe/Amsterdam
+(1 row)
+
+eric=> SELECT now() AT TIME ZONE 'Europe/Paris';
+          timezone          
+----------------------------
+ 2016-08-28 14:43:19.844146
+(1 row)
+
+eric=> SELECT now() AT TIME ZONE 'Europe/London';
+          timezone          
+----------------------------
+ 2016-08-28 13:43:19.844146
+(1 row)
+
+eric=> SELECT now() AT TIME ZONE 'Europe/Lisbon';
+          timezone          
+----------------------------
+ 2016-08-28 13:43:19.844146
+(1 row)
+
+eric=> SELECT now() AT TIME ZONE 'UTC';
+          timezone          
+----------------------------
+ 2016-08-28 12:43:19.844146
+(1 row)
+
+eric=>  SELECT now() AT TIME ZONE current_setting('TimeZone');
+          timezone          
+----------------------------
+ 2016-08-28 14:43:19.844146
+(1 row)
+
+eric=>  SELECT now() AT TIME ZONE current_setting('TimeZone');
+          timezone          
+----------------------------
+ 2016-08-28 14:43:19.844146
+(1 row)
+
+eric=>  SELECT now();
+              now              
+-------------------------------
+ 2016-08-28 14:43:19.844146+02
+(1 row)
+
+eric=> rollback ;
+ROLLBACK
+eric=>  SELECT now();
+              now              
+-------------------------------
+ 2016-08-28 14:48:51.202001+02
+(1 row)
+
+eric=>  SELECT now();
+              now              
+-------------------------------
+ 2016-08-28 14:48:51.202001+02
+(1 row)
+
+eric=>  SELECT now();
+              now              
+-------------------------------
+ 2016-08-28 14:48:51.202001+02
+(1 row)
+
+eric=>  SELECT now();
+              now              
+-------------------------------
+ 2016-08-28 14:48:51.202001+02
+(1 row)
+
+eric=>  SELECT now();
+              now              
+-------------------------------
+ 2016-08-28 14:48:51.202001+02
+(1 row)
+
+eric=> rollback ;
+ROLLBACK
+eric=>  SELECT now();
+              now              
+-------------------------------
+ 2016-08-28 14:49:08.210259+02
+(1 row)
+
+eric=> select timeofday();
+              timeofday               
+--------------------------------------
+ Sun Aug 28 14:50:14.439153 2016 CEST
+(1 row)
+
+eric=> select timeofday();
+              timeofday               
+--------------------------------------
+ Sun Aug 28 14:50:17.096536 2016 CEST
+(1 row)
+
+eric=> select timeofday();
+              timeofday               
+--------------------------------------
+ Sun Aug 28 14:50:18.176168 2016 CEST
+(1 row)
+
+eric=> select timeofday();
+              timeofday               
+--------------------------------------
+ Sun Aug 28 14:50:18.915257 2016 CEST
+(1 row)
+
+eric=> select now();
+              now              
+-------------------------------
+ 2016-08-28 14:49:08.210259+02
+(1 row)
+
+eric=> select now();
+              now              
+-------------------------------
+ 2016-08-28 14:49:08.210259+02
+(1 row)
+
+eric=> select timeofday();
+              timeofday               
+--------------------------------------
+ Sun Aug 28 15:08:19.341086 2016 CEST
+(1 row)
+
+eric=> select timeofday();
+              timeofday               
+--------------------------------------
+ Sun Aug 28 15:08:20.927555 2016 CEST
+(1 row)
+
+eric=> select timeofday() at timezone 'utc';
+ERROR:  syntax error at or near "timezone"
+LINE 1: select timeofday() at timezone 'utc';
+                              ^
+eric=> select now() at timezone 'UTC';
+ERROR:  syntax error at or near "timezone"
+LINE 1: select now() at timezone 'UTC';
+                        ^
+eric=> select timeofday() at time zone 'utc';
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+eric=> rollback ;
+ROLLBACK
+eric=> select timeofday() at time zone 'utc';
+ERROR:  function pg_catalog.timezone(unknown, text) does not exist
+LINE 1: select timeofday() at time zone 'utc';
+                           ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+eric=> select 1;
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+eric=> rollback ;
+ROLLBACK
+eric=> select 1;
+ ?column? 
+----------
+        1
+(1 row)
+
+eric=> select now();
+              now              
+-------------------------------
+ 2016-08-28 15:24:48.335067+02
+(1 row)
+
+eric=> select now()::"timestamp with timezone";
+ERROR:  type "timestamp with timezone" does not exist
+LINE 1: select now()::"timestamp with timezone";
+                      ^
+eric=> select now()::"timestamp with time zone";
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+eric=> rollback ;
+ROLLBACK
+eric=> select now()::"timestamp with time zone";
+ERROR:  type "timestamp with time zone" does not exist
+LINE 1: select now()::"timestamp with time zone";
+                      ^
+eric=> show all;
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+eric=> rollback ;
+ROLLBACK
+eric=> show all
+eric-> ;
+                name                 |      setting       |                                                          de
+scription                                                          
+-------------------------------------+--------------------+------------------------------------------------------------
+-------------------------------------------------------------------
+ allow_system_table_mods             | off                | Allows modifications of the structure of system tables.
+ application_name                    | psql               | Sets the application name to be reported in statistics and 
+logs.
+ archive_command                     | (disabled)         | Sets the shell command that will be called to archive a WAL
+ file.
+ archive_mode                        | off                | Allows archiving of WAL files using archive_command.
+ archive_timeout                     | 0                  | Forces a switch to the next xlog file if a new file has not
+ been started within N seconds.
+ array_nulls                         | on                 | Enable input of NULL elements in arrays.
+ authentication_timeout              | 1min               | Sets the maximum allowed time to complete client authentica
+tion.
+ autovacuum                          | on                 | Starts the autovacuum subprocess.
+ autovacuum_analyze_scale_factor     | 0.1                | Number of tuple inserts, updates, or deletes prior to analy
+ze as a fraction of reltuples.
+ autovacuum_analyze_threshold        | 50                 | Minimum number of tuple inserts, updates, or deletes prior 
+to analyze.
+ autovacuum_freeze_max_age           | 200000000          | Age at which to autovacuum a table to prevent transaction I
+D wraparound.
+ autovacuum_max_workers              | 3                  | Sets the maximum number of simultaneously running autovacuu
+m worker processes.
+ autovacuum_multixact_freeze_max_age | 400000000          | Multixact age at which to autovacuum a table to prevent mul
+tixact wraparound.
+ autovacuum_naptime                  | 1min               | Time to sleep between autovacuum runs.
+ autovacuum_vacuum_cost_delay        | 20ms               | Vacuum cost delay in milliseconds, for autovacuum.
+ autovacuum_vacuum_cost_limit        | -1                 | Vacuum cost amount available before napping, for autovacuum
+.
+ autovacuum_vacuum_scale_factor      | 0.2                | Number of tuple updates or deletes prior to vacuum as a fra
+ction of reltuples.
+ autovacuum_vacuum_threshold         | 50                 | Minimum number of tuple updates or deletes prior to vacuum.
+ autovacuum_work_mem                 | -1                 | Sets the maximum memory to be used by each autovacuum worke
+r process.
+ backslash_quote                     | safe_encoding      | Sets whether "\'" is allowed in string literals.
+ bgwriter_delay                      | 200ms              | Background writer sleep time between rounds.
+ bgwriter_lru_maxpages               | 100                | Background writer maximum number of LRU pages to flush per 
+round.
+ bgwriter_lru_multiplier             | 2                  | Multiple of the average buffer usage to free per round.
+ block_size                          | 8192               | Shows the size of a disk block.
+ bonjour                             | off                | Enables advertising the server via Bonjour.
+ bonjour_name                        |                    | Sets the Bonjour service name.
+ bytea_output                        | hex                | Sets the output format for bytea.
+ check_function_bodies               | on                 | Check function bodies during CREATE FUNCTION.
+ checkpoint_completion_target        | 0.5                | Time spent flushing dirty buffers during checkpoint, as fra
+ction of checkpoint interval.
+ checkpoint_segments                 | 3                  | Sets the maximum distance in log segments between automatic
+ WAL checkpoints.
+ checkpoint_timeout                  | 5min               | Sets the maximum time between automatic WAL checkpoints.
+ checkpoint_warning                  | 30s                | Enables warnings if checkpoint segments are filled more fre
+quently than this.
+ client_encoding                     | UTF8               | Sets the client's character set encoding.
+ client_min_messages                 | notice             | Sets the message levels that are sent to the client.
+ commit_delay                        | 0                  | Sets the delay in microseconds between transaction commit a
+nd flushing WAL to disk.
+ commit_siblings                     | 5                  | Sets the minimum concurrent open transactions before perfor
+ming commit_delay.
+ constraint_exclusion                | partition          | Enables the planner to use constraints to optimize queries.
+ cpu_index_tuple_cost                | 0.005              | Sets the planner's estimate of the cost of processing each 
+index entry during an index scan.
+ cpu_operator_cost                   | 0.0025             | Sets the planner's estimate of the cost of processing each 
+operator or function call.
+ cpu_tuple_cost                      | 0.01               | Sets the planner's estimate of the cost of processing each 
+tuple (row).
+ cursor_tuple_fraction               | 0.1                | Sets the planner's estimate of the fraction of a cursor's r
+ows that will be retrieved.
+ data_checksums                      | off                | Shows whether data checksums are turned on for this cluster
+.
+ DateStyle                           | ISO, MDY           | Sets the display format for date and time values.
+ db_user_namespace                   | off                | Enables per-database user names.
+ deadlock_timeout                    | 1s                 | Sets the time to wait on a lock before checking for deadloc
+k.
+ debug_assertions                    | off                | Turns on various assertion checks.
+ debug_pretty_print                  | on                 | Indents parse and plan tree displays.
+ debug_print_parse                   | off                | Logs each query's parse tree.
+ debug_print_plan                    | off                | Logs each query's execution plan.
+ debug_print_rewritten               | off                | Logs each query's rewritten parse tree.
+ default_statistics_target           | 100                | Sets the default statistics target.
+ default_tablespace                  |                    | Sets the default tablespace to create tables and indexes in
+.
+ default_text_search_config          | pg_catalog.english | Sets default text search configuration.
+ default_transaction_deferrable      | off                | Sets the default deferrable status of new transactions.
+ default_transaction_isolation       | read committed     | Sets the transaction isolation level of each new transactio
+n.
+ default_transaction_read_only       | off                | Sets the default read-only status of new transactions.
+ default_with_oids                   | off                | Create new tables with OIDs by default.
+ dynamic_shared_memory_type          | posix              | Selects the dynamic shared memory implementation used.
+ effective_cache_size                | 4GB                | Sets the planner's assumption about the size of the disk ca
+che.
+ effective_io_concurrency            | 1                  | Number of simultaneous requests that can be handled efficie
+ntly by the disk subsystem.
+ enable_bitmapscan                   | on                 | Enables the planner's use of bitmap-scan plans.
+ enable_hashagg                      | on                 | Enables the planner's use of hashed aggregation plans.
+ enable_hashjoin                     | on                 | Enables the planner's use of hash join plans.
+ enable_indexonlyscan                | on                 | Enables the planner's use of index-only-scan plans.
+ enable_indexscan                    | on                 | Enables the planner's use of index-scan plans.
+ enable_material                     | on                 | Enables the planner's use of materialization.
+ enable_mergejoin                    | on                 | Enables the planner's use of merge join plans.
+ enable_nestloop                     | on                 | Enables the planner's use of nested-loop join plans.
+ enable_seqscan                      | on                 | Enables the planner's use of sequential-scan plans.
+ enable_sort                         | on                 | Enables the planner's use of explicit sort steps.
+ enable_tidscan                      | on                 | Enables the planner's use of TID scan plans.
+ escape_string_warning               | on                 | Warn about backslash escapes in ordinary string literals.
+ event_source                        | PostgreSQL         | Sets the application name used to identify PostgreSQL messa
+ges in the event log.
+ exit_on_error                       | off                | Terminate session on any error.
+ extra_float_digits                  | 0                  | Sets the number of digits displayed for floating-point valu
+es.
+ from_collapse_limit                 | 8                  | Sets the FROM-list size beyond which subqueries are not col
+lapsed.
+ fsync                               | on                 | Forces synchronization of updates to disk.
+ full_page_writes                    | on                 | Writes full pages to WAL when first modified after a checkp
+oint.
+ geqo                                | on                 | Enables genetic query optimization.
+ geqo_effort                         | 5                  | GEQO: effort is used to set the default for other GEQO para
+meters.
+ geqo_generations                    | 0                  | GEQO: number of iterations of the algorithm.
+ geqo_pool_size                      | 0                  | GEQO: number of individuals in the population.
+ geqo_seed                           | 0                  | GEQO: seed for random path selection.
+ geqo_selection_bias                 | 2                  | GEQO: selective pressure within the population.
+ geqo_threshold                      | 12                 | Sets the threshold of FROM items beyond which GEQO is used.
+ gin_fuzzy_search_limit              | 0                  | Sets the maximum allowed result for exact search by GIN.
+ hot_standby                         | off                | Allows connections and queries during recovery.
+ hot_standby_feedback                | off                | Allows feedback from a hot standby to the primary that will
+ avoid query conflicts.
+ huge_pages                          | try                | Use of huge pages on Linux.
+ ignore_checksum_failure             | off                | Continues processing after a checksum failure.
+ ignore_system_indexes               | off                | Disables reading from system indexes.
+ integer_datetimes                   | on                 | Datetimes are integer based.
+ IntervalStyle                       | postgres           | Sets the display format for interval values.
+ join_collapse_limit                 | 8                  | Sets the FROM-list size beyond which JOIN constructs are no
+t flattened.
+ krb_caseins_users                   | off                | Sets whether Kerberos and GSSAPI user names should be treat
+ed as case-insensitive.
+ lc_collate                          | en_US.UTF-8        | Shows the collation order locale.
+ lc_ctype                            | en_US.UTF-8        | Shows the character classification and case conversion loca
+le.
+ lc_messages                         | en_US.UTF-8        | Sets the language in which messages are displayed.
+ lc_monetary                         | en_US.UTF-8        | Sets the locale for formatting monetary amounts.
+ lc_numeric                          | en_US.UTF-8        | Sets the locale for formatting numbers.
+ lc_time                             | en_US.UTF-8        | Sets the locale for formatting date and time values.
+ listen_addresses                    | *                  | Sets the host name or IP address(es) to listen to.
+ lo_compat_privileges                | off                | Enables backward compatibility mode for privilege checks on
+ large objects.
+ local_preload_libraries             |                    | Lists unprivileged shared libraries to preload into each ba
+ckend.
+ lock_timeout                        | 0                  | Sets the maximum allowed duration of any wait for a lock.
+ log_autovacuum_min_duration         | -1                 | Sets the minimum execution time above which autovacuum acti
+ons will be logged.
+ log_checkpoints                     | off                | Logs each checkpoint.
+ log_connections                     | off                | Logs each successful connection.
+ log_destination                     | stderr             | Sets the destination for server log output.
+ log_disconnections                  | off                | Logs end of a session, including duration.
+ log_duration                        | off                | Logs the duration of each completed SQL statement.
+ log_error_verbosity                 | default            | Sets the verbosity of logged messages.
+ log_executor_stats                  | off                | Writes executor performance statistics to the server log.
+ log_file_mode                       | 0600               | Sets the file permissions for log files.
+ log_hostname                        | off                | Logs the host name in the connection logs.
+ log_line_prefix                     |                    | Controls information prefixed to each log line.
+ log_lock_waits                      | off                | Logs long lock waits.
+ log_min_duration_statement          | -1                 | Sets the minimum execution time above which statements will
+ be logged.
+ log_min_error_statement             | error              | Causes all statements generating error at or above this lev
+el to be logged.
+ log_min_messages                    | warning            | Sets the message levels that are logged.
+ log_parser_stats                    | off                | Writes parser performance statistics to the server log.
+ log_planner_stats                   | off                | Writes planner performance statistics to the server log.
+ log_rotation_age                    | 1d                 | Automatic log file rotation will occur after N minutes.
+ log_rotation_size                   | 0                  | Automatic log file rotation will occur after N kilobytes.
+ log_statement                       | none               | Sets the type of statements logged.
+ log_statement_stats                 | off                | Writes cumulative performance statistics to the server log.
+ log_temp_files                      | -1                 | Log the use of temporary files larger than this number of k
+ilobytes.
+ log_timezone                        | Europe/Amsterdam   | Sets the time zone to use in log messages.
+ log_truncate_on_rotation            | on                 | Truncate existing log files of same name during log rotatio
+n.
+ logging_collector                   | on                 | Start a subprocess to capture stderr output and/or csvlogs 
+into log files.
+ maintenance_work_mem                | 64MB               | Sets the maximum memory to be used for maintenance operatio
+ns.
+ max_connections                     | 100                | Sets the maximum number of concurrent connections.
+ max_files_per_process               | 1000               | Sets the maximum number of simultaneously open files for ea
+ch server process.
+ max_function_args                   | 100                | Shows the maximum number of function arguments.
+ max_identifier_length               | 63                 | Shows the maximum identifier length.
+ max_index_keys                      | 32                 | Shows the maximum number of index keys.
+ max_locks_per_transaction           | 64                 | Sets the maximum number of locks per transaction.
+ max_pred_locks_per_transaction      | 64                 | Sets the maximum number of predicate locks per transaction.
+ max_prepared_transactions           | 0                  | Sets the maximum number of simultaneously prepared transact
+ions.
+ max_replication_slots               | 0                  | Sets the maximum number of simultaneously defined replicati
+on slots.
+ max_stack_depth                     | 2MB                | Sets the maximum stack depth, in kilobytes.
+ max_standby_archive_delay           | 30s                | Sets the maximum delay before canceling queries when a hot 
+standby server is processing archived WAL data.
+ max_standby_streaming_delay         | 30s                | Sets the maximum delay before canceling queries when a hot 
+standby server is processing streamed WAL data.
+ max_wal_senders                     | 0                  | Sets the maximum number of simultaneously running WAL sende
+r processes.
+ max_worker_processes                | 8                  | Maximum number of concurrent worker processes.
+ password_encryption                 | on                 | Encrypt passwords.
+ port                                | 5432               | Sets the TCP port the server listens on.
+ post_auth_delay                     | 0                  | Waits N seconds on connection startup after authentication.
+ pre_auth_delay                      | 0                  | Waits N seconds on connection startup before authentication
+.
+ quote_all_identifiers               | off                | When generating SQL fragments, quote all identifiers.
+ random_page_cost                    | 4                  | Sets the planner's estimate of the cost of a nonsequentiall
+y fetched disk page.
+ restart_after_crash                 | on                 | Reinitialize server after backend crash.
+ search_path                         | "$user",public     | Sets the schema search order for names that are not schema-
+qualified.
+ segment_size                        | 1GB                | Shows the number of pages per disk file.
+ seq_page_cost                       | 1                  | Sets the planner's estimate of the cost of a sequentially f
+etched disk page.
+ server_encoding                     | UTF8               | Sets the server (database) character set encoding.
+ server_version                      | 9.4.8              | Shows the server version.
+ server_version_num                  | 90408              | Shows the server version as an integer.
+ session_replication_role            | origin             | Sets the session's behavior for triggers and rewrite rules.
+ shared_buffers                      | 128MB              | Sets the number of shared memory buffers used by the server
+.
+ sql_inheritance                     | on                 | Causes subtables to be included by default in various comma
+nds.
+ ssl                                 | off                | Enables SSL connections.
+ ssl_ca_file                         |                    | Location of the SSL certificate authority file.
+ ssl_cert_file                       | server.crt         | Location of the SSL server certificate file.
+ ssl_crl_file                        |                    | Location of the SSL certificate revocation list file.
+ ssl_key_file                        | server.key         | Location of the SSL server private key file.
+ ssl_prefer_server_ciphers           | on                 | Give priority to server ciphersuite order.
+ ssl_renegotiation_limit             | 0                  | Set the amount of traffic to send and receive before renego
+tiating the encryption keys.
+ standard_conforming_strings         | on                 | Causes '...' strings to treat backslashes literally.
+ statement_timeout                   | 0                  | Sets the maximum allowed duration of any statement.
+ superuser_reserved_connections      | 3                  | Sets the number of connection slots reserved for superusers
+.
+ synchronize_seqscans                | on                 | Enable synchronized sequential scans.
+ synchronous_commit                  | on                 | Sets the current transaction's synchronization level.
+ synchronous_standby_names           |                    | List of names of potential synchronous standbys.
+ syslog_facility                     | local0             | Sets the syslog "facility" to be used when syslog enabled.
+ syslog_ident                        | postgres           | Sets the program name used to identify PostgreSQL messages 
+in syslog.
+ tcp_keepalives_count                | 0                  | Maximum number of TCP keepalive retransmits.
+ tcp_keepalives_idle                 | 0                  | Time between issuing TCP keepalives.
+ tcp_keepalives_interval             | 0                  | Time between TCP keepalive retransmits.
+ temp_buffers                        | 8MB                | Sets the maximum number of temporary buffers used by each s
+ession.
+ temp_file_limit                     | -1                 | Limits the total size of all temporary files used by each s
+ession.
+ temp_tablespaces                    |                    | Sets the tablespace(s) to use for temporary tables and sort
+ files.
+ TimeZone                            | Europe/Amsterdam   | Sets the time zone for displaying and interpreting time sta
+mps.
+ timezone_abbreviations              | Default            | Selects a file of time zone abbreviations.
+ trace_notify                        | off                | Generates debugging output for LISTEN and NOTIFY.
+ trace_recovery_messages             | log                | Enables logging of recovery-related debugging information.
+ trace_sort                          | off                | Emit information about resource usage in sorting.
+ track_activities                    | on                 | Collects information about executing commands.
+ track_activity_query_size           | 1024               | Sets the size reserved for pg_stat_activity.query, in bytes
+.
+ track_counts                        | on                 | Collects statistics on database activity.
+ track_functions                     | none               | Collects function-level statistics on database activity.
+ track_io_timing                     | off                | Collects timing statistics for database I/O activity.
+ transaction_deferrable              | off                | Whether to defer a read-only serializable transaction until
+ it can be executed with no possible serialization failures.
+ transaction_isolation               | read committed     | Sets the current transaction's isolation level.
+ transaction_read_only               | off                | Sets the current transaction's read-only status.
+ transform_null_equals               | off                | Treats "expr=NULL" as "expr IS NULL".
+ unix_socket_group                   |                    | Sets the owning group of the Unix-domain socket.
+ unix_socket_permissions             | 0777               | Sets the access permissions of the Unix-domain socket.
+ update_process_title                | on                 | Updates the process title to show the active SQL command.
+ vacuum_cost_delay                   | 0                  | Vacuum cost delay in milliseconds.
+ vacuum_cost_limit                   | 200                | Vacuum cost amount available before napping.
+ vacuum_cost_page_dirty              | 20                 | Vacuum cost for a page dirtied by vacuum.
+ vacuum_cost_page_hit                | 1                  | Vacuum cost for a page found in the buffer cache.
+ vacuum_cost_page_miss               | 10                 | Vacuum cost for a page not found in the buffer cache.
+ vacuum_defer_cleanup_age            | 0                  | Number of transactions by which VACUUM and HOT cleanup shou
+ld be deferred, if any.
+ vacuum_freeze_min_age               | 50000000           | Minimum age at which VACUUM should freeze a table row.
+ vacuum_freeze_table_age             | 150000000          | Age at which VACUUM should scan whole table to freeze tuple
+s.
+ vacuum_multixact_freeze_min_age     | 5000000            | Minimum age at which VACUUM should freeze a MultiXactId in 
+a table row.
+ vacuum_multixact_freeze_table_age   | 150000000          | Multixact age at which VACUUM should scan whole table to fr
+eeze tuples.
+ wal_block_size                      | 8192               | Shows the block size in the write ahead log.
+ wal_buffers                         | 4MB                | Sets the number of disk-page buffers in shared memory for W
+AL.
+ wal_keep_segments                   | 0                  | Sets the number of WAL files held for standby servers.
+ wal_level                           | minimal            | Set the level of information written to the WAL.
+ wal_log_hints                       | off                | Writes full pages to WAL when first modified after a checkp
+oint, even for a non-critical modifications.
+ wal_receiver_status_interval        | 10s                | Sets the maximum interval between WAL receiver status repor
+ts to the primary.
+ wal_receiver_timeout                | 1min               | Sets the maximum wait time to receive data from the primary
+.
+ wal_segment_size                    | 16MB               | Shows the number of pages per write ahead log segment.
+ wal_sender_timeout                  | 1min               | Sets the maximum time to wait for WAL replication.
+ wal_sync_method                     | fdatasync          | Selects the method used for forcing WAL updates to disk.
+ wal_writer_delay                    | 200ms              | WAL writer sleep time between WAL flushes.
+ work_mem                            | 4MB                | Sets the maximum memory to be used for query workspaces.
+ xmlbinary                           | base64             | Sets how binary values are to be encoded in XML.
+ xmloption                           | content            | Sets whether XML data in implicit parsing and serialization
+ operations is to be considered as documents or content fragments.
+ zero_damaged_pages                  | off                | Continues processing past damaged page headers.
+(224 rows)
+
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+
+eric=>  show *time*
+eric-> ;
+ERROR:  syntax error at or near "*"
+LINE 1: show *time*
+             ^
+eric=> select* from pg_settings where name like '%time%';
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+eric=> rollback ;
+ROLLBACK
+eric=> select* from pg_settings where name like '%time%';
+          name          |     setting      | unit |                           category                           |     
+                                    short_desc                                         |             extra_desc        
+      |  context  | vartype |       source       | min_val |  max_val   | enumvals | boot_val |    reset_val     | sour
+cefile | sourceline 
+------------------------+------------------+------+--------------------------------------------------------------+-----
+---------------------------------------------------------------------------------------+-------------------------------
+------+-----------+---------+--------------------+---------+------------+----------+----------+------------------+-----
+-------+------------
+ archive_timeout        | 0                | s    | Write-Ahead Log / Archiving                                  | Forc
+es a switch to the next xlog file if a new file has not been started within N seconds. |                               
+      | sighup    | integer | default            | 0       | 1073741823 |          | 0        | 0                |     
+       |           
+ authentication_timeout | 60               | s    | Connections and Authentication / Security and Authentication | Sets
+ the maximum allowed time to complete client authentication.                           |                               
+      | sighup    | integer | default            | 1       | 600        |          | 60       | 60               |     
+       |           
+ autovacuum_naptime     | 60               | s    | Autovacuum                                                   | Time
+ to sleep between autovacuum runs.                                                     |                               
+      | sighup    | integer | default            | 1       | 2147483    |          | 60       | 60               |     
+       |           
+ checkpoint_timeout     | 300              | s    | Write-Ahead Log / Checkpoints                                | Sets
+ the maximum time between automatic WAL checkpoints.                                   |                               
+      | sighup    | integer | default            | 30      | 3600       |          | 300      | 300              |     
+       |           
+ deadlock_timeout       | 1000             | ms   | Lock Management                                              | Sets
+ the time to wait on a lock before checking for deadlock.                              |                               
+      | superuser | integer | default            | 1       | 2147483647 |          | 1000     | 1000             |     
+       |           
+ integer_datetimes      | on               |      | Preset Options                                               | Date
+times are integer based.                                                               |                               
+      | internal  | bool    | default            |         |            |          | on       | on               |     
+       |           
+ lc_time                | en_US.UTF-8      |      | Client Connection Defaults / Locale and Formatting           | Sets
+ the locale for formatting date and time values.                                       |                               
+      | user      | string  | configuration file |         |            |          | C        | en_US.UTF-8      |     
+       |           
+ lock_timeout           | 0                | ms   | Client Connection Defaults / Statement Behavior              | Sets
+ the maximum allowed duration of any wait for a lock.                                  | A value of 0 turns off the tim
+eout. | user      | integer | default            | 0       | 2147483647 |          | 0        | 0                |     
+       |           
+ log_timezone           | Europe/Amsterdam |      | Reporting and Logging / What to Log                          | Sets
+ the time zone to use in log messages.                                                 |                               
+      | sighup    | string  | configuration file |         |            |          | GMT      | Europe/Amsterdam |     
+       |           
+ statement_timeout      | 0                | ms   | Client Connection Defaults / Statement Behavior              | Sets
+ the maximum allowed duration of any statement.                                        | A value of 0 turns off the tim
+eout. | user      | integer | default            | 0       | 2147483647 |          | 0        | 0                |     
+       |           
+ timezone_abbreviations | Default          |      | Client Connection Defaults / Locale and Formatting           | Sele
+cts a file of time zone abbreviations.                                                 |                               
+      | user      | string  | default            |         |            |          |          | Default          |     
+       |           
+ wal_receiver_timeout   | 60000            | ms   | Replication / Standby Servers                                | Sets
+ the maximum wait time to receive data from the primary.                               |                               
+      | sighup    | integer | default            | 0       | 2147483647 |          | 60000    | 60000            |     
+       |           
+ wal_sender_timeout     | 60000            | ms   | Replication / Sending Servers                                | Sets
+ the maximum time to wait for WAL replication.                                         |                               
+      | sighup    | integer | default            | 0       | 2147483647 |          | 60000    | 60000            |     
+       |           
+(13 rows)
+
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=> 
+eric=>  select current_setting('timezone');
+ current_setting  
+------------------
+ Europe/Amsterdam
+(1 row)
+
+eric=> show timezone;
+     TimeZone     
+------------------
+ Europe/Amsterdam
+(1 row)
+
+eric=> show all;
+                name                 |      setting       |                                                          de
+scription                                                          
+-------------------------------------+--------------------+------------------------------------------------------------
+-------------------------------------------------------------------
+ allow_system_table_mods             | off                | Allows modifications of the structure of system tables.
+ application_name                    | psql               | Sets the application name to be reported in statistics and 
+logs.
+ archive_command                     | (disabled)         | Sets the shell command that will be called to archive a WAL
+ file.
+ archive_mode                        | off                | Allows archiving of WAL files using archive_command.
+ archive_timeout                     | 0                  | Forces a switch to the next xlog file if a new file has not
+ been started within N seconds.
+ array_nulls                         | on                 | Enable input of NULL elements in arrays.
+ authentication_timeout              | 1min               | Sets the maximum allowed time to complete client authentica
+tion.
+ autovacuum                          | on                 | Starts the autovacuum subprocess.
+ autovacuum_analyze_scale_factor     | 0.1                | Number of tuple inserts, updates, or deletes prior to analy
+ze as a fraction of reltuples.
+ autovacuum_analyze_threshold        | 50                 | Minimum number of tuple inserts, updates, or deletes prior 
+to analyze.
+ autovacuum_freeze_max_age           | 200000000          | Age at which to autovacuum a table to prevent transaction I
+D wraparound.
+ autovacuum_max_workers              | 3                  | Sets the maximum number of simultaneously running autovacuu
+m worker processes.
+ autovacuum_multixact_freeze_max_age | 400000000          | Multixact age at which to autovacuum a table to prevent mul
+tixact wraparound.
+ autovacuum_naptime                  | 1min               | Time to sleep between autovacuum runs.
+ autovacuum_vacuum_cost_delay        | 20ms               | Vacuum cost delay in milliseconds, for autovacuum.
+ autovacuum_vacuum_cost_limit        | -1                 | Vacuum cost amount available before napping, for autovacuum
+.
+ autovacuum_vacuum_scale_factor      | 0.2                | Number of tuple updates or deletes prior to vacuum as a fra
+ction of reltuples.
+ autovacuum_vacuum_threshold         | 50                 | Minimum number of tuple updates or deletes prior to vacuum.
+ autovacuum_work_mem                 | -1                 | Sets the maximum memory to be used by each autovacuum worke
+r process.
+ backslash_quote                     | safe_encoding      | Sets whether "\'" is allowed in string literals.
+ bgwriter_delay                      | 200ms              | Background writer sleep time between rounds.
+ bgwriter_lru_maxpages               | 100                | Background writer maximum number of LRU pages to flush per 
+round.
+ bgwriter_lru_multiplier             | 2                  | Multiple of the average buffer usage to free per round.
+ block_size                          | 8192               | Shows the size of a disk block.
+ bonjour                             | off                | Enables advertising the server via Bonjour.
+ bonjour_name                        |                    | Sets the Bonjour service name.
+ bytea_output                        | hex                | Sets the output format for bytea.
+ check_function_bodies               | on                 | Check function bodies during CREATE FUNCTION.
+ checkpoint_completion_target        | 0.5                | Time spent flushing dirty buffers during checkpoint, as fra
+ction of checkpoint interval.
+ checkpoint_segments                 | 3                  | Sets the maximum distance in log segments between automatic
+ WAL checkpoints.
+ checkpoint_timeout                  | 5min               | Sets the maximum time between automatic WAL checkpoints.
+ checkpoint_warning                  | 30s                | Enables warnings if checkpoint segments are filled more fre
+quently than this.
+ client_encoding                     | UTF8               | Sets the client's character set encoding.
+ client_min_messages                 | notice             | Sets the message levels that are sent to the client.
+ commit_delay                        | 0                  | Sets the delay in microseconds between transaction commit a
+nd flushing WAL to disk.
+ commit_siblings                     | 5                  | Sets the minimum concurrent open transactions before perfor
+ming commit_delay.
+ constraint_exclusion                | partition          | Enables the planner to use constraints to optimize queries.
+ cpu_index_tuple_cost                | 0.005              | Sets the planner's estimate of the cost of processing each 
+index entry during an index scan.
+ cpu_operator_cost                   | 0.0025             | Sets the planner's estimate of the cost of processing each 
+operator or function call.
+ cpu_tuple_cost                      | 0.01               | Sets the planner's estimate of the cost of processing each 
+tuple (row).
+ cursor_tuple_fraction               | 0.1                | Sets the planner's estimate of the fraction of a cursor's r
+ows that will be retrieved.
+ data_checksums                      | off                | Shows whether data checksums are turned on for this cluster
+.
+ DateStyle                           | ISO, MDY           | Sets the display format for date and time values.
+ db_user_namespace                   | off                | Enables per-database user names.
+ deadlock_timeout                    | 1s                 | Sets the time to wait on a lock before checking for deadloc
+k.
+ debug_assertions                    | off                | Turns on various assertion checks.
+ debug_pretty_print                  | on                 | Indents parse and plan tree displays.
+ debug_print_parse                   | off                | Logs each query's parse tree.
+ debug_print_plan                    | off                | Logs each query's execution plan.
+ debug_print_rewritten               | off                | Logs each query's rewritten parse tree.
+ default_statistics_target           | 100                | Sets the default statistics target.
+ default_tablespace                  |                    | Sets the default tablespace to create tables and indexes in
+.
+ default_text_search_config          | pg_catalog.english | Sets default text search configuration.
+ default_transaction_deferrable      | off                | Sets the default deferrable status of new transactions.
+ default_transaction_isolation       | read committed     | Sets the transaction isolation level of each new transactio
+n.
+ default_transaction_read_only       | off                | Sets the default read-only status of new transactions.
+ default_with_oids                   | off                | Create new tables with OIDs by default.
+ dynamic_shared_memory_type          | posix              | Selects the dynamic shared memory implementation used.
+ effective_cache_size                | 4GB                | Sets the planner's assumption about the size of the disk ca
+che.
+ effective_io_concurrency            | 1                  | Number of simultaneous requests that can be handled efficie
+ntly by the disk subsystem.
+ enable_bitmapscan                   | on                 | Enables the planner's use of bitmap-scan plans.
+ enable_hashagg                      | on                 | Enables the planner's use of hashed aggregation plans.
+ enable_hashjoin                     | on                 | Enables the planner's use of hash join plans.
+ enable_indexonlyscan                | on                 | Enables the planner's use of index-only-scan plans.
+ enable_indexscan                    | on                 | Enables the planner's use of index-scan plans.
+ enable_material                     | on                 | Enables the planner's use of materialization.
+ enable_mergejoin                    | on                 | Enables the planner's use of merge join plans.
+ enable_nestloop                     | on                 | Enables the planner's use of nested-loop join plans.
+ enable_seqscan                      | on                 | Enables the planner's use of sequential-scan plans.
+ enable_sort                         | on                 | Enables the planner's use of explicit sort steps.
+ enable_tidscan                      | on                 | Enables the planner's use of TID scan plans.
+ escape_string_warning               | on                 | Warn about backslash escapes in ordinary string literals.
+ event_source                        | PostgreSQL         | Sets the application name used to identify PostgreSQL messa
+ges in the event log.
+ exit_on_error                       | off                | Terminate session on any error.
+ extra_float_digits                  | 0                  | Sets the number of digits displayed for floating-point valu
+es.
+ from_collapse_limit                 | 8                  | Sets the FROM-list size beyond which subqueries are not col
+lapsed.
+ fsync                               | on                 | Forces synchronization of updates to disk.
+ full_page_writes                    | on                 | Writes full pages to WAL when first modified after a checkp
+oint.
+ geqo                                | on                 | Enables genetic query optimization.
+ geqo_effort                         | 5                  | GEQO: effort is used to set the default for other GEQO para
+meters.
+ geqo_generations                    | 0                  | GEQO: number of iterations of the algorithm.
+ geqo_pool_size                      | 0                  | GEQO: number of individuals in the population.
+ geqo_seed                           | 0                  | GEQO: seed for random path selection.
+ geqo_selection_bias                 | 2                  | GEQO: selective pressure within the population.
+ geqo_threshold                      | 12                 | Sets the threshold of FROM items beyond which GEQO is used.
+ gin_fuzzy_search_limit              | 0                  | Sets the maximum allowed result for exact search by GIN.
+ hot_standby                         | off                | Allows connections and queries during recovery.
+ hot_standby_feedback                | off                | Allows feedback from a hot standby to the primary that will
+ avoid query conflicts.
+ huge_pages                          | try                | Use of huge pages on Linux.
+ ignore_checksum_failure             | off                | Continues processing after a checksum failure.
+ ignore_system_indexes               | off                | Disables reading from system indexes.
+ integer_datetimes                   | on                 | Datetimes are integer based.
+ IntervalStyle                       | postgres           | Sets the display format for interval values.
+ join_collapse_limit                 | 8                  | Sets the FROM-list size beyond which JOIN constructs are no
+t flattened.
+ krb_caseins_users                   | off                | Sets whether Kerberos and GSSAPI user names should be treat
+ed as case-insensitive.
+ lc_collate                          | en_US.UTF-8        | Shows the collation order locale.
+ lc_ctype                            | en_US.UTF-8        | Shows the character classification and case conversion loca
+le.
+ lc_messages                         | en_US.UTF-8        | Sets the language in which messages are displayed.
+ lc_monetary                         | en_US.UTF-8        | Sets the locale for formatting monetary amounts.
+ lc_numeric                          | en_US.UTF-8        | Sets the locale for formatting numbers.
+ lc_time                             | en_US.UTF-8        | Sets the locale for formatting date and time values.
+ listen_addresses                    | *                  | Sets the host name or IP address(es) to listen to.
+ lo_compat_privileges                | off                | Enables backward compatibility mode for privilege checks on
+ large objects.
+ local_preload_libraries             |                    | Lists unprivileged shared libraries to preload into each ba
+ckend.
+ lock_timeout                        | 0                  | Sets the maximum allowed duration of any wait for a lock.
+ log_autovacuum_min_duration         | -1                 | Sets the minimum execution time above which autovacuum acti
+ons will be logged.
+ log_checkpoints                     | off                | Logs each checkpoint.
+ log_connections                     | off                | Logs each successful connection.
+ log_destination                     | stderr             | Sets the destination for server log output.
+ log_disconnections                  | off                | Logs end of a session, including duration.
+ log_duration                        | off                | Logs the duration of each completed SQL statement.
+ log_error_verbosity                 | default            | Sets the verbosity of logged messages.
+ log_executor_stats                  | off                | Writes executor performance statistics to the server log.
+ log_file_mode                       | 0600               | Sets the file permissions for log files.
+ log_hostname                        | off                | Logs the host name in the connection logs.
+ log_line_prefix                     |                    | Controls information prefixed to each log line.
+ log_lock_waits                      | off                | Logs long lock waits.
+ log_min_duration_statement          | -1                 | Sets the minimum execution time above which statements will
+ be logged.
+ log_min_error_statement             | error              | Causes all statements generating error at or above this lev
+el to be logged.
+ log_min_messages                    | warning            | Sets the message levels that are logged.
+ log_parser_stats                    | off                | Writes parser performance statistics to the server log.
+ log_planner_stats                   | off                | Writes planner performance statistics to the server log.
+ log_rotation_age                    | 1d                 | Automatic log file rotation will occur after N minutes.
+ log_rotation_size                   | 0                  | Automatic log file rotation will occur after N kilobytes.
+ log_statement                       | none               | Sets the type of statements logged.
+ log_statement_stats                 | off                | Writes cumulative performance statistics to the server log.
+ log_temp_files                      | -1                 | Log the use of temporary files larger than this number of k
+ilobytes.
+ log_timezone                        | Europe/Amsterdam   | Sets the time zone to use in log messages.
+ log_truncate_on_rotation            | on                 | Truncate existing log files of same name during log rotatio
+n.
+ logging_collector                   | on                 | Start a subprocess to capture stderr output and/or csvlogs 
+into log files.
+ maintenance_work_mem                | 64MB               | Sets the maximum memory to be used for maintenance operatio
+ns.
+ max_connections                     | 100                | Sets the maximum number of concurrent connections.
+ max_files_per_process               | 1000               | Sets the maximum number of simultaneously open files for ea
+ch server process.
+ max_function_args                   | 100                | Shows the maximum number of function arguments.
+ max_identifier_length               | 63                 | Shows the maximum identifier length.
+ max_index_keys                      | 32                 | Shows the maximum number of index keys.
+ max_locks_per_transaction           | 64                 | Sets the maximum number of locks per transaction.
+ max_pred_locks_per_transaction      | 64                 | Sets the maximum number of predicate locks per transaction.
+ max_prepared_transactions           | 0                  | Sets the maximum number of simultaneously prepared transact
+ions.
+ max_replication_slots               | 0                  | Sets the maximum number of simultaneously defined replicati
+on slots.
+ max_stack_depth                     | 2MB                | Sets the maximum stack depth, in kilobytes.
+ max_standby_archive_delay           | 30s                | Sets the maximum delay before canceling queries when a hot 
+standby server is processing archived WAL data.
+ max_standby_streaming_delay         | 30s                | Sets the maximum delay before canceling queries when a hot 
+standby server is processing streamed WAL data.
+ max_wal_senders                     | 0                  | Sets the maximum number of simultaneously running WAL sende
+r processes.
+ max_worker_processes                | 8                  | Maximum number of concurrent worker processes.
+ password_encryption                 | on                 | Encrypt passwords.
+ port                                | 5432               | Sets the TCP port the server listens on.
+ post_auth_delay                     | 0                  | Waits N seconds on connection startup after authentication.
+ pre_auth_delay                      | 0                  | Waits N seconds on connection startup before authentication
+.
+ quote_all_identifiers               | off                | When generating SQL fragments, quote all identifiers.
+ random_page_cost                    | 4                  | Sets the planner's estimate of the cost of a nonsequentiall
+y fetched disk page.
+ restart_after_crash                 | on                 | Reinitialize server after backend crash.
+ search_path                         | "$user",public     | Sets the schema search order for names that are not schema-
+qualified.
+ segment_size                        | 1GB                | Shows the number of pages per disk file.
+ seq_page_cost                       | 1                  | Sets the planner's estimate of the cost of a sequentially f
+etched disk page.
+ server_encoding                     | UTF8               | Sets the server (database) character set encoding.
+ server_version                      | 9.4.8              | Shows the server version.
+ server_version_num                  | 90408              | Shows the server version as an integer.
+ session_replication_role            | origin             | Sets the session's behavior for triggers and rewrite rules.
+ shared_buffers                      | 128MB              | Sets the number of shared memory buffers used by the server
+.
+ sql_inheritance                     | on                 | Causes subtables to be included by default in various comma
+nds.
+ ssl                                 | off                | Enables SSL connections.
+ ssl_ca_file                         |                    | Location of the SSL certificate authority file.
+ ssl_cert_file                       | server.crt         | Location of the SSL server certificate file.
+ ssl_crl_file                        |                    | Location of the SSL certificate revocation list file.
+ ssl_key_file                        | server.key         | Location of the SSL server private key file.
+ ssl_prefer_server_ciphers           | on                 | Give priority to server ciphersuite order.
+ ssl_renegotiation_limit             | 0                  | Set the amount of traffic to send and receive before renego
+tiating the encryption keys.
+ standard_conforming_strings         | on                 | Causes '...' strings to treat backslashes literally.
+ statement_timeout                   | 0                  | Sets the maximum allowed duration of any statement.
+ superuser_reserved_connections      | 3                  | Sets the number of connection slots reserved for superusers
+.
+ synchronize_seqscans                | on                 | Enable synchronized sequential scans.
+ synchronous_commit                  | on                 | Sets the current transaction's synchronization level.
+ synchronous_standby_names           |                    | List of names of potential synchronous standbys.
+ syslog_facility                     | local0             | Sets the syslog "facility" to be used when syslog enabled.
+ syslog_ident                        | postgres           | Sets the program name used to identify PostgreSQL messages 
+in syslog.
+ tcp_keepalives_count                | 0                  | Maximum number of TCP keepalive retransmits.
+ tcp_keepalives_idle                 | 0                  | Time between issuing TCP keepalives.
+ tcp_keepalives_interval             | 0                  | Time between TCP keepalive retransmits.
+ temp_buffers                        | 8MB                | Sets the maximum number of temporary buffers used by each s
+ession.
+ temp_file_limit                     | -1                 | Limits the total size of all temporary files used by each s
+ession.
+ temp_tablespaces                    |                    | Sets the tablespace(s) to use for temporary tables and sort
+ files.
+ TimeZone                            | Europe/Amsterdam   | Sets the time zone for displaying and interpreting time sta
+mps.
+ timezone_abbreviations              | Default            | Selects a file of time zone abbreviations.
+ trace_notify                        | off                | Generates debugging output for LISTEN and NOTIFY.
+ trace_recovery_messages             | log                | Enables logging of recovery-related debugging information.
+ trace_sort                          | off                | Emit information about resource usage in sorting.
+ track_activities                    | on                 | Collects information about executing commands.
+ track_activity_query_size           | 1024               | Sets the size reserved for pg_stat_activity.query, in bytes
+eric=> show Timezone;
+     TimeZone     
+------------------
+ Europe/Amsterdam
+(1 row)
+
+eric=>  select current_setting('Timezone');
+ current_setting  
+------------------
+ Europe/Amsterdam
+(1 row)
+
+eric=> select pg_typeof(1);
+ pg_typeof 
+-----------
+ integer
+(1 row)
+
+eric=> select pg_typeof(now());
+        pg_typeof         
+--------------------------
+ timestamp with time zone
+(1 row)
+
+eric=> select pg_typeof(timeofday());
+ pg_typeof 
+-----------
+ text
+(1 row)
+
+eric=> SELECT array_agg(distinct "id") "all_ids" FROM "auth_user";
+ERROR:  relation "auth_user" does not exist
+LINE 1: SELECT array_agg(distinct "id") "all_ids" FROM "auth_user";
+                                                       ^
+eric=> \h array_agg
+No help available for "array_agg".
+Try \h with no arguments to see available help.
+eric=> \h now
+No help available for "now".
+Try \h with no arguments to see available help.
+eric=> \h now()
+No help available for "now()".
+Try \h with no arguments to see available help.
+eric=> \? now
+General
+  \copyright             show PostgreSQL usage and distribution terms
+  \g [FILE] or ;         execute query (and send results to file or |pipe)
+  \gset [PREFIX]         execute query and store results in psql variables
+  \h [NAME]              help on syntax of SQL commands, * for all commands
+  \q                     quit psql
+  \watch [SEC]           execute query every SEC seconds
+
+Query Buffer
+  \e [FILE] [LINE]       edit the query buffer (or file) with external editor
+  \ef [FUNCNAME [LINE]]  edit function definition with external editor
+  \p                     show the contents of the query buffer
+  \r                     reset (clear) the query buffer
+  \s [FILE]              display history or save it to file
+  \w FILE                write query buffer to file
+
+Input/Output
+  \copy ...              perform SQL COPY with data stream to the client host
+  \echo [STRING]         write string to standard output
+  \i FILE                execute commands from file
+  \ir FILE               as \i, but relative to location of current script
+  \o [FILE]              send all query results to file or |pipe
+  \qecho [STRING]        write string to query output stream (see \o)
+
+Informational
+  (options: S = show system objects, + = additional detail)
+  \d[S+]                 list tables, views, and sequences
+  \d[S+]  NAME           describe table, view, sequence, or index
+  \da[S]  [PATTERN]      list aggregates
+  \db[+]  [PATTERN]      list tablespaces
+  \dc[S+] [PATTERN]      list conversions
+  \dC[+]  [PATTERN]      list casts
+\?: extra argument "now" ignored
+eric=> create table u as select now();
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+eric=> rollback ;
+ROLLBACK
+eric=> create table u as select now();
+SELECT 1
+eric=> \d u
+********* QUERY **********
+SELECT c.oid,
+  n.nspname,
+  c.relname
+FROM pg_catalog.pg_class c
+     LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+WHERE c.relname ~ '^(u)$'
+  AND pg_catalog.pg_table_is_visible(c.oid)
+ORDER BY 2, 3;
+**************************
+
+********* QUERY **********
+SELECT c.relchecks, c.relkind, c.relhasindex, c.relhasrules, c.relhastriggers, c.relhasoids, '', c.reltablespace, CASE WHEN c.reloftype = 0 THEN '' ELSE c.reloftype::pg_catalog.regtype::pg_catalog.text END, c.relpersistence, c.relreplident
+FROM pg_catalog.pg_class c
+ LEFT JOIN pg_catalog.pg_class tc ON (c.reltoastrelid = tc.oid)
+WHERE c.oid = '16489';
+**************************
+
+********* QUERY **********
+SELECT a.attname,
+  pg_catalog.format_type(a.atttypid, a.atttypmod),
+  (SELECT substring(pg_catalog.pg_get_expr(d.adbin, d.adrelid) for 128)
+   FROM pg_catalog.pg_attrdef d
+   WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum AND a.atthasdef),
+  a.attnotnull, a.attnum,
+  (SELECT c.collname FROM pg_catalog.pg_collation c, pg_catalog.pg_type t
+   WHERE c.oid = a.attcollation AND t.oid = a.atttypid AND a.attcollation <> t.typcollation) AS attcollation,
+  NULL AS indexdef,
+  NULL AS attfdwoptions
+FROM pg_catalog.pg_attribute a
+WHERE a.attrelid = '16489' AND a.attnum > 0 AND NOT a.attisdropped
+ORDER BY a.attnum;
+**************************
+
+********* QUERY **********
+SELECT c.oid::pg_catalog.regclass FROM pg_catalog.pg_class c, pg_catalog.pg_inherits i WHERE c.oid=i.inhparent AND i.inhrelid = '16489' ORDER BY inhseqno;
+**************************
+
+********* QUERY **********
+SELECT c.oid::pg_catalog.regclass FROM pg_catalog.pg_class c, pg_catalog.pg_inherits i WHERE c.oid=i.inhrelid AND i.inhparent = '16489' ORDER BY c.oid::pg_catalog.regclass::pg_catalog.text;
+**************************
+
+               Table "public.u"
+ Column |           Type           | Modifiers 
+--------+--------------------------+-----------
+ now    | timestamp with time zone | 
+
+eric=> create table u as select dayoftime();
+ERROR:  function dayoftime() does not exist
+LINE 1: create table u as select dayoftime();
+                                 ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+eric=> create table u as select timeofday();
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+eric=> rollback ;
+ROLLBACK
+eric=> create table u as select timeofday();
+SELECT 1
+eric=> \d u
+********* QUERY **********
+SELECT c.oid,
+  n.nspname,
+  c.relname
+FROM pg_catalog.pg_class c
+     LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+WHERE c.relname ~ '^(u)$'
+  AND pg_catalog.pg_table_is_visible(c.oid)
+ORDER BY 2, 3;
+**************************
+
+********* QUERY **********
+SELECT c.relchecks, c.relkind, c.relhasindex, c.relhasrules, c.relhastriggers, c.relhasoids, '', c.reltablespace, CASE WHEN c.reloftype = 0 THEN '' ELSE c.reloftype::pg_catalog.regtype::pg_catalog.text END, c.relpersistence, c.relreplident
+FROM pg_catalog.pg_class c
+ LEFT JOIN pg_catalog.pg_class tc ON (c.reltoastrelid = tc.oid)
+WHERE c.oid = '16492';
+**************************
+
+********* QUERY **********
+SELECT a.attname,
+  pg_catalog.format_type(a.atttypid, a.atttypmod),
+  (SELECT substring(pg_catalog.pg_get_expr(d.adbin, d.adrelid) for 128)
+   FROM pg_catalog.pg_attrdef d
+   WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum AND a.atthasdef),
+  a.attnotnull, a.attnum,
+  (SELECT c.collname FROM pg_catalog.pg_collation c, pg_catalog.pg_type t
+   WHERE c.oid = a.attcollation AND t.oid = a.atttypid AND a.attcollation <> t.typcollation) AS attcollation,
+  NULL AS indexdef,
+  NULL AS attfdwoptions
+FROM pg_catalog.pg_attribute a
+WHERE a.attrelid = '16492' AND a.attnum > 0 AND NOT a.attisdropped
+ORDER BY a.attnum;
+**************************
+
+********* QUERY **********
+SELECT c.oid::pg_catalog.regclass FROM pg_catalog.pg_class c, pg_catalog.pg_inherits i WHERE c.oid=i.inhparent AND i.inhrelid = '16492' ORDER BY inhseqno;
+**************************
+
+********* QUERY **********
+SELECT c.oid::pg_catalog.regclass FROM pg_catalog.pg_class c, pg_catalog.pg_inherits i WHERE c.oid=i.inhrelid AND i.inhparent = '16492' ORDER BY c.oid::pg_catalog.regclass::pg_catalog.text;
+**************************
+
+       Table "public.u"
+  Column   | Type | Modifiers 
+-----------+------+-----------
+ timeofday | text | 
+
+eric=> select now()::timestamp with time zone at time zone 'America/New_York';
+          timezone          
+----------------------------
+ 2016-08-28 16:10:55.414653
+(1 row)
+
+eric=> select now()::timestamp with time zone;
+              now              
+-------------------------------
+ 2016-08-28 22:10:55.414653+02
+(1 row)
+
+eric=> select now();
+              now              
+-------------------------------
+ 2016-08-28 22:10:55.414653+02
+(1 row)
+
+eric=> select now()::timestamp with time zone;
+              now              
+-------------------------------
+ 2016-08-28 22:10:55.414653+02
+(1 row)
+
+eric=> select now()::timestamp without time zone;
+            now             
+----------------------------
+ 2016-08-28 22:10:55.414653
+(1 row)
+
+eric=> select now();
+              now              
+-------------------------------
+ 2016-08-28 22:10:55.414653+02
+(1 row)
+
+eric=>  select timeofday();
+              timeofday               
+--------------------------------------
+ Sun Aug 28 22:15:56.099947 2016 CEST
+(1 row)
+
+eric=>  select now::timestamp;
+ERROR:  column "now" does not exist
+LINE 1: select now::timestamp;
+               ^
+eric=>  select now()::timestamp;
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+eric=> rollback ;
+ROLLBACK
+eric=>  select now()::timestamp;
+            now             
+----------------------------
+ 2016-08-28 22:16:24.475602
+(1 row)
+
+eric=>  select timeofday()::timestamp;
+         timeofday          
+----------------------------
+ 2016-08-28 22:18:00.427479
+(1 row)
+
+eric=>  select timeofday()::timestamp with time zone;
+           timeofday           
+-------------------------------
+ 2016-08-28 22:18:07.025969+02
+(1 row)
+
+eric=> select now()::timestamp with time zone;
+              now              
+-------------------------------
+ 2016-08-28 22:16:24.475602+02
+(1 row)
+
+eric=> select typeof(now());
+ERROR:  function typeof(timestamp with time zone) does not exist
+LINE 1: select typeof(now());
+               ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+eric=> select pg_typeof(now());
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+eric=> rollback ;
+ROLLBACK
+eric=> select pg_typeof(now());
+        pg_typeof         
+--------------------------
+ timestamp with time zone
+(1 row)
+
+eric=> select pg_typeof(timeofday());
+ pg_typeof 
+-----------
+ text
+(1 row)
+
+eric=> select timeofday()
+eric-> ;
+              timeofday               
+--------------------------------------
+ Mon Aug 29 19:51:40.822071 2016 CEST
+(1 row)
+
+eric=> select timeofday()::timestamp with time zone
+eric-> ;
+           timeofday           
+-------------------------------
+ 2016-08-29 19:51:55.435777+02
+(1 row)
+
+eric=> select timeofday()::timestamp with time zone;
+           timeofday           
+-------------------------------
+ 2016-08-29 19:51:58.061114+02
+(1 row)
+
+eric=> select timeofday()::timestamp with time zone at time zone 'America/New York';
+ERROR:  time zone "America/New York" not recognized
+eric=> rollback ;
+ROLLBACK
+eric=> select timeofday()::timestamp with time zone at time zone 'America/New_York';
+          timezone          
+----------------------------
+ 2016-08-29 13:53:14.538623
+(1 row)
+
+eric=> select timeofday();
+              timeofday               
+--------------------------------------
+ Mon Aug 29 19:54:09.817788 2016 CEST
+(1 row)
+
+eric=> select timeofday()::timestamp  at time zone 'America/New_York';
+           timezone            
+-------------------------------
+ 2016-08-30 01:55:17.561947+02
+(1 row)
+
+eric=> rollback ;
+ROLLBACK
+eric=> select now()::timestamp with time zone at time zone 'America/New_York';
+          timezone          
+----------------------------
+ 2016-08-29 13:57:10.899797
+(1 row)
+
+eric=> select now() at time zone 'America/New_York';
+          timezone          
+----------------------------
+ 2016-08-29 13:57:10.899797
+(1 row)
+
+eric=> select now()::timestamp at time zone 'America/New_York';
+           timezone            
+-------------------------------
+ 2016-08-30 01:57:10.899797+02
+(1 row)
+
+/ 7	. 
+
+/ cursors	,
+
+/ Lees	,
+https://www.postgresql.org/docs/8.1/static/sql-fetch.html
+https://www.postgresql.org/docs/9.6/static/plpgsql-cursors.html
+http://www.postgresqltutorial.com/plpgsql-cursor/
+
+/ als we fetch backward	, doe dan declare scroll cursor	, al werkt backward voor eenvoudige queries ook als we NIET declare scroll cursor , maar declare cursor,		
+/ een cursor staat altijd gepositioneerd, voor de 1ste regel, op een regel, of achter de laatste regel	,
+
+/ init staat hij voor de 1ste regel	, als we fetch 6	, dan zien we 6 regels , en is de positie de 6de regel geworden, 
+/ als we dan fetch 3	, dan krijgen we dus de volgende 3 regels	, klopt	, 
+/ maar als we fetch backward 3	, dan krijgen we dus regel 5,4,3	, en als we dan weer fetch 2,	 krijgen we regel 4,5	,
+
+/ reset cursor: fetch absolute 0 from cursor
+/ fetch count from cursor= fetch forward count from cursor			/ forward is de default	,
+
+/ lees	,
+https://www.postgresql.org/docs/8.4/static/view-pg-cursors.html
+
+The pg_cursors view displays cursors created by any of these means. Cursors only exist for the duration of the transaction that defines them, unless they have been declared WITH HOLD. Therefore non-holdable cursors are only present in the view until the end of their creating transaction.
+
+/ we kunnen een tx ook beeindigen met end,	
+
+eric=> end;
+COMMIT
+
+
+/ 1313	. 
+
+[eric@almond hello-world-3]$ psql -U eric
+eric=> \h begin
+...
+/ hoeven we niet in psql, autocommit off	,
+
+eric=> declare db cursor for select*from pg_database;	-- db is de naam van de cursor	,
+DECLARE CURSOR
+
+eric=> fetch 3 from db;
+  datname  | datdba | encoding | datcollate  |  datctype   | datistemplate | dat
+allowconn | datconnlimit | datlastsysoid | datfrozenxid | datminmxid | dattables
+pace |               datacl                
+-----------+--------+----------+-------------+-------------+---------------+----
+----------+--------------+---------------+--------------+------------+----------
+-----+-------------------------------------
+ template1 |     10 |        6 | en_US.UTF-8 | en_US.UTF-8 | t             | t  
+          |           -1 |         13085 |         1929 |          1 |          
+1663 | {=c/postgres,postgres=CTc/postgres}
+ template0 |     10 |        6 | en_US.UTF-8 | en_US.UTF-8 | t             | f  
+          |           -1 |         13085 |         1929 |          1 |          
+1663 | {=c/postgres,postgres=CTc/postgres}
+ postgres  |     10 |        6 | en_US.UTF-8 | en_US.UTF-8 | f             | t  
+          |           -1 |         13085 |         1929 |          1 |          
+1663 | 
+(3 rows)
+
+eric=> rollback ;
+ROLLBACK
+eric=> declare attrs scroll cursor for select*from pg_attribute;
+DECLARE CURSOR
+/ commit heeft geen zin	, een cursor leeft zolang de tx leeft	,
+
+
+/ 1313	. 
+
+/ pos cursor is voor 1ste row	,
+eric=> fetch 3 from attrs;
+ attrelid |   attname    | atttypid | attstattarget | attlen | attnum | attndims
+ | attcacheoff | atttypmod | attbyval | attstorage | attalign | attnotnull | att
+hasdef | attisdropped | attislocal | attinhcount | attcollation | attacl | attop
+tions | attfdwoptions 
+----------+--------------+----------+---------------+--------+--------+---------
+-+-------------+-----------+----------+------------+----------+------------+----
+-------+--------------+------------+-------------+--------------+--------+------
+------+---------------
+     1255 | proname      |       19 |            -1 |     64 |      1 |        0
+ |          -1 |        -1 | f        | p          | c        | t          | f  
+       | f            | t          |           0 |            0 |        |      
+      | 
+     1255 | pronamespace |       26 |            -1 |      4 |      2 |        0
+ |          -1 |        -1 | t        | p          | i        | t          | f  
+       | f            | t          |           0 |            0 |        |      
+      | 
+     1255 | proowner     |       26 |            -1 |      4 |      3 |        0
+ |          -1 |        -1 | t        | p          | i        | t          | f  
+       | f            | t          |           0 |            0 |        |      
+      | 
+(3 rows)
+/ we zien row 1,2,3
+
+/ pos cursor is row 3	,
+eric=> fetch forward 3 from attrs;
+ attrelid | attname | atttypid | attstattarget | attlen | attnum | attndims | at
+tcacheoff | atttypmod | attbyval | attstorage | attalign | attnotnull | atthasde
+f | attisdropped | attislocal | attinhcount | attcollation | attacl | attoptions
+ | attfdwoptions 
+----------+---------+----------+---------------+--------+--------+----------+---
+----------+-----------+----------+------------+----------+------------+---------
+--+--------------+------------+-------------+--------------+--------+-----------
+-+---------------
+     1255 | prolang |       26 |            -1 |      4 |      4 |        0 |   
+       -1 |        -1 | t        | p          | i        | t          | f       
+  | f            | t          |           0 |            0 |        |           
+ | 
+     1255 | procost |      700 |            -1 |      4 |      5 |        0 |   
+       -1 |        -1 | t        | p          | i        | t          | f       
+  | f            | t          |           0 |            0 |        |           
+ | 
+     1255 | prorows |      700 |            -1 |      4 |      6 |        0 |   
+       -1 |        -1 | t        | p          | i        | t          | f       
+  | f            | t          |           0 |            0 |        |           
+ | 
+(3 rows)
+/ we zien row 4,5,6	,
+
+/ de pos van de cursor is row 6	,
+eric=> fetch 3 from attrs;
+ attrelid |   attname    | atttypid | attstattarget | attlen | attnum | attndims
+ | attcacheoff | atttypmod | attbyval | attstorage | attalign | attnotnull | att
+hasdef | attisdropped | attislocal | attinhcount | attcollation | attacl | attop
+tions | attfdwoptions 
+----------+--------------+----------+---------------+--------+--------+---------
+-+-------------+-----------+----------+------------+----------+------------+----
+-------+--------------+------------+-------------+--------------+--------+------
+------+---------------
+     1255 | provariadic  |       26 |            -1 |      4 |      7 |        0
+ |          -1 |        -1 | t        | p          | i        | t          | f  
+       | f            | t          |           0 |            0 |        |      
+      | 
+     1255 | protransform |       24 |            -1 |      4 |      8 |        0
+ |          -1 |        -1 | t        | p          | i        | t          | f  
+       | f            | t          |           0 |            0 |        |      
+      | 
+     1255 | proisagg     |       16 |            -1 |      1 |      9 |        0
+ |          -1 |        -1 | t        | p          | c        | t          | f  
+       | f            | t          |           0 |            0 |        |      
+      | 
+(3 rows)
+/ we zien row 7,8,9
+
+/ de pos van de cursor is row 9	,
+eric=> fetch backward 3 from attrs;
+ attrelid |   attname    | atttypid | attstattarget | attlen | attnum | attndims
+ | attcacheoff | atttypmod | attbyval | attstorage | attalign | attnotnull | att
+hasdef | attisdropped | attislocal | attinhcount | attcollation | attacl | attop
+tions | attfdwoptions 
+----------+--------------+----------+---------------+--------+--------+---------
+-+-------------+-----------+----------+------------+----------+------------+----
+-------+--------------+------------+-------------+--------------+--------+------
+------+---------------
+     1255 | protransform |       24 |            -1 |      4 |      8 |        0
+ |          -1 |        -1 | t        | p          | i        | t          | f  
+       | f            | t          |           0 |            0 |        |      
+      | 
+     1255 | provariadic  |       26 |            -1 |      4 |      7 |        0
+ |          -1 |        -1 | t        | p          | i        | t          | f  
+       | f            | t          |           0 |            0 |        |      
+      | 
+     1255 | prorows      |      700 |            -1 |      4 |      6 |        0
+ |          -1 |        -1 | t        | p          | i        | t          | f  
+       | f            | t          |           0 |            0 |        |      
+      | 
+(3 rows)
+/ we zien row 8,7,6	,
+
+/ de pos van de cursor is 6	, 
+eric=> fetch 3 from attrs;
+ attrelid |   attname    | atttypid | attstattarget | attlen | attnum | attndims
+ | attcacheoff | atttypmod | attbyval | attstorage | attalign | attnotnull | att
+hasdef | attisdropped | attislocal | attinhcount | attcollation | attacl | attop
+tions | attfdwoptions 
+----------+--------------+----------+---------------+--------+--------+---------
+-+-------------+-----------+----------+------------+----------+------------+----
+-------+--------------+------------+-------------+--------------+--------+------
+------+---------------
+     1255 | provariadic  |       26 |            -1 |      4 |      7 |        0
+ |          -1 |        -1 | t        | p          | i        | t          | f  
+       | f            | t          |           0 |            0 |        |      
+      | 
+     1255 | protransform |       24 |            -1 |      4 |      8 |        0
+ |          -1 |        -1 | t        | p          | i        | t          | f  
+       | f            | t          |           0 |            0 |        |      
+      | 
+     1255 | proisagg     |       16 |            -1 |      1 |      9 |        0
+ |          -1 |        -1 | t        | p          | c        | t          | f  
+       | f            | t          |           0 |            0 |        |      
+      | 
+(3 rows)
+/ we zien row 7,8,9
+
+/ 1313	. 
+
+eric=> fetch next from attrs;
+ attrelid | attname | atttypid | attstattarget | attlen | attnum | attndims | at
+tcacheoff | atttypmod | attbyval | attstorage | attalign | attnotnull | atthasde
+f | attisdropped | attislocal | attinhcount | attcollation | attacl | attoptions
+ | attfdwoptions 
+----------+---------+----------+---------------+--------+--------+----------+---
+----------+-----------+----------+------------+----------+------------+---------
+--+--------------+------------+-------------+--------------+--------+-----------
+-+---------------
+     1255 | proname |       19 |            -1 |     64 |      1 |        0 |   
+       -1 |        -1 | f        | p          | c        | t          | f       
+  | f            | t          |           0 |            0 |        |           
+ | 
+(1 row)
+
+eric=> fetch next from attrs;
+ attrelid |   attname    | atttypid | attstattarget | attlen | attnum | attndims
+ | attcacheoff | atttypmod | attbyval | attstorage | attalign | attnotnull | att
+hasdef | attisdropped | attislocal | attinhcount | attcollation | attacl | attop
+tions | attfdwoptions 
+----------+--------------+----------+---------------+--------+--------+---------
+-+-------------+-----------+----------+------------+----------+------------+----
+-------+--------------+------------+-------------+--------------+--------+------
+------+---------------
+     1255 | pronamespace |       26 |            -1 |      4 |      2 |        0
+ |          -1 |        -1 | t        | p          | i        | t          | f  
+       | f            | t          |           0 |            0 |        |      
+      | 
+(1 row)
+
+eric=> fetch prior from attrs;
+ attrelid | attname | atttypid | attstattarget | attlen | attnum | attndims | at
+tcacheoff | atttypmod | attbyval | attstorage | attalign | attnotnull | atthasde
+f | attisdropped | attislocal | attinhcount | attcollation | attacl | attoptions
+ | attfdwoptions 
+----------+---------+----------+---------------+--------+--------+----------+---
+----------+-----------+----------+------------+----------+------------+---------
+--+--------------+------------+-------------+--------------+--------+-----------
+-+---------------
+     1255 | proname |       19 |            -1 |     64 |      1 |        0 |   
+       -1 |        -1 | f        | p          | c        | t          | f       
+  | f            | t          |           0 |            0 |        |           
+ | 
+(1 row)
+
+eric=> fetch next from attrs;
+ attrelid |   attname    | atttypid | attstattarget | attlen | attnum | attndims
+ | attcacheoff | atttypmod | attbyval | attstorage | attalign | attnotnull | att
+hasdef | attisdropped | attislocal | attinhcount | attcollation | attacl | attop
+tions | attfdwoptions 
+----------+--------------+----------+---------------+--------+--------+---------
+-+-------------+-----------+----------+------------+----------+------------+----
+-------+--------------+------------+-------------+--------------+--------+------
+------+---------------
+     1255 | pronamespace |       26 |            -1 |      4 |      2 |        0
+ |          -1 |        -1 | t        | p          | i        | t          | f  
+       | f            | t          |           0 |            0 |        |      
+      | 
+(1 row)
+
+eric=> fetch first from attrs;
+ attrelid | attname | atttypid | attstattarget | attlen | attnum | attndims | at
+tcacheoff | atttypmod | attbyval | attstorage | attalign | attnotnull | atthasde
+f | attisdropped | attislocal | attinhcount | attcollation | attacl | attoptions
+ | attfdwoptions 
+----------+---------+----------+---------------+--------+--------+----------+---
+----------+-----------+----------+------------+----------+------------+---------
+--+--------------+------------+-------------+--------------+--------+-----------
+-+---------------
+     1255 | proname |       19 |            -1 |     64 |      1 |        0 |   
+       -1 |        -1 | f        | p          | c        | t          | f       
+  | f            | t          |           0 |            0 |        |           
+ | 
+(1 row)
+
+eric=> fetch absolute 0 from attrs;
+ attrelid | attname | atttypid | attstattarget | attlen | attnum | attndims | at
+tcacheoff | atttypmod | attbyval | attstorage | attalign | attnotnull | atthasde
+f | attisdropped | attislocal | attinhcount | attcollation | attacl | attoptions
+ | attfdwoptions 
+----------+---------+----------+---------------+--------+--------+----------+---
+----------+-----------+----------+------------+----------+------------+---------
+--+--------------+------------+-------------+--------------+--------+-----------
+-+---------------
+(0 rows)
+
+eric=> fetch next from attrs;
+ attrelid | attname | atttypid | attstattarget | attlen | attnum | attndims | at
+tcacheoff | atttypmod | attbyval | attstorage | attalign | attnotnull | atthasde
+f | attisdropped | attislocal | attinhcount | attcollation | attacl | attoptions
+ | attfdwoptions 
+----------+---------+----------+---------------+--------+--------+----------+---
+----------+-----------+----------+------------+----------+------------+---------
+--+--------------+------------+-------------+--------------+--------+-----------
+-+---------------
+     1255 | proname |       19 |            -1 |     64 |      1 |        0 |   
+       -1 |        -1 | f        | p          | c        | t          | f       
+  | f            | t          |           0 |            0 |        |           
+ | 
+(1 row)
+
+/ 13	 .
+
+/ als we gdb	, we zien	,
+
+Missing separate debuginfos, use: dnf debuginfo-install cyrus-sasl-lib-2.1.26-25.2.fc23.x86_64 keyutils-libs-1.5.9-7.fc23.x86_64 krb5-libs-1.14.1-1.fc23.x86_64 libcom_err-1.42.13-3.fc23.x86_64 libselinux-2.4-4.fc23.x86_64 nspr-4.12.0-1.fc23.x86_64 nss-3.23.0-1.0.fc23.x86_64 nss-softokn-freebl-3.23.0-1.0.fc23.x86_64 nss-util-3.23.0-1.0.fc23.x86_64 openldap-2.4.40-14.fc23.x86_64 openssl-libs-1.0.2g-2.fc23.x86_64 pcre-8.38-7.fc23.x86_64 postgresql-libs-9.4.9-1.fc23.x86_64 zlib-1.2.8-9.fc23.x86_64
+
+
+[eric@almond 32.21]$ sudo dnf debuginfo-install postgresql-libs
+Installing:
+ cyrus-sasl-debuginfo    x86_64  2.1.26-25.2.fc23       fedora-debuginfo   748 k
+ e2fsprogs-debuginfo     x86_64  1.42.13-3.fc23         fedora-debuginfo   1.4 M
+ gcc-base-debuginfo      x86_64  5.3.1-6.fc23           updates-debuginfo  3.3 M
+ gcc-debuginfo           x86_64  5.3.1-6.fc23           updates-debuginfo  238 M
+ glibc-debuginfo         x86_64  2.22-18.fc23           updates-debuginfo  9.6 M
+ glibc-debuginfo-common  x86_64  2.22-18.fc23           updates-debuginfo   10 M
+ keyutils-debuginfo      x86_64  1.5.9-7.fc23           fedora-debuginfo    89 k
+ krb5-debuginfo          x86_64  1.14.3-8.fc23          updates-debuginfo  4.1 M
+ libdb-debuginfo         x86_64  5.3.28-13.fc23         fedora-debuginfo    10 M
+ libselinux-debuginfo    x86_64  2.4-4.fc23             fedora-debuginfo   1.0 M
+ libverto-debuginfo      x86_64  0.2.6-5.fc23           fedora-debuginfo    64 k
+ ncurses-debuginfo       x86_64  5.9-21.20150214.fc23   fedora-debuginfo   1.1 M
+ nspr-debuginfo          x86_64  4.13.0-1.fc23          updates-debuginfo  598 k
+ nss-debuginfo           x86_64  3.27.0-1.2.fc23        updates-debuginfo  4.8 M
+ nss-softokn-debuginfo   x86_64  3.27.0-1.0.fc23        updates-debuginfo  2.1 M
+ nss-util-debuginfo      x86_64  3.27.0-1.0.fc23        updates-debuginfo  273 k
+ openldap-debuginfo      x86_64  2.4.40-14.fc23         fedora-debuginfo   4.2 M
+ openssl-debuginfo       x86_64  1:1.0.2j-1.fc23        updates-debuginfo  4.3 M
+ pcre-debuginfo          x86_64  8.39-6.fc23            updates-debuginfo  1.2 M
+ postgresql-debuginfo    x86_64  9.4.9-1.fc23           updates-debuginfo   25 M
+ readline-debuginfo      x86_64  6.3-6.fc23             fedora-debuginfo   380 k
+ sqlite-debuginfo        x86_64  3.11.0-3.fc23          updates-debuginfo  5.9 M
+ zlib-debuginfo          x86_64  1.2.8-9.fc23           fedora-debuginfo   254 k
+
+/ lees	,
+https://fedoramagazine.org/managing-packages-fedora-dnf/
+
+/ Geef in google	,
+dnf install debuginfo-install
+/ lees	,
+https://ask.fedoraproject.org/en/question/76537/how-to-keep-installed-debuginfo-packages-up-to-date-with-dnf/
+$ dnf --enablerepo=updates-debuginfo update
+/ TODO
+
+[eric@almond 32.21]$ pwd
+/home/eric/Devel/Postgres/manual/32.21
+[eric@almond 32.21]$ gcc -Wall -g libpqex.c -lpq
+[eric@almond 32.21]$ gdb ./a.out
+(gdb) r dbname=eric
+21		conn=PQconnectdb(conninfo);
+
+
+(gdb) p *conn
+$2 = {
+  pghost = 0x0, 
+  pghostaddr = 0x0, 
+  pgport = 0x60cf90 "5432", 
+...
+
+/ we zien	, 
+warning: the debug information found in "/usr/lib/debug//lib64/libnss_files-2.22.so.debug" does not match "/lib64/libnss_files.so.2" (CRC mismatch).
+/ klopt	,
+[eric@almond 32.21]$ dnf list installed *nss*
+Last metadata expiration check: 3 days, 14:01:16 ago on Wed Feb  8 22:06:24 2017.
+Installed Packages
+nss.x86_64                            3.23.0-1.0.fc23          @updates          
+nss-debuginfo.x86_64                  3.27.0-1.2.fc23          @updates-debuginfo
+
+/ 13	. 
+
+(gdb) list PQerrorMessage
+5442	}
+5443	
+5444	char *
+5445	PQerrorMessage(const PGconn *conn)
+5446	{
+5447		if (!conn)
+5448			return libpq_gettext("connection pointer is NULL\n");
+5449	
+5450		return conn->errorMessage.data;
+5451	}
+
+(gdb) list *$pc
+...
+
+/ we kunnen gewoon debug	,
+27		res=PQexec(conn,"begin");
+(gdb) s
+PQexec (conn=0x603030, query=0x400f12 "begin") at fe-exec.c:1843
+1843		if (!PQexecStart(conn))
+(gdb) bt
+#0  PQexec (conn=0x603030, query=0x400f12 "begin") at fe-exec.c:1843
+#1  0x0000000000400bfc in main (argc=2, argv=0x7fffffffdab8, env=0x7fffffffdad0)
+    at libpqex.c:27
+(gdb) s
+PQexecStart (conn=0x603030) at fe-exec.c:1927
+1927		if (!conn)
+...
+
+/ fe staat voor front-end	,
+
+/ finish is step out	,
+
+/ 7	. 
+
+/ Download source via link op,
+https://www.postgresql.org/download/linux/redhat/
+
+[eric@almond Postgres]$ tar xvjf ~/Downloads/postgresql-9.6.2.tar.bz2 
+
+[eric@almond postgresql-9.6.2]$ dnf list installed *postgres*
+Installed Packages
+postgresql.x86_64                          9.4.8-1.fc23                   @updates
+postgresql-contrib.x86_64                  9.4.8-1.fc23                   @updates
+postgresql-libs.x86_64                     9.4.8-1.fc23                   @updates
+postgresql-server.x86_64                   9.4.8-1.fc23                   @updates
+
+[eric@almond postgresql-9.6.2]$ dnf list available *postgres*
+postgresql-devel.x86_64                     9.4.9-1.fc23                   updates
+/ WH moeten we	,
+
+/ Lees	,
+https://www.postgresql.org/docs/9.6/static/libpq-build.html
+
+/ Lees	,
+https://www.postgresql.org/docs/9.6/static/libpq-example.html
+/ we zien daar het prg	,
+[eric@almond postgresql-9.6.2]$ less src/test/examples/testlibpq2.c
+...
+/ Dit prg gaan we zelf create	,
+
+/ Wat gebeurt er met de running postgres	, als we	,
+
+[eric@almond 32.21]$ sudo dnf install postgresql-devel
+Last metadata expiration check: 0:01:58 ago on Sat Feb 11 20:59:24 2017.
+Dependencies resolved.
+==================================================================================
+ Package                   Arch          Version             Repository      Size
+==================================================================================
+Installing:
+ postgresql-devel          x86_64        9.4.9-1.fc23        updates        1.0 M
+Upgrading:
+ postgresql                x86_64        9.4.9-1.fc23        updates        1.1 M
+ postgresql-contrib        x86_64        9.4.9-1.fc23        updates        635 k
+ postgresql-libs           x86_64        9.4.9-1.fc23        updates        240 k
+ postgresql-server         x86_64        9.4.9-1.fc23        updates        4.0 M
+
+Transaction Summary
+==================================================================================
+Install  1 Package
+Upgrade  4 Packages
+
+/ Hij wordt herstart	,
+
+[eric@almond hello-world-3]$ systemctl status postgresql.service 
+● postgresql.service - PostgreSQL database server
+   Loaded: loaded (/usr/lib/systemd/system/postgresql.service; disabled; vendor preset: disabled)
+   Active: active (running) since Sat 2017-02-11 21:02:26 CET; 21s ago			
+																															^^^^^^^^^
+
+[eric@almond hello-world-3]$ psql -V
+psql (PostgreSQL) 9.4.9
+/ Klopt	,
+
+[eric@almond 32.21]$ pwd
+/home/eric/Devel/Postgres/manual/32.21
+[eric@almond 32.21]$ cat libpqex.c 
+#include <libpq-fe.h>
+[eric@almond 32.21]$ gcc -E libpqex.c 
+...
+/ OK
+/ -lpq hoeft dus niet hier	,
+
+$ vi libpqex.c
+#include<stdio.h>
+#include<stdlib.h>
+#include <libpq-fe.h>
+static void exit_nicely(PGconn*conn){
+  PQfinish(conn);
+  exit(1);
+}
+int main(int argc,char**argv,char**env){
+  const char*conninfo;
+  PGconn*conn;
+  PGresult*res;
+  int nfields;
+  int i,j;
+
+  if(argc>1){
+    conninfo=argv[1];
+  }else{
+    conninfo="dbname=postgres";
+  }
+  conn=PQconnectdb(conninfo);
+  if(PQstatus(conn)!=CONNECTION_OK){
+    fprintf(stderr,"Connection to database failed: %s",PQerrorMessage(conn));
+    exit_nicely(conn);
+  }
+
+
+  return 0;
+}
+
+[eric@almond 32.21]$ gcc -Wall libpqex.c -lpq
+[eric@almond 32.21]$ ./a.out									/ naar postgres	,
+[eric@almond 32.21]$ ./a.out eric
+Connection to database failed: missing "=" after "eric" in connection info string
+[eric@almond 32.21]$ ./a.out  dbname=eric			/ naar eric	,
+[eric@almond 32.21]$ ./a.out  "host=localhost dbname=eric password=eric"	/ use "..."
+[eric@almond 32.21]$
+
+/ we moesten wel eerst het password van eric set	,
+
+/ Lees de 1ste page van libpq	,
+https://www.postgresql.org/docs/9.4/static/libpq-connect.html
+/ voor alle args	, 
+
+/ intermezzo
+
+/ als we dbname=eric host=localhost	, moeten we ook een password geven	
+
+/ Lees,	
+http://stackoverflow.com/questions/12720967/how-to-change-postgresql-user-password
+
+[eric@almond hello-world-3]$ psql eric	 / zo kan het ook	,
+psql (9.4.9)
+Type "help" for help.
+eric=>  alter role eric password 'eric';
+eric=> commit;
+eric=> \q
+
+[eric@almond hello-world-3]$ PGPASSWORD=eric psql -U eric -h localhost
+/ OK
+
+/ Einde intermezzo
+
+/ intermezzo
+
+/ nadat we psql hebben start	, is er nog geen tx	, een rollback geeft ERR	,
+/ als we een query doen , wordt er eerst een tx start	, we kunnen rollback	,
+
+[eric@almond hello-world-3]$ psql eric
+/ er is nog geen tx	,
+eric=> rollback ;
+WARNING:  there is no transaction in progress
+ROLLBACK
+eric=> select*from t;
+...
+eric=> rollback ;
+ROLLBACK
+eric=> rollback ;
+WARNING:  there is no transaction in progress
+ROLLBACK
+
+/ we kunnen zelf ook als 1ste een begin geven	, maar is niet nodig	,
+/ het is wel nodig	, als autocommit on is	,
+[eric@almond hello-world-3]$ psql eric
+eric=> begin;
+BEGIN
+eric=> rollback ;
+ROLLBACK
+eric=> rollback 
+eric-> ;
+WARNING:  there is no transaction in progress
+ROLLBACK
+
+
+/ Einde intermezzo
+
+
+
+/ 7		. 
+
+/ build postgres	,
+
+[eric@almond postgresql-9.6.2]$ ./configure 
+...
+checking for library containing readline... no
+configure: error: readline library not found
+
+/ Lees	,
+https://www.postgresql.org/message-id/m3he1ypgmu.fsf%40varsoon.wireboard.com
+
+[eric@almond postgresql-9.6.2]$ sudo dnf install readline-devel
+Installing:
+ ncurses-devel        x86_64       5.9-21.20150214.fc23       fedora       732 k
+ readline-devel       x86_64       6.3-6.fc23                 fedora       179 k
+
+/ 13 	.
+
+/ wat is CFLAGS	?
+
+/ Lees	,
+http://stackoverflow.com/questions/7117978/gnu-make-list-the-values-of-all-variables-or-macros-in-a-particular-run
+
+/ na ./configure	,
+[eric@almond postgresql-9.6.2]$  make -pn | grep -A1 "^# makefile"| grep -v "^#\|^--" | sort | uniq | grep CFLAGS
+...
+CFLAGS = -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -O2
+/ TODO
+
+/ 13	. 
+
+[eric@almond postgresql-9.6.2]$ ./configure CFLAGS="-g"
+
+[eric@almond postgresql-9.6.2]$  make -pn | grep -A1 "^# makefile"| grep -v "^#\|^--" | sort | uniq  | grep CFLAGS
+...
+CFLAGS = -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -g
+
+/ dit gaat dus anders dan bij gmp	, waar we de hele CFLAGS , met daarin -O2 vervangen door -g	, moesten geven	,
+/ TODO
+
+[eric@almond postgresql-9.6.2]$  make | tee LOG_make.txt
+
+/ 7	 
+
+/ Lees	 ,
+https://www.postgresql.org/docs/9.1/static/ddl-inherit.html
+
+eric=> CREATE TABLE cities (
+eric(>     name            text,
+eric(>     population      float,
+eric(>     altitude        int     -- in feet
+eric(> );
+CREATE TABLE
+eric=> 
+eric=> CREATE TABLE capitals (
+eric(>     state           char(2)
+eric(> ) INHERITS (cities);
+CREATE TABLE
+
+eric=> \d cities
+           Table "public.cities"
+   Column   |       Type       | Modifiers 
+------------+------------------+-----------
+ name       | text             | 
+ population | double precision | 
+ altitude   | integer          | 
+Number of child tables: 1 (Use \d+ to list them.)
+
+eric=> \d capitals
+          Table "public.capitals"
+   Column   |       Type       | Modifiers 
+------------+------------------+-----------
+ name       | text             | 
+ population | double precision | 
+ altitude   | integer          | 
+ state      | character(2)     | 
+Inherits: cities
+
+/ Lees	, 
+https://www.postgresql.org/docs/9.1/static/tutorial-sql-intro.html
+
+
+/ SERIAL
+
+eric=> create table m(i serial);
+eric=> alter table m add column s text;
+eric=> insert into m values(default,'foo');
+eric=> insert into m(s)values('bar');
+eric=> select*from m;
+ i |  s  
+---+-----
+ 1 | foo
+ 2 | bar
+
+/ Einde SERIAL
+
+/ GENERATE_SERIES
+
+
+eric=> select current_date ;
+    date    
+------------
+ 2017-05-20
+(1 row)
+
+eric=> select generate_series(1,10);
+ generate_series 
+-----------------
+               1
+               2
+               3
+               4
+               5
+               6
+               7
+               8
+               9
+              10
+(10 rows)
+
+eric=> select current_date + generate_series(1,10);
+/ of	,
+eric=> select current_date +s from generate_series(1,10)s;
+  ?column?  
+------------
+ 2017-05-21
+ 2017-05-22
+ 2017-05-23
+ 2017-05-24
+ 2017-05-25
+ 2017-05-26
+ 2017-05-27
+ 2017-05-28
+ 2017-05-29
+ 2017-05-30
+(10 rows)
+
+eric=> select current_date + generate_series(1,10,2);
+  ?column?  
+------------
+ 2017-05-21
+ 2017-05-23
+ 2017-05-25
+ 2017-05-27
+ 2017-05-29
+(5 rows)
+
+eric=> select current_date + generate_series(1,10,4);
+  ?column?  
+------------
+ 2017-05-21
+ 2017-05-25
+ 2017-05-29
+(3 rows)
+/ zolang het past	,
+
+
+eric=> select cast('2017-05-21' as date); 
+    date    
+------------
+ 2017-05-21
+(1 row)
+eric=> select cast('2017-05-21' as timestamp); 
+      timestamp      
+---------------------
+ 2017-05-21 00:00:00
+(1 row)
+
+eric=> select generate_series('2017-05-20','2017-06-01'::date,'24 hours');
+    generate_series     
+------------------------
+ 2017-05-20 00:00:00+02
+ 2017-05-21 00:00:00+02
+ 2017-05-22 00:00:00+02
+ 2017-05-23 00:00:00+02
+ 2017-05-24 00:00:00+02
+ 2017-05-25 00:00:00+02
+ 2017-05-26 00:00:00+02
+ 2017-05-27 00:00:00+02
+ 2017-05-28 00:00:00+02
+ 2017-05-29 00:00:00+02
+ 2017-05-30 00:00:00+02
+ 2017-05-31 00:00:00+02
+ 2017-06-01 00:00:00+02
+(13 rows)
+/ 1 van de 1ste 2 args moet ::date	,
+
+eric=> select pg_typeof(generate_series('2017-05-20','2017-06-01'::date,'24 hours'));
+        pg_typeof         
+--------------------------
+ timestamp with time zone
+ timestamp with time zone
+ timestamp with time zone
+ timestamp with time zone
+ timestamp with time zone
+ timestamp with time zone
+ timestamp with time zone
+ timestamp with time zone
+ timestamp with time zone
+ timestamp with time zone
+ timestamp with time zone
+ timestamp with time zone
+ timestamp with time zone
+(13 rows)
+/ TODO de uitkomsten zijn timestamp with time zone	,
+
+/ 7	. 
+
+/ Lees	, 
+http://www.postgresqltutorial.com/postgresql-random-range/
+
+eric$ psql -E
+
+eric=> select generate_series(1,10),random()*9+1;
+ generate_series |     ?column?     
+-----------------+------------------
+               1 | 8.39620333630592
+               2 | 6.26501694787294
+               3 | 6.98788433056325
+               4 | 4.04072270682082
+               5 |  9.0092667019926
+               6 | 2.05746947461739
+               7 | 9.62281273119152
+               8 | 7.96379253966734
+               9 | 5.43589742574841
+              10 | 1.15411439072341
+(10 rows)
+
+eric=> select generate_series(1,10),floor(random()*9+1);
+ generate_series | floor 
+-----------------+-------
+               1 |     5
+               2 |     4
+               3 |     3
+               4 |     2
+               5 |     6
+               6 |     9
+               7 |     4
+               8 |     2
+               9 |     9
+              10 |     4
+(10 rows)
+
+eric=> create table n(i int ,j int);
+CREATE TABLE
+eric=> insert into n select generate_series(1,100),floor(random()*9+1);
+INSERT 0 100
+
+create or replace function random_between(low int,high int)returns int as $$
+begin	
+	return floor(low+random()*(high-low));
+end
+$$language 'plpgsql' strict; 
+
+ 
+
+
+
+
+
+
+
+/ Einde GENERATE_SERIES
+
+/ GENERAL 
+
+/ 7	. 
+
+/ Lees	,
+https://www.postgresql.org/docs/9.1/static/functions-info.html
+9.25. System Information Functions
+
+eric=> select current_user;
+ current_user 
+--------------
+ eric
+(1 row)
+eric=> select current_date;
+    date    
+------------
+ 2017-05-20
+(1 row)
+
+eric=> select '2017-05-20'+1;
+ERROR:  invalid input syntax for integer: "2017-05-20"
+
+eric=> select '2017-05-20'::date+1;
+  ?column?  
+------------
+ 2017-05-21
+(1 row)
+
+/ 7	. 
+
+/ Lees voor pg_typeof	, 
+https://www.postgresql.org/docs/9.2/static/functions-info.html
+9.25. System Information Functions
+
+eric=> select pg_typeof('2017-05-20');
+ pg_typeof 
+-----------
+ unknown
+(1 row)
+
+eric=> select pg_typeof('2017-05-20'::date);
+ pg_typeof 
+-----------
+ date
+(1 row)
+
+eric=> select now();
+              now              
+-------------------------------
+ 2017-05-20 16:22:36.931057+02
+(1 row)
+
+eric=> select pg_typeof(now());
+        pg_typeof         
+--------------------------
+ timestamp with time zone
+(1 row)
+
+eric=> select pg_typeof(1);
+ pg_typeof 
+-----------
+ integer
+(1 row)
+
+
+
+
+
+
+/ Einde GENERAL 
+
+/ google
+sql deferred
+/ Lees	,
+https://begriffs.com/posts/2017-08-27-deferrable-sql-constraints.html
+
+https://begriffs.com/posts/2017-10-21-sql-domain-integrity.html
+
+/ 7	. 
+
+/ na upgrade van fedora kan ik postgresql niet meer starten	,
+
+/////////////////////////////////////////////////////////////////////
+/ lees	,
+https://fedoraproject.org/wiki/PostgreSQL
+
+# systemctl start postgresql
+
+[root@almond ~]# journalctl -xe 
+Mar 20 20:54:47 almond.nuts.org su[16316]: pam_unix(su-l:session): session opene
+Mar 20 20:54:47 almond.nuts.org audit[16316]: USER_START pid=16316 uid=0 auid=10
+Mar 20 20:55:25 almond.nuts.org systemd[1]: Starting PostgreSQL database server.
+-- Subject: Unit postgresql.service has begun start-up
+-- Defined-By: systemd
+-- Support: https://lists.freedesktop.org/mailman/listinfo/systemd-devel
+-- 
+-- Unit postgresql.service has begun starting up.
+Mar 20 20:55:25 almond.nuts.org postgresql-check-db-dir[16440]: An old version '
+Mar 20 20:55:25 almond.nuts.org postgresql-check-db-dir[16440]: You need to dump
+Mar 20 20:55:25 almond.nuts.org audit[1]: SERVICE_START pid=1 uid=0 auid=4294967
+Mar 20 20:55:25 almond.nuts.org postgresql-check-db-dir[16440]: See /usr/share/d
+Mar 20 20:55:25 almond.nuts.org systemd[1]: postgresql.service: Control process 
+Mar 20 20:55:25 almond.nuts.org systemd[1]: Failed to start PostgreSQL database 
+-- Subject: Unit postgresql.service has failed
+-- Defined-By: systemd
+-- Support: https://lists.freedesktop.org/mailman/listinfo/systemd-devel
+-- 
+-- Unit postgresql.service has failed.
+-- 
+-- The result is failed.
+Mar 20 20:55:25 almond.nuts.org systemd[1]: postgresql.service: Unit entered fai
+Mar 20 20:55:25 almond.nuts.org systemd[1]: postgresql.service: Failed with resu
+[root@almond ~]# journalctl -xn --no-pager
+-- Logs begin at Mon 2015-11-02 18:05:59 CET, end at Tue 2018-03-20 20:55:25 CET. --
+Mar 20 20:54:47 almond.nuts.org audit[16316]: USER_START pid=16316 uid=0 auid=1000 ses=3 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 msg='op=PAM:session_open grantors=pam_keyinit,pam_keyinit,pam_limits,pam_systemd,pam_unix acct="root" exe="/usr/bin/su" hostname=almond.nuts.org addr=? terminal=pts/1 res=success'
+Mar 20 20:55:25 almond.nuts.org systemd[1]: Starting PostgreSQL database server...
+-- Subject: Unit postgresql.service has begun start-up
+-- Defined-By: systemd
+-- Support: https://lists.freedesktop.org/mailman/listinfo/systemd-devel
+-- 
+-- Unit postgresql.service has begun starting up.
+Mar 20 20:55:25 almond.nuts.org postgresql-check-db-dir[16440]: An old version '9.4' of the database format was found.
+Mar 20 20:55:25 almond.nuts.org postgresql-check-db-dir[16440]: You need to dump and reload before using PostgreSQL 9.6.8.
+Mar 20 20:55:25 almond.nuts.org audit[1]: SERVICE_START pid=1 uid=0 auid=4294967295 ses=4294967295 subj=system_u:system_r:init_t:s0 msg='unit=postgresql comm="systemd" exe="/usr/lib/systemd/systemd" hostname=? addr=? terminal=? res=failed'
+Mar 20 20:55:25 almond.nuts.org postgresql-check-db-dir[16440]: See /usr/share/doc/postgresql/README.rpm-dist for more information.
+Mar 20 20:55:25 almond.nuts.org systemd[1]: postgresql.service: Control process exited, code=exited status=1
+Mar 20 20:55:25 almond.nuts.org systemd[1]: Failed to start PostgreSQL database server.
+-- Subject: Unit postgresql.service has failed
+-- Defined-By: systemd
+-- Support: https://lists.freedesktop.org/mailman/listinfo/systemd-devel
+-- 
+-- Unit postgresql.service has failed.
+-- 
+-- The result is failed.
+Mar 20 20:55:25 almond.nuts.org systemd[1]: postgresql.service: Unit entered failed state.
+Mar 20 20:55:25 almond.nuts.org systemd[1]: postgresql.service: Failed with result 'exit-code'.
+[root@almond ~]# journalctl -xn --no-pager
+-- Logs begin at Mon 2015-11-02 18:05:59 CET, end at Tue 2018-03-20 21:03:04 CET. --
+Mar 20 20:55:25 almond.nuts.org postgresql-check-db-dir[16440]: See /usr/share/doc/postgresql/README.rpm-dist for more information.
+Mar 20 20:55:25 almond.nuts.org systemd[1]: postgresql.service: Control process exited, code=exited status=1
+Mar 20 20:55:25 almond.nuts.org systemd[1]: Failed to start PostgreSQL database server.
+-- Subject: Unit postgresql.service has failed
+-- Defined-By: systemd
+-- Support: https://lists.freedesktop.org/mailman/listinfo/systemd-devel
+-- 
+-- Unit postgresql.service has failed.
+-- 
+-- The result is failed.
+Mar 20 20:55:25 almond.nuts.org systemd[1]: postgresql.service: Unit entered failed state.
+Mar 20 20:55:25 almond.nuts.org systemd[1]: postgresql.service: Failed with result 'exit-code'.
+Mar 20 21:01:01 almond.nuts.org CROND[16568]: (root) CMD (run-parts /etc/cron.hourly)
+Mar 20 21:01:01 almond.nuts.org run-parts[16571]: (/etc/cron.hourly) starting 0anacron
+Mar 20 21:01:01 almond.nuts.org run-parts[16577]: (/etc/cron.hourly) finished 0anacron
+Mar 20 21:03:04 almond.nuts.org org.gnome.Shell.desktop[1789]: Window manager warning: last_user_time (16379044) is greater than comparison timestamp (16379032).  This most likely represents a buggy client sending inaccurate timestamps in messages such as _NET_ACTIVE_WINDOW.  Trying to work around...
+Mar 20 21:03:04 almond.nuts.org org.gnome.Shell.desktop[1789]: Window manager warning: 0x2400001 (systemd - ) appears to be one of the offending windows with a timestamp of 16379044.  Working around...
+[root@almond ~]#      postgresql-setup --help
+Usage: /usr/bin/postgresql-setup MODE_OPTION [--unit=UNIT_NAME] [OPTION...]
+
+Script is aimed to help sysadmin with basic database cluster administration.
+Usually, "postgresql-setup --initdb" and "postgresql-setup --upgrade" is
+enough, however there are other options described below.
+
+For more info and howto/when use this script please look at the documentation
+file /usr/share/doc/postgresql/README.rpm-dist.
+
+Available operation mode:
+  --initdb      Initialize new PostgreSQL database cluster.  This is usually the
+                first action you perform after PostgreSQL server installation.
+  --upgrade     Upgrade database cluster for new major version of PostgreSQL
+                server.  See the --upgrade-from option for more info.
+
+Options:
+  --unit=UNIT_NAME           The UNIT_NAME is used to select proper unit
+                             configuration (unit == service or initscript name
+                             on non-systemd systems).  For example, if you want
+                             to work with unit called
+                             'postgresql@com_example.service', you should use
+                             'postgresql@com_example' (without trailing .service
+                             string).  When no UNIT_NAME is explicitly passed,
+                             the 'postgresql' string is used by default.
+  --port=PORT                port where the initialized server will listen for
+                             connections
+  --new-systemd-unit         We dropped this option for security reasons.
+                             Nowadays, please use the root-only script
+                             /usr/sbin/postgresql-new-systemd-unit.
+  --datadir                  Dropped with --new-systemd-unit.
+  --upgrade-from-unit=UNIT   Select proper unit name to upgrade from.  This
+                             has similar semantics as --unit option.
+  --upgrade-ids              Print list of available IDs of upgrade scenarios to
+                             standard output.
+  --upgrade-from=ID          Specify id "old" postgresql stack to upgrade
+                             from.  List of available IDs can be listed by
+                             --upgrade-ids.  Default is 'postgresql'.
+
+Other options:
+  --help                     show this help
+  --version                  show version of this package
+  --debug                    show basic debugging information
+
+Environment:
+  PGSETUP_INITDB_OPTIONS     Options carried by this variable are passed to
+                             subsequent call of `initdb` binary (see man
+                             initdb(1)).  This variable is used also during
+                             'upgrade' mode because the new cluster is actually
+                             re-initialized from the old one.
+  PGSETUP_PGUPGRADE_OPTIONS  Options in this variable are passed next to the
+                             subsequent call of `pg_upgrade`.  For more info
+                             about possible options please look at man
+                             pg_upgrade(1).
+  PGSETUP_DEBUG              Set to '1' if you want to see very verbose shell
+                             debugging output.
+[root@almond ~]#  exit
+logout
+
+/  7	. 
+
+[root@almond ~]# systemctl status postgresql
+
+● postgresql.service - PostgreSQL database server
+   Loaded: loaded (/usr/lib/systemd/system/postgresql.service; disabled; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Mon 2018-07-02 20:32:03 CEST; 16s ago
+  Process: 1568 ExecStartPre=/usr/libexec/postgresql-check-db-dir postgresql (code=exited, status=1/FAILURE)
+
+Jul 02 20:32:03 almond.nuts.org systemd[1]: Starting PostgreSQL database server...
+Jul 02 20:32:03 almond.nuts.org postgresql-check-db-dir[1568]: An old version '9.4' of the database format was found.
+Jul 02 20:32:03 almond.nuts.org postgresql-check-db-dir[1568]: You need to dump and reload before using PostgreSQL 9.6.8.
+Jul 02 20:32:03 almond.nuts.org postgresql-check-db-dir[1568]: See /usr/share/doc/postgresql/README.rpm-dist for more information.
+Jul 02 20:32:03 almond.nuts.org systemd[1]: postgresql.service: Control process exited, code=exited status=1
+Jul 02 20:32:03 almond.nuts.org systemd[1]: Failed to start PostgreSQL database server.
+Jul 02 20:32:03 almond.nuts.org systemd[1]: postgresql.service: Unit entered failed state.
+Jul 02 20:32:03 almond.nuts.org systemd[1]: postgresql.service: Failed with result 'exit-code'.
+~
+
+[root@almond ~]# less /usr/share/doc/postgresql/README.rpm-dist
+...
+$ vi /var/lib/pgsql/data/pg_hba.cnf
+...
+$ vi /var/lib/pgsql/data/postgresql.conf
+...
+
+[root@almond ~]# cp -a /var/lib/pgsql/ /home/eric/Devel/Postgres/
+
+[root@almond data]# pwd
+/var/lib/pgsql/data
+/ we kunnen in deze rm	-rf *
+/ en opnieuw	,
+# postgresql-setup --initdb
+
+[root@almond pgsql]# cp -a data/ ~eric/Devel/Postgres/
+
+[root@almond pgsql]# postgresql-setup --initdb
+ * Initializing database in '/var/lib/pgsql/data'
+ * Initialized, logs are in /var/lib/pgsql/initdb_postgresql.log
+
+[root@almond pgsql]# systemctl start postgresql
+/ OK	,
+
+[root@almond pgsql]# dnf install pgadmin3
+
+/ 7	. 
+
+/ we hebben postgres installed,	
+
+[eric@almond vanderplas]$ psql --version
+psql (PostgreSQL) 9.6.8
+
+/ 13	. 
+
+[eric@almond vanderplas]$ psql -Upostgres
+psql: FATAL:  Peer authentication failed for user "postgres"
+[eric@almond vanderplas]$ psql -Ueric
+psql: FATAL:  role "eric" does not exist
+[eric@almond vanderplas]$ psql -Ufoo
+psql: FATAL:  Peer authentication failed for user "foo"
+
+/ er is een verschil tussen eric en alle andere users	,
+/ TODO
+
+/ 13	. 
+
+/ lees	,
+https://fedoraproject.org/wiki/PostgreSQL
+
+/ het volgende lukt wel,	
+-bash-4.4$ psql
+psql (9.6.8)
+Type "help" for help.
+
+postgres=# \l
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileg
+es   
+-----------+----------+----------+-------------+-------------+------------------
+-----
+ postgres  | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ template0 | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/postgres      
+    +
+           |          |          |             |             | postgres=CTc/post
+gres
+ template1 | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/postgres      
+    +
+           |          |          |             |             | postgres=CTc/post
+gres
+(3 rows)
+
+/ deze zijn hetzelfde	,
+
+/ onder Linux account postgres	,
+-bash-4.4$ psql
+-bash-4.4$ psql -Upostgres
+/ hij kijkt inderdaad naar het Linux account	,
+
+/ onder Linux account eric zien we	,
+[eric@almond vanderplas]$ psql -Upostgres
+psql: FATAL:  Peer authentication failed for user "postgres"
+[eric@almond vanderplas]$ psql -Ueric
+psql: FATAL:  role "eric" does not exist
+
+/ onder Linux account postgres zien we	,
+-bash-4.4$ psql -Ueric
+psql: FATAL:  Peer authentication failed for user "eric"
+
+/ 13	. 
+
+/ onder Linux account postgres	,
+-bash-4.4$ psql
+postgres=# create user eric with password 'vlWalnoot27';
+CREATE ROLE
+postgres=# create database test owner eric;
+CREATE DATABASE
+
+/ in bash	,
+[eric@almond vanderplas]$ psql -Ueric test
+psql (9.6.8)
+Type "help" for help.
+
+test=> 
+/ zonder password	, dit is peer authentication	: 
+peer — obtains user's name from operating system and checks if it matches database user name 
+
+/ 13	. 
+
+/ onder Linux account postgres  ,
+-bash-4.4$ psql
+postgres=# create user foo with password 'foo';
+CREATE ROLE
+postgres=# create database testfoo owner foo;
+CREATE DATABASE
+
+/ in bash ,
+[eric@almond vanderplas]$ psql -Ufoo testfoo
+psql: FATAL:  Peer authentication failed for user "foo"
+/ TODO 
+/ maak md5 in pg_hba.conf
+/ als je create user foo with password 'foo' 	, use je dan md5	?
+/ lees	,
+https://fedoraproject.org/wiki/PostgreSQL
+https://stackoverflow.com/questions/17429040/creating-user-with-encrypted-password-in-postgresql
+
+/ 13	. 
+
+/ in bash	,
+[eric@almond Postgres]$ sudo su - postgres
+-bash-4.4$ pwd
+/var/lib/pgsql
+
+/ 13	. 
+
+[eric@almond vanderplas]$ psql -Ueric test
+psql (9.6.8)
+Type "help" for help.
+
+test=> \dg
+                                   List of roles
+ Role name |                         Attributes                         | Member
+ of 
+-----------+------------------------------------------------------------+-------
+----
+ eric      |                                                            | {}
+ foo       |                                                            | {}
+ postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+
+/ 13	. 
+
+test=> \set
+AUTOCOMMIT = 'off'
+...
+/ is dit in 9.6 automatisch zo	?
+/ TODO 
+
+/ 13	. 
+
+/ PostgreSQL Development Essentials
+
+test=> select generate_series(1,10)
+test-> ;
+ generate_series 
+-----------------
+               1
+               2
+               3
+               4
+               5
+               6
+               7
+               8
+               9
+              10
+(10 rows)
+test=> select array[1,2,3];
+  array  
+---------
+ {1,2,3}
+(1 row)
+
+test=>  select random();
+      random       
+-------------------
+ 0.430338867940009
+(1 row)
+
+test=>  select random();
+      random       
+-------------------
+ 0.719493101350963
+(1 row)
+
+
+/ 13	. 
+
+
+test=> with stuff as(
+select array['a','b','c','d','e','f','g','h'] as names
+)
+select names[(random()*100)::int%8+1]
+from stuff;
+ names 
+-------
+ c
+(1 row)
+
+test=> with stuff as(
+select array['a','b','c','d','e','f','g','h'] as names
+)
+select names[(random()*100)::int%8+1]
+from stuff;
+ names 
+-------
+ h
+(1 row)
+
+/ 13	. 
+
+test=> create table customers(
+test(> id integer,
+test(> name varchar(126),
+test(> countrycode varchar(3),
+test(> contactnum text);
+CREATE TABLE
+test=> commit;
+COMMIT
+
+/ 7	. 
+
+/ lees	,
+https://stackoverflow.com/questions/722221/how-to-log-postgresql-queries
+
+/ we zien	,
+[eric@almond vanderplas]$ sudo -su
+# cd /var/lib/pgsql
+[root@almond pgsql]# pwd
+/var/lib/pgsql
+[root@almond pgsql]# ls -l data/pg_log
+total 0
+-rw-------. 1 postgres postgres 0 Aug 10 07:23 postgresql-Fri.log
+-rw-------. 1 postgres postgres 0 Aug 13 07:23 postgresql-Mon.log
+-rw-------. 1 postgres postgres 0 Aug 11 00:00 postgresql-Sat.log
+-rw-------. 1 postgres postgres 0 Aug 12 10:36 postgresql-Sun.log
+-rw-------. 1 postgres postgres 0 Aug  9 07:50 postgresql-Thu.log
+-rw-------. 1 postgres postgres 0 Aug 14 19:56 postgresql-Tue.log
+-rw-------. 1 postgres postgres 0 Aug  8 00:00 postgresql-Wed.log
+/ ze zijn er wel, alleen nog niet conf	,
+
+/ 7	. 
+
+/ SQL WAL
+
+/ lees	,
+https://stackoverflow.com/questions/36291676/query-transaction-log-in-postgresql
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/runtime-config-wal.html 	/ !
+->
+https://www.postgresql.org/docs/9.6/static/wal-configuration.html
+
+https://www.postgresql.org/docs/9.6/static/sql-altersystem.html
+
+https://www.postgresql.org/docs/9.6/static/sql-show.html
+
+/ 13
+
+/ lees	,
+https://www.postgresql.org/docs/9.5/logicaldecoding-explanation.html
+
+Logical decoding is the process of extracting all persistent changes to a database's tables into a coherent, easy to understand format which can be interpreted without detailed knowledge of the database's internal state.
+
+In PostgreSQL, logical decoding is implemented by decoding the contents of the write-ahead log, which describe changes on a storage level, into an application-specific form such as a stream of tuples or SQL statements.
+
+/ 13	. 
+
+/ lees	,
+https://stackoverflow.com/questions/36291676/query-transaction-log-in-postgresql
+/ we gaan deze doen	, 
+
+/ lees	,
+https://stackoverflow.com/questions/14051939/how-to-read-wal-files-in-pg-xlog-directory-through-java
+/ TODO
+
+postgres=# show wal_level;
+ wal_level 
+-----------
+ minimal
+(1 row)
+
+postgres=# show max_replication_slots;
+ max_replication_slots 
+-----------------------
+ 0
+(1 row)
+
+/ 13	. 
+
+/ in	,
+https://www.postgresql.org/docs/9.6/static/logicaldecoding.html
+
+postgres=# alter system set wal_TAB
+wal_buffers                   wal_receiver_timeout
+wal_compression               wal_retrieve_retry_interval
+wal_keep_segments             wal_sender_timeout
+wal_level                     wal_sync_method
+wal_log_hints                 wal_writer_delay
+wal_receiver_status_interval  wal_writer_flush_after
+
+postgres=# select*from pg_create_logical_replication_slot('slot','test_decoding');
+ERROR:  replication slots can only be used if max_replication_slots > 0
+
+ 
+postgres=# alter system set max_replication_slots =1;
+ALTER SYSTEM
+postgres=# \q
+bash-4.3$ pg_ctl restart
+/ we moeten pg restart voor dit	, anders blijft max_replication_slots=0	,
+
+/ of	,
+[root@almond ~]# systemctl restart postgresql.service
+
+bash-4.3$ psql
+psql (9.5.7)
+Type "help" for help.
+
+postgres=# show max_replication_slots 
+;
+ max_replication_slots 
+-----------------------
+ 1
+(1 row)
+
+
+[root@almond ~]# systemctl status postgresql.service
+...
+
+-bash-4.4$ whoami
+postgres
+-bash-4.4$ psql
+postgres=# select*from pg_create_logical_replication_slot('slot','test_decoding');
+ERROR:  logical decoding requires wal_level >= logical
+
+postgres=# alter system set wal_level=logical;
+ALTER SYSTEM
+postgres=# \q
+bash-4.3$ pg_ctl restart
+
+-bash-4.4$ psql
+postgres=# select*from pg_create_logical_replication_slot('slot','test_decoding');
+ slot_name | xlog_position 
+-----------+---------------
+ slot      | 0/159F990
+/ of	,
+ slot      | 0/6000140
+
+(1 row)
+postgres=# create table product(id serial,val json);
+CREATE TABLE
+postgres=# select*from pg_logical_slot_get_changes('slot',null,null);
+ location  | xid  |    data     
+-----------+------+-------------
+ 0/159FA18 | 1813 | BEGIN 1813
+ 0/15BFF38 | 1813 | COMMIT 1813
+(2 rows)
+
+postgres=# \d product
+                         Table "public.product"
+ Column |  Type   |                      Modifiers                       
+--------+---------+------------------------------------------------------
+ id     | integer | not null default nextval('product_id_seq'::regclass)
+ val    | json    | 
+
+
+/ we zien de table product ook op de slave, dus ipv hot_standby is logical ook okay	,
+
+/ lees,	
+https://www.postgresql.org/docs/9.6/runtime-config-wal.html
+/ hot_standy heet sinds 9.6 replica	,
+
+wal_level determines how much information is written to the WAL. The default value is minimal, which writes only the information needed to recover from a crash or immediate shutdown. replica adds logging required for WAL archiving as well as information required to run read-only queries on a standby server. Finally, logical adds information necessary to support logical decoding. Each level includes the information logged at all lower levels. This parameter can only be set at server start.
+
+INSERT 0 1
+postgres=# select*from pg_logical_slot_get_changes('slot',null,null);
+ location  | xid  |                                  data                      
+            
+-----------+------+------------------------------------------------------------
+------------
+ 0/15C1FF8 | 1814 | BEGIN 1814
+ 0/15C20E0 | 1814 | table public.product: INSERT: id[integer]:1 val[json]:'{"de
+sc":"foo"}'
+ 0/15C2160 | 1814 | COMMIT 1814
+(3 rows)
+
+postgres=# select pg_drop_replication_slot('slot');
+ pg_drop_replication_slot 
+--------------------------
+ 
+(1 row)
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/logicaldecoding.html
+
+/ 13	. 
+
+/ we zien pas ...
+
+postgres=# \set AUTOCOMMIT off
+postgres=# insert into product(val)values('{"name":"bar"}');
+INSERT 0 1
+postgres=# insert into product(val)values('{"name":"bar"}');
+INSERT 0 1
+postgres=# select*from pg_logical_slot_get_changes('slot',null,null);
+ location | xid | data 
+----------+-----+------
+(0 rows)
+/ we zien dus NIETS	, als NIET commit is	,
+
+postgres=# commit;
+COMMIT
+postgres=# select*from pg_logical_slot_get_changes('slot',null,null);
+ location  | xid  |                                  data                      
+            
+-----------+------+------------------------------------------------------------
+------------
+ 0/15C2F10 | 1817 | BEGIN 1817
+ 0/15C2FE0 | 1817 | table public.product: INSERT: id[integer]:4 val[json]:'{"na
+me":"bar"}'
+ 0/15C3118 | 1817 | table public.product: INSERT: id[integer]:5 val[json]:'{"na
+me":"bar"}'
+ 0/15C31D0 | 1817 | COMMIT 1817
+(4 rows)
+/ Nu zien we de tx log	,
+
+/ 13	. 
+
+/ rollback to a savepoint	, 
+
+postgres=# begin;
+BEGIN
+postgres=# insert into product(val)values('{"name":"bar"}');
+INSERT 0 1
+postgres=# insert into product(val)values('{"name":"bar"}');
+INSERT 0 1
+postgres=# insert into product(val)values('{"name":"bar"}');
+INSERT 0 1
+postgres=# savepoint my;
+SAVEPOINT
+postgres=# insert into product(val)values('{"name":"bar"}');
+INSERT 0 1
+postgres=# insert into product(val)values('{"name":"bar"}');
+INSERT 0 1
+postgres=# insert into product(val)values('{"name":"bar"}');
+INSERT 0 1
+postgres=# rollback to my;
+ROLLBACK
+postgres=# commit;
+COMMIT
+postgres=# select*from pg_logical_slot_get_changes('slot',null,null);
+ location  | xid  |                                  data                      
+             
+-----------+------+------------------------------------------------------------
+-------------
+ 0/15C3F10 | 1822 | BEGIN 1822
+ 0/15C3FE0 | 1822 | table public.product: INSERT: id[integer]:13 val[json]:'{"n
+ame":"bar"}'
+ 0/15C4340 | 1822 | table public.product: INSERT: id[integer]:14 val[json]:'{"n
+ame":"bar"}'
+ 0/15C4390 | 1822 | table public.product: INSERT: id[integer]:15 val[json]:'{"n
+ame":"bar"}'
+ 0/15C4568 | 1822 | COMMIT 1822
+(5 rows)
+
+/ 13	. 
+
+/ we hadden verwacht na checkpoint 3 inserts te zien in de tx log	, maar dat is niet zo	,
+/ TODO
+
+postgres=# begin;
+BEGIN
+postgres=# insert into product(val)values('{"name":"bar"}');
+INSERT 0 1
+postgres=# insert into product(val)values('{"name":"bar"}');
+INSERT 0 1
+postgres=# insert into product(val)values('{"name":"bar"}');
+INSERT 0 1
+postgres=# checkpoint ;
+CHECKPOINT
+postgres=# select*from pg_logical_slot_get_changes('slot',null,null);
+ location | xid | data 
+----------+-----+------
+(0 rows)
+
+postgres=# insert into product(val)values('{"name":"bar"}');
+INSERT 0 1
+postgres=# insert into product(val)values('{"name":"bar"}');
+INSERT 0 1
+postgres=# insert into product(val)values('{"name":"bar"}');
+INSERT 0 1
+postgres=# commit;
+COMMIT
+postgres=# select*from pg_logical_slot_get_changes('slot',null,null);
+ location  | xid  |                                  data                      
+             
+-----------+------+------------------------------------------------------------
+-------------
+ 0/15C4E20 | 1825 | BEGIN 1825
+ 0/15C4E20 | 1825 | table public.product: INSERT: id[integer]:25 val[json]:'{"n
+ame":"bar"}'
+ 0/15C4E70 | 1825 | table public.product: INSERT: id[integer]:26 val[json]:'{"n
+ame":"bar"}'
+ 0/15C4EC0 | 1825 | table public.product: INSERT: id[integer]:27 val[json]:'{"n
+ame":"bar"}'
+ 0/15C50C0 | 1825 | table public.product: INSERT: id[integer]:28 val[json]:'{"n
+ame":"bar"}'
+ 0/15C56D8 | 1825 | table public.product: INSERT: id[integer]:29 val[json]:'{"n
+ame":"bar"}'
+ 0/15C5728 | 1825 | table public.product: INSERT: id[integer]:30 val[json]:'{"n
+ame":"bar"}'
+ 0/15C57E0 | 1825 | COMMIT 1825
+(8 rows)
+
+/ 13	. 
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/runtime-config-wal.html
+
+postgres=# show synchronous_commit ;
+ synchronous_commit 
+--------------------
+ on
+(1 row)
+
+/ Einde SQL WAL
+
+/ 13	. 
+
+/ lees	,
+https://dev.mysql.com/doc/refman/5.7/en/innodb-recovery.html
+Redo-log-based discovery,
+
+/ google	,
+Redo-log-based discovery vs write ahead log
+/ lees	,
+http://www.moeding.net/2012/07/postgresql-wal-vs.-oracle-redo-log/
+
+Write-Ahead Logging (WAL) in PostgreSQL and Redo Logs in Oracle have some things in common. Here I want to compare both with respect to database configuration.
+
+postgres=# show wal_segment_size; 
+ wal_segment_size 
+------------------
+ 16MB
+(1 row)
+postgres=# show checkpoint_completion_target; 
+ checkpoint_completion_target 
+------------------------------
+ 0.5
+(1 row)
+
+/ 13	 .
+
+/ google
+postgresql how to read write ahead log
+/ lees	,
+https://www.depesz.com/2011/07/14/write-ahead-log-understanding-postgresql-conf-checkpoint_segments-checkpoint_timeout-checkpoint_warning/
+/ kijk in	,
+data/pg_xlog/
+
+[root@almond data]# pg_controldata . 
+pg_control version number:            960
+Catalog version number:               201608131
+Database system identifier:           6578402828875586928
+Database cluster state:               in production
+pg_control last modified:             Thu 16 Aug 2018 10:04:39 PM CEST
+Latest checkpoint location:           0/15C7348
+Prior checkpoint location:            0/15C7268
+Latest checkpoint's REDO location:    0/15C7310
+Latest checkpoint's REDO WAL file:    000000010000000000000001
+Latest checkpoint's TimeLineID:       1
+Latest checkpoint's PrevTimeLineID:   1
+Latest checkpoint's full_page_writes: on
+Latest checkpoint's NextXID:          0:1828
+Latest checkpoint's NextOID:          24592
+Latest checkpoint's NextMultiXactId:  1
+Latest checkpoint's NextMultiOffset:  0
+Latest checkpoint's oldestXID:        1798
+Latest checkpoint's oldestXID's DB:   1
+Latest checkpoint's oldestActiveXID:  1828
+Latest checkpoint's oldestMultiXid:   1
+Latest checkpoint's oldestMulti's DB: 1
+Latest checkpoint's oldestCommitTsXid:0
+Latest checkpoint's newestCommitTsXid:0
+Time of latest checkpoint:            Thu 16 Aug 2018 10:04:38 PM CEST
+Fake LSN counter for unlogged rels:   0/1
+Minimum recovery ending location:     0/0
+Min recovery ending loc's timeline:   0
+Backup start location:                0/0
+Backup end location:                  0/0
+End-of-backup record required:        no
+wal_level setting:                    logical
+wal_log_hints setting:                off
+max_connections setting:              100
+max_worker_processes setting:         8
+max_prepared_xacts setting:           0
+max_locks_per_xact setting:           64
+track_commit_timestamp setting:       off
+Maximum data alignment:               8
+Database block size:                  8192
+Blocks per segment of large relation: 131072
+WAL block size:                       8192
+Bytes per WAL segment:                16777216
+Maximum length of identifiers:        64
+Maximum columns in an index:          32
+Maximum size of a TOAST chunk:        1996
+Size of a large-object chunk:         2048
+Date/time type storage:               64-bit integers
+Float4 argument passing:              by value
+Float8 argument passing:              by value
+Data page checksum version:           0
+[root@almond pgsql]# cd data
+[root@almond data]# pg_controldata .
+pg_control version number:            960
+Catalog version number:               201608131
+Database system identifier:           6578402828875586928
+Database cluster state:               in production
+pg_control last modified:             Thu 16 Aug 2018 10:04:39 PM CEST
+Latest checkpoint location:           0/15C7348
+Prior checkpoint location:            0/15C7268
+Latest checkpoint's REDO location:    0/15C7310
+Latest checkpoint's REDO WAL file:    000000010000000000000001
+Latest checkpoint's TimeLineID:       1
+Latest checkpoint's PrevTimeLineID:   1
+Latest checkpoint's full_page_writes: on
+Latest checkpoint's NextXID:          0:1828
+Latest checkpoint's NextOID:          24592
+Latest checkpoint's NextMultiXactId:  1
+Latest checkpoint's NextMultiOffset:  0
+Latest checkpoint's oldestXID:        1798
+Latest checkpoint's oldestXID's DB:   1
+Latest checkpoint's oldestActiveXID:  1828
+Latest checkpoint's oldestMultiXid:   1
+Latest checkpoint's oldestMulti's DB: 1
+Latest checkpoint's oldestCommitTsXid:0
+Latest checkpoint's newestCommitTsXid:0
+Time of latest checkpoint:            Thu 16 Aug 2018 10:04:38 PM CEST
+Fake LSN counter for unlogged rels:   0/1
+Minimum recovery ending location:     0/0
+Min recovery ending loc's timeline:   0
+Backup start location:                0/0
+Backup end location:                  0/0
+End-of-backup record required:        no
+wal_level setting:                    logical
+wal_log_hints setting:                off
+max_connections setting:              100
+max_worker_processes setting:         8
+max_prepared_xacts setting:           0
+max_locks_per_xact setting:           64
+track_commit_timestamp setting:       off
+Maximum data alignment:               8
+Database block size:                  8192
+Blocks per segment of large relation: 131072
+WAL block size:                       8192
+Bytes per WAL segment:                16777216
+Maximum length of identifiers:        64
+Maximum columns in an index:          32
+Maximum size of a TOAST chunk:        1996
+Size of a large-object chunk:         2048
+Date/time type storage:               64-bit integers
+Float4 argument passing:              by value
+Float8 argument passing:              by value
+Data page checksum version:           0
+
+/ na 
+postgres=# checkpoint ;
+[root@almond data]# pg_controldata . 
+...
+Latest checkpoint location:           0/15C7E10
+Prior checkpoint location:            0/15C7D30
+Latest checkpoint's REDO location:    0/15C7DD8
+...
+
+/ 13	 .
+
+/ google	,
+difference between commit and checkpoint
+/ lees	,
+https://dba.stackexchange.com/questions/124697/difference-between-commit-and-checkpoint
+->
+www.orafaq.com/wiki/Checkpoint
+oracleinaction.com/checkpoints
+->
+https://jonathanlewis.wordpress.com/2007/04/12/log-file-switch/
+
+/ google,
+postgresql how to read write ahead log
+/ kijk	,
+https://www.youtube.com/watch?v=XiH2LzjgWV4
+
+/ lees	,
+http://www.orafaq.com/wiki/DBWR
+http://www.moeding.net/2012/07/postgresql-wal-vs.-oracle-redo-log/
+
+/ 13	. 
+
+/ ga naar	,
+https://github.com/postgres/postgres
+
+[eric@almond Postgres]$ pwd
+/home/eric/Devel/Postgres
+[eric@almond Postgres]$ git clone https://github.com/postgres/postgres.git
+...
+
+/ google	, 
+git checkout remote branch  
+/ lees	,
+https://stackify.com/git-checkout-remote-branch
+->
+https://makandracards.com/makandra/521-check-out-a-remote-branch-in-git
+...
+git fetch 					/ of TODO git fetch origin
+git checkout groups
+This will automatically track origin/groups from a local branch groups.
+In older Git versions you need to say this:
+git fetch origin
+git checkout --track origin/groups
+
+/ moet  ?
+git fetch
+/ TODO
+
+/ lees	,
+https://stackify.com/git-checkout-remote-branch
+->
+https://confluence.atlassian.com/bitbucket/checkout-a-branch-into-a-local-repository-313466957.html
+
+$ cd <repo_name>
+List all your branches:
+$ git branch -a
+You should see something similar to the following:
+* master   <feature_branch>
+  remotes/origin/<feature_branch>
+  remotes/origin/master
+Notice that it lists both the branches that are local and the remote branches on Bitbucket. Using the list as reference, choose the branch you want to checkout.  In this example, the feature branch is the branch.
+Checkout the branch you want to use.
+$ git checkout <feature_branch>
+Confirm you are now working on that branch:
+$ git branch
+You should see something similar to the following:
+$ git branch 
+* <feature_branch>
+  master
+
+/ 1313	.
+
+[eric@almond postgres_cp]$ git checkout REL_11_BETA3
+Note: checking out 'REL_11_BETA3'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by performing another checkout.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -b with the checkout command again. Example:
+
+  git checkout -b <new-branch-name>
+
+HEAD is now at e62cc60fb9... Stamp 11beta3.
+[eric@almond postgres_cp]$ git branch 
+* (HEAD detached at REL_11_BETA3)
+  master
+[eric@almond postgres_cp]$ git checkout -b REL_11_BETA3_branch
+Switched to a new branch 'REL_11_BETA3_branch'
+[eric@almond postgres_cp]$ git branch 
+* REL_11_BETA3_branch
+  master
+
+/ 1313	 .
+
+/ we kunnen ook in 1 keer	,
+
+[eric@almond Postgres]$ cp -a postgres postgres_cp
+[eric@almond Postgres]$ cd postgres_cp/
+[eric@almond postgres_cp]$ git checkout -b REL_11_BETA3_branch
+Switched to a new branch 'REL_11_BETA3_branch'
+[eric@almond postgres_cp]$ git branch 
+* REL_11_BETA3_branch
+  master
+
+/ we hebben meteen een branch	,
+
+/ 1313	. 
+
+[eric@almond postgres_cp]$ git checkout -b REL_10_5
+Switched to a new branch 'REL_10_5'
+[eric@almond postgres_cp]$ git branch 
+* REL_10_5
+  REL_11_BETA3_branch
+  master
+
+/ 1313	. 
+
+/ Met git checkout hebben we geen INSTALL	, 
+/ lees	,
+https://www.postgresql.org/docs/devel/static/install-procedure.html
+
+[eric@almond postgres_cp]$ ./configure --enable-debug
+...
+configure: using compiler=gcc (GCC) 7.3.1 20180130 (Red Hat 7.3.1-2)
+configure: using CFLAGS=-Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -Wno-format-truncation -g -O2
+configure: using CPPFLAGS= -D_GNU_SOURCE 
+configure: using LDFLAGS=  -Wl,--as-needed
+configure: creating ./config.status
+config.status: creating GNUmakefile
+config.status: creating src/Makefile.global
+config.status: creating src/include/pg_config.h
+config.status: creating src/include/pg_config_ext.h
+config.status: creating src/interfaces/ecpg/include/ecpg_config.h
+config.status: linking src/backend/port/tas/dummy.s to src/backend/port/tas.s
+config.status: linking src/backend/port/dynloader/linux.c to src/backend/port/dynloader.c
+config.status: linking src/backend/port/posix_sema.c to src/backend/port/pg_sema.c
+config.status: linking src/backend/port/sysv_shmem.c to src/backend/port/pg_shmem.c
+config.status: linking src/backend/port/dynloader/linux.h to src/include/dynloader.h
+config.status: linking src/include/port/linux.h to src/include/pg_config_os.h
+config.status: linking src/makefiles/Makefile.linux to src/Makefile.port
+
+/ 1313	. 
+[eric@almond postgres_cp]$ ./configure --enable-cassert --enable-debug CFLAGS=-O0
+...
+configure: using CFLAGS=-Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -Wno-format-truncation -g -O0
+
+
+/ 1313	. 
+
+[eric@almond postgres_cp]$ ./configure --enable-cassert --enable-debug CFLAGS="-ggdb -Og -g3 -fno-omit-frame-pointer"
+...
+configure: using CFLAGS=-Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -Wno-format-truncation -g -ggdb -Og -g3 -fno-omit-frame-pointer
+
+
+/ lees,	
+http://gcc.gnu.org/onlinedocs/gcc/Inline.html
+
+/ google,
+postgresql source debug
+/ lees	,
+https://wiki.postgresql.org/wiki/Developer_FAQ
+...
+First, if you are developing new C code you should ALWAYS work in a build configured with the --enable-cassert and --enable-debug options. Enabling asserts turns on many sanity checking options. Enabling debug symbols supports use of debuggers (such as gdb) to trace through misbehaving code. When compiling on gcc, the additional cflags -ggdb -Og -g3 -fno-omit-frame-pointer are also useful, as they insert a lot of debugging info detail. You can pass them to configure with something like:
+   ./configure --enable-cassert --enable-debug CFLAGS="-ggdb -Og -g3 -fno-omit-frame-pointer"
+Using -O0 instead of -Og will disable most compiler optimisation, including inlining, but -Og performs almost as well as the usual optimser flags like -O2 or -Os while providing much more debug info. You'll see many fewer <value optimised out> variables, less confusing and hard to follow re-ordering of execution, etc, but performance will remain quite usable. -ggdb -g3 tells gcc to also include the maximum amount of debug information in the produced binaries, including things like macro definitions.
+-fno-omit-frame-pointer is useful when using tracing and profiling tools like perf, as frame pointers allow these tools to capture the call stack, not just the top function on the stack.
+
+/ 1313	. 
+
+/ we hebben 	,
+ 1050  ./configure --enable-cassert --enable-debug CFLAGS="-ggdb -Og -g3 -fno-omit-frame-pointer"
+
+/ we moeten bison install,	
+[eric@almond postgres_cp]$ dnf list available *bison*
+...
+[eric@almond postgres_cp]$ sudo dnf install bison
+Downloading Packages:
+bison-3.0.4-6.fc26.x86_64.rpm                  587 kB/s | 682 kB     00:01    
+
+/ doe opnieuw
+ 1050  ./configure --enable-cassert --enable-debug CFLAGS="-ggdb -Og -g3 -fno-omit-frame-pointer"
+/ OK	, 
+$ make | tee LOG_make.txt
+
+/ maar dan later vraagt hij om flex	,
+
+[eric@almond postgres_cp]$ sudo dnf install flex
+...
+[eric@almond postgres_cp]$ ./configure --enable-cassert --enable-debug CFLAGS="-ggdb -Og -g3 -fno-omit-frame-pointer"
+$ make | tee LOG_make.txt
+
+$ sudo make install | tee LOG_make_install.txt
+
+/ 13	. 
+
+/ lees,
+https://www.postgresql.org/docs/current/static/admin.html
+/ we zien 
+16. Installation from Source Code
+16.1. Short Version
+16.2. Requirements
+16.3. Getting The Source
+16.4. Installation Procedure
+16.5. Post-Installation Setup
+16.6. Supported Platforms
+16.7. Platform-specific Notes
+18. Server Setup and Operation
+18.1. The PostgreSQL User Account
+18.2. Creating a Database Cluster / hier staat over initdb	,
+...
+
+
+/ 7	. 
+
+/ video
+
+https://www.youtube.com/watch?v=XiH2LzjgWV4&t=997s
+
+/ 13	. 
+...
+/ reasons WAL
+/ TODO 
+
+/ 13	. 
+
+/ 15:49
+Shared buffers
+	Dirty buffers
+	this is where the transactions are performed	,
+
+/ the 'query backend' does an  insert, update, ... produces dirty buffers, en als dit succesvol, dan wordt de tx information written to WAL, and then the tx is completed	,
+
+/ we hoeven niet een insert, update naar de file te schrijven, want we hebben alles in de WAL, 
+/ maar nu de disk is inconsistent met de buffers, ze zijn dirty, daarom zijn er bgwriter en checkpointer	,
+
+/ als de disk crash, dan hebben we de WAL om te restore	,
+/ bgwriter en checkpointer hebben disk sync, maar bij crash gaat dat verloren	,
+
+/ iets voor 25:00
+/ 'query backend' writes niet alleen naar buffers, maar ook naar disk: 
+/ bgwriter writes 100 buffers (=4k page TODO) en sleeps for 100ms	, dit is de default config, ok op laptops	, 
+/ dus moet 'query backend' terwijl bgwriter sleeps, ook write naar buffers	,
+/ dus op productie: laat bgwriter vaker sync	,
+
+$ less postgresql.conf
+#wal_writer_delay = 200ms               # 1-10000 milliseconds
+#wal_writer_flush_after = 1MB           # measured in pages, 0 disables
+
+
+/ 26:00
+
+/ WAL file naming,
+
+/ 1st 8 chars=timelineID created by initdb	,
+
+/ 2nd 8 chars=blockID,
+
+/ 3rd 8 chars=WAL segment ID	,
+
+/ 1ste WAL file is altijd,
+000000010000000000000001 
+/ volgende	,
+000000010000000000000002 
+...
+0000000100000000000000ff 
+...
+0000000100000000ffffffff 
+000000010000000100000000 
+...
+0000000100000001ffffffff 
+000000010000000200000000
+...
+
+/ 13	. 
+
+/ manage WAL
+
+/ pg_archivecleanup
+/ pg_resetwal	/ in 9.6 pg_resetxlog	,
+/ pg_waldump, 	in 9.6 pg_xlogdump	,
+
+
+/ 7	. 
+
+/ pg_xlogdump
+
+/ lees	,
+https://paquier.xyz/postgresql-2/postgres-9-3-feature-highlight-pg_xlogdump/
+
+/ we doen 
+
+$ psql
+postgres=# \set AUTOCOMMIT 'off'
+
+/ en we doen	,
+root@almond pg_xlog]# watch -n 0.1 -d "  pg_xlogdump 000000010000000000000001 | tail "
+/ of	,
+root@almond pg_xlog]# pg_xlogdump -f 000000010000000000000001
+
+/ bij watch is -n 0.1 is de kortste herhaaltijd	, -d geeft een oplichting welke lines veranderd	, je ziet ook goed wanneer de xlog veranderd	,
+/ pg_xlogdump heeft ook -f	, OK, alleen je ziet geen oplichting zoals bij watch -d	,
+
+/ als we ,
+postgres=# insert into product(val) values('{"name":"bar"}');
+INSERT 0 1
+postgres=# insert into product(val) values('{"name":"bar"}');
+INSERT 0 1
+postgres=# insert into product(val) values('{"name":"bar"}');
+INSERT 0 1
+postgres=# insert into product(val) values('{"name":"bar"}');
+INSERT 0 1
+postgres=# commit;
+COMMIT
+
+/ dan zien we na elke regel de xlog veranderen	, bij inserts kan het best even duren, bij commit altijd direct	, 
+/ TODO
+
+rmgr: Heap        len (rec/tot):     74/    74, tx:       1850, lsn: 0/0162C0D8, prev 0/0162C0A0, desc: INSERT off 61, blkref #0: rel 1663/13357/16402 blk 0
+rmgr: Standby     len (rec/tot):     54/    54, tx:          0, lsn: 0/0162C128, prev 0/0162C0D8, desc: RUNNING_XACTS nextXid 1851 latestCompletedXid 1849 oldestRunningXid 1850; 1 xacts: 1850
+rmgr: Transaction len (rec/tot):     46/    46, tx:       1850, lsn: 0/0162C160, prev 0/0162C128, desc: COMMIT 2018-09-08 22:03:57.637523 CEST
+
+rmgr: Heap        len (rec/tot):     74/    74, tx:       1851, lsn: 0/0162C190, prev 0/0162C160, desc: INSERT off 62, blkref #0: rel 1663/13357/16402 blk 0
+rmgr: Standby     len (rec/tot):     54/    54, tx:          0, lsn: 0/0162C1E0, prev 0/0162C190, desc: RUNNING_XACTS nextXid 1852 latestCompletedXid 1850 oldestRunningXid 1851; 1 xacts: 1851
+rmgr: Heap        len (rec/tot):     74/    74, tx:       1851, lsn: 0/0162C218, prev 0/0162C1E0, desc: INSERT off 63, blkref #0: rel 1663/13357/16402 blk 0
+rmgr: Standby     len (rec/tot):     54/    54, tx:          0, lsn: 0/0162C268, prev 0/0162C218, desc: RUNNING_XACTS nextXid 1852 latestCompletedXid 1850 oldestRunningXid 1851; 1 xacts: 1851
+...
+rmgr: XLOG        len (rec/tot):    106/   106, tx:          0, lsn: 0/0162C578, prev 0/0162C540, desc: CHECKPOINT_ONLINE redo 0/162C540; tli 1; prev tli 1; fpw true; xid 0:1852; oid 24592; multi 1; offset 0; oldest xid 1798 in DB 1; oldest multi 1 in DB 1; oldest/newest commit timestamp xid: 0/0; oldest running xid 1851; online
+rmgr: Standby     len (rec/tot):     54/    54, tx:          0, lsn: 0/0162C5E8, prev 0/0162C578, desc: RUNNING_XACTS nextXid 1852 latestCompletedXid 1850 oldestRunningXid 1851; 1 xacts: 1851
+
+rmgr: Sequence    len (rec/tot):    204/   204, tx:       1851, lsn: 0/0162C620, prev 0/0162C5E8, desc: LOG rel 1663/13357/16400, blkref #0: rel 1663/13357/16400 blk 0
+rmgr: Heap        len (rec/tot):     79/  3431, tx:       1851, lsn: 0/0162C6F0, prev 0/0162C620, desc: INSERT off 64, blkref #0: rel 1663/13357/16402 blk 0 FPW
+rmgr: Standby     len (rec/tot):     54/    54, tx:          0, lsn: 0/0162D458, prev 0/0162C6F0, desc: RUNNING_XACTS nextXid 1852 latestCompletedXid 1850 oldestRunningXid 1851; 1 xacts: 1851
+rmgr: Heap        len (rec/tot):     74/    74, tx:       1851, lsn: 0/0162D490, prev 0/0162D458, desc: INSERT off 65, blkref #0: rel 1663/13357/16402 blk 0
+rmgr: Standby     len (rec/tot):     54/    54, tx:          0, lsn: 0/0162D4E0, prev 0/0162D490, desc: RUNNING_XACTS nextXid 1852 latestCompletedXid 1850 oldestRunningXid 1851; 1 xacts: 1851
+rmgr: Heap        len (rec/tot):     74/    74, tx:       1851, lsn: 0/0162D518, prev 0/0162D4E0, desc: INSERT off 66, blkref #0: rel 1663/13357/16402 blk 0
+rmgr: Standby     len (rec/tot):     54/    54, tx:          0, lsn: 0/0162D568, prev 0/0162D518, desc: RUNNING_XACTS nextXid 1852 latestCompletedXid 1850 oldestRunningXid 1851; 1 xacts: 1851
+rmgr: Transaction len (rec/tot):     46/    46, tx:       1851, lsn: 0/0162D5A0, prev 0/0162D568, desc: COMMIT 2018-09-08 22:25:28.817964 CEST
+rmgr: Standby     len (rec/tot):     50/    50, tx:          0, lsn: 0/0162D5D0, prev 0/0162D5A0, desc: RUNNING_XACTS nextXid 1852 latestCompletedXid 1851 oldestRunningXid 1852
+rmgr: Standby     len (rec/tot):     50/    50, tx:          0, lsn: 0/0162D608, prev 0/0162D5D0, desc: RUNNING_XACTS nextXid 1852 latestCompletedXid 1851 oldestRunningXid 1852
+rmgr: XLOG        len (rec/tot):    106/   106, tx:          0, lsn: 0/0162D640, prev 0/0162D608, desc: CHECKPOINT_ONLINE redo 0/162D608; tli 1; prev tli 1; fpw true; xid 0:1852; oid 24592; multi 1; offset 0; oldest xid 1798 in DB 1; oldest multi 1 in DB 1; oldest/newest commit timestamp xid: 0/0; oldest running xid 1852; online
+rmgr: Standby     len (rec/tot):     50/    50, tx:          0, lsn: 0/0162D6B0, prev 0/0162D640, desc: RUNNING_XACTS nextXid 1852 latestCompletedXid 1851 oldestRunningXid 1852
+
+/ de vorige tx was 1850	,  de laatste actie was de commit, daarna begon 1851	,
+
+postgres=# show wal_level;
+ wal_level 
+-----------
+ logical
+(1 row)
+/ deze level zegt wat hij gaat insert in de WAL	,
+
+/ we zien op elke line: 
+lsn: 0/0162D608, prev 0/0162D5D0
+/ prev is de lsn van de vorige regel	,
+
+/ 13	. 
+
+/ rollback	,
+
+/ we doen	,
+postgres=# insert into product(val) values('{"name":"bar"}');
+INSERT 0 1
+postgres=# rollback;
+ROLLBACK
+postgres=# insert into product(val) values('{"name":"bar"}');
+INSERT 0 1
+
+/ we zien	,
+
+rmgr: Sequence    len (rec/tot):    204/   204, tx:       1852, lsn: 0/0162DA68, prev 0/0162DA30, desc: LOG rel 1663/13357/16400, blkref #0: rel 1663/13357/16400 blk 0
+rmgr: Heap        len (rec/tot):     79/  3587, tx:       1852, lsn: 0/0162DB38, prev 0/0162DA68, desc: INSERT off 67, blkref #0: rel 1663/13357/16402 blk 0 FPW
+rmgr: Standby     len (rec/tot):     54/    54, tx:          0, lsn: 0/0162E958, prev 0/0162DB38, desc: RUNNING_XACTS nextXid 1853 latestCompletedXid 1851 oldestRunningXid 1852; 1 xacts: 1852
+rmgr: Transaction len (rec/tot):     34/    34, tx:       1852, lsn: 0/0162E990, prev 0/0162E958, desc: ABORT 2018-09-08 22:49:47.397805 CEST
+
+rmgr: Heap        len (rec/tot):     74/    74, tx:       1853, lsn: 0/0162E9F0, prev 0/0162E9B8, desc: INSERT off 68, blkref #0: rel 1663/13357/16402 blk 0
+rmgr: Standby     len (rec/tot):     54/    54, tx:          0, lsn: 0/0162EA40, prev 0/0162E9F0, desc: RUNNING_XACTS nextXid 1854 latestCompletedXid 1852 oldestRunningXid 1853; 1 xacts: 1853
+
+/ we zien de volgende tx	,
+
+/ (33:00)
+
+/ during recovery, the lsn on the page is compared with the lsn on the WAL file, the largest wins	,
+/ when rollback, the ... is not written (TODO), the greater wins, which is the on the page	, so it is left alone	,
+
+/ (34:00)
+
+postgres=#  \df pg_xlog*
+                                                          List of functions
+   Schema   |          Name           | Result data type |                       Argumen
+t data types                        |  Type  
+------------+-------------------------+------------------+------------------------------
+------------------------------------+--------
+ pg_catalog | pg_xlog_location_diff   | numeric          | pg_lsn, pg_lsn               
+                                    | normal
+ pg_catalog | pg_xlog_replay_pause    | void             |                              
+                                    | normal
+ pg_catalog | pg_xlog_replay_resume   | void             |                              
+                                    | normal
+ pg_catalog | pg_xlogfile_name        | text             | pg_lsn                       
+                                    | normal
+ pg_catalog | pg_xlogfile_name_offset | record           | wal_location pg_lsn, OUT file
+_name text, OUT file_offset integer | normal
+(5 rows)
+
+postgres=#  \df pg_current*
+                                       List of functions
+   Schema   |              Name               | Result data type | Argument data types |
+  Type  
+------------+---------------------------------+------------------+---------------------+
+--------
+ pg_catalog | pg_current_xlog_flush_location  | pg_lsn           |                     |
+ normal
+ pg_catalog | pg_current_xlog_insert_location | pg_lsn           |                     |
+ normal
+ pg_catalog | pg_current_xlog_location        | pg_lsn           |                     |
+ normal
+(3 rows)
+
+postgres=# insert into product(val) values('{"name":"bar"}');
+INSERT 0 1
+postgres=# select pg_current_xlog_location();
+ pg_current_xlog_location 
+--------------------------
+ 0/1632720
+(1 row)
+/ dit is de eerstvolgende xlog location, 
+/ als je even wacht, zie je hem ook	,
+
+rmgr: Heap        len (rec/tot):     79/  3691, tx:       1854, lsn: 0/01631860, prev 0/01631790, desc: INSERT off 69, blkref #0: rel 1663/13357/16402 blk 0 FPW
+rmgr: Standby     len (rec/tot):     54/    54, tx:          0, lsn: 0/016326E8, prev 0/01631860, desc: RUNNING_XACTS nextXid 1855 latestCompletedXid 1853 oldestRunningXid 1854; 1 xacts: 1854
+rmgr: Standby     len (rec/tot):     54/    54, tx:          0, lsn: 0/01632720, prev 0/016326E8, desc: RUNNING_XACTS nextXid 1855 latestCompletedXid 1853 oldestRunningXid 1854; 1 xacts: 1854
+
+/ Intermezzo
+
+/ we maken per ongeluk een type fout	,
+/ we zien in de xlog een ABORT	,
+
+postgres=# select pg_xlog_name( pg_current_xlog_location());
+ERROR:  function pg_xlog_name(pg_lsn) does not exist
+
+rmgr: Transaction len (rec/tot):     34/    34, tx:       1854, lsn: 0/016328E0, prev 0/016328A8, desc: ABORT 2018-09-09 21:03:42.307015 CEST
+
+postgres=# select 1;
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+postgres=# rollback;
+ROLLBACK
+/ we moeten een rollback geven	, 
+/ in de xlog zien we niets	, de ABORT is al geweest	,
+
+/ Einde Intermezzo 
+
+postgres=# select pg_xlogfile_name( pg_current_xlog_location());
+     pg_xlogfile_name     
+--------------------------
+ 000000010000000000000001
+(1 row)
+
+/ 36:00
+
+[root@almond pg_xlog]# ls ../global/
+1136_fsm  1213_vm   1233      1261_vm   2396_fsm  2676  2698     2964_vm  3592     4061     pg_control
+...
+/ we zien pg_control	,
+/ dit is een file	, pg_controldata is zoals pg_waldump	, een fct die de inhoud van pg_control geeft	, 
+
+/ 44:00
+
+[root@almond pg_xlog]# pg_controldata -D /var/lib/pgsql/data/
+pg_control version number:            960
+Catalog version number:               201608131
+Database system identifier:           6578402828875586928
+Database cluster state:               in production
+pg_control last modified:             Sun 09 Sep 2018 09:17:00 PM CEST
+Latest checkpoint location:           0/1632B38
+Prior checkpoint location:            0/1632A58
+Latest checkpoint's REDO location:    0/1632B00
+Latest checkpoint's REDO WAL file:    000000010000000000000001
+Latest checkpoint's TimeLineID:       1
+Latest checkpoint's PrevTimeLineID:   1
+Latest checkpoint's full_page_writes: on
+Latest checkpoint's NextXID:          0:1855
+Latest checkpoint's NextOID:          24592
+Latest checkpoint's NextMultiXactId:  1
+Latest checkpoint's NextMultiOffset:  0
+Latest checkpoint's oldestXID:        1798
+Latest checkpoint's oldestXID's DB:   1
+Latest checkpoint's oldestActiveXID:  1855
+Latest checkpoint's oldestMultiXid:   1
+Latest checkpoint's oldestMulti's DB: 1
+Latest checkpoint's oldestCommitTsXid:0
+Latest checkpoint's newestCommitTsXid:0
+Time of latest checkpoint:            Sun 09 Sep 2018 09:17:00 PM CEST
+Fake LSN counter for unlogged rels:   0/1
+Minimum recovery ending location:     0/0
+Min recovery ending loc's timeline:   0
+Backup start location:                0/0
+Backup end location:                  0/0
+End-of-backup record required:        no
+wal_level setting:                    logical
+wal_log_hints setting:                off
+max_connections setting:              100
+max_worker_processes setting:         8
+max_prepared_xacts setting:           0
+max_locks_per_xact setting:           64
+track_commit_timestamp setting:       off
+Maximum data alignment:               8
+Database block size:                  8192
+Blocks per segment of large relation: 131072
+WAL block size:                       8192
+Bytes per WAL segment:                16777216
+Maximum length of identifiers:        64
+Maximum columns in an index:          32
+Maximum size of a TOAST chunk:        1996
+Size of a large-object chunk:         2048
+Date/time type storage:               64-bit integers
+Float4 argument passing:              by value
+Float8 argument passing:              by value
+Data page checksum version:           0
+
+root@almond pg_xlog]# pg_xlogdump -f 000000010000000000000001
+...
+rmgr: Standby     len (rec/tot):     50/    50, tx:          0, lsn: 0/01632B00, prev 0/01632AC8, desc: RUNNING_XACTS nextXid 1855 latestCompletedXid 1854 oldestRunningXid 1855
+rmgr: XLOG        len (rec/tot):    106/   106, tx:          0, lsn: 0/01632B38, prev 0/01632B00, desc: CHECKPOINT_ONLINE redo 0/1632B00; tli 1; prev tli 1; fpw true; xid 0:1855; oid 24592; multi 1; offset 0; oldest xid 1798 in DB 1; oldest multi 1 in DB 1; oldest/newest commit timestamp xid: 0/0; oldest running xid 1855; online
+rmgr: Standby     len (rec/tot):     50/    50, tx:          0, lsn: 0/01632BA8, prev 0/01632B38, desc: RUNNING_XACTS nextXid 1855 latestCompletedXid 1854 oldestRunningXid 1855
+
+/ in de checkpoint regel zien we de positie van de redo regel: CHECKPOINT_ONLINE redo 0/1632B00
+
+/ 13	 .
+
+/ lees	,
+https://dba.stackexchange.com/questions/139128/how-does-checkpoint-know-which-point-to-recover-from-in-postgresql
+http://www.interdb.jp/pg/pgsql09.html
+
+/ google,
+pg_dump vs base backup	
+/ lees	,
+https://www.opsdash.com/blog/postgresql-backup-restore.html
+
+/ google	,
+postgresql master slave
+/ lees	,
+https://blog.raveland.org/post/postgresql_sr/
+/ kijk	,
+https://www.youtube.com/watch?v=ldOPon17uYE
+/ en	vervolg	,
+https://www.youtube.com/watch?v=HkgYdirSdi0
+https://www.youtube.com/watch?v=NaPnYQBBdyU
+
+/ 52:00
+
+/ archive = backup WAL files	,
+
+/ continuous archiving	, large database, active running database	,
+/ Replication, backup , PITR:
+archive_mode on
+archive_command=/bin/true
+archive_timeout
+
+/ archive copies the WAL files to another place	, 
+/ archive backs up the WAL files	,
+
+/ the base backup + archived WAL files= restore db	,
+
+/ pg_dump= snapshot backup	,
+
+/ met pg_basebackup maak je een base backup	, (ipv vroeger pg_start_backup	, dan met rsync ... en dan pg_stop_backup	,
+
+/ 7	. 
+
+/ kijk	,
+https://www.youtube.com/watch?v=Jvdtx-Smffo
+
+/ use sql_dump or pg_upgrade to upgrade	,  
+/ met pitr kan je niet upgrade	,
+
+/ pitr does the entire cluster, not 1 database of table	,
+
+/ 7	. 
+
+/ postgresql master slave
+https://www.howtoforge.com/tutorial/how-to-set-up-master-slave-replication-for-postgresql-96-on-ubuntu-1604/
+https://www.digitalocean.com/community/tutorials/how-to-set-up-master-slave-replication-on-postgresql-on-an-ubuntu-12-04-vps
+
+
+ 7 .
+
+/ lees  ,
+http://www.dbta.com/Columns/DBA-Corner/An-Introduction-to-Recursive-SQL-96878.aspx
+https://www.mssqltips.com/sqlservertip/1520/recursive-queries-using-common-table-expressions-cte-in-sql-server/
+https://www.youtube.com/watch?v=7GpyHedM4pw
+
+/ 7	. 
+
+/ we start 2 docker containers met pg ,
+
+[eric@almond postgres3a]$  docker run --network=my-bridge --rm -ti my/fedora-postgres3a
+/ 1 keer  ,
+
+[eric@almond postgres3a]$  docker run --network=my-bridge --rm -ti -p 12345:5432 my/fedora-postgres3a
+/ -p 12345:5432 heb ik niet nodig, want ik hoef de db niet vanaf de host de query, we kunnen $ docker exec  , maar in principe kan allebei  ,
+[eric@almond postgres3a]$ docker exec -ti optimistic_shaw bash
+bash-4.3$ psql
+psql (9.5.7)
+Type "help" for help.
+postgres=#
+
+[eric@almond postgres3a]$ docker run --network=my-bridge --rm -ti -p 12346:5432 my/fedora-postgres3a
+LOG:  redirecting log output to logging collector process
+HINT:  Future log output will appear in directory "pg_log".
+eric@almond postgres3a]$ docker exec -ti reverent_albattani bash
+bash-4.3$ psql
+psql (9.5.7)
+Type "help" for help.
+postgres=# \q
+
+

@@ -1,0 +1,150 @@
+/ Kies in menu linksboven	,
+Compute Engine
+/ we volgen de quickstart	,
+/ we create 2 vm's	, 
+1 vCPU , 0.6GB	, 
+
+/ 13	. 
+
+/ back-end VM, instance-1
+
+/ we click de SSH button rechts	, en we doen	, 
+    3  sudo apt-get update
+    4  sudo apt-get install mongodb
+    5  sudo service mongodb stop
+    9  sudo mkdir $HOME/db ; sudo mongod --dbpath $HOME/db --port 80 --fork --logpath /var/tmp/mongodb
+
+/ Maar het beste gaat 	, local op laptop	,
+/ Maar we zien dan niet wat we moeten doen	, 
+[eric@almond misc]$ gcloud compute --project "web-server-project-1148" ssh --zone "europe-west1-c" "instance-1"
+Warning: Permanently added '104.155.104.35' (ECDSA) to the list of known hosts.
+  Memory usage: 25%               IP address for eth0: 10.240.0.2
+$ ps ajx 
+    1  6102  6101  6101 ?           -1 Sl       0   0:01 mongod --dbpath /home/ericjvandervelden/db --port 80 -
+
+/ 104.155.104.35 is external IP adres 	, 10.240.0.2 intern	, 
+
+/ 13	. 
+
+/ front-end VM, instance-2
+
+$ sudo apt-get update
+$ sudo apt-get install git nodejs npm
+$ git clone https://github.com/GoogleCloudPlatform/todomvc-mongodb.git
+$ cd todomvc-mongodb; npm install
+$ nohup nodejs server.js --be_ip 10.240.0.2 --fe_ip 10.240.0.3 &
+
+/ Open	in chrome,
+http://146.148.120.150:8080/
+
+/ 13	. 
+
+Find Google Cloud Platform samples on GitHub
+http://googlecloudplatform.github.io/
+
+Learn how to set up Load Balancing
+/ TODO
+
+Learn how to run containers
+https://cloud.google.com/container-engine/docs/?hl=en_US&_ga=1.268625650.2083072423.1427531363
+/ we zijn in 
+Google CloudPlatform (Niet de console; rechts naast mijn foto zien we link 'Console')
+Documentation (boven)	, 
+Container Engine , Documentation (links)	,
+/ we zien Quickstart containers	,
+https://cloud.google.com/container-engine/docs/quickstart
+
+Ga naar console, links boven menu, kies Compute Engine	, 
+/ delete beide VM's	,
+
+/ 13	. 
+
+/ we zijn op 	,
+https://cloud.google.com/container-engine/docs/quickstart
+/ we zien dat we kubectl nodig hebben	, 
+/ we komen op	, via google search 	,
+http://kubernetes.io/docs/hellonode/	 
+
+[eric@almond misc]$ gcloud components update
+
+
+Your current Cloud SDK version is: 0.9.89
+You will be upgraded to version: 118.0.0
+
+┌────────────────────────────────────────────────────────┐
+│           These components will be updated.            │
+├─────────────────────────────────┬────────────┬─────────┤
+│               Name              │  Version   │   Size  │
+├─────────────────────────────────┼────────────┼─────────┤
+│ BigQuery Command Line Tool      │     2.0.24 │ < 1 MiB │
+│ Cloud SDK Core Libraries        │ 2016.07.18 │ 4.0 MiB │
+│ Cloud Storage Command Line Tool │       4.19 │ 2.6 MiB │
+─────────────────────────────────┴────────────┴─────────┘
+┌────────────────────────────────────────────────────────────────────────────┐
+│                    These components will be installed.                     │
+├─────────────────────────────────────────────────────┬────────────┬─────────┤
+│                         Name                        │  Version   │   Size  │
+├─────────────────────────────────────────────────────┼────────────┼─────────┤
+│ BigQuery Command Line Tool (Platform Specific)      │     2.0.24 │ < 1 MiB │
+│ Cloud SDK Core Libraries (Platform Specific)        │ 2016.03.28 │ < 1 MiB │
+│ Cloud Storage Command Line Tool (Platform Specific) │       4.18 │ < 1 MiB │
+└─────────────────────────────────────────────────────┴────────────┴─────────┘
+
+A lot has changed since your last upgrade.  For the latest full release notes,
+please visit:
+  https://dl.google.com/dl/cloudsdk/channels/rapid/RELEASE_NOTES
+
+Do you want to continue (Y/n)?   
+
+/ we zien	,
+WARNING: There are older versions of Google Cloud Platform tools on your system PATH.
+Please remove the following to avoid accidentally invoking these old tools:
+
+/home/eric/Devel/Cloud/Google/go_appengine/dev_appserver.py
+
+$ vi .bash_profile
+#PATH=$PATH:$HOME/Devel/Cloud/Google/go_appengine
+/ TODO
+
+[eric@almond misc]$ gcloud components update
+All components are up to date.
+
+[eric@almond misc]$ gcloud components install kubectl
+
+
+Your current Cloud SDK version is: 118.0.0
+Installing components from version: 118.0.0
+
+┌─────────────────────────────────────────────┐
+│     These components will be installed.     │
+├─────────────────────────┬─────────┬─────────┤
+│           Name          │ Version │   Size  │
+├─────────────────────────┼─────────┼─────────┤
+│ kubectl                 │         │         │
+│ kubectl (Linux, x86_64) │   1.2.5 │ 8.2 MiB │
+└─────────────────────────┴─────────┴─────────┘
+
+For the latest full release notes, please visit:
+  https://cloud.google.com/sdk/release_notes
+
+Do you want to continue (Y/n)?  
+
+╔════════════════════════════════════════════════════════════╗
+╠═ Creating update staging area                             ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Installing: kubectl                                      ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Installing: kubectl (Linux, x86_64)                      ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Creating backup and activating new installation          ═╣
+╚════════════════════════════════════════════════════════════╝
+
+Performing post processing steps...done.
+
+Update done!
+
+
+
+
+ 
+ 

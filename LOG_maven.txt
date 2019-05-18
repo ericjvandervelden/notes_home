@@ -1,0 +1,837 @@
+/ See BOOK EXAMPLES INSTALL
+/ See CH-SIMPLE-WEBAPP
+/ See CH-MULTI 
+/ See CH-MULTI-SPRING
+
+/ BOOK EXAMPLES INSTALL
+
+[eric@almond maven]$ pwd
+/home/eric/Devel/maven
+[eric@almond maven]$ git clone https://github.com/sonatype/maven-example-en.git
+
+[eric@almond maven-example-en]$ cp -a examples/ ~/Devel/Eclipse/scala/workspace-maven/
+
+/ 13	. 
+
+/ we moeten NIET import examples als maven project	, we zien dan geen build path	, 
+/ we import examples/ch-simple-webapp	, we zien in eclipse
+parent						/home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-simple-web
+simple-webapp			/home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-simple-web/simple-webapp
+
+
+/ CH-SIMPLE-WEBAPP
+
+/ we zien	, 
+[eric@almond ch-simple-web]$ pwd
+/home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-simple-web
+[eric@almond ch-simple-web]$ less pom.xml 
+  <groupId>org.sonatype.mavenbook.simpleweb</groupId>
+  <artifactId>parent</artifactId>
+  <version>0.8-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <modules>
+    <module>simple-webapp</module>
+  </modules>
+
+[eric@almond ch-simple-web]$ less simple-webapp/pom.xml 
+  <parent>
+        <artifactId>parent</artifactId>
+        <groupId>org.sonatype.mavenbook.simpleweb</groupId>
+        <version>0.8-SNAPSHOT</version>
+  </parent>
+  <artifactId>simple-webapp</artifactId>
+  <packaging>war</packaging>
+
+/ Blijkbaar wordt groupId en version inherit van parent	, 
+/ TODO
+/ Is dat de reden van de parent	?
+/ TODO
+
+/ 13	. 
+
+/ deploy in tomcat	,
+
+/ Lees over tomcat plugin	, 
+https://stackoverflow.com/questions/26883836/tomcat-8-maven-plugin-for-java-8	
+
+[eric@almond apache-tomcat-7.0.62]$ pwd
+/home/eric/Devel/Java/Tomcat/apache-tomcat-7.0.62
+[eric@almond apache-tomcat-7.0.62]$ less conf/tomcat-users.xml 
+<tomcat-users>
+  <role rolename="manager-gui"/>
+  <role rolename="manager-script"/>
+  <user username="tomcat" password="s3cret" roles="manager-gui,manager-script"/>
+</tomcat-users>
+/ TODO Moeten beide roles	?
+
+$ vi ~/.m2/settings.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+        <servers>
+                <server>
+                        <id>tomcat</id>
+                        <username>tomcat</username>
+                        <password>s3cret</password>
+                </server>
+        </servers>
+</settings>
+
+/ we moesten
+$ unset JAVA_HOME
+/ TODO
+[eric@almond apache-tomcat-7.0.62]$ bin/catalina.sh jpda run
+/ OK
+
+/ 13	. 
+
+/ aanpassen pom file	,
+
+$ pwd
+/home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-simple-web/simple-webapp
+$ vi pom.xml 
+
+	 <dependency>
+	    <groupId>javax.servlet</groupId>
+	    <artifactId>javax.servlet-api</artifactId>
+	    <version>3.1.0</version>
+	</dependency>
+
+      <plugin>
+     	<groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.6.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+          <groupId>org.apache.tomcat.maven</groupId>
+          <artifactId>tomcat7-maven-plugin</artifactId>
+          <version>2.2</version>
+          <configuration>
+	          <port>8080</port>
+	          <path>/${project.artifactId}</path>
+	          <url>http://localhost:8080/manager/text</url>
+	          <server>tomcat</server>
+          </configuration>
+  </plugin>
+/ TODO <port> MOET	?
+
+/ In eclipse run config	, 
+name: ch-simple-web-deploy
+base dir: ${workspace_loc:/examples/ch-simple-web/simple-webapp}
+goals: tomcat7:undeploy clean package tomcat7:deploy
+
+/ we moeten dit doen in ${workspace_loc:/examples/ch-simple-web/simple-webapp}, NIET in ${workspace_loc:/examples/ch-simple-web}
+/ TODO
+/ package kan WEL in ${workspace_loc:/examples/ch-simple-web}
+
+/ Geef	,
+http://localhost:8080/simple-webapp/
+/ we zien index.jsp
+Hello World
+
+/ we hebben ook run config	,
+name: ch-simple-web-sources
+base dir: ${workspace_loc:/examples/ch-simple-web/simple-webapp}
+goals: dependency:sources
+
+/ 13	. 
+/ Geef	,
+http://localhost:8080/simple-webapp/simple
+/ we zien	,
+SimpleServlet Executed
+
+/ Lees	, 
+http://www.avajava.com/tutorials/lessons/how-do-i-update-my-maven-project-to-work-in-eclipse.html 
+
+tomcat7:undeploy clean package tomcat7:deploy
+clean package
+dependency:sources
+
+/ 13	. 
+
+$ vi SimpleServet.java 
+
+@WebServlet("/simple")
+public class SimpleServlet extends HttpServlet {
+
+/ We moeten web.xml	aanpassen,
+
+/ Lees	,
+https://www.mkyong.com/web-development/the-web-xml-deployment-descriptor-examples/
+
+$ vi web.xml
+
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+		 http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+</web-app>
+
+/ Geef	,
+http://localhost:8080/simple-webapp/simple
+
+/ WAS:
+$ vi web.xml
+
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>Archetype Created Web Application</display-name>
+  <servlet>
+    <servlet-name>simple</servlet-name>
+    <servlet-class>org.sonatype.mavenbook.web.SimpleServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>simple</servlet-name>
+    <url-pattern>/simple</url-pattern>
+  </servlet-mapping>
+</web-app>
+
+
+/ Einde CH-SIMPLE-WEBAPP
+
+/ CH-MULTI
+
+/ we delete in eclipse van ch-simple-webapp
+parent
+simple-webapp
+
+/ import in eclipse existing maven projecct, examples/ch-multi
+
+/ we zien 
+parent					/home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi
+simple-parent		/home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent
+simple-weather	/home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-weather
+simple-webapp		/home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-webapp
+
+/ we zien dus parent opnieuw	, maar is een andere als net	,
+
+/ 13	. 
+
+/ Belangrijkste	 
+
+@WebServlet("/weather")
+public class WeatherServlet extends HttpServlet {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	String zip = request.getParameter("zip" );
+	WeatherService weatherService = new WeatherService();			/ (*)
+
+public class WeatherService {
+    public String retrieveForecast( String zip ) throws Exception {
+			InputStream dataIn = new YahooRetriever().retrieve( zip );
+
+public class YahooRetriever {
+	public InputStream retrieve(String zipcode) throws Exception {
+		String url = "http://weather.yahooapis.com/forecastrss?p=" + zipcode;
+		URLConnection conn = new URL(url).openConnection();
+		return conn.getInputStream();
+
+/ (*) we zien dat WeatherServlet zelf new doet	:
+	WeatherService weatherService = new WeatherService();			/ (*)
+
+/ Dat gaat we straks in ch-multi-spring Spring laten doen	, ook kun je WeatherServlet niet goed testen	, omdat je WeatherService niet kan vervangen en mock	,
+
+
+
+/ 13	. 
+
+/ we maken run configs	,
+
+name: parent-install
+base dir: ${workspace_loc:/parent}
+goals: clean install
+
+
+simple-webapp-deploy
+${workspace_loc:/simple-webapp}
+tomcat7:undeploy tomcat7:deploy 
+
+/ 13	. 
+
+[eric@almond webapps]$ ls ~/.m2/repository/org/sonatype/mavenbook/multi/
+parent  simple-parent  simple-weather  simple-webapp
+[eric@almond webapps]$ ls ~/.m2/repository/org/sonatype/mavenbook/multi/parent/0.8-SNAPSHOT/
+maven-metadata-local.xml  parent-0.8-SNAPSHOT.pom  _remote.repositories
+
+/ Als we simple-webapp deploy 	, vraagt TODO om parent's pom
+/ Daarom moeten we ook parent install	, en niet alleen simple-parent
+/ TODO
+
+/ we zien ook	,
+
+[eric@almond webapps]$ ls ~/.m2/repository/org/sonatype/mavenbook/multi/simple-parent/0.8-SNAPSHOT/
+maven-metadata-local.xml  _remote.repositories  simple-parent-0.8-SNAPSHOT.pom
+[eric@almond webapps]$ ls ~/.m2/repository/org/sonatype/mavenbook/multi/simple-weather/0.8-SNAPSHOT/
+maven-metadata-local.xml  _remote.repositories  simple-weather-0.8-SNAPSHOT.jar  simple-weather-0.8-SNAPSHOT.pom
+[eric@almond webapps]$ ls ~/.m2/repository/org/sonatype/mavenbook/multi/simple-webapp/0.8-SNAPSHOT/
+maven-metadata-local.xml  _remote.repositories  simple-webapp-0.8-SNAPSHOT.pom  simple-webapp-0.8-SNAPSHOT.war
+
+
+/ run config parent-install
+
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] Multi Chapter Parent Project
+[INFO] Multi Chapter Simple Parent Project
+[INFO] Multi Chapter Simple Weather API
+[INFO] simple-webapp
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Multi Chapter Parent Project 0.8-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ parent ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.4:install (default-install) @ parent ---
+[INFO] Installing /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/pom.xml to /home/eric/.m2/repository/org/sonatype/mavenbook/multi/parent/0.8-SNAPSHOT/parent-0.8-SNAPSHOT.pom
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Multi Chapter Simple Parent Project 0.8-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ simple-parent ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.4:install (default-install) @ simple-parent ---
+[INFO] Installing /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/pom.xml to /home/eric/.m2/repository/org/sonatype/mavenbook/multi/simple-parent/0.8-SNAPSHOT/simple-parent-0.8-SNAPSHOT.pom
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Multi Chapter Simple Weather API 0.8-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[WARNING] The artifact org.apache.commons:commons-io:jar:1.3.2 has been relocated to commons-io:commons-io:jar:1.3.2
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ simple-weather ---
+[INFO] Deleting /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-weather/target
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ simple-weather ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.6.1:compile (default-compile) @ simple-weather ---
+[INFO] Changes detected - recompiling the module!
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 6 source files to /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-weather/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ simple-weather ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.6.1:testCompile (default-testCompile) @ simple-weather ---
+[INFO] Changes detected - recompiling the module!
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 2 source files to /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-weather/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ simple-weather ---
+[INFO] Surefire report directory: /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-weather/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.sonatype.mavenbook.weather.yahoo.YahooParserTest
+0    INFO  YahooParser  - Creating XML Reader
+186  INFO  YahooParser  - Parsing XML Response
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.309 sec
+Running org.sonatype.mavenbook.weather.yahoo.WeatherFormatterTest
+232  INFO  YahooParser  - Creating XML Reader
+238  INFO  YahooParser  - Parsing XML Response
+242  INFO  WeatherFormatter  - Formatting Weather Data
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.076 sec
+
+Results :
+
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ simple-weather ---
+[INFO] Building jar: /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-weather/target/simple-weather-0.8-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-install-plugin:2.4:install (default-install) @ simple-weather ---
+[INFO] Installing /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-weather/target/simple-weather-0.8-SNAPSHOT.jar to /home/eric/.m2/repository/org/sonatype/mavenbook/multi/simple-weather/0.8-SNAPSHOT/simple-weather-0.8-SNAPSHOT.jar
+[INFO] Installing /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-weather/pom.xml to /home/eric/.m2/repository/org/sonatype/mavenbook/multi/simple-weather/0.8-SNAPSHOT/simple-weather-0.8-SNAPSHOT.pom
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building simple-webapp 0.8-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ simple-webapp ---
+[INFO] Deleting /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-webapp/target
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ simple-webapp ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-webapp/src/main/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.6.1:compile (default-compile) @ simple-webapp ---
+[INFO] Changes detected - recompiling the module!
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 2 source files to /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-webapp/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ simple-webapp ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-webapp/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.6.1:testCompile (default-testCompile) @ simple-webapp ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ simple-webapp ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- maven-war-plugin:2.2:war (default-war) @ simple-webapp ---
+[INFO] Packaging webapp
+[INFO] Assembling webapp [simple-webapp] in [/home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-webapp/target/simple-webapp]
+[INFO] Processing war project
+[INFO] Copying webapp resources [/home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-webapp/src/main/webapp]
+[INFO] Webapp assembled in [81 msecs]
+[INFO] Building war: /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-webapp/target/simple-webapp.war
+[INFO] WEB-INF/web.xml already added, skipping
+[INFO] 
+[INFO] --- maven-install-plugin:2.4:install (default-install) @ simple-webapp ---
+[INFO] Installing /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-webapp/target/simple-webapp.war to /home/eric/.m2/repository/org/sonatype/mavenbook/multi/simple-webapp/0.8-SNAPSHOT/simple-webapp-0.8-SNAPSHOT.war
+[INFO] Installing /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-webapp/pom.xml to /home/eric/.m2/repository/org/sonatype/mavenbook/multi/simple-webapp/0.8-SNAPSHOT/simple-webapp-0.8-SNAPSHOT.pom
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] Multi Chapter Parent Project ....................... SUCCESS [  0.656 s]
+[INFO] Multi Chapter Simple Parent Project ................ SUCCESS [  0.038 s]
+[INFO] Multi Chapter Simple Weather API ................... SUCCESS [  4.231 s]
+[INFO] simple-webapp ...................................... SUCCESS [  1.132 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 6.204 s
+[INFO] Finished at: 2017-06-05T17:39:37+02:00
+[INFO] Final Memory: 20M/208M
+[INFO] ------------------------------------------------------------------------
+
+/ 13	. 
+
+
+[eric@almond examples]$ jar tvf ch-multi/simple-parent/simple-weather/target/simple-weather-0.8-SNAPSHOT.jar 
+     0 Mon Jun 05 16:26:06 CEST 2017 META-INF/
+   130 Mon Jun 05 16:26:04 CEST 2017 META-INF/MANIFEST.MF
+     0 Mon Jun 05 16:26:04 CEST 2017 org/
+     0 Mon Jun 05 16:26:04 CEST 2017 org/sonatype/
+     0 Mon Jun 05 16:26:04 CEST 2017 org/sonatype/mavenbook/
+     0 Mon Jun 05 16:26:04 CEST 2017 org/sonatype/mavenbook/weather/
+   534 Mon Jun 05 16:26:02 CEST 2017 log4j.properties
+   291 Mon Jun 05 16:26:02 CEST 2017 output.vm
+  1078 Mon Jun 05 16:26:04 CEST 2017 org/sonatype/mavenbook/weather/WeatherService.class
+  1749 Mon Jun 05 16:26:04 CEST 2017 org/sonatype/mavenbook/weather/WeatherFormatter.class
+  1307 Mon Jun 05 16:26:04 CEST 2017 org/sonatype/mavenbook/weather/YahooRetriever.class
+  1751 Mon Jun 05 16:26:04 CEST 2017 org/sonatype/mavenbook/weather/Main.class
+  2555 Mon Jun 05 16:26:04 CEST 2017 org/sonatype/mavenbook/weather/YahooParser.class
+  1667 Mon Jun 05 16:26:04 CEST 2017 org/sonatype/mavenbook/weather/Weather.class
+     0 Mon Jun 05 16:26:06 CEST 2017 META-INF/maven/
+     0 Mon Jun 05 16:26:06 CEST 2017 META-INF/maven/org.sonatype.mavenbook.multi/
+     0 Mon Jun 05 16:26:06 CEST 2017 META-INF/maven/org.sonatype.mavenbook.multi/simple-weather/
+  1725 Mon Jun 05 10:35:10 CEST 2017 META-INF/maven/org.sonatype.mavenbook.multi/simple-weather/pom.xml
+   135 Mon Jun 05 16:26:04 CEST 2017 META-INF/maven/org.sonatype.mavenbook.multi/simple-weather/pom.properties
+
+[eric@almond examples]$ jar tvf ch-multi/simple-parent/simple-webapp/target/simple-webapp.war 
+     0 Mon Jun 05 16:26:06 CEST 2017 META-INF/
+   130 Mon Jun 05 16:26:04 CEST 2017 META-INF/MANIFEST.MF
+     0 Mon Jun 05 16:26:06 CEST 2017 WEB-INF/
+     0 Mon Jun 05 16:26:06 CEST 2017 WEB-INF/classes/
+     0 Mon Jun 05 16:26:06 CEST 2017 WEB-INF/classes/org/
+     0 Mon Jun 05 16:26:06 CEST 2017 WEB-INF/classes/org/sonatype/
+     0 Mon Jun 05 16:26:06 CEST 2017 WEB-INF/classes/org/sonatype/mavenbook/
+     0 Mon Jun 05 16:26:06 CEST 2017 WEB-INF/classes/org/sonatype/mavenbook/web/
+     0 Mon Jun 05 16:26:06 CEST 2017 WEB-INF/lib/
+   741 Mon Jun 05 10:35:10 CEST 2017 WEB-INF/web.orig.xml
+  1833 Mon Jun 05 16:26:06 CEST 2017 WEB-INF/classes/org/sonatype/mavenbook/web/WeatherServlet.class
+  1102 Mon Jun 05 16:26:06 CEST 2017 WEB-INF/classes/org/sonatype/mavenbook/web/SimpleServlet.class
+   283 Mon Jun 05 14:58:30 CEST 2017 WEB-INF/web.xml
+1010675 Mon Oct 24 22:05:18 CEST 2016 WEB-INF/lib/xercesImpl-2.6.2.jar
+ 65261 Sat Jun 27 09:23:10 CEST 2015 WEB-INF/lib/oro-2.0.8.jar
+392124 Mon Jun 05 14:36:08 CEST 2017 WEB-INF/lib/velocity-1.5.jar
+207723 Wed Jul 08 19:51:44 CEST 2015 WEB-INF/lib/commons-lang-2.1.jar
+367444 Mon Jun 05 14:29:56 CEST 2017 WEB-INF/lib/log4j-1.2.14.jar
+313898 Mon Jun 29 22:42:14 CEST 2015 WEB-INF/lib/dom4j-1.6.1.jar
+124724 Mon Oct 24 22:05:18 CEST 2016 WEB-INF/lib/xmlParserAPIs-2.6.2.jar
+108874 Mon Jun 05 14:29:58 CEST 2017 WEB-INF/lib/xom-1.0.jar
+226915 Mon Jun 05 14:29:58 CEST 2017 WEB-INF/lib/jaxen-1.1.1.jar
+559366 Mon Jun 05 14:30:12 CEST 2017 WEB-INF/lib/commons-collections-3.1.jar
+153253 Mon Feb 27 23:47:28 CET 2017 WEB-INF/lib/jdom-1.0.jar
+ 95806 Mon Jun 05 11:11:40 CEST 2017 WEB-INF/lib/javax.servlet-api-3.1.0.jar
+2450757 Mon Jun 05 14:30:04 CEST 2017 WEB-INF/lib/icu4j-2.6.1.jar
+  8748 Mon Jun 05 16:26:04 CEST 2017 WEB-INF/lib/simple-weather-0.8-SNAPSHOT.jar
+109318 Sat Jun 27 09:23:10 CEST 2015 WEB-INF/lib/xml-apis-1.0.b2.jar
+3149655 Mon Jun 05 14:30:02 CEST 2017 WEB-INF/lib/xalan-2.6.0.jar
+    52 Mon Jun 05 10:35:10 CEST 2017 index.jsp
+     0 Mon Jun 05 16:26:08 CEST 2017 META-INF/maven/
+     0 Mon Jun 05 16:26:08 CEST 2017 META-INF/maven/org.sonatype.mavenbook.multi/
+     0 Mon Jun 05 16:26:08 CEST 2017 META-INF/maven/org.sonatype.mavenbook.multi/simple-webapp/
+  1720 Mon Jun 05 16:20:42 CEST 2017 META-INF/maven/org.sonatype.mavenbook.multi/simple-webapp/pom.xml
+   134 Mon Jun 05 16:26:06 CEST 2017 META-INF/maven/org.sonatype.mavenbook.multi/simple-webapp/pom.properties
+
+/ Dus in simple-webapp.war zien we	, 
+  1833 Mon Jun 05 16:26:06 CEST 2017 WEB-INF/classes/org/sonatype/mavenbook/web/WeatherServlet.class
+  1102 Mon Jun 05 16:26:06 CEST 2017 WEB-INF/classes/org/sonatype/mavenbook/web/SimpleServlet.class
+/ en	, 
+  8748 Mon Jun 05 16:26:04 CEST 2017 WEB-INF/lib/simple-weather-0.8-SNAPSHOT.jar
+/ en alle mvn deps	, zoals	,
+367444 Mon Jun 05 14:29:56 CEST 2017 WEB-INF/lib/log4j-1.2.14.jar
+
+/ dus we zien de beide servlets uit simple-webapp	, 
+/ maar ook de weather jar, WH omdat  in simple-webapp	,
+$ pom.xml
+   <dependency>
+      <groupId>org.sonatype.mavenbook.multi</groupId>
+      <artifactId>simple-weather</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+/ Deze dep is ook nodig omdat WeatherServlet WeahterService vraagt	, 
+
+/ 13		. 
+
+/ we deden eerst	,
+/ maar ERR	,
+
+/ simple-parent package	, want we willen beide modules package	,
+/ simple-webapp deploy	, 
+
+/ dus 2 runconfigs	,
+name: simple-parent-package
+base dir: ${workspace_loc:/simple-parent}
+goals: clean package
+
+name: simple-webapp-deploy
+base dir: ${workspace_loc:/simple-webapp}
+goals: tomcat7:undeploy tomcat7:deploy 
+
+/ start tomcat 
+[eric@almond apache-tomcat-7.0.62]$ pwd
+/home/eric/Devel/Java/Tomcat/apache-tomcat-7.0.62
+$ bin/catalina.sh jpda run
+
+
+/ na simple-parent package gedaan	, de simple-weather.jar zit in de simple-webapp.war	,
+/ In simple-webapp's  pom staat de dep op simple-weather	,
+/ Als we simple-webapp deploy, zien we  
+[ERROR] Failed to execute goal on project simple-webapp: Could not resolve dependencies for project org.sonatype.mavenbook.multi:simple-webapp:war:0.8-SNAPSHOT: Could not find artifact org.sonatype.mavenbook.multi:simple-weather:jar:0.8-SNAPSHOT -> [Help 1]
+
+/ we doen daarom net als net
+/ we hebben simple-parent package gedaan	, de simple-weather.jar zit in de simple-webapp.war	,
+/ we comment out in simple-webapp's  pom dep op simple-weather	,	want simple-weather.jar zit toch al in de simple-webapp.war	,
+en deploy simple-webapp	, dit nu OK
+/ geef	,
+http://localhost:8080/simple-webapp/weather?zip=01201
+/ ERROR
+javax.servlet.ServletException: Error instantiating servlet class org.sonatype.mavenbook.web.WeatherServlet
+	org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:505)
+	org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:103)
+	org.apache.catalina.valves.AccessLogValve.invoke(AccessLogValve.java:957)
+	org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:423)
+	org.apache.coyote.http11.AbstractHttp11Processor.process(AbstractHttp11Processor.java:1079)
+	org.apache.coyote.AbstractProtocol$AbstractConnectionHandler.process(AbstractProtocol.java:620)
+	org.apache.tomcat.util.net.JIoEndpoint$SocketProcessor.run(JIoEndpoint.java:316)
+	java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	java.lang.Thread.run(Thread.java:745)
+root cause
+
+java.lang.Error: Unresolved compilation problems: 
+	The import org.sonatype.mavenbook.weather cannot be resolved
+	WeatherService cannot be resolved to a type
+	WeatherService cannot be resolved to a type
+
+	org.sonatype.mavenbook.web.WeatherServlet.<init>(WeatherServlet.java:3)
+	sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
+	sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	java.lang.reflect.Constructor.newInstance(Constructor.java:423)
+	java.lang.Class.newInstance(Class.java:442)
+	org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:505)
+	org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:103)
+	org.apache.catalina.valves.AccessLogValve.invoke(AccessLogValve.java:957)
+	org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:423)
+	org.apache.coyote.http11.AbstractHttp11Processor.process(AbstractHttp11Processor.java:1079)
+	org.apache.coyote.AbstractProtocol$AbstractConnectionHandler.process(AbstractProtocol.java:620)
+	org.apache.tomcat.util.net.JIoEndpoint$SocketProcessor.run(JIoEndpoint.java:316)
+	java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	java.lang.Thread.run(Thread.java:745)
+
+/ toch zien we	, 
+[eric@almond webapps]$ pwd
+/home/eric/Devel/Java/Tomcat/apache-tomcat-7.0.62/webapps
+[eric@almond webapps]$ ls simple-webapp/WEB-INF/lib/
+commons-collections-3.1.jar  javax.servlet-api-3.1.0.jar  oro-2.0.8.jar                    xercesImpl-2.6.2.jar
+commons-lang-2.1.jar         jaxen-1.1.1.jar              simple-weather-0.8-SNAPSHOT.jar  xml-apis-1.0.b2.jar
+dom4j-1.6.1.jar              jdom-1.0.jar                 velocity-1.5.jar                 xmlParserAPIs-2.6.2.jar
+icu4j-2.6.1.jar              log4j-1.2.14.jar             xalan-2.6.0.jar                  xom-1.0.jar
+/ Dus simple-weather zit er in	,
+/ TODO
+
+/ 13	. 
+
+/ simple-parent install
+
+Installing /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-weather/target/simple-weather-0.8-SNAPSHOT.jar to /home/eric/.m2/repository/org/sonatype/mavenbook/multi/simple-weather/0.8-SNAPSHOT/simple-weather-0.8-SNAPSHOT.jar
+[INFO] Installing /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-weather/pom.xml to /home/eric/.m2/repository/org/sonatype/mavenbook/multi/simple-weather/0.8-SNAPSHOT/simple-weather-0.8-SNAPSHOT.pom
+[INFO]                                                                  
+
+[INFO] --- maven-install-plugin:2.4:install (default-install) @ simple-webapp ---
+[INFO] Installing /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-webapp/target/simple-webapp.war to /home/eric/.m2/repository/org/sonatype/mavenbook/multi/simple-webapp/0.8-SNAPSHOT/simple-webapp-0.8-SNAPSHOT.war
+[INFO] Installing /home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi/simple-parent/simple-webapp/pom.xml to /home/eric/.m2/repository/org/sonatype/mavenbook/multi/simple-webapp/0.8-SNAPSHOT/simple-webapp-0.8-SNAPSHOT.pom
+[INFO] ------------------------------------------------------------------------
+
+/ simple-webapp deploy	,
+
+Failed to execute goal on project simple-webapp: Could not resolve dependencies for project org.sonatype.mavenbook.multi:simple-webapp:war:0.8-SNAPSHOT: Failed to collect dependencies at org.sonatype.mavenbook.multi:simple-weather:jar:0.8-SNAPSHOT: Failed to read artifact descriptor for org.sonatype.mavenbook.multi:simple-weather:jar:0.8-SNAPSHOT: Could not find artifact org.sonatype.mavenbook.multi:parent:pom:0.8-SNAPSHOT -> [Help 1]
+[ERROR] 
+
+/ we moeten dus doen	,  
+parent : install
+simple-webapp: deploy
+
+/ 13	. 
+
+/ Geef	,
+http://localhost:8080/simple-webapp/weather?zip=01201
+/ ERR:
+Error Retrieving Forecast: Server returned HTTP response code: 401 for URL: http://weather.yahooapis.com/forecastrss?p=01201
+
+/ ze hebben veranderd:
+
+/ Geef	,
+http://weather.yahooapis.com/forecastrss?p=01201
+
+<yahoo:error xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" xml:lang="en-US" yahoo:uri="http://yahoo.com">
+<yahoo:description>
+Please provide valid credentials. OAuth oauth_problem="OST_OAUTH_PARAMETER_ABSENT_ERROR", realm="yahooapis.com"
+</yahoo:description>
+<yahoo:detail>
+Please provide valid credentials. OAuth oauth_problem="OST_OAUTH_PARAMETER_ABSENT_ERROR", realm="yahooapis.com"
+</yahoo:detail>
+</yahoo:error>
+
+/ TODO
+
+/ 13	. 
+
+[eric@almond examples]$ jar tvf ch-multi/simple-parent/simple-weather/target/simple-weather-0.8-SNAPSHOT.jar 
+     0 Mon Jun 05 17:39:36 CEST 2017 META-INF/
+   130 Mon Jun 05 17:39:34 CEST 2017 META-INF/MANIFEST.MF
+     0 Mon Jun 05 17:39:34 CEST 2017 org/
+     0 Mon Jun 05 17:39:34 CEST 2017 org/sonatype/
+     0 Mon Jun 05 17:39:34 CEST 2017 org/sonatype/mavenbook/
+     0 Mon Jun 05 17:39:34 CEST 2017 org/sonatype/mavenbook/weather/
+   534 Mon Jun 05 17:39:32 CEST 2017 log4j.properties
+   291 Mon Jun 05 17:39:32 CEST 2017 output.vm
+  1078 Mon Jun 05 17:39:34 CEST 2017 org/sonatype/mavenbook/weather/WeatherService.class
+  1749 Mon Jun 05 17:39:34 CEST 2017 org/sonatype/mavenbook/weather/WeatherFormatter.class
+  1307 Mon Jun 05 17:39:34 CEST 2017 org/sonatype/mavenbook/weather/YahooRetriever.class
+  1751 Mon Jun 05 17:39:34 CEST 2017 org/sonatype/mavenbook/weather/Main.class
+  2555 Mon Jun 05 17:39:34 CEST 2017 org/sonatype/mavenbook/weather/YahooParser.class
+  1667 Mon Jun 05 17:39:34 CEST 2017 org/sonatype/mavenbook/weather/Weather.class
+     0 Mon Jun 05 17:39:36 CEST 2017 META-INF/maven/
+     0 Mon Jun 05 17:39:36 CEST 2017 META-INF/maven/org.sonatype.mavenbook.multi/
+     0 Mon Jun 05 17:39:36 CEST 2017 META-INF/maven/org.sonatype.mavenbook.multi/simple-weather/
+  1725 Mon Jun 05 10:35:10 CEST 2017 META-INF/maven/org.sonatype.mavenbook.multi/simple-weather/pom.xml
+   135 Mon Jun 05 17:39:36 CEST 2017 META-INF/maven/org.sonatype.mavenbook.multi/simple-weather/pom.properties
+/ we zien GEEN deps	,
+/ TODO
+
+eric@almond examples]$ jar tvf ch-multi/simple-parent/simple-webapp/target/simple-webapp.war 
+     0 Mon Jun 05 17:39:38 CEST 2017 META-INF/
+   130 Mon Jun 05 17:39:36 CEST 2017 META-INF/MANIFEST.MF
+     0 Mon Jun 05 17:39:36 CEST 2017 WEB-INF/
+     0 Mon Jun 05 17:39:36 CEST 2017 WEB-INF/classes/
+     0 Mon Jun 05 17:39:36 CEST 2017 WEB-INF/classes/org/
+     0 Mon Jun 05 17:39:36 CEST 2017 WEB-INF/classes/org/sonatype/
+     0 Mon Jun 05 17:39:36 CEST 2017 WEB-INF/classes/org/sonatype/mavenbook/
+     0 Mon Jun 05 17:39:36 CEST 2017 WEB-INF/classes/org/sonatype/mavenbook/web/
+     0 Mon Jun 05 17:39:36 CEST 2017 WEB-INF/lib/
+   741 Mon Jun 05 10:35:10 CEST 2017 WEB-INF/web.orig.xml
+  1833 Mon Jun 05 17:39:36 CEST 2017 WEB-INF/classes/org/sonatype/mavenbook/web/WeatherServlet.class
+  1102 Mon Jun 05 17:39:36 CEST 2017 WEB-INF/classes/org/sonatype/mavenbook/web/SimpleServlet.class
+   283 Mon Jun 05 14:58:30 CEST 2017 WEB-INF/web.xml
+1010675 Mon Oct 24 22:05:18 CEST 2016 WEB-INF/lib/xercesImpl-2.6.2.jar
+ 65261 Sat Jun 27 09:23:10 CEST 2015 WEB-INF/lib/oro-2.0.8.jar
+392124 Mon Jun 05 14:36:08 CEST 2017 WEB-INF/lib/velocity-1.5.jar
+207723 Wed Jul 08 19:51:44 CEST 2015 WEB-INF/lib/commons-lang-2.1.jar
+367444 Mon Jun 05 14:29:56 CEST 2017 WEB-INF/lib/log4j-1.2.14.jar
+313898 Mon Jun 29 22:42:14 CEST 2015 WEB-INF/lib/dom4j-1.6.1.jar
+124724 Mon Oct 24 22:05:18 CEST 2016 WEB-INF/lib/xmlParserAPIs-2.6.2.jar
+108874 Mon Jun 05 14:29:58 CEST 2017 WEB-INF/lib/xom-1.0.jar
+226915 Mon Jun 05 14:29:58 CEST 2017 WEB-INF/lib/jaxen-1.1.1.jar
+559366 Mon Jun 05 14:30:12 CEST 2017 WEB-INF/lib/commons-collections-3.1.jar
+153253 Mon Feb 27 23:47:28 CET 2017 WEB-INF/lib/jdom-1.0.jar
+ 95806 Mon Jun 05 11:11:40 CEST 2017 WEB-INF/lib/javax.servlet-api-3.1.0.jar
+2450757 Mon Jun 05 14:30:04 CEST 2017 WEB-INF/lib/icu4j-2.6.1.jar
+  8748 Mon Jun 05 17:39:36 CEST 2017 WEB-INF/lib/simple-weather-0.8-SNAPSHOT.jar
+109318 Sat Jun 27 09:23:10 CEST 2015 WEB-INF/lib/xml-apis-1.0.b2.jar
+3149655 Mon Jun 05 14:30:02 CEST 2017 WEB-INF/lib/xalan-2.6.0.jar
+    52 Mon Jun 05 10:35:10 CEST 2017 index.jsp
+     0 Mon Jun 05 17:39:38 CEST 2017 META-INF/maven/
+     0 Mon Jun 05 17:39:38 CEST 2017 META-INF/maven/org.sonatype.mavenbook.multi/
+     0 Mon Jun 05 17:39:38 CEST 2017 META-INF/maven/org.sonatype.mavenbook.multi/simple-webapp/
+  1720 Mon Jun 05 16:58:30 CEST 2017 META-INF/maven/org.sonatype.mavenbook.multi/simple-webapp/pom.xml
+   134 Mon Jun 05 17:39:36 CEST 2017 META-INF/maven/org.sonatype.mavenbook.multi/simple-webapp/pom.properties
+
+
+/ Einde CH-MULTI
+
+/ CH-MULTI-SPRING
+
+/ import in eclipse existing maven proj ch-multi-spring
+/ we zien
+parent
+simple-command
+simple-model
+simple-parent
+simple-persist
+simple-weather
+simple-webapp
+
+/ 13	 .
+
+/ we zijn in simple-persist, WeatherDAO en we geven F3 op HibernateDaoSupport	,  
+public class WeatherDAO extends HibernateDaoSupport {
+/ we zien de source van HibernateDaoSupport	, en via -> in eclipse zien we dat in spring-2.0.7.jar	,
+																										 <-
+
+/ we zien in WeatherDAO	,
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+/ en we zien inderdaad de sources	,
+[eric@almond examples]$ ls ~/.m2/repository/org/springframework/spring/2.0.7/
+m2e-lastUpdated.properties     spring-2.0.7.jar               spring-2.0.7.pom               spring-2.0.7-sources.jar
+_remote.repositories           spring-2.0.7.jar.sha1          spring-2.0.7.pom.sha1          spring-2.0.7-sources.jar.sha1
+
+/ In simple-persist's src/main/resources zien we 
+applicationContext-persist.xml									/ spring app context	,
+hibernate.cfg.xml	,
+
+/ lees	,
+http://docs.spring.io/spring-framework/docs/2.0.8/api/
+org.springframework.orm.hibernate3 
+Class HibernateTemplate
+
+/ of	, 
+http://docs.spring.io/spring/docs/3.2.18.RELEASE/javadoc-api/
+public abstract class HibernateDaoSupport
+NOTE: As of Hibernate 3.0.1, transactional Hibernate access code can also be coded in plain Hibernate style. Hence, for newly started projects, consider adopting the standard Hibernate3 style of coding data access objects instead, based on SessionFactory.getCurrentSession().
+
+
+
+
+/13	. 
+
+/ lees	,
+http://docs.spring.io/spring/docs/3.2.18.RELEASE/spring-framework-reference/htmlsingle/#classic-spring-hibernate
+
+A.1 Classic ORM usage
+This section documents the classic usage patterns that you might encounter in a legacy Spring application. For the currently recommended usage patterns, please refer to the Chapter 15, Object Relational Mapping (ORM) Data Access chapter.
+
+A.1.1 Hibernate
+
+For the currently recommended usage patterns for Hibernate see Section 15.3, “Hibernate”
+
+/ we lezen bij 15.3.2 Implementing DAOs based on plain Hibernate 3 API over contextual sessions	,
+/ google: hibernate contextual sessions	,
+https://docs.jboss.org/hibernate/stable/core.old/reference/en/html/architecture-current-session.html
+https://docs.jboss.org/hibernate/orm/3.3/reference/en-US/html/architecture.html#architecture-current-session
+
+/ Lees	15.3.3, 
+http://docs.spring.io/spring/docs/3.2.18.RELEASE/spring-framework-reference/htmlsingle/#orm-hibernate
+
+
+/ Lees	, 
+http://docs.spring.io/spring/docs/3.2.18.RELEASE/javadoc-api/
+
+/ 13	. 
+
+/ Lees Walls	, ch 5 Spring & Hibernate	, (188)
+
+/ hij scrijft over LocalSessionFactoryBean en AnnotationSessionFactoryBean	, 
+
+/ in Spittr zien we in de appl context	, 
+$ vi RepositoryTest-context.xml
+
+ 	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+
+managed bean stateless session bean
+
+
+/ en uit maven book in simple-persist	,
+
+$ vi applicationContext-persist.xml
+
+	<bean id="sessionFactory"
+        class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <property name="annotatedClasses">
+            <list>
+                <value>org.sonatype.mavenbook.weather.model.Atmosphere</value>
+                <value>org.sonatype.mavenbook.weather.model.Condition</value>
+                <value>org.sonatype.mavenbook.weather.model.Location</value>
+                <value>org.sonatype.mavenbook.weather.model.Weather</value>
+                <value>org.sonatype.mavenbook.weather.model.Wind</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.format_sql">true</prop>
+                <prop key="hibernate.transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+                <prop key="hibernate.connection.pool_size">0</prop>
+        		<prop key="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</prop>
+        		<prop key="hibernate.connection.url">jdbc:hsqldb:data/weather;shutdown=true</prop>
+        		<prop key="hibernate.connection.username">sa</prop>
+        	    <prop key="hibernate.connection.password"></prop>
+        	    <prop key="hibernate.connection.autocommit">true</prop>
+        	    <prop key="hibernate.jdbc.batch_size">0</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="locationDAO" class="org.sonatype.mavenbook.weather.persist.LocationDAO">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    
+    <bean id="weatherDAO" class="org.sonatype.mavenbook.weather.persist.WeatherDAO">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+ </beans>
+ 
+/ Moeten we hiernaast ook nog een hibernate.cfg.xml	? 
+/ TODO
+
+
+ /13	. 
+
+
+/ Lees	, 
+https://github.com/eclipse/smarthome/pull/1275/commits/de4b9c6c373e525aee52d782f031b9f5f0c6f7e6
+
+/ onze query in YahooRetriever was	,
+http://weather.yahooapis.com/forecastrss?p=01201
+
+/ wat is p 	?
+
+
+/ Ipv 
+"http://weather.yahooapis.com/forecastrss?w=" + location + "&u=c";
+/ moeten we 	,
+https://query.yahooapis.com/v1/public/yql?format=xml&q=SELECT%20*%20FROM%20weather.forecast%20WHERE%20u=%27c%27%20AND%20woeid%20=%20%2701201%27
+/=
+https://query.yahooapis.com/v1/public/yql?format=xml&q=SELECT * FROM weather.forecast WHERE u='c' AND woeid ='01201'
+
+/ we hebben format json vervangen door xml	,
+
+/ ze doen w= ipv p= en u='c'
+/ TODO
+
+/ Einde CH-MULTI-SPRING

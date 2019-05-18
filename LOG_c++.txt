@@ -1,0 +1,1123 @@
+/ 7	. 
+
+/ lees,
+https://help.eclipse.org/mars/index.jsp?topic=%2Forg.eclipse.cdt.doc.user%2Freference%2Fcdt_u_prop_build_settings_tool.htm
+
+/ In project ch6 hadden op de een of ander manier 
+/ Als we 
+File, New, C++ project
+Project name: foo
+Project type: Executable
+								Empty project
+Toolchains
+Linux GCC
+Next
+Configurations
+Default
+/ Het gevolg is dat 
+/ right click project, Properties , C/C++ Build, Settings
+/ we hebben GEEN Tool settings, Build steps, Build artifact
+
+/ me2 heeft ook configuration Default (Active)
+/ Dit krijg je als je 
+File, New, C++ project, Makefile project, Empty project
+
+/ 7	. 
+
+/ Als je
+File, New, C++ project, Executable,
+/ dan build ziet de makefile niet	,
+
+/ lees	,
+https://help.eclipse.org/neon/index.jsp?topic=%2Forg.eclipse.cdt.doc.user%2Fgetting_started%2Fcdt_w_newproj.htm 
+
+/ 7	. 
+
+/ Kies een van de twee, click 'Advanced Settings' 
+/ onderaan staat:
+Additional configurations may be added after project creation.
+Use 'Manage configurations' buttons either on toolbar or property pages.
+/ Klopt	, 
+/ Op de toolbar is er een button 'Manage configurations'	, 
+/ of right click project, Properties	, C/C++ Build	,
+/ rechtsboven: click Manage configuration 
+/ click New,
+Name: Debug
+* import predefined / check, ernaast is een drop down list, open	,
+Executable > Linux GCC > Debug
+/ Kies deze als active	,
+OK /click
+/ click New,
+Name: Release 
+* import predefined / check, ernaast is een drop down list, open	,
+Executable > Linux GCC > Release 
+OK /click
+/ select Default
+/ click Delete
+
+/ right click project, Properties , C/C++ Build, Settings
+/ Kies Configuration: Debug [Active]
+GCC C++ compiler
+command g++
+All options: -O0 -g3 -Wall -fmessage-length=0
+
+/ Hier zien we bij GCC C++ compiler het verschil tussen Debug en Release: 
+/ kies Configuration Release
+/ Release heeft geen -g3 optie	, 
+
+
+
+
+
+
+
+/ 7	.
+
+/ Lees	, 
+https://www.tutorialspoint.com/cplusplus/cpp_quick_guide.htm
+
+/ Lees	,
+http://www.modernescpp.com/index.php/garbage-collectio-no-thanks
+/ via Rainer Grimm's tweet	,
+
+/ Lees	,
+https://twitter.com/search?q=rainer%20grimm&src=typd
+/ ->
+https://www.youtube.com/watch?v=e0DsVqZLMzU
+
+/ 7	. 
+
+	cb.s="foo";
+	samp cb2=cb;
+	free(cb.s);
+/ ERR	,
+/ free alleen op dyn alloc mem	, met malloc	,
+
+	samp cb;
+	cb.s=(char*)malloc(32);
+	samp cb2=cb;
+	free(cb.s); 	/ OK
+	free(cb2.s);	/ ERR
+
+/ 7	. 
+
+class samp{
+
+public:
+	char*s;
+	samp(){
+		cout<<"ctor"<<this<<",&s: "<<&s<<endl;
+		s='\0';
+	}
+	~samp(){
+		cout<<"dtor: "<<this<<", s: "<<s<<",&s: "<<&s<<endl;
+		if(s){
+			free(s);
+		}
+	}
+
+void f(){
+	samp cb;
+	cb.s=(char*)malloc(32);
+	free(cb.s);
+}
+int main() {
+	f();
+
+/ ERR als f exits	, want eerder was al  free(cb.s)	, en in ~ weer free(s)
+
+/ 7	 
+
+void f(){
+	samp cb;
+	cb.s=(char*)malloc(32);
+	samp cb2=cb;	 / bitwise copy	, cb.s==cb2.s
+	free(cb.s);
+	free(cb2.s); 	/ ERR	, 2 keer free	,
+	int i=0;
+
+}
+
+&cb	samp *	0x7fffffffd3c0	
+&str	samp *	0x7fffffffd3d0	
+
+/ 7	.
+
+/ free hoort bij malloc	,
+
+	char*s="foo";
+	free(s);
+/ ERR
+	char*s=(char*)malloc(32);
+	free(s);
+/ OK
+
+/ 7	. 
+
+#include <iostream>
+#include <cstdlib>
+#include <cstring>
+using namespace std;
+
+class samp{
+
+public:
+	char*s;
+	samp(){
+		cout<<"ctor"<<this<<",&s: "<<&s<<endl;
+		s='\0';
+	}
+	~samp(){
+		cout<<"dtor: "<<this<<", s: "<<s<<",&s: "<<&s<<endl;
+		if(s){
+			free(s);
+		}
+	}
+	void show(){
+		cout<<"show, "<<s<<",&s: "<<&s<<endl;}
+	void set(char*str);
+};
+
+void samp::set(char*str){
+	cout<<"set"<<endl;
+	s=(char*)malloc(sizeof(str)+1);
+	cout<<"set, s: "<<s<<",&s: "<<&s<<endl;
+	strcpy(s,str);
+}
+
+samp input(){
+	char s[128];
+	samp str;
+	cout<<"&str: "<<&str<<endl;
+	cout<<"Enter a string: ";
+	cin>>s;
+	str.set(s); 
+	return str;	/ we zien alleen de ~ op str	, er is geen temp copy zoals in boek		,
+}
+int main() {
+	samp cb;
+	cb=input();	 / copy	,
+	cb.show();
+	return 0;
+}						/ we zien de ~ op cb	,  maar omdat cb=copy str	, is ~ ERR	, omdat voor de 2de keer free	,
+
+/ we zien dat het OK gaat in input	, return van een local str	,
+/ TODO
+
+/ 7. 	
+
+samp i(){
+	samp l;
+	return l;
+}
+int main() {
+	samp s=i();
+	samp t;
+	t=i();
+	return 0;
+}
+
+/ bij
+	samp s=i();
+/ is s de samp l die in i is create	, op deze samp wordt ~samp NIET called,	
+/ bij 
+	samp t;
+	t=i();
+/ is t een bitwise copy van de samp l die in i wordt create	, op deze samp l wordt ~samp WEL called	,
+/ als main returned, wordt op s ~samp called,	en op t wordt ~samp called	,
+
+
+/ we debug	, 
+  samp s=i();
+/s
+samp i(){
+	samp l; 	/ &l	samp *	0x7fffffffd390	
+	return l;
+/t
+int main() {
+	samp s=i();	/ &s	samp *	0x7fffffffd390	
+/d
+	samp t;	/ &t	samp *	0x7fffffffd380	
+	t=i();
+/s
+samp i(){
+	samp l;			/ &l	samp *	0x7fffffffd3a0	
+	return l;
+/s
+	~samp(){ 	/ this	samp * const	0x7fffffffd3a0	
+/t
+	t=i(); 	/ &t	samp *	0x7fffffffd380	
+
+	return 0;
+}
+/s
+	~samp(){	 / this	samp * const	0x7fffffffd380	
+/t
+/s
+	~samp(){	 / this	samp * const	0x7fffffffd390	
+
+/ 7	. 
+
+
+samp j(){
+	samp l;
+	l.set("foo");
+}
+int main() {
+	samp s2=j();				/ nu wel copy	, TODO
+	samp t2;
+	t2=j();							/ we zien 3de samp obj	, TODO
+
+/ debug	, 
+int main() {
+	samp s2=j();
+/s
+samp j(){
+	samp l;			/ &l	samp *	0x7fffffffd380	
+	l.set("foo");
+l	samp	{...}	
+	s	char *	0x614c20 "foo"	
+}
+/s
+	~samp(){ 	/ this
+/t
+int main() {
+	samp s2=j();
+/d
+&s2	samp *	0x7fffffffd3c0	
+
+	samp t2;	/ &t2	samp *	0x7fffffffd3b0	
+	t2=j();
+/s
+samp j(){
+	samp l;			/ &l	samp *	0x7fffffffd380	
+	l.set("foo");
+l	samp	{...}	
+	s	char *	0x614c20 "foo"	
+}
+s/
+	~samp(){ 	/ this d380
+/t
+s/
+	~samp(){ 	/ this d3d0			<-
+		/ ERR	, 2de keer free	,
+
+
+
+
+
+
+
+
+
+/ 7	. 
+
+samp i(){
+	samp s;
+&s	samp *	0x7fffffffd3c0	
+
+	samp cb;
+&cb	samp *	0x7fffffffd3b0	
+
+	cb=input();
+/s
+samp input(){
+	samp str;
+&str	samp *	0x7fffffffd3d0	
+str	samp	{...}	
+	s	char *	0x614c50 "foo"	
+
+	return str;
+/s
+	~samp(){
+this	samp * const	0x7fffffffd3d0	
+	free(s)			/ OK 
+	s	char *	0x614c50 ""	
+/t
+int main() {
+cb	samp	{...}	
+	s	char *	0x614c50 ""	
+
+	return 0;
+/s
+	~samp(){
+this	samp * const	0x7fffffffd3b0	
+		if(s){
+this	samp * const	0x7fffffffd3b0	
+	s	char *	0x614c50 ""	
+			free(s);		 / ERR
+
+/ 7	. 
+
+/ 13	. 
+
+$ vi me2.cpp
+
+class samp{
+
+public:
+	char*s;
+		s='\0';
+	}
+	~samp(){
+		if(s){
+			free(s);
+		}
+	}
+}
+void samp::set(char* str){
+	s=(char*)malloc(sizeof(str)+1);
+	strcpy(s,str);
+}
+
+samp j(){
+	samp l;
+	samp m;
+	l.set("foo");
+	m.set("bar");
+	return l;
+}
+
+int main() {
+	j();
+
+/ we zien dat voor return l; ~samp op m, en na return l; ~samp op l	,
+
+/ 13	. 
+
+int main() {
+	samp t2;
+	t2=j();
+
+/ hetzelfde als hierboven voor j	,
+/ we zien dat voor return l; ~samp op m, en na return l; ~samp op l	,
+/ dan object copy van l in j naar t2	(l != t2), dus t2 krijgt released s	,
+/ op zich is dat geen ERR, maar als main exits, wordt ~samp op t2 called en dan ERR	, 
+/ er staat weliswaar strcpy(s,str)	, maar s wordt gewoon free	, wat dat betreft doet strcpy niets	,
+
+/ 13	. 
+
+int main() {
+	samp t2=j();
+
+/ nu is l in j==t2, dus wordt ~samp niet op l in j called,	 
+/ als main returns, wordt 
+
+/ 7	. 
+
+/ we maken een samp(char const*) ctor,
+
+$ vi me2.cpp
+
+class samp{
+
+public:
+	char*s;
+	samp(char const*p){
+		s=new char[strlen(p)+1];
+		strcpy(s,p);
+	}
+	~samp(){
+		if(s) free(s);
+	}
+}
+samp k(){
+	samp s("foo");
+	return s;
+}
+
+int main() {
+	samp s3("foo");  	/ precies goed: ~samp op s3 is called, na return main	, en dan wordt s3.s free: de bedoeling
+
+	samp s3=k(); / precies goed: als k returns, wordt ~samp op s in k niet called	, wel na return van main	, 
+
+	samp s3;
+	s3=samp("foo"); / ERR, want ~samp op samp("foo") wordt called, WH na s3=samp("foo), waardoor z'n s wordt free,
+									/ maar s3 is copy van samp("foo") dus krijgt dezelfde s , en ~samp op s3 na return main frees de 									/ mem waar s points to weer	, en dat is de ERR	,
+
+	samp s3;
+	s3=k();		/ ERR, precies hetzelfde als hierboven	, WH wordt de ~samp op de s in k called na s3=
+
+	return (0);
+}
+
+/ Lees	,
+https://en.wikipedia.org/wiki/Return_value_optimization
+
+/ 7	 
+
+/ copy ctor	,
+
+/ google	,
+copy constructor not called
+/ lees	,
+http://en.cppreference.com/w/cpp/language/copy_constructor
+
+/ google,
+copy constructor force called
+
+/ de copy ctor wordt called bij init, niet bij assign	,
+
+$ vi me2.cpp
+
+class samp{
+
+public:
+	char*s;
+	samp(){
+		s='\0';
+	}
+	samp(char const*p){
+		s=new char[strlen(p)+1];
+		strcpy(s,p);
+	}
+	samp(const samp&t){
+		s=new char[strlen(t.s)+1];
+		strcpy(s,t.s);
+	}
+	~samp(){
+		if(s) free(s);
+	}
+}
+
+int main() {
+	samp s3("foo");
+
+	samp s3=k();	/ cpy ctor called	, 
+
+	samp s3;
+	s3=samp("foo");	 / cpy ctor NIET called	, 
+
+	samp s3;
+	s3=k();
+
+/ Maar 
+	samp s3=k();	
+/ had geen problemen	, 
+/ we hadden ERR bij assign, maar daar lost de cpy ctor niets op, want wordt niet called	,
+
+/ 7	. 
+
+/ google,
+disable RVO/NRVO
+/ lees	,
+https://stackoverflow.com/questions/8758152/disabling-gs-return-value-optimisation
+
+-fno-elide-constructors
+
+
+int main(){
+	samp s3=k();
+
+/ nu geeft deze ook problemen	, 
+/ de copy ctor moet dit oplossen	, 
+/ TODO
+/ Of -fno-elide-constructors weghalen van g++ in Makefile
+
+$ vi me2.cpp
+
+lass samp{
+
+public:
+	char*s;
+	samp(){
+		s='\0';
+	}
+
+	samp(char const*str){
+		s=new char[strlen(str)+1];
+		strcpy(s,str);
+	}
+	~samp(){
+		if(s){
+			cout<<s<<","<<this<<endl;
+		}
+	}
+};
+/ we doen NIET free(s) in ~samp()	, maar print s	, dan zullen we 3 calls zien	,
+
+samp k(){
+	samp si("foo");
+	return si;
+}
+
+int main() {
+	samp s3=k();
+	return 0;
+}
+
+$ vi Makefile
+CXXFLAGS =	 -g -Wall -fmessage-length=0 -fno-elide-constructors
+
+/ run	,
+
+foo,0x7ffe9654d750
+foo,0x7ffe9654d780
+foo,0x7ffe9654d770
+
+/ we zien de ~samp op si als k exits, maar ook van de copy en van s3, als main exits	,
+
+/ 7	. 
+
+/ het probleem is dat er steeds een (bitwise) copy wordt gemaakt van het object	, er is dus een default copy ctor die dit doet	, 
+/ met een copy ctor zeggen we dat de copy niet meer bitwise is, maar ... 
+
+
+
+
+
+
+/ 7	. 
+
+/ kijk	,
+https://www.youtube.com/watch?v=y9sGAF1k63o	/ googletest in eclipse	,
+
+/ 7	. 
+
+/ lees functional programming in c++
+
+/ Lees	, 
+https://manning-content.s3.amazonaws.com/download/2/d33f70a-80d0-406d-86be-0020f244489a/Cukic_FPinCplusplus_MEAP_V03_ch1.pdf
+
+
+/ 7	. 
+
+/ we zien sigabtr alleen als de debug	, niet als we run	l
+/ sigabrt zien we als een char* 2 keer wordt free	,
+
+/ proj me3	,
+
+$ vi me3.cpp
+
+#include <iostream>
+#include <cstdlib>
+#include <cstring>
+using namespace std;
+
+class str{
+	char*p;
+public:
+	str(const char*s);
+	~str(){
+		delete[]p;
+	}
+	char*get(){
+		return p;
+	}
+
+};
+
+str::str(const char*s){
+	p=new char[strlen(s)+1];
+	strcpy(p,s);
+}
+void show(str x){
+	char*s=x.get();
+	cout<<s<<endl;
+
+}
+int main(){
+	str a("foo"),b("bar");
+	show(a);
+	show(b);
+}
+
+/ we zien sigabrt	,
+
+/ we maken daarom een copy ctor	,
+
+str::str(const str&x){
+	p=new char[strlen(x.p)+1];
+	strcpy(p,x.p);
+}
+/ Deze wordt called in show calls	, 
+/ en de ~str wordt 4 keer called	, en niet 2 keer dezelfde mem free	,
+
+/ 7	. 
+
+/ Ook een return is nu OK	,
+
+$ vi me3.cpp
+
+#include <iostream>
+#include <cstdlib>
+#include <cstring>
+using namespace std;
+
+class str{
+	char*p;
+public:
+	str(const char*s);
+	str(const str&x);
+	~str(){
+		delete[]p;
+	}
+	str f();
+	char*get(){
+		return p;
+	}
+
+};
+
+str::str(const char*s){
+	p=new char[strlen(s)+1]; // Un- or ill-initialized variable found 	TODO
+	strcpy(p,s);
+}
+str::str(const str&x){
+	p=new char[strlen(x.p)+1];
+	strcpy(p,x.p);
+}
+str str::f(){
+	str x("baz");
+	return x;
+}
+void show(str x){
+	char*s=x.get();
+	cout<<s<<endl;
+
+}
+int main(){
+	str a("foo"),b("bar");
+	show(a);
+	show(b);
+	str x=a.f();
+}
+
+/ OK, 
+/ debug ipv. run	, anders zie je misschien de sigabrt niet	,
+
+/ 7	. 
+
+/ google
+make all
+/ lees	,
+https://stackoverflow.com/questions/2514903/what-does-all-stand-for-in-a-makefile
+https://stackoverflow.com/questions/6856263/what-is-the-difference-between-make-and-make-all
+
+/ google
+make default rules
+https://www.gnu.org/software/make/manual/html_node/Catalogue-of-Rules.html
+
+/ google
+make $< $@
+/ automatic variables
+https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html
+
+/ lees	,
+https://www.gnu.org/software/make/manual/html_node/Suffix-Rules.html
+/ we moeten de pattern rules %.o:%.c hebben	,
+
+/ google,
+eclipse c++ console buffer size
+/ lees	,
+https://stackoverflow.com/questions/2600653/adjusting-eclipse-console-size
+/ Ga naar,
+Windows, preferences, C/C++, build, console
+limit console output (number of lines): 50000 (was 500)
+
+/ 7	. 
+
+/ we zien	,
+
+%: %.cpp
+#  recipe to execute (built-in):
+	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.cpp
+#  recipe to execute (built-in):
+	$(COMPILE.cpp) $(OUTPUT_OPTION) $<
+
+%: %.o
+#  recipe to execute (built-in):
+	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# default
+LINK.cpp = $(LINK.cc)
+# default
+LINK.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+
+# default
+CXX = g++
+# makefile (from 'Makefile', line 1)
+CXXFLAGS = -g -Wall -fmessage-length=0 -fno-elide-constructors
+
+CPPFLAGS is NIET def	,
+LDFLAGS is NIET def	,
+TARGET_ARCH is NIET def	,
+
+# default
+COMPILE.cpp = $(COMPILE.cc)
+# default
+COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+
+/ 7	 .
+
+/ prj ch6
+
+$ vi 6.2v1.cpp
+
+#include <iostream>
+#include <cstdlib>
+#include <cstring>
+using namespace std;
+
+class coord{
+	int x,y;
+public:
+	coord(){
+		x=0;
+		y=0;
+	}
+	coord(int i,int j){
+		x=i;
+		y=j;
+	}
+	~coord(){
+		cout<<"~coord() on "<<this<<endl;
+	}
+	void get_xy(int&i,int&j){
+		i=x;
+		j=y;
+	}
+	coord operator+(coord c);
+};
+coord coord::operator +(coord c){
+	coord t;
+	t.x=x+c.x;
+	t.y=y+c.y;
+	return t;
+}
+
+int main(){
+	coord c1(10,10),c2(5,3),c3;
+	int x,y;
+	c3=c1+c2;
+	c3.get_xy(x,y);
+	return 0;
+}
+
+/ Lees (99) en (167/168/169)
+/ we zien hieronder dat bij 
+coord coord::operator +(coord c){
+/ voor c een van de 2 ctor NIET wordt called, maar een default copy ctor, waarbij c de bitwise copy wordt van c2	, (de 2 ctor's passen ook niet, straks wel als we zelf een copy ctor maken)
+/ wel wordt de ~coord op c called,	
+
+/ we zien	,
+coord() op c1 
+coord() op c2
+coord() op c3
+coord() op t (in operator+)
+~coord() op t  
+~coord() op return coord 
+~coord() op c 
+~coord() op c3 
+~coord() op c2 
+~coord() op c1 
+
+/ de copy ctor (nu nog bitwise) wordt called (see boek (169)):
+coord t=c
+fct(c)
+y=fct(...) // copy return coord naar y	,
+
+/ in ons geval wordt in coord:operator+ de bitwise copy ctor 2 keer called: om c te maken, en om de return coord te maken	,
+
+/ als we een copy ctor maken, wordt deze geroepen ipv de bitwise copy ctor	,
+
+/ 13	. 
+
+/ we maken een copy ctor	, 
+
+$ vi 6.2v1.cpp
+
+public:
+	coord(const coord&c){
+		x=c.x;
+		y=c.y;
+	}
+
+/ Als we b set in deze copy ctor, dan zien we dat hij 2 keer wordt called in,
+coord coord::operator +(coord c){
+	coord t;
+	t.x=x+c.x;
+	t.y=y+c.y;
+	return t;
+}
+/ nl om c te maken , en om de return coord te maken	, de def ctor wordt called op t	,
+/ daarna wordt de dtor called op c,t, en op het return obj, na dat deze assigned is aan c3, met de operator=	,  
+/ TODO
+/ 13	. 
+
+/ dit kan ook	:
+
+coord coord::operator -(const coord&c){
+	coord t;
+	t.x=x+c.x;
+	t.y=this->y+c.y;
+	return t;
+}
+/ voor c wordt geen copy ctor en dtor called	,
+/ voor t wordt default ctor en dtor called, 
+/ voor return obj wordt copy ctor en dtor called	, 
+/ c3 krijgt return obj assigned met de operator=	,
+/ TODO
+
+/ 13	. 
+
+/ Dit moeten we NIET doen	,
+
+coord& coord::operator -(const coord&c){
+  coord t;
+  t.x=x+c.x;
+  t.y=this->y+c.y;
+  return t;
+}
+0x0000000000400ca8 in coord::operator= (this=0x7fffffffd380) at 6.2v1.cpp:7
+7	class coord{
+/ er wordt geen return obj create	, de dtor wordt eerst op t called, en daarna c3=t, maar ~ is op t 
+
+/ we maken	,
+	coord&operator=(const coord&c){
+		this->x=c.x;
+		this->y=c.y;
+		return *this;
+	}
+/ we zien dat als called, this=c3, en &c=0	, want t is net dtor op called	,
+/ TODO
+
+/ Deze operator= met returns coord& is OK	,
+
+/ 13	. 
+
+/ Deze 2 samen zijn OK,
+
+	coord&operator=(const coord&c){
+		this->x=c.x;
+		this->y=c.y;
+		return *this;
+	}
+};
+coord coord::operator -(const coord&c){
+	coord t;
+	t.x=x+c.x;
+	t.y=this->y+c.y;
+	return t;
+} 
+
+/ def ctor op c1,c2,c3,t
+/ copy ctor op ret
+/ ~ op t
+/ c3=ret
+/ ~ op ret	,
+/ en ~ op c3,c2,c1
+
+/ 13	. 
+/ Zoals het er nu staat, kan niet	,
+/ TODO
+
+/ 7	 .
+
+/ na operator= wordt de ~ called op het rechts	,
+
+$ vi 6.2v1.cpp
+
+class coord{
+	coord&operator=(const coord&c){
+		this->x=c.x;
+		this->y=c.y;
+		return *this;
+	}
+};
+coord coord::operator -(const coord& c){
+	coord t;
+	t.x=x+c.x;
+	t.y=this->y+c.y;
+	return t;
+}
+
+
+int main(){
+	coord c1(10,10),c2(5,3),c3;
+	c3=c1-c2;
+
+/ in operator- 
+	eerst de copy ctor, this=ret-: de ret- wordt create	,
+	dan de ~ op t	, 
+/ dan operator=, this=c3, arg c=ret-	,
+/	dan de ~ op ret-, dit komt door coord operator-	, heeft niets met operator= te doen	,
+/ dan als main exits, de ~ op c3, c2, c1	,
+
+/ 13	.
+
+/ we kunnen ook coord operator=	,
+
+class coord{
+	coord operator=(const coord&c){
+		this->x=c.x;
+		this->y=c.y;
+		return *this;
+	}
+};
+coord coord::operator -(const coord& c){
+	coord t;
+	t.x=x+c.x;
+	t.y=this->y+c.y;
+	return t;
+}
+int main(){
+	coord c1(10,10),c2(5,3),c3;
+	c3=c1-c2;
+
+/ er wordt:
+c3 create, default ctor,
+t create, default ctor,
+ret- create, copy ctor,
+~ op t,
+ret= create, copy ctor,
+~ op ret=
+~ op ret- 
+
+/ 7	 
+
+/ youtube	, 
+scott meyers
+/ Kijk,
+https://www.youtube.com/watch?v=RT46MpK39rQ&t=699s
+
+/ Kijk	,
+https://www.youtube.com/watch?v=WDIkqP4JbkE	/ scott meyers cpu caches
+->
+https://herbsutter.com/
+
+https://www.youtube.com/watch?v=wQxj20X-tIU / scott meyers type deduction
+
+https://www.youtube.com/watch?v=smqT9Io_bKo	 / scott meyers' books	,
+
+
+/ 7	. 
+
+/ google
+cuda databases
+/ lees	,
+https://www.infoworld.com/article/3123747/data-center/faster-with-gpus-5-turbocharged-databases.html
+https://community.hortonworks.com/articles/60416/pg-storm-let-postgresql-run-faster-on-the-gpu.html
+
+/ 7	. 
+
+/ google,
+c++ difference smart pointers raii
+/ lees over raii en smart pointers	,
+https://stackoverflow.com/questions/35859942/the-difference-between-raii-and-smart-pointers-in-c
+https://msdn.microsoft.com/en-us/library/hh279674.aspx
+https://www.youtube.com/watch?v=Jc9n9BcYSj4
+https://www.youtube.com/watch?v=lTB3kiltIuw
+https://www.youtube.com/watch?v=UOB7-B2MfwA 	/ <-
+
+/ 7	. 
+
+/ we hebben ch6 van Makefile project naar C++ project ,
+/ de makefile worden gen en verschijnen in Debug/ of in Release/	, al naar gelang de configuratie is	,
+
+/ Omdat de makefile anders is	, we hadden 2 .cpp file met main, en dat kan nu niet	, 
+/ Als we in ch6 
+File, New , source file
+main.cpp
+/ en we copy de main uit 6.2v1.cpp naar main.cpp	, dan kent hij type coord niet, 
+/ TODO
+
+/ 7	. 
+
+/ we maken C++ project ch6_2	, en we zien alleen nog maar Includes/	, 
+
+/ right click ch_2	, properties, C/c++ build, 
+GCC C++ compiler, Miscellaneous
+/ voeg toe: -fno-elide-constructors
+/ click nu GCC C++ compiler, dan zie je ze allemaal: O0 -g3 -Wall -c -fmessage-length=0 -fno-elide-constructors
+
+/ Debug/ met de makefiles wordt pas bij build gemaakt	,
+/ we maken ,
+File, New, Class
+Namespace: my
+Class name: Coord
+/ we zien
+
+$ vi Coord.h
+
+#ifndef COORD_H_
+#define COORD_H_
+
+namespace my {
+
+class Coord {
+public:
+	Coord();
+	virtual ~Coord();
+};
+
+} /* namespace my */
+
+#endif /* COORD_H_ */
+
+
+$ vi Coord.cpp
+
+#include "Coord.h"
+
+namespace my {
+
+Coord::Coord() {
+	// TODO Auto-generated constructor stub
+
+}
+
+Coord::~Coord() {
+	// TODO Auto-generated destructor stub
+}
+
+} /* namespace my */
+
+/ toen we de eerste keer, 
+File, New, Class
+Namespace: std
+/ We hebben er my van gemaakt, maar wat gebeurt er als we std kiezen	, hoeven we dan geen 
+using namespace std;
+/ of std::cout
+/ TODO 
+
+/ google,	
+eclipse c++ generate header file from source file
+/ het is juist andersom!
+/ lees	,
+https://stackoverflow.com/questions/2322705/auto-generate-header-files-for-a-c-source-file-in-an-ide
+
+$ vi Coord.h
+
+#ifndef COORD_H_
+#define COORD_H_
+
+namespace my {
+
+class Coord {
+	int x,y;
+public:
+	Coord();
+	Coord(int i,int j);
+	Coord(const Coord&c);
+	virtual ~Coord();
+	void getxy(int&i,int&j);
+	Coord operator+(Coord c);
+	Coord operator-(Coord&c);
+	Coord operator*(Coord&c);
+};
+
+} /* namespace my */
+
+#endif /* COORD_H_ */
+
+/ click
+Source, Implement method, Select all, OK,
+
+/ Ga ze nu implement in Coord.cpp	,
+
+
+
+ 

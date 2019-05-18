@@ -1,0 +1,56 @@
+/ 1	.
+
+2017-03-07 14:28:06,879 INFO  [com.mpobjects.dbpatch.DataBasePatcher] (main:) Executing patch [oms/patch-566-stock-trans-shipitem-idx$postgresql.sql] ...
+2017-03-07 14:28:06,913 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) create index IDX_STOCK_TRANSACTION_SHI on STOCK_TRANSACTION(SHIPMENT_ITEM_SYSTEMID)
+2017-03-07 14:28:06,913 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERROR: column "shipment_item_systemid" does not exist
+
+/ de stock patches komen uit de inventory module,        en deze staat niet in dsvcts-build-config.properties   ,
+/ oms/patch-566-stock-trans-shipitem-idx$postgresql.sql is ingechecked in oms patch, en die staat wel in dsvcts-build-config.properties , 
+module.oms.component=module
+/ en die 566 patch had onder inventory moeten zijn ingechecked  , 
+
+/ Zet deze patch op SKIPPED
+
+/ 2	. 
+
+2017-03-07 14:56:37,929 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-584-containerassocseq$postgresql.sql]: 
+2017-03-07 14:56:37,930 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) create sequence sysid_ContainerAssociation increment by 10
+2017-03-07 14:56:37,930 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERROR: relation "sysid_containerassociation" already exists
+/ we doen met de hand   , 
+
+eric@mposerv8:~$ PGPASSWORD=al5deewaoNgaavie3Oit6cheeWohdaYi psql -U mpo -h mposerv8 -p 5433 dsvcts
+dsvcts=> select setval('sysid_ContainerAssociation', (select greatest((select max(SYSTEM_ID) from PARENT_CONTAINER), (select max(SYSTEM_ID) from SERVICE_ORDER_CONTAINER), (select max(SYSTEM_ID) from SHIPMENT_ITEM_CONTAINER))));
+ setval 
+--------
+       
+(1 row)
+/ en set MANUALLY_APPLIED deze patch        , 
+dsvcts=> update mpo_scs_patch set status='MANUALLY_APPLIED' where name='patch-584-containerassocseq$postgresql.sql';
+UPDATE 1
+
+/ 3	. 
+
+2017-03-07 15:20:12,146 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-602-navigationmenu$postgresql.sql]: 
+2017-03-07 15:20:12,146 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) insert into properties (system_id, property_name, property_type, description) values (mpo_nextval(
+'sysid'), 'navigation.menu.id', 'STRING', 'Identifier of the nagivation menu to use for the given user.')
+2017-03-07 15:20:12,146 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERROR: function mpo_nextval(unknown) does not exist
+  Hint: No function matches the given name and argument types. You might need to add explicit type casts.
+  Position: 87
+
+$ vi patch-602-navigationmenu$postgresql.sql
+insert into properties (system_id, property_name, property_type, description) values (mpo_nextval('sysid'), 'navigation.menu.id', 'STRING', 'Identifier of the 
+nagivation menu to use for the given user.');
+ 
+
+/ Deze patch was bij firebird niet nodig	, maar bij postgres wel	,  
+$ vi patch-402-segno-gen$postgresql.sql
+create function mpo_nextval(seqname varchar) returns integer as $verbatim$
+...
+
+/ we moeten dus	, 
+dsvcts'> update mpo_scs_patch set status='NOT_APPLIED' where name like 'patch-402-segno-gen$postgresql.sql';'
+
+
+
+
+

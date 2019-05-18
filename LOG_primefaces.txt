@@ -1,0 +1,140 @@
+/ 7	. 
+
+/ ga naar downloads	, daar zien we hoe maven dep moet zijn	, 
+https://www.primefaces.org/downloads/
+
+[eric@almond primefaces]$ pwd
+/home/eric/Devel/Java/primefaces
+[eric@almond primefaces]$ git clone https://github.com/primefaces/primefaces.git
+
+/ we maken zoals in getting started	, 
+
+/ scala eclipse, 
+/ workspace-jsf
+/ proj primefaces-first
+
+$ vi test.xhmtl
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      >
+<h:head>
+  <title>PrmeFaces First</title>
+</h:head>
+<h:body>
+  <p:spinner/>
+</h:body>
+</html>
+
+$ vi web.xml
+
+<?xml version='1.0' encoding='UTF-8'?>
+
+
+
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+    <display-name>JSFReg</display-name>
+    <description>Simple Registration Application</description>
+
+    <context-param>
+        <param-name>javax.faces.PROJECT_STAGE</param-name>
+        <param-value>Development</param-value>
+    </context-param>
+    
+
+    <!-- Faces Servlet -->
+  <servlet>
+    <servlet-name>Faces Servlet</servlet-name>
+    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+   <servlet-mapping>
+       <servlet-name>Faces Servlet</servlet-name>
+       <url-pattern>/faces/*</url-pattern>
+   </servlet-mapping>
+
+   <welcome-file-list>
+     <welcome-file>faces/test.xhtml</welcome-file>
+   </welcome-file-list>
+
+</web-app>
+
+/ geef	, 
+http://localhost:8080/primefaces-first/
+/ OK
+
+/ we zien in HTML	,
+
+<head id="j_idt2">
+	<link type="text/css" rel="stylesheet" href="/primefaces-first/faces/javax.faces.resource/theme.css?ln=primefaces-aristo">
+	<link type="text/css" rel="stylesheet" href="/primefaces-first/faces/javax.faces.resource/components.css;jsessionid=554AAE175C3852478D863ADFED7006B8?ln=primefaces&amp;v=6.1">
+	<script type="text/javascript" src="/primefaces-first/faces/javax.faces.resource/jquery/jquery.js;jsessionid=554AAE175C3852478D863ADFED7006B8?ln=primefaces&amp;v=6.1"></script>
+	<script type="text/javascript" src="/primefaces-first/faces/javax.faces.resource/jquery/jquery-plugins.js;jsessionid=554AAE175C3852478D863ADFED7006B8?ln=primefaces&amp;v=6.1"></script>
+	<script type="text/javascript" src="/primefaces-first/faces/javax.faces.resource/core.js;jsessionid=554AAE175C3852478D863ADFED7006B8?ln=primefaces&amp;v=6.1"></script>
+	<script type="text/javascript" src="/primefaces-first/faces/javax.faces.resource/components.js;jsessionid=554AAE175C3852478D863ADFED7006B8?ln=primefaces&amp;v=6.1"></script>
+	<script type="text/javascript">if(window.PrimeFaces){PrimeFaces.settings.locale='en_US';PrimeFaces.settings.projectStage='Development';}</script>
+  <title>PrmeFaces First</title>
+</head>
+<body>
+	<span id="j_idt5" class="ui-spinner ui-widget ui-corner-all"><input id="j_idt5_input" name="j_idt5_input" type="text" class="ui-spinner-input ui-inputfield ui-state-default ui-corner-all" autocomplete="off" role="textbox" aria-multiline="false" aria-disabled="false" aria-readonly="false" aria-valuenow="0">
+		<a class="ui-spinner-button ui-spinner-up ui-corner-tr ui-button ui-widget ui-state-default ui-button-text-only">
+			<span class="ui-button-text">
+				<span class="ui-icon ui-icon-triangle-1-n ui-c"></span>
+			</span>
+		</a>
+		<a class="ui-spinner-button ui-spinner-down ui-corner-br ui-button ui-widget ui-state-default ui-button-text-only">
+			<span class="ui-button-text">
+				<span class="ui-icon ui-icon-triangle-1-s ui-c"></span>
+			</span>
+		</a>
+	</span>
+	<div id="textarea_simulator" style="position: absolute; top: 0px; left: 0px; visibility: hidden;"></div>
+</body>
+
+/ we zien in  de source van PrimeFaces NIET components.js	, 
+/ TODO
+
+/ Hier zit alle js	,
+eric@almond primefaces]$ ls ./src/main/resources/META-INF/resources/primefaces/
+accordion                  effect        log              ring
+ajaxstatus                 excanvas      menu             schedule
+autocomplete               fa            messages         scrollpanel
+blockui                    fieldset      mindmap          signature
+calendar                   fileupload    mobile           slider
+captcha                    forms         moment           spacer
+carousel                   galleria      mousewheel       spinner
+charts                     gmap          notificationbar  spotlight
+chips                      grid          orderlist        stack
+clock                      growl         organigram       sticky
+colorpicker                hotkey        outputpanel      tabview
+columntoggler              idlemonitor   overlaypanel     tagcloud
+contentflow                imagecompare  paginator        terminal
+core                       imagecropper  panel            texteditor
+dashboard                  imageswitch   panelgrid        timeline
+datagrid                   inplace       photocam         toolbar
+datalist                   inputnumber   picklist         tooltip
+datascroller               inputswitch   poll             touch
+datatable                  jquery        printer          tree
+diagram                    keyboard      progressbar      treetable
+dialog                     keyfilter     push             tristatecheckbox
+dock                       knob          raphael          validation
+dragdrop                   layout        rating           watermark
+dynamiccontent.properties  lifecycle     resizable        wizard
+editor                     lightbox      ribbon
+
+/ bijv	, 
+[eric@almond primefaces]$ ls ./src/main/resources/META-INF/resources/primefaces/jquery/
+extensions.txt  jquery.js  jquery-plugins.js  ui
+[eric@almond primefaces]$ ls ./src/main/resources/META-INF/resources/primefaces/jquery/ui
+jquery-ui.css
+[eric@almond primefaces]$ ls ./src/main/resources/META-INF/resources/primefaces/datagrid/
+datagrid.css  datagrid.js
+
+

@@ -1,0 +1,17 @@
+Motivatie:
+Ik ben waarschijnlijk een medior Java developer. Ik wil altijd blijven programmeeren en een senior worden. Ik wil zogezegd in het harnas sterven. U moet van mij geen manager maken of zoiets.
+Ik heb bijvoorbeeld geen ervaring met Continuous Integration. Dat moet ik nog leren. Daarom vind ik mezelf geen senior.
+
+Ik zie dat uw interesses uitgaan naar functioneel programmeren. Dat vind ik ook interessant. Dat is gekomen door JavaScript. Ik oefende thuis met Scheme en Erlang (programmeren is een hobby van mij, naast wiskunde en hardlopen). Scala lijkt twee druppels water op Erlang. Als je zuiver stateless programmeert, dan vraag ik met wel af hoe dat dan met de database gaat. Maar Scala doet dat niet, geloof ik. 
+
+Ik heb Scala nooit op het werk gebruikt. Maar ik wil me er wel verder in ontwikkelen en er examens in doen, maar dat geldt eigenlijk voor alle dingen die mij tot een senior kunnen maken. 
+
+Ik hoop in een gesprek met u alles toe te lichten. 
+
+Kwaliteiten:
+geduld: op mijn vorige werk gebruikte ik Wicket, een front-end framework. Als ik bijvoorbeeld de documentatie van String of Hibernate lees, kom ik er wel uit, maar bji Wicket niet. Ik moest de source code doornenen. Toen begreep ik het pas.
+
+Verbeteringen:
+continuous integration: nooit gedaan
+unit en integration testen: voor ieder programma zijn er test programma's. Voor Wicket is er bijvoorbeeld WicketTester. Ik heb tests gemaakt. maar het ik heb er nog niet genoeg routine in, vind ik.
+

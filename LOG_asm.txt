@@ -1,0 +1,1164 @@
+/ See BYTESCODE
+
+/ 7	. 
+
+/ Lees	, 
+http://stackoverflow.com/questions/26564083/how-to-use-asm-library-in-maven-project
+https://www.javacodegeeks.com/2012/02/manipulating-java-class-files-with-asm.html
+
+<dependency>
+    <groupId>org.ow2.asm</groupId>
+    <artifactId>asm</artifactId>
+    <version>5.2</version>
+</dependency>
+/ of	, 
+<dependency>
+    <groupId>org.ow2.asm</groupId>
+    <artifactId>asm-all</artifactId>
+    <version>5.2</version>
+</dependency>
+
+/ TODO Wat is het verschil	? 
+
+/ Maar we nemen asm-debug-all	, anders kunnen we niet debug	, 
+/ 7	. 
+
+/ ws workspace-wicket7_5
+
+/ we maken een gradle proj asm-study
+
+$ vi build.gradle
+
+dependencies {
+    compile 'org.ow2.asm:asm-debug-all:5.2'			/ deze voegen we toe	, 
+
+    // Use JUnit test framework
+    testCompile 'junit:junit:4.12'
+}
+
+/ Als we de build.gradle edit, moeten we in eclipse	, 
+/ right click project, Gradle, Refresh gradle project	, 
+
+/ Dan kent hij ClassVisitor in .java files	, 
+
+/ Lees	, 
+https://www.javacodegeeks.com/2012/02/manipulating-java-class-files-with-asm.html
+
+$ vi FirstTest.java
+
+public class FirstTest {
+
+	@Test
+	public void testClassVisitor()throws IOException{
+		ClassVisitor visitor=new ClassVisitor(Opcodes.ASM5) {
+			@Override
+			public void visit(int version, int access, String name,
+					String signature, String superName, String[] interfaces) {
+				super.visit(version, access, name, signature, superName, interfaces);
+			}
+			@Override
+			public void visitOuterClass(String owner, String name, String desc) {
+				super.visitOuterClass(owner, name, desc);
+			}
+			@Override
+			public AnnotationVisitor visitAnnotation(String desc,
+					boolean visible) {
+				return super.visitAnnotation(desc, visible);
+			}
+			@Override
+			public void visitAttribute(Attribute attr) {
+				super.visitAttribute(attr);
+			}
+			@Override
+			public FieldVisitor visitField(int access, String name,
+					String desc, String signature, Object value) {
+				return super.visitField(access, name, desc, signature, value);
+			}
+			@Override
+			public void visitEnd() {
+				super.visitEnd();
+			}
+			@Override
+			public MethodVisitor visitMethod(int access, String name,
+					String desc, String signature, String[] exceptions) {
+				return super.visitMethod(access, name, desc, signature, exceptions);
+			}
+			@Override
+			public void visitSource(String source, String debug) {
+				super.visitSource(source, debug);
+			}
+			
+			
+		};
+		InputStream is=FirstTest.class.getResourceAsStream("/java/lang/String.class");		/ precies zo	, 
+		ClassReader reader=new ClassReader(is);
+		reader.accept(visitor, 0);
+	}
+}
+
+/ we vallen in b's	, 
+/s
+			public void visit(int version, int access, String name,											/ visit class
+					String signature, String superName, String[] interfaces) {
+this	FirstTest$1  (id=34)																	/= visitor	,
+version	51							/ java 7
+access	49							/ WH public final
+name	"java/lang/String" (id=36)	
+signature	"Ljava/lang/Object;Ljava/io/Serializable;Ljava/lang/Comparable<Ljava/lang/String;>;Ljava/lang/CharSequence;" (id=41)	
+superName	"java/lang/Object" (id=42)	
+interfaces	String[3]  (id=43)	
+	[0]	"java/io/Serializable" (id=52)	
+	[1]	"java/lang/Comparable" (id=53)	
+	[2]	"java/lang/CharSequence" (id=54)	
+/ want, 	
+public final class String
+    implements java.io.Serializable, Comparable<String>, CharSequence {
+
+/ lees	, 
+https://en.wikipedia.org/wiki/Java_class_file
+
+/c
+			@Override
+			public void visitSource(String source, String debug) {
+this	FirstTest$1  (id=34)	
+source	"String.java" (id=51)	
+debug	null	
+
+
+/c
+			@Override
+			public FieldVisitor visitField(int access, String name,
+					String desc, String signature, Object value) {
+this	FirstTest$1  (id=34)	
+access	18					/ WH private final
+name	"value" (id=67)	
+desc	"[C" (id=68)	
+signature	null	
+value	null	
+/ want	, 
+    private final char value[];
+
+/c
+			@Override
+			public FieldVisitor visitField(int access, String name,
+					String desc, String signature, Object value) {
+this	FirstTest$1  (id=34)	
+access	2	
+name	"hash" (id=71)	
+desc	"I" (id=72)	
+signature	null	
+value	null	
+/ want, 
+    private int hash; // Default to 0
+
+/c
+			@Override
+			public FieldVisitor visitField(int access, String name,
+					String desc, String signature, Object value) {
+this	FirstTest$1  (id=34)	
+access	26	
+name	"serialVersionUID" (id=77)	
+desc	"J" (id=78)	
+signature	null	
+value	Long  (id=79)	
+/ want	, 
+    private static final long serialVersionUID = -6849794470754667710L;
+
+
+/c
+			@Override
+			public FieldVisitor visitField(int access, String name,
+					String desc, String signature, Object value) {
+this	FirstTest$1  (id=34)	
+access	26	
+name	"serialPersistentFields" (id=87)	
+desc	"[Ljava/io/ObjectStreamField;" (id=88)	
+signature	null	
+value	null	
+/ want	, 
+    private static final ObjectStreamField[] serialPersistentFields =
+            new ObjectStreamField[0];
+/ we geloven het	, 
+
+/c
+			@Override
+			public MethodVisitor visitMethod(int access, String name,
+					String desc, String signature, String[] exceptions) {
+				return super.visitMethod(access, name, desc, signature, exceptions);
+this	FirstTest$1  (id=34)	
+access	1	
+name	"<init>" (id=113)	
+desc	"()V" (id=114)	
+signature	null	
+exceptions	null	
+/ want	, 
+    public String() {
+        this.value = new char[0];
+    }
+
+/c
+			@Override
+			public MethodVisitor visitMethod(int access, String name,
+					String desc, String signature, String[] exceptions) {
+				return super.visitMethod(access, name, desc, signature, exceptions);
+/want	, 
+this	FirstTest$1  (id=34)	
+access	1	
+name	"<init>" (id=113)	
+desc	"([BLjava/nio/charset/Charset;)V" (id=144)	
+signature	null	
+exceptions	null	
+
+/c
+			@Override
+			public MethodVisitor visitMethod(int access, String name,
+					String desc, String signature, String[] exceptions) {
+this	FirstTest$1  (id=34)	
+access	1	
+name	"length" (id=159)	
+desc	"()I" (id=160)	
+signature	null	
+exceptions	null	
+/ want,
+    public int length() {
+        return value.length;
+    }
+/ we geloven het 	, 
+
+/ 7	. 
+
+$ vi X.java
+package first;
+
+public class X {
+    public X(){
+
+    }
+    public void f1(){
+        int i=7;
+        i=i+13;
+    }
+    public String f2(){
+        return "";
+    }
+}
+
+[eric@localhost asm-study]$ javap -c bin/first/X.class 
+Compiled from "X.java"
+public class first.X {
+  public first.X();
+    Code:
+       0: aload_0       
+       1: invokespecial #8                  // Method java/lang/Object."<init>":()V
+       4: return        
+
+  public void f1();
+    Code:
+       0: bipush        7
+       2: istore_1      
+       3: iinc          1, 13
+       6: return        
+
+  public java.lang.String f2();
+    Code:
+       0: ldc           #19                 // String 
+       2: areturn       
+}
+
+$ vi FirstTest.java
+
+public class FirstTest {
+	@Test
+	public void testMethodVisitor()throws IOException{
+//		InputStream is=FirstTest.class.getResourceAsStream("/java/lang/String.class");	 	
+//		InputStream is=FirstTest.class.getResourceAsStream("/first/FirstTest$X.class");	// eerst was X een nested class van FirstTest	,
+		InputStream is=FirstTest.class.getResourceAsStream("/first/X.class");
+		ClassReader reader=new ClassReader(is);
+		reader.accept(new MethodPrinterVisitor(Opcodes.ASM5), 0);
+	}
+	
+	private static class MethodPrinterVisitor extends ClassVisitor{
+		public MethodPrinterVisitor(int api) {							// moet, want ClassVisitor heeft geen ctor zonder args	,  
+			super(api);
+		}
+
+		@Override
+		public MethodVisitor visitMethod(int access, String name, String desc,
+				String signature, String[] exceptions) {
+			MethodVisitor visitor=new MethodVisitor(Opcodes.ASM5) {
+			};
+
+			InstructionAdapter adapter=new InstructionAdapter(Opcodes.ASM5,visitor){	// we moeten 2 args , 1ste = Opcodes.ASM5   ,
+				public void visitInsn(int opcode) {	// visits a zero operand instruction.
+					System.out.println(Integer.toHexString(opcode));		// RETURJN, RETURN, ARETURN
+					super.visitInsn(opcode);
+				}
+				@Override
+				public void visitIntInsn(int opcode, int operand) {	// visits an instruction with a single int operand.
+					System.out.println(Integer.toHexString(opcode));	// BIPUSH 7
+					super.visitIntInsn(opcode, operand);
+				}
+				@Override
+				public void visitVarInsn(int opcode, int var) {	// visits a local variable instruction.
+					System.out.println(Integer.toHexString(opcode));	// ALOAD 0, ISTORE 1
+					super.visitVarInsn(opcode, var);
+				}
+			};
+			
+			return adapter;
+		}
+	}
+}
+
+/ we print niet meer alle visits	, maar hebben b's set in InstructionAdapter	, 
+/s
+    @Override
+    public void visitLabel(final Label label) {	 / label=L1811557934	/ TODO
+        mark(label);
+	}
+/c
+/s
+   @Override
+    public void visitMethodInsn(final int opcode, final String owner,
+            final String name, final String desc, final boolean itf) {
+ this	FirstTest$MethodPrinterVisitor$2  (id=34)	
+opcode	183													/= INVOKESPECIAL
+owner	"java/lang/Object" (id=52)	
+name	"<init>" (id=57)	
+desc	"()V" (id=58)	
+itf	false	
+        doVisitMethodInsn(opcode, owner, name, desc, itf);
+/s
+    private void doVisitMethodInsn(int opcode, final String owner,
+            final String name, final String desc, final boolean itf) {
+        switch (opcode) {
+        case Opcodes.INVOKESPECIAL:
+            invokespecial(owner, name, desc, itf);
+            break;
+/c
+    @Override
+    public void visitIincInsn(final int var, final int increment) {
+        iinc(var, increment);
+this	FirstTest$MethodPrinterVisitor$2  (id=67)	
+var	1	
+increment	13	
+/c
+    @Override
+    public void visitLdcInsn(final Object cst) {
+        } else if (cst instanceof String) {
+            aconst(cst);
+this	FirstTest$MethodPrinterVisitor$2  (id=75)	
+cst	"" (id=77)	
+
+
+/ Geef in browser	, 
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace-wicket7_5/asm-study/build/reports/tests/test/classes/first.FirstTest.html#testMethodVisitor
+/ Eerst hadden we ERR	, we deden  new InstructionAdapter(visitor)
+Failed tests
+FirstTest.testMethodVisitor
+/ click on it	, we zien de stack trace	, 
+
+[eric@localhost asm-study]$ pwd
+/home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace-wicket7_5/asm-study
+
+
+/ Lees	, 
+http://asm.ow2.org/asm50/javadoc/user/index.html
+
+/ 7	. 
+
+/ we kunnen op de cmd line	,
+[eric@localhost asm-study]$ java -cp /home/eric/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm-debug-all/5.2/3354e11e2b34215f06dab629ab88e06aca477c19/asm-debug-all-5.2.jar org/objectweb/asm/util/ASMifier java.lang.String
+
+$ vi ASMifier.java
+
+    public static void main(final String[] args) throws Exception {
+		...
+        cr.accept(new TraceClassVisitor(null, new ASMifier(), new PrintWriter( System.out)), flags);
+    }
+/ Dus prints naar System.out	,
+
+/ Maar we kunnen in onze test file ook 	, 
+
+$ vi FirstTest.java
+
+	@Test
+	public void testASMifier()throws Exception{
+		//ASMifier.main(new String[]{"java.lang.String"});
+		ASMifier.main(new String[]{"first.X"});
+	}
+
+$ vi first/X.java
+
+package first;
+
+public class X {
+	public X(){
+		
+	}
+	public void f1(){
+		int i=7;
+		i=i+13;
+	}
+	public String f2(){
+		return "";
+	}
+}
+
+/ google: 
+http://xmodulo.com/how-to-save-console-output-to-file-in-eclipse.html
+/ eclipse manier TODO
+System.setOut(new PrintStream(new FileOutputStream("output.txt")));	/ OK
+
+/ google:
+/ lees	, 
+http://stackoverflow.com/questions/2308188/getresourceasstream-vs-fileinputstream
+
+http://stackoverflow.com/questions/4714645/how-can-i-save-a-file-to-the-class-path
+
+/ Lees	, 
+https://www.javacodegeeks.com/2012/02/manipulating-java-class-files-with-asm.html
+http://asm.ow2.org/asm50/javadoc/user/index.html
+https://support.google.com/a/answer/60781?hl=en
+
+
+$ vi FirstTest.java
+
+	@Test @Ignore
+	public void testASMifier()throws Exception{
+		PrintStream out=System.out;
+		System.setOut(new PrintStream(new FileOutputStream("/tmp/XDump.java")));
+		ASMifier.main(new String[]{"first.X"});
+		System.setOut(out);
+	}
+
+/ run de test	, 
+
+$ less /tmp/XDump.java
+
+package asm.first;
+import java.util.*;
+import org.objectweb.asm.*;
+public class XDump implements Opcodes {
+
+public static byte[] dump () throws Exception {
+
+ClassWriter cw = new ClassWriter(0);
+FieldVisitor fv;
+MethodVisitor mv;
+AnnotationVisitor av0;
+
+cw.visit(52, ACC_PUBLIC + ACC_SUPER, "first/X", null, "java/lang/Object", null);
+
+{
+mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
+mv.visitCode();
+mv.visitVarInsn(ALOAD, 0);
+mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+mv.visitInsn(RETURN);
+mv.visitMaxs(1, 1);
+mv.visitEnd();
+}
+{
+mv = cw.visitMethod(ACC_PUBLIC, "f1", "()V", null, null);
+mv.visitCode();
+mv.visitIntInsn(BIPUSH, 7);
+mv.visitVarInsn(ISTORE, 1);
+mv.visitIincInsn(1, 13);
+mv.visitInsn(RETURN);
+mv.visitMaxs(1, 2);
+mv.visitEnd();
+}
+{
+mv = cw.visitMethod(ACC_PUBLIC, "f2", "()Ljava/lang/String;", null, null);
+mv.visitCode();
+mv.visitLdcInsn("");
+mv.visitInsn(ARETURN);
+mv.visitMaxs(1, 1);
+mv.visitEnd();
+}
+cw.visitEnd();
+
+return cw.toByteArray();
+}
+}
+
+/ 7	. 
+
+/ we copy deze code in een private method in de FirstTest	, 
+
+$ vi FirstTest.java
+
+package first;
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.Attribute;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.commons.InstructionAdapter;
+import org.objectweb.asm.util.ASMifier;
+
+
+public class FirstTest implements Opcodes{											<- Opcodes.ACC_PUBLIC, ...
+
+	
+	@Test @Ignore
+	public void testASMifier()throws Exception{										/ run 1 keer	, 
+		PrintStream out=System.out;
+		System.setOut(new PrintStream(new FileOutputStream("/tmp/XDump.java")));
+		ASMifier.main(new String[]{"first.X"});
+		System.setOut(out);
+		
+	}
+	
+	@Test
+	public void testCreateFromASMifier() throws Exception{			/ exec	, 
+		FileOutputStream fos=new FileOutputStream("X.class");
+		DataOutputStream dos=new DataOutputStream(fos);
+		byte[]b=dump();
+		dos.write(b);
+		dos.close();
+	}
+	
+
+	public static byte[] dump () throws Exception {				/ copy paste van de dump	, 
+
+		ClassWriter cw = new ClassWriter(0);			/ met deze hebben we NIET geoef	, hierboven	, 
+		FieldVisitor fv;
+		MethodVisitor mv;
+		AnnotationVisitor av0;
+	
+		cw.visit(52, ACC_PUBLIC + ACC_SUPER, "first/X", null, "java/lang/Object", null);
+	
+		{
+		mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
+		mv.visitCode();
+		mv.visitVarInsn(ALOAD, 0);
+		mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+		mv.visitInsn(RETURN);
+		mv.visitMaxs(1, 1);
+		mv.visitEnd();
+		}
+		{
+		mv = cw.visitMethod(ACC_PUBLIC, "f1", "()V", null, null);
+		mv.visitCode();
+		mv.visitIntInsn(BIPUSH, 7);
+		mv.visitVarInsn(ISTORE, 1);
+		mv.visitIincInsn(1, 13);
+		mv.visitInsn(RETURN);
+		mv.visitMaxs(1, 2);
+		mv.visitEnd();
+		}
+		{
+		mv = cw.visitMethod(ACC_PUBLIC, "f2", "()Ljava/lang/String;", null, null);
+		mv.visitCode();
+		mv.visitLdcInsn("");
+		mv.visitInsn(ARETURN);
+		mv.visitMaxs(1, 1);
+		mv.visitEnd();
+		}
+		cw.visitEnd();
+	
+		return cw.toByteArray();
+		
+	}
+}
+
+/ run de test	, 
+
+[eric@almond asm-study]$ pwd
+/home/eric/Devel/Eclipse/scala/workspace-spring/asm-study
+[eric@almond asm-study]$ javap -c X.class 
+public class first.X {
+  public first.X();
+    Code:
+       0: aload_0
+       1: invokespecial #8                  // Method java/lang/Object."<init>":()V
+       4: return
+
+  public void f1();
+    Code:
+       0: bipush        7
+       2: istore_1
+       3: iinc          1, 13
+       6: return
+
+  public java.lang.String f2();
+    Code:
+       0: ldc           #13                 // String
+       2: areturn
+}
+[eric@almond asm-study]$ javap -c bin/first/X.class 
+Compiled from "X.java"
+public class first.X {
+  public first.X();
+    Code:
+       0: aload_0
+       1: invokespecial #8                  // Method java/lang/Object."<init>":()V
+       4: return
+
+  public void f1();
+    Code:
+       0: bipush        7
+       2: istore_1
+       3: iinc          1, 13
+       6: return
+
+  public java.lang.String f2();
+    Code:
+       0: ldc           #19                 // String
+       2: areturn
+}
+/ toch zijn ze verschillend van grootte	, 
+/ misschien is first/X.java met -g compile	, 
+
+[eric@almond asm-study]$ find -name X.class | xargs ls -l
+-rw-rw-r--. 1 eric eric 431 Mar 15 22:10 ./bin/first/X.class
+-rw-rw-r--. 1 eric eric 433 Mar 17 21:57 ./build/classes/main/first/X.class
+-rw-rw-r--. 1 eric eric 223 Mar 18 19:42 ./X.class
+/ TODO
+
+/ 13	. 
+
+$ vi FirstTest.java
+
+	@Test 
+	public void testCreateFromASMifier() throws Exception{
+		FileOutputStream fos=new FileOutputStream("X.class");
+		DataOutputStream dos=new DataOutputStream(fos);
+		byte[]b=dump();
+		dos.write(b);
+		dos.close();
+	}
+	
+	@Test
+	public void testCreateFromASMifier2() throws Exception{
+		FileOutputStream fos=new FileOutputStream("X2.class");
+		byte[]b=dump();
+		fos.write(b);
+		fos.close();
+	}
+
+/ allebei OK	, DataOutputStream lijkt onnodig	, 
+
+/ 7	. 
+
+/ Lees	, 
+https://www.javacodegeeks.com/2012/02/manipulating-java-class-files-with-asm.html
+
+
+/ eclipse: als we X.java edit, en save	, wordt hij compiled als er niet is	, en verschijnt hij in bin/	, 
+/ Dus als we een test run, die X.class verandert	, en we willen de orig X.class terug	, verwijder hem dan, en edit X.java iets, en save	, dan is de originele er weer	, 
+/ eclipse: Project explorer, click triangle, click Customize view, uncheck Java output folders: we zien de bin/ 	, 
+
+$ vi FirstTest.java
+
+	@Test
+	public void testMethodWriter() throws IOException{
+		InputStream in=getClass().getResourceAsStream("X.class");
+		ClassReader cr=new ClassReader(in);
+		
+		ClassWriter cw=new ClassWriter(ClassWriter.COMPUTE_MAXS);
+		ClassVisitor cv=new MyClassVisitor2(ASM5, cw);
+		
+		cr.accept(cv, 0);
+		
+		FileOutputStream fos=new FileOutputStream("X3.class");
+		fos.write(cw.toByteArray());
+
+		X x=new X();
+		x.f1();
+		String s=x.f2();
+	}
+
+	private static class MyMethodVisitor extends MethodVisitor{
+		private String methodName;
+
+		public MyMethodVisitor(final int api, final MethodVisitor mv,final String methodName) {
+			super(api,mv);
+			this.methodName=methodName;
+		}
+		@Override
+		public void visitCode() {
+			super.visitCode();
+			super.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+			super.visitLdcInsn("method: "+methodName);
+			super.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V",false);
+		}
+	}
+	
+	private static class MyClassVisitor2 extends ClassVisitor{
+		public MyClassVisitor2(int api,ClassWriter cw) {
+			super(api,cw);
+		}
+		@Override
+		public MethodVisitor visitMethod(int access, String name, String desc,
+				String signature, String[] exceptions) {
+			MethodVisitor mv=super.visitMethod(access, name, desc, signature, exceptions);
+			return new MyMethodVisitor(api, mv, name);
+		
+		}
+	}
+
+/ Run de test	, 
+/ we zien in de console	, 
+method: <init>
+method: f1
+method: f2
+
+/ we zien 	,  
+[eric@almond asm-study]$ javap -c bin/first/X.class 
+Compiled from "X.java"
+public class first.X {
+  public first.X();
+    Code:
+       0: getstatic     #13                 // Field java/lang/System.out:Ljava/io/PrintStream
+       3: ldc           #15                 // String method: <init>
+       5: invokevirtual #21                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+       8: aload_0
+       9: invokespecial #23                 // Method java/lang/Object."<init>":()V
+      12: return
+
+  public void f1();
+    Code:
+       0: getstatic     #13                 // Field java/lang/System.out:Ljava/io/PrintStream
+       3: ldc           #28                 // String method: f1
+       5: invokevirtual #21                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+       8: bipush        7
+      10: istore_1
+      11: iinc          1, 13
+      14: return
+
+  public java.lang.String f2();
+    Code:
+       0: getstatic     #13                 // Field java/lang/System.out:Ljava/io/PrintStream
+       3: ldc           #34                 // String method: f2
+       5: invokevirtual #21                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+       8: ldc           #36                 // String
+      10: areturn
+}
+
+
+/ 7	. 
+
+/ ws 
+/ proj asm-study
+
+/ Nogmaals FirstTest	, 
+
+$ vi FirstTest.java
+
+	@Test
+	public void testMethodVisitor()throws IOException{
+		InputStream is=FirstTest.class.getResourceAsStream("/first/X.class");
+		ClassReader reader=new ClassReader(is);
+		ClassVisitor cv=new ClassVisitor(Opcodes.ASM5) {	/ new ClassVisitor's class is een anon. subclass van ClassVisitor	, wordt genoteerd met FirstTest$1	, 'super is dus ClassVisitor zelf'	, beter: super.visit is de ClassVisitor.visit	,  
+			@Override
+			public void visit(int version, int access, String name,
+					String signature, String superName, String[] interfaces) {
+				System.out.println("visit:"+name);
+				super.visit(version, access, name, signature, superName, interfaces);	/ super
+			}
+		};
+		reader.accept(new MyClassVisitor(Opcodes.ASM5,cv), 0);	// chain van 2 ClassVisitors
+	}
+
+	private static class MyClassVisitor extends ClassVisitor{
+		public MyClassVisitor(int api) {	// moet, want ClassVisitor heeft geen ctor zonder args  ,
+			super(api);
+		}
+		public MyClassVisitor(int api,ClassVisitor cv) {
+			super(api,cv);
+		}
+
+		@Override
+		public MethodVisitor visitMethod(int access, String name, String desc,
+				String signature, String[] exceptions) {
+			MethodVisitor visitor=new MethodVisitor(Opcodes.ASM5) {
+				@Override
+				public void visitVarInsn(int opcode, int var) {
+					System.out.println("visitVarInsn:"+Integer.toHexString(opcode))	;
+					super.visitVarInsn(opcode, var);
+				}
+			};
+			MethodVisitor visitor2=new MethodVisitor(Opcodes.ASM5,visitor) {
+				@Override
+				public void visitVarInsn(int opcode, int var) {
+					System.out.println("visitVarInsn:"+Integer.toHexString(opcode))	;
+					super.visitVarInsn(opcode, var);
+				}
+			};
+//			InstructionAdapter adapter=new InstructionAdapter(Opcodes.ASM5,visitor){	// we moeten 2 args , 1ste = Opcodes.ASM5   ,
+			MethodVisitor visitor3=new MethodVisitor(Opcodes.ASM5,visitor2) {
+				public void visitInsn(int opcode) {	// visits a zero operand instruction.
+					System.out.println("visitVarInsn:"+Integer.toHexString(opcode));		// RETURJN, RETURN, ARETURN
+					super.visitInsn(opcode);
+				}
+				@Override
+				public void visitIntInsn(int opcode, int operand) {	// visits an instruction with a single int operand.
+					System.out.println("visitVarInsn:"+Integer.toHexString(opcode));	// BIPUSH 7
+					super.visitIntInsn(opcode, operand);
+				}
+				@Override
+				public void visitVarInsn(int opcode, int var) {	// visits a local variable instruction.
+					System.out.println("visitVarInsn:"+Integer.toHexString(opcode));	// ALOAD 0, ISTORE 1
+					super.visitVarInsn(opcode, var);
+				}
+			};
+			// b's in the other ones
+			
+//			return adapter;
+			return visitor3;
+		}
+	}
+
+	
+[eric@almond asm]$ javap -c -verbose -p  /home/eric/Devel/Eclipse/scala/workspace-spring/asm-study/build/classes/main/first/X.class 
+Classfile /home/eric/Devel/Eclipse/scala/workspace-spring/asm-study/build/classes/main/first/X.class
+  Last modified Mar 17, 2017; size 433 bytes
+  MD5 checksum e21293243489d65fa14f80b9e777f1f0
+  Compiled from "X.java"
+public class first.X
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+   #1 = Methodref          #4.#19         // java/lang/Object."<init>":()V
+   #2 = String             #20            //
+   #3 = Class              #21            // first/X
+   #4 = Class              #22            // java/lang/Object
+   #5 = Utf8               <init>
+   #6 = Utf8               ()V
+   #7 = Utf8               Code
+   #8 = Utf8               LineNumberTable
+   #9 = Utf8               LocalVariableTable
+  #10 = Utf8               this
+  #11 = Utf8               Lfirst/X;
+  #12 = Utf8               f1
+  #13 = Utf8               i
+  #14 = Utf8               I
+  #15 = Utf8               f2
+  #16 = Utf8               ()Ljava/lang/String;
+  #17 = Utf8               SourceFile
+  #18 = Utf8               X.java
+  #19 = NameAndType        #5:#6          // "<init>":()V
+  #20 = Utf8
+  #21 = Utf8               first/X
+  #22 = Utf8               java/lang/Object
+{
+  public first.X();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: return
+      LineNumberTable:
+        line 4: 0
+        line 6: 4
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       5     0  this   Lfirst/X;
+
+  public void f1();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=2, locals=2, args_size=1
+         0: bipush        7
+         2: istore_1
+         3: iload_1
+         4: bipush        13
+         6: iadd
+         7: istore_1
+         8: return
+      LineNumberTable:
+        line 8: 0
+        line 9: 3
+        line 10: 8
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       9     0  this   Lfirst/X;
+            3       6     1     i   I
+
+  public java.lang.String f2();
+    descriptor: ()Ljava/lang/String;
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: ldc           #2                  // String
+         2: areturn
+      LineNumberTable:
+        line 12: 0
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       3     0  this   Lfirst/X;
+}
+SourceFile: "X.java"
+
+
+/ Maar	, 
+
+/stack
+/s
+Thread [main] (Suspended (breakpoint at line 112 in ClassVisitor))	
+	FirstTest$MyClassVisitor(ClassVisitor).visit(int, int, String, String, String, String[]) line: 112	
+        if (cv != null) {
+            cv.visit(version, access, name, signature, superName, interfaces);
+/cb
+	ClassReader.accept(ClassVisitor, Attribute[], int) line: 637	
+        // visits the class declaration
+        classVisitor.visit(readInt(items[1] - 7), access, name, signature,
+                superClass, interfaces);
+/cb
+	ClassReader.accept(ClassVisitor, int) line: 521	
+        accept(classVisitor, new Attribute[0], flags);
+/cb
+	FirstTest.testMethodVisitor() line: 92	
+		reader.accept(new MyClassVisitor(Opcodes.ASM5,cv), 0); // chain van 2 ClassVisitors
+/cb
+	NativeMethodAccessorImpl.invoke0(Method, Object, Object[]) line: not available [native method]	
+	NativeMethodAccessorImpl.invoke(Object, Object[]) line: 62	
+	DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: 43	
+	Method.invoke(Object, Object...) line: 498	
+	FrameworkMethod$1.runReflectiveCall() line: 50	
+	FrameworkMethod$1(ReflectiveCallable).run() line: 12	
+	FrameworkMethod.invokeExplosively(Object, Object...) line: 47	
+	InvokeMethod.evaluate() line: 17	
+	BlockJUnit4ClassRunner(ParentRunner<T>).runLeaf(Statement, Description, RunNotifier) line: 325	
+	BlockJUnit4ClassRunner.runChild(FrameworkMethod, RunNotifier) line: 78	
+	BlockJUnit4ClassRunner.runChild(Object, RunNotifier) line: 57	
+	ParentRunner$3.run() line: 290	
+	ParentRunner$1.schedule(Runnable) line: 71	
+	BlockJUnit4ClassRunner(ParentRunner<T>).runChildren(RunNotifier) line: 288	
+	ParentRunner<T>.access$000(ParentRunner, RunNotifier) line: 58	
+	ParentRunner$2.evaluate() line: 268	
+	BlockJUnit4ClassRunner(ParentRunner<T>).run(RunNotifier) line: 363	
+	JUnit4TestClassReference(JUnit4TestReference).run(TestExecution) line: 50	
+	TestExecution.run(ITestReference[]) line: 38	
+	RemoteTestRunner.runTests(String[], String, TestExecution) line: 459	
+	RemoteTestRunner.runTests(TestExecution) line: 675	
+	RemoteTestRunner.run() line: 382	
+	RemoteTestRunner.main(String[]) line: 192	
+
+/ In 	,
+	ClassReader.accept(ClassVisitor, int) line: 521	
+this	ClassReader  (id=37)	
+	b	(id=68)								<- class bytecode	,
+	header	387	
+	items	(id=70)	
+	maxStringLength	24	
+	strings	String[41]  (id=72)	
+
+/ we doen in eclipse	, 
+java.io.FileOutputStream fos = new java.io.FileOutputStream("/home/eric/Devel/Java/asm/x_in_testMethodVisitor.class");
+fos.write(b);
+fos.close();
+
+/ we zien weer X.class	,
+
+/ 	7
+
+	@Test
+	public void testMethodWriter() throws IOException{
+		InputStream in=getClass().getResourceAsStream("X.class");
+		ClassReader cr=new ClassReader(in);
+		
+		ClassWriter cw=new ClassWriter(ClassWriter.COMPUTE_MAXS);
+		ClassVisitor cv=new MyClassVisitor2(ASM5, cw);
+		
+		cr.accept(cv, 0);
+		
+		FileOutputStream fos=new FileOutputStream("bin/first/X.class");
+		fos.write(cw.toByteArray());	
+		
+		X x=new X();	/ eerst de class loader loads de class	, die nu is aangepast	, 
+		x.f1();
+		String s=x.f2();
+	}
+
+	
+	private static class MyMethodVisitor extends MethodVisitor{
+		private String methodName;
+
+		public MyMethodVisitor(final int api, final MethodVisitor mv,final String methodName) {
+			super(api,mv);
+			this.methodName=methodName;
+		}
+		@Override
+		public void visitCode() {
+			super.visitCode();
+			super.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+			super.visitLdcInsn("method: "+methodName);
+			super.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V",false);
+		}
+	}
+	
+	private static class MyClassVisitor2 extends ClassVisitor{
+		public MyClassVisitor2(int api,ClassWriter cw) {
+			super(api,cw);
+		}
+		@Override
+		public MethodVisitor visitMethod(int access, String name, String desc,
+				String signature, String[] exceptions) {
+			MethodVisitor mv=super.visitMethod(access, name, desc, signature, exceptions);
+			return new MyMethodVisitor(api, mv, name);
+		
+		}
+	}
+	
+/ Als we deze test nog een keer willen run	, moeten we in eclipse even X.java iets veranderen, een spatie toevoegen/verwijderen in de ctor bijv	, en dan save	, dan is in bin/ de first/X.class weer onveranderd	, 
+
+/ run de testMethodWriter()	, 
+
+[eric@almond bin]$ pwd
+/home/eric/Devel/Eclipse/scala/workspace-spring/asm-study/bin
+
+[eric@almond bin]$ javap -c -p -verbose first/X.class 
+Classfile /home/eric/Devel/Eclipse/scala/workspace-spring/asm-study/bin/first/X.class
+  Last modified Apr 3, 2017; size 638 bytes
+  MD5 checksum 6eeeeda89ca26ed1a6bc27cf7a445e1e
+  Compiled from "X.java"
+public class first.X
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+   #1 = Utf8               first/X
+   #2 = Class              #1             // first/X
+   #3 = Utf8               java/lang/Object
+   #4 = Class              #3             // java/lang/Object
+   #5 = Utf8               X.java
+   #6 = Utf8               <init>
+   #7 = Utf8               ()V
+   #8 = Utf8               java/lang/System
+   #9 = Class              #8             // java/lang/System
+  #10 = Utf8               out
+  #11 = Utf8               Ljava/io/PrintStream;
+  #12 = NameAndType        #10:#11        // out:Ljava/io/PrintStream;
+  #13 = Fieldref           #9.#12         // java/lang/System.out:Ljava/io/PrintStream;
+  #14 = Utf8               method: <init>
+  #15 = String             #14            // method: <init>
+  #16 = Utf8               java/io/PrintStream
+  #17 = Class              #16            // java/io/PrintStream
+  #18 = Utf8               println
+  #19 = Utf8               (Ljava/lang/String;)V
+  #20 = NameAndType        #18:#19        // println:(Ljava/lang/String;)V
+  #21 = Methodref          #17.#20        // java/io/PrintStream.println:(Ljava/lang/String;)V
+  #22 = NameAndType        #6:#7          // "<init>":()V
+  #23 = Methodref          #4.#22         // java/lang/Object."<init>":()V
+  #24 = Utf8               this
+  #25 = Utf8               Lfirst/X;
+  #26 = Utf8               f1
+  #27 = Utf8               method: f1
+  #28 = String             #27            // method: f1
+  #29 = Utf8               i
+  #30 = Utf8               I
+  #31 = Utf8               f2
+  #32 = Utf8               ()Ljava/lang/String;
+  #33 = Utf8               method: f2
+  #34 = String             #33            // method: f2
+  #35 = Utf8
+  #36 = String             #35            //
+  #37 = Utf8               Code
+  #38 = Utf8               LocalVariableTable
+  #39 = Utf8               LineNumberTable
+  #40 = Utf8               SourceFile
+{
+  public first.X();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=2, locals=1, args_size=1
+         0: getstatic     #13                 // Field java/lang/System.out:Ljava/io/PrintStream;
+         3: ldc           #15                 // String method: <init>
+         5: invokevirtual #21                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+         8: aload_0
+         9: invokespecial #23                 // Method java/lang/Object."<init>":()V
+        12: return
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            8       5     0  this   Lfirst/X;
+      LineNumberTable:
+        line 4: 8
+        line 5: 12
+
+  public void f1();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=2, locals=2, args_size=1
+         0: getstatic     #13                 // Field java/lang/System.out:Ljava/io/PrintStream;
+         3: ldc           #28                 // String method: f1
+         5: invokevirtual #21                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+         8: bipush        7
+        10: istore_1
+        11: iinc          1, 13
+        14: return
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            8       7     0  this   Lfirst/X;
+           11       4     1     i   I
+      LineNumberTable:
+        line 7: 8
+        line 8: 11
+        line 9: 14
+
+  public java.lang.String f2();
+    descriptor: ()Ljava/lang/String;
+    flags: ACC_PUBLIC
+    Code:
+      stack=2, locals=1, args_size=1
+         0: getstatic     #13                 // Field java/lang/System.out:Ljava/io/PrintStream;
+         3: ldc           #34                 // String method: f2
+         5: invokevirtual #21                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+         8: ldc           #36                 // String
+        10: areturn
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            8       3     0  this   Lfirst/X;
+      LineNumberTable:
+        line 11: 8
+}
+SourceFile: "X.java"
+
+/ 7. 
+
+/ BYTESCODE
+
+/ scala ide
+/ project asm-study
+
+/ we maken classes, en kijken naar de bytescodes	, 
+
+/ Lees	, 
+http://stackoverflow.com/questions/4163923/what-can-i-do-to-make-display-the-bin-folder-on-eclipse
+/ we kunnen de bin/ zien in eclipse in de Project Explorer, NIET in de package explorer	, 
+
+/ Daar kunnen we een class file open	, maar kunnen geen b's set	,
+
+
+
+
+/ Einde BYTESCODE

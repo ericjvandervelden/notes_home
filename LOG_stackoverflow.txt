@@ -1,0 +1,92 @@
+/ 7	. 
+
+https://stackoverflow.com/questions/55200167/how-to-access-h2-database-console-without-h2-jar
+
+/ 7	. 
+
+https://stackoverflow.com/questions/55199612/hibernate-how-to-reason-about-optimistic-locking-exception-under-contention-h
+
+I have the following structure in my database via Hibernate. I am operating on MySQL. This structure is a table with a simple counter describing how often (column count) an event happens per day (column day).
+
+@Entity
+@Table(name="daily_log")
+public class DailyLog {
+    @Version
+    @Column(name="opt_lock_v")
+    protected Integer version;
+
+    @Column(name="day")
+    @Temporal(TemporalType.DATE)
+    private Date day;
+
+    @Column(name="count")
+    private Integer count;
+}
+In my application, I simply perform the following operation for an increment:
+
+DailyLog log = dailyLogRepository.findLogEntry(new Date()); // get row by current day
+log.setCount(log.getCount() + 1); // increment count by 1
+And later in my application, I read from the database the updated count i.e. log.getCount().
+
+Under high load/ high contention, the code which updates the counter throws an OptimisticLockException which is a problem from Hibernate's versioning mechanism.
+
+/ 7	. 
+
+https://stackoverflow.com/questions/55110470/h2-sql-any-with-selected-column
+
+I am having trouble selecting with a quantified predicate in H2 database. The issue arises when using the quantified predicate (= ANY) on a column that is being selected.
+
+I am expecting this to work
+
+SELECT array_vals.c1, name 
+FROM (
+  SELECT c1 
+  FROM (
+    values(('FRED', 'BARNEY')))
+  ) array_vals 
+LEFT JOIN human ON human.name = ANY (c1);
+but receiving expected "(, WITH, SELECT, FROM"; instead.
+
+This form does work:
+
+SELECT array_vals.c1, name 
+FROM (
+  SELECT c1 
+  FROM (values(('FRED', 'BARNEY')))
+) array_vals 
+LEFT JOIN human ON array_contains(c1, human.name);
+However array_contains looks as though it will not be able to use an index.
+
+/ lees	,
+
+
+SELECT ProductName,ProductID
+FROM Products
+WHERE ProductID = ANY (SELECT ProductID FROM OrderDetails WHERE Quantity = 10);
+/=
+select distinct ProductName,p.ProductID
+from Products p
+inner join OrderDetails d on p.ProductID=d.ProductID
+where d.Quantity=10
+
+/ 7	 
+
+https://stackoverflow.com/questions/55107803/hibernate-onetomany-error-while-adding-second-record
+
+/ Intermezzo
+
+/ lees over InverseJoinColumns	,
+https://stackoverflow.com/questions/38817417/what-is-the-meaning-of-hibernate-inversejoincolumns/38818049
+
+From the javadocs, it means:
+
+(Optional) The foreign key columns of the join table which reference the primary table of the entity that does not own the association
+In layman's terms, it is the column of Category that will be used as a part of the JoinTable relationship between the current entity and Category.
+
+If you don't specify joinColumns and inverseJoinColumns on the @JoinTable annotation, the persistence provider assumes a primary key to primary key join relationship and still store the equivalent ID columns for two related entities in the table by default.
+/ TODO
+
+/ maak zelf eens een voorbeeld zonder de joinColumns en inverseJoinColumns 	,
+/ TODO
+
+/ Einde Intermezzo

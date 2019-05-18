@@ -1,0 +1,39 @@
+https://nl.wikipedia.org/wiki/Navier-Stokes-vergelijkingen
+is een tensor voor de veralgemeende druk (of stress). Deze tensor omvat onder meer een deel dat de viscositeit voorstelt, en is een maat voor hoeveel afschuifkracht een laag bewegende stof uitoefent op een daarnaast bewegende andere laag.
+
+/ click stress
+https://nl.wikipedia.org/wiki/Mechanische_spanning
+
+/ click afschuifkracht
+https://nl.wikipedia.org/wiki/Schuifspanning
+
+https://en.wikipedia.org/wiki/Tensor
+
+https://en.wikipedia.org/wiki/Stress_tensor				/ aantal mog	,
+https://en.wikipedia.org/wiki/Cauchy_stress_tensor
+https://en.wikipedia.org/wiki/Viscous_stress_tensor
+https://en.wikipedia.org/wiki/Strain_rate_tensor			/ relative deformatie, verandering (snelheid) in deformatie
+
+/ google: stress strain
+https://en.wikipedia.org/wiki/Stress%E2%80%93strain_curve
+/-> 
+https://en.wikipedia.org/wiki/Stress_(mechanics)	/ stress
+https://en.wikipedia.org/wiki/Deformation_(mechanics)	/  strain
+
+http://physics.bgsu.edu/~stoner/p201/shm/sld002.htm
+strain=relative change in shape or size of an object due to externally applied forces
+stress=internal force (per unit area) associated with the strain
+Hooke's law
+
+wire under tension
+stress=tension/cross-section area
+strain=stretch/original length
+Hooke's law: T/A=Y(delta L/L0)
+
+stress=applied pressure
+strain=relative volume change
+Hooke's law: p=-B(delta V/V0)
+
+
+
+

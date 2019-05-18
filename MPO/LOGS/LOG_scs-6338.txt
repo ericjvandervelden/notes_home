@@ -1,0 +1,23 @@
+/ 7	. 
+
+[eric@localhost bin]$ vs-test-3.sh 
+jboss@192.168.3.103's password: jboss@mpo
+
+jboss@vs-test-3:~$  less /local/apps/jboss-4.0.5.GA/server/scstest2/deploy/postgres-ds.xml 
+                <xa-datasource-property name="ServerName">192.168.1.8</xa-datasource-property>
+                <xa-datasource-property name="PortNumber">5433</xa-datasource-property>
+                <xa-datasource-property name="DatabaseName">scstest2</xa-datasource-property>
+                <xa-datasource-property name="User">scstest</xa-datasource-property>
+                <xa-datasource-property name="Password">al5deewaoNgaavie3Oit6cheeWohdaYi</xa-datasource-property>
+
+/ Ga naar mposerv8	, 
+$ mposerv8 
+eric@mposerv8:~$ PGPASSWORD=al5deewaoNgaavie3Oit6cheeWohdaYi psql -U scstest -p 5433 -h localhost scstest2
+
+/ of op laptop	, 
+[eric@localhost local]$ PGPASSWORD=eric987@MPO psql -U eric -p 5433 -h mposerv8 scstest2
+/ OK
+
+
+
+

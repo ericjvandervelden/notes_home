@@ -1,0 +1,18 @@
+public interface EnumeratedValueObjectInterface extends DescribedUniqueFieldValueObject, SoftDeletable {
+/e
+public interface DescribedUniqueFieldValueObject extends UniqueFieldValueObject {
+	public String getDescription();
+	public void setDescription(String aDescription);
+/e
+public interface UniqueFieldValueObject extends Comparable<UniqueFieldValueObject>, EntityInterface {
+	public String getCode();
+	public void setCode(String aCode);
+/e
+public interface EntityInterface extends Serializable {
+	int getSystemId();
+	void setSystemId(int aSystemId);
+
+public interface SoftDeletable {
+	boolean isDeleted();
+	void setDeleted(boolean deleted);
+

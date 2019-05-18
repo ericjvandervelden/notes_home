@@ -1,0 +1,9 @@
+/ See VALIDATION
+
+/ VALIDATION
+
+/ Lees	,
+http://stackoverflow.com/questions/124865/xml-schema-xsd-validation-tool
+
+
+/ Einde VALIDATION

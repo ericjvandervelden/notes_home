@@ -1,0 +1,14 @@
+Beste Wim,
+
+Arjen vroeg of ik nog vragen had. Ik heb er toch nog een paar.
+
+Op mijn vorig kantoor gebruikten we het open-session-in-view pattern. Ik was benieuwd of jullie dit pattern niet gebruiken. Want de (database) transactie duurt zolang als de http request, dus als Hibernate een entity heeft gemaakt, dan geeft deze in het volgende request een LazyInitializationException als je een property van de entity opvraagt. In mijn Hibernate boek van Vlad Mihalcea staat dat je LazyInitializationExceptions moet vermijden, zodat de open-session-in-view pattern helemaal niet nodig is, door JOIN FETCH te gebruiken of DTO projections te maken in plaats van entities.  Doen jullie dat zo?
+
+Ik gebruik in Wicket vaak het Hollywood-Principle pattern (Inversion of Control).
+
+Heeft Arjen misschien nog naar WicketTester gekeken? En welke testing frameworks gebruiken jullie?  SpringJUnit4ClassRunner, Arquillian, DbUnit, Mockito? (Arjen vertelde al dat hij JMeter gebruikt voor performance testing).
+
+Bedankt.
+	
+
+

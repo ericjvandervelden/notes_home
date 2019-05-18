@@ -1,0 +1,2 @@
+/ lees over websockets in cxf	,
+https://github.com/apache/cxf/blob/master/distribution/src/main/release/samples/jax_rs/spark/README.txt

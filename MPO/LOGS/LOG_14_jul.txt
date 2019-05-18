@@ -1,0 +1,153 @@
+/ PCT-238
+
+SELECT (select max(ev.event_value) FROM event_value ev where ee.system_id = ev.event_systemid and ev.qualifier = 'eventLocationId') as BLS_code, 
+		ee.actual_value as actual_value, 
+		si.reference1 as barcode, 
+		sho.invoice_party_id as customerid, 
+		sho.reference1 as product, 
+		sho.reference2 as cusref, 
+		sho.to_address as toaddr1, 
+		sho.to_address2 as toaddr2, 
+		sho.to_postal_code as tozipcode, 
+		sho.to_city as tocity, 
+		c2.country_code as tocountry, 
+		sho.from_address as fromaddr1, 
+		sho.from_reference5 as reference5, 
+		sho.from_address2 as fromaddr2, 
+		sho.from_postal_code as fromzipcode, 
+		sho.from_city as fromcity, 
+		c1.country_code as fromcountry, 
+		si.width_m*1000 as width, 
+		si.length_m*1000 as length, 
+		si.height_m*1000 as height, 
+		si.weight_kg*1000 as weight, 
+		ee.closed_on as eventdtm, 
+		et.name as eventtype, 
+		sod1.field_value as optiesoort, 
+		sod2.field_value as kenmerksoort, 
+		so.estimated_end_after etastart, 
+		so.estimated_end_before etaend
+FROM event_event ee
+, service_order so
+, consignment c
+, service_action sa
+, shipment_order sho
+, event_type et
+, shipment_item si
+, country c1
+, country c2
+, shipment_order_detail sod1
+, shipment_order_detail sod2
+, entity_detail_type edt1
+, entity_detail_type edt2
+where ee.service_order_systemid=so.system_id 
+and c.service_order_systemid=so.system_id 
+and sa.consignment_systemid=c.system_id 
+and sa.shipment_order_systemid=sho.system_id 
+and et.system_id=ee.event_type_systemid 
+and si.shipment_order_systemid=sho.system_id
+and sho.from_country_systemid=c1.system_id 
+and sho.to_country_systemid=c2.system_id 
+and sod1.entity_systemid=sho.system_id 
+and edt1.system_id=sod1.edt_systemid 
+and edt1.name = 'OptieSoort' 
+and sod2.entity_systemid=sho.system_id 
+and edt2.system_id=sod2.edt_systemid 
+and edt2.name = 'ProductKenmerkSoort' 
+and ee.system_id in (26824356)
+and so.service_order_id='N0003047';
+SELECT (select max(ev.event_value) FROM event_value ev where ee.system_id = ev.event_systemid and ev.qualifier = 'eventLocationId') as BLS_code, 
+		ee.actual_value as actual_value, 
+		si.reference1 as barcode, 
+		sho.invoice_party_id as customerid, 
+		sho.reference1 as product, 
+		sho.reference2 as cusref, 
+		sho.to_address as toaddr1, 
+		sho.to_address2 as toaddr2, 
+		sho.to_postal_code as tozipcode, 
+		sho.to_city as tocity, 
+		c2.country_code as tocountry, 
+		sho.from_address as fromaddr1, 
+		sho.from_reference5 as reference5, 
+		sho.from_address2 as fromaddr2, 
+		sho.from_postal_code as fromzipcode, 
+		sho.from_city as fromcity, 
+		c1.country_code as fromcountry, 
+		si.width_m*1000 as width, 
+		si.length_m*1000 as length, 
+		si.height_m*1000 as height, 
+		si.weight_kg*1000 as weight, 
+		ee.closed_on as eventdtm, 
+		et.name as eventtype, 
+		sod1.field_value as optiesoort, 
+		sod2.field_value as kenmerksoort, 
+		so.estimated_end_after etastart, 
+		so.estimated_end_before etaend
+FROM event_event ee
+, service_order so
+, consignment c
+, service_action sa
+, shipment_order sho
+, event_type et
+, shipment_item si
+, country c1
+, country c2
+, shipment_order_detail sod1
+, shipment_order_detail sod2
+, entity_detail_type edt1
+, entity_detail_type edt2
+where ee.service_order_systemid=so.system_id 
+and c.service_order_systemid=so.system_id 
+and sa.consignment_systemid=c.system_id 
+and sa.shipment_order_systemid=sho.system_id 
+and et.system_id=ee.event_type_systemid 
+and si.shipment_order_systemid=sho.system_id
+and sho.from_country_systemid=c1.system_id 
+and sho.to_country_systemid=c2.system_id 
+and sod1.entity_systemid=sho.system_id 
+and edt1.system_id=sod1.edt_systemid 
+and edt1.name = 'OptieSoort' 
+and sod2.entity_systemid=sho.system_id 
+and edt2.system_id=sod2.edt_systemid 
+and edt2.name = 'ProductKenmerkSoort' 
+and ee.system_id in (26824356)
+
+SELECT count(*) 
+FROM event_event ee
+, service_order so
+, consignment c
+, service_action sa
+, shipment_order sho
+, event_type et
+, shipment_item si
+, country c1
+, country c2
+, shipment_order_detail sod1
+, shipment_order_detail sod2
+, entity_detail_type edt1
+, entity_detail_type edt2
+where ee.service_order_systemid=so.system_id 
+and c.service_order_systemid=so.system_id 
+and sa.consignment_systemid=c.system_id 
+and sa.shipment_order_systemid=sho.system_id 
+and et.system_id=ee.event_type_systemid 
+and si.shipment_order_systemid=sho.system_id
+and sho.from_country_systemid=c1.system_id 
+and sho.to_country_systemid=c2.system_id 
+and sod1.entity_systemid=sho.system_id 
+and edt1.system_id=sod1.edt_systemid 
+and edt1.name = 'OptieSoort' 
+and sod2.entity_systemid=sho.system_id 
+and edt2.system_id=sod2.edt_systemid 
+and edt2.name = 'ProductKenmerkSoort' 
+and ee.system_id in (26824356)
+and so.service_order_id='N0003047';
+
+select ee.* 
+from event_event ee
+,service_order so 
+where ee.service_order_systemid=so.system_id 
+nd so.service_order_id='N0003047';
+
+
+/ PCT-238

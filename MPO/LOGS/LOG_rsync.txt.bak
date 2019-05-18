@@ -1,0 +1,289 @@
+/ 7	. 
+
+/ rsync rsync_src/
+
+/ Ga naar	,
+http://articles.slicehost.com/2007/10/10/rsync-exclude-files-and-folders
+
+[eric@localhost tmp]$ find rsync_src/
+rsync_src/
+rsync_src/1.txt
+rsync_src/1.lnk
+rsync_src/sub
+rsync_src/sub/3.txt
+rsync_src/sub/.2.txt
+rsync_src/excl
+rsync_src/excl/.5.txt
+rsync_src/excl/4.txt
+[eric@localhost tmp]$ rsync -avz --delete --exclude excl rsync_src/ rsync_dst/
+
+[eric@localhost tmp]$ find rsync_dst/
+rsync_dst/
+rsync_dst/1.txt
+rsync_dst/1.lnk
+rsync_dst/sub
+rsync_dst/sub/3.txt
+rsync_dst/sub/.2.txt
+
+[eric@localhost tmp]$ mv rsync_src/sub/3.txt rsync_src/
+[eric@localhost tmp]$ find rsync_src
+rsync_src
+rsync_src/3.txt
+rsync_src/1.txt
+rsync_src/1.lnk
+rsync_src/sub
+rsync_src/sub/.2.txt
+rsync_src/excl
+rsync_src/excl/.5.txt
+rsync_src/excl/4.txt
+
+[eric@localhost tmp]$ rsync -avz --delete --exclude excl rsync_src/ rsync_dst/
+sending incremental file list
+./
+3.txt
+deleting sub/3.txt
+sub/
+
+sent 244 bytes  received 59 bytes  606.00 bytes/sec
+total size is 21  speedup is 0.07
+
+[eric@localhost tmp]$ find rsync_dst/
+rsync_dst/
+rsync_dst/3.txt
+rsync_dst/1.txt
+rsync_dst/1.lnk
+rsync_dst/sub
+rsync_dst/sub/.2.txt
+
+/ 13	. 
+
+[eric@localhost tmp]$ find rsync_src/
+rsync_src/
+rsync_src/3.txt
+rsync_src/1.txt
+rsync_src/1.lnk
+rsync_src/sub
+rsync_src/sub/.2.txt
+rsync_src/excl
+rsync_src/excl/.5.txt
+rsync_src/excl/4.txt
+
+[eric@localhost tmp]$ find rsync_dst
+rsync_dst
+rsync_dst/1.txt
+rsync_dst/1.lnk
+rsync_dst/sub
+rsync_dst/sub/3.txt
+rsync_dst/sub/.2.txt
+
+[eric@localhost tmp]$ cat rsync_excl.txt 
+excl
+
+[eric@localhost tmp]$ rsync -avz --delete --exclude-from rsync_excl.txt   rsync_src/ rsync_dst/
+
+[eric@localhost tmp]$ rsync -avz --delete --exclude-from rsync_excl.txt   rsync_src/ rsync_dst/
+sending incremental file list
+./
+3.txt
+deleting sub/3.txt
+sub/
+
+sent 244 bytes  received 59 bytes  606.00 bytes/sec
+total size is 21  speedup is 0.07
+
+[eric@localhost tmp]$ find rsync_dst/
+rsync_dst/
+rsync_dst/3.txt
+rsync_dst/1.txt
+rsync_dst/1.lnk
+rsync_dst/sub
+rsync_dst/sub/.2.txt
+
+/ 7	. 
+
+/ rsync rsync_src
+
+/ 13	. 
+
+[eric@localhost tmp]$ find rsync_src/
+rsync_src/
+rsync_src/1.txt
+rsync_src/1.lnk
+rsync_src/sub
+rsync_src/sub/3.txt
+rsync_src/sub/.2.txt
+rsync_src/excl
+rsync_src/excl/.5.txt
+rsync_src/excl/4.txt
+
+[eric@localhost tmp]$ rsync -avz    rsync_src rsync_dst/
+[eric@localhost tmp]$ find rsync_dst/
+rsync_dst/
+rsync_dst/rsync_src
+rsync_dst/rsync_src/1.txt
+rsync_dst/rsync_src/1.lnk
+rsync_dst/rsync_src/sub
+rsync_dst/rsync_src/sub/3.txt
+rsync_dst/rsync_src/sub/.2.txt
+rsync_dst/rsync_src/excl
+rsync_dst/rsync_src/excl/.5.txt
+rsync_dst/rsync_src/excl/4.txt
+
+[eric@localhost tmp]$ rsync -avz --exclude-from  rsync_excl.txt   rsync_src rsync_dst/
+sending incremental file list
+created directory rsync_dst
+rsync_src/
+rsync_src/1.lnk -> 1.txt
+rsync_src/1.txt
+rsync_src/sub/
+rsync_src/sub/.2.txt
+rsync_src/sub/3.txt
+
+sent 359 bytes  received 124 bytes  966.00 bytes/sec
+total size is 21  speedup is 0.04
+
+[eric@localhost tmp]$ find rsync_dst/
+rsync_dst/
+rsync_dst/rsync_src
+rsync_dst/rsync_src/1.txt
+rsync_dst/rsync_src/1.lnk
+rsync_dst/rsync_src/sub
+rsync_dst/rsync_src/sub/3.txt
+rsync_dst/rsync_src/sub/.2.txt
+
+[eric@localhost tmp]$ mv rsync_src/sub/3.txt rsync_src/
+[eric@localhost tmp]$ rsync -avz --delete --exclude-from  rsync_excl.txt   rsync_src rsync_dst/
+sending incremental file list
+rsync_src/
+rsync_src/3.txt
+deleting rsync_src/sub/3.txt
+rsync_src/sub/
+
+sent 260 bytes  received 70 bytes  660.00 bytes/sec
+total size is 21  speedup is 0.06
+
+/ 13	. 
+
+/ alles is altijd tov src dir 	, dus 
+$ cat rsync_excl
+excl
+/ Dan is excl relative tov rsync_src	, omdat dat de src dir is van rsync:
+
+[eric@localhost tmp]$ rsync -avz --delete --exclude-from  rsync_excl.txt   rsync_src rsync_dst/
+																			^^^^^^^
+
+/ 7	. 
+
+/ 13	. 
+
+[eric@localhost tmp]$ find rsync_src
+rsync_src
+rsync_src/3.txt
+rsync_src/sub2
+rsync_src/sub2/excl2
+rsync_src/sub2/excl2/.6.txt
+rsync_src/sub2/excl2/7.txt
+rsync_src/1.txt
+rsync_src/1.lnk
+rsync_src/sub
+rsync_src/sub/.2.txt
+rsync_src/excl
+rsync_src/excl/.5.txt
+rsync_src/excl/4.txt
+
+[eric@localhost tmp]$ rsync -avz --delete --exclude excl --exclude sub2/excl2 rsync_src/ rsync_dest
+
+[eric@localhost tmp]$ find rsync_dest/
+rsync_dest/
+rsync_dest/3.txt
+rsync_dest/sub2
+rsync_dest/1.txt
+rsync_dest/1.lnk
+rsync_dest/sub
+rsync_dest/sub/.2.txt
+
+/ 13	. 
+
+[eric@localhost tmp]$ mkdir rsync_src/sub3
+[eric@localhost tmp]$ mv rsync_src/3.txt rsync_src/sub3
+[eric@localhost tmp]$ rsync -avz --delete --exclude excl --exclude sub2/excl2 rsync_src/ rsync_dest
+sending incremental file list
+deleting 3.txt
+./
+sub3/
+sub3/3.txt
+
+sent 281 bytes  received 53 bytes  668.00 bytes/sec
+total size is 21  speedup is 0.06
+[eric@localhost tmp]$ find rsync_dest/
+rsync_dest/
+rsync_dest/sub3
+rsync_dest/sub3/3.txt
+rsync_dest/sub2
+rsync_dest/1.txt
+rsync_dest/1.lnk
+rsync_dest/sub
+rsync_dest/sub/.2.txt
+
+[eric@localhost tmp]$ mv rsync_src/sub3/3.txt rsync_src/
+[eric@localhost tmp]$ rmdir rsync_src/sub3
+[eric@localhost tmp]$ rsync -avz --delete --exclude excl --exclude sub2/excl2 rsync_src/ rsync_dest
+sending incremental file list
+deleting sub3/3.txt
+deleting sub3/
+./
+3.txt
+
+sent 268 bytes  received 63 bytes  662.00 bytes/sec
+total size is 21  speedup is 0.06
+[eric@localhost tmp]$ find rsync_dest/
+rsync_dest/
+rsync_dest/3.txt
+rsync_dest/sub2
+rsync_dest/1.txt
+rsync_dest/1.lnk
+rsync_dest/sub
+rsync_dest/sub/.2.txt
+
+/ 13	. 
+
+[root@localhost home]# rsync -avz --delete --exclude Downloads --exclude DB_TAP eric/ /run/media/eric/WD/mpo/home/eric/ 
+/ OK
+
+/ 13	. 
+
+/ Open	,
+
+$ pwd
+/home/eric/Devel/Java/Eclipse/eclipse-jee
+$ eclipse/eclipse
+$ pwd
+/home/eric/Devel/Java/Eclipse/eclipse-jee-test
+$ pwd
+/home/eric/Devel/Java/Eclipse/eclipse-interfacing-testing
+
+$ pwd
+/home/eric/Devel/Java/ActiveMQ/apache-activemq-5.10.1
+$ bin/activemq console
+
+$ pwd
+/home/eric/Devel/Java/Eclipse/eclipse-jee/workspace
+$ pwd
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server
+$ pwd
+/home/eric/Devel/Java/Wicket/wicket
+
+/home/eric/bin
+
+$ pwd
+/home/eric/DB_TAP/Firebird/Dsvfms
+$ isql-fb -user sysdba -password masterkey dsvfms.fdb_20160127-003030.fdb 
+
+$ PGPASSWORD=mpopostgres@mpo psql -U mpopostgres geosco0706p
+
+
+
+
+ 
+
+

@@ -1,0 +1,1000 @@
+  235  printf "GET / HTTP/1.0\r\n\r\n" | nc localhost 3000
+  236  printf "GET / HTTP/1.1\r\n\r\n" | nc localhost 3000
+  237  printf "GET /" | nc localhost 3000
+  238  nc localhost 3000
+  239  printf "GET /" | nc localhost 3000
+  240  printf "GET /" | nc 127.0.0.1 3000
+  241  nc localhost 3000
+  242  printf "GET / HTTP/1.1" | nc localhost 3000
+  243  printf --hel[
+  244  printf --help
+  245  man bash
+  246  printf "GET / HTTP/1.1" 
+  247  print "GET / HTTP/1.1" 
+  248  printf "GET / HTTP/1.1\n" 
+  249  printf "GET / HTTP/1.1\n\n" 
+  250  printf "GET / HTTP/1.1\n\n" | nc localhost 3000
+  251  printf "GET / HTTP/1.1\n\n"
+  252  nc localhost 3000
+  253  printf "GET / HTTP/1.1\n\n"
+  254  printf "GET / HTTP/1.1\n\n" | nc localhost 3000
+  255  printf "GET / HTTP/1.1\\n\\n" | nc localhost 3000
+  256  echo "GET / HTTP1.1"
+  257  echo "GET / HTTP1.1\n"
+  258  echo -e "GET / HTTP1.1\n"
+  259  echo -e "GET / HTTP1.1\n" | nc localhost 3000
+  260  nc localhost 3000
+  261  echo -e "GET / HTTP1.1\n"
+  262  cat <(echo -e "GET / HTTP1.1\n")
+  263  cat < <(echo -e "GET / HTTP1.1\n")
+  264  nc localhost 3000 < <(echo -e "GET / HTTP1.1\n")
+  265   nc --help
+  266  man ncat
+  267  nc localhost 3000 < <(echo -e "GET / HTTP/1.1")
+  268  cat <(echo -e "GET / HTTP/1.1")
+  269  nc localhost 3000 < <(echo -e "GET / HTTP/1.1\n")
+  270  cat <(echo -e "GET / HTTP/1.1\n")
+  271  printf "GET / HTTP/1.1\r\n\r\n" | nc localhost 3000
+  272  printf "GET / HTTP/1.1\n\n\n\n" | nc localhost 3000
+  273  nc localhost 3000 <<EOF
+  274  GET / HTTP/1.1
+  275  EOF
+  276  nc localhost 3000 <<EOF
+  277  GET / HTTP/1.1
+  278  EOF
+  279  exit
+  280  ps ajx
+  281  ps ajx | grep hd
+  282  ps ajx | grep nc
+  283  ps ajx | grep ' nc '
+  284  kill -9 4381
+  285  pwd
+  286  cd ..
+  287  cd Misc/
+  288  ls
+  289  npm start
+  290  nvm use v5.5.0
+  291  npm start
+  292  ls
+  293  mv public/a.* .
+  294  ls
+  295  npm start
+  296  exit
+  297  cd ../../Webpack/
+  298  ls
+  299  cd video/
+  300  pwd
+  301  cd ../../
+  302  ls
+  303  vi package.json 
+  304  rm package.json 
+  305  mkdir Mocha/Chai -p
+  306  cd Mocha/Chai/
+  307  git clone https://github.com/ericjvandervelden/chai-mocha-testing.git
+  308  cd chai-mocha-testing/
+  309  vi .gitignore
+  310  git status
+  311  ls
+  312  git rm -r node_modules/
+  313  git status
+  314  git commit -m "Removed node_modules/ "
+  315  ls
+  316  vi package.json 
+  317  npm install
+  318  nvm use
+  319  nvm use 5
+  320  npm install
+  321  git status
+  322  pwd
+  323  ls  
+  324  git push
+  325  pwd
+  326  cd ../../../
+  327  ls
+  328  cd Webpack/
+  329  ls
+  330  mkdir bear
+  331  cd bear/
+  332  npm init
+  333  vi index.js
+  334  vi index.js 
+  335  cd ../video/
+  336  ls
+  337  ls node_modules/
+  338  cd ..
+  339  ls
+  340  mv bear/ my-bear
+  341  vi my-bear/package.json 
+  342  vi my-bear/index.js 
+  343  vi video/index.js
+  344  cd video/
+  345  less package.json 
+  346  npm start
+  347  cp -a ../my-bear/ node_modules/
+  348  npm start
+  349  cd ..
+  350  pwd
+  351  find my-bear/
+  352  cat my-bear/package.json 
+  353  cat my-bear/index.js 
+  354  cd video/
+  355  pwd
+  356  cat pak
+  357  cat index.
+  358  cat index.js
+  359  wd
+  360  pwd
+  361  history 
+  362  ls
+  363  ls node_modules/
+  364  cp node_modules/my-bear/index.js bear2.js
+  365  vi bear2.js 
+  366  vi index.js
+  367  vi bear2.js 
+  368  vi index.js
+  369  npm start
+  370  vi index.js
+  371  npm start
+  372  vi index.js
+  373  npm start
+  374  cat bear2.js 
+  375  cat index.
+  376  cat index.js
+  377  npm start
+  378  vi index.js
+  379  npm i webpack-dev-server --save-dev
+  380  vi package.json 
+  381  npm bundle
+  382  npm run bundle
+  383  vi package.json 
+  384  npm run bundle
+  385   npm start
+  386   vi index.js
+  387   npm start
+  388  npm run bundle
+  389  vi package.json 
+  390  npm run bundle
+  391  vi package.json 
+  392  npm run bundle
+  393  vi package.json 
+  394  npm run bundle
+  395  npm start
+  396  vi index.js
+  397  npm start
+  398  vi package.json 
+  399  ps ajx | grep pack
+  400  vi package.json 
+  401  npm start
+  402  vi node_modules/my-bear/package.json 
+  403  vi index.js 
+  404  npm start
+  405  ps ajx
+  406  npm start
+  407  npm run bundle.js 
+  408  npm run bundle2
+  409  vi package.json 
+  410  npm run bundle2
+  411  vi package.json 
+  412  npm run bundle2
+  413  node_modules/.bin/webpack-dev-server --help
+  414  npm run bundle2
+  415  npm run bundle
+  416  npm i jquery --save
+  417  npm run bundle
+  418  vi ../my-bear/index.js 
+  419  cat index.
+  420  cat index.js
+  421  vi index.js
+  422  npm run bundle
+  423  pwd
+  424  cd ..
+  425  ls
+  426  mkdir my_css
+  427  cd my_css
+  428  npm init
+  429  vi package.json 
+  430  vi index.css
+  431  cd ..
+  432  cp -a my_css/ video/node_modules/
+  433  cd video/
+  434  npm i css-loader --save-dev
+  435  npm run bundle
+  436  vi index.js
+  437  npm run bundle
+  438  vi ../my-bear/index.js 
+  439  vi index.js
+  440  cp -a ../my-bear/ node_modules/
+  441  npm run bundle
+  442  find ../my_css/
+  443  cd ..
+  444  pwd
+  445  ls
+  446  cat my_css/package.json 
+  447  cat my_css/index.css 
+  448  cd video/
+  449  ls
+  450  cat index.html 
+  451  cat index.js
+  452  cd ..
+  453  cat my-bear/package.json 
+  454  cat my-bear/index.js 
+  455  cd video/
+  456  vi ../my-bear/index.js 
+  457  cat ../my-bear/index.js 
+  458  cp -a ../my-bear/ node_modules/
+  459  npm run bundle
+  460  cd ../my_css/
+  461  ls
+  462  vi index.css 
+  463  vi base.css
+  464  cat index.css 
+  465  vi base.css 
+  466  cd ../video/
+  467  cp -a ../my_css/ node_modules/
+  468  npm run bundle
+  469  cd ../my_css/
+  470  pwd
+  471  ls
+  472  cat base.css 
+  473  cat index.css 
+  474  cd ../video/
+  475  vi webpack.config.js
+  476  vi ../my-bear/index.js 
+  477  cp -a ../my-bear/ node_modules/
+  478  npm run bundle
+  479  ls
+  480  vi webpack.config.js 
+  481  npm run bundle
+  482  pwd
+  483  cat webpack.config.js 
+  484   cat ../my-bear/index.js 
+  485  pwd
+  486  cd ../../
+  487  ls
+  488  mkdir Babel
+  489  cd Babel/
+  490  mkdir video
+  491  cd video/
+  492  npm init
+  493  pwd
+  494  npm i babel --save-dev
+  495  less node_modules/babel/package.json 
+  496  npm i babelify --save-dev
+  497  npm i budo --save-dev
+  498  pwd
+  499  vi index.js
+  500  rm index.js 
+  501  vi index.js 
+  502  node index.js 
+  503  vi index.js 
+  504  vi package.json 
+  505  vi index.js 
+  506  ls node_modules/
+  507   less package.json 
+  508  vi package.json 
+  509  vi index.js 
+  510  ls node_modules/
+  511  vi package.json 
+  512  npm i babel-preset-es2015 --save-dev
+  513  vi package.json 
+  514  npm i babel-preset-react --save-dev
+  515  vi package.json 
+  516  vi index.js 
+  517  cat package.json 
+  518  vi index.js 
+  519  cd ../../
+  520  ls
+  521  mkdir React
+  522  mkdir React/website
+  523  cd React/website/
+  524  npm init
+  525  pwd
+  526  vi index.js
+  527  cd ..
+  528  mv website/ getting_started
+  529  cd getting_started/
+  530  ls
+  531  vi package.json 
+  532  vi index.js
+  533  cd ..
+  534  mv getting_started/ getting-started/
+  535  cd getting-started/
+  536  vi package.json 
+  537  vi index.js 
+  538  vi index.html
+  539  vi index.js
+  540  npm i  --save-dev react react-dom babelify babel-preset-react
+  541  ls node_modules/
+  542  npm i --save-dev browserify
+  543  vi package.json 
+  544  npm start
+  545  vi package.json 
+  546  npm start
+  547  ls
+  548  node_modules/.bin/browserify -t [babelify --presets [react]] index.js -o bundle.js
+  549  ls
+  550  node_modules/.bin/browserify -t [babelify --presets [react]] ./index.js -o bundle.js
+  551  ls
+  552  vi index.
+  553  vi index.js
+  554  node_modules/.bin/browserify -t [babelify --presets [react]] index.js -o bundle.js
+  555  vi index.js
+  556  less node_modules/react-dom/index.js 
+  557  less node_modules/react-dom/server.js 
+  558  less node_modules/react-dom/dist/react-dom.js
+  559  less node_modules/react-dom/dist/react-dom-server.js 
+  560  grep render node_modules/react-dom/
+  561  grep render -r node_modules/react-dom/
+  562  less node_modules/r
+  563  grep render -r node_modules/react
+  564  less node_modules/react/lib/ReactDOM.js
+  565  vi index.js
+  566  npm start
+  567  vi index.js
+  568  npm start
+  569  vi index.js
+  570  npm start
+  571  vi package.json 
+  572  less ../../Browserify/video/package.json 
+  573  vi  ../../Browserify/video/package.json 
+  574  vi package.json 
+  575  npm start
+  576  cd ..
+  577  ls
+  578  mv getting-started/ getting-started-with-browserify
+  579  vi getting-started-with-browserify/package.json 
+  580  mkdir getting-started-with-webpack
+  581  cd getting-started-with-
+  582  cd getting-started-with-webpack/
+  583  npm ini
+  584  npm init
+  585  cd ../getting-started-with-browserify/
+  586  vi index.js
+  587  cat package.json 
+  588  pwd
+  589   cd ..
+  590  cd ../Babel/video/
+  591  npm start
+  592  cd ../../React/getting-started/
+  593  vi package.json 
+  594  npm start
+  595  npm i camelize --save-dev
+  596  npm start
+  597  npm i emptyfunction --save-dev
+  598  npm start
+  599  npm un --help
+  600  npm un emptyfunction --save-dev
+  601  npm i emptyFunction --save-dev
+  602  npm un camelize --save-dev
+  603  vi package.json 
+  604  npm start
+  605  cat package.json 
+  606  pwd
+  607  cd ../blog/
+  608  ls
+  609  vi index.js 
+  610  ls
+  611  ls ..
+  612  cd ..
+  613  tar cvzf blog.tgz blog/
+  614  cd blog/
+  615  ls
+  616  vi index.js
+  617  vi package.json 
+  618  vi index.js
+  619  vi package.json 
+  620  pwd
+  621  less ../../Browserify/video/package.json 
+  622  ls ..
+  623  cd ../getting-started/
+  624  ls
+  625  less package.json 
+  626  vi index.js
+  627  budo --help
+  628  ls
+  629  node_modules/.bin/budo --help
+  630  ls
+  631  vi package.json 
+  632  cat package.json 
+  633  npm start
+  634  ls
+  635  vi index.html 
+  636  vi index.js
+  637  vi index.html 
+  638  vi index.js
+  639  cd ../blog/
+  640  ls
+  641  vi index.html 
+  642  vi index.js
+  643  vi package.json 
+  644  vi index.js
+  645  vi index.html 
+  646  vi index.js
+  647  npm start
+  648  ls -ltr ~/Downloads/
+  649  ls -ltr ~/Downloads/ | grep sublime
+  650  ls
+  651  vi index.js
+  652  ps ajx 
+  653  kill -9 31296
+  654  ps ajx 
+  655  kill -9 31301 31339
+  656  ps ajx 
+  657  kill -9 31334
+  658  ps ajx 
+  659  ps ajxw
+  660  ps auxw
+  661  ps ajxw
+  662  kill -9 31494
+  663  ps ajxw
+  664  kill -9 31499
+  665  ps ajxw
+  666  ps ajx 
+  667  kill -9 31614  31619 
+  668  ps ajx 
+  669  kill -9 31614  31619 
+  670  ps ajx 
+  671  kill -9 31684  31689
+  672  ps ajx 
+  673  kill -9 31747
+  674  ps ajx 
+  675  cd ../jesse/
+  676  vi index.js
+  677  pwd
+  678  ls
+  679  vi radio.js
+  680  cd ../levelup/
+  681  vi index.js
+  682  cp index.js index0.js
+  683  vi index.js
+  684  pwd
+  685  ls
+  686  vi index.js
+  687  vi contactlist.js 
+  688  v index.js
+  689  vi index.js
+  690  ls
+  691  cp -a index.js index4.js
+  692  cp -a contactlist.js contactlist4.js
+  693  cp -a contact.js contact4.js
+  694  vi package.json 
+  695  vi index.js
+  696  less ../../Webpack/video/package.json 
+  697  less package.json 
+  698  less node_modules/babelify/package.json 
+  699  less ../../Webpack/video/package.json 
+  700  find ../../Webpack/video/ -name package.json 
+  701  grep 'babel-loader' < <(find ../../Webpack/video/ -name package.json  )
+  702  grep 'babel-loader' <(find ../../Webpack/video/ -name package.json  )
+  703  grep 'babel-loader' $(find ../../Webpack/video/ -name package.json  )
+  704  mv ~/Downloads/fourier_spectal.pdf ~/Documents/
+  705  top
+  706  ls
+  707  vi index.html 
+  708  cd ../
+  709  cd ..
+  710  cd Webpack/video/
+  711  ls
+  712  vi webpack.config.js 
+  713  ls
+  714  pwd
+  715  cd ..
+  716  ls
+  717  mkdir video2
+  718  cd video2
+  719  npm init
+  720  npm i --save-dev webpack
+  721  vi package.json 
+  722  vi index.js
+  723  cp ../video/index.html .
+  724  cat index.html 
+  725  npm start
+  726  pwd
+  727  vi bear.js
+  728  vi index.js
+  729  vi index.html 
+  730  cat package.json 
+  731  cat index2.js 
+  732  cat bear2.js 
+  733  vi index2.js 
+  734  vi bear2.js 
+  735  cat ../video/bear2.js 
+  736  cat ../video/index.js
+  737  vi index2.js
+  738  vi bear2.js 
+  739  vi index2.js 
+  740  cat bear2.js 
+  741  vi index2.js 
+  742  vi bear2.js 
+  743  cat bear2.js 
+  744  cat index2.js 
+  745  vi bear2.js 
+  746  cat package.json 
+  747  vi bear2.js 
+  748  vi index2.js 
+  749  vi bear2.js 
+  750  vi ~/.vimrc 
+  751  vi bear2.js 
+  752  vi bear3.css
+  753  cp bear2.js bear3.js
+  754  mv bear3.css style3.css
+  755  vi bear3.js
+  756  cp index2.js index3.js
+  757  vi index3.js 
+  758  vi package.json 
+  759  vi index3.js 
+  760  cat package.json 
+  761  cat index3.js 
+  762  cat bear3.js 
+  763  cat style3.css 
+  764  cd ..
+  765  ls
+  766  mkdir CodeSchool
+  767  mkdir CodeSchool/Express
+  768  cd CodeSchool/Express/
+  769  pwd
+  770  npm init
+  771  cd ..
+  772  cd Express/
+  773  ls
+  774  npm i express --save
+  775  vi package.json 
+  776  npm i express --save
+  777  vi package.json 
+  778  vi index.js
+  779  cat level1/index.js 
+  780  vi public/index.html 
+  781  vi level1/index.js 
+  782  vi index.js 
+  783  cat public/index.html 
+  784  vi public/index.html 
+  785  npm i --save jquery
+  786  cp -a node_modules/jquery/dist/jquery.js public/
+  787  vi public/index.html 
+  788  vi public/client.js
+  789  vi public/index.html 
+  790  vi index.js 
+  791  vi public/index.html 
+  792  vi public/client.js 
+  793  vi logger.js 
+  794  vi index.js 
+  795   ls
+  796  mkdir level2
+  797  mv level2 level2partII
+  798  cp index.js logger.js public/ level2partII
+  799  cp -a index.js logger.js public/ level2partII
+  800  ls
+  801  vi index.js 
+  802  rm logger.js 
+  803  vi index.js 
+  804  ls
+  805  mkdir level3part*
+  806  ls
+  807  mv level3part\*/ level3partI
+  808  cp -a index.js public/ level3partI/
+  809  vi index.js 
+  810  vi level3partI/index.js 
+  811  vi index.js 
+  812  vi level3partI/index.js 
+  813  vi public/index.html 
+  814  vi public/client.js 
+  815  vi public/index.html 
+  816  vi public/client.js 
+  817  vi index.js 
+  818  ls
+  819  vi level2partII/index.js 
+  820  vi index.js 
+  821  vi public/client.js 
+  822  vi index.js 
+  823  vi public/client.js 
+  824  vi index.js 
+  825  mkdir level3partII
+  826  cp -a index.js public/ level3partII
+  827  vi index.js 
+  828  npm i --save body-parser
+  829  vi index.js 
+  830  vi public/client.js 
+  831  mv index.js server.js
+  832  vi package.json 
+  833  vi public/index.html 
+  834  vi public/client.js 
+  835  cp ~/Pictures/add.png ~/Pictures/delete.png public/
+  836  vi public/client.js 
+  837  rm public/delete.png public/add.png 
+  838  rm ~/Pictures/add.png  
+  839  mv ~/Pictures/delete.png public/
+  840  vi public/client.js 
+  841  rm public/delete.png 
+  842  ls
+  843  ls public/
+  844  vi public/client.js 
+  845  vi server.js 
+  846  vi public/li
+  847  vi public/client.js 
+  848  vi server.js 
+  849  mkdir fileupload
+  850  ls
+  851  mv fileupload/ level4_fileupload
+  852  cp -a server.js public/ level4_fileupload/
+  853  vi server.js 
+  854  mkdir level5partI
+  855  cp -a server.js public/ level5partI/
+  856  vi server.js 
+  857  mkdir routes
+  858  vi routes/blocks.js
+  859  vi server.js 
+  860  ls
+  861  mkdir level5partI*
+  862  mkdir level5partII
+  863  cp -a server.js public/ level5partII
+  864  cd ..
+  865  ls
+  866  mkdir Polymer
+  867  cd Polymer/
+  868  ls
+  869  npm init
+  870  vi package.json 
+  871  npm i -g bower
+  872  npm --help
+  873  npm un --help
+  874  npm r -g bower
+  875  ls /home/eric/.nvm/versions/node/v5.5.0/lib/node_modules
+  876  npm i -g bower
+  877  ls /home/eric/.nvm/versions/node/v5.5.0/lib/node_modules
+  878  npm i -g polymer-cli
+  879  ls /home/eric/.nvm/versions/node/v5.5.0/lib/node_modules
+  880  ls /home/eric/.nvm/versions/node/v5.5.0/lib/node_modules/polymer-cli/node_modules/
+  881  polymer help
+  882  pwd
+  883  mkdir my-el && cd my-el
+  884  polymer help
+  885  polymer help init
+  886  polymer init
+  887  ls
+  888  ls bower_components/
+  889  ls
+  890  vi index.html 
+  891  ls ..
+  892  pwd
+  893  cd ..
+  894  ls
+  895  vi package.json 
+  896  rm package.json 
+  897  cd my-el/
+  898  ls
+  899  less my-el.html 
+  900  ls bower_components/
+  901  ls bower_components/polymer/
+  902  less bower.json 
+  903  ls
+  904  less bower.json 
+  905  cd ..
+  906  ls
+  907  pwd
+  908  mkdir app
+  909  cd app
+  910  polymer init
+  911  ls
+  912  ls ..
+  913  vi bower.json 
+  914  vi index.html 
+  915  vi src/my-app/my-app.html 
+  916  ls
+  917  ls ..
+  918  ls src/
+  919  ls 
+  920  ls src/
+  921  find src
+  922  less src/my-app/my-app.html 
+  923  find test
+  924  less test/my-app/my-app_test.html 
+  925  polymer test
+  926  polymer help
+  927  polymer help test
+  928   polymer serve
+  929  cd ../my-el/
+  930   polymer serve
+  931  cd ../app/
+  932   polymer serve
+  933  cd ../my-el/
+  934   polymer serve
+  935  cd ../app
+  936   polymer serve
+  937  polymer test --browser Chrome
+  938  polymer lint --input src/my-app/my-app.html 
+  939  polymer lint --input my-app.html
+  940  cd ../my-el/
+  941  find
+  942  ls
+  943  polymer lint --help
+  944  polymer lint my-el.html 
+  945  polymer help
+  946  polymer help lint
+  947  polymer lint
+  948  polymer lint -h
+  949  polymer lint -h -v
+  950  polymer lint  -v
+  951  polymer lint  -v my-el.html 
+  952  polymer lint  -v ./my-el.html 
+  953  polymer lint  -v --input my-el.html 
+  954  polymer build --entrypoint index.html
+  955   npm
+  956   cd ..
+  957  ls
+  958  pwd
+  959  find /home/eric/Downloads/ | ls -ltr
+  960  find /home/eric/Downloads/ | xargs ls -ltr
+  961  find /home/eric/Downloads/ | xargs ls -1tr | 
+  962  find /home/eric/Downloads/ | xargs ls -1tr |  awk 'END{print}'
+  963  find /home/eric/Downloads/ -print0 | xargs -0 ls -1tr |  awk 'END{print}'
+  964  find /home/eric/Downloads/ -print0 | xargs -0 ls -1tr |  awk 'END{print}' | xargs unzip -l 
+  965  find /home/eric/Downloads/
+  966  find /home/eric/Downloads/ | xargs ls -1tr
+  967  find /home/eric/Downloads/ | xargs ls -ltr
+  968  find /home/eric/Downloads/ 
+  969  find /home/eric/Downloads/ | xargs ls -ltr
+  970  find /home/eric/Downloads/ 
+  971  find /home/eric/Downloads/ | xargs ls -1tr
+  972  unzip -l ~/Downloads/polymer-first-elements.zip
+  973  unzip  ~/Downloads/polymer-first-elements.zip
+  974  pwd
+  975  exit
+  976  ls
+  977  cd ..
+  978  ls
+  979  cd icon-toggle-finished/
+  980  ls
+  981  less demo/icon-toggle-demo.html 
+  982  less icon-toggle.html 
+  983  cd ..
+  984  ls
+  985  cd icon-toggle-finished/
+  986  ls
+  987  vi demo/index.html 
+  988  vi demo/icon-toggle-demo.html 
+  989  vi icon-toggle.html 
+  990  vi demo/icon-toggle-demo.html 
+  991  vi icon-toggle.html 
+  992  vi demo/icon-toggle-demo.html 
+  993  vi icon-toggle.html 
+  994  vi demo/icon-toggle-demo.html 
+  995  exit
+  996  vi icon-toggle-finished/
+  997  vi icon-toggle-finished/icon-toggle.html 
+  998  vi icon-toggle-finished/demo/icon-toggle-demo.html 
+  999  vi icon-toggle-finished/icon-toggle.html 
+ 1000  vi icon-toggle-finished/demo/icon-toggle-demo.html 
+ 1001  vi icon-toggle-finished/icon-toggle.htm
+ 1002  vi icon-toggle-finished/icon-toggle.html
+ 1003  vi icon-toggle-finished/demo/icon-toggle-demo.html 
+ 1004  vi icon-toggle-finished/icon-toggle.html
+ 1005  vi icon-toggle-finished/demo/icon-toggle-demo.html 
+ 1006  ls
+ 1007  cd ..
+ 1008  ls
+ 1009  mkdir tmp
+ 1010  cd tmp/
+ 1011  tar tvzf ../polymer-first-elements.tgz 
+ 1012  tar xvzf ../polymer-first-elements.tgz 
+ 1013  cd polymer-first-elements/
+ 1014  ls
+ 1015  pwd
+ 1016  cd ..
+ 1017  ls
+ 1018  rm -rf *
+ 1019  ls -ltr ~/Downloads/
+ 1020  unzip ~/Downloads/polymer-first-elements.zip 
+ 1021  cd polymer-first-elements/
+ 1022  ls
+ 1023  npm
+ 1024  nvm use v5.5.0
+ 1025  polymer serve
+ 1026  ls
+ 1027  cp -a icon-toggle-finished/demo/ .
+ 1028  cp -a icon-toggle-finished/icon-toggle.html .
+ 1029  polymer serve
+ 1030  pwd
+ 1031  diff ../../polymer-first-elements/icon-toggle.html icon-toggle.html 
+ 1032  vi icon-toggle.html 
+ 1033  cd ../
+ 1034  ls
+ 1035  rm polymer-first-elements.tgz 
+ 1036  cd polymer-first-elements/
+ 1037  vi icon-toggle.html 
+ 1038  polymer serve
+ 1039  wd
+ 1040  ls
+ 1041  cp -a icon-toggle-my-fifth-a/icon-toggle.html .
+ 1042  cp -a icon-toggle-my-fifth-a/demo/ .
+ 1043  pwd
+ 1044  vi demo/icon-toggle-demo.html 
+ 1045  ls
+ 1046  cp -a bower.json icon-toggle.html demo/ icon-toggle-my-fifth
+ 1047  rm -rf icon-toggle-my-fifth-a/
+ 1048  vi demo/icon-toggle-demo.html 
+ 1049  vi icon-toggle-my-fifth/demo/icon-toggle-demo.html 
+ 1050  vi demo/index.html 
+ 1051  cd ../my-el/
+ 1052  ls
+ 1053  ls bower_components/
+ 1054  ls
+ 1055  vi index.html 
+ 1056  vi my-el.html 
+ 1057  vi demo/index.html 
+ 1058  ls bower_components/
+ 1059  ls
+ 1060  polymer serve
+ 1061  cd ..
+ 1062  ls
+ 1063  mkdir my-elw
+ 1064  cd my-elw
+ 1065  polymer init
+ 1066  ls
+ 1067  ls bower_components/
+ 1068  cd ..
+ 1069  rm -rf my-elw
+ 1070  cd my-el/
+ 1071  polymer init
+ 1072  ls
+ 1073  ls build/
+ 1074  ls build/unbundled/
+ 1075  ls build/unbundled/demo/
+ 1076  polymer serve
+ 1077  cd ../my-app/
+ 1078  polymer serve
+ 1079  polymer serve --help
+ 1080  polymer serve --open
+ 1081  vi test/index.html 
+ 1082  vi test/my-view1.html 
+ 1083  polymer test
+ 1084  polymer serve
+ 1085  wd
+ 1086  pwd
+ 1087  cd ..
+ 1088  ls
+ 1089  pwd
+ 1090  ls /home/eric/.nvm/versions/node/v5.5.0/lib/node_modules
+ 1091  ls
+ 1092  cd polymer-first-elements/
+ 1093  ls
+ 1094  polymer serve
+ 1095  pwd
+ 1096  cd ..
+ 1097  pwd
+ 1098  ls
+ 1099  cd polymer-first-elements/
+ 1100  ls
+ 1101  vi icon-toggle-orig/icon-toggle.html 
+ 1102  vi icon-toggle-orig/demo/index.html 
+ 1103  vi icon-toggle-orig/demo/icon-toggle-demo.html 
+ 1104  ls
+ 1105  polymer serve
+ 1106  ls
+ 1107  vi icon-toggle.html 
+ 1108  diff icon-toggle.html icon-toggle-my-fifth/icon-toggle.html 
+ 1109  diff -r demo/ icon-toggle-my-fifth/demo/
+ 1110  cd icon-toggle-finished/
+ 1111  polymer serve
+ 1112  cd ../icon-toggle-orig
+ 1113  ls
+ 1114  vi icon-toggle.html 
+ 1115  cd ../icon-toggle-orig-my/
+ 1116  ls
+ 1117  vi icon-toggle.html 
+ 1118  ls
+ 1119  ls ..
+ 1120  vi icon-toggle.html 
+ 1121  cd ..
+ 1122  ls
+ 1123  vi icon-toggle.html 
+ 1124  vi icon-toggle-orig/icon-toggle.html 
+ 1125  vi icon-toggle-orig-my/icon-toggle.html 
+ 1126  vi icon-toggle-orig-my/demo/icon-toggle-demo.html 
+ 1127  vi demo/icon-toggle-demo.html 
+ 1128  vi icon-toggle-orig-my/demo/
+ 1129  vi icon-toggle-orig-my/demo/icon-toggle-demo.html 
+ 1130  vi icon-toggle-orig-my/demo/icon-toggle.
+ 1131  vi icon-toggle-orig-my/demo/icon-toggle.h
+ 1132  vi icon-toggle-orig-my/icon-toggle.html 
+ 1133  cd icon-toggle-orig-my/
+ 1134  polymer serve
+ 1135  vi demo/index.html 
+ 1136  polymer serve
+ 1137  ls
+ 1138  vi bower.json 
+ 1139  cd ..
+ 1140  rm -rf icon-toggle-orig-my/
+ 1141  ls
+ 1142  diff icon-toggle.html icon-toggle-my-fifth/icon-toggle.html 
+ 1143  diff -r demo/ icon-toggle-my-fifth/demo/
+ 1144  vi icon-toggle-my-fifth/demo/icon-toggle-demo.html 
+ 1145  diff -r demo/ icon-toggle-my-fifth/demo/
+ 1146  mkdir icon-toggle-my-fifth2
+ 1147  cp -a bower.json demo/ icon-toggle.html icon-toggle-my-fifth2
+ 1148  cp icon-toggle-orig/icon-toggle.html .
+ 1149  cp -a icon-toggle-orig/demo/ .
+ 1150  polymer serve
+ 1151  mv icon-toggle.html demo/
+ 1152  vi demo/icon-toggle.html 
+ 1153  vi demo/icon-toggle-demo.html 
+ 1154  polymer serve
+ 1155  ls
+ 1156  mv demo/ deemo
+ 1157  polymer serve
+ 1158  ls
+ 1159  $ vi deemo/icon-toggle.html 
+ 1160   vi deemo/icon-toggle.html 
+ 1161  vi deemo/icon-toggle-demo.html 
+ 1162  mv deemo/ demo
+ 1163  mv demo/icon-toggle.html .
+ 1164  vi icon-toggle.html 
+ 1165  vi demo/icon-toggle-demo.html 
+ 1166  polymer serve
+ 1167  vi demo/index.html 
+ 1168  vi icon-toggle-orig/demo/index.html 
+ 1169  vi demo/index.html 
+ 1170  polymer serve
+ 1171  vi demo/index.html 
+ 1172  ls
+ 1173  mkdir sub
+ 1174  cp -a demo/ sub
+ 1175  cp icon-toggle.html sub
+ 1176  cd sub
+ 1177  vi icon-toggle.html 
+ 1178  vi demo/index.html 
+ 1179  vi demo/icon-toggle-demo.html 
+ 1180  polymer serve
+ 1181  cp ../bower.json .
+ 1182  vi bower.json 
+ 1183  polymer serve
+ 1184  ls
+ 1185  cd ..
+ 1186  ls
+ 1187  rm -rf sub
+ 1188  vi icon-toggle.html 
+ 1189  vi demo/icon-toggle-demo.html 
+ 1190  vi icon-toggle-my-first/demo/icon-toggle.html 
+ 1191  vi icon-toggle-my-second/icon-toggle.html 
+ 1192  cp icon-toggle-my-second/icon-toggle.html .
+ 1193  cp icon-toggle-my-second/demo/ . -a
+ 1194  polymer serve
+ 1195  vi icon-toggle.html 
+ 1196  vi demo/icon-toggle-demo.html 
+ 1197  vi icon-toggle.html 
+ 1198  vi demo/icon-toggle-demo.html 
+ 1199  vi icon-toggle.html 
+ 1200  cp icon-toggle-my-third/demo/ . -a
+ 1201  cp icon-toggle-my-third/icon-toggle.html .
+ 1202  vi icon-toggle.html 
+ 1203  vi demo/icon-toggle-demo.html 
+ 1204  vi icon-toggle.html 
+ 1205  vi demo/icon-toggle-demo.html 
+ 1206  vi icon-toggle.html 
+ 1207  vi demo/icon-toggle-demo.html 
+ 1208  vi icon-toggle.html 
+ 1209  vi demo/icon-toggle-demo.html 
+ 1210  vi icon-toggle.html 
+ 1211  cp -a demo/ icon-toggle-my-third/
+ 1212  cp icon-toggle.html  icon-toggle-my-third/
+ 1213  vi icon-toggle.html 
+ 1214  vi demo/icon-toggle-demo.html 
+ 1215  vi demo/index.html 
+ 1216  vi demo/icon-toggle-demo.html 
+ 1217  cp icon-toggle.html  icon-toggle-my-third/
+ 1218  cp -a demo/ icon-toggle-my-third/
+ 1219  cp icon-toggle-my-fifth/demo/ . -a
+ 1220  cp icon-toggle-my-fifth/icon-toggle.html .
+ 1221  vi demo/icon-toggle-demo.html 
+ 1222  vi icon-toggle-finished/demo/icon-toggle-demo.html 
+ 1223  grep isFav -r icon-toggle-finished/
+ 1224  cd ..
+ 1225  ls
+ 1226  cd my-el/
+ 1227  ls
+ 1228  vi demo/index.html 
+ 1229  vi my-el.html 
+ 1230  vi demo/index.html 
+ 1231  polymer serve
+ 1232  pwd
+ 1233  pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+ 1234  history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Polymer_my-el.txt

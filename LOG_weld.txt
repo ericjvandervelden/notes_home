@@ -1,0 +1,184 @@
+/ 7	. 
+
+/ Lees	over weld standalone	,
+http://coders-kitchen.com/2014/01/15/using-cdi-standalone/
+
+http://www.mastertheboss.com/jboss-frameworks/cdi/building-a-cdi-2-standalone-java-application
+https://github.com/fmarchioni/mastertheboss/tree/master/cdi/cdi-j2se
+
+/ 7	. 
+
+[eric@almond cdi]$ pwd
+/home/eric/Devel/Java/cdi
+[eric@almond cdi]$ git clone https://github.com/fmarchioni/mastertheboss.git
+
+/ in scala IDE we maken workspace-cdi, en import	,
+/home/eric/Devel/Java/cdi/mastertheboss/cdi/cdi-j2se
+
+/ we hebben maven-compiler-plugin add	, en we moesten in eclipse right click project, 
+	Maven,   Update Project ...
+/ TODO
+
+/ 13
+
+/ doe clean package	,
+
+Feb 26, 2017 11:26:26 AM org.jboss.weld.bootstrap.WeldStartup <clinit>
+INFO: WELD-000900: 3.0.0 (CR1)
+Feb 26, 2017 11:26:26 AM org.jboss.weld.bootstrap.WeldStartup startContainer
+INFO: WELD-000101: Transactional services not available. Injection of @Inject UserTransaction not available. Transactional observers will be invoked synchronously.
+Feb 26, 2017 11:26:27 AM org.jboss.weld.environment.se.WeldContainer complete
+INFO: WELD-ENV-002003: Weld SE container f2d9bed1-4afc-4c9c-9f8d-dd4c09b307ab initialized
+Hello World!
+Feb 26, 2017 11:26:27 AM org.jboss.weld.environment.se.WeldContainer shutdown
+INFO: WELD-ENV-002001: Weld SE container f2d9bed1-4afc-4c9c-9f8d-dd4c09b307ab shut down
+
+/ 13	. 
+
+/ Als we de run config clean package onder debug run in eclipse	, dan valt hij wel in het b, maar zegt	, 
+Edit source lookup path
+/ Maar als we in eclipse CD2Demo onder debug run, vindt hij CD2Demo.java wel	, 
+/ TODO
+
+/ we doen
+dependency:sources	, 
+
+/ lees	, 
+http://stackoverflow.com/questions/2059431/get-source-jars-from-maven-repository
+
+/ we zien	,
+
+[INFO] Scanning for projects...
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building cdi-j2se 1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:sources (default-cli) @ cdi-j2se ---
+[INFO] Downloading: https://repo.maven.apache.org/maven2/javax/enterprise/cdi-api/2.0-PFD/cdi-api-2.0-PFD-sources.jar
+[INFO] Downloaded: https://repo.maven.apache.org/maven2/javax/enterprise/cdi-api/2.0-PFD/cdi-api-2.0-PFD-sources.jar (191 KB at 272.6 KB/sec)
+[INFO] Downloading: https://repo.maven.apache.org/maven2/org/jboss/spec/javax/interceptor/jboss-interceptors-api_1.2_spec/1.0.0.Final/jboss-interceptors-api_1.2_spec-1.0.0.Final-sources.jar
+[INFO] Downloaded: https://repo.maven.apache.org/maven2/org/jboss/spec/javax/interceptor/jboss-interceptors-api_1.2_spec/1.0.0.Final/jboss-interceptors-api_1.2_spec-1.0.0.Final-sources.jar (9 KB at 199.3 KB/sec)
+[INFO] Downloading: https://repo.maven.apache.org/maven2/org/jboss/logging/jboss-logging/3.2.1.Final/jboss-logging-3.2.1.Final-sources.jar
+[INFO] Downloaded: https://repo.maven.apache.org/maven2/org/jboss/logging/jboss-logging/3.2.1.Final/jboss-logging-3.2.1.Final-sources.jar (51 KB at 601.1 KB/sec)
+[INFO] Downloading: https://repo.maven.apache.org/maven2/org/jboss/weld/weld-core-impl/3.0.0.CR1/weld-core-impl-3.0.0.CR1-sources.jar
+[INFO] Downloaded: https://repo.maven.apache.org/maven2/org/jboss/weld/weld-core-impl/3.0.0.CR1/weld-core-impl-3.0.0.CR1-sources.jar (1108 KB at 735.3 KB/sec)
+[INFO] Downloading: https://repo.maven.apache.org/maven2/org/jboss/weld/weld-api/3.0.CR1/weld-api-3.0.CR1-sources.jar
+[INFO] Downloaded: https://repo.maven.apache.org/maven2/org/jboss/weld/weld-api/3.0.CR1/weld-api-3.0.CR1-sources.jar (33 KB at 514.9 KB/sec)
+[INFO] Downloading: https://repo.maven.apache.org/maven2/org/jboss/classfilewriter/jboss-classfilewriter/1.1.2.Final/jboss-classfilewriter-1.1.2.Final-sources.jar
+[INFO] Downloaded: https://repo.maven.apache.org/maven2/org/jboss/classfilewriter/jboss-classfilewriter/1.1.2.Final/jboss-classfilewriter-1.1.2.Final-sources.jar (84 KB at 643.5 KB/sec)
+[INFO] Downloading: https://repo.maven.apache.org/maven2/org/jboss/weld/environment/weld-environment-common/3.0.0.CR1/weld-environment-common-3.0.0.CR1-sources.jar
+[INFO] Downloaded: https://repo.maven.apache.org/maven2/org/jboss/weld/environment/weld-environment-common/3.0.0.CR1/weld-environment-common-3.0.0.CR1-sources.jar (68 KB at 211.5 KB/sec)
+[INFO] Downloading: https://repo.maven.apache.org/maven2/org/jboss/spec/javax/el/jboss-el-api_3.0_spec/1.0.7.Final/jboss-el-api_3.0_spec-1.0.7.Final-sources.jar
+[INFO] Downloaded: https://repo.maven.apache.org/maven2/org/jboss/spec/javax/el/jboss-el-api_3.0_spec/1.0.7.Final/jboss-el-api_3.0_spec-1.0.7.Final-sources.jar (118 KB at 618.1 KB/sec)
+[INFO] Downloading: https://repo.maven.apache.org/maven2/javax/interceptor/javax.interceptor-api/1.2/javax.interceptor-api-1.2-sources.jar
+[INFO] Downloaded: https://repo.maven.apache.org/maven2/javax/interceptor/javax.interceptor-api/1.2/javax.interceptor-api-1.2-sources.jar (34 KB at 565.2 KB/sec)
+[INFO] Downloading: https://repo.maven.apache.org/maven2/javax/el/javax.el-api/3.0.0/javax.el-api-3.0.0-sources.jar
+[INFO] Downloaded: https://repo.maven.apache.org/maven2/javax/el/javax.el-api/3.0.0/javax.el-api-3.0.0-sources.jar (120 KB at 734.0 KB/sec)
+[INFO] Downloading: https://repo.maven.apache.org/maven2/org/jboss/weld/se/weld-se-core/3.0.0.CR1/weld-se-core-3.0.0.CR1-sources.jar
+[INFO] Downloaded: https://repo.maven.apache.org/maven2/org/jboss/weld/se/weld-se-core/3.0.0.CR1/weld-se-core-3.0.0.CR1-sources.jar (48 KB at 299.6 KB/sec)
+[INFO] Downloading: https://repo.maven.apache.org/maven2/org/jboss/weld/probe/weld-probe-core/3.0.0.CR1/weld-probe-core-3.0.0.CR1-sources.jar
+[INFO] Downloaded: https://repo.maven.apache.org/maven2/org/jboss/weld/probe/weld-probe-core/3.0.0.CR1/weld-probe-core-3.0.0.CR1-sources.jar (713 KB at 747.6 KB/sec)
+[INFO] Downloading: https://repo.maven.apache.org/maven2/org/jboss/weld/weld-spi/3.0.CR1/weld-spi-3.0.CR1-sources.jar
+[INFO] Downloaded: https://repo.maven.apache.org/maven2/org/jboss/weld/weld-spi/3.0.CR1/weld-spi-3.0.CR1-sources.jar (115 KB at 682.4 KB/sec)
+[INFO] Downloading: https://repo.maven.apache.org/maven2/javax/annotation/javax.annotation-api/1.3/javax.annotation-api-1.3-sources.jar
+[INFO] Downloaded: https://repo.maven.apache.org/maven2/javax/annotation/javax.annotation-api/1.3/javax.annotation-api-1.3-sources.jar (42 KB at 583.7 KB/sec)
+[INFO] Downloading: https://repo.maven.apache.org/maven2/junit/junit/3.8.1/junit-3.8.1-sources.jar
+[INFO] Downloaded: https://repo.maven.apache.org/maven2/junit/junit/3.8.1/junit-3.8.1-sources.jar (57 KB at 678.1 KB/sec)
+[INFO] 
+[INFO] The following files have been resolved:
+[INFO]    javax.enterprise:cdi-api:jar:sources:2.0-PFD:compile
+[INFO]    org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.2_spec:jar:sources:1.0.0.Final:compile
+[INFO]    org.jboss.logging:jboss-logging:jar:sources:3.2.1.Final:compile
+[INFO]    org.jboss.weld:weld-core-impl:jar:sources:3.0.0.CR1:compile
+[INFO]    org.jboss.weld:weld-api:jar:sources:3.0.CR1:compile
+[INFO]    org.jboss.classfilewriter:jboss-classfilewriter:jar:sources:1.1.2.Final:compile
+[INFO]    javax.inject:javax.inject:jar:sources:1:compile
+[INFO]    org.jboss.weld.environment:weld-environment-common:jar:sources:3.0.0.CR1:compile
+[INFO]    org.jboss.spec.javax.el:jboss-el-api_3.0_spec:jar:sources:1.0.7.Final:compile
+[INFO]    javax.interceptor:javax.interceptor-api:jar:sources:1.2:compile
+[INFO]    javax.el:javax.el-api:jar:sources:3.0.0:compile
+[INFO]    org.jboss.weld.se:weld-se-core:jar:sources:3.0.0.CR1:compile
+[INFO]    org.jboss.weld.probe:weld-probe-core:jar:sources:3.0.0.CR1:compile
+[INFO]    org.jboss.weld:weld-spi:jar:sources:3.0.CR1:compile
+[INFO]    javax.annotation:javax.annotation-api:jar:sources:1.3:compile
+[INFO]    junit:junit:jar:sources:3.8.1:test
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 6.718 s
+[INFO] Finished at: 2017-02-26T11:38:25+01:00
+[INFO] Final Memory: 15M/245M
+[INFO] ------------------------------------------------------------------------
+
+/ we zien de sources in .m2	, 
+[eric@almond cdi-j2se]$ ls ~/.m2/repository/org/jboss/weld/weld-core-impl/3.0.0.CR1/
+weld-core-impl-3.0.0.CR1.jar
+weld-core-impl-3.0.0.CR1-sources.jar
+...
+
+/ Maar we zien in build path, libraries , geen source attachments	, 
+
+
+/ 13	. 
+
+/ we debug CD2Demo rechstreeks	, niet via exec-maven-plugin 	, 
+/s
+
+/ Hij zei dat  cdi-api-2.0-PFD.jar geen source source attached had	, maar is er wel	, 
+/ maar na enige tijd vond hij hem wel	, TODO
+Attach source		/ we hoefden uiteindelijk niets te doen	, 
+/ we zien ook in build path , dat alle jars een source attachment hebben nu	, 
+
+/ er is dus in eclipse
+Edit source lookup path
+Attach source
+/ TODO
+
+
+[eric@almond cdi-j2se]$ ls ~/.m2/repository/javax/enterprise/cdi-api/2.0-PFD/
+cdi-api-2.0-PFD.jar               cdi-api-2.0-PFD-sources.jar
+
+/ stack 
+/s
+			SeContainerInitializer.findSeContainerInitializer() line: 103	
+        Iterator<SeContainerInitializer> iterator = ServiceLoader.load(SeContainerInitializer.class, SeContainerInitializer.class.getClassLoader()).iterator();
+/cb
+			SeContainerInitializer.newInstance() line: 97	
+			CDI2Demo.main(String...) line: 8	
+
+/ we geven F3 op ServiceLoader	, 
+Attach Source
+[eric@almond cdi-j2se]$ ls /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.72-9.b16.fc23.x86_64/jre/lib/
+rt.jar
+/ has no source attachment	, 
+ /Maar als ik met de debugger step in , dan 
+Edit source lookup path	,
+
+/ we doen 	, 
+[eric@almond cdi-j2se]$ dnf list install java-1.8.0-openjdk-src
+
+Installing:
+ java-1.8.0-openjdk-src         x86_64    1:1.8.0.111-1.b16.fc23     updates     45 M
+ nss-pem                        x86_64    1.0.2-2.fc23               updates     77 k
+Upgrading:
+ java-1.8.0-openjdk             x86_64    1:1.8.0.111-1.b16.fc23     updates    227 k
+ java-1.8.0-openjdk-devel       x86_64    1:1.8.0.111-1.b16.fc23     updates    9.8 M
+ java-1.8.0-openjdk-headless    x86_64    1:1.8.0.111-1.b16.fc23     updates     32 M
+ nspr                           x86_64    4.13.0-1.fc23              updates    133 k
+ nss                            x86_64    3.27.0-1.2.fc23            updates    844 k
+ nss-softokn                    x86_64    3.27.0-1.0.fc23            updates    381 k
+ nss-softokn-freebl             x86_64    3.27.0-1.0.fc23            updates    221 k
+ nss-sysinit                    x86_64    3.27.0-1.2.fc23            updates     58 k
+ nss-tools                      x86_64    3.27.0-1.2.fc23            updates    496 k
+ nss-util                       x86_64    3.27.0-1.0.fc23            updates     82 k
+
+warning: /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.72-9.b16.fc23.x86_64/jre/lib/security/local_policy.jar saved as /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.72-9.b16.fc23.x86_64/jre/lib/security/local_policy.jar.rpmsave
+warning: /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.72-9.b16.fc23.x86_64/jre/lib/security/java.security saved as /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.72-9.b16.fc23.x86_64/jre/lib/security/java.security.rpmsave
+warning: /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.72-9.b16.fc23.x86_64/jre/lib/security/US_export_policy.jar saved as /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.72-9.b16.fc23.x86_64/jre/lib/security/US_export_policy.jar.rpmsave
+
+/ we herstart eclipse	, en nu is ServiceLoader er	,
+
+
+

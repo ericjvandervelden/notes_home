@@ -1,0 +1,81 @@
+# temp
+
+shipmentorder.reference1.pnllogistics.general     = Requested Productcode
+shipmentorder.reference1.pnllogistics.outbound    = Requested Productcode
+shipmentorder.reference1.pnllogistics.lb          = Requested Productcode
+shipmentorder.reference1.pnllogistics.ab          = Requested Productcode
+shipmentorder.reference1.pnllogistics.rt          = Requested Productcode
+shipmentorder.reference1.pnllogistics.ad          = Requested Productcode
+shipmentorder.reference2.pnllogistics.general     = Customer reference
+shipmentorder.reference2.pnllogistics.outbound    = Customer reference
+shipmentorder.reference2.pnllogistics.lb          = Customer reference
+shipmentorder.reference2.pnllogistics.ab          = Customer reference
+shipmentorder.reference2.pnllogistics.rt          = Customer reference
+shipmentorder.reference2.pnllogistics.ad          = Customer reference
+shipmentorder.reference3.pnllogistics.general     = Import Partner Shipment order
+shipmentorder.reference3.pnllogistics.outbound    = Import Partner Shipment order
+shipmentorder.reference3.pnllogistics.lb          = Import Partner Shipment order
+shipmentorder.reference3.pnllogistics.ab          = Import Partner Shipment order
+shipmentorder.reference3.pnllogistics.rt          = Import Partner Shipment order
+shipmentorder.reference3.pnllogistics.ad          = Import Partner Shipment order
+shipmentorder.reference4.pnllogistics.general     = Consignor shipment order
+shipmentorder.reference4.pnllogistics.outbound    = Export Partner Nr
+shipmentorder.reference4.pnllogistics.lb          = Export Partner Nr
+shipmentorder.reference4.pnllogistics.ab          = Export Partner Nr
+shipmentorder.reference4.pnllogistics.rt          = Export Partner Nr
+shipmentorder.reference4.pnllogistics.ad          = Export Partner Nr
+shipmentorder.reference5.pnllogistics.outbound    = Consignor shipment order
+shipmentorder.reference5.pnllogistics.lb          = Consignor shipment order
+shipmentorder.reference5.pnllogistics.ab          = Consignor shipment order
+shipmentorder.reference5.pnllogistics.rt          = Consignor shipment order
+shipmentorder.reference5.pnllogistics.ad          = Consignor shipment order
+shipmentorder.reference6.pnllogistics.general     = Consignee shipment order
+shipmentorder.reference6.pnllogistics.outbound    = Consignee shipment order
+shipmentorder.reference6.pnllogistics.lb          = Consignee shipment order
+shipmentorder.reference6.pnllogistics.ab          = Consignee shipment order
+shipmentorder.reference6.pnllogistics.rt          = Consignee shipment order
+shipmentorder.reference6.pnllogistics.ad          = Consignee shipment order
+shipmentorder.reference7.pnllogistics.general     = PostNL reference
+shipmentorder.reference7.pnllogistics.outbound    = PostNL reference
+shipmentorder.reference7.pnllogistics.lb          = PostNL reference
+shipmentorder.reference7.pnllogistics.ab          = PostNL reference
+shipmentorder.reference7.pnllogistics.rt          = PostNL reference
+shipmentorder.reference7.pnllogistics.ad          = PostNL reference
+
+shipmentorder.requestedstartafter.pnllogistics.general = Requested Start After
+shipmentorder.requestedstartafter.pnllogistics.outbound = Requested Start After
+shipmentorder.requestedstartafter.pnllogistics.lb = Requested Start After
+shipmentorder.requestedstartafter.pnllogistics.ab = Requested Start After
+shipmentorder.requestedstartafter.pnllogistics.rt= Requested Start After
+shipmentorder.requestedstartafter.pnllogistics.ad = Requested Start After
+
+shipmentorder.requestedstartbefore.pnllogistics.general = Requested Start Before
+shipmentorder.requestedstartbefore.pnllogistics.outbound = Requested Start Before
+shipmentorder.requestedstartbefore.pnllogistics.lb = Requested Start Before
+shipmentorder.requestedstartbefore.pnllogistics.ab = Requested Start Before
+shipmentorder.requestedstartbefore.pnllogistics.rt= Requested Start Before
+shipmentorder.requestedstartbefore.pnllogistics.ad = Requested Start Before
+
+shipmentorder.requestedendafter.pnllogistics.general = Requested End After
+shipmentorder.requestedendafter.pnllogistics.outbound = Requested End After
+shipmentorder.requestedendafter.pnllogistics.lb = Requested End After
+shipmentorder.requestedendafter.pnllogistics.ab = Requested End After
+shipmentorder.requestedendafter.pnllogistics.rt= Requested End After
+shipmentorder.requestedendafter.pnllogistics.ad = Requested End After
+
+shipmentorder.requestedendbefore.pnllogistics.general = Requested End Before
+shipmentorder.requestedendbefore.pnllogistics.outbound = Requested End Before
+shipmentorder.requestedendbefore.pnllogistics.lb = Requested End Before
+shipmentorder.requestedendbefore.pnllogistics.ab = Requested End Before
+shipmentorder.requestedendbefore.pnllogistics.rt= Requested End Before
+shipmentorder.requestedendbefore.pnllogistics.ad = Requested End Before
+
+shipmentorder.price.label.pnllogistics.general = Price
+shipmentorder.price.label.pnllogistics.outbound = Price
+shipmentorder.price.label.pnllogistics.lb = Price
+shipmentorder.price.label.pnllogistics.ab = Price
+shipmentorder.price.label.pnllogistics.rt= Price
+shipmentorder.price.label.pnllogistics.ad = Price
+
+
+

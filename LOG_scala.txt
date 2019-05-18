@@ -1,0 +1,386 @@
+/ INSTALL IDE 
+
+/ we zijn op 	,
+http://www.scala-lang.org/download/
+
+/ we zien de IDE	,
+/ -> 
+http://scala-ide.org/download/sdk.html
+
+/ we maken	,
+[eric@almond scala]$ pwd
+/home/eric/Devel/Java/scala
+
+[eric@almond scala]$ pwd
+/home/eric/Devel/Eclipse/scala
+[eric@almond scala]$ tar xvzf ~/Downloads/scala-SDK-4.4.1-vfinal-2.11-linux.gtk.x86_64.tar.gz 
+
+/ op de downloads page, onderaan zien we videos	,
+http://scala-ide.org/docs/videos.html
+
+/ lees	, 
+http://scala-ide.org/docs/current-user-doc/gettingstarted/index.html
+
+/ Einde INSTALL IDE 
+
+/ TUTORIAL
+
+http://docs.scala-lang.org/tutorials/tour/tour-of-scala
+
+/ we maken een scala project	, 
+New, Scala project
+tour
+
+
+/ Einde TUTORIAL
+
+/ BOOK
+
+/ lees	, 
+http://booksites.artima.com/programming_in_scala
+Browse the source code of the book examples
+http://booksites.artima.com/programming_in_scala/examples
+
+/ ch2
+
+/ scripts in eclipse
+/ lees	,
+http://stackoverflow.com/questions/1502110/using-scala-as-a-scripting-language-from-eclipse
+
+/ we maken een nieuw Scala project	 ,
+book
+
+/ right click project book, Scala,  create Scala interpreter in book	, 
+/ we zien in de console	,
+
+scala> 1+2
+res0: Int = 3
+
+scala> res0*2
+res1: Int = 6
+
+scala> println("hello")
+hello
+
+scala> def max(x:Int,y:Int):Int={ if(x>y)x else y}
+max: (x: Int, y: Int)Int
+scala> max(3,7)
+res3: Int = 7
+
+/ 13	. 
+
+/ we zien niet hoe we in eclipse een script kunnen maken 	, 
+/ we doen daarom een object met een main	,
+
+$ vi Step4.scala
+
+object Step4{
+  def main(args: Array[String]): Unit = {
+    println("hello");
+  }
+}
+/ Deze kunnen we run	, 
+/ we mogen ook step4.scala noemen, 
+/ TODO
+
+$ vi Step4.scala
+
+object Step4{
+  def main(args: Array[String]): Unit = {
+    args.foreach( { x => println(x) })
+    args.foreach { x => println(x) }
+    args.foreach(f)
+  }
+  def f(x:Any):Unit={
+    println(x)
+  }
+}
+
+/ ch3
+
+$ vi ch3.scala
+
+object ch3 {
+  def main(args: Array[String]): Unit = {
+    val g=new Array[String](3)
+    g(0)="hello"
+    g(1)=","
+    g(2)="world\n"
+    
+    for(i <- 0 to 2 ){
+      print(g(i))
+    }
+    for(i <- (0).to ( 2) ){
+      print(g(i))
+    }
+    for(i <- 0 to 2 ){
+      print(g.apply(i))
+    }
+
+    
+    println(10)
+    Console println 10
+  }
+}
+
+/ we kunnen NIET aan de linkerkant	, 
+	g.apply(1)=""
+
+/ ch4
+
+/ lees tour,
+http://docs.scala-lang.org/tutorials/tour/nested-functions
+
+/ lees	, het boek zelf	, 
+http://www.artima.com/pins1ed/
+
+/ lees	, code bij het boek	, 
+http://booksites.artima.com/programming_in_scala/examples/
+Classes and Objects
+http://booksites.artima.com/programming_in_scala/examples/html/ch04.html
+4.1 Classes, fields, and methods
+/ bijv	,
+http://booksites.artima.com/programming_in_scala/examples/classes-and-objects/ChecksumCalculator3.scala
+
+/ 13	. 
+
+$ less ch4/Ex3.scala
+
+package ch4
+
+object Ex3 {
+  class ChecksumAccumulator {
+    private var sum = 0
+    def add(b: Byte): Unit = sum += b
+    def checksum(): Int = ~(sum & 0xFF) + 1
+  }
+
+  def main(args: Array[String]) {
+    val calc = new ChecksumAccumulator
+    calc.add(3)
+    
+    println("calc.checksum [" + calc.checksum + "]")
+  }
+}
+
+/ een arg van fct is val, bijv b in add(b: Byte), 
+
+/ right click in eclipse, Run as , Scala application
+checksum: -13
+
+/ 13	. 
+
+/ in eclipse	, als je op src staat, right click new scala obj, geef in de name ch4. mee, dan komt obj in package ch4	, als je op pkg ch4 staat, right click geeft al ch4. in de name	, 
+
+$ less ch4.SemiInference.scala
+
+object SemiInference {
+
+  /* This method has multiple statements on the same line,
+   * so you need to write semicolons explicitly. */
+  def printProd2() {
+    val s = "hello"; println(s)
+  }
+
+  /* This method has just one statement.  The compiler
+   * will not insert semicolons in the middle of an if. */
+  def check(x: Int) {
+    if (x < 2)
+      println("too small")
+    else
+      println("ok")
+  }
+}
+
+ /Wat kunnen we met dit obj	?
+/ TODO
+/ Dit is een singleton	,
+
+/ 4.3 Singleton objects
+
+/ proj book	,
+
+/ in eclipse ook ctrl+shift+u, 3c0 geeft π
+
+/ een companion en de class zijn in 1 file	, 
+/ ze kunnen elkaars private access	, 
+
+/ 13	 
+
+/ class & companion kunnen bij elkaars privates	,
+
+$ less self.X.scala
+
+package self
+
+
+class X {
+  import X._					/ we moeten dit doen	, 
+  private var sum=7
+  def g(i:Int):Int={
+    val j=index				/ dan kan de class bij de privates van de companion	,
+    j
+  }
+}
+object X{
+  private var index=13
+  
+  def f(i:Int):Int={
+    val x=new X
+    x.sum
+   
+  }
+    
+  def main(args: Array[String]): Unit = {
+    val i=X.f(0)
+    println(i)
+    val j=new X().g(0)
+    println(j)
+    val k=new X().sum			/ companion kan bij privates van de class	, 
+    println(k)
+    
+    
+  }
+}
+object S{
+  def main(args: Array[String]): Unit = {
+    val k=new X().g(0); // new X().sum kan niet hier  , 
+    println(k)
+  }
+}
+
+
+/ 13	. 
+
+/ we dachten eerst dan companion en class niet in 1 file hoefden, en dat ze niet hetzelfde hoeven te heten	, 	
+
+/ maar hieronder zijn class ch4.Ex3.ChecksumAccumulator en object ch4.Ex5.ChecksumAccumulator niet elkaars class & companion, omdat ze anders heten, de ene heeft Ex3 in zijn naam, en de andere Ex5	. Dus ze kunnen niet bij elkaars privates. Maar het werkt wel, een object fct doet new 'n class, en calls een van deze public fcts	,
+
+$ vi ch4.Ex3.scala
+
+package ch4
+
+object Ex3{
+
+  class ChecksumAccumulator {
+  
+      private var sum = 0
+  
+      def add(b: Byte): Unit = {
+        sum += b
+      }
+  
+      def checksum(): Int = {
+        return ~(sum & 0xFF) + 1
+      }
+  }
+  
+}
+
+$ vi ch4.Ex5.scala
+
+package ch4
+
+import scala.collection.mutable.Map
+import ch4.Ex3.ChecksumAccumulator
+
+object Ex5{
+  
+  object ChecksumAccumulator2{
+    
+    private val cache=Map[String,Int]()
+    
+    def calculate(s:String):Int=
+      if(cache.contains(s))
+        cache(s)
+      else{
+        val acc=new ChecksumAccumulator
+        for(c<-s)
+          acc.add(c.toByte)
+        val cs=acc.checksum()
+        cache+=(s->cs)
+        cs
+      }    
+  }  
+  
+  def main(args: Array[String]): Unit = {
+    val sum=ChecksumAccumulator2.calculate("hello")
+    val sum2=ChecksumAccumulator2.calculate("π")
+    println(sum.toHexString)
+    println(sum2.toHexString)
+  }
+  
+}
+
+/ 13	. 
+
+/ als we de omsluitende objects weglaten, krijgen we foutmelding dat de companion en class niet in 1 file	, 
+/ nu hebben ze dezelfde naam, ch4.ChecksumAccumulator2	, 
+
+$ vi Ex3a.scala
+
+package ch4
+
+class ChecksumAccumulator2{
+
+ Companions 'class ChecksumAccumulator2' and 'object ChecksumAccumulator2' must be 
+ defined in same file: Found in /home/eric/Devel/Eclipse/scala/workspace/book/src/ch4/
+ Ex3a.scala and /home/eric/Devel/Eclipse/scala/workspace/book/src/ch4/Ex5a.scala 
+      private var sum = 0
+  
+      def add(b: Byte): Unit = {
+        sum += b
+      }
+  
+      def checksum(): Int = {
+        return ~(sum & 0xFF) + 1
+      }
+ 
+  
+}
+
+$ vi Ex5a.scala
+
+package ch4
+
+import scala.collection.mutable.Map
+
+object ChecksumAccumulator2{
+
+Companions 'class ChecksumAccumulator2' and 'object ChecksumAccumulator2' must be 
+ defined in same file: Found in /home/eric/Devel/Eclipse/scala/workspace/book/src/ch4/
+ Ex3a.scala and /home/eric/Devel/Eclipse/scala/workspace/book/src/ch4/Ex5a.scala
+    
+    private val cache=Map[String,Int]()
+    
+    def calculate(s:String):Int=
+      if(cache.contains(s))
+        cache(s)
+      else{
+        val acc=new ChecksumAccumulator2
+        for(c<-s)
+          acc.add(c.toByte)
+        val cs=acc.checksum()
+        cache+=(s->cs)
+        cs
+      }    
+ 
+  
+  def main(args: Array[String]): Unit = {
+    val sum=ChecksumAccumulator2.calculate("hello")
+    val sum2=ChecksumAccumulator2.calculate("π")
+    println(sum.toHexString)
+    println(sum2.toHexString)
+  }
+  
+}
+
+/ eclipse voegt de imports toe	,
+/ de class en de object hoeven niet in dezelfde file of pkg	, want ch4.Ex3.ChecksumAccumulator hadden we al	,
+/ we zien inderdaad ch4.Ex3.ChecksumAccumulator en niet ch4.ChecksumAccumulator 
+/ de class en de object hoeven ook niet hetzelfde te heten	,
+
+
+
+
+/ Einde BOOK

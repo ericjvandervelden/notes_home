@@ -1,0 +1,5 @@
+/ lees	,
+Get started
+	Start a local cluster
+https://www.cockroachlabs.com/docs/stable/start-a-local-cluster.html
+https://www.cockroachlabs.com/docs/stable/start-a-local-cluster-in-docker.html

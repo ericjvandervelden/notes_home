@@ -1,0 +1,16 @@
+Hallo,
+
+Ik wil altijd developer blijven. Ik zie mezelf nu als medior, wat het ook mogen zijn, en wil senior worden. Ik heb op de zaak met Jenkins gewerkt, maar er is veel meer mogelijk: dat bedoel ik met nog geen senior te zijn.
+
+Computer programma's maken is ook mijn hobby, naast wiskunde bestuderen en hardlopen. 
+
+Ik heb in mijn laatste rol ervaring opgedaan met Spring, Hiberate , Wicket, Mockito, Maven en Jenkins. Ook gebruikte ik WicketTester om Wicket pagina's te testen (WicketTester speelt de rol van Tomcat), en met Mockito mockte ik de database. 
+Thuis was ik altijd met AngularJS bezig, maar op de zaak gebruikten we Wicket, dus heb ik me daar volledig op gericht. Ik herinner me dat ik Karma en Protractor gebruikte om AngularJS te testen. Ik heb recent nog wel met Angular en Webpack geoefend, maar ik moet het toch allemaal weer oppakken. 
+
+Op de zaak heb ik ook gewerkt met Selenium; een tester bij ons moest Wicket pagina's testen. Met SOAP heb ik niet gewerkt. 
+
+
+
+
+
+

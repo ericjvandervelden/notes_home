@@ -1,0 +1,106 @@
+/ 7	. 
+
+https://www.youtube.com/watch?v=MOdlp1d0PNA / machine learning, data science
+
+https://www.datacamp.com/courses/importing-managing-financial-data-in-python?utm_source=adwords_ppc&utm_campaignid=877257579&utm_adgroupid=43744250843&utm_device=c&utm_keyword=&utm_matchtype=&utm_network=d&utm_adpostion=none&utm_creative=242851816453&utm_targetid=aud-299068418609&utm_loc_interest_ms=&utm_loc_physical_ms=9064062&gclid=EAIaIQobChMIzKyl77f22AIVQYp3Ch0RCQyCEAEYASAAEgIZEPD_BwE / datacamp free course financial in python
+
+/ lees	,
+https://www.analyticsvidhya.com/blog/2017/08/introduction-to-multi-label-classification/
+
+/ lees	over classification en regression,
+https://machinelearningmastery.com/classification-versus-regression-in-machine-learning/
+
+/ 7	. 
+
+https://playground.tensorflow.org/
+->
+http://neuralnetworksanddeeplearning.com/index.html
+
+/ (bishop 47)
+/ lees	,
+https://www.le.ac.uk/users/dsgp1/COURSES/THIRDMET/MYLECTURES/1REGRESS.pdf
+
+
+https://www.le.ac.uk/users/dsgp1/COURSES/THIRDMET/MYLECTURES/1REGRESS.pdf
+
+/ 7	. 
+
+/ lees	,
+https://en.wikipedia.org/wiki/Symmetric_matrix
+https://en.wikipedia.org/wiki/Extensions_of_symmetric_operators
+https://en.wikipedia.org/wiki/Self-adjoint_operator
+https://en.wikipedia.org/wiki/Bounded_operator
+https://en.wikipedia.org/wiki/Sequence_space
+
+/ 7	. 
+
+/ schur complement 
+/ lees	,
+https://www.colorado.edu/engineering/CAS/courses.d/IFEM.d/IFEM.AppP.d/IFEM.AppP.pdf
+
+/ lees	,
+http://djalil.chafai.net/blog/2012/10/14/determinant-of-block-matrices/
+https://en.wikipedia.org/wiki/Determinant#Block_matrices
+https://en.wikipedia.org/wiki/LU_decomposition
+https://en.wikipedia.org/wiki/QR_decomposition
+https://en.wikipedia.org/wiki/Singular_value_decomposition
+https://en.wikipedia.org/wiki/Block_matrix
+https://en.wikipedia.org/wiki/Schur_decomposition
+https://en.wikipedia.org/wiki/Schur_complement
+https://en.wikipedia.org/wiki/LU_decomposition
+
+/ 7	. 
+
+/ google	,
+spring boot kubernetes
+/ lees	,
+https://itnext.io/migrating-a-spring-boot-service-to-kubernetes-in-5-steps-7c1702da81b6
+/->
+https://docs.docker.com/machine/overview
+
+/ over spring boot kubernetes	,
+/ kijk	,
+https://www.youtube.com/watch?v=OsWXtVbTnv0&t=741s
+https://www.youtube.com/watch?v=hkbRRpADRi8
+
+/ 7	. 
+
+/ bayesian vs frequentists
+
+https://stats.stackexchange.com/questions/22/bayesian-and-frequentist-reasoning-in-plain-english
+->
+https://www.behind-the-enemy-lines.com/2008/01/are-you-bayesian-or-frequentist-or.html
+
+/ 7	. 
+
+/ see Bishop(166)
+/ lees	,
+https://en.wikipedia.org/wiki/Marginal_likelihood
+Bayesian model comparison->
+https://en.wikipedia.org/wiki/Bayes_factor
+->
+https://en.wikipedia.org/wiki/Model_selection
+
+/ op
+https://en.wikipedia.org/wiki/Marginal_likelihood
+/ lees	,
+s Gaussian integration or a Monte Carlo method, or a method specialized to statistical problems such as the Laplace approximation, Gibbs/Metropolis sampling, or the EM algorithm.
+
+/ lees	,
+https://www.quora.com/What-is-the-difference-between-marginal-likelihood-and-posterior
+http://www.stat.columbia.edu/~madigan/G6102/NOTES/margLike.pdf
+
+/ google,	
+marginal likelihood example
+/ lees	,
+https://docs.pymc.io/notebooks/Bayes_factor.html 
+http://mlg.eng.cam.ac.uk/teaching/4f13/1819/marginal%20likelihood.pdf
+http://alumni.media.mit.edu/~tpminka/statlearn/demo/
+https://www.fil.ion.ucl.ac.uk/~wpenny/course/bayes.pdf
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5882686/
+
+/ least mean squares algorithm
+https://danieltakeshi.github.io/2015-07-29-the-least-mean-squares-algorithm
+https://www.eit.lth.se/fileadmin/eit/courses/ett042/LEC/notes2.pdf
+
+

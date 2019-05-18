@@ -1,0 +1,1837 @@
+
+/ BUILD OPENSSL
+
+[eric@almond OpenSSL]$ pwd
+/home/eric/Devel/OpenSSL
+$ ./config -d
+$ make
+$ make test
+$ sudo make install
+/ in	,
+/usr/local/ssl
+
+
+/ Einde BUILDOPENSSL
+
+
+/ DEBUG OPENSSL
+
+/ 7	.
+
+/ we geven  ,
+
+[eric@almond openssl]$ pwd
+/home/eric/Devel/OpenSSL/openssl
+[eric@almond ]$ apps/openssl sha <(echo -n eric)
+SHA(/dev/fd/63)= b46ad15ca8898e9b3d1172de80e4b71122573e18
+/ of
+[eric@almond ]$ apps/openssl sha
+eric(stdin)= b46ad15ca8898e9b3d1172de80e4b71122573e18
+/ we moeten 3 keer ctrl+d
+/ TODO
+
+/ 7	.
+
+[eric@almond openssl]$ gdb apps/openssl
+(gdb) b main
+Breakpoint 1 at 0x402b43: file openssl.c, line 226.
+(gdb) r <(echo -n eric)
+
+/ Intermezzo
+
+$ vi crypto/lhash/lhash.h
+# define LHASH_OF(type) struct lhash_st_##type
+# define DECLARE_LHASH_OF(type) LHASH_OF(type) { int dummy; }
+
+$ vi apps/progs.h
+
+typedef struct {
+    int type;
+    const char *name;
+    int (*func) (int argc, char *argv[]);
+} FUNCTION;
+DECLARE_LHASH_OF(FUNCTION);
+
+FUNCTION functions[] = {
+	...
+    {FUNC_TYPE_MD, "sha", dgst_main},
+
+
+$ vi apps/openssl.e
+
+# 58 "progs.h"
+typedef struct {
+    int type;
+    const char *name;
+    int (*func) (int argc, char *argv[]);
+} FUNCTION;
+struct lhash_st_FUNCTION { int dummy; };
+
+FUNCTION functions[] = {
+	...
+    {2, "sha", dgst_main},
+
+/ Einde Intermezzo
+
+$ vi openssl.c
+
+int main(int Argc, char *Argv[])
+    LHASH_OF(FUNCTION) *prog = NULL;
+/=
+    struct lhash_st_FUNCTION *prog = ((void *)0);
+(gdb) pt prog
+type = struct lhash_st_FUNCTION {
+    int dummy;
+} *
+
+288	        if ((bio_err = BIO_new(BIO_s_file())) != NULL)
+(gdb) p bio_err[0]
+$8 = {
+  method = 0x906780 <methods_filep>, 
+  callback = 0x0, 
+  cb_arg = 0x0, 
+  init = 0, 
+  shutdown = 1, 
+  flags = 0, 
+  retry_reason = 0, 
+  num = 0, 
+  ptr = 0x0, 
+  next_bio = 0x0, 
+  prev_bio = 0x0, 
+  references = 1, 
+  num_read = 0, 
+  num_write = 0, 
+  ex_data = {
+    sk = 0x0, 
+    dummy = 0
+  }
+}
+...
+324	    apps_startup();
+/=
+    do { signal(13,((__sighandler_t) 1)); CRYPTO_set_mem_functions( malloc, realloc, free); ERR_load_crypto_strings(); OPENSSL_add_all_algorithms_noconf(); ENGINE_load_builtin_engines(); setup_ui_method(); } while(0);
+/s
+#2  0x000000000053c8a5 in OPENSSL_add_all_algorithms_noconf () at c_all.c:83
+    OpenSSL_add_all_ciphers();
+/s
+#1  0x000000000053c8b5 in OpenSSL_add_all_ciphers () at c_allc.c:69
+
+/ Lees	,
+https://www.nlnetlabs.nl/downloads/publications/hsm/hsm_node17.html
+/ Lees	,
+https://www.openssl.org/docs/crypto/engine.html#DESCRIPTION
+
+void OpenSSL_add_all_ciphers(void)
+{
+    EVP_add_cipher(EVP_des_cfb());
+/s
+#0  EVP_des_cfb64 () at e_des.c:214
+BLOCK_CIPHER_defs(des, EVP_DES_KEY, NID_des, 8, 8, 8, 64,
+                  EVP_CIPH_RAND_KEY, des_init_key, NULL,
+                  EVP_CIPHER_set_asn1_iv, EVP_CIPHER_get_asn1_iv, des_ctrl)
+/=
+static const EVP_CIPHER des_cbc = { 31, 8, 8, 8, 0x200 | 0x2, des_init_key, des_cbc_cipher, ((void *)0), sizeof(EVP_DES_KEY), EVP_CIPHER_set_asn1_iv, EVP_CIPHER_get_asn1_iv, des_ctrl, ((void *)0) }; 
+const EVP_CIPHER *EVP_des_cbc(void) { return &des_cbc; } 
+
+static const EVP_CIPHER des_cfb64 = { 30, 1, 8, 8, 0x200 | 0x3, des_init_key, des_cfb64_cipher, ((void *)0), sizeof(EVP_DES_KEY), EVP_CIPHER_set_asn1_iv, EVP_CIPHER_get_asn1_iv, des_ctrl, ((void *)0) }; 
+const EVP_CIPHER *EVP_des_cfb64(void) { return &des_cfb64; } 
+
+static const EVP_CIPHER des_ofb = { 45, 1, 8, 8, 0x200 | 0x4, des_init_key, des_ofb_cipher, ((void *)0), sizeof(EVP_DES_KEY), EVP_CIPHER_set_asn1_iv, EVP_CIPHER_get_asn1_iv, des_ctrl, ((void *)0) }; 
+const EVP_CIPHER *EVP_des_ofb(void) { return &des_ofb; } 
+
+static const EVP_CIPHER des_ecb = { 29, 8, 8, 0, 0x200 | 0x1, des_init_key, des_ecb_cipher, ((void *)0), sizeof(EVP_DES_KEY), EVP_CIPHER_set_asn1_iv, EVP_CIPHER_get_asn1_iv, des_ctrl, ((void *)0) }; 
+const EVP_CIPHER *EVP_des_ecb(void) { return &des_ecb; }
+
+/ Intermezzo
+
+$ vi evp_locl.h
+
+#define BLOCK_CIPHER_defs(cname, kstruct, \
+                          nid, block_size, key_len, iv_len, cbits, flags, \
+                          init_key, cleanup, set_asn1, get_asn1, ctrl) \
+BLOCK_CIPHER_def_cbc(cname, kstruct, nid, block_size, key_len, iv_len, flags, \
+                     init_key, cleanup, set_asn1, get_asn1, ctrl) \
+BLOCK_CIPHER_def_cfb(cname, kstruct, nid, key_len, iv_len, cbits, \
+                     flags, init_key, cleanup, set_asn1, get_asn1, ctrl) \
+BLOCK_CIPHER_def_ofb(cname, kstruct, nid, key_len, iv_len, cbits, \
+                     flags, init_key, cleanup, set_asn1, get_asn1, ctrl) \
+BLOCK_CIPHER_def_ecb(cname, kstruct, nid, block_size, key_len, flags, \
+                     init_key, cleanup, set_asn1, get_asn1, ctrl)
+
+#define BLOCK_CIPHER_def_cbc(cname, kstruct, nid, block_size, key_len, \
+                             iv_len, flags, init_key, cleanup, set_asn1, \
+                             get_asn1, ctrl) \
+BLOCK_CIPHER_def1(cname, cbc, cbc, CBC, kstruct, nid, block_size, key_len, \
+                  iv_len, flags, init_key, cleanup, set_asn1, get_asn1, ctrl)
+
+#define BLOCK_CIPHER_def_cfb(cname, kstruct, nid, key_len, \
+                             iv_len, cbits, flags, init_key, cleanup, \
+                             set_asn1, get_asn1, ctrl) \
+BLOCK_CIPHER_def1(cname, cfb##cbits, cfb##cbits, CFB, kstruct, nid, 1, \
+                  key_len, iv_len, flags, init_key, cleanup, set_asn1, \
+                  get_asn1, ctrl)
+...
+
+#define BLOCK_CIPHER_def1(cname, nmode, mode, MODE, kstruct, nid, block_size, \
+                          key_len, iv_len, flags, init_key, cleanup, \
+                          set_asn1, get_asn1, ctrl) \
+static const EVP_CIPHER cname##_##mode = { \
+        nid##_##nmode, block_size, key_len, iv_len, \
+        flags | EVP_CIPH_##MODE##_MODE, \
+        init_key, \
+        cname##_##mode##_cipher, \
+        cleanup, \
+        sizeof(kstruct), \
+        set_asn1, get_asn1,\
+        ctrl, \
+        NULL \
+}; \
+const EVP_CIPHER *EVP_##cname##_##mode(void) { return &cname##_##mode; }
+
+/ Einde Intermezzo
+
+/t
+(gdb) s
+EVP_add_cipher (c=0x696ac0 <des_cfb64>) at names.c:69
+(gdb) p c
+$10 = (const EVP_CIPHER *) 0x696ac0 <des_cfb64>
+(gdb) p c[0]
+$11 = {
+  nid = 30, 
+  block_size = 1, 
+  key_len = 8, 
+  iv_len = 8, 
+  flags = 515, 
+  init = 0x533a11 <des_init_key>, 
+  do_cipher = 0x533676 <des_cfb64_cipher>, 
+  cleanup = 0x0, 
+  ctx_size = 136, 
+  set_asn1_parameters = 0x53d361 <EVP_CIPHER_set_asn1_iv>, 
+  get_asn1_parameters = 0x53d2c5 <EVP_CIPHER_get_asn1_iv>, 
+  ctrl = 0x533a69 <des_ctrl>, 
+  app_data = 0x0
+}
+74	    r = OBJ_NAME_add(OBJ_nid2sn(c->nid), OBJ_NAME_TYPE_CIPHER_METH,
+75	                     (const char *)c);
+(gdb) s
+OBJ_nid2sn (n=30) at obj_dat.c:345
+350	        return (nid_objs[n].sn);
+
+/ Intermezzo
+
+$ vi obj_dat.h
+
+static const unsigned char lvalues[6255]={
+0x2A,0x86,0x48,0x86,0xF7,0x0D,               /* [  0] OBJ_rsadsi */
+0x2A,0x86,0x48,0x86,0xF7,0x0D,0x01,          /* [  6] OBJ_pkcs */
+...
+0x2B,0x0E,0x03,0x02,0x09,                    /* [191] OBJ_des_cfb64 */
+...
+
+
+
+static const ASN1_OBJECT nid_objs[NUM_NID]={
+{"rsadsi","RSA Data Security, Inc.",NID_rsadsi,6,&(lvalues[0]),0},
+{"pkcs","RSA Data Security, Inc. PKCS",NID_pkcs,7,&(lvalues[6]),0},
+...
+{"DES-CFB","des-cfb",NID_des_cfb64,5,&(lvalues[191]),0},
+...
+
+
+/ Let op	, in obj_dat.e zien we ../../include/openssl/ossl_typ.h, maar	,
+[eric@almond objects]$ ls -l ../../include/openssl/ossl_typ.h 
+lrwxrwxrwx. 1 eric wheel 23 Aug  8 14:51 ../../include/openssl/ossl_typ.h -> ../../crypto/ossl_typ.h
+
+[eric@almond objects]$ vi ../ossl_typ.h
+typedef struct asn1_object_st ASN1_OBJECT;
+
+[eric@almond objects]$ vi ../asn1/asn1.h
+struct asn1_object_st {
+    const char *sn, *ln;
+    int nid;
+    int length;
+    const unsigned char *data;  /* data remains const after init */
+    int flags;                  /* Should we free this one */
+};
+
+
+$ vi obj_dat.c
+
+# include "obj_dat.h"
+
+const char *OBJ_nid2sn(int n)
+{
+        return (nid_objs[n].sn);
+
+objects.h:# define OBJ_NAME_TYPE_CIPHER_METH       0x02
+
+
+/ Einde Intermezzo
+
+/t
+#1  0x000000000053837e in EVP_add_cipher (c=0x696ac0 <des_cfb64>) at names.c:79
+74	    r = OBJ_NAME_add(OBJ_nid2sn(c->nid), OBJ_NAME_TYPE_CIPHER_METH,
+75	                     (const char *)c);
+(gdb) s 
+OBJ_NAME_add (name=0x64cddb "DES-CFB", type=2, data=0x696ac0 <des_cfb64> "\036") at o_names.c:185
+
+(gdb) p *( struct evp_cipher_st*)data
+$71 = {
+  nid = 30, 
+  block_size = 1, 
+  key_len = 8, 
+  iv_len = 8, 
+  flags = 515, 
+  init = 0x533a11 <des_init_key>, 
+  do_cipher = 0x533676 <des_cfb64_cipher>, 
+  cleanup = 0x0, 
+  ctx_size = 136, 
+  set_asn1_parameters = 0x53d361 <EVP_CIPHER_set_asn1_iv>, 
+  get_asn1_parameters = 0x53d2c5 <EVP_CIPHER_get_asn1_iv>, 
+  ctrl = 0x533a69 <des_ctrl>, 
+  app_data = 0x0
+}
+...
+(gdb) p onp[0]
+$45 = {
+  type = 2,								/ OBJ_NAME_TYPE_CIPHER_METH	, 
+  alias = 0, 
+  name = 0x64cddb "DES-CFB", 
+  data = 0x696ac0 <des_cfb64> "\036" 	/  de struct evp_cipher_st 	,
+}
+(gdb) pt onp[0]
+type = struct obj_name_st {
+    int type;
+    int alias;
+    const char *name;
+    const char *data;
+}
+(gdb) p names_lh[0]
+$47 = {
+  dummy = 9711200
+}
+(gdb) pt names_lh[0]
+type = struct lhash_st_OBJ_NAME {
+    int dummy;
+}
+(gdb) p names_lh[1]
+$48 = {
+  dummy = 0
+}
+(gdb) p (( _LHASH *)names_lh)[0]
+$96 = {
+  b = 0x942e60, 
+  comp = 0x4b4939 <obj_name_LHASH_COMP>, 
+  hash = 0x4b4917 <obj_name_LHASH_HASH>, 
+  num_nodes = 8, 
+  num_alloc_nodes = 16, 
+  p = 0, 
+  pmax = 8, 
+  up_load = 512, 
+  down_load = 256, 
+  num_items = 1, 
+  num_expands = 0, 
+  num_expand_reallocs = 0, 
+  num_contracts = 0, 
+  num_contract_reallocs = 0, 
+  num_hash_calls = 1, 
+  num_comp_calls = 0, 
+  num_insert = 1, 
+  num_replace = 0, 
+  num_delete = 0, 
+  num_no_delete = 0, 
+  num_retrieve = 0, 
+  num_retrieve_miss = 0, 
+  num_hash_comps = 0, 
+  error = 0
+}
+(gdb) pt (( _LHASH *)names_lh)[0]
+type = struct lhash_st {
+    LHASH_NODE **b;
+    LHASH_COMP_FN_TYPE comp;
+    LHASH_HASH_FN_TYPE hash;
+    unsigned int num_nodes;
+    unsigned int num_alloc_nodes;
+    unsigned int p;
+    unsigned int pmax;
+    unsigned long up_load;
+    unsigned long down_load;
+    unsigned long num_items;
+    unsigned long num_expands;
+    unsigned long num_expand_reallocs;
+    unsigned long num_contracts;
+    unsigned long num_contract_reallocs;
+    unsigned long num_hash_calls;
+    unsigned long num_comp_calls;
+    unsigned long num_insert;
+    unsigned long num_replace;
+    unsigned long num_delete;
+    unsigned long num_no_delete;
+    unsigned long num_retrieve;
+    unsigned long num_retrieve_miss;
+    unsigned long num_hash_comps;
+    int error;
+}
+
+
+
+202	    ret = lh_OBJ_NAME_insert(names_lh, onp);
+(gdb)  s
+lh_insert (lh=0x942da0, data=0x942ef0) at lhash.c:184
+
+(gdb) p (struct lhash_st_OBJ_NAME[2])*names_lh
+$74 = {{
+    dummy = 9711200
+  }, {
+    dummy = 0
+  }}
+/ data = onp in de caller	,
+
+188	    rn = getrn(lh, data, &hash);
+(gdb) s
+getrn (lh=0x942da0, data=0x943010, rhash=0x7fffffffd850) at lhash.c:396
+396	    hash = (*(lh->hash)) (data);
+(gdb) s
+obj_name_LHASH_HASH (arg=0x943010) at o_names.c:53
+/=
+static unsigned long obj_name_LHASH_HASH(const void *arg) { const OBJ_NAME *a = arg; return obj_name_hash(a); }
+/s
+(gdb) s
+obj_name_hash (a_void=0x943010) at o_names.c:136
+
+(gdb) p *(struct obj_name_st*)a_void
+$107 = {
+  type = 2, 
+  alias = 0, 
+  name = 0x64cde3 "des-cfb", 
+  data = 0x696ac0 <des_cfb64> "\036"
+}
+136	    const OBJ_NAME *a = (const OBJ_NAME *)a_void;
+144	        ret = lh_strhash(a->name);
+146	    ret ^= a->type;
+147	    return (ret);
+/t
+(gdb) 
+getrn (lh=0x942da0, data=0x943010, rhash=0x7fffffffd850) at lhash.c:397
+396	    hash = (*(lh->hash)) (data);
+/d
+(gdb) p hash
+$112 = 2907256096
+398	    *rhash = hash;
+400	    nn = hash % lh->pmax;
+(gdb) p lh->pmax
+$114 = 8
+(gdb) p nn
+$115 = 0
+404	    cf = lh->comp;
+(gdb) p lh->comp
+$119 = (LHASH_COMP_FN_TYPE) 0x4b4939 <obj_name_LHASH_COMP>
+    ret = &(lh->b[(int)nn]);
+
+   for (n1 = *ret; n1 != NULL; n1 = n1->next) {
+        if (n1->hash != hash) {
+/ JA
+            ret = &(n1->next);
+
+            continue;
+        }
+/ 1 for loop	, want	,
+(gdb) p n1
+$126 = (LHASH_NODE *) 0x0
+    return (ret);
+(gdb) p ret
+$128 = (LHASH_NODE **) 0x942f88
+/t
+lh_insert (lh=0x942da0, data=0x943010) at lhash.c:190
+    rn = getrn(lh, data, &hash);
+/ d
+(gdb) p rn
+$129 = (LHASH_NODE **) 0x942f88
+190	    if (*rn == NULL) {
+/ JA
+191	        if ((nn = (LHASH_NODE *)OPENSSL_malloc(sizeof(LHASH_NODE))) == NULL) {
+195	        nn->data = data;
+/ onp 
+196	        nn->next = NULL;
+198	        nn->hash = hash;
+200	        *rn = nn;
+201	        ret = NULL;
+
+/ SAMENVATTING
+
+(gdb) bt
+#0  lh_insert (lh=0x942da0, data=0x943010) at lhash.c:201
+...
+
+/ lh is een _LHASH=struct lhash_st	, 
+/ lh->b is een struct lhash_node_st* array	, elke l
+/ data is een struct obj_name_st	, die een 
+/ TODO (Afmaken)	,
+
+(gdb) p lh
+$180 = (_LHASH *) 0x942da0
+(gdb) pt lh
+type = struct lhash_st {
+    LHASH_NODE **b;
+	...
+(gdb) p lh->b
+$181 = (LHASH_NODE **) 0x942e60
+(gdb) pt lh->b
+type = struct lhash_node_st {
+    void *data;
+    struct lhash_node_st *next;
+    unsigned long hash;
+} **
+(gdb) p lh->b[0][0]
+$191 = {
+  data = 0x942ef0, 
+  next = 0x9430a0, 
+  hash = 548166168
+}
+(gdb) p *(struct obj_name_st*)lh->b[0][0].data
+/=
+(gdb) p ((struct obj_name_st*)lh->b[0][0].data)[0]
+$184 = {
+  type = 2, 
+  alias = 0, 
+  name = 0x64cddb "DES-CFB", 
+  data = 0x696ac0 <des_cfb64> "\036"
+}
+(gdb) p ((struct evp_cipher_st*)((struct obj_name_st*)lh->b[0][0].data)[0].data)[0]
+$195 = {
+  nid = 30, 
+  block_size = 1, 
+  key_len = 8, 
+  iv_len = 8, 
+  flags = 515, 
+  init = 0x533a11 <des_init_key>, 
+  do_cipher = 0x533676 <des_cfb64_cipher>, 
+  cleanup = 0x0, 
+  ctx_size = 136, 
+  set_asn1_parameters = 0x53d361 <EVP_CIPHER_set_asn1_iv>, 
+  get_asn1_parameters = 0x53d2c5 <EVP_CIPHER_get_asn1_iv>, 
+  ctrl = 0x533a69 <des_ctrl>, 
+  app_data = 0x0
+}
+
+(gdb) p lh->b[0][0].next[0]
+$208 = {
+  data = 0x943010, 
+  next = 0x0, 
+  hash = 2907256096
+}
+
+(gdb) p *(struct obj_name_st*)lh->b[0][0].next[0].data
+/=
+(gdb) p ((struct obj_name_st*)lh->b[0][0].next[0].data)[0]
+$198 = {
+  type = 2, 
+  alias = 0, 
+  name = 0x64cde3 "des-cfb", 
+  data = 0x696ac0 <des_cfb64> "\036"
+}
+(gdb) p ((struct evp_cipher_st*)((struct obj_name_st*)lh->b[0][0].next[0].data)[0].data)[0]
+$199 = {
+  nid = 30, 
+  block_size = 1, 
+  key_len = 8, 
+  iv_len = 8, 
+  flags = 515, 
+  init = 0x533a11 <des_init_key>, 
+  do_cipher = 0x533676 <des_cfb64_cipher>, 
+  cleanup = 0x0, 
+  ctx_size = 136, 
+  set_asn1_parameters = 0x53d361 <EVP_CIPHER_set_asn1_iv>, 
+  get_asn1_parameters = 0x53d2c5 <EVP_CIPHER_get_asn1_iv>, 
+  ctrl = 0x533a69 <des_ctrl>, 
+  app_data = 0x0
+}
+
+
+/ Einde SAMENVATTING
+
+/t
+#0  OBJ_NAME_add (name=0x64cde3 "des-cfb", type=2, data=0x696ac0 <des_cfb64> "\036") at o_names.c:203
+202	    ret = lh_OBJ_NAME_insert(names_lh, onp);
+/d
+(gdb) p ret
+$210 = (OBJ_NAME *) 0x0
+
+/ Intermezzo
+
+/ we moeten een extra cast doen	, 
+(gdb) p ((struct lhash_st*)names_lh)[0]
+$213 = {
+  b = 0x942e60, 
+	...
+/ want	,
+(gdb) p names_lh
+$214 = (struct lhash_st_OBJ_NAME *) 0x942da0
+(gdb) p names_lh[0]
+$215 = {
+  dummy = 9711200
+}
+/ en dus	,
+(gdb) p ((struct evp_cipher_st*)((struct obj_name_st*)((struct lhash_st*)names_lh)->b[0][0].next[0].data)[0].data)[0]
+$216 = {
+  nid = 30, 
+  block_size = 1, 
+  key_len = 8, 
+  iv_len = 8, 
+  flags = 515, 
+  init = 0x533a11 <des_init_key>, 
+  do_cipher = 0x533676 <des_cfb64_cipher>, 
+  cleanup = 0x0, 
+  ctx_size = 136, 
+  set_asn1_parameters = 0x53d361 <EVP_CIPHER_set_asn1_iv>, 
+  get_asn1_parameters = 0x53d2c5 <EVP_CIPHER_get_asn1_iv>, 
+  ctrl = 0x533a69 <des_ctrl>, 
+  app_data = 0x0
+}
+
+/ Einde Intermezzo
+
+203	    if (ret != NULL) {
+/ NEE
+222	    return (1);
+/t
+(gdb) 
+EVP_add_cipher (c=0x696ac0 <des_cfb64>) at names.c:81
+   r = OBJ_NAME_add(OBJ_nid2ln(c->nid), OBJ_NAME_TYPE_CIPHER_METH,
+                     (const char *)c);
+/d
+81	    return (r);
+
+/ Deze is bekend hier	,
+/ TODO 
+(gdb) p names_lh
+$219 = (struct lhash_st_OBJ_NAME *) 0x942da0
+/ we zien dat 
+$ vi o_names.c
+static LHASH_OF(OBJ_NAME) *names_lh = NULL;
+/=
+static struct lhash_st_OBJ_NAME *names_lh = ((void *)0);
+
+/t
+(gdb) 
+OpenSSL_add_all_ciphers () at c_allc.c:70
+69	    EVP_add_cipher(EVP_des_cfb());
+/d
+(gdb) p names_lh
+$220 = (struct lhash_st_OBJ_NAME *) 0x942da0
+/ Ook hier bekend	,
+/ TODO
+
+(gdb) finish
+Run till exit from #0  0x000000000053c8c2 in OpenSSL_add_all_ciphers () at c_allc.c:70
+OPENSSL_add_all_algorithms_noconf () at c_all.c:84
+84	    OpenSSL_add_all_digests();
+/ Net als add ciphers	, ook in names_lh	,
+
+/ Ook hier bekend	,
+/ TODO
+(gdb) p names_lh
+$224 = (struct lhash_st_OBJ_NAME *) 0x942da0
+
+OpenSSL_add_all_digests () at c_alld.c:71
+71	    EVP_add_digest(EVP_md5());
+Value returned is $227 = 1
+(gdb) finish
+OPENSSL_add_all_algorithms_noconf () at c_all.c:90
+90	}
+
+/ we komen weer in openssl.c, 
+324	    apps_startup();
+/=
+    do { signal(13,((__sighandler_t) 1)); CRYPTO_set_mem_functions( malloc, realloc, free); ERR_load_crypto_strings(); OPENSSL_add_all_algorithms_noconf(); ENGINE_load_builtin_engines(); setup_ui_method(); } while(0);
+
+(gdb) s
+ENGINE_load_builtin_engines () at eng_all.c:66
+80	    ENGINE_load_rdrand();
+(gdb) s
+ENGINE_load_rdrand () at eng_rdrand.c:136
+137	        ENGINE *toadd = ENGINE_rdrand();
+(gdb) s
+ENGINE_rdrand () at eng_rdrand.c:122
+	...
+/t
+140	        ENGINE_add(toadd);
+(gdb) s
+ENGINE_add (e=0x980fe0) at eng_list.c:256
+265	    if (!engine_list_add(e)) {
+(gdb) s
+engine_list_add (e=0x980fe0) at eng_list.c:104
+126	        engine_list_head = e;
+(gdb) p e
+$228 = (ENGINE *) 0x980fe0
+126	        engine_list_head = e;
+127	        e->prev = NULL;
+147	        engine_list_tail = e;
+148	    e->next = NULL;
+149	    return 1;
+/t
+(gdb) 
+ENGINE_load_builtin_engines () at eng_all.c:82
+82	    ENGINE_load_dynamic();
+(gdb) finish
+Run till exit from #0  ENGINE_load_builtin_engines () at eng_all.c:82
+0x0000000000402ca9 in main (Argc=3, Argv=0x7fffffffded8) at openssl.c:324
+324	    apps_startup();
+/=
+    do { signal(13,((__sighandler_t) 1)); CRYPTO_set_mem_functions( malloc, realloc, free); ERR_load_crypto_strings(); OPENSSL_add_all_algorithms_noconf(); ENGINE_load_builtin_engines(); setup_ui_method(); } while(0);
+(gdb) s
+setup_ui_method () at apps.c:530
+/ TODO
+/t
+(gdb) 
+main (Argc=3, Argv=0x7fffffffded8) at openssl.c:327
+324	    apps_startup();
+/d
+327	    p = getenv("OPENSSL_CONF");
+   if (p == ((void *)0))
+        p = getenv("SSLEAY_CONF");
+    if (p == ((void *)0))
+        p = to_free = make_config_name();
+$229 = 0x98e5c0 "/usr/local/ssl/openssl.cnf"
+333	    default_config_file = p;
+    config = NCONF_new(((void *)0));
+   i = NCONF_load(config, p, &errline);
+/ TODO
+
+/ Intermezzo
+
+(gdb) p config[0]
+$235 = {
+  meth = 0x90b000 <default_method>, 
+  meth_data = 0x90ac00 <CONF_type_default>, 
+  data = 0x98f430
+}
+
+(gdb) p ((struct lhash_st*)config->data)->b[0][0]
+$241 = {
+  data = 0x991280, 
+  next = 0x998010, 
+  hash = 3040256832
+}
+(gdb) p ((struct lhash_st*)config->data)->b[1][0]
+$240 = {
+  data = 0x99fb40, 
+  next = 0x0, 
+  hash = 10432440897
+}
+(gdb) p ((struct lhash_st*)config->data)->b[0][0].next[0]
+$243 = {
+  data = 0x997ef0, 
+  next = 0x99fa20, 
+  hash = 10514315136
+}
+...
+
+/ wat zitten er nu in	, nu WH geen struct evp_cipher_st's
+/ TODO
+
+/ Einde Intermezzo
+
+351	    prog = prog_init();
+/s
+#0  prog_init () at openssl.c:687
+static struct lhash_st_FUNCTION *prog_init(void)
+{
+    struct lhash_st_FUNCTION *ret;
+    FUNCTION *f;
+    size_t i;
+
+    for (i = 0, f = functions; f->name != ((void *)0); ++f, ++i) ;
+
+/ Intermezzo
+
+[eric@almond openssl-1.0.2d]$ vi apps/progs.h
+
+typedef struct {
+    int type;
+    const char *name;
+    int (*func) (int argc, char *argv[]);
+} FUNCTION;
+DECLARE_LHASH_OF(FUNCTION);
+/=
+struct lhash_st_FUNCTION { int dummy; };
+
+FUNCTION functions[] = {
+    {FUNC_TYPE_GENERAL, "dgst", dgst_main},
+    {FUNC_TYPE_MD, "sha", dgst_main},
+
+/ Einde Intermezzo
+
+    if ((ret = ((struct lhash_st_FUNCTION *)lh_new(function_LHASH_HASH, function_LHASH_COMP))) == ((void *)0))
+/ NEE
+(gdb) p ret
+$246 = (struct lhash_st_FUNCTION *) 0x98f920
+
+(gdb) pt function_LHASH_HASH
+type = unsigned long (const void *)
+/ TODO
+
+
+(gdb) bt
+#0  lh_insert (lh=0x98f920, data=0x8fd458 <functions+24>) at lhash.c:196
+(gdb) s
+lh_insert (lh=0x98f920, data=0x8fd458 <functions+24>) at lhash.c:184
+...
+196	        nn->next = NULL;
+
+
+/t
+(gdb) 
+prog_init () at openssl.c:693
+693	    for (f = functions; f->name != NULL; f++)
+694	        (void)lh_FUNCTION_insert(ret, f);
+/d
+695	    return (ret);
+(gdb) p ret
+$255 = (struct lhash_st_FUNCTION *) 0x98f920
+
+/t
+(gdb) 
+main (Argc=3, Argv=0x7fffffffded8) at openssl.c:354
+351	    prog = prog_init();
+/d
+
+/ Intermezzo
+
+/ Nu NIET names_lh, maar prog	,
+
+/ De type is nu NIET struct evp_cipher_st, maar FUNCTION	,
+
+(gdb) p ((struct lhash_st*)prog)->b[0]
+$268 = (LHASH_NODE *) 0x0
+(gdb) p ((struct lhash_st*)prog)->b[1][0]
+$263 = {
+  data = 0x8fd818 <functions+984>, 
+  next = 0x0, 
+  hash = 4222051009
+}
+(gdb) p ((FUNCTION*)((struct lhash_st*)prog)->b[1][0].data)[0]
+$265 = {
+  type = 1, 
+  name = 0x62212c "srp", 
+  func = 0x45a8cf <srp_main>
+}
+(gdb) p ((struct lhash_st*)prog)->b[2][0]
+$262 = {
+  data = 0x8fd4e8 <functions+168>, 
+  next = 0x9a00a0, 
+  hash = 161282
+}
+...
+
+/ Einde Intermezzo
+
+353	    /* first check the program name */
+354	    program_name(Argv[0], pname, sizeof pname);
+(gdb) p Argv[0]
+$269 = 0x7fffffffe201 "/home/eric/Devel/OpenSSL/openssl-1.0.2d/apps/openssl"
+(gdb) p pname
+$274 = "openssl\000
+356	    f.name = pname;
+357	    fp = lh_FUNCTION_retrieve(prog, &f);
+(gdb) s
+lh_retrieve (lh=0x98f920, data=0x7fffffffdd50) at lhash.c:247
+248	    rn = getrn(lh, data, &hash);
+/s
+#0  getrn (lh=0x98f920, data=0x7fffffffdd50, rhash=0x7fffffffd8f8) at lhash.c:396
+396	    hash = (*(lh->hash)) (data);
+(gdb) p hash
+$290 = 315646420
+
+
+/ Intermezzo
+
+$289 = {
+  data = 0x8fd818 <functions+984>, 
+  next = 0x0, 
+  hash = 4222051009
+}
+
+(gdb) p ((FUNCTION*)lh->b[1][0].data)[0]
+$286 = {
+  type = 1, 
+  name = 0x62212c "srp", 
+  func = 0x45a8cf <srp_main>
+}
+
+(gdb) p ((FUNCTION*)data)[0]
+$287 = {
+  type = -8800, 
+  name = 0x7fffffffdd70 "openssl", 
+  func = 0x7fffffffdef8
+}
+/ van data (f hierboven) was alleen name set	,
+
+/ Einde Intermezzo
+
+400	    nn = hash % lh->pmax;
+(gdb) p nn
+$291 = 20
+(gdb) p lh->pmax
+$292 = 32
+   if (nn < lh->p)
+        nn = hash % lh->num_alloc_nodes;
+(gdb) p nn
+$295 = 20
+
+   ret = &(lh->b[(int)nn]);
+$302 = {
+  data = 0x8fdab8 <functions+1656>, 
+  next = 0x0, 
+  hash = 829752852
+}
+
+    for (n1 = *ret; n1 != ((void *)0); n1 = n1->next) {
+
+        lh->num_hash_comps++;
+        if (n1->hash != hash) {
+/ JA
+            ret = &(n1->next);
+            continue;
+        }
+/ Maar 	,
+(gdb) p ret[0]
+$300 = (LHASH_NODE *) 0x0
+
+/ Dus openssl zit er niet bij,	
+/t
+(gdb) 
+lh_retrieve (lh=0x98f920, data=0x7fffffffdd50) at lhash.c:250
+248	    rn = getrn(lh, data, &hash);
+/d
+(gdb) p rn[0]
+$303 = (LHASH_NODE *) 0x0
+252	        return (NULL);
+/t
+(gdb) 
+main (Argc=3, Argv=0x7fffffffded8) at openssl.c:358
+357	    fp = lh_FUNCTION_retrieve(prog, &f);
+(gdb) p fp
+$304 = (FUNCTION *) 0x0
+   if (Argc != 1) {
+        Argc--;
+        Argv++;
+        ret = do_cmd(prog, Argc, Argv);
+(gdb) p Argv[0]
+$305 = 0x7fffffffe236 "sha"
+(gdb) p Argv[1]
+$306 = 0x7fffffffe23a "/dev/fd/63"
+/ prog is de lhash_st van de fcts zoals dgst, sha, die je achter openssl geeft,	
+
+/ Intermezzo 
+
+(gdb) p ((FUNCTION*)((struct lhash_st*)prog)->b[1][0].data)[0]
+$313 = {
+  type = 1, 
+  name = 0x62212c "srp", 
+  func = 0x45a8cf <srp_main>
+}
+
+/ Einde Intermezzo 
+
+(gdb) s
+do_cmd (prog=0x98f920, argc=2, argv=0x7fffffffdee0) at openssl.c:457
+    f.name = argv[0];
+(gdb) p f
+$315 = {
+  type = 0, 
+  name = 0x7fffffffe236 "sha", 
+  func = 0x7fffffffd910
+}
+(gdb) s
+lh_retrieve (lh=0x98f920, data=0x7fffffffd8c0) at lhash.c:247
+396	    hash = (*(lh->hash)) (data);
+$316 = 458406291
+400	    nn = hash % lh->pmax;
+19
+405	    ret = &(lh->b[(int)nn]);
+(gdb) p ret[0][0]
+$321 = {
+  data = 0x8fd8f0 <functions+1200>, 
+  next = 0x0, 
+  hash = 458406291
+}
+/ Klopt	, 
+   for (n1 = *ret; n1 != ((void *)0); n1 = n1->next) {
+        if (n1->hash != hash) {
+/ NEE
+        if (cf(n1->data, data) == 0)
+/ JA
+            break;
+
+419	    return (ret);
+(gdb) p ((FUNCTION*)ret[0][0].data)[0]
+$325 = {
+  type = 2, 
+  name = 0x622138 "sha", 
+  func = 0x409be9 <dgst_main>
+}
+/t
+lh_retrieve (lh=0x98f920, data=0x7fffffffd8c0) at lhash.c:250
+    rn = getrn(lh, data, &hash);
+/d
+(gdb) p rn
+$326 = (LHASH_NODE **) 0x9a1e68
+
+254	        ret = (*rn)->data;
+(gdb) p ((FUNCTION*)ret)[0]
+$328 = {
+  type = 2, 
+  name = 0x622138 "sha", 
+  func = 0x409be9 <dgst_main>
+}
+257	    return (ret);
+/t
+(gdb) 
+do_cmd (prog=0x98f920, argc=2, argv=0x7fffffffdee0) at openssl.c:465
+464	    fp = lh_FUNCTION_retrieve(prog, &f);
+/d
+(gdb) p fp[0]
+$329 = {
+  type = 2, 
+  name = 0x622138 "sha", 
+  func = 0x409be9 <dgst_main>
+}
+477	        ret = fp->func(argc, argv);
+(gdb)  s
+dgst_main (argc=2, argv=0x7fffffffdee0) at dgst.c:106
+117	    int keyform = FORMAT_PEM;
+
+    if ((buf = (unsigned char *)OPENSSL_malloc(BUFSIZE)) == NULL) {
+/=
+    if ((buf = (unsigned char *)CRYPTO_malloc((int)1024*8,"dgst.c",136)) == ((void *)0)) {
+
+144	    if (!load_config(bio_err, NULL))
+(gdb) s
+load_config (err=0x91a010, cnf=0x0) at apps.c:1573
+    OPENSSL_load_builtin_modules();
+(gdb) s
+OPENSSL_load_builtin_modules () at conf_mall.c:76
+    ASN1_add_oid_module();
+/ PEM, DER, BER, ...
+(gdb) s
+ASN1_add_oid_module () at asn_moid.c:100
+100	    CONF_module_add("oid_section", oid_module_init, oid_module_finish);
+(gdb) s
+CONF_module_add (name=0x6b9ff3 "oid_section", ifunc=0x60c499 <oid_module_init>, ffunc=0x60c57c <oid_module_finish>)
+    at conf_mod.c:463
+    if (module_add(NULL, name, ifunc, ffunc))
+(gdb) s
+module_add (dso=0x0, name=0x6b9ff3 "oid_section", ifunc=0x60c499 <oid_module_init>, 
+    ffunc=0x60c57c <oid_module_finish>) at conf_mod.c:280
+        supported_modules = ((struct stack_st_CONF_MODULE *)sk_new_null());
+285	    tmod = OPENSSL_malloc(sizeof(CONF_MODULE));
+   	tmod->dso = dso;
+0
+    tmod->name = BUF_strdup(name);
+$333 = 0x6b9ff3 "oid_section"
+    tmod->init = ifunc;
+$334 = (conf_init_func *) 0x60c499 <oid_module_init>
+    tmod->finish = ffunc;
+$335 = (conf_finish_func *) 0x60c57c <oid_module_finish>
+    tmod->links = 0;
+295	    if (!sk_CONF_MODULE_push(supported_modules, tmod)) {
+(gdb) p supported_modules [0]
+$338 = {
+  stack = {
+    num = 1, 
+    data = 0x9a5b00, 
+    sorted = 0, 
+    num_alloc = 4, 
+    comp = 0x0
+  }
+}
+/ er staat er 1 op	,
+/ Welke type op data	?
+(gdb) p ((struct conf_module_st*)data)[0]
+...
+/t
+(gdb) 
+OPENSSL_load_builtin_modules () at conf_mall.c:78
+	    ASN1_add_oid_module();
+/d
+(gdb) p supported_modules
+$345 = (struct stack_st_CONF_MODULE *) 0x9a5a60
+/ Weer zo'n global obj	,
+(gdb) p ((struct stack_st*)supported_modules )[0]
+$347 = {
+  num = 2, 
+  data = 0x9a5b00, 
+  sorted = 0, 
+  num_alloc = 4, 
+  comp = 0x0
+}
+(gdb) pt ((struct stack_st*)supported_modules )[0]
+type = struct stack_st {
+    int num;
+    char **data;
+    int sorted;
+    int num_alloc;
+    int (*comp)(const void *, const void *);
+}
+(gdb) p ((struct conf_module_st*)((struct stack_st*)supported_modules )[0].data[0])[0]
+$376 = {
+  dso = 0x0, 
+  name = 0x9a5c50 "oid_section", 
+  init = 0x60c499 <oid_module_init>, 
+  finish = 0x60c57c <oid_module_finish>, 
+  links = 0, 
+  usr_data = 0x0
+}
+/ Hieronder	,
+(gdb) p ((struct conf_module_st*)((struct stack_st*)supported_modules )[0].data[1])[0]
+$373 = {
+  dso = 0x0, 
+  name = 0x9a5d90 "engines", 
+  init = 0x602f73 <int_engine_module_init>, 
+  finish = 0x603036 <int_engine_module_finish>, 
+  links = 0, 
+  usr_data = 0x0
+}
+
+
+78	    ENGINE_add_conf_module();
+
+(gdb) s
+ENGINE_add_conf_module () at eng_cnf.c:240
+    CONF_module_add("engines",
+                    int_engine_module_init, int_engine_module_finish);
+(gdb) s
+CONF_module_add (name=0x6b8ac7 "engines", ifunc=0x602f73 <int_engine_module_init>, 
+    ffunc=0x603036 <int_engine_module_finish>) at conf_mod.c:463
+463	    if (module_add(NULL, name, ifunc, ffunc))
+(gdb) s
+module_add (dso=0x0, name=0x6b8ac7 "engines", ifunc=0x602f73 <int_engine_module_init>, 
+    ffunc=0x603036 <int_engine_module_finish>) at conf_mod.c:280
+...
+295	    if (!sk_CONF_MODULE_push(supported_modules, tmod)) {
+(gdb) s
+sk_push (st=0x9a5a60, data=0x9a5ce0) at stack.c:283
+283	    return (sk_insert(st, data, st->num));
+(gdb) s
+sk_insert (st=0x9a5a60, data=0x9a5ce0, loc=1) at stack.c:183
+(gdb) 
+#0  sk_insert (st=0x9a5a60, data=0x9a5ce0, loc=1) at stack.c:183
+(gdb) p ((struct conf_module_st*)data)[0]
+$342 = {
+  dso = 0x0, 
+  name = 0x9a5d90 "engines", 
+  init = 0x602f73 <int_engine_module_init>, 
+  finish = 0x603036 <int_engine_module_finish>, 
+  links = 0, 
+  usr_data = 0x0
+}
+...
+/t
+(gdb) 
+OPENSSL_load_builtin_modules () at conf_mall.c:80
+80	    EVP_add_alg_module();
+(gdb) s
+EVP_add_alg_module () at evp_cnf.c:117
+117	    CONF_module_add("alg_section", alg_module_init, 0);
+(gdb) s
+CONF_module_add (name=0x6b923a "alg_section", ifunc=0x604acc <alg_module_init>, ffunc=0x0) at conf_mod.c:463
+463	    if (module_add(NULL, name, ifunc, ffunc))
+/s
+(gdb) s
+module_add (dso=0x0, name=0x6b923a "alg_section", ifunc=0x604acc <alg_module_init>, ffunc=0x0) at conf_mod.c:280
+...
+194	        st->data[st->num] = data;
+...
+(gdb) 
+load_config (err=0x91a010, cnf=0x98eb30) at apps.c:1583
+1581	    OPENSSL_load_builtin_modules();
+/d
+(gdb) p ((struct conf_module_st*)((struct stack_st*)supported_modules )[0].data[2])[0]
+$377 = {
+  dso = 0x0, 
+  name = 0x9a5ed0 "alg_section", 
+  init = 0x604acc <alg_module_init>, 
+  finish = 0x0, 
+  links = 0, 
+  usr_data = 0x0
+}
+1583	    if (CONF_modules_load(cnf, NULL, 0) <= 0) {
+(gdb) s
+CONF_modules_load (cnf=0x98eb30, appname=0x0, flags=0) at conf_mod.c:127
+
+/ Intermezzo 
+
+/ cnf==config	, config is weer zo'n global	,
+/ WH openssl.cnf	,
+
+(gdb) p config[0]
+$381 = {
+  meth = 0x90b000 <default_method>, 
+  meth_data = 0x90ac00 <CONF_type_default>, 
+  data = 0x98f430
+}
+(gdb) p ((struct lhash_st*)config->data)->b[1][0]
+$382 = {
+  data = 0x99fb40, 
+  next = 0x0, 
+  hash = 10432440897
+}
+(gdb) p ((struct lhash_st*)config->data)->b[0][0]
+$383 = {
+  data = 0x991280, 
+  next = 0x998010, 
+  hash = 3040256832
+}
+
+/ Einde Intermezzo 
+
+   if (!appname || (!vsection && (flags & 0x20)))
+        vsection = NCONF_get_string(cnf, ((void *)0), "openssl_conf");
+(char*)0
+
+/t
+(gdb) 
+dgst_main (argc=2, argv=0x7fffffffdee0) at dgst.c:148
+    if (!load_config(bio_err, ((void *)0)))
+/d
+    program_name(argv[0], pname, sizeof pname);
+(gdb) s
+program_name (in=0x7fffffffe236 "sha", out=0x7fffffffd750 "\255p\016\257", size=40) at apps.c:373
+       p = in;
+    BUF_strlcpy(out, p, size);
+/t
+(gdb) 
+dgst_main (argc=2, argv=0x7fffffffdee0) at dgst.c:150
+    md = EVP_get_digestbyname(pname);
+(gdb) s
+EVP_get_digestbyname (name=0x7fffffffd750 "sha") at names.c:124
+124	    cp = (const EVP_MD *)OBJ_NAME_get(name, OBJ_NAME_TYPE_MD_METH);
+(gdb) s
+OBJ_NAME_get (name=0x7fffffffd750 "sha", type=1) at o_names.c:153
+
+   on.name = name;
+    on.type = type;
+(gdb) p on
+$387 = {
+  type = 1, 
+  name = 0x7fffffffd750 "sha", 
+
+    for (;;) {
+        ret = ((OBJ_NAME *)lh_retrieve(((_LHASH *)((void*) (1 ? names_lh : (struct lhash_st_OBJ_NAME*)0))), ((void*) (1 ? &on : (OBJ_NAME*)0))));
+(gdb) s
+lh_retrieve (lh=0x942da0, data=0x7fffffffd680) at lhash.c:247
+/ lh=names_lh	, data=&on
+    rn = getrn(lh, data, &hash);
+(gdb) s
+getrn (lh=0x942da0, data=0x7fffffffd680, rhash=0x7fffffffd648) at lhash.c:396
+
+(gdb) p ((struct obj_name_st*)data)[0]
+$391 = {
+  type = 1, 
+  name = 0x7fffffffd750 "sha", 
+	...
+
+396	    hash = (*(lh->hash)) (data);
+398	    *rhash = hash;
+400	    nn = hash % lh->pmax;
+18
+    cf = lh->comp;
+    ret = &(lh->b[(int)nn]);
+   for (n1 = *ret; n1 != ((void *)0); n1 = n1->next) {
+        if (n1->hash != hash) {
+/NEE
+        if (cf(n1->data, data) == 0)
+/ JA
+			break;
+    return (ret);
+/t
+(gdb) 
+lh_retrieve (lh=0x942da0, data=0x7fffffffd680) at lhash.c:250
+
+   rn = getrn(lh, data, &hash);
+/d
+    } else {
+        ret = (*rn)->data;
+257	    return (ret);
+/t
+(gdb) 
+OBJ_NAME_get (name=0x7fffffffd750 "sha", type=1) at o_names.c:168
+    for (;;) {
+        ret = ((OBJ_NAME *)lh_retrieve(((_LHASH *)((void*) (1 ? names_lh : (struct lhash_st_OBJ_NAME*)0))), ((void*) (1 ? &on : (OBJ_NAME*)0))));
+/d
+175	            return (ret->data);
+/t
+(gdb) 
+EVP_get_digestbyname (name=0x7fffffffd750 "sha") at names.c:125
+    const EVP_MD *cp;
+    cp = (const EVP_MD *)OBJ_NAME_get(name, 0x01);
+/d
+
+/ Intermezzo
+
+(gdb)  p ((struct obj_name_st*)((struct lhash_st*)names_lh)[0].b[18][0].data)[0]
+$411 = {
+  type = 1, 
+  alias = 0, 
+  name = 0x64ce97 "sha", 
+  data = 0x6b9700 <sha_md> ")"
+}
+(gdb)  p ((struct env_md_st*)((struct obj_name_st*)((struct lhash_st*)names_lh)[0].b[18][0].data)[0].data)[0]
+$412 = {
+  type = 41, 
+  pkey_type = 42, 
+  md_size = 20, 
+  flags = 0, 
+  init = 0x605518 <init>, 
+  update = 0x605536 <update>, 
+  final = 0x605567 <final>, 
+  copy = 0x0, 
+  cleanup = 0x0, 
+  sign = 0x513387 <RSA_sign>, 
+  verify = 0x513bf3 <RSA_verify>, 
+  required_pkey_type = {6, 19, 0, 0, 0}, 
+  block_size = 64, 
+  ctx_size = 104, 
+  md_ctrl = 0x0
+}
+
+/ Hierboven deden we	,
+(gdb) p ((struct evp_cipher_st*)((struct obj_name_st*)((struct lhash_st*)names_lh)->b[0][0].next[0].data)[0].data)[0]
+
+/ Einde Intermezzo
+
+125	    return (cp);
+
+/t
+(gdb) 
+dgst_main (argc=2, argv=0x7fffffffdee0) at dgst.c:152
+
+    md = EVP_get_digestbyname(pname);
+/d
+(gdb) p md[0]
+$414 = {
+  type = 41, 
+  pkey_type = 42, 
+  md_size = 20, 
+  flags = 0, 
+  init = 0x605518 <init>, 
+  update = 0x605536 <update>, 
+  final = 0x605567 <final>, 
+  copy = 0x0, 
+  cleanup = 0x0, 
+  sign = 0x513387 <RSA_sign>, 
+  verify = 0x513bf3 <RSA_verify>, 
+  required_pkey_type = {6, 19, 0, 0, 0}, 
+  block_size = 64, 
+  ctx_size = 104, 
+  md_ctrl = 0x0
+}
+
+   argc--;
+    argv++;
+    while (argc > 0) {
+        if ((*argv)[0] != '-')
+            break;
+/ geen optie	,
+(gdb) p argv[0]
+$415 = 0x7fffffffe23a "/dev/fd/63"
+/ een file	,
+
+    in = BIO_new(BIO_s_file());
+(gdb) s
+BIO_s_file () at bss_file.c:202
+202	    return (&methods_filep);
+(gdb) p methods_filep 
+$416 = {
+  type = 1026, 
+  name = 0x694d38 "FILE pointer", 
+  bwrite = 0x524f61 <file_write>, 
+  bread = 0x524ead <file_read>, 
+  bputs = 0x525394 <file_puts>, 
+  bgets = 0x525334 <file_gets>, 
+  ctrl = 0x524fc3 <file_ctrl>, 
+  create = 0x524dfb <file_new>, 
+  destroy = 0x524e37 <file_free>, 
+  callback_ctrl = 0x0
+}
+/t
+(gdb) p in[0]
+$420 = {
+  method = 0x906780 <methods_filep>, 
+...
+/ TODO
+
+    bmd = BIO_new(BIO_f_md());
+(gdb) s
+BIO_f_md () at bio_md.c:94
+94	    return (&methods_md);
+(gdb)  p methods_md 
+$421 = {
+  type = 520, 
+  name = 0x69aa01 "message digest", 
+  bwrite = 0x53a7f4 <md_write>, 
+  bread = 0x53a72f <md_read>, 
+  bputs = 0x0, 
+  bgets = 0x53ab66 <md_gets>, 
+  ctrl = 0x53a8d6 <md_ctrl>, 
+  create = 0x53a690 <md_new>, 
+  destroy = 0x53a6dc <md_free>, 
+  callback_ctrl = 0x53ab13 <md_callback_ctrl>
+}
+/t
+(gdb) p bmd[0]
+$426 = {
+  method = 0x907040 <methods_md>, 
+...
+/ TODO
+
+    if (!app_passwd(bio_err, passargin, ((void *)0), &passin, ((void *)0))) {
+/ TODO
+
+   if (out_bin == -1) {
+        if (keyfile)
+/ NEE
+        else
+            out_bin = 0;
+
+    if (randfile)
+/ NEE
+
+    if (outfile) {
+/ NEE
+    } else {
+        out = BIO_new_fp(stdout, 0x00);
+(gdb) p stdout
+$431 = (struct _IO_FILE *) 0x7ffff7bd2800 <_IO_2_1_stdout_>
+(gdb) s
+BIO_new_fp (stream=0x7ffff7bd2800 <_IO_2_1_stdout_>, close_flag=0) at bss_file.c:194
+
+    if ((ret = BIO_new(BIO_s_file())) == ((void *)0))
+    BIO_ctrl(ret,106,close_flag,(char *)stream);
+(gdb) s
+BIO_ctrl (b=0x9a6250, cmd=106, larg=0, parg=0x7ffff7bd2800 <_IO_2_1_stdout_>) at bio_lib.c:345
+
+    long (*cb) (BIO *, int, const char *, int, long, long);
+    cb = b->callback;
+0
+(gdb) s
+file_ctrl (b=0x9a6250, cmd=106, num=0, ptr=0x7ffff7bd2800 <_IO_2_1_stdout_>) at bss_file.c:275
+
+276	    FILE *fp = (FILE *)b->ptr;
+0
+280	    switch (cmd) {
+    case 108:
+        file_free(b);
+        b->shutdown = (int)num & 0x01;
+304	        b->ptr = ptr;
+(gdb) p ptr
+$441 = (void *) 0x7ffff7bd2800 <_IO_2_1_stdout_>
+305	        b->init = 1;
+
+/t
+(gdb) 
+dgst_main (argc=1, argv=0x7fffffffdee8) at dgst.c:337
+	else{
+        out = BIO_new_fp(stdout, 0x00);
+/d
+(gdb) p out
+$442 = (BIO *) 0x9a6250
+(gdb) p out[0]
+$443 = {
+  method = 0x906780 <methods_filep>, 
+  callback = 0x0, 
+  cb_arg = 0x0, 
+  init = 1, 
+  shutdown = 0, 
+  flags = 0, 
+  retry_reason = 0, 
+  num = 0, 
+  ptr = 0x7ffff7bd2800 <_IO_2_1_stdout_>, 
+  next_bio = 0x0, 
+  prev_bio = 0x0, 
+  references = 1, 
+  num_read = 0, 
+  num_write = 0, 
+  ex_data = {
+    sk = 0x0, 
+    dummy = 0
+  }
+}
+
+    else {
+        EVP_MD_CTX *mctx = ((void *)0);
+        if (!BIO_ctrl(bmd,120,0,(char *)&mctx)) {
+(gdb) s
+BIO_ctrl (b=0x9a60b0, cmd=120, larg=0, parg=0x7fffffffd718) at bio_lib.c:345
+(gdb) p b[0]
+$444 = {
+  method = 0x907040 <methods_md>, 
+  callback = 0x0, 
+  cb_arg = 0x0, 
+  init = 0, 
+  shutdown = 1, 
+  flags = 0, 
+  retry_reason = 0, 
+  num = 0, 
+  ptr = 0x9a61a0, 
+  next_bio = 0x0, 
+  prev_bio = 0x0, 
+  references = 1, 
+  num_read = 0, 
+  num_write = 0, 
+  ex_data = {
+    sk = 0x0, 
+    dummy = 0
+  }
+}
+/ ptr is er al	, zie hier vlak onder	,
+
+   long (*cb) (BIO *, int, const char *, int, long, long);
+    cb = b->callback;
+0
+    ret = b->method->ctrl(b, cmd, larg, parg);
+(gdb) s
+md_ctrl (b=0x9a60b0, cmd=120, num=0, ptr=0x7fffffffd718) at bio_md.c:179
+/ zonet waren we in file_ctrl	,
+
+    EVP_MD_CTX *ctx, *dctx, **pctx;
+
+182	    ctx = b->ptr;
+(gdb) p ctx[0]
+$447 = {
+  digest = 0x0, 
+  engine = 0x0, 
+  flags = 0, 
+  md_data = 0x0, 
+  pctx = 0x0, 
+  update = 0x0
+}
+(gdb) pt ctx
+type = struct env_md_ctx_st {
+    const EVP_MD *digest;
+    ENGINE *engine;
+    unsigned long flags;
+    void *md_data;
+    EVP_PKEY_CTX *pctx;
+    int (*update)(EVP_MD_CTX *, const void *, size_t);
+} *
+
+    switch (cmd) {
+   case 120:
+        pctx = ptr;
+/ ptr is laatste param	,
+        *pctx = ctx;
+        b->init = 1;
+        break;
+/t
+(gdb) 
+dgst_main (argc=1, argv=0x7fffffffdee8) at dgst.c:444
+        if (!BIO_ctrl(bmd,120,0,(char *)&mctx)) {
+/d
+(gdb) p mctx
+$448 = (EVP_MD_CTX *) 0x9a61a0
+(gdb) p mctx[0]
+$449 = {
+  digest = 0x0, 
+  engine = 0x0, 
+  flags = 0, 
+  md_data = 0x0, 
+  pctx = 0x0, 
+  update = 0x0
+}
+/ mctx==bmd->ptr	,
+446	        if (!EVP_DigestInit_ex(mctx, md, impl)) {
+(gdb) p mctx
+$466 = (EVP_MD_CTX *) 0x9a61a0
+(gdb) p md
+$467 = (const EVP_MD *) 0x6b9700 <sha_md>
+(gdb) p impl
+$468 = (ENGINE *) 0x0
+(gdb) p mctx[0]
+$469 = {
+  digest = 0x0, 
+  engine = 0x0, 
+  flags = 0, 
+  md_data = 0x0, 
+  pctx = 0x0, 
+  update = 0x0
+}
+(gdb) p md[0]
+$470 = {
+  type = 41, 
+  pkey_type = 42, 
+  md_size = 20, 
+  flags = 0, 
+  init = 0x605518 <init>, 
+  update = 0x605536 <update>, 
+  final = 0x605567 <final>, 
+  copy = 0x0, 
+  cleanup = 0x0, 
+  sign = 0x513387 <RSA_sign>, 
+  verify = 0x513bf3 <RSA_verify>, 
+  required_pkey_type = {6, 19, 0, 0, 0}, 
+  block_size = 64, 
+  ctx_size = 104, 
+  md_ctrl = 0x0
+}
+
+
+(gdb) s
+EVP_DigestInit_ex (ctx=0x9a61a0, type=0x6b9700 <sha_md>, impl=0x0) at digest.c:148
+    EVP_MD_CTX_clear_flags(ctx, 0x0002);
+(gdb) s
+EVP_MD_CTX_clear_flags (ctx=0x9a61a0, flags=2) at evp_lib.c:346
+346	    ctx->flags &= ~flags;
+/t
+187	            impl = ENGINE_get_digest_engine(type->type);
+(gdb) s
+ENGINE_get_digest_engine (nid=41) at tb_digest.c:117
+117	    return engine_table_select(&digest_table, nid);
+(gdb) s
+engine_table_select (table=0x915970 <digest_table>, nid=41) at eng_table.c:247
+
+/ Intermezzo
+
+$ vi crypto/ex_data.c
+
+/* What an "implementation of ex_data functionality" looks like */
+struct st_CRYPTO_EX_DATA_IMPL {
+        /*********************/
+    /* GLOBAL OPERATIONS */
+    /* Return a new class index */
+    int (*cb_new_class) (void);
+    /* Cleanup all state used by the implementation */
+    void (*cb_cleanup) (void);
+        /************************/
+    /* PER-CLASS OPERATIONS */
+    /* Get a new method index within a class */
+    int (*cb_get_new_index) (int class_index, long argl, void *argp,
+                             CRYPTO_EX_new *new_func, CRYPTO_EX_dup *dup_func,
+                             CRYPTO_EX_free *free_func);
+    /* Initialise a new CRYPTO_EX_DATA of a given class */
+    int (*cb_new_ex_data) (int class_index, void *obj, CRYPTO_EX_DATA *ad);
+    /* Duplicate a CRYPTO_EX_DATA of a given class onto a copy */
+    int (*cb_dup_ex_data) (int class_index, CRYPTO_EX_DATA *to,
+                           CRYPTO_EX_DATA *from);
+    /* Cleanup a CRYPTO_EX_DATA of a given class */
+    void (*cb_free_ex_data) (int class_index, void *obj, CRYPTO_EX_DATA *ad);
+};
+
+$ vi crypto/crypto.h 
+
+typedef struct st_CRYPTO_EX_DATA_IMPL CRYPTO_EX_DATA_IMPL;
+
+/ Einde Intermezzo
+
+    tmplate.nid = nid;
+
+(gdb) pt tmplate
+type = struct st_engine_pile {
+    int nid;
+    struct stack_st_ENGINE *sk;
+    ENGINE *funct;
+    int uptodate;
+}
+267	    fnd = lh_ENGINE_PILE_retrieve(&(*table)->piles, &tmplate);
+/=
+   fnd = ((ENGINE_PILE *)lh_retrieve(((_LHASH *)((void*) (1 ? &(*table)->piles : (struct lhash_st_ENGINE_PILE*)0))), ((void*) (1 ? &tmplate : (ENGINE_PILE*)0))));
+(gdb) s
+lh_retrieve (lh=0x989260, data=0x7fffffffd640) at lhash.c:247
+(gdb) pt lh
+type = struct lhash_st {
+...
+(gdb) p lh[0]
+$483 = {
+  b = 0x989390, 
+  comp = 0x602395 <engine_pile_LHASH_COMP>, 
+  hash = 0x602373 <engine_pile_LHASH_HASH>, 
+  num_nodes = 8, 
+  num_alloc_nodes = 16, 
+  p = 0, 
+  pmax = 8, 
+...
+248	    rn = getrn(lh, data, &hash);
+(gdb) s
+getrn (lh=0x989260, data=0x7fffffffd640, rhash=0x7fffffffd608) at lhash.c:396
+396	    hash = (*(lh->hash)) (data);
+41
+398	    *rhash = hash;
+400	    nn = hash % lh->pmax;
+1
+405	    ret = &(lh->b[(int)nn]);
+406	    for (n1 = *ret; n1 != NULL; n1 = n1->next) {
+...
+/ Hij is er niet	,
+252	        return (NULL);
+/t
+(gdb) 
+engine_table_select (table=0x915970 <digest_table>, nid=41) at eng_table.c:268
+    fnd = ((ENGINE_PILE *)lh_retrieve(((_LHASH *)((void*) (1 ? &(*table)->piles : (struct lhash_st_ENGINE_PILE*)0))), ((void*) (1 ? &tmplate : (ENGINE_PILE*)0))));
+/d
+    if (!fnd)
+        goto end;
+336	    return ret;
+/t
+(gdb) 
+EVP_DigestInit_ex (ctx=0x9a61a0, type=0x6b9700 <sha_md>, impl=0x0) at digest.c:188
+            impl = ENGINE_get_digest_engine(type->type);
+/d
+0
+   if (ctx->digest != type) {
+		...
+        ctx->digest = type;
+
+218	        if (!(ctx->flags & EVP_MD_CTX_FLAG_NO_INIT) && type->ctx_size) {
+219	            ctx->update = type->update;
+220	            ctx->md_data = OPENSSL_malloc(type->ctx_size);
+
+248	    return ctx->digest->init(ctx);
+
+(gdb) p ctx[0]
+$496 = {
+  digest = 0x6b9700 <sha_md>, 
+  engine = 0x0, 
+  flags = 0, 
+  md_data = 0x9a6340, 
+  pctx = 0x0, 
+  update = 0x605536 <update>
+}
+(gdb) pt ctx->digest 
+type = const struct env_md_st {
+    int type;
+    int pkey_type;
+    int md_size;
+    unsigned long flags;
+    int (*init)(EVP_MD_CTX *);
+    int (*update)(EVP_MD_CTX *, const void *, size_t);
+    int (*final)(EVP_MD_CTX *, unsigned char *);
+    int (*copy)(EVP_MD_CTX *, const EVP_MD_CTX *);
+    int (*cleanup)(EVP_MD_CTX *);
+    int (*sign)(int, const unsigned char *, unsigned int, unsigned char *, unsigned int *, void *);
+    int (*verify)(int, const unsigned char *, unsigned int, const unsigned char *, unsigned int, void *);
+    int required_pkey_type[5];
+    int block_size;
+    int ctx_size;
+    int (*md_ctrl)(EVP_MD_CTX *, int, int, void *);
+} *
+(gdb) pt ctx->update
+type = int (*)(EVP_MD_CTX *, const void *, size_t)
+
+$ vi crypto/ossl_typ.h
+typedef struct env_md_st EVP_MD;
+typedef struct env_md_ctx_st EVP_MD_CTX;
+
+(gdb) s
+init (ctx=0x9a61a0) at m_sha.c:74
+74	    return SHA_Init(ctx->md_data);
+(gdb) p ctx[0]
+$499 = {
+  digest = 0x6b9700 <sha_md>, 
+  engine = 0x0, 
+  flags = 0, 
+  md_data = 0x9a6340, 
+  pctx = 0x0, 
+  update = 0x605536 <update>
+}
+(gdb) s
+SHA_Init (c=0x9a6340) at sha_locl.h:131
+131	    memset(c, 0, sizeof(*c));
+
+/ Intermezzo
+
+/ we zien sha_locl.h in sha_dgst.c included, 	
+/ dus we maken sha_dgst.e , en we zien wat in sha_locl.h wordt included	, 
+
+$ vi sha_locl.h
+
+#if defined(SHA_0)
+
+# define HASH_UPDATE                    SHA_Update
+# define HASH_TRANSFORM                 SHA_Transform
+# define HASH_FINAL                     SHA_Final
+# define HASH_INIT                      SHA_Init
+# define HASH_BLOCK_DATA_ORDER          sha_block_data_order
+# define Xupdate(a,ix,ia,ib,ic,id)      (ix=(a)=(ia^ib^ic^id))
+
+static void sha_block_data_order(SHA_CTX *c, const void *p, size_t num);
+
+#include "md32_common.h"
+/ deze doet	,
+int SHA_Update(SHA_CTX *c, const void *data_, size_t len)
+{
+void SHA_Transform(SHA_CTX *c, const unsigned char *data)
+{
+int SHA_Final(unsigned char *md, SHA_CTX *c)
+{
+
+#define INIT_DATA_h0 0x67452301UL
+#define INIT_DATA_h1 0xefcdab89UL
+#define INIT_DATA_h2 0x98badcfeUL
+#define INIT_DATA_h3 0x10325476UL
+#define INIT_DATA_h4 0xc3d2e1f0UL
+
+#ifdef SHA_0
+fips_md_init(SHA)
+/=
+$ vi crypto.h
+# else
+#  define fips_md_init_ctx(alg, cx) \
+        int alg##_Init(cx##_CTX *c)
+
+/ daarom zien we in sha_dgst.e	,
+nt SHA_Init(SHA_CTX *c)
+{
+    memset(c, 0, sizeof(*c));
+    c->h0 = INIT_DATA_h0;
+    c->h1 = INIT_DATA_h1;
+    c->h2 = INIT_DATA_h2;
+    c->h3 = INIT_DATA_h3;
+    c->h4 = INIT_DATA_h4;
+    return 1;
+}
+
+/ Einde Intermezzo
+
+(gdb) s
+SHA_Init (c=0x9a6340) at sha_locl.h:131
+131	    memset(c, 0, sizeof(*c));
+
+/t
+(gdb) 
+dgst_main (argc=1, argv=0x7fffffffdee8) at dgst.c:453
+        if (!EVP_DigestInit_ex(mctx, md, impl)) {
+/d
+    if (sigfile && sigkey) {
+ /NEE
+    inp = BIO_push(bmd, in);
+(gdb) p bmd[0]
+$501 = {
+  method = 0x907040 <methods_md>, 
+  callback = 0x0, 
+  cb_arg = 0x0, 
+  init = 1, 
+  shutdown = 1, 
+  flags = 0, 
+  retry_reason = 0, 
+  num = 0, 
+  ptr = 0x9a61a0, 
+	...
+(gdb) p in[0]
+$503 = {
+  method = 0x906780 <methods_filep>, 
+  callback = 0x0, 
+  cb_arg = 0x0, 
+  init = 0, 
+  shutdown = 1, 
+  flags = 0, 
+  retry_reason = 0, 
+  num = 0, 
+  ptr = 0x0, 
+...
+
+/ HIER HIER HIER
+
+
+/ Einde DEBUG OPENSSL
+

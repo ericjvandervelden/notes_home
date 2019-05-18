@@ -1,0 +1,40 @@
+
+
+RP-SET-DEF-WEIGHT=SUM(
+	RT-DEFAULT-WEIGHT_OUTPUT=RT-DEFAULT-WEIGHT(
+	 	SHIPUNIT
+	)
+)	
+		
+pnllogistics3=# select*from cost_component_specification where name like '%Weight%';
+
+pnllogistics3=# select rp.* from cost_component_specification ccs join rate_parameter rp on ccs.parameter_systemid=rp.system_id where ccs.name like '%Weight%';
+
+pnllogistics3=#   select rct. *from cost_component_specification ccs join rate_component_type rct on ccs.order_rate_part_systemid=rct.system_id where ccs.name like '%Weight%';
+
+pnllogistics3=# select*from rate_parameter rp where rp.name like 'RP-SET-DEF-WEIGHT';
+pnllogistics3=# select rp.* from rate_parameter rp join rate_agreement ra on rp.rate_agreement_systemid=ra.system_id where rp.name='RP-SET-DEF-WEIGHT' and ra.name='RA-BUSINESSRULES SHO';
+
+pnllogistics3=# select rf.* from rate_parameter rp join rate_function rf on rp.outputfrom_function_systemid=rf.system_id where rp.name like 'RP-SET-DEF-WEIGHT';
+pnllogistics3=# select rf.* from rate_function rf join rate_parameter rp on rf.system_id=rp.outputfrom_function_systemid join rate_agreement ra on rp.rate_agreement_systemid=ra.system_id where rp.name='RP-SET-DEF-WEIGHT' and ra.name='RA-BUSINESSRULES SHO';
+
+pnllogistics3=# select fd.* from rate_parameter rp join rate_function rf on rp.outputfrom_function_systemid=rf.system_id join function_definition fd on rf.function_definition_systemid=fd.system_id where rp.name like 'RP-SET-DEF-WEIGHT';
+
+pnllogistics3=# select ip.* from rate_parameter rp join rate_function rf on rp.outputfrom_function_systemid=rf.system_id join input_parameter ip on ip.rate_func_systemid=rf.system_id where rp.name like 'RP-SET-DEF-WEIGHT';
+pnllogistics3=# select ip.* from rate_parameter rp join rate_function rf on rp.outputfrom_function_systemid=rf.system_id join input_parameter ip on ip.rate_func_systemid=rf.system_id  join rate_agreement ra on rp.rate_agreement_systemid=ra.system_id where rp.name like 'RP_REQ_START_BEFORE' and ra.name='RA-BUSINESSRULES SHO';;
+
+
+pnllogistics3=# select irp.* from rate_parameter rp join rate_function rf on rp.outputfrom_function_systemid=rf.system_id join input_parameter ip on ip.rate_func_systemid=rf.system_id join rate_parameter irp on ip.parameter_systemid=irp.system_id where rp.name like 'RP-SET-DEF-WEIGHT';
+
+pnllogistics3=# select rp.* from rate_parameter rp where rp.name='RT-DEFAULT-WEIGHT_OUTPUT';
+
+pnllogistics3=# select fd.* from rate_parameter rp join rate_function rf on rp.outputfrom_function_systemid=rf.system_id join function_definition fd on rf.function_definition_systemid=fd.system_id where rp.name like 'RT-DEFAULT-WEIGHT_OUTPUT';
+
+pnllogistics3=# select*from rate_table where name like '%RT-DEFAULT-WEIGHT%';
+
+pnllogistics3=# select ip.* from rate_parameter rp join rate_function rf on rp.outputfrom_function_systemid=rf.system_id join input_parameter ip on ip.rate_func_systemid=rf.system_id where rp.name like 'RT-DEFAULT-WEIGHT_OUTPUT';
+
+pnllogistics3=# select iod.* from input_parameter ip join rate_function rf on ip.rate_func_systemid=rf.system_id join rate_parameter rp  on rp.outputfrom_function_systemid=rf.system_id join order_detail iod on ip.order_detail_systemid=iod.system_id where rp.name = 'RT-DEFAULT-WEIGHT_OUTPUT';
+
+pnllogistics3=# select*from dimension where name like '%SHIPUNIT%';
+ system_id |     name     | rate_table_systemid | unit_systemid | rounding | discrete | basic_charge_applicable | sequence_nr | max_min

@@ -1,0 +1,642 @@
+/ CREATE SHIPMENTORDER
+
+/ 7	.
+
+/ pnllogistics	,
+/ db  pnllogistics5a
+/ sho template: cons_test_gse
+
+/ 7	. 
+
+/ we willen de dates veranderen in het sho tpl	, maar in de GUI van het tpl zien ze we niet	,
+
+/ planning, shipment order , create
+shipment-order-template_list
+
+$ vi oms-sitemap.xmap
+			<map:match pattern="shipment-order-template_list">
+				<map:call resource="dynatablePage">
+					<map:parameter name="xsp" value="xsp/shipment-order-template_list.xml"/>
+
+/ er is geen aparte table voor sho tpl's, het zijn zelf ook sho's	,
+/ de template name is de shipment_order_id van de sho's met is_template=1	,
+
+pnllogistics5a=# select shipment_order_id from shipment_order where is_template=1;
+    shipment_order_id    
+-------------------------
+ SHOT_COLLECT-Dutchworks
+ MAC-TEST
+ DEMO-3/DOM
+ TEST
+ cons_test_gse
+ gse rt/rt belgie
+ rt/rt gerard
+ MANUAL RETURN ORDER
+ FIXEDFTL
+ TEST01
+ LB admin lh
+ LB admin no lh
+ pharma
+(13 rows)
+
+/ we zien inderdaad in de db	,
+
+pnllogistics5a=# select *from shipment_order where shipment_order_id='cons_test_gse';
+requested_departure_before     | 2015-05-08 16:04:41.696
+requested_departure_after      | 2015-05-08 16:04:41.696
+requested_arrival_before       | 2015-05-09 16:04:41.696
+requested_arrival_after        | 2015-05-09 16:04:41.696
+
+/ 7	. 
+
+oo=> create table ts_tbl(t timestamp);
+CREATE TABLE
+foo=> \d ts_tbl
+              Table "public.ts_tbl"
+ Column |            Type             | Modifiers 
+--------+-----------------------------+-----------
+ t      | timestamp without time zone | 
+
+
+
+
+
+
+
+
+/ Einde CREATE SHIPMENTORDER
+
+/ POSTGRES
+
+/ Lees	, 
+http://www.postgresql.org/docs/9.1/static/datatype-datetime.html
+
+/ we zien	,
+timestamp
+date
+time
+interval
+
+/ timestamp without timezone	,
+TIMESTAMP '2004-10-19 10:23:54'
+
+/ timestamp with timezone	,
+TIMESTAMP '2004-10-19 10:23:54+02'
+
+/ Lees	,
+http://www.postgresql.org/docs/9.1/static/functions-datetime.html
+
+/ Met timestamps werken ze met + interval	, je kunt dan '5' geven, dat zijn sec, '5 hours', of '5 days'	,
+/ Met dates kun je gewoon een getal geven	, 
+/ als we op een date + interval '<getal>'	, dan wordt het een timestamp	, en we tellen in dit geval het aantal sec op bij 00:00:00	, 
+
+pnllogistics5a=# select requested_departure_before  from shipment_order where shipment_order_id='cons_test_gse';
+-[ RECORD 1 ]--------------+------------------------
+requested_departure_before | 2015-05-08 16:04:41.696
+
+pnllogistics5a=# select requested_departure_before+interval '5' from shipment_order where shipment_order_id='cons_test_gse';
+-[ RECORD 1 ]---------------------
+?column? | 2015-05-08 16:04:46.696
+
+pnllogistics5a=# select requested_departure_before+interval '5 hours' from shipment_order where shipment_order_id='cons_test_gse';
+-[ RECORD 1 ]---------------------
+?column? | 2015-05-08 21:04:41.696
+
+pnllogistics5a=# select requested_departure_before+interval '5 days' from shipment_order where shipment_order_id='cons_test_gse';
+-[ RECORD 1 ]---------------------
+?column? | 2015-05-13 16:04:41.696
+
+/ 7	. 
+
+/ we maken zelf een table, 	timestamp is timestamp without timezone	,
+
+foo=> create table ts_tbl(t timestamp);
+CREATE TABLE
+foo=> \d ts_tbl
+              Table "public.ts_tbl"
+ Column |            Type             | Modifiers 
+--------+-----------------------------+-----------
+ t      | timestamp without time zone | 
+
+[root@localhost pg_log]# date
+Mon Mar 14 09:10:22 CET 2016
+
+foo=> select now();
+             now              
+------------------------------
+ 2016-03-14 03:56:47.31722-04
+(1 row)
+/ Dit is een timestamp with timezone	,
+
+foo=> select now()::timestamp
+foo-> ;
+            now            
+---------------------------
+ 2016-03-14 03:56:47.31722
+(1 row)
+
+foo=> select now()::date;
+    now     
+------------
+ 2016-03-14
+(1 row)
+
+/ 7	. 
+
+/ list functions + source code	,
+\df lists all functions	, 
+\df+ lists all functions+ source code
+\df+ <function> list only record of <function>	,
+
+foo=> \x
+foo=> \df+
+
+List of functions
+-[ RECORD 1 ]-------+---------------------------------------------------------------------
+Schema              | public
+Name                | fct
+Result data type    | integer
+Argument data types | 
+Type                | normal
+Security            | invoker
+Volatility          | volatile
+Owner               | foo
+Language            | plpgsql
+Source code         | 
+                    | declare 
+                    |         quantity integer:=30;
+                    | begin
+                    |         raise notice 'Quantity here is %', quantity; -- prints
+                    |         return quantity;
+                    | end;
+                    | 
+Description         | 
+-[ RECORD 2 ]-------+---------------------------------------------------------------------
+Schema              | public
+Name                | fct1
+Result data type    | integer
+...
+
+/ 7	. 
+
+/ Lees	,
+http://www.postgresql.org/docs/9.3/static/sql-createfunction.html
+
+/ 13	. 
+
+/ Interactief	,
+
+PGPASSWORD=foo psql -U foo
+foo=> create or replace function fct3() returns int as $$
+begin
+return 30;
+end
+$$
+language plpgsql;
+CREATE FUNCTION
+foo=> commit;
+COMMIT
+
+foo=> select fct3();
+ fct3 
+------
+   30
+(1 row)
+
+/ 13	. 
+
+/ Met script	,
+
+[eric@localhost Manual]$ pwd
+/home/eric/Devel/Postgres/scripts/Manual
+[eric@localhost Manual]$ cat 40.2_a.sql 
+create or replace function fct3() returns integer as $$
+begin
+	return 30; 
+end
+$$
+language plpgsql;
+commit;
+
+[eric@localhost Local]$ PGPASSWORD=foo psql -U foo </home/eric/Devel/Postgres/scripts/Manual/40.2_a.sql 
+Null display is "NULL".
+CREATE FUNCTION
+COMMIT
+
+[eric@localhost Local]$ PGPASSWORD=foo psql -U foo <<SQL
+> select fct3();
+> SQL
+Null display is "NULL".
+ fct3 
+------
+   30
+(1 row)
+
+/ 13	. 
+
+/ Zo kan het ook ,maar we moeten we $ escape	,
+
+[eric@localhost Local]$ PGPASSWORD=foo psql -U foo <<PGSQL
+create or replace function fct3() returns integer as \$\$
+begin
+return 30; 
+end
+\$\$
+language plpgsql;
+commit;
+PGSQL										/ Geef nu Enter	,
+Null display is "NULL".
+CREATE FUNCTION
+COMMIT
+
+[eric@localhost Local]$ PGPASSWORD=foo psql -U foo <<SQL
+select fct3();
+SQL
+Null display is "NULL".
+ fct3 
+------
+   30
+(1 row)
+ 
+/ 7	. 
+
+[eric@localhost Manual]$ pwd
+/home/eric/Devel/Postgres/scripts/Manual
+[eric@localhost Manual]$ cat myadd.sql 
+create or replace function myadd(integer,integer) returns integer as $$
+select $1+$2;
+$$
+language sql;
+commit;
+
+[eric@localhost Local]$ PGPASSWORD=foo psql -U foo </home/eric/Devel/Postgres/scripts/Manual/myadd.sql 
+Null display is "NULL".
+CREATE FUNCTION
+COMMIT
+[eric@localhost Local]$ PGPASSWORD=foo psql -U foo <<_                                                 
+select myadd(3,5);
+_
+Null display is "NULL".
+ myadd 
+-------
+     8
+(1 row)
+
+/ 7	. 
+
+/ 13	. 
+
+/ vergl	, 
+
+create or replace function fct3() returns integer as $$
+begin
+	return 30; 
+end
+$$
+language plpgsql;
+commit;
+
+create or replace function myadd(integer,integer) returns integer as $$
+select $1+$2;
+$$
+language sql;
+commit;
+
+/ language plpgsql verwacht begin ... end	,
+
+/ 13	. 
+
+/ we probeerden	,
+
+$ cat myadd.sql
+
+create or replace function myadd(integer,integer) returns integer as $$
+begin
+select $1+$2;
+end
+$$
+language plpgsql;
+commit;
+
+[eric@localhost Local]$ PGPASSWORD=foo psql -U foo </home/eric/Devel/Postgres/scripts/Manual/myadd.sql 
+Null display is "NULL".
+CREATE FUNCTION
+COMMIT
+
+[eric@localhost Local]$ PGPASSWORD=foo psql -U foo <<_
+select myadd(3,5);
+> _
+Null display is "NULL".
+ERROR:  query has no destination for result data
+HINT:  If you want to discard the results of a SELECT, use PERFORM instead.
+CONTEXT:  PL/pgSQL function myadd(integer,integer) line 3 at SQL statement
+
+/ 13	. 
+
+foo=> select table_name  from information_schema.columns where data_type like 'date%';
+/ of,	
+foo=> select table_name  from information_schema.columns where data_type like 'timestamp%';
+...
+
+/ 13	. 
+
+/ interval -> time
+/ integer
+ 
+/ 13	. 
+
+foo=> create table mydate(d date);
+CREATE TABLE
+foo=> commit;
+COMMIT
+foo=>  insert into mydate values(now()::date);
+INSERT 0 1
+foo=> commit;
+COMMIT
+foo=>  insert into mydate values(now()::date);
+/ we hoeven niet te cast	, want de column is al van type date	, dus de cast gebeurt zoiezo	,
+foo=>  insert into mydate values(now());
+INSERT 0 1
+foo=> select*from mydate;
+     d      
+------------
+ 2016-03-16
+ 2016-03-16
+(2 rows)
+foo=> rollback;
+ROLLBACK
+
+/ Kan ook	,
+foo=>  insert into mydate values('2015-12-02');
+INSERT 0 1
+foo=> commit;
+COMMIT
+
+foo=> create table mytimestamp(t timestamp);
+CREATE TABLE
+foo=> commit;
+COMMIT
+foo=> insert into mytimestamp values(now());
+INSERT 0 1
+foo=> insert into mytimestamp values(now()::date);
+INSERT 0 1
+foo=> select*from mytimestamp;
+             t              
+----------------------------
+ 2016-03-16 02:19:37.178662
+ 2016-03-16 00:00:00
+(2 rows)
+foo=> rollback;
+ROLLBACK
+foo=> insert into mytimestamp values('2015-12-14 16:12:34.123456');
+INSERT 0 1
+foo=> commit;
+COMMIT
+foo=> insert into mytimestamp values('2015-12-14 16:99:34.123456');
+ERROR:  date/time field value out of range: "2015-12-14 16:99:34.123456"
+foo=> rollback;
+ROLLBACK
+
+/ 13	. 
+
+/ bij date kunnen we +1	, bij timestamp niet	,
+
+foo=> select*from mydate;
+     d      
+------------
+ 2016-03-16
+ 2016-12-02
+(2 rows)
+foo=> select*from mytimestamp;
+             t              
+----------------------------
+ 2016-03-16 02:33:22.236999
+ 2015-12-14 16:12:34.123456
+(2 rows)
+
+/ als de current tx is aborted	, kunnen we nog wel select doen, maar geen insert	,
+
+foo=> select d+1 from mydate ;
+/=
+foo=> select d+integer '1' from mydate;
+  ?column?  
+------------
+ 2016-03-17
+ 2016-12-03
+(2 rows)
+
+foo=> select t+1 from mytimestamp ;
+/=
+foo=> select t+integer '1' from mytimestamp ;
+ERROR:  operator does not exist: timestamp without time zone + integer
+
+/ 13	. 
+
+/ verschil 	,
+
+foo=> select now()::date+integer '1';
+  ?column?  
+------------
+ 2016-03-17
+(1 row)
+
+foo=> select now()::date+interval '1 day';
+      ?column?       
+---------------------
+ 2016-03-17 00:00:00
+(1 row)
+
+foo=> select now()+interval '1 day';
+           ?column?            
+-------------------------------
+ 2016-03-17 02:55:25.658988-04
+(1 row)
+
+
+/ 13	. 
+
+/ Lees	,
+http://serverfault.com/questions/554359/postgresql-timezone-does-not-match-system-timezone
+
+[eric@localhost bin]$ sudo less /var/lib/pgsql/data/postgresql.conf
+timezone = 'US/Eastern'
+/ WH moet ik deze verbeteren	, dan zal now() de goede waarde geven	,
+/ TODO
+
+/ als we /var/lib/pgsql/data/pg_hba.conf hebben modified	, moeten we 
+$ pg_ctl reload
+/ or 
+$ kill -HUP
+/ TODO
+/ Wat na modify postgresql.conf	?
+/ TODO
+
+/ 13	. 
+
+/ set date op morgen	,
+
+/ we konden wel 
+foo=>  insert into mydate values(now());
+/ we kunnen , maar hoeven niet	,
+foo=>  insert into mydate values(now()::date);
+/ Maar als we now() gaat use in expressions met integer	, moeten we ::date	,
+
+foo=> update mydate set d=now()::date+integer '1';
+UPDATE 2
+foo=> select*from mydate;
+     d      
+------------
+ 2016-03-17
+ 2016-03-17
+(2 rows)
+foo=> rollback ;
+ROLLBACK
+foo=> update mydate set d=now()+integer '1';
+ERROR:  operator does not exist: timestamp with time zone + integer
+foo=> rollback ;
+ROLLBACK
+
+
+/ set timestamp op morgen	,
+
+foo=> update mytimestamp set t=now()+interval '1 day';
+UPDATE 2
+foo=> select*from mytimestamp;
+             t              
+----------------------------
+ 2016-03-17 03:59:49.828614
+ 2016-03-17 03:59:49.828614
+(2 rows)
+foo=> rollback ;
+ROLLBACK
+foo=> update mytimestamp set t=now()::date+interval '1 day';
+UPDATE 2
+foo=> select*from mytimestamp;
+          t          
+---------------------
+ 2016-03-17 00:00:00
+ 2016-03-17 00:00:00
+(2 rows)
+
+/ 13	. 
+
+/ Lees	,
+http://stackoverflow.com/questions/21087710/how-to-write-update-function-stored-procedure-in-postgresql
+/ ->
+https://github.com/pgxn/pgxn-manager
+
+///////////////////////////////
+/ een select gaat met language sql	, 
+/ een update met language plpgsql	, we moeten een type return	, en begin end	,
+/ we moeten
+	return found	;
+/ TODO
+
+/ we kunnen met create or replace function alleen replace als de return type van de fct niet verandert	,
+
+[eric@localhost Manual]$ pwd
+/home/eric/Devel/Postgres/scripts/Manual
+[eric@localhost Manual]$ cat mydate_tomorrow.sql 
+
+drop function if exists mydate();
+create or replace function mydate() returns boolean as $$
+begin
+update mydate set d=now()::date+integer '1';
+return found;
+end;
+$$
+language plpgsql;
+commit;
+
+[eric@localhost Local]$ PGPASSWORD=foo psql -U foo </home/eric/Devel/Postgres/scripts/Manual/mydate_tomorrow.sql 
+Null display is "NULL".
+DROP FUNCTION
+CREATE FUNCTION
+COMMIT
+
+[eric@localhost Local]$ PGPASSWORD=foo psql -U foo <<_
+select*from mydate();
+commit;
+> _
+Null display is "NULL".
+ mydate 
+--------
+ t
+(1 row)
+
+[eric@localhost Local]$ PGPASSWORD=foo psql -U foo <<_
+select*from mydate;
+> _
+Null display is "NULL".
+     d      
+------------
+ 2016-03-17
+ 2016-03-17
+(2 rows)
+
+/ 13	. 
+
+/ timestamp tomorrow	,
+
+[eric@localhost Manual]$ cat mytimestamp_tomorrow.sql 
+drop function if exists mytimestamp();
+create or replace function mytimestamp() returns boolean as $$
+begin
+update mytimestamp set t=now()+interval '1 day';
+return found;
+end;
+$$
+language plpgsql;
+commit;
+
+[eric@localhost Local]$ PGPASSWORD=foo psql -U foo </home/eric/Devel/Postgres/scripts/Manual/mytimestamp_tomorrow.sql 
+Null display is "NULL".
+DROP FUNCTION
+CREATE FUNCTION
+COMMIT
+[eric@localhost Local]$ PGPASSWORD=foo psql -U foo <<_                                                                
+select*from mytimestamp();
+commit;
+_
+Null display is "NULL".
+ mytimestamp 
+-------------
+ t
+(1 row)
+
+COMMIT
+[eric@localhost Local]$ PGPASSWORD=foo psql -U foo <<_                                                                
+select*from mytimestamp;
+> _
+Null display is "NULL".
+             t              
+----------------------------
+ 2016-03-17 06:10:24.579146
+ 2016-03-17 06:10:24.579146
+(2 rows)
+
+/ 13	. 
+
+/ we gaan dit nu toepassen in pnllogistics5a	,
+
+Req start after: tomorrow 
+Requested start before: tomorrow 
+Req end after: after tomorrow 
+Requested end before: after tomorrow 
+
+ requested_departure_before     | timestamp without time zone | 
+ requested_departure_after      | timestamp without time zone | 
+ requested_arrival_before       | timestamp without time zone | 
+ requested_arrival_after        | timestamp without time zone | 
+
+
+
+
+
+
+
+
+
+
+
+/ Einde POSTGRES

@@ -1,0 +1,1941 @@
+/ HIBERNATE
+
+/ 7	. 
+
+/ proj. hibernate_mappings	, 
+
+/ Als we zien	, 
+HibernateLog --> 08:17:17 INFO  org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl - HHH000115: Hibernate connection pool size: 20 (min=1)
+HibernateLog --> 08:17:18 INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQLDialect
+HibernateLog --> 08:17:18 INFO  org.hibernate.engine.jdbc.internal.LobCreatorBuilder - HHH000424: Disabling contextual LOB creation as createClob() method threw error : java.lang.reflect.InvocationTargetException
+HibernateLog --> 08:17:18 INFO  org.hibernate.engine.transaction.internal.TransactionFactoryInitiator - HHH000399: Using default transaction strategy (direct JDBC transactions)
+HibernateLog --> 08:17:18 INFO  org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory - HHH000397: Using ASTQueryTranslatorFactory
+HibernateLog --> 08:17:18 TRACE org.hibernate.type.TypeFactory - Scoping types to session factory org.hibernate.internal.SessionFactoryImpl@485aa65e
+HibernateLog --> 08:17:19 DEBUG org.hibernate.SQL - alter table sporter drop constraint FK_1k67yd2nymaoofah9faoxj0cl
+Hibernate: alter table sporter drop constraint FK_1k67yd2nymaoofah9faoxj0cl
+
+/ Doe dan in psql , 
+> rollback;
+/ of misschien 
+> commit;
+
+/ Dan loopt hij weer doen	, 
+
+HibernateLog --> 08:32:52 DEBUG org.hibernate.SQL - drop table if exists club cascade
+Hibernate: drop table if exists club cascade
+HibernateLog --> 08:32:52 DEBUG org.hibernate.SQL - drop table if exists sporter cascade
+Hibernate: drop table if exists sporter cascade
+HibernateLog --> 08:32:52 DEBUG org.hibernate.SQL - create table club (id_  bigserial not null, name_ varchar(255), primary key (id_))
+Hibernate: create table club (id_  bigserial not null, name_ varchar(255), primary key (id_))
+HibernateLog --> 08:32:52 DEBUG org.hibernate.SQL - create table sporter (id_  bigserial not null, name_ varchar(255), club_ int8 not null, primary key (id_))
+Hibernate: create table sporter (id_  bigserial not null, name_ varchar(255), club_ int8 not null, primary key (id_))
+HibernateLog --> 08:32:52 DEBUG org.hibernate.SQL - alter table sporter add constraint FK_1k67yd2nymaoofah9faoxj0cl foreign key (club_) references club
+Hibernate: alter table sporter add constraint FK_1k67yd2nymaoofah9faoxj0cl foreign key (club_) references club
+
+
+/ 7	. 
+
+$ vi Club.hbm.xml
+
+<hibernate-mapping 
+	package="my.test.own.hibernate_mappings">
+
+<class 
+	name="Club" 
+	table="club"
+>
+	<id 
+		name="id"
+		column="id_"	
+	>	
+		<generator 
+			class="identity"/>
+	</id>
+
+/ We hadden 
+		<generator 
+			class="increment"/>
+
+/ Nu zien we serial column type 	,
+
+foo=> \d sporter
+                                 Table "public.sporter"
+ Column |          Type          |                       Modifiers                       
+--------+------------------------+-------------------------------------------------------
+ id_    | bigint                 | not null default nextval('sporter_id__seq'::regclass)
+ name_  | character varying(255) | 
+Indexes:
+    "sporter_pkey" PRIMARY KEY, btree (id_)
+Referenced by:
+    TABLE "club_sporters" CONSTRAINT "fk_328ocd02cikea2g8x5ujiqdv8" FOREIGN KEY (sporter_) REFERENCES sporter(id_)
+
+/ 7	. 
+
+/ we map sporter.club	, inverse="false"	, naar een fk	,
+/ we map club.sporters al dan niet	, 
+
+/ we doen alleen	,
+		  	sporter.setClub(club);
+		  	sporter2.setClub(club);
+//		  	club.getSporters().add(sporter);
+//		  	club.getSporters().add(sporter2);
+/ en	,
+		  	session.save(club); 
+		  	session.save(sporter);
+		  	session.save(sporter2);
+		  	session.beginTransaction().commit();
+
+/ we moeten daarom de sporter.club map (naar fk)	, 
+/ als we de club.sporters willen zien , moeten we de club.sporters map, inverse="true'	,
+
+/ club.sporters.map.table=[]	, ook als we club.sporters map, inverse="true', dat is omdat we alleen sporter.setClub call	,
+/ als we session.get(Club.class,1l) doen, krijgen we club	, en is club.sporters.map.table=[]
+/ dit is dus nog steeds in dezefde session	, 
+
+/ 13
+/ we hebben club.sporters NIET mapped (inverse=true)
+/ als we nu in een nieuwe session de set club.sporters na get(club) , dan is club.sporters.map.table=[]	,  / club.sporters=HashMap
+
+/ 13
+/ we kunnen club.sporters WEL map (inverse="true")	, 
+			System.out.println(club3);
+/ dan club.sporters.set=null							/ club.sporters=PersistentSet, wrapper om map=HashSet)
+			System.out.println(club3.getSporters());
+clus.sporters.set.map.table=[...]
+
+
+$ vi Main_N_1.java
+
+			session = sessionFactory.openSession();
+			PersistenceContext context=((SessionImplementor)session).getPersistenceContext();
+
+		  	Club club=new Club("Club");
+		  	Sporter sporter=new Sporter("Sporter");
+		  	Sporter sporter2=new Sporter("Sporter2");
+
+		  	sporter.setClub(club);
+		  	sporter2.setClub(club);
+//		  	club.getSporters().add(sporter);
+//		  	club.getSporters().add(sporter2);
+
+		  	session.save(club); // moet eerst, WH omdat sporter fk heeft naar club	,
+		  	session.save(sporter);// anders hier TransientPropertyValueException
+		  	session.save(sporter2);
+		  	session.beginTransaction().commit();
+
+		  	session2=sessionFactory.openSession();
+			PersistenceContext context2=((SessionImplementor)session2).getPersistenceContext();	// (*)
+
+			Sporter sporter3=(Sporter)session2.get(Sporter.class, 1l);	// (**)
+			Club club3=sporter3.getClub();
+			System.out.println(club3);
+			System.out.println(club3.getSporters());
+			
+
+$ vi Sporter.hbm.xml
+	<many-to-one 
+		name="club"
+		column="club_"
+		not-null="true"
+	/>
+/ name="club" is Sporter.name	, 
+/ column="club_" is de name van de column in tbl sporter	,
+/ <many-to-one maakt een fk, en Sporter.name is een Club	, dus weet hij waar hij de fk naar moet zetten, naar pk van club tbl	,
+
+$ vi Club.hbm.xml
+	<set 
+		name="sporters"
+		inverse="true"
+	>
+		<key column="club_" not-null="true"/>
+		<one-to-many class="Sporter"/>
+	</set>
+/ <set/> maps de coll naar de db	, 
+/ <key/> : omdat inverse="true" is dit de key aan de andere kant	, en dat klopt	, herinner: <key/> is altijd fk	, en dit is inderdaad de fk aan de andere kant	, deze points (bij <set/> van Component's ) naar het type van de hbm.xml file waar hij in staat	, in dit geval Sporter	, want hij staat aan de andere kant	, maar nu geven we het ook explicit op in <one-to-many/> 	, MOET dit? TODO
+/ <one-to-many/>: een <set/> van components leidt tot een nieuwe tbl	, we zien daar dan ook <set table="..."/>. Met <one-to-many/> zeggen we dat het niet om een Component gaat	, en ook het type,  
+
+/ (*)
+		  	session.beginTransaction().commit();
+/d
+/ Omdat we NIET 
+//		  	club.getSporters().add(sporter);
+//		  	club.getSporters().add(sporter2);
+sporter	Sporter  (id=23)	
+	club	Club  (id=21)	
+		id	1	
+		name	"Club" (id=39)	
+		sporters	PersistentSet  (id=40)	
+			initialized true						/ !
+			set	HashSet<E>  (id=59)	
+				map	HashMap<K,V>  (id=66)	
+					size	0	
+					table	HashMap$Entry<K,V>[0]  (id=73)	
+
+/ (**)
+			Sporter sporter3=(Sporter)session2.get(Sporter.class, 1l);
+/d
+sporter3	Sporter  (id=27)	
+	club	Club_$$_jvst783_1  (id=28)	
+		handler	JavassistLazyInitializer  (id=49)	
+			initialized false
+			target null
+
+			Club club3=sporter3.getClub();
+/d
+club3	Club_$$_jvst8a3_1  (id=28)	 			/ initialized=false
+
+			System.out.println(club3);
+/d
+sporter3	Sporter  (id=69)	
+	club	Club_$$_jvst81a_1  (id=70)	
+		handler	JavassistLazyInitializer  (id=80)	
+			initialized	true	
+			target	Club  (id=106)	
+				sporters	PersistentSet  (id=108)	
+					initialized false	
+					set null
+
+			System.out.println(club3.getSporters());
+club3	Club_$$_jvsta91_1  (id=28)	
+	handler	JavassistLazyInitializer  (id=39)	
+		target	Club  (id=79)	
+			sporters	PersistentSet  (id=81)	
+				initialized	true	
+				set	HashSet<E>  (id=86)	
+[my.test.own.hibernate_mappings.Sporter@70c233c2, my.test.own.hibernate_mappings.Sporter@7d3ded55]
+  
+/ 7	. 
+
+$ vi Club.hbm.xml
+	<set 
+		name="sporters"
+		inverse="false"	
+		
+	>
+		<key column="club_" not-null="true"/>
+		<one-to-many class="Sporter"/>
+	</set>
+
+$ vi Sporter.hbm.xml
+	<many-to-one 
+		name="club"
+		column="club_"
+		not-null="true"
+		insert="false"
+		update="false"
+	>
+	</many-to-one>
+
+$ vi Main1_N.java
+
+			session = sessionFactory.openSession();
+			PersistenceContext context=((SessionImplementor)session).getPersistenceContext();
+
+//		  	sporter.setClub(club);
+//		  	sporter2.setClub(club);
+		  	club.getSporters().add(sporter);
+		  	club.getSporters().add(sporter2);
+
+		  	session.save(club);
+		  	session.save(sporter);
+		  	session.save(sporter2);
+		  	session.beginTransaction().commit();
+
+		  	session2=sessionFactory.openSession();
+			PersistenceContext context2=((SessionImplementor)session2).getPersistenceContext();
+			
+			Sporter sporter3=(Sporter)session2.get(Sporter.class, 1l);	// (*)
+			Club club3=sporter3.getClub();
+			System.out.println(club3);
+			Set<Sporter>sporters3=club3.getSporters();
+//			System.out.println(sporters3);					// initialized=true
+// of,
+			for(Sporter sporter5:sporters3){				// initialized=true
+				System.out.println(sporter5);
+			}
+
+/ (*)
+			Sporter sporter3=(Sporter)session2.get(Sporter.class, 1l);	// (*)
+/d
+sporter3	Sporter  (id=27)	
+	club	Club_$$_jvst921_1  (id=28)	
+		handler	JavassistLazyInitializer  (id=49)	
+			initialized false
+			target null
+
+			Club club3=sporter3.getClub();
+/ gewoon de proxy hierboven	, 
+			System.out.println(club3);
+/d
+club3	Club_$$_jvst115_1  (id=28)	
+	handler	JavassistLazyInitializer  (id=39)	
+		initialized	true	
+		target	Club  (id=79)	
+			sporters	PersistentSet  (id=81)	
+				initialized false
+				set null
+
+			Set<Sporter>sporters3=club3.getSporters();
+/ gewoon, de sporters hierboven	, 
+//			System.out.println(sporters3);					// initialized=true
+// of,
+			for(Sporter sporter5:sporters3){				// initialized=true
+/d
+club3	Club_$$_jvste4e_1  (id=28)	
+	handler	JavassistLazyInitializer  (id=39)	
+		initialized	true	
+		target	Club  (id=86)	
+			sporters	PersistentSet  (id=88)	
+				initialized	true	
+				set	HashSet<E>  (id=93)	
+[my.test.own.hibernate_mappings.Sporter@571fc776, my.test.own.hibernate_mappings.Sporter@102049d5]
+
+				System.out.println(sporter5);
+			}
+
+/ 7	. 
+
+/ bidir many-to-one	, join table	, 
+
+$ vi Club.hbm.xml
+
+	<set 
+		name="sporters"
+		inverse="true"			/ (*)	
+		table="club_sporters"
+	>
+		<key column="club_" not-null="true"/>
+		<many-to-many class="Sporter" column="sporter_" />		/ nu column attr, want column in rel. table	, 
+	</set>
+
+
+$ vi Sporter.hbm.xml
+
+	<join 
+		table="club_sporters"
+		inverse="false"			/ (*)
+		optional="true"
+	>
+		<many-to-one 
+			name="club"
+			column="club_"
+			not-null="true"
+		/>
+		<key column="sporter_"/>
+	</join>
+
+/ WH we zien bij Club's mapping en Sporter's mapping dezelfde fk defs	, maar iets anders	, 
+Club's
+       <key column="club_" not-null="true"/>
+       <many-to-many class="Sporter" column="sporter_" />     
+/ en 	,
+Sporter's	, 
+        <many-to-one name="club" column="club_" not-null="true" />
+        <key column="sporter_"/>
+
+/ <key/> is de fk die refs naar waar hij instaat	, klopt	, 
+/ in Club's mapping staat <key column="club_"/> , in Sporter's mapping staat <key column="sporter_"/> 
+/ in Club's mapping staat <many-to-many class="Sporter", in Sporters's mapping staat <many-to-one name="club", en via Sporter.club achterhaalt hij de Club type	,  
+/ <key/> refs naar pk van waar hij in staat	, dus van sporter, en het is een fk in de rel.tbl	, 
+/ <many-to-one/> is Sporter.club	, dus refs naar club	, en is ook een fk in de rel.tbl	,   
+
+/ Daarom kunnen we WH inverse="true/false" omdraaien	, hij kijkt WH aan de true kant	, 
+
+foo=> \d club_sporters
+ Table "public.club_sporters"
+  Column  |  Type  | Modifiers 
+----------+--------+-----------
+ sporter_ | bigint | not null
+ club_    | bigint | not null
+Indexes:
+    "club_sporters_pkey" PRIMARY KEY, btree (sporter_)									<-
+Foreign-key constraints:
+    "fk_328ocd02cikea2g8x5ujiqdv8" FOREIGN KEY (sporter_) REFERENCES sporter(id_)
+    "fk_gmq364l55apelblrugu0qau57" FOREIGN KEY (club_) REFERENCES club(id_)
+
+foo=> select*from club_sporters;
+ sporter_ | club_ 
+----------+-------
+        1 |     1
+        2 |     1
+
+/////////////////////////////////
+/ Als we inverse omdraaien	, dan is de pk anders	,  see beneden	,
+    "club_sporters_pkey" PRIMARY KEY, btree (club_, sporter_)											<-
+/ TODO
+
+$ vi Main_N_1.java
+
+		  	sporter.setClub(club); 		/ (*)
+		  	sporter2.setClub(club);
+//		  	club.getSporters().add(sporter);
+//		  	club.getSporters().add(sporter2);
+		  	
+		  	session.save(club); 
+		  	session.save(sporter);
+		  	session.save(sporter2);
+		  	session.beginTransaction().commit();
+
+/ 13	. 
+
+/ we doen sporter.setClub	, en NIET club.getSporters().add	, dus daarom inverse="false" bij Sporter	, 
+
+/ Als we 
+//		  	sporter.setClub(club); 		
+//		  	sporter2.setClub(club);
+		  	club.getSporters().add(sporter);
+		  	club.getSporters().add(sporter2);
+
+/ dan moeten we in de mappings inverse="false" bij Club	,
+
+		  	session.save(club); 
+		  	session.save(sporter);
+		  	session.save(sporter2);
+//		  	session.flush();
+		  	session.beginTransaction().commit();
+
+		  	session2=sessionFactory.openSession();
+			PersistenceContext context2=((SessionImplementor)session2).getPersistenceContext();
+			
+			Sporter sporter3=(Sporter)session2.get(Sporter.class, 1l);
+			Club club3=sporter3.getClub();
+			System.out.println(club3);
+			Set<Sporter>sporters3=club3.getSporters();
+			System.out.println(sporters3);				// sporters3 initialized=true
+			// of,
+			for(Sporter sporter5:sporters3){			// sporters3 initialized=true
+				System.out.println(sporter5);
+			}
+ 	
+/ Precies hetzelfde als zonder rel. tbl	, 
+
+/ 7	. 
+
+/ we draaien inverse om	, 
+
+$ vi Club.hbm.xml 
+
+	<set 
+		name="sporters"
+		inverse="false"	
+		table="club_sporters"
+	>
+		<key column="club_" not-null="true"/>
+		<many-to-many unique="true" class="Sporter" column="sporter_" />
+	</set>
+
+$ vi Sporter.hbm.xml
+
+	<join 
+		table="club_sporters"
+		inverse="true"
+		optional="true"
+	>
+		<key 
+			column="sporter_"/>
+		<many-to-one 	
+			name="club" 
+			column="club_" 
+			not-null="true" />
+	</join>
+
+$ vi MainN_1.java
+
+//		  	sporter.setClub(club);
+//		  	sporter2.setClub(club);
+		  	
+		  	club.getSporters().add(sporter);
+		  	club.getSporters().add(sporter2);
+
+/ we zien	, 
+
+foo=> select*from club_sporters;
+ sporter_ | club_ 
+----------+-------
+        2 |     1
+        1 |     1
+(2 rows)
+
+foo=> \d club_sporters
+ Table "public.club_sporters"
+  Column  |  Type  | Modifiers 
+----------+--------+-----------
+ sporter_ | bigint | not null
+ club_    | bigint | not null
+Indexes:
+    "club_sporters_pkey" PRIMARY KEY, btree (club_, sporter_)											<-
+Foreign-key constraints:
+    "fk_328ocd02cikea2g8x5ujiqdv8" FOREIGN KEY (sporter_) REFERENCES sporter(id_)
+    "fk_gmq364l55apelblrugu0qau57" FOREIGN KEY (club_) REFERENCES club(id_)
+
+/ 7	. 
+
+/ many-to-many, bidir	. 
+
+$ vi Club.hbm.xml
+
+	<set 
+		name="sporters"
+		inverse="true"																<-
+		table="clubs_sporters"
+	>
+		<key column="club_" not-null="true"/>
+		<many-to-many class="Sporter" column="sporter_" unique="false"/>
+	</set>
+
+$ vi Sporter.hbm.xml
+
+	<set 
+		name="clubs"
+		inverse="false"																<-
+		table="clubs_sporters"
+	>
+		<key column="sporter_" not-null="true"/>
+		<many-to-many class="Club" column="club_" />
+	</set>
+
+$ vi MainM_N.java
+
+		  	sporter.getClubs().add(club);
+		  	sporter.getClubs().add(club2);
+		  	sporter2.getClubs().add(club);
+		  	sporter2.getClubs().add(club2);
+
+/ we zien 	,
+
+foo=> \d clubs_sporters
+ Table "public.clubs_sporters"
+  Column  |  Type  | Modifiers 
+----------+--------+-----------
+ sporter_ | bigint | not null
+ club_    | bigint | not null
+Indexes:
+    "clubs_sporters_pkey" PRIMARY KEY, btree (sporter_, club_)
+Foreign-key constraints:
+    "fk_jdo4187nu5ny3ubk64ef7jo5h" FOREIGN KEY (sporter_) REFERENCES sporter(id_)
+    "fk_r0bafvuq4up8q175fohgpy561" FOREIGN KEY (club_) REFERENCES club(id_)
+
+foo=> select*from clubs_sporters;
+ sporter_ | club_ 
+----------+-------
+        1 |     1
+        1 |     2
+        2 |     1
+        2 |     2
+(4 rows)
+
+
+/ 7	.
+
+/ mapping components	,
+
+/ doc <property/>: 5.1.4.1.6.
+
+/ boek (185) mapping cmponents	, 
+/ boek (305) als in ticket, 	
+
+/ lees	, 
+boek(205) SELECT CASE
+
+$ vi Person.hbm.xml
+
+<hibernate-mapping 
+	package="my.test.own.hibernate_mappings">
+<class 
+	name="Person" 
+	table="person"
+>
+	<id 
+		name="id"
+		column="id_"	
+	>	
+		<generator 
+			class="identity"/>
+	</id>
+	
+	<component
+		name="name"
+		class="Name"
+	>
+		<property
+			name="first"
+			column="first_"
+			not-null="true"
+		></property>
+		<property 
+			name="last"
+			column="last_"
+			not-null="true"
+		></property>
+	</component>
+
+	<component
+		name="address"
+		class="AddressC"
+	>
+		<property
+			name="street"
+			column="street_"
+			not-null="true"
+		></property>
+		<property 
+			name="number"
+			column="number_"
+			not-null="true"
+		></property>
+	</component>
+
+</class>
+</hibernate-mapping>
+
+$ vi hibernate.cfg.xml
+<mapping resource="my/test/own/hibernate_mappings/Person.hbm.xml"/>
+
+$ vi Main_component.java
+
+			session = sessionFactory.openSession();
+			PersistenceContext context=((SessionImplementor)session).getPersistenceContext();
+
+			Person person=new Person();
+			Name name=new Name();
+			name.setFirst("Foo");
+			name.setLast("Bar");
+			AddressC address=new AddressC();
+			address.setStreet("Foo lane");
+			address.setNumber(7);
+			person.setName(name);
+			person.setAddress(address);
+			session.save(person);
+			
+			Person person2=new Person();
+			Name name2=new Name();
+			name2.setFirst("Gee");
+			name2.setLast("Hee");
+			AddressC address2=new AddressC();
+			address2.setStreet("Gee lane");
+			address2.setNumber(13);
+			person2.setName(name2);
+			person2.setAddress(address2);
+			session.save(person2);
+
+		  	session.beginTransaction().commit();
+
+/ we zien,	 
+foo=> \d person
+                                  Table "public.person"
+ Column  |          Type          |                      Modifiers                       
+---------+------------------------+------------------------------------------------------
+ id_     | bigint                 | not null default nextval('person_id__seq'::regclass)
+ first_   | character varying(255) | not null
+ last_   | character varying(255) | not null
+ street_ | character varying(255) | not null
+ number_ | integer                | not null
+Indexes:
+    "person_pkey" PRIMARY KEY, btree (id_)
+
+foo=> select*from person;
+ id_ | first_| last_ | street_  | number_ 
+-----+-------+-------+----------+---------
+   1 | Foo   | Bar   | Foo lane |       7
+   2 | Gee   | Hee   | Gee lane |      13
+(2 rows)
+
+
+/ 7	. 
+
+/ mapping collections	,  set of strings	,
+
+$ vi Person.hbm.xml
+
+<hibernate-mapping 
+	package="my.test.own.hibernate_mappings">
+<class 
+	name="Person" 
+	table="person"
+>
+	<set 
+		name="images"
+		table="image"
+	>
+		<key 
+			column="ref_">
+		</key>											<- maps naar fk in image tbl naar person table	,
+		<element 
+			type="string"								<- MOET	, 
+			column="file_" 
+			not-null="true"/>
+	</set>
+
+$ vi Person.java
+
+public class Person {
+	private Collection<String>images;
+
+	public Collection<String> getImages() {
+		return images;
+	}
+	public void setImages(Collection<String> images) {
+		this.images = images;
+	}
+
+$ vi Main_component.java
+
+			session = sessionFactory.openSession();
+			PersistenceContext context=((SessionImplementor)session).getPersistenceContext();
+
+			Person person=new Person();
+			Name name=new Name();
+			name.setFirst("Foo");
+			name.setLast("Bar");
+			AddressC address=new AddressC();
+			address.setStreet("Foo lane");
+			address.setNumber(7);
+			Set<String>images=new HashSet<String>();
+			images.add("foo.jpg");
+			images.add("bar.png");
+			person.setName(name);
+			person.setAddress(address);
+			person. setImages(images);
+			session.save(person);
+			
+			Person person2=new Person();
+			Name name2=new Name();
+			name2.setFirst("Gee");
+			name2.setLast("Hee");
+			AddressC address2=new AddressC();
+			address2.setStreet("Gee lane");
+			address2.setNumber(13);
+			Set<String>images2=new HashSet<String>();
+			images2.add("gee.jpg");
+			images2.add("gee.jpg");								<- 2 keer, maar het is een set	, 
+			person2.setName(name2);
+			person2.setAddress(address2);
+			person2.setImages(images2);
+			session.save(person2);
+			
+		  	session.beginTransaction().commit();
+
+/ we zien	, 
+person	Person  (id=23)	
+	address	AddressC  (id=27)	
+	id	1	
+	images	PersistentSet  (id=37)								<- wraps	, 	
+	name	Name  (id=25)	
+
+
+
+=> \d person
+                                  Table "public.person"
+ Column  |          Type          |                      Modifiers                       
+---------+------------------------+------------------------------------------------------
+ id_     | bigint                 | not null default nextval('person_id__seq'::regclass)
+ first_   | character varying(255) | not null
+ last_   | character varying(255) | not null
+ street_ | character varying(255) | not null
+ number_ | integer                | not null
+Indexes:
+    "person_pkey" PRIMARY KEY, btree (id_)
+Referenced by:
+    TABLE "image" CONSTRAINT "fk_mlyq38psfieaqhboxv4wbkdlq" FOREIGN KEY (id_) REFERENCES person(id_)
+
+foo=> \d image
+            Table "public.image"
+ Column |          Type          | Modifiers 
+--------+------------------------+-----------
+ ref_	| bigint                 | not null
+ file_  | character varying(255) | not null
+Indexes:
+    "image_pkey" PRIMARY KEY, btree (ref_, file_)								<- !
+Foreign-key constraints:
+    "fk_mlyq38psfieaqhboxv4wbkdlq" FOREIGN KEY (ref_) REFERENCES person(id_)
+
+foo=>  select*from person;
+ id_ | first_ | last_ | street_  | number_ 
+-----+-------+-------+----------+---------
+   1 | Foo   | Bar   | Foo lane |       7
+   2 | Gee   | Hee   | Gee lane |      13
+(2 rows)
+
+foo=> select*from image;
+ ref_ |  file_  
+-----+---------
+   1 | bar.png
+   1 | foo.jpg
+   2 | gee.jpg
+(3 rows)
+
+/ 7	. 
+
+/ mapping collections, idbag of strings	, 
+
+$ vi Person.hbm.xml
+
+<hibernate-mapping 
+	package="my.test.own.hibernate_mappings">
+<class 
+	name="Person" 
+	table="person"
+>
+	<idbag
+		name="images2"
+		table="image2"
+	>
+		<collection-id
+			type="long"					<- MOET	,
+			column="id_"
+		>
+			<generator 
+				class="sequence">		<- identity ERR	,
+			</generator>
+		</collection-id>
+		<key 
+			column="ref_"
+		></key>
+		<element
+			type="string"
+			column="file_"
+			not-null="true"
+		></element>
+	</idbag>
+
+$ vi Person.java
+
+public class Person {
+	private Collection<String>images;
+	private Collection<String>images2;
+
+$ vi Main_component.java
+
+			Person person=new Person();
+			Name name=new Name();
+			name.setFirst("Foo");
+			name.setLast("Bar");
+			AddressC address=new AddressC();
+			address.setStreet("Foo lane");
+			address.setNumber(7);
+			Set<String>images=new HashSet<String>();					<-
+			images.add("foo.jpg");
+			images.add("bar.png");
+			Collection<String>imagesa=new ArrayList<String>();			<- See comment hieronder, 	
+			imagesa.add("foo2.jpg");
+			imagesa.add("foo2.jpg");
+			person.setName(name);
+			person.setAddress(address);
+			person. setImages(images);
+			person.setImages2(imagesa);
+			session.save(person);
+			
+			Person person2=new Person();
+			Name name2=new Name();
+			name2.setFirst("Gee");
+			name2.setLast("Hee");
+			AddressC address2=new AddressC();
+			address2.setStreet("Gee lane");
+			address2.setNumber(13);
+			Set<String>images2=new HashSet<String>();					<-
+			images2.add("gee.jpg");
+			images2.add("gee.jpg");
+			Collection<String>images2a=new ArrayList<String>();			<-
+			images2a.add("gee2.jpg");
+			images2a.add("hee2.png");
+			person2.setName(name2);
+			person2.setAddress(address2);
+			person2.setImages(images2);
+			person2.setImages2(images2a);
+			session.save(person2);
+			
+		  	session.beginTransaction().commit();
+
+/ ArrayList is er alleen voor in Java	, want je kunt ook HashSet nemen, maar dan houd je ["foo.jpg"] over	, met ArrayList ["foo.jpg", "foo.jpg"]
+/ Voor Hibernate maakt het niet uit	, hij krijgt of 1 of 2 entries	, 
+/ Dus als je maar 1 entry add, kun je HashSet nemen	, <idbag><collection-id/>...</idbag> maakt een tbl met een surrogate pk	,
+
+/ Na 
+	session.save(person)
+/ worden de HashSet person.images  en ArrayList person.images2 wrapped in een PersistentSet resp.  PersistentIdentifierBag	, 
+person	Person  (id=21)	
+	id	1	
+	images	PersistentSet  (id=44)	
+		set	HashSet<E>  (id=27)	
+	images2	PersistentIdentifierBag  (id=48)	
+		values	ArrayList<E>  (id=33)	
+
+
+foo=> \d person
+                                  Table "public.person"
+ Column  |          Type          |                      Modifiers                       
+---------+------------------------+------------------------------------------------------
+ id_     | bigint                 | not null default nextval('person_id__seq'::regclass)
+ first_   | character varying(255) | not null
+ last_   | character varying(255) | not null
+ street_ | character varying(255) | not null
+ number_ | integer                | not null
+Indexes:
+    "person_pkey" PRIMARY KEY, btree (id_)
+Referenced by:
+    TABLE "images2" CONSTRAINT "fk_gmypyns4tpm95h0bdvf7pju9k" FOREIGN KEY (ref_) REFERENCES person(id_)
+    TABLE "image" CONSTRAINT "fk_mlyq38psfieaqhboxv4wbkdlq" FOREIGN KEY (ref_) REFERENCES person(id_)
+
+foo=> \d image
+            Table "public.image"
+ Column |          Type          | Modifiers 
+--------+------------------------+-----------
+ ref_    | bigint                 | not null
+ file_  | character varying(255) | not null
+Indexes:
+    "image_pkey" PRIMARY KEY, btree (ref_, file_)
+Foreign-key constraints:
+    "fk_mlyq38psfieaqhboxv4wbkdlq" FOREIGN KEY (ref_) REFERENCES person(id_)
+
+foo=> \d images2
+            Table "public.images2"
+ Column  |          Type          | Modifiers 
+---------+------------------------+-----------
+ ref_ | bigint                 | not null
+ file_   | character varying(255) | not null
+ id_     | bigint                 | not null
+Indexes:
+    "images2_pkey" PRIMARY KEY, btree (id_)
+Foreign-key constraints:
+    "fk_gmypyns4tpm95h0bdvf7pju9k" FOREIGN KEY (ref_) REFERENCES person(id_)
+
+foo=> select*from person;
+ id_ | name_ | last_ | street_  | number_ 
+-----+-------+-------+----------+---------
+   1 | Foo   | Bar   | Foo lane |       7
+   2 | Gee   | Hee   | Gee lane |      13
+(2 rows)
+
+foo=> select*from image;
+ ref_ |  file_  
+-----+---------
+   1 | bar.png
+   1 | foo.jpg
+   2 | gee.jpg
+(3 rows)
+
+foo=> select*from image2;
+ ref_ 	|  file_   | id_ 
+---------+----------+-----
+       1 | foo2.jpg |   1
+       1 | foo2.jpg |   2
+       2 | gee2.jpg |   3
+       2 | hee2.png |   4
+(4 rows)
+
+/ 7	. 
+
+/ map van strings	, 
+
+$ vi Person.hbm.xml
+
+<hibernate-mapping 
+	package="my.test.own.hibernate_mappings">
+<class 
+	name="Person" 
+	table="person"
+>
+	<map 
+		name="images3"
+		table="image3"
+	>
+		<key
+			column="ref_"
+		></key>
+		<map-key 
+			type="string"
+			column="name_"
+		></map-key>
+		<element
+			type="string"
+			column="file_"
+			not-null="true"
+		></element>
+	</map>
+
+$ vi Person.java
+
+public class Person {
+	private Map<String, String>images3;
+
+$ vi Main_component.java
+
+			Map<String, String>imagesm=new HashMap<String, String>();
+			imagesm.put("foom", "foom.jpg");
+			imagesm.put("barm", "barm.png");
+
+			person.setImages3(imagesm);
+			session.save(person);
+
+		  	session2=sessionFactory.openSession();
+		  	Person person3=(Person)session2.get(Person.class, 1l);
+		  	System.out.println("*** image3:");
+		  	for(Map.Entry<String, String>entry:person3.getImages3().entrySet()){
+		  		String key=entry.getKey();
+		  		System.out.println(key);
+		  		String value=entry.getValue();
+		  		System.out.println(value);
+		  	}
+
+/ we zien	,
+
+foo=> \d image3
+            Table "public.image3"
+ Column |          Type          | Modifiers 
+--------+------------------------+-----------
+ ref_   | bigint                 | not null
+ file_  | character varying(255) | not null
+ name_  | character varying(255) | not null
+Indexes:
+    "image3_pkey" PRIMARY KEY, btree (ref_, name_)										<-
+Foreign-key constraints:
+    "fk_sb3fojgtro08aeei8rx4usdab" FOREIGN KEY (ref_) REFERENCES person(id_)
+
+foo=> select*from image3;
+ ref_ |  file_   | name_ 
+------+----------+-------
+    1 | barm.png | foom
+    2 | geem.jpg | geem
+    2 | heem.png | heem
+(3 rows)
+
+/ Een Map kijkt naar de key	, dus als we	,
+			Map<String, String>imagesm=new HashMap<String, String>();
+			imagesm.put("foom", "foom.jpg");
+			imagesm.put("foom", "barm.png");
+/ dan is er maar 1 entry in imagesm	, 
+	foom:barm.jpg
+
+/ 13	. 
+
+/ <map order-by/>
+
+/ Dit bepaalt NIET de order waarin de inserts in de image3 tbl gedaan worden	, maar bij select	, 
+
+$ vi Person.hbm.xml
+
+	<map 
+		name="images3"
+		table="image3"
+		order-by="name_ desc"	 <-
+	>
+		<key
+			column="ref_"
+		></key>
+		<map-key 
+			type="string"
+			column="name_"
+		></map-key>
+		<element
+			type="string"
+			column="file_"
+			not-null="true"
+		></element>
+	</map>
+ 
+$ vi Main_component.java
+
+		  	session2=sessionFactory.openSession();
+		  	Person person3=(Person)session2.get(Person.class, 1l);
+		  	System.out.println("*** image3:");
+		  	for(Map.Entry<String, String>entry:person3.getImages3().entrySet()){
+		  		String key=entry.getKey();
+		  		System.out.println(key);
+		  		String value=entry.getValue();
+		  		System.out.println(value);
+		  	}
+
+/ we zien	,
+Hibernate: select images3x0_.ref_ as ref_1_7_0_, images3x0_.file_ as file_2_4_0_, images3x0_.name_ as name_3_0_ from image3 images3x0_ where images3x0_.ref_=? order by images3x0_.name_ desc
+HibernateLog --> 12:03:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+HibernateLog --> 12:03:24 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([ref_1_7_0_] : [BIGINT]) - [1]
+HibernateLog --> 12:03:24 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([file_2_4_0_] : [VARCHAR]) - [foom.jpg]
+HibernateLog --> 12:03:24 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name_3_0_] : [VARCHAR]) - [foom]
+HibernateLog --> 12:03:24 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([ref_1_7_0_] : [BIGINT]) - [1]
+HibernateLog --> 12:03:24 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([file_2_4_0_] : [VARCHAR]) - [barm.png]
+HibernateLog --> 12:03:24 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name_3_0_] : [VARCHAR]) - [barm]
+foom
+foom.jpg
+barm
+barm.png
+
+foo=> select*from image3;
+ ref_ |  file_   | name_ 
+------+----------+-------
+    1 | barm.png | barm
+    1 | foom.jpg | foom
+    2 | geem.jpg | geem
+    2 | heem.png | heem
+(4 rows)
+
+/ 7	. 
+
+/
+
+
+
+
+/ 7	. mapping of collection , set of components	,
+
+/ de components zijn Image's	, er onstaat een table image_s	, 
+/ Met <set/> worden de <key/> en de <composite-element>'s <property/>'s de pk in de image_s table,	 
+/ Daarom moeten we in Image equals en hashCode	, 
+/ TODO
+
+$ vi Person.hbm.xml
+
+<hibernate-mapping 
+	package="my.test.own.hibernate_mappings">
+<class 
+	name="Person" 
+	table="person"
+>
+	<set 
+		name="imagesS"
+		table="image_s"		
+	>
+		<key
+			column="ref_"
+		></key>
+		
+		<composite-element 
+			class="Image"
+		>
+			<property 
+				name="name"	
+				column="name_"
+				not-null="true"
+			></property>
+			<property 
+				name="length"	
+				column="length_"
+				not-null="true"
+			></property>
+			<property 
+				name="height"	
+				column="height_"
+				not-null="true"
+			></property>
+		</composite-element>
+	</set>
+
+$ vi Main_component.java
+
+			session = sessionFactory.openSession();
+			PersistenceContext context=((SessionImplementor)session).getPersistenceContext();
+
+			Person person=new Person();
+			Name name=new Name();
+			name.setFirst("Foo");
+			name.setLast("Bar");
+			AddressC address=new AddressC();
+			address.setStreet("Foo lane");
+			address.setNumber(7);
+			Collection<String>images=new HashSet<String>();
+			images.add("foo.jpg");
+			images.add("bar.png");
+			Collection<String>imagesa=new ArrayList<String>();
+			imagesa.add("foo2.jpg");
+			imagesa.add("foo2.jpg");
+			Collection<Image>imagesS=new HashSet<Image>();														<-
+			Image imageS=new Image();imageS.setName("fooS.jpg");imageS.setLength(7);imageS.setHeight(13);
+			imagesS.add(imageS);
+			person.setName(name);
+			person.setAddress(address);
+			person. setImages(images);
+			person.setImages2(imagesa);
+			person.setImagesS(imagesS);																			<-
+			session.save(person);
+			
+			Person person2=new Person();
+			Name name2=new Name();
+			name2.setFirst("Gee");
+			name2.setLast("Hee");
+			AddressC address2=new AddressC();
+			address2.setStreet("Gee lane");
+			address2.setNumber(13);
+			Collection<String>images2=new HashSet<String>();
+			images2.add("gee.jpg");
+			images2.add("gee.jpg");
+			Collection<String>images2a=new ArrayList<String>();
+			images2a.add("gee2.jpg");
+			images2a.add("hee2.png");
+			Collection<Image>imagesS2=new HashSet<Image>();														<-
+			Image imageS2=new Image();imageS2.setName("geeS.jpg");imageS2.setLength(7);imageS2.setHeight(13);
+			imagesS2.add(imageS2);
+			person2.setName(name2);
+			person2.setAddress(address2);
+			person2.setImages(images2);
+			person2.setImages2(images2a);
+			person2.setImagesS(imagesS2);																		<-
+			session.save(person2);
+			
+		  	session.beginTransaction().commit(); 
+
+/ Na 
+	session.save(person)
+/ worden de HashSet person.images  en ArrayList person.images2 en de HashSet person.imageS wrapped in een PersistentSet resp.  PersistentIdentifierBag	, resp PersistentSet	, 
+person	Person  (id=21)	
+	id	1	
+	images	PersistentSet  (id=44)	
+		set	HashSet<E>  (id=27)	
+	images2	PersistentIdentifierBag  (id=48)	
+		values	ArrayList<E>  (id=33)	
+	imagesS	PersistentSet  (id=51)	
+		set	HashSet<E>  (id=36)	
+
+
+
+$ vi Image.java
+
+public class Image {
+
+	private String name;
+	private int length;
+	private int height;
+...
+
+foo=> \d person
+                                  Table "public.person"
+ Column  |          Type          |                      Modifiers                       
+---------+------------------------+------------------------------------------------------
+ id_     | bigint                 | not null default nextval('person_id__seq'::regclass)
+ first_  | character varying(255) | not null
+ last_   | character varying(255) | not null
+ street_ | character varying(255) | not null
+ number_ | integer                | not null
+Indexes:
+    "person_pkey" PRIMARY KEY, btree (id_)
+Referenced by:
+    TABLE "image2" CONSTRAINT "fk_3xxecp3lu9imnh6kbwsgche6j" FOREIGN KEY (ref_) REFERENCES person(id_)
+    TABLE "image_s" CONSTRAINT "fk_95tj6a0q189w85npdccprl8fa" FOREIGN KEY (ref_) REFERENCES person(id_)
+    TABLE "image" CONSTRAINT "fk_mlyq38psfieaqhboxv4wbkdlq" FOREIGN KEY (ref_) REFERENCES person(id_)
+
+foo=> \d image
+            Table "public.image"
+ Column |          Type          | Modifiers 
+--------+------------------------+-----------
+ ref_    | bigint                 | not null
+ file_  | character varying(255) | not null
+Indexes:
+    "image_pkey" PRIMARY KEY, btree (ref_, file_)
+Foreign-key constraints:
+    "fk_mlyq38psfieaqhboxv4wbkdlq" FOREIGN KEY (ref_) REFERENCES person(id_)
+
+foo=> \d image2
+            Table "public.image2"
+ Column  |          Type          | Modifiers 
+---------+------------------------+-----------
+ ref_ | bigint                 | not null
+ file_   | character varying(255) | not null
+ id_     | bigint                 | not null
+Indexes:
+    "image2_pkey" PRIMARY KEY, btree (id_)
+Foreign-key constraints:
+    "fk_3xxecp3lu9imnh6kbwsgche6j" FOREIGN KEY (ref_) REFERENCES person(id_)
+
+foo=> \d image_s
+            Table "public.image_s"
+ Column  |          Type          | Modifiers 
+---------+------------------------+-----------
+ ref_     | bigint                 | not null
+ name_   | character varying(255) | not null
+ length_ | integer                | not null
+ height_ | integer                | not null
+Indexes:
+    "image_s_pkey" PRIMARY KEY, btree (ref_, name_, length_, height_)				<-	!
+Foreign-key constraints:
+    "fk_95tj6a0q189w85npdccprl8fa" FOREIGN KEY (ref_) REFERENCES person(id_)
+
+foo=>  select*from person;
+ id_ | first_ | last_ | street_  | number_ 
+-----+--------+-------+----------+---------
+   1 | Foo    | Bar   | Foo lane |       7
+   2 | Gee    | Hee   | Gee lane |      13
+(2 rows)
+
+foo=>  select*from image;
+ ref_ |  file_  
+-----+---------
+   1 | bar.png
+   1 | foo.jpg
+   2 | gee.jpg
+(3 rows)
+
+foo=>  select*from image2;
+ ref_ |  file_   | id_ 
+---------+----------+-----
+       1 | foo2.jpg |   1
+       1 | foo2.jpg |   2
+       2 | gee2.jpg |   3
+       2 | hee2.png |   4
+(4 rows)
+
+foo=>  select*from image_s;
+ ref_ |  name_   | length_ | height_ 
+-----+----------+---------+---------
+   1 | fooS.jpg |       7 |      13
+   2 | geeS.jpg |       7 |      13
+(2 rows)
+
+
+
+
+/ 13	. 
+
+/ boek(253)
+/ Vraag een Person in nieuwe H. session , en iterate over z'n Image's	, vraag aan deze Image z'n Person terug	, vraag z'n Name, en print first	,
+/ we kunnen ook direct dat Image vragen aan H.	, maar dan vind je NIET de Person	, 
+
+$ vi Person.hbm.xml
+
+	<set 
+		name="imagesS"
+		table="image_s"		
+	>
+		<key
+			column="ref_"
+		></key>
+		
+		<composite-element 
+			class="Image"
+		>
+			<parent 
+				name="person"/>
+			<property 
+				name="name"	
+				column="name_"
+				not-null="true"
+			></property>
+			<property 
+				name="length"	
+				column="length_"
+				not-null="true"
+			></property>
+			<property 
+				name="height"	
+				column="height_"
+				not-null="true"
+			></property>
+		</composite-element>
+	</set>
+
+$ vi Main_component.java
+
+/ hier verandert NIETS	,
+		  	session.beginTransaction().commit();
+		  	
+		  	session2=sessionFactory.openSession();										
+		  	Person person3=(Person)session2.get(Person.class, 1l);
+		  	for(Image image:person3.getImagesS()){
+		  		String name3=image.getName();
+		  		System.out.println(name3);
+		  		Person person4=image.getPerson();								<-
+		  		System.out.println(person4.getName().getFirst());
+		  	}
+
+$ vi Image.java
+
+public class Image {
+	private String name;
+	private int length;
+	private int height;
+	private Person person; 	<-
+
+////////////////
+/ In de db verandert NIETS	,
+/ TODO
+foo=> \d image_s
+            Table "public.image_s"
+ Column  |          Type          | Modifiers 
+---------+------------------------+-----------
+ ref_     | bigint                 | not null
+ name_   | character varying(255) | not null
+ length_ | integer                | not null
+ height_ | integer                | not null
+Indexes:
+    "image_s_pkey" PRIMARY KEY, btree (ref_, name_, length_, height_)
+Foreign-key constraints:
+    "fk_95tj6a0q189w85npdccprl8fa" FOREIGN KEY (ref_) REFERENCES person(id_)
+
+
+/ 7	. 
+
+/ avoid not-null's	,  
+
+/ met <idbag/>
+
+/ met <set/> worden <key/> en <element/> tesamen de pk	, 
+/ met <set><composite-set/> worden <key/> en alle <composite-element/>'s <property/>'s tesamen de pk	, 
+/ met <idbag><composite-set><collection-id/><key/><composite-element/> wordt alleen de <collection-id/> de pk	,
+
+/ Omdat we een surrogate pk hebben in image_b	, speelt Image's equals en hashCode geen rol meer	, 
+/ TODO
+/ Maar toch zouden we ze moeten hebben in Image	, als we in Java HashSet zouden use, maar dat doen we niet, we hebben ArrayList	, dus hebben we equals en hashCode NIET nodig	,
+
+$ vi Person.hbm.xml
+
+<hibernate-mapping 
+	package="my.test.own.hibernate_mappings">
+<class 
+	name="Person" 
+	table="person"
+>
+	<idbag
+		name="imagesB"
+		table="image_b"		
+	>
+		<collection-id 					<- verschil met <set/>	, surrogate pk	,
+			type="long" 
+			column="id_"
+		>
+			<generator 
+				class="sequence"
+			></generator>
+		</collection-id>
+		<key
+			column="ref_"
+		></key>
+		
+		<composite-element 
+			class="Image"
+		>
+			<parent 
+				name="person"/>
+			<property 
+				name="name"	
+				column="name_"
+				not-null="false"
+			></property>
+			<property 
+				name="length"	
+				column="length_"
+				not-null="false"
+			></property>
+			<property 
+				name="height"	
+				column="height_"
+				not-null="false"
+			></property>
+		</composite-element>
+	</idbag> 
+
+$ vi Person.java
+
+public class Person {
+	private long id;
+	private Name name;
+	private AddressC address;
+	private Collection<String>images;
+	private Collection<String>images2;
+	private Collection<Image>imagesS;
+	private Collection<Image>imagesB;
+
+$ vi Image.java
+
+public class Image {
+	@Override
+	public int hashCode() {
+		return this.name.hashCode()+this.length+this.height;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Image){
+			Image that=(Image)obj;
+			return that.name.equals(this.name)&& that.length==this.length && that.height==this.height;
+		}
+		else{
+			return false;
+		}
+	}
+
+$ vi Main_component.java
+
+			session = sessionFactory.openSession();
+
+			Collection<Image>imagesB=new ArrayList<Image>();
+			Image imageB=new Image();imageB.setName("fooS.jpg");imageB.setLength(7);imageB.setHeight(13);
+			Image imageB2=new Image();imageB2.setName("fooS.jpg");imageB2.setLength(7);imageB2.setHeight(13);
+			imagesB.add(imageB);
+			imagesB.add(imageB2);
+			person.setImagesB(imagesB);
+
+			session.save(person);
+
+			Collection<Image>imagesB2=new ArrayList<Image>();
+			Image imageB3=new Image();imageB3.setName("geeS.jpg");imageB3.setLength(7);imageB3.setHeight(13);
+			Image imageB4=new Image();imageB4.setName("geeS.jpg");imageB4.setLength(7);imageB4.setHeight(13);
+			Image imageB5=new Image();imageB5.setName("geeS.jpg");imageB5.setLength(7);imageB5.setHeight(13);
+			imagesB2.add(imageB3);
+			imagesB2.add(imageB4);
+			imagesB2.add(imageB5);
+			person2.setImagesB(imagesB2);
+
+			session.save(person2);
+
+//////////////////////////////////////////////////////
+/ We hebben equals (en hashCode) in Image	, 
+/ Als we HashSet zouden use, ipv ArrayList	, dan bestaan imagesB en imagesB2  maar uit 1 elem	,
+
+foo=> \d image_b
+            Table "public.image_b"
+ Column  |          Type          | Modifiers 
+---------+------------------------+-----------
+ ref_    | bigint                 | not null
+ name_   | character varying(255) | not null
+ length_ | integer                | not null
+ height_ | integer                | not null
+ id_     | bigint                 | not null
+Indexes:
+    "image_b_pkey" PRIMARY KEY, btree (id_)													<-
+Foreign-key constraints:
+    "fk_aas222civ8lrcvvoikj3daf64" FOREIGN KEY (ref_) REFERENCES person(id_)
+
+foo=> select*from image_b;
+ ref_ |  name_   | length_ | height_ | id_ 
+------+----------+---------+---------+-----
+    1 | fooS.jpg |       7 |      13 |   3
+    1 | fooS.jpg |       7 |      13 |   4
+    2 | geeS.jpg |       7 |      13 |   7
+    2 | geeS.jpg |       7 |      13 |   8
+    2 | geeS.jpg |       7 |      13 |   9
+(5 rows)
+
+/ 7	. 
+
+/ avoid not-null's 
+
+/ met map	, 
+
+/ vergeleken met <idbag/> moeten we een <map-key/> maken, met daarin de key uit Java	, 
+
+$ vi Person.hbm.xml
+
+	<map
+		name="imagesM"
+		table="image_m"	
+		order-by="name_ desc"	
+	>
+		<key
+			column="ref_"
+		></key>
+
+		<map-key 
+			type="string"
+			column="key_"
+		></map-key>
+		
+		<composite-element 
+			class="Image"
+		>
+ 			<parent 
+				name="person"/>
+			<property 
+				name="name"	
+				column="name_"
+				not-null="true"
+			></property>
+			<property 
+				name="length"	
+				column="length_"
+				not-null="true"
+			></property>
+			<property 
+				name="height"	
+				column="height_"
+				not-null="false"
+			></property>
+		</composite-element>
+	</map>		
+
+$ vi Person.java
+
+public class Person {
+	private Map<String, Image>imagesM;
+
+
+$ vi Main_component.java
+
+			Map<String, Image>imagesM=new HashMap<String, Image>();
+			Image imageM=new Image();imageM.setName("fooM.jpg");imageM.setLength(7);imageM.setHeight(13);
+			Image imageM2=new Image();imageM2.setName("fooM2.jpg");imageM2.setLength(7);imageM2.setHeight(13);
+			imagesM.put("fooM",imageM);
+			imagesM.put("fooM2", imageM2);
+
+			person.setImagesM(imagesM);
+			session.save(person);
+
+		  	session2=sessionFactory.openSession();
+		  	Person person3=(Person)session2.get(Person.class, 1l);
+		  	System.out.println("*** imageM:");
+		  	for(Map.Entry<String, Image>entry:person3.getImagesM().entrySet()){
+		  		String key=entry.getKey();
+		  		System.out.println(key);
+		  		String value=entry.getValue().getName();
+		  		System.out.println(value);
+		  		Person person4=entry.getValue().getPerson();
+		  		System.out.println(person4.getName().getFirst());
+		  	}
+
+/ we zien	,
+
+foo=> select*from image_m;
+ ref_ |   name_   | length_ | height_ | key_  
+------+-----------+---------+---------+-------
+    1 | fooM2.jpg |       7 |      13 | fooM2
+    1 | fooM.jpg  |       7 |      13 | fooM
+(2 rows)
+
+*** imageM:
+Hibernate: 
+select imagesm0_.ref_ as ref_1_8_0_, imagesm0_.name_ as name_2_6_0_, imagesm0_.length_ as length_3_6_0_, imagesm0_.height_ as height_4_6_0_, imagesm0_.key_ as key_5_0_ 
+from image_m imagesm0_ 
+where imagesm0_.ref_=? 
+order by imagesm0_.name_ desc
+HibernateLog --> 12:57:02 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+HibernateLog --> 12:57:02 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([ref_1_8_0_] : [BIGINT]) - [1]
+HibernateLog --> 12:57:02 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name_2_6_0_] : [VARCHAR]) - [fooM.jpg]
+HibernateLog --> 12:57:02 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([length_3_6_0_] : [INTEGER]) - [7]
+HibernateLog --> 12:57:02 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([height_4_6_0_] : [INTEGER]) - [13]
+HibernateLog --> 12:57:02 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([key_5_0_] : [VARCHAR]) - [fooM]
+HibernateLog --> 12:57:02 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([ref_1_8_0_] : [BIGINT]) - [1]
+HibernateLog --> 12:57:02 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name_2_6_0_] : [VARCHAR]) - [fooM2.jpg]
+HibernateLog --> 12:57:02 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([length_3_6_0_] : [INTEGER]) - [7]
+HibernateLog --> 12:57:02 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([height_4_6_0_] : [INTEGER]) - [13]
+HibernateLog --> 12:57:02 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([key_5_0_] : [VARCHAR]) - [fooM2]
+fooM
+fooM.jpg
+Foo
+fooM2
+fooM2.jpg
+Foo
+
+/ 7	. 
+
+/ join table met extra columns	, 
+
+/ boek (307/308)
+
+$ vi Club.hbm.xml
+
+<hibernate-mapping 
+	package="my.test.own.hibernate_mappings">
+
+<class name="Club" table="club" >
+
+	<id name="id" column="id_"	>	
+		<generator class="identity"/>
+	</id>
+	
+	<property name="name" column="name_" />
+
+	<set name="clubSporters" table="club_sporters" >
+		<key column="ref_club_" ></key>	
+		<composite-element class="ClubSporter" >
+			<parent name="club"></parent>
+			<many-to-one name="sporter" column="ref_sporter_" not-null="true" class="Sporter" ></many-to-one>
+			<property name="name" column="name_"/>
+		</composite-element>
+	</set>
+
+$ vi Sporter.hbm.xml
+
+<hibernate-mapping package="my.test.own.hibernate_mappings">
+
+<class name="Sporter" table="sporter" >
+
+	<id name="id" column="id_" >	
+		<generator class="identity"/>
+	</id>
+	
+	<property name="name" column="name_" />
+
+$ vi MainJoinWithExtraColumns.java
+
+			session = sessionFactory.openSession();
+			PersistenceContext context=((SessionImplementor)session).getPersistenceContext();
+
+			Club club=new Club("Club");
+			Club club2=new Club("Club2");
+			Sporter sporter=new Sporter("Sporter");
+		  	Sporter sporter2=new Sporter("Sporter2");
+			ClubSporter clubSporter11=new ClubSporter();clubSporter11.setClub(club);clubSporter11.setSporter(sporter);clubSporter11.setName("clubsporter11");
+			club.getClubSporters().add(clubSporter11);
+			ClubSporter clubSporter12=new ClubSporter();clubSporter12.setClub(club);clubSporter12.setSporter(sporter2);clubSporter12.setName("clubsporter12");
+			club.getClubSporters().add(clubSporter12);
+			ClubSporter clubSporter21=new ClubSporter();clubSporter21.setClub(club2);clubSporter21.setSporter(sporter);clubSporter21.setName("clubsporter21");
+			club2.getClubSporters().add(clubSporter21);
+			ClubSporter clubSporter22=new ClubSporter();clubSporter22.setClub(club2);clubSporter22.setSporter(sporter2);clubSporter22.setName("clubsporter22");
+			club2.getClubSporters().add(clubSporter22);
+
+		  	session.save(club); 		
+		  	session.save(club2); 	
+		  	session.save(sporter);
+		  	session.save(sporter2);
+	  	
+		  	session.beginTransaction().commit();
+
+/ we zien	, 
+foo=> \d club_sporters
+           Table "public.club_sporters"
+    Column    |          Type          | Modifiers 
+--------------+------------------------+-----------
+ ref_club_    | bigint                 | not null
+ ref_sporter_ | bigint                 | not null
+ name_        | character varying(255) | 
+Indexes:
+    "club_sporters_pkey" PRIMARY KEY, btree (ref_club_, ref_sporter_)
+Foreign-key constraints:
+    "fk_8mca6g4k4tibs350cbbeb24rr" FOREIGN KEY (ref_club_) REFERENCES club(id_)
+    "fk_efs1dros4tf4ex1ycolahc9im" FOREIGN KEY (ref_sporter_) REFERENCES sporter(id_)
+
+foo=>  \d club
+                                 Table "public.club"
+ Column |          Type          |                     Modifiers                      
+--------+------------------------+----------------------------------------------------
+ id_    | bigint                 | not null default nextval('club_id__seq'::regclass)
+ name_  | character varying(255) | 
+Indexes:
+    "club_pkey" PRIMARY KEY, btree (id_)
+Referenced by:
+    TABLE "club_sporters" CONSTRAINT "fk_8mca6g4k4tibs350cbbeb24rr" FOREIGN KEY (ref_club_) REFERENCES club(id_)
+
+foo=> \d sporter
+                                 Table "public.sporter"
+ Column |          Type          |                       Modifiers                       
+--------+------------------------+-------------------------------------------------------
+ id_    | bigint                 | not null default nextval('sporter_id__seq'::regclass)
+ name_  | character varying(255) | 
+Indexes:
+    "sporter_pkey" PRIMARY KEY, btree (id_)
+Referenced by:
+    TABLE "club_sporters" CONSTRAINT "fk_efs1dros4tf4ex1ycolahc9im" FOREIGN KEY (ref_sporter_) REFERENCES sporter(id_)
+
+foo=>  select*from club;
+ id_ | name_ 
+-----+-------
+   1 | Club
+   2 | Club2
+(2 rows)
+
+foo=> select*from sporter;
+ id_ |  name_   
+-----+----------
+   1 | Sporter
+   2 | Sporter2
+(2 rows)
+
+foo=>  select*from club_sporters;
+ ref_club_ | ref_sporter_ |     name_     
+-----------+--------------+---------------
+         1 |            1 | clubsporter11
+         1 |            2 | clubsporter12
+         2 |            2 | clubsporter22
+         2 |            1 | clubsporter21
+(4 rows)
+
+/ 7	. 
+
+select clubsporte0_.ref_club_ as ref_club1_0_0_, clubsporte0_.ref_sporter_ as ref_spor2_1_0_, clubsporte0_.name_ as name_3_1_0_, sporter1_.id_ as id_1_9_1_, sporter1_.name_ as name_2_9_1_ 
+from club_sporters clubsporte0_ 
+inner join sporter sporter1_ on clubsporte0_.ref_sporter_=sporter1_.id_ 
+where clubsporte0_.ref_club_=?
+HibernateLog --> 09:13:53 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+
+HibernateLog --> 09:13:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([ref_club1_0_0_] : [BIGINT]) - [1]
+HibernateLog --> 09:13:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([ref_spor2_1_0_] : [BIGINT]) - [1]
+HibernateLog --> 09:13:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name_3_1_0_] : [VARCHAR]) - [clubsporter11]
+HibernateLog --> 09:13:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id_1_9_1_] : [BIGINT]) - [1]
+HibernateLog --> 09:13:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name_2_9_1_] : [VARCHAR]) - [Sporter]
+
+HibernateLog --> 09:13:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([ref_club1_0_0_] : [BIGINT]) - [1]
+HibernateLog --> 09:13:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([ref_spor2_1_0_] : [BIGINT]) - [2]
+HibernateLog --> 09:13:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name_3_1_0_] : [VARCHAR]) - [clubsporter12]
+HibernateLog --> 09:13:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id_1_9_1_] : [BIGINT]) - [2]
+HibernateLog --> 09:13:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name_2_9_1_] : [VARCHAR]) - [Sporter2]
+
+/ 7	. 
+
+/ proj hibernate_mappings
+
+/ we hebben MainJoinWithExtraColumns en MainJoinWithExtraColumns2	, 
+/ MainJoinWithExtraColumns is zoals in boek (307/308) en MainJoinWithExtraColumns2 is als in SCS	, 
+/ in boek is Club ook in ClubSporter	, zoals in SCS is Club2 niet in ClubSporter2
+
+$ vi Club2.hbm.xml
+
+<class 
+	name="Club2" 
+	table="club2"
+>
+	<set 
+		name="clubSporters2"
+		table="club_sporters2"
+	>
+		<key
+			column="ref_club2_"
+		></key>	
+		<composite-element 
+			class="ClubSporter2"
+		>
+			<!-- <parent
+				name="club"></parent> -->
+			<many-to-one 
+				name="sporter2"
+				column="ref_sporter2_"
+				not-null="true"
+				class="Sporter2"
+			></many-to-one>
+			<property
+				name="name"
+				column="name_"/>			
+		</composite-element>	
+	</set>
+
+$ vi Club2.java
+public class Club2 {
+    private long id;
+    private String name;
+    private Set<ClubSporter2>clubSporters2=new HashSet<ClubSporter2>();
+
+$ vi Sporter2.java
+public class Sporter2 {
+    private long id;
+    private String name;
+
+$ vi ClubSporter2.java
+	private String name;
+	private Sporter2 sporter2;
+	public ClubSporter2() {
+	}
+	@Override
+	public int hashCode() {
+//		return this.name.hashCode()+this.sporter.hashCode()+this.club.hashCode();
+		int hashCode=31;
+		hashCode=31*hashCode+name.hashCode();
+		hashCode=31*hashCode+sporter2.hashCode();
+		return hashCode;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof ClubSporter2){
+			ClubSporter2 that=(ClubSporter2)obj;
+			return that.name.equals(this.name) && that.sporter2.equals(this.sporter2) ;
+		}
+		else{
+			return false;
+		}
+	}
+
+$ vi MainJoinWithExtraColumns2.java
+public class MainJoinWithExtraColumns2{
+	public void testBasicUsage() {
+			session = sessionFactory.openSession();
+
+			Club2 club=new Club2("Club");
+			Club2 club2=new Club2("Club2");
+			Sporter2 sporter=new Sporter2("Sporter");
+		  	Sporter2 sporter2=new Sporter2("Sporter2");
+			ClubSporter2 clubSporter11=new ClubSporter2();clubSporter11.setSporter2(sporter);clubSporter11.setName("clubsporter11");
+			club.getClubSporters2().add(clubSporter11);
+			ClubSporter2 clubSporter12=new ClubSporter2();clubSporter12.setSporter2(sporter2);clubSporter12.setName("clubsporter12");
+			club.getClubSporters2().add(clubSporter12);
+			ClubSporter2 clubSporter21=new ClubSporter2();clubSporter21.setSporter2(sporter);clubSporter21.setName("clubsporter21");
+			club2.getClubSporters2().add(clubSporter21);
+			ClubSporter2 clubSporter22=new ClubSporter2();clubSporter22.setSporter2(sporter2);clubSporter22.setName("clubsporter22");
+			club2.getClubSporters2().add(clubSporter22);
+
+		  	session.save(club); 		
+		  	session.save(club2); 	
+		  	session.save(sporter);
+		  	session.save(sporter2);
+		  	session.beginTransaction().commit();
+		  	
+		  	session2=sessionFactory.openSession();
+		  	Club2 club1_=(Club2)session2.get(Club2.class, 1l);
+		  	ClubSporter2 clubSporter2ToRemove=null;
+		  	for(ClubSporter2 clubSporter:club1_.getClubSporters2()){
+		  		if(clubSporter.getName().contains("11")){
+		  			clubSporter2ToRemove=clubSporter;
+		  		}
+		  	}
+		  	club1_.getClubSporters2().remove(clubSporter2ToRemove);
+		  	session2.save(club1_);
+		  	session2.beginTransaction().commit();
+
+/ We zien de 4 inserts en de delete	, 
+foo=>  select*from club_sporters2;
+ ref_club2_ | ref_sporter2_ |     name_     
+------------+---------------+---------------
+          1 |             2 | clubsporter12
+          2 |             2 | clubsporter22
+          2 |             1 | clubsporter21
+(3 rows)
+
+
+
+
+/ Einde HIBERNATE
+
+/ HIBERNATE
+
+/ Ch9
+
+/ (404)
+
+			Item item=new Item();
+			item.setName("Foo");
+			session = sessionFactory.openSession();
+			session.save(item);
+			item.setCity("Bar");
+			session.beginTransaction().commit();
+
+/ we zien	, 
+
+Hibernate: insert into item (name_, city_) values (?, ?)
+HibernateLog --> 15:52:21 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo]
+HibernateLog --> 15:52:21 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [null]
+HibernateLog --> 15:52:21 DEBUG org.hibernate.SQL - update item set name_=?, city_=? where id_=?
+Hibernate: update item set name_=?, city_=? where id_=?
+HibernateLog --> 15:52:21 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo]
+HibernateLog --> 15:52:21 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [Bar]
+HibernateLog --> 15:52:21 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+
+
+/ Einde HIBERNATE
+
+
+
+/ OPEN IN CHROME
+
+http://projects.spring.io/spring-framework/
+http://docs.spring.io/spring/docs/current/spring-framework-reference/html/aop-api.html#aop-pfb-proxy-types
+http://docs.spring.io/spring/docs/2.0.0/reference/aop.html#d0e9015
+http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/transaction/interceptor/TransactionProxyFactoryBean.html
+
+
+http://mywiki.wooledge.org/BashFAQ/024			/ while IFS= read -r line TODO
+http://askubuntu.com/questions/68463/how-to-disable-global-super-p-shortcut			/ windows-p shortcut	,
+
+https://groups.google.com/a/mp-objects.com/forum/?hl=nl#!topic/mposcs/Zkc7ExBjzaY
+https://system.mp-objects.com/fisheye/cru/SCS-119
+https://system.mp-objects.com/fisheye/changelog/SCS?cs=23986
+
+file:///home/eric/Downloads/LondonWicket-OpenSessionInView.pdf		/ Open session in view pattern	, 
+https://cwiki.apache.org/confluence/display/WICKET/A+Simple+DataView+Example   							/ !
+http://localhost:9090/web/index3.html
+http://localhost:9090/wicket-testing/ajaxlinkstudy?0
+https://developer.jboss.org/wiki/OpenSessionInView			!
+
+http://stackoverflow.com/questions/19258749/get-list-of-column-names-from-a-firebird-database-table
+
+http://stackoverflow.com/questions/5309926/how-to-get-the-data-id-attribute			/ jquery, data-id attr	,
+
+http://joda-time.sourceforge.net/quickstart.html
+
+http://csrc.nist.gov/groups/ST/ecc-workshop-2015/papers/session4-merkle-johannes.pdf
+
+http://camel.apache.org/file2.html
+http://camel.apache.org/running-camel-standalone-and-have-it-keep-running.html
+
+/ Einde OPEN IN CHROME

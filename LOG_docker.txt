@@ -1,0 +1,2548 @@
+/ see HERHALING 20180203
+
+/ 7	. 
+
+[eric@almond locale]$ docker images
+REPOSITORY                                       TAG                 IMAGE ID            CREATED             SIZE
+gcr.io/my-kubernetes-codelab-150420/hello-node   v1                  c6597358678d        11 weeks ago        655.5 MB
+my/fedora-locale                                 latest              ee6dfc560b4f        11 weeks ago        718.7 MB
+node                                             latest              89cd8193c9a1        11 weeks ago        655.5 MB
+openshift/origin                                 v1.3.1              5db3d6aa750d        4 months ago        487.1 MB
+my/fedora-postgres                               latest              bb8ee85830d3        6 months ago        869.3 MB
+cockroachdb/cockroach                            latest              101ce26df89e        6 months ago        303.9 MB
+my/fedora-sshd                                   latest              9e1fbcf832dd        6 months ago        739.3 MB
+my/fedora-dockerfile                             latest              8a12fd78bfa1        6 months ago        700.5 MB
+my/fedora_postgres                               latest              a4f19b3c7f9a        6 months ago        889.6 MB
+my/fedora-volume                                 latest              b912b82e4212        6 months ago        713.3 MB
+my/fedora_dockerfile                             latest              a6057b96dca8        6 months ago        796.5 MB
+postgres                                         latest              96f9d302e4ba        6 months ago        265.9 MB
+my/ubuntu                                        latest              6a32cac2935d        6 months ago        223 MB
+misc                                             latest              09c73925b71a        6 months ago        125.1 MB
+ubuntu                                           latest              42118e3df429        6 months ago        124.8 MB
+centos                                           latest              50dae1ee8677        6 months ago        196.7 MB
+fedora                                           latest              f9873d530588        7 months ago        204.4 MB
+java                                             latest              264282a59a95        8 months ago        669.2 MB
+node                                             5.5                 baa18fdeb577        12 months ago       643 MB
+my/pingpong                                      latest              830f637d5735        13 months ago       641.9 MB
+local/sshd                                       latest              1075125904ff        13 months ago       233.3 MB
+local/sshd                                       v2                  41167092f2d0        13 months ago       233.3 MB
+local/sshd                                       v3                  f098d9c9ba5f        13 months ago       154.9 MB
+local/centos-sshd                                latest              d1a42ba5e50e        13 months ago       233.3 MB
+mytraining/postgres                              latest              0d0c2955f2d6        14 months ago       335.6 MB
+ouruser/sinatra                                  v2                  9657390b829c        14 months ago       319 MB
+ubuntu                                           14.04               06ab2de020f4        14 months ago       187.9 MB
+busybox                                          latest              d9551b4026f0        14 months ago       1.113 MB
+java                                             8                   64a90a51caf9        14 months ago       641.9 MB
+debian                                           jessie              bd94bc3c03b9        14 months ago       125.1 MB
+debian                                           latest              bd94bc3c03b9        14 months ago       125.1 MB
+hello-world                                      latest              690ed74de00f        16 months ago       960 B
+training/webapp                                  latest              6fae60ef3446        21 months ago       348.7 MB
+training/postgres                                latest              6fa973bb3c26        2 years ago         364.6 MB
+
+
+/ 7	. 
+
+/ Lees	,
+https://fedoraproject.org/wiki/DNF_system_upgrade
+/ hier staat hoe je fedora kunt upgrade naar 25 bijv	,
+/ TODO
+/ Hier staat het ook	,
+https://fedoramagazine.org/upgrading-fedora-24-fedora-25/
+/ Lees	 ook	, 
+https://fedoraproject.org/wiki/Upgrading
+/ Lees	,
+https://alt.fedoraproject.org/en/cloud/
+
+/ 	7. 
+
+/ ga naar	,
+https://docs.docker.com/
+/ kies rechts in het midden de version	, Docker v1.10 
+
+
+
+/ 7	. 
+
+[eric@almond locale]$ pwd
+/home/eric/Devel/Docker2/fedora/locale
+[eric@almond locale]$ cat Dockerfile 
+from fedora
+run ["echo","Π"]																											<- verander hier wat	,
+run ["dnf","-y","upgrade","--refresh","--setopt=deltarpm=false"]			<- !
+run ["dnf","-y","install","vim"]
+env LANG en_US.UTF-8
+#run ["dnf","-y","install","glibc-langpack-en"]
+#env LC_ALL en_US.UTF-8
+
+[eric@almond locale]$ docker build --help
+  --rm=true                       Remove intermediate containers after a successful build
+
+
+eric@almond locale]$ docker build --rm=true -t my/fedora-locale .
+Sending build context to Docker daemon 2.048 kB
+Step 1 : FROM fedora
+ ---> f9873d530588
+Step 2 : RUN echo Π
+ ---> Using cache
+ ---> 7397618b4392
+Step 3 : RUN dnf -y upgrade --refresh --setopt=deltarpm=false
+ ---> Running in 47113ac88452
+Last metadata expiration check: 0:00:51 ago on Mon Feb 13 20:31:40 2017.
+Dependencies resolved.
+================================================================================
+ Package                       Arch     Version                 Repository
+                                                                           Size
+================================================================================
+Installing:
+ libsigsegv                    x86_64   2.10-10.fc24            fedora     28 k
+ mpfr                          x86_64   3.1.5-1.fc24            updates   215 k
+ nss-pem                       x86_64   1.0.2-2.fc24            updates    76 k
+ system-python                 x86_64   3.5.2-3.fc24            updates    50 k
+ trousers                      x86_64   0.3.13-6.fc24           fedora    150 k
+ trousers-lib                  x86_64   0.3.13-6.fc24           fedora    157 k
+Upgrading:
+ audit-libs                    x86_64   2.7.1-1.fc24            updates   104 k
+ bash                          x86_64   4.3.42-7.fc24           updates   1.4 M
+ bash-completion               noarch   1:2.4-1.fc24            updates   269 k
+ bzip2-libs                    x86_64   1.0.6-21.fc24           updates    44 k
+ ca-certificates               noarch   2017.2.11-1.0.fc24      updates   437 k
+ chkconfig                     x86_64   1.8-1.fc24              updates   179 k
+ coreutils                     x86_64   8.25-7.fc24             updates   1.1 M
+ coreutils-common              x86_64   8.25-7.fc24             updates   1.9 M
+ cracklib                      x86_64   2.9.6-4.fc24            updates    84 k
+ cracklib-dicts                x86_64   2.9.6-4.fc24            updates   3.9 M
+ cryptsetup-libs               x86_64   1.7.2-1.fc24            updates   220 k
+ curl                          x86_64   7.47.1-10.fc24          updates   294 k
+ dbus                          x86_64   1:1.11.8-1.fc24         updates   246 k
+ dbus-libs                     x86_64   1:1.11.8-1.fc24         updates   173 k
+ device-mapper                 x86_64   1.02.122-2.fc24         updates   308 k
+ device-mapper-libs            x86_64   1.02.122-2.fc24         updates   364 k
+ dnf                           noarch   1.1.10-4.fc24           updates   275 k
+ dnf-conf                      noarch   1.1.10-4.fc24           updates    95 k
+ dnf-yum                       noarch   1.1.10-4.fc24           updates    79 k
+ elfutils-default-yama-scope   noarch   0.168-1.fc24            updates    38 k
+ elfutils-libelf               x86_64   0.168-1.fc24            updates   199 k
+ elfutils-libs                 x86_64   0.168-1.fc24            updates   276 k
+ emacs-filesystem              noarch   1:25.1-2.fc24           updates    65 k
+ expat                         x86_64   2.1.1-2.fc24            updates    88 k
+ fedora-release                noarch   24-2                    updates    30 k
+ fedora-repos                  noarch   24-3                    updates    87 k
+ gawk                          x86_64   4.1.3-8.fc24            updates   1.0 M
+ glib2                         x86_64   2.48.2-1.fc24           updates   2.2 M
+ glibc                         x86_64   2.23.1-11.fc24          updates   3.6 M
+ glibc-all-langpacks           x86_64   2.23.1-11.fc24          updates   6.9 M
+ glibc-common                  x86_64   2.23.1-11.fc24          updates   861 k
+ gmp                           x86_64   1:6.1.1-1.fc24          updates   315 k
+ gnupg2                        x86_64   2.1.13-2.fc24           updates   1.9 M
+ gnutls                        x86_64   3.4.17-2.fc24           updates   661 k
+ gpgme                         x86_64   1.6.0-3.fc24            updates   171 k
+ hawkey                        x86_64   0.6.3-6.1.fc24          updates    63 k
+ info                          x86_64   6.1-3.fc24              updates   191 k
+ krb5-libs                     x86_64   1.14.4-4.fc24           updates   737 k
+ libarchive                    x86_64   3.2.2-1.fc24            updates   340 k
+ libassuan                     x86_64   2.4.3-1.fc24            updates    76 k
+ libblkid                      x86_64   2.28.2-1.fc24           updates   180 k
+ libcap-ng                     x86_64   0.7.8-1.fc24            updates    30 k
+ libcurl                       x86_64   7.47.1-10.fc24          updates   260 k
+ libfdisk                      x86_64   2.28.2-1.fc24           updates   221 k
+ libgcc                        x86_64   6.3.1-1.fc24            updates    89 k
+ libgcrypt                     x86_64   1.6.6-1.fc24            updates   376 k
+ libgpg-error                  x86_64   1.24-1.fc24             updates   158 k
+ libidn                        x86_64   1.33-1.fc24             updates   233 k
+ libksba                       x86_64   1.3.5-1.fc24            updates   130 k
+ libmetalink                   x86_64   0.1.3-1.fc24            updates    28 k
+ libmnl                        x86_64   1.0.4-1.fc24            updates    28 k
+ libmount                      x86_64   2.28.2-1.fc24           updates   198 k
+ libpsl                        x86_64   0.13.0-3.fc24           updates    45 k
+ libreport-filesystem          x86_64   2.7.2-1.fc24            updates    48 k
+ libselinux                    x86_64   2.5-12.fc24             updates   163 k
+ libsemanage                   x86_64   2.5-6.fc24              updates   150 k
+ libsepol                      x86_64   2.5-10.fc24             updates   294 k
+ libsmartcols                  x86_64   2.28.2-1.fc24           updates   142 k
+ libsolv                       x86_64   0.6.25-1.fc24           updates   360 k
+ libsss_idmap                  x86_64   1.14.2-2.fc24           updates    81 k
+ libsss_nss_idmap              x86_64   1.14.2-2.fc24           updates    78 k
+ libstdc++                     x86_64   6.3.1-1.fc24            updates   451 k
+ libtasn1                      x86_64   4.9-1.fc24              updates   326 k
+ libuuid                       x86_64   2.28.2-1.fc24           updates    80 k
+ libxkbcommon                  x86_64   0.6.1-1.fc24            updates   112 k
+ lua                           x86_64   5.3.3-2.fc24            updates   297 k
+ lz4                           x86_64   1.7.5-1.fc24            updates   101 k
+ ncurses                       x86_64   6.0-6.20160709.fc24     updates   341 k
+ ncurses-base                  noarch   6.0-6.20160709.fc24     updates    78 k
+ ncurses-libs                  x86_64   6.0-6.20160709.fc24     updates   297 k
+ nettle                        x86_64   3.2-3.fc24              updates   305 k
+ npth                          x86_64   1.3-1.fc24              updates    23 k
+ nspr                          x86_64   4.13.1-1.fc24           updates   134 k
+ nss                           x86_64   3.28.1-1.3.fc24         updates   857 k
+ nss-softokn                   x86_64   3.28.1-1.0.fc24         updates   385 k
+ nss-softokn-freebl            x86_64   3.28.1-1.0.fc24         updates   225 k
+ nss-sysinit                   x86_64   3.28.1-1.3.fc24         updates    59 k
+ nss-tools                     x86_64   3.28.1-1.3.fc24         updates   500 k
+ nss-util                      x86_64   3.28.1-1.0.fc24         updates    82 k
+ openssl-libs                  x86_64   1:1.0.2k-1.fc24         updates   1.2 M
+ pcre                          x86_64   8.40-1.fc24             updates   404 k
+ python3                       x86_64   3.5.2-3.fc24            updates    57 k
+ python3-dnf                   noarch   1.1.10-4.fc24           updates   451 k
+ python3-hawkey                x86_64   0.6.3-6.1.fc24          updates    45 k
+ python3-libs                  x86_64   3.5.2-3.fc24            updates   1.4 M
+ python3-pygpgme               x86_64   0.3-18.fc24             updates    90 k
+ rpm                           x86_64   4.13.0-1.fc24           updates   514 k
+ rpm-build-libs                x86_64   4.13.0-1.fc24           updates   117 k
+ rpm-libs                      x86_64   4.13.0-1.fc24           updates   294 k
+ rpm-plugin-selinux            x86_64   4.13.0-1.fc24           updates    53 k
+ rpm-plugin-systemd-inhibit    x86_64   4.13.0-1.fc24           updates    53 k
+ rpm-python3                   x86_64   4.13.0-1.fc24           updates   101 k
+ sqlite-libs                   x86_64   3.13.0-1.fc24           updates   452 k
+ sssd-client                   x86_64   1.14.2-2.fc24           updates   132 k
+ system-python-libs            x86_64   3.5.2-3.fc24            updates   6.2 M
+ systemd                       x86_64   229-18.fc24             updates   5.1 M
+ systemd-libs                  x86_64   229-18.fc24             updates   458 k
+ tzdata                        noarch   2016j-2.fc24            updates   419 k
+ util-linux                    x86_64   2.28.2-1.fc24           updates   2.2 M
+ vim-minimal                   x86_64   2:8.0.314-1.fc24        updates   515 k
+
+Transaction Summary
+================================================================================
+Install    6 Packages
+Upgrade  100 Packages
+
+Total download size: 60 M
+Downloading Packages:
+--------------------------------------------------------------------------------
+Total                                           615 kB/s |  60 MB     01:39     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Upgrading   : libgcc-6.3.1-1.fc24.x86_64                                1/206 
+  Upgrading   : tzdata-2016j-2.fc24.noarch                                2/206 
+  Upgrading   : ncurses-base-6.0-6.20160709.fc24.noarch                   3/206 
+  Upgrading   : glibc-all-langpacks-2.23.1-11.fc24.x86_64                 4/206 
+  Upgrading   : glibc-common-2.23.1-11.fc24.x86_64                        5/206 
+  Upgrading   : nss-softokn-freebl-3.28.1-1.0.fc24.x86_64                 6/206 
+  Upgrading   : glibc-2.23.1-11.fc24.x86_64                               7/206 
+  Upgrading   : ncurses-libs-6.0-6.20160709.fc24.x86_64                   8/206 
+  Upgrading   : bash-4.3.42-7.fc24.x86_64                                 9/206 
+  Upgrading   : libsepol-2.5-10.fc24.x86_64                              10/206 
+  Upgrading   : libstdc++-6.3.1-1.fc24.x86_64                            11/206 
+  Upgrading   : pcre-8.40-1.fc24.x86_64                                  12/206 
+  Upgrading   : libselinux-2.5-12.fc24.x86_64                            13/206 
+  Upgrading   : bzip2-libs-1.0.6-21.fc24.x86_64                          14/206 
+  Upgrading   : libgpg-error-1.24-1.fc24.x86_64                          15/206 
+  Upgrading   : nspr-4.13.1-1.fc24.x86_64                                16/206 
+  Upgrading   : nss-util-3.28.1-1.0.fc24.x86_64                          17/206 
+  Upgrading   : elfutils-libelf-0.168-1.fc24.x86_64                      18/206 
+  Upgrading   : expat-2.1.1-2.fc24.x86_64                                19/206 
+  Upgrading   : gmp-1:6.1.1-1.fc24.x86_64                                20/206 
+  Upgrading   : info-6.1-3.fc24.x86_64                                   21/206 
+  Upgrading   : lua-5.3.3-2.fc24.x86_64                                  22/206 
+  Upgrading   : libuuid-2.28.2-1.fc24.x86_64                             23/206 
+  Upgrading   : libgcrypt-1.6.6-1.fc24.x86_64                            24/206 
+  Upgrading   : libcap-ng-0.7.8-1.fc24.x86_64                            25/206 
+  Upgrading   : audit-libs-2.7.1-1.fc24.x86_64                           26/206 
+  Upgrading   : sqlite-libs-3.13.0-1.fc24.x86_64                         27/206 
+  Upgrading   : nss-softokn-3.28.1-1.0.fc24.x86_64                       28/206 
+  Upgrading   : libassuan-2.4.3-1.fc24.x86_64                            29/206 
+  Upgrading   : chkconfig-1.8-1.fc24.x86_64                              30/206 
+  Upgrading   : lz4-1.7.5-1.fc24.x86_64                                  31/206 
+  Upgrading   : nettle-3.2-3.fc24.x86_64                                 32/206 
+  Installing  : mpfr-3.1.5-1.fc24.x86_64                                 33/206 
+  Upgrading   : libmetalink-0.1.3-1.fc24.x86_64                          34/206 
+  Upgrading   : libksba-1.3.5-1.fc24.x86_64                              35/206 
+  Upgrading   : ca-certificates-2017.2.11-1.0.fc24.noarch                36/206 
+  Upgrading   : cracklib-2.9.6-4.fc24.x86_64                             37/206 
+  Upgrading   : elfutils-default-yama-scope-0.168-1.fc24.noarch          38/206 
+  Upgrading   : elfutils-libs-0.168-1.fc24.x86_64                        39/206 
+  Upgrading   : fedora-repos-24-3.noarch                                 40/206 
+  Upgrading   : fedora-release-24-2.noarch                               41/206 
+  Upgrading   : ncurses-6.0-6.20160709.fc24.x86_64                       42/206 
+  Installing  : libsigsegv-2.10-10.fc24.x86_64                           43/206 
+  Upgrading   : gawk-4.1.3-8.fc24.x86_64                                 44/206 
+  Upgrading   : libsmartcols-2.28.2-1.fc24.x86_64                        45/206 
+  Upgrading   : libsss_idmap-1.14.2-2.fc24.x86_64                        46/206 
+  Upgrading   : libsss_nss_idmap-1.14.2-2.fc24.x86_64                    47/206 
+  Upgrading   : libtasn1-4.9-1.fc24.x86_64                               48/206 
+  Upgrading   : libxkbcommon-0.6.1-1.fc24.x86_64                         49/206 
+  Upgrading   : npth-1.3-1.fc24.x86_64                                   50/206 
+  Upgrading   : libreport-filesystem-2.7.2-1.fc24.x86_64                 51/206 
+  Upgrading   : dnf-conf-1.1.10-4.fc24.noarch                            52/206 
+  Upgrading   : emacs-filesystem-1:25.1-2.fc24.noarch                    53/206 
+  Upgrading   : libidn-1.33-1.fc24.x86_64                                54/206 
+  Upgrading   : systemd-libs-229-18.fc24.x86_64                          55/206 
+  Upgrading   : dbus-libs-1:1.11.8-1.fc24.x86_64                         56/206 
+  Upgrading   : libpsl-0.13.0-3.fc24.x86_64                              57/206 
+  Upgrading   : gnutls-3.4.17-2.fc24.x86_64                              58/206 
+  Upgrading   : gnupg2-2.1.13-2.fc24.x86_64                              59/206 
+  Upgrading   : gpgme-1.6.0-3.fc24.x86_64                                60/206 
+  Upgrading   : coreutils-common-8.25-7.fc24.x86_64                      61/206 
+  Upgrading   : coreutils-8.25-7.fc24.x86_64                             62/206 
+  Upgrading   : openssl-libs-1:1.0.2k-1.fc24.x86_64                      63/206 
+  Upgrading   : krb5-libs-1.14.4-4.fc24.x86_64                           64/206 
+  Upgrading   : system-python-libs-3.5.2-3.fc24.x86_64                   65/206 
+  Upgrading   : libblkid-2.28.2-1.fc24.x86_64                            66/206 
+  Upgrading   : libmount-2.28.2-1.fc24.x86_64                            67/206 
+  Upgrading   : libfdisk-2.28.2-1.fc24.x86_64                            68/206 
+  Upgrading   : util-linux-2.28.2-1.fc24.x86_64                          69/206 
+  Upgrading   : device-mapper-1.02.122-2.fc24.x86_64                     70/206 
+  Upgrading   : device-mapper-libs-1.02.122-2.fc24.x86_64                71/206 
+  Upgrading   : cryptsetup-libs-1.7.2-1.fc24.x86_64                      72/206 
+  Upgrading   : systemd-229-18.fc24.x86_64                               73/206 
+  Upgrading   : dbus-1:1.11.8-1.fc24.x86_64                              74/206 
+  Installing  : system-python-3.5.2-3.fc24.x86_64                        75/206 
+  Upgrading   : python3-libs-3.5.2-3.fc24.x86_64                         76/206 
+  Upgrading   : python3-3.5.2-3.fc24.x86_64                              77/206 
+  Upgrading   : python3-pygpgme-0.3-18.fc24.x86_64                       78/206 
+  Installing  : trousers-lib-0.3.13-6.fc24.x86_64                        79/206 
+  Upgrading   : libarchive-3.2.2-1.fc24.x86_64                           80/206 
+  Installing  : nss-pem-1.0.2-2.fc24.x86_64                              81/206 
+  Upgrading   : nss-3.28.1-1.3.fc24.x86_64                               82/206 
+  Upgrading   : nss-sysinit-3.28.1-1.3.fc24.x86_64                       83/206 
+  Upgrading   : libcurl-7.47.1-10.fc24.x86_64                            84/206 
+  Upgrading   : curl-7.47.1-10.fc24.x86_64                               85/206 
+  Upgrading   : rpm-plugin-selinux-4.13.0-1.fc24.x86_64                  86/206 
+  Upgrading   : rpm-libs-4.13.0-1.fc24.x86_64                            87/206 
+  Upgrading   : rpm-4.13.0-1.fc24.x86_64                                 88/206 
+  Upgrading   : libsolv-0.6.25-1.fc24.x86_64                             89/206 
+  Upgrading   : hawkey-0.6.3-6.1.fc24.x86_64                             90/206 
+  Upgrading   : python3-hawkey-0.6.3-6.1.fc24.x86_64                     91/206 
+  Upgrading   : rpm-plugin-systemd-inhibit-4.13.0-1.fc24.x86_64          92/206 
+  Upgrading   : rpm-build-libs-4.13.0-1.fc24.x86_64                      93/206 
+  Upgrading   : rpm-python3-4.13.0-1.fc24.x86_64                         94/206 
+  Upgrading   : python3-dnf-1.1.10-4.fc24.noarch                         95/206 
+  Upgrading   : dnf-1.1.10-4.fc24.noarch                                 96/206 
+  Upgrading   : dnf-yum-1.1.10-4.fc24.noarch                             97/206 
+  Upgrading   : nss-tools-3.28.1-1.3.fc24.x86_64                         98/206 
+  Installing  : trousers-0.3.13-6.fc24.x86_64                            99/206 
+  Upgrading   : sssd-client-1.14.2-2.fc24.x86_64                        100/206 
+  Upgrading   : cracklib-dicts-2.9.6-4.fc24.x86_64                      101/206 
+  Upgrading   : libsemanage-2.5-6.fc24.x86_64                           102/206 
+  Upgrading   : glib2-2.48.2-1.fc24.x86_64                              103/206 
+  Upgrading   : vim-minimal-2:8.0.314-1.fc24.x86_64                     104/206 
+  Upgrading   : bash-completion-1:2.4-1.fc24.noarch                     105/206 
+  Upgrading   : libmnl-1.0.4-1.fc24.x86_64                              106/206 
+  Cleanup     : fedora-repos-24-1.noarch                                107/206 
+  Cleanup     : fedora-release-24-1.noarch                              108/206 
+  Cleanup     : dnf-yum-1.1.9-2.fc24.noarch                             109/206 
+  Cleanup     : dnf-1.1.9-2.fc24.noarch                                 110/206Failed to connect to bus: No such file or directory
+ 
+  Cleanup     : python3-dnf-1.1.9-2.fc24.noarch                         111/206 
+  Cleanup     : python3-pygpgme-0.3-15.fc24.x86_64                      112/206 
+  Cleanup     : dnf-conf-1.1.9-2.fc24.noarch                            113/206 
+  Cleanup     : cracklib-dicts-2.9.6-2.fc24.x86_64                      114/206 
+  Cleanup     : bash-completion-1:2.3-1.fc24.noarch                     115/206 
+  Cleanup     : cryptsetup-libs-1.7.1-1.fc24.x86_64                     116/206 
+  Cleanup     : device-mapper-libs-1.02.122-1.fc24.x86_64               117/206 
+  Cleanup     : device-mapper-1.02.122-1.fc24.x86_64                    118/206 
+  Cleanup     : dbus-1:1.11.2-1.fc24.x86_64                             119/206 
+  Cleanup     : systemd-229-8.fc24.x86_64                               120/206 
+  Cleanup     : util-linux-2.28-2.fc24.x86_64                           121/206 
+  Cleanup     : rpm-plugin-systemd-inhibit-4.13.0-0.rc1.27.fc24.x86_6   122/206 
+  Cleanup     : nss-tools-3.23.0-1.2.fc24.x86_64                        123/206 
+  Cleanup     : rpm-python3-4.13.0-0.rc1.27.fc24.x86_64                 124/206 
+  Cleanup     : rpm-build-libs-4.13.0-0.rc1.27.fc24.x86_64              125/206 
+  Cleanup     : sssd-client-1.13.4-3.fc24.x86_64                        126/206 
+  Cleanup     : libsemanage-2.5-2.fc24.x86_64                           127/206 
+  Cleanup     : elfutils-libs-0.166-2.fc24.x86_64                       128/206 
+  Cleanup     : gpgme-1.4.3-7.fc24.x86_64                               129/206 
+  Cleanup     : gnupg2-2.1.11-3.fc24.x86_64                             130/206 
+  Cleanup     : gnutls-3.4.12-1.fc24.x86_64                             131/206 
+  Cleanup     : python3-hawkey-0.6.3-2.fc24.x86_64                      132/206 
+  Cleanup     : nettle-3.2-2.fc24.x86_64                                133/206 
+  Cleanup     : libmount-2.28-2.fc24.x86_64                             134/206 
+  Cleanup     : glib2-2.48.1-1.fc24.x86_64                              135/206 
+  Cleanup     : python3-3.5.1-7.fc24.x86_64                             136/206 
+  Cleanup     : libfdisk-2.28-2.fc24.x86_64                             137/206 
+  Cleanup     : libblkid-2.28-2.fc24.x86_64                             138/206 
+  Cleanup     : vim-minimal-2:7.4.1718-1.fc24.x86_64                    139/206 
+  Cleanup     : python3-libs-3.5.1-7.fc24.x86_64                        140/206 
+  Cleanup     : system-python-libs-3.5.1-7.fc24.x86_64                  141/206 
+  Cleanup     : hawkey-0.6.3-2.fc24.x86_64                              142/206 
+  Cleanup     : libsolv-0.6.20-3.fc24.x86_64                            143/206 
+  Cleanup     : rpm-plugin-selinux-4.13.0-0.rc1.27.fc24.x86_64          144/206 
+  Cleanup     : rpm-libs-4.13.0-0.rc1.27.fc24.x86_64                    145/206 
+  Cleanup     : rpm-4.13.0-0.rc1.27.fc24.x86_64                         146/206 
+  Cleanup     : curl-7.47.1-4.fc24.x86_64                               147/206 
+  Cleanup     : libcurl-7.47.1-4.fc24.x86_64                            148/206 
+  Cleanup     : nss-sysinit-3.23.0-1.2.fc24.x86_64                      149/206 
+  Cleanup     : nss-3.23.0-1.2.fc24.x86_64                              150/206 
+  Cleanup     : nss-softokn-3.23.0-1.0.fc24.x86_64                      151/206 
+  Cleanup     : nss-util-3.23.0-1.0.fc24.x86_64                         152/206 
+  Cleanup     : libarchive-3.1.2-17.fc24.x86_64                         153/206 
+  Cleanup     : krb5-libs-1.14.1-6.fc24.x86_64                          154/206 
+  Cleanup     : openssl-libs-1:1.0.2h-1.fc24.x86_64                     155/206 
+  Cleanup     : ca-certificates-2016.2.7-1.0.fc24.noarch                156/206 
+  Cleanup     : coreutils-8.25-5.fc24.x86_64                            157/206 
+  Cleanup     : gmp-1:6.1.0-2.fc24.x86_64                               158/206 
+  Cleanup     : chkconfig-1.7-2.fc24.x86_64                             159/206 
+  Cleanup     : ncurses-6.0-5.20160116.fc24.x86_64                      160/206 
+  Cleanup     : gawk-4.1.3-3.fc24.x86_64                                161/206 
+  Cleanup     : libpsl-0.13.0-1.fc24.x86_64                             162/206 
+  Cleanup     : libmetalink-0.1.2-9.fc24.x86_64                         163/206 
+  Cleanup     : lua-5.3.2-3.fc24.x86_64                                 164/206 
+  Cleanup     : libassuan-2.4.2-2.fc24.x86_64                           165/206 
+  Cleanup     : libksba-1.3.4-1.fc24.x86_64                             166/206 
+  Cleanup     : dbus-libs-1:1.11.2-1.fc24.x86_64                        167/206 
+  Cleanup     : systemd-libs-229-8.fc24.x86_64                          168/206 
+  Cleanup     : libidn-1.32-2.fc24.x86_64                               169/206 
+  Cleanup     : info-6.1-2.fc24.x86_64                                  170/206 
+  Cleanup     : libgcrypt-1.6.4-2.fc24.x86_64                           171/206 
+  Cleanup     : cracklib-2.9.6-2.fc24.x86_64                            172/206 
+  Cleanup     : elfutils-default-yama-scope-0.166-2.fc24.noarch         173/206 
+  Cleanup     : libgpg-error-1.21-2.fc24.x86_64                         174/206 
+  Cleanup     : lz4-r131-2.fc24.x86_64                                  175/206 
+  Cleanup     : expat-2.1.1-1.fc24.x86_64                               176/206 
+  Cleanup     : bzip2-libs-1.0.6-20.fc24.x86_64                         177/206 
+  Cleanup     : nspr-4.12.0-1.fc24.x86_64                               178/206 
+  Cleanup     : sqlite-libs-3.11.0-3.fc24.x86_64                        179/206 
+  Cleanup     : elfutils-libelf-0.166-2.fc24.x86_64                     180/206 
+  Cleanup     : libuuid-2.28-2.fc24.x86_64                              181/206 
+  Cleanup     : libtasn1-4.8-1.fc24.x86_64                              182/206 
+  Cleanup     : npth-1.2-3.fc24.x86_64                                  183/206 
+  Cleanup     : audit-libs-2.5.2-1.fc24.x86_64                          184/206 
+  Cleanup     : libsss_idmap-1.13.4-3.fc24.x86_64                       185/206 
+  Cleanup     : libsss_nss_idmap-1.13.4-3.fc24.x86_64                   186/206 
+  Cleanup     : libcap-ng-0.7.7-4.fc24.x86_64                           187/206 
+  Cleanup     : libsmartcols-2.28-2.fc24.x86_64                         188/206 
+  Cleanup     : libxkbcommon-0.5.0-4.fc24.x86_64                        189/206 
+  Cleanup     : libmnl-1.0.3-11.fc24.x86_64                             190/206 
+  Cleanup     : emacs-filesystem-1:25.0.94-1.fc24.noarch                191/206 
+  Cleanup     : coreutils-common-8.25-5.fc24.x86_64                     192/206 
+  Cleanup     : libreport-filesystem-2.7.1-1.fc24.x86_64                193/206 
+  Cleanup     : ncurses-libs-6.0-5.20160116.fc24.x86_64                 194/206 
+  Cleanup     : bash-4.3.42-5.fc24.x86_64                               195/206 
+  Cleanup     : libsepol-2.5-3.fc24.x86_64                              196/206 
+  Cleanup     : libstdc++-6.1.1-2.fc24.x86_64                           197/206 
+  Cleanup     : pcre-8.38-11.fc24.x86_64                                198/206 
+  Cleanup     : libselinux-2.5-3.fc24.x86_64                            199/206 
+  Cleanup     : glibc-common-2.23.1-7.fc24.x86_64                       200/206 
+  Cleanup     : glibc-all-langpacks-2.23.1-7.fc24.x86_64                201/206 
+  Cleanup     : nss-softokn-freebl-3.23.0-1.0.fc24.x86_64               202/206 
+  Cleanup     : glibc-2.23.1-7.fc24.x86_64                              203/206 
+  Cleanup     : tzdata-2016d-1.fc24.noarch                              204/206 
+  Cleanup     : ncurses-base-6.0-5.20160116.fc24.noarch                 205/206 
+  Cleanup     : libgcc-6.1.1-2.fc24.x86_64                              206/206Failed to connect to bus: No such file or directory
+ 
+  Verifying   : libsigsegv-2.10-10.fc24.x86_64                            1/206 
+  Verifying   : nss-pem-1.0.2-2.fc24.x86_64                               2/206 
+  Verifying   : system-python-3.5.2-3.fc24.x86_64                         3/206 
+  Verifying   : mpfr-3.1.5-1.fc24.x86_64                                  4/206 
+  Verifying   : trousers-0.3.13-6.fc24.x86_64                             5/206 
+  Verifying   : trousers-lib-0.3.13-6.fc24.x86_64                         6/206 
+  Verifying   : audit-libs-2.7.1-1.fc24.x86_64                            7/206 
+  Verifying   : bash-4.3.42-7.fc24.x86_64                                 8/206 
+  Verifying   : bash-completion-1:2.4-1.fc24.noarch                       9/206 
+  Verifying   : bzip2-libs-1.0.6-21.fc24.x86_64                          10/206 
+  Verifying   : ca-certificates-2017.2.11-1.0.fc24.noarch                11/206 
+  Verifying   : chkconfig-1.8-1.fc24.x86_64                              12/206 
+  Verifying   : coreutils-8.25-7.fc24.x86_64                             13/206 
+  Verifying   : coreutils-common-8.25-7.fc24.x86_64                      14/206 
+  Verifying   : cracklib-2.9.6-4.fc24.x86_64                             15/206 
+  Verifying   : cracklib-dicts-2.9.6-4.fc24.x86_64                       16/206 
+  Verifying   : cryptsetup-libs-1.7.2-1.fc24.x86_64                      17/206 
+  Verifying   : curl-7.47.1-10.fc24.x86_64                               18/206 
+  Verifying   : libcurl-7.47.1-10.fc24.x86_64                            19/206 
+  Verifying   : dbus-1:1.11.8-1.fc24.x86_64                              20/206 
+  Verifying   : dbus-libs-1:1.11.8-1.fc24.x86_64                         21/206 
+  Verifying   : device-mapper-1.02.122-2.fc24.x86_64                     22/206 
+  Verifying   : device-mapper-libs-1.02.122-2.fc24.x86_64                23/206 
+  Verifying   : dnf-1.1.10-4.fc24.noarch                                 24/206 
+  Verifying   : python3-dnf-1.1.10-4.fc24.noarch                         25/206 
+  Verifying   : dnf-conf-1.1.10-4.fc24.noarch                            26/206 
+  Verifying   : python3-hawkey-0.6.3-6.1.fc24.x86_64                     27/206 
+  Verifying   : dnf-yum-1.1.10-4.fc24.noarch                             28/206 
+  Verifying   : hawkey-0.6.3-6.1.fc24.x86_64                             29/206 
+  Verifying   : elfutils-default-yama-scope-0.168-1.fc24.noarch          30/206 
+  Verifying   : elfutils-libelf-0.168-1.fc24.x86_64                      31/206 
+  Verifying   : elfutils-libs-0.168-1.fc24.x86_64                        32/206 
+  Verifying   : emacs-filesystem-1:25.1-2.fc24.noarch                    33/206 
+  Verifying   : expat-2.1.1-2.fc24.x86_64                                34/206 
+  Verifying   : fedora-release-24-2.noarch                               35/206 
+  Verifying   : fedora-repos-24-3.noarch                                 36/206 
+  Verifying   : gawk-4.1.3-8.fc24.x86_64                                 37/206 
+  Verifying   : glib2-2.48.2-1.fc24.x86_64                               38/206 
+  Verifying   : glibc-2.23.1-11.fc24.x86_64                              39/206 
+  Verifying   : glibc-common-2.23.1-11.fc24.x86_64                       40/206 
+  Verifying   : glibc-all-langpacks-2.23.1-11.fc24.x86_64                41/206 
+  Verifying   : gmp-1:6.1.1-1.fc24.x86_64                                42/206 
+  Verifying   : gnupg2-2.1.13-2.fc24.x86_64                              43/206 
+  Verifying   : gnutls-3.4.17-2.fc24.x86_64                              44/206 
+  Verifying   : gpgme-1.6.0-3.fc24.x86_64                                45/206 
+  Verifying   : info-6.1-3.fc24.x86_64                                   46/206 
+  Verifying   : krb5-libs-1.14.4-4.fc24.x86_64                           47/206 
+  Verifying   : libarchive-3.2.2-1.fc24.x86_64                           48/206 
+  Verifying   : libassuan-2.4.3-1.fc24.x86_64                            49/206 
+  Verifying   : libblkid-2.28.2-1.fc24.x86_64                            50/206 
+  Verifying   : libuuid-2.28.2-1.fc24.x86_64                             51/206 
+  Verifying   : libmount-2.28.2-1.fc24.x86_64                            52/206 
+  Verifying   : util-linux-2.28.2-1.fc24.x86_64                          53/206 
+  Verifying   : libfdisk-2.28.2-1.fc24.x86_64                            54/206 
+  Verifying   : libsmartcols-2.28.2-1.fc24.x86_64                        55/206 
+  Verifying   : libcap-ng-0.7.8-1.fc24.x86_64                            56/206 
+  Verifying   : libgcc-6.3.1-1.fc24.x86_64                               57/206 
+  Verifying   : libgcrypt-1.6.6-1.fc24.x86_64                            58/206 
+  Verifying   : libgpg-error-1.24-1.fc24.x86_64                          59/206 
+  Verifying   : libidn-1.33-1.fc24.x86_64                                60/206 
+  Verifying   : libksba-1.3.5-1.fc24.x86_64                              61/206 
+  Verifying   : libmetalink-0.1.3-1.fc24.x86_64                          62/206 
+  Verifying   : libmnl-1.0.4-1.fc24.x86_64                               63/206 
+  Verifying   : libpsl-0.13.0-3.fc24.x86_64                              64/206 
+  Verifying   : libreport-filesystem-2.7.2-1.fc24.x86_64                 65/206 
+  Verifying   : libselinux-2.5-12.fc24.x86_64                            66/206 
+  Verifying   : libsepol-2.5-10.fc24.x86_64                              67/206 
+  Verifying   : libsemanage-2.5-6.fc24.x86_64                            68/206 
+  Verifying   : libsolv-0.6.25-1.fc24.x86_64                             69/206 
+  Verifying   : libsss_idmap-1.14.2-2.fc24.x86_64                        70/206 
+  Verifying   : libsss_nss_idmap-1.14.2-2.fc24.x86_64                    71/206 
+  Verifying   : libstdc++-6.3.1-1.fc24.x86_64                            72/206 
+  Verifying   : libtasn1-4.9-1.fc24.x86_64                               73/206 
+  Verifying   : libxkbcommon-0.6.1-1.fc24.x86_64                         74/206 
+  Verifying   : lua-5.3.3-2.fc24.x86_64                                  75/206 
+  Verifying   : lz4-1.7.5-1.fc24.x86_64                                  76/206 
+  Verifying   : ncurses-6.0-6.20160709.fc24.x86_64                       77/206 
+  Verifying   : ncurses-libs-6.0-6.20160709.fc24.x86_64                  78/206 
+  Verifying   : ncurses-base-6.0-6.20160709.fc24.noarch                  79/206 
+  Verifying   : nettle-3.2-3.fc24.x86_64                                 80/206 
+  Verifying   : npth-1.3-1.fc24.x86_64                                   81/206 
+  Verifying   : nspr-4.13.1-1.fc24.x86_64                                82/206 
+  Verifying   : nss-3.28.1-1.3.fc24.x86_64                               83/206 
+  Verifying   : nss-softokn-3.28.1-1.0.fc24.x86_64                       84/206 
+  Verifying   : nss-util-3.28.1-1.0.fc24.x86_64                          85/206 
+  Verifying   : nss-softokn-freebl-3.28.1-1.0.fc24.x86_64                86/206 
+  Verifying   : nss-tools-3.28.1-1.3.fc24.x86_64                         87/206 
+  Verifying   : nss-sysinit-3.28.1-1.3.fc24.x86_64                       88/206 
+  Verifying   : openssl-libs-1:1.0.2k-1.fc24.x86_64                      89/206 
+  Verifying   : pcre-8.40-1.fc24.x86_64                                  90/206 
+  Verifying   : python3-3.5.2-3.fc24.x86_64                              91/206 
+  Verifying   : python3-libs-3.5.2-3.fc24.x86_64                         92/206 
+  Verifying   : system-python-libs-3.5.2-3.fc24.x86_64                   93/206 
+  Verifying   : python3-pygpgme-0.3-18.fc24.x86_64                       94/206 
+  Verifying   : rpm-4.13.0-1.fc24.x86_64                                 95/206 
+  Verifying   : rpm-python3-4.13.0-1.fc24.x86_64                         96/206 
+  Verifying   : rpm-libs-4.13.0-1.fc24.x86_64                            97/206 
+  Verifying   : rpm-plugin-selinux-4.13.0-1.fc24.x86_64                  98/206 
+  Verifying   : rpm-plugin-systemd-inhibit-4.13.0-1.fc24.x86_64          99/206 
+  Verifying   : rpm-build-libs-4.13.0-1.fc24.x86_64                     100/206 
+  Verifying   : sqlite-libs-3.13.0-1.fc24.x86_64                        101/206 
+  Verifying   : sssd-client-1.14.2-2.fc24.x86_64                        102/206 
+  Verifying   : systemd-229-18.fc24.x86_64                              103/206 
+  Verifying   : systemd-libs-229-18.fc24.x86_64                         104/206 
+  Verifying   : tzdata-2016j-2.fc24.noarch                              105/206 
+  Verifying   : vim-minimal-2:8.0.314-1.fc24.x86_64                     106/206 
+  Verifying   : audit-libs-2.5.2-1.fc24.x86_64                          107/206 
+  Verifying   : bash-4.3.42-5.fc24.x86_64                               108/206 
+  Verifying   : bash-completion-1:2.3-1.fc24.noarch                     109/206 
+  Verifying   : bzip2-libs-1.0.6-20.fc24.x86_64                         110/206 
+  Verifying   : ca-certificates-2016.2.7-1.0.fc24.noarch                111/206 
+  Verifying   : chkconfig-1.7-2.fc24.x86_64                             112/206 
+  Verifying   : coreutils-8.25-5.fc24.x86_64                            113/206 
+  Verifying   : coreutils-common-8.25-5.fc24.x86_64                     114/206 
+  Verifying   : cracklib-2.9.6-2.fc24.x86_64                            115/206 
+  Verifying   : cracklib-dicts-2.9.6-2.fc24.x86_64                      116/206 
+  Verifying   : cryptsetup-libs-1.7.1-1.fc24.x86_64                     117/206 
+  Verifying   : curl-7.47.1-4.fc24.x86_64                               118/206 
+  Verifying   : dbus-1:1.11.2-1.fc24.x86_64                             119/206 
+  Verifying   : dbus-libs-1:1.11.2-1.fc24.x86_64                        120/206 
+  Verifying   : device-mapper-1.02.122-1.fc24.x86_64                    121/206 
+  Verifying   : device-mapper-libs-1.02.122-1.fc24.x86_64               122/206 
+  Verifying   : dnf-1.1.9-2.fc24.noarch                                 123/206 
+  Verifying   : dnf-conf-1.1.9-2.fc24.noarch                            124/206 
+  Verifying   : dnf-yum-1.1.9-2.fc24.noarch                             125/206 
+  Verifying   : elfutils-default-yama-scope-0.166-2.fc24.noarch         126/206 
+  Verifying   : elfutils-libelf-0.166-2.fc24.x86_64                     127/206 
+  Verifying   : elfutils-libs-0.166-2.fc24.x86_64                       128/206 
+  Verifying   : emacs-filesystem-1:25.0.94-1.fc24.noarch                129/206 
+  Verifying   : expat-2.1.1-1.fc24.x86_64                               130/206 
+  Verifying   : fedora-release-24-1.noarch                              131/206 
+  Verifying   : fedora-repos-24-1.noarch                                132/206 
+  Verifying   : gawk-4.1.3-3.fc24.x86_64                                133/206 
+  Verifying   : glib2-2.48.1-1.fc24.x86_64                              134/206 
+  Verifying   : glibc-2.23.1-7.fc24.x86_64                              135/206 
+  Verifying   : glibc-all-langpacks-2.23.1-7.fc24.x86_64                136/206 
+  Verifying   : glibc-common-2.23.1-7.fc24.x86_64                       137/206 
+  Verifying   : gmp-1:6.1.0-2.fc24.x86_64                               138/206 
+  Verifying   : gnupg2-2.1.11-3.fc24.x86_64                             139/206 
+  Verifying   : gnutls-3.4.12-1.fc24.x86_64                             140/206 
+  Verifying   : gpgme-1.4.3-7.fc24.x86_64                               141/206 
+  Verifying   : hawkey-0.6.3-2.fc24.x86_64                              142/206 
+  Verifying   : info-6.1-2.fc24.x86_64                                  143/206 
+  Verifying   : krb5-libs-1.14.1-6.fc24.x86_64                          144/206 
+  Verifying   : libarchive-3.1.2-17.fc24.x86_64                         145/206 
+  Verifying   : libassuan-2.4.2-2.fc24.x86_64                           146/206 
+  Verifying   : libblkid-2.28-2.fc24.x86_64                             147/206 
+  Verifying   : libcap-ng-0.7.7-4.fc24.x86_64                           148/206 
+  Verifying   : libcurl-7.47.1-4.fc24.x86_64                            149/206 
+  Verifying   : libfdisk-2.28-2.fc24.x86_64                             150/206 
+  Verifying   : libgcc-6.1.1-2.fc24.x86_64                              151/206 
+  Verifying   : libgcrypt-1.6.4-2.fc24.x86_64                           152/206 
+  Verifying   : libgpg-error-1.21-2.fc24.x86_64                         153/206 
+  Verifying   : libidn-1.32-2.fc24.x86_64                               154/206 
+  Verifying   : libksba-1.3.4-1.fc24.x86_64                             155/206 
+  Verifying   : libmetalink-0.1.2-9.fc24.x86_64                         156/206 
+  Verifying   : libmnl-1.0.3-11.fc24.x86_64                             157/206 
+  Verifying   : libmount-2.28-2.fc24.x86_64                             158/206 
+  Verifying   : libpsl-0.13.0-1.fc24.x86_64                             159/206 
+  Verifying   : libreport-filesystem-2.7.1-1.fc24.x86_64                160/206 
+  Verifying   : libselinux-2.5-3.fc24.x86_64                            161/206 
+  Verifying   : libsemanage-2.5-2.fc24.x86_64                           162/206 
+  Verifying   : libsepol-2.5-3.fc24.x86_64                              163/206 
+  Verifying   : libsmartcols-2.28-2.fc24.x86_64                         164/206 
+  Verifying   : libsolv-0.6.20-3.fc24.x86_64                            165/206 
+  Verifying   : libsss_idmap-1.13.4-3.fc24.x86_64                       166/206 
+  Verifying   : libsss_nss_idmap-1.13.4-3.fc24.x86_64                   167/206 
+  Verifying   : libstdc++-6.1.1-2.fc24.x86_64                           168/206 
+  Verifying   : libtasn1-4.8-1.fc24.x86_64                              169/206 
+  Verifying   : libuuid-2.28-2.fc24.x86_64                              170/206 
+  Verifying   : libxkbcommon-0.5.0-4.fc24.x86_64                        171/206 
+  Verifying   : lua-5.3.2-3.fc24.x86_64                                 172/206 
+  Verifying   : lz4-r131-2.fc24.x86_64                                  173/206 
+  Verifying   : ncurses-6.0-5.20160116.fc24.x86_64                      174/206 
+  Verifying   : ncurses-base-6.0-5.20160116.fc24.noarch                 175/206 
+  Verifying   : ncurses-libs-6.0-5.20160116.fc24.x86_64                 176/206 
+  Verifying   : nettle-3.2-2.fc24.x86_64                                177/206 
+  Verifying   : npth-1.2-3.fc24.x86_64                                  178/206 
+  Verifying   : nspr-4.12.0-1.fc24.x86_64                               179/206 
+  Verifying   : nss-3.23.0-1.2.fc24.x86_64                              180/206 
+  Verifying   : nss-softokn-3.23.0-1.0.fc24.x86_64                      181/206 
+  Verifying   : nss-softokn-freebl-3.23.0-1.0.fc24.x86_64               182/206 
+  Verifying   : nss-sysinit-3.23.0-1.2.fc24.x86_64                      183/206 
+  Verifying   : nss-tools-3.23.0-1.2.fc24.x86_64                        184/206 
+  Verifying   : nss-util-3.23.0-1.0.fc24.x86_64                         185/206 
+  Verifying   : openssl-libs-1:1.0.2h-1.fc24.x86_64                     186/206 
+  Verifying   : pcre-8.38-11.fc24.x86_64                                187/206 
+  Verifying   : python3-3.5.1-7.fc24.x86_64                             188/206 
+  Verifying   : python3-dnf-1.1.9-2.fc24.noarch                         189/206 
+  Verifying   : python3-hawkey-0.6.3-2.fc24.x86_64                      190/206 
+  Verifying   : python3-libs-3.5.1-7.fc24.x86_64                        191/206 
+  Verifying   : python3-pygpgme-0.3-15.fc24.x86_64                      192/206 
+  Verifying   : rpm-4.13.0-0.rc1.27.fc24.x86_64                         193/206 
+  Verifying   : rpm-build-libs-4.13.0-0.rc1.27.fc24.x86_64              194/206 
+  Verifying   : rpm-libs-4.13.0-0.rc1.27.fc24.x86_64                    195/206 
+  Verifying   : rpm-plugin-selinux-4.13.0-0.rc1.27.fc24.x86_64          196/206 
+  Verifying   : rpm-plugin-systemd-inhibit-4.13.0-0.rc1.27.fc24.x86_6   197/206 
+  Verifying   : rpm-python3-4.13.0-0.rc1.27.fc24.x86_64                 198/206 
+  Verifying   : sqlite-libs-3.11.0-3.fc24.x86_64                        199/206 
+  Verifying   : sssd-client-1.13.4-3.fc24.x86_64                        200/206 
+  Verifying   : system-python-libs-3.5.1-7.fc24.x86_64                  201/206 
+  Verifying   : systemd-229-8.fc24.x86_64                               202/206 
+  Verifying   : systemd-libs-229-8.fc24.x86_64                          203/206 
+  Verifying   : tzdata-2016d-1.fc24.noarch                              204/206 
+  Verifying   : util-linux-2.28-2.fc24.x86_64                           205/206 
+  Verifying   : vim-minimal-2:7.4.1718-1.fc24.x86_64                    206/206 
+
+Installed:
+  libsigsegv.x86_64 2.10-10.fc24        mpfr.x86_64 3.1.5-1.fc24                
+  nss-pem.x86_64 1.0.2-2.fc24           system-python.x86_64 3.5.2-3.fc24       
+  trousers.x86_64 0.3.13-6.fc24         trousers-lib.x86_64 0.3.13-6.fc24       
+
+Upgraded:
+  audit-libs.x86_64 2.7.1-1.fc24                                                
+  bash.x86_64 4.3.42-7.fc24                                                     
+  bash-completion.noarch 1:2.4-1.fc24                                           
+  bzip2-libs.x86_64 1.0.6-21.fc24                                               
+  ca-certificates.noarch 2017.2.11-1.0.fc24                                     
+  chkconfig.x86_64 1.8-1.fc24                                                   
+  coreutils.x86_64 8.25-7.fc24                                                  
+  coreutils-common.x86_64 8.25-7.fc24                                           
+  cracklib.x86_64 2.9.6-4.fc24                                                  
+  cracklib-dicts.x86_64 2.9.6-4.fc24                                            
+  cryptsetup-libs.x86_64 1.7.2-1.fc24                                           
+  curl.x86_64 7.47.1-10.fc24                                                    
+  dbus.x86_64 1:1.11.8-1.fc24                                                   
+  dbus-libs.x86_64 1:1.11.8-1.fc24                                              
+  device-mapper.x86_64 1.02.122-2.fc24                                          
+  device-mapper-libs.x86_64 1.02.122-2.fc24                                     
+  dnf.noarch 1.1.10-4.fc24                                                      
+  dnf-conf.noarch 1.1.10-4.fc24                                                 
+  dnf-yum.noarch 1.1.10-4.fc24                                                  
+  elfutils-default-yama-scope.noarch 0.168-1.fc24                               
+  elfutils-libelf.x86_64 0.168-1.fc24                                           
+  elfutils-libs.x86_64 0.168-1.fc24                                             
+  emacs-filesystem.noarch 1:25.1-2.fc24                                         
+  expat.x86_64 2.1.1-2.fc24                                                     
+  fedora-release.noarch 24-2                                                    
+  fedora-repos.noarch 24-3                                                      
+  gawk.x86_64 4.1.3-8.fc24                                                      
+  glib2.x86_64 2.48.2-1.fc24                                                    
+  glibc.x86_64 2.23.1-11.fc24                                                   
+  glibc-all-langpacks.x86_64 2.23.1-11.fc24                                     
+  glibc-common.x86_64 2.23.1-11.fc24                                            
+  gmp.x86_64 1:6.1.1-1.fc24                                                     
+  gnupg2.x86_64 2.1.13-2.fc24                                                   
+  gnutls.x86_64 3.4.17-2.fc24                                                   
+  gpgme.x86_64 1.6.0-3.fc24                                                     
+  hawkey.x86_64 0.6.3-6.1.fc24                                                  
+  info.x86_64 6.1-3.fc24                                                        
+  krb5-libs.x86_64 1.14.4-4.fc24                                                
+  libarchive.x86_64 3.2.2-1.fc24                                                
+  libassuan.x86_64 2.4.3-1.fc24                                                 
+  libblkid.x86_64 2.28.2-1.fc24                                                 
+  libcap-ng.x86_64 0.7.8-1.fc24                                                 
+  libcurl.x86_64 7.47.1-10.fc24                                                 
+  libfdisk.x86_64 2.28.2-1.fc24                                                 
+  libgcc.x86_64 6.3.1-1.fc24                                                    
+  libgcrypt.x86_64 1.6.6-1.fc24                                                 
+  libgpg-error.x86_64 1.24-1.fc24                                               
+  libidn.x86_64 1.33-1.fc24                                                     
+  libksba.x86_64 1.3.5-1.fc24                                                   
+  libmetalink.x86_64 0.1.3-1.fc24                                               
+  libmnl.x86_64 1.0.4-1.fc24                                                    
+  libmount.x86_64 2.28.2-1.fc24                                                 
+  libpsl.x86_64 0.13.0-3.fc24                                                   
+  libreport-filesystem.x86_64 2.7.2-1.fc24                                      
+  libselinux.x86_64 2.5-12.fc24                                                 
+  libsemanage.x86_64 2.5-6.fc24                                                 
+  libsepol.x86_64 2.5-10.fc24                                                   
+  libsmartcols.x86_64 2.28.2-1.fc24                                             
+  libsolv.x86_64 0.6.25-1.fc24                                                  
+  libsss_idmap.x86_64 1.14.2-2.fc24                                             
+  libsss_nss_idmap.x86_64 1.14.2-2.fc24                                         
+  libstdc++.x86_64 6.3.1-1.fc24                                                 
+  libtasn1.x86_64 4.9-1.fc24                                                    
+  libuuid.x86_64 2.28.2-1.fc24                                                  
+  libxkbcommon.x86_64 0.6.1-1.fc24                                              
+  lua.x86_64 5.3.3-2.fc24                                                       
+  lz4.x86_64 1.7.5-1.fc24                                                       
+  ncurses.x86_64 6.0-6.20160709.fc24                                            
+  ncurses-base.noarch 6.0-6.20160709.fc24                                       
+  ncurses-libs.x86_64 6.0-6.20160709.fc24                                       
+  nettle.x86_64 3.2-3.fc24                                                      
+  npth.x86_64 1.3-1.fc24                                                        
+  nspr.x86_64 4.13.1-1.fc24                                                     
+  nss.x86_64 3.28.1-1.3.fc24                                                    
+  nss-softokn.x86_64 3.28.1-1.0.fc24                                            
+  nss-softokn-freebl.x86_64 3.28.1-1.0.fc24                                     
+  nss-sysinit.x86_64 3.28.1-1.3.fc24                                            
+  nss-tools.x86_64 3.28.1-1.3.fc24                                              
+  nss-util.x86_64 3.28.1-1.0.fc24                                               
+  openssl-libs.x86_64 1:1.0.2k-1.fc24                                           
+  pcre.x86_64 8.40-1.fc24                                                       
+  python3.x86_64 3.5.2-3.fc24                                                   
+  python3-dnf.noarch 1.1.10-4.fc24                                              
+  python3-hawkey.x86_64 0.6.3-6.1.fc24                                          
+  python3-libs.x86_64 3.5.2-3.fc24                                              
+  python3-pygpgme.x86_64 0.3-18.fc24                                            
+  rpm.x86_64 4.13.0-1.fc24                                                      
+  rpm-build-libs.x86_64 4.13.0-1.fc24                                           
+  rpm-libs.x86_64 4.13.0-1.fc24                                                 
+  rpm-plugin-selinux.x86_64 4.13.0-1.fc24                                       
+  rpm-plugin-systemd-inhibit.x86_64 4.13.0-1.fc24                               
+  rpm-python3.x86_64 4.13.0-1.fc24                                              
+  sqlite-libs.x86_64 3.13.0-1.fc24                                              
+  sssd-client.x86_64 1.14.2-2.fc24                                              
+  system-python-libs.x86_64 3.5.2-3.fc24                                        
+  systemd.x86_64 229-18.fc24                                                    
+  systemd-libs.x86_64 229-18.fc24                                               
+  tzdata.noarch 2016j-2.fc24                                                    
+  util-linux.x86_64 2.28.2-1.fc24                                               
+  vim-minimal.x86_64 2:8.0.314-1.fc24                                           
+
+Complete!
+ ---> 2ec390d36afc
+Removing intermediate container 47113ac88452
+Step 4 : RUN dnf -y install vim
+ ---> Running in 610cdd7d6b87
+Last metadata expiration check: 0:03:57 ago on Mon Feb 13 20:31:40 2017.
+Dependencies resolved.
+================================================================================
+ Package              Arch         Version                  Repository     Size
+================================================================================
+Installing:
+ gpm-libs             x86_64       1.20.7-9.fc24            fedora         36 k
+ perl-Carp            noarch       1.38-2.fc24              fedora         28 k
+ perl-Exporter        noarch       5.72-349.fc24            fedora         33 k
+ perl-libs            x86_64       4:5.22.3-368.fc24        updates       1.4 M
+ vim-common           x86_64       2:8.0.314-1.fc24         updates       6.6 M
+ vim-enhanced         x86_64       2:8.0.314-1.fc24         updates       1.2 M
+ vim-filesystem       x86_64       2:8.0.314-1.fc24         updates        31 k
+ which                x86_64       2.20-13.fc24             fedora         46 k
+
+Transaction Summary
+================================================================================
+Install  8 Packages
+
+Total download size: 9.4 M
+Installed size: 36 M
+Downloading Packages:
+--------------------------------------------------------------------------------
+Total                                           526 kB/s | 9.4 MB     00:18     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Installing  : perl-Carp-1.38-2.fc24.noarch                                1/8 
+  Installing  : perl-Exporter-5.72-349.fc24.noarch                          2/8 
+  Installing  : perl-libs-4:5.22.3-368.fc24.x86_64                          3/8 
+  Installing  : vim-filesystem-2:8.0.314-1.fc24.x86_64                      4/8 
+  Installing  : vim-common-2:8.0.314-1.fc24.x86_64                          5/8 
+  Installing  : which-2.20-13.fc24.x86_64                                   6/8 
+  Installing  : gpm-libs-1.20.7-9.fc24.x86_64                               7/8 
+  Installing  : vim-enhanced-2:8.0.314-1.fc24.x86_64                        8/8 
+  Verifying   : vim-enhanced-2:8.0.314-1.fc24.x86_64                        1/8 
+  Verifying   : gpm-libs-1.20.7-9.fc24.x86_64                               2/8 
+  Verifying   : which-2.20-13.fc24.x86_64                                   3/8 
+  Verifying   : vim-common-2:8.0.314-1.fc24.x86_64                          4/8 
+  Verifying   : perl-libs-4:5.22.3-368.fc24.x86_64                          5/8 
+  Verifying   : perl-Carp-1.38-2.fc24.noarch                                6/8 
+  Verifying   : perl-Exporter-5.72-349.fc24.noarch                          7/8 
+  Verifying   : vim-filesystem-2:8.0.314-1.fc24.x86_64                      8/8 
+
+Installed:
+  gpm-libs.x86_64 1.20.7-9.fc24           perl-Carp.noarch 1.38-2.fc24         
+  perl-Exporter.noarch 5.72-349.fc24      perl-libs.x86_64 4:5.22.3-368.fc24   
+  vim-common.x86_64 2:8.0.314-1.fc24      vim-enhanced.x86_64 2:8.0.314-1.fc24 
+  vim-filesystem.x86_64 2:8.0.314-1.fc24  which.x86_64 2.20-13.fc24            
+
+Complete!
+ ---> 57cc8f3ccf05
+Removing intermediate container 610cdd7d6b87
+Step 5 : ENV LANG en_US.UTF-8
+ ---> Running in bfb528d6325d
+ ---> 8561bfadf188
+Removing intermediate container bfb528d6325d
+Successfully built 8561bfadf188
+[eric@almond locale]$ 
+
+[eric@almond locale]$  docker run --rm -ti my/fedora-locale bash
+root@46621155d270 /]# env
+HOSTNAME=46621155d270
+TERM=xterm
+LS_COLORS=rs=0:di=01;3...
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+PWD=/
+LANG=en_US.UTF-8
+SHLVL=1
+HOME=/root
+_=/usr/bin/env
+[root@46621155d270 /]# echo π
+π
+[root@46621155d270 /]# exit
+exit
+[eric@almond locale]$ docker ps -a
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+
+/ 7	. 
+
+/ HERHALING 20180203
+
+[eric@almond locale]$ cat Dockerfile 
+from fedora
+run ["echo","ρ"]
+run ["dnf","-y","upgrade","--refresh","--setopt=deltarpm=false"]
+run ["dnf","-y","install","vim"]
+run ["dnf","-y","install","procps-ng"]
+env LANG en_US.UTF-8
+
+/ de env LANG verschijnt in de container als je $ env doet	,
+/ de package vim verschijnt in de container als installed package	,
+
+[eric@almond locale]$ docker build --rm -t my/fedora-locale .
+Sending build context to Docker daemon 2.048 kB
+Step 1 : FROM fedora
+ ---> f9873d530588
+Step 2 : RUN echo ρ
+ ---> Using cache
+ ---> f09013d8ab26
+Step 3 : RUN dnf -y upgrade --refresh --setopt=deltarpm=false
+ ---> Using cache
+ ---> e27c14176eaf
+Step 4 : RUN dnf -y install vim
+ ---> Using cache
+ ---> 22d1b9ef100e
+Step 5 : RUN dnf -y install procps-ng
+...
+Complete!
+ ---> 8f8af7adf0f0
+Removing intermediate container b11759b72a70
+Step 6 : ENV LANG en_US.UTF-8
+ ---> Running in 85775c389409
+ ---> 894aed50bf6f
+Removing intermediate container 85775c389409
+Successfully built 894aed50bf6f
+/ RUN en ENV worden exec tijdens build	,
+/ als 1 keer gedaan	, dan niet meer	,
+/ dus als je dnf -y upgrade	exec, moet je bijv de regel er boven aanpassen, we hebben echo "π" veranderd in echo "ρ"  
+
+[eric@almond locale]$ docker run --rm -ti my/fedora-locale bash
+root@117c17a3cdb0 /]# ps ajx | grep systemd
+/ is er niet	, daarom zagen we tijdens dnf upgrade bij dnf: failed to connect to bus	,
+
+/ 7	. 
+
+/ we zien dat als we 	,
+eric@almond locale]$ docker run  -d my/fedora-locale bash 
+cc1edd6a914c9d322d9fb0aa4c8b572d9ec19f5860b4575a83fb05549a32ab57
+$ docker ps -a
+/ de container is Status: Exited	, (we hoeven geen $ docker stop te doen)
+/ met -d kun je geen --rm geven	, dus moeten we zelf 	,
+$ docker rm <naam>
+
+/ google,
+docker daemon stop
+/ lees	,
+https://stackoverflow.com/questions/30209776/docker-container-will-automatically-stop-after-docker-run-d
+
+/ 1313	.
+
+/ Doe docker -it , en dan in de container: ctrl+pq	: is een alt. voor docker -d	, maar hij blijft dus draaien	,
+/ hij blijft WH draaien, omdat bash in de foregroud draait	,
+[eric@almond locale]$ docker run  -ti my/fedora-locale bash 
+[root@ffa542aeb703 /]# ctrl+pq [eric@almond locale]$ docker ps -a
+CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS              PORTS                               NAMES
+ffa542aeb703        my/fedora-locale      "bash"                   20 seconds ago      Up 19 seconds                                           sad_hugle
+[eric@almond locale]$ docker stop sad_hugle
+sad_hugle
+[eric@almond locale]$ docker rm sad_hugle
+sad_hugle
+
+/ 1313	. 
+
+eric@almond locale]$ docker run -d  my/fedora-locale tail -f /dev/null
+[eric@almond locale]$ docker ps -a
+CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS              PORTS                               NAMES
+069347b5ac16        my/fedora-locale      "tail -f /dev/null"      10 seconds ago      Up 9 seconds                                            lonely_wilson
+[eric@almond locale]$ docker exec -ti lonely_wilson bash
+[root@069347b5ac16 /]# top 
+TERM environment variable not set.
+/ TODO
+[root@069347b5ac16 /]# ps ajx
+ PPID   PID  PGID   SID TTY      TPGID STAT   UID   TIME COMMAND
+    0     1     1     1 ?           -1 Ss       0   0:00 tail -f /dev/null
+...
+
+$ vi Dockerfile
+...
+env TERM xterm-256color
+...
+[eric@almond locale]$ docker build --rm -t my/fedora-locale .
+/ Nu werkt top in de container,	
+
+/ tail -f betekent --follow	,
+/ Dus als je in een container bent, en je doet $ docker exec -t -i , dan kun je in de de ene bash $ tail -f 1.txt doen	, je ziet de contents	, en in de andere bash kun je $ cat >> 1.txt doen, en regels add, je ziet ze dan in $ tail -f	,
+
+/ 13	. 
+
+/ de makkelijkste manier is:
+
+[eric@almond locale]$ docker run -t -d   my/fedora-locale bash
+[eric@almond locale]$ docker ps -a
+CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS              PORTS                               NAMES
+6a50a801e1a3        my/fedora-locale      "bash"                   5 seconds ago       Up 4 seconds                                            dreamy_bardeen
+/ Hij blijft Up	, 
+
+/ 13	. 
+
+[eric@almond locale]$ docker run -t -i  --name fl   my/fedora-locale bash
+[root@6f6c2c4457df /]# exit
+exit
+/ de Status: Exited	, dus hoeven we alleen $ docker rm fl	,
+
+[eric@almond locale]$ docker run -t -i  --rm --name fl   my/fedora-locale bash
+[root@a2fc475ac00f /]# exit
+/ de container is weg	, we hoeven niets te doen	,
+
+/ 13	. 
+
+/ 1313	. 
+
+/ zonder -t -i 
+
+[eric@almond locale]$ docker run --name fl my/fedora-locale bash
+/ is meteen Exited	,
+
+/ 1313	. 
+
+/ we lazen in de stackoverflow dat -i of -t de container in foreground mode brengt, dus kunnen we attach:
+
+[eric@almond locale]$ docker run -t --name fl my/fedora-locale bash
+[root@df3ce8aaac5e /]# 
+/ maar we kunnen niets intypen, 
+/ maar wel attach	,
+[eric@almond locale]$ docker exec  -t -i fl bash
+[root@df3ce8aaac5e /]# exit
+/ fl is nog Up	,
+
+[eric@almond locale]$ docker run -i --name fl my/fedora-locale bash
+/ geen prompt	,
+[eric@almond locale]$ docker exec  -t -i fl bash
+[root@c775608e2776 /]# exit
+/ fl is Up	,
+ 
+
+/ Einde HERHALING 20180203
+
+/ 7	 .
+
+[eric@almond dockerfile]$  pwd
+/home/eric/Devel/Docker2/fedora/dockerfile
+
+$ vi Dockerfile
+
+from my/fedora-locale
+run dnf -y upgrade --refresh --setopt=deltarpm=false
+run echo "π" >/pi.txt
+run echo "Π" >/cap_pi.txt
+run useradd postgres
+run echo "export LANG=en_US.utf8" >>/home/postgres/.bash_profile
+run cat /home/postgres/.bash_profile
+run cat /1.txt
+#entrypoint ["/script.sh"]
+#cmd ["foo"]
+cmd echo "ε" >/eps.txt
+
+/ HERHALING 20180203
+
+/ we hebben in locale met dnf -y upgrade fedora upgrade, door de regel voor dnf -y upgrade te veranderen	,
+/ als we hier docker build doen, dan is dus de regel from my/fedora-locale veranderd, en begint hij opnieuw vanaf regel 2 in deze Dockerfile	,
+
+/ Einde HERHALING 20180203
+
+
+[eric@almond dockerfile]$ docker build  -t my/fedora-dockerfile .
+Sending build context to Docker daemon  7.68 kB
+Step 1 : FROM my/fedora-locale
+ ---> 8561bfadf188
+Step 2 : RUN dnf -y upgrade --refresh --setopt=deltarpm=false
+ ---> Running in 7b99a4f434c7
+Dependencies resolved.
+Nothing to do.
+Complete!
+ ---> e6e2471b4e5e
+Removing intermediate container 7b99a4f434c7
+Step 3 : RUN echo "π" >/pi.txt
+ ---> Running in f4603a35f653
+ ---> fb0068b90721
+Removing intermediate container f4603a35f653
+Step 4 : RUN echo "Π" >/cap_pi.txt
+ ---> Running in 6f72aca5a41e
+ ---> 10acf413edb4
+Removing intermediate container 6f72aca5a41e
+Step 5 : RUN useradd postgres
+ ---> Running in fe83bafa58c1
+ ---> 35b8c7bae5d5
+Removing intermediate container fe83bafa58c1
+Step 6 : RUN echo "export LANG=en_US.utf8" >>/home/postgres/.bash_profile
+ ---> Running in a59aac82bbe0
+ ---> 466eb3557951
+Removing intermediate container a59aac82bbe0
+Step 7 : RUN cat /home/postgres/.bash_profile
+ ---> Running in 64b593b74a2a
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
+
+# User specific environment and startup programs
+
+PATH=$PATH:$HOME/.local/bin:$HOME/bin
+
+export PATH
+export LANG=en_US.utf8
+ ---> bb7bfe8c303e
+Removing intermediate container 64b593b74a2a
+Step 8 : RUN cat /pi.txt
+ ---> Running in d790e9e57af3
+π
+ ---> 236aabf4496c
+Removing intermediate container d790e9e57af3
+Step 9 : CMD echo "ε" >/eps.txt
+ ---> Running in 6a9a45000fcd
+ ---> 4abd99f72537
+Removing intermediate container 6a9a45000fcd
+Successfully built 4abd99f72537
+[eric@almond dockerfile]$ docker images 
+REPOSITORY                                       TAG                 IMAGE ID            CREATED             SIZE
+my/fedora-dockerfile                             latest              4abd99f72537        50 seconds ago      800.6 MB
+/klopt	,
+
+/ Lees	,
+https://docs.docker.com/engine/getstarted/step_four/
+/ voor de command line docker adds a layer, 4abd99f72537	,
+
+[eric@almond dockerfile]$  docker run --rm -ti my/fedora-dockerfile bash
+[root@10eb97ebf1ed /]# ls
+bin   cap_pi.txt  etc   lib    lost+found  mnt  pi.txt  root  sbin  sys  usr
+boot  dev         home  lib64  media       opt  proc    run   srv   tmp  var
+root@10eb97ebf1ed /]# cat pi.txt 
+π
+[root@10eb97ebf1ed /]# cat cap_pi.txt 
+Π
+[root@10eb97ebf1ed /]# cat /home/postgres/.bash_profile 
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
+
+# User specific environment and startup programs
+
+PATH=$PATH:$HOME/.local/bin:$HOME/bin
+
+export PATH
+export LANG=en_US.utf8
+
+/ omdat de container meteen weer exits	, zien we /eps.txt niet	,
+/ we veranderen de cmd	,
+$ vi Dockerfile
+...
+cmd cat pi.txt
+
+/ we hebben later dit command weer gegeven,	 en ging helemaal opnieuw build	, 
+/ TODO
+[eric@almond dockerfile]$ docker build  -t my/fedora-dockerfile .
+Sending build context to Docker daemon  7.68 kB
+Step 1 : FROM my/fedora-locale
+ ---> bfa71867dcd4
+Step 2 : RUN dnf -y upgrade --refresh --setopt=deltarpm=false
+ ---> Running in ec813963365d
+Dependencies resolved.
+Nothing to do.
+Complete!
+ ---> 6e46a64cbfe6
+Removing intermediate container ec813963365d
+Step 3 : RUN dnf -y install procps-ng
+ ---> Running in 030fc2e619a1
+Last metadata expiration check: 0:00:05 ago on Sun Jan 21 16:14:34 2018.
+Dependencies resolved.
+================================================================================
+ Package           Arch           Version                  Repository      Size
+================================================================================
+Installing:
+ procps-ng         x86_64         3.3.10-11.fc24           fedora         389 k
+
+Transaction Summary
+================================================================================
+Install  1 Package
+
+Total download size: 389 k
+Installed size: 873 k
+Downloading Packages:
+--------------------------------------------------------------------------------
+Total                                           238 kB/s | 389 kB     00:01     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Installing  : procps-ng-3.3.10-11.fc24.x86_64                             1/1 
+  Verifying   : procps-ng-3.3.10-11.fc24.x86_64                             1/1 
+
+Installed:
+  procps-ng.x86_64 3.3.10-11.fc24                                               
+
+Complete!
+ ---> 2eb3ff265da3
+Removing intermediate container 030fc2e619a1
+Step 4 : RUN echo "π" >/pi.txt
+ ---> Running in 89bf3777289d
+ ---> 6449ab38069b
+Removing intermediate container 89bf3777289d
+Step 5 : RUN echo "Π" >/cap_pi.txt
+ ---> Running in 43a03adb19d9
+ ---> dab210fe32a5
+Removing intermediate container 43a03adb19d9
+Step 6 : RUN useradd postgres
+ ---> Running in 786bc0d71506
+ ---> 49b4b5ca4653
+Removing intermediate container 786bc0d71506
+Step 7 : RUN echo "export LANG=en_US.utf8" >>/home/postgres/.bash_profile
+ ---> Running in bf02df8872e0
+ ---> 0864a3dea1e0
+Removing intermediate container bf02df8872e0
+Step 8 : RUN cat /home/postgres/.bash_profile
+ ---> Running in 69375ff29510
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
+
+# User specific environment and startup programs
+
+PATH=$PATH:$HOME/.local/bin:$HOME/bin
+
+export PATH
+export LANG=en_US.utf8
+ ---> a5d99f4d788f
+Removing intermediate container 69375ff29510
+Step 9 : RUN cat /pi.txt
+ ---> Running in 11d8f835fef5
+π
+ ---> 512cdd2dc4bc
+Removing intermediate container 11d8f835fef5
+Step 10 : CMD sleep 3
+ ---> Running in 2f227144bfa5
+ ---> 931a2dca3847
+Removing intermediate container 2f227144bfa5
+Successfully built 931a2dca3847
+
+[eric@almond dockerfile]$  docker run --rm -ti my/fedora-dockerfile
+π
+
+/ 7	. 
+
+/ In locale/Dockerfile is er geen cmd, in dockerfile/Dockerfile wel	, 
+/ Daarom moeten we bij locale/ een commando geven op de command line,	 
+
+[eric@almond locale]$ docker run --rm -it my/fedora-locale bash
+
+/ maar wel kunnen we ,
+[eric@almond locale]$ docker run --rm -it my/fedora-dockerfile
+
+/ 7	. 
+
+/ op de host ,
+[eric@almond locale]$ which netstat | xargs dnf provides
+net-tools-2.0-0.35.20150915git.fc23.x86_64 : Basic networking tools
+
+[eric@almond locale]$ which ifconfig | xargs dnf provides
+net-tools-2.0-0.35.20150915git.fc23.x86_64 : Basic networking tools
+
+[eric@almond locale]$ which xargs | xargs dnf provides
+findutils-1:4.5.16-1.fc23.x86_64 : The GNU versions of find utilities (find and xargs)
+
+[eric@almond locale]$ which ping | xargs dnf provides
+iputils-20140519-7.fc23.x86_64 : Network monitoring tools including ping
+
+/ HIER HIER HIER 21-01-2018
+/ in de container	,
+[eric@almond sshd]$  docker run --rm -ti my/fedora-locale bash
+[root@3f236b3ac9e1 /]# dnf -y install net-tools									/ ifconfig
+[root@3f236b3ac9e1 /]# dnf -y install iputils										/ ping	
+[root@3f236b3ac9e1 /]# dnf -y install findutils
+
+[root@3f236b3ac9e1 /]# which getcap | xargs dnf provides
+libcap-2.24-9.fc24.x86_64 : Library for getting and setting POSIX.1e capabilities
+/ al	,
+
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.2  netmask 255.255.0.0  broadcast 0.0.0.0
+        inet6 fe80::42:acff:fe11:2  prefixlen 64  scopeid 0x20<link>
+        ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)
+        RX packets 422  bytes 574248 (560.7 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 384  bytes 28867 (28.1 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1  (Local Loopback)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+
+[root@3f236b3ac9e1 /]# ping 172.17.0.2
+bash: /usr/bin/ping: Operation not permitted
+
+[root@3f236b3ac9e1 /]# which ping | xargs getcap 
+/usr/bin/ping = cap_net_admin,cap_net_raw+ep
+[root@3f236b3ac9e1 /]# which ping | xargs setcap cap_net_admin,cap_net_raw+p 	/ zonder +e	,
+[root@3f236b3ac9e1 /]# ping 172.17.0.2
+PING 172.17.0.2 (172.17.0.2) 56(84) bytes of data.
+64 bytes from 172.17.0.2: icmp_seq=1 ttl=64 time=0.062 ms
+...
+
+
+
+/ 7	 .
+
+/ Lees	, 
+https://access.redhat.com/documentation/en/red-hat-enterprise-linux-atomic-host/7/single/getting-started-with-containers/
+http://devops-assess.rhcloud.com/
+https://www.meetup.com/JBoss-User-Group-Worldwide/events/228454602/
+http://goinbigdata.com/docker-run-vs-cmd-vs-entrypoint/
+
+/ 7	. 
+
+Prefer ENTRYPOINT to CMD when building executable Docker image and you need a command always to be executed. Additionally use CMD if you need to provide extra default arguments that could be overwritten from command line when docker container runs.
+
+Choose CMD if you need to provide a default command and/or arguments that can be overwritten from command line when docker container runs.
+
+/ 7	.  
+
+[eric@almond misc]$ pwd
+/home/eric/Devel/Docker2/fedora/misc
+
+$ vi Dockerfile
+from my/fedora-locale 
+run dnf -y install less procps-ng hostname iputils net-tools findutils
+run setcap cap_net_raw,cap_net_admin+p  /usr/bin/ping
+
+#cmd ["ping","localhost"]			
+#cmd ping localhost
+#cmd ["read"]
+cmd read
+
+[eric@almond misc]$ docker build --rm -t my/fedora-misc .
+[eric@almond misc]$ docker run --rm -ti --name misc my/fedora-misc
+
+/ De ping stoppen we met ctrl+c	, de read met een woord, bijv foo(Enter) of ctrl+d
+/ in alle 4 de gevallen werkt --rm 	, de container is verdwenen	,
+/ ctrl+c werkt niet op read	,
+
+/ we zien dat met  
+cmd ping localhost
+cmd ["ping","localhost"]
+/ de containers stop met 
+$ docker stop misc
+/ TODO 
+
+/ we kunnen ping schrijven in cmd lines	, omdat	,
+[eric@almond misc]$ docker run --rm -ti --name misc my/fedora-misc bash
+[root@e4044304ab4d /]# whoami
+root
+[root@e4044304ab4d /]# echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+
+/ 7	. 
+
+/ Lees	, 
+https://docs.docker.com/v1.11/engine/reference/builder/#entrypoint
+
+/ we kunnen arg geven aan entrypoint 	, (NIET aan cmd)	,
+
+$ vi Dockerfile
+from my/fedora-locale
+run dnf -y install less procps-ng hostname iputils net-tools findutils
+run setcap cap_net_raw,cap_net_admin+p  /usr/bin/ping
+
+#cmd ["ping","localhost"]
+#cmd ping localhost
+entrypoint ["ping"]      # geef docker ... <image> -d localhost 
+
+#cmd ["read"]
+#cmd read
+
+[eric@almond misc]$ docker build --rm -t my/fedora-misc .
+[eric@almond misc]$ docker run --rm -ti --name misc my/fedora-misc  -d localhost
+64 bytes from localhost (::1): icmp_seq=1 ttl=64 time=0.053 ms
+...
+ctrl+c
+
+/ 7
+
+/ we zien dat als we exec form use	, bash met pid 1 wordt vervangen door het cmd	, 
+
+$ vi Dockerfile
+from my/fedora-locale 
+run dnf -y install less procps-ng hostname iputils net-tools findutils
+run setcap cap_net_raw,cap_net_admin+p  /usr/bin/ping
+
+entrypoint ["top","-b"]
+cmd ["-c"]
+
+
+[eric@almond misc]$ docker build --rm -t my/fedora-misc .
+[eric@almond misc]$ docker run --rm -ti --name misc my/fedora-misc -H		/ overwrites cmd ["-c"]
+...
+[eric@almond locale]$ docker exec -it misc bash
+[root@85c96b4bbeca /]# ps ajax
+ PPID   PID  PGID   SID TTY      TPGID STAT   UID   TIME COMMAND
+    0     1     1     1 ?            1 Ss+      0   0:00 top -b -H				<-
+    0     9     9     9 ?           28 Ss       0   0:00 bash
+    9    28    28     9 ?           28 R+       0   0:00 ps ajax
+
+[eric@almond misc]$ docker run --rm -ti --name misc my/fedora-misc
+...
+[root@28d3a0aece5d /]# ps ajx
+ PPID   PID  PGID   SID TTY      TPGID STAT   UID   TIME COMMAND
+    0     1     1     1 ?            1 Ss+      0   0:00 top -b -c
+    0     8     8     8 ?           27 Ss       0   0:00 bash
+    8    27    27     8 ?           27 R+       0   0:00 ps ajx
+
+/ HIER HIER HIER
+
+/ 7	. 
+
+/ op de laptop hetbben we httpd start met systemctl	, maar we zien	,
+eric@almond locale]$ ps ajx | grep httpd
+    1  1233  1233  1233 ?           -1 Ss       0   0:36 /usr/sbin/httpd -DFOREGROUND
+ 1233  2268  1233  1233 ?           -1 Sl      48   0:00 /usr/sbin/httpd -DFOREGROUND
+...
+
+/ 7	. 
+
+/ Lees	,
+
+/ 7	 
+
+/ Lees in v1.10
+https://docs.docker.com/v1.10/engine/userguide/containers/usingdocker/
+
+/ lees	,
+https://hub.docker.com/r/training/webapp/
+/ we zien rechts Source Repository docker-training/webapp
+https://github.com/docker-training/webapp
+
+$ vi Dockerfile
+FROM ubuntu:14.04
+MAINTAINER Docker Education Team <education@docker.com>
+RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -q python-all python-pip 
+ADD ./webapp/requirements.txt /tmp/requirements.txt
+RUN pip install -qr /tmp/requirements.txt
+ADD ./webapp /opt/webapp/
+WORKDIR /opt/webapp
+EXPOSE 5000
+CMD ["python", "app.py"]
+
+$ vi webapp/app.py
+import os
+
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    provider = str(os.environ.get('PROVIDER', 'world'))
+    return 'Hello '+provider+'!'
+
+if __name__ == '__main__':
+    # Bind to PORT if defined, otherwise default to 5000.
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
+
+$ vi webapp/requirements.txt
+Flask
+Jinja2
+Werkzeug
+distribute
+wsgiref
+
+[eric@almond misc]$  docker run -P  --rm --name web training/webapp python app.py
+ * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+^C
+/ OK
+
+[eric@almond misc]$  docker run -P  --rm --name web training/webapp python app.py
+ * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+
+[eric@almond locale]$ docker exec -it web bash
+root@c9306bcd69f3:/opt/webapp# ps ajx																		/ inderdaad in WORKDIR
+ PPID   PID  PGID   SID TTY      TPGID STAT   UID   TIME COMMAND
+    0     1     1     1 ?           -1 Ss       0   0:00 python app.py
+    0    10    10    10 ?           27 Ss       0   0:00 bash
+   10    27    27    10 ?           27 R+       0   0:00 ps ajx
+root@c9306bcd69f3:/opt/webapp# ls
+Procfile  app.py  requirements.txt  tests.py
+
+root@c9306bcd69f3:/opt/webapp# ls /tmp
+requirements.txt
+
+/ -P map port 5000 in dit geval tot een port op de host	,
+/ -P is -p 5000 	, omdat de app onder port 5000 
+
+[eric@almond locale]$ docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS                     NAMES
+c9306bcd69f3        training/webapp     "python app.py"     3 hours ago         Up 3 hours          0.0.0.0:32770->5000/tcp   web
+
+[eric@almond locale]$ curl http://localhost:32770
+Hello world!
+
+/ als we -p 5001	, 
+[eric@almond misc]$  docker run -p 5001  --rm --name web training/webapp python app.py
+ * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+/ dan	, 
+[eric@almond locale]$ curl http://localhost:32772
+curl: (56) Recv failure: Connection reset by peer
+
+eric@almond misc]$  docker run -p 1234:5000  --rm --name web training/webapp python app.py
+ * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+/ OK
+[eric@almond locale]$ curl http://localhost:1234
+Hello world!
+
+/ 7	. 
+
+$ vi Dockerfile
+[eric@almond misc]$ cat Dockerfile 
+from my/fedora-locale 
+run dnf -y install less procps-ng hostname iputils net-tools findutils
+run setcap cap_net_raw,cap_net_admin+p  /usr/bin/ping
+run dnf -y install httpd
+
+expose 80 443
+entrypoint ["httpd","-D","FOREGROUND"]
+
+[eric@almond misc]$  docker run -p 80  --rm --name web my/fedora-misc
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.2. Set the 'ServerName' directive globally to suppress this message
+
+/ daarom -h	, 
+[eric@almond misc]$  docker run -p 80  --rm --name web -h peanut.nuts.org my/fedora-misc
+[eric@almond locale]$ curl http://localhost:32775
+/ OK
+/ de hostname heeft niets te maken met de url	, 
+/ TODO
+
+[eric@almond locale]$ docker exec -it web bash
+[root@peanut /]# hostname
+peanut.nuts.org
+/ we kunnen NIET met hostname de hostname set	,
+/ TODO
+
+/ ook	,
+[eric@almond locale]$ docker port web
+80/tcp -> 0.0.0.0:32775
+
+/ 7	. 
+
+[eric@almond locale]$ docker network ls
+NETWORK ID          NAME                DRIVER
+dcebc75e2994        bridge              bridge              
+503e0a64ad69        none                null                
+9d1fb23f1bcb        host                host     
+
+[eric@almond misc]$  docker run -p 80  --rm --name web my/fedora-misc
+
+[eric@almond locale]$ curl http://localhost:32779
+/ OK
+
+eric@almond locale]$ docker network inspect bridge
+[
+    {
+        "Name": "bridge",
+        "Id": "dcebc75e2994703cd5b1fd4c4eabcdb0a6544c6b430312395eb825b34938b093",
+        "Scope": "local",
+        "Driver": "bridge",
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.17.0.0/16"
+                }
+            ]
+        },
+        "Containers": {
+            "f017538feffef17c35a8ed3d4ea1ea4dee91e1be97a4f6589d9d90e952736c61": {
+                "Name": "web",
+                "EndpointID": "48a7d20baf3860e4db30c257ad3c9ba33f53bebb1c669aafa8df955a499f4632",
+                "MacAddress": "02:42:ac:11:00:02",
+                "IPv4Address": "172.17.0.2/16",
+                "IPv6Address": ""
+            }
+        },
+        "Options": {
+            "com.docker.network.bridge.default_bridge": "true",
+            "com.docker.network.bridge.enable_icc": "true",
+            "com.docker.network.bridge.enable_ip_masquerade": "true",
+            "com.docker.network.bridge.host_binding_ipv4": "0.0.0.0",
+            "com.docker.network.bridge.name": "docker0",
+            "com.docker.network.driver.mtu": "1500"
+        }
+    }
+]
+[eric@almond locale]$ docker network disconnect bridge web
+[eric@almond locale]$ docker network inspect bridge
+        "Containers": {},
+...
+[eric@almond locale]$ curl http://localhost:32779
+curl: (7) Failed to connect to localhost port 32777: Connection refused
+[eric@almond locale]$ docker network connect bridge web
+eric@almond locale]$ curl http://localhost:32779
+curl: (7) Failed to connect to localhost port 32779: Connection refused
+/ we kunnen NIET meer herstellen	,
+
+/ 13	. 
+
+[eric@almond locale]$ docker network rm my-bridge my-bridge-2
+[eric@almond locale]$ docker network create -d bridge  my-bridge
+/ of	,
+[eric@almond locale]$ docker network create my-bridge									/ bridge is default type	,
+3f515af6483335b4d99c1cf62a1450f8cbdd0aa9988bac0f934093891c60d327
+
+[eric@almond locale]$ docker network inspect my-bridge 
+[
+    {
+        "Name": "my-bridge",
+        "Id": "c360bb8026c9b7a50a6517c1a8bb17ba60ea917ad5e1ca123361ba9a4054dfa8",
+        "Scope": "local",
+        "Driver": "bridge",
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.18.0.0/16",
+                    "Gateway": "172.18.0.1/16"
+                }
+            ]
+        },
+        "Containers": {},
+        "Options": {}
+    }
+]
+
+/ Geef --net	,
+[eric@almond misc]$  docker run -p 80  --rm --name web -h peanut.nuts.org --net=my-bridge my/fedora-misc
+/ OK
+[eric@almond locale]$ docker network inspect my-bridge 
+[eric@almond locale]$ docker network inspect my-bridge 
+[
+    {
+        "Name": "my-bridge",
+        "Id": "c360bb8026c9b7a50a6517c1a8bb17ba60ea917ad5e1ca123361ba9a4054dfa8",
+        "Scope": "local",
+        "Driver": "bridge",
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.18.0.0/16",
+                    "Gateway": "172.18.0.1/16"
+                }
+            ]
+        },
+        "Containers": {
+            "c8cecb0c93207a5a35ef6cf581835161d78bbf07a7890232a3ece0593f90de21": {
+                "Name": "web",
+                "EndpointID": "62aa4f1f8469696d5b6a1a1376e2d6988149085744ef22bcb1b1ebb5389e8585",
+                "MacAddress": "02:42:ac:12:00:02",
+                "IPv4Address": "172.18.0.2/16",
+                "IPv6Address": ""
+            }
+        },
+        "Options": {}
+    }
+]
+
+[eric@almond fedora]$ cp -a misc/ cli
+[eric@almond cli]$ cat Dockerfile 
+from my/fedora-locale 
+run dnf -y install less procps-ng hostname iputils net-tools findutils
+run setcap cap_net_raw,cap_net_admin+p  /usr/bin/ping
+run dnf -y install httpd
+
+entrypoint ["bash"]
+
+[eric@almond cli]$ docker build --rm -t my/fedora-cli .
+[eric@almond cli]$ docker run --rm --name cli -ti my/fedora-cli
+[root@28965f1b4da6 /]# 
+
+[eric@almond locale]$ docker inspect web | grep IPAddress
+            "SecondaryIPAddresses": null,
+            "IPAddress": "",
+                    "IPAddress": "172.18.0.2",
+[eric@almond locale]$ docker inspect cli | grep IPAddress
+            "SecondaryIPAddresses": null,
+            "IPAddress": "172.17.0.3",
+                    "IPAddress": "172.17.0.3",
+
+/ Zitten in verschillende networks	,
+[root@28965f1b4da6 /]# ping 172.18.0.2
+/ NIETS
+^C[eric@almond cli]$ docker run --rm --name cli -ti --net=my-bridge my/fedora-cli
+[root@a44b685eaac0 /]# ping 172.18.0.2
+PING 172.18.0.2 (172.18.0.2) 56(84) bytes of data.
+64 bytes from 172.18.0.2: icmp_seq=1 ttl=64 time=0.233 ms
+64 bytes from 172.18.0.2: icmp_seq=2 ttl=64 time=0.145 ms
+...
+
+/ 	7	. 
+
+/ data in containers	,
+
+misc$ vi Dockerfile
+from my/fedora-locale 
+run dnf -y install less procps-ng hostname iputils net-tools findutils
+run setcap cap_net_raw,cap_net_admin+p  /usr/bin/ping
+run dnf -y install httpd
+
+expose 80 443
+entrypoint ["httpd","-D","FOREGROUND"]
+
+/ 13	. 
+
+/ -v  /logs/webapp geeft een volume op de host in /var/lib/docker/volumes	, 
+/ je kunt de name laten gen, of zelf geven	,  
+
+/ 1313	.
+
+/ gen	,
+
+
+[eric@almond misc]$  docker run -p 80  --rm --name web -h peanut.nuts.org -v /logs/webapp my/fedora-misc
+
+[eric@almond cli]$  docker exec -ti web bash
+[root@peanut /]# ps ajx
+ PPID   PID  PGID   SID TTY      TPGID STAT   UID   TIME COMMAND
+    0     1     1     1 ?           -1 Ss       0   0:00 httpd -D FOREGROUND
+    1     9     1     1 ?           -1 Sl      48   0:05 httpd -D FOREGROUND
+    1    10     1     1 ?           -1 Sl      48   0:05 httpd -D FOREGROUND
+    1    11     1     1 ?           -1 Sl      48   0:04 httpd -D FOREGROUND
+    1    12     1     1 ?           -1 Sl      48   0:05 httpd -D FOREGROUND
+    1    16     1     1 ?           -1 Sl      48   0:05 httpd -D FOREGROUND
+    0    40    40    40 ?           58 Ss       0   0:00 bash
+   40    58    58    40 ?           58 R+       0   0:00 ps ajx
+[root@peanut /]# ls
+... webapp
+[root@peanut /]# touch webapp/1.txt
+[root@peanut /]# touch webapp/2.txt
+
+
+$ docker inspect web
+        "Mounts": [
+            {
+                "Name": "2ba450ae5a023555fdd3ef9a46543e1187b5c1de960c69693eb778f36f287c06",
+                "Source": "/var/lib/docker/volumes/2ba450ae5a023555fdd3ef9a46543e1187b5c1de960c69693eb778f36f287c06/_data",
+                "Destination": "/webapp",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+            }
+        ],
+
+
+[eric@almond cli]$ sudo ls /var/lib/docker
+containers  devicemapper  graph  image	linkgraph.db  network  repositories-devicemapper  tmp  trust  volumes
+
+[eric@almond cli]$ sudo ls /var/lib/docker/volumes/dc92883777575f178142e010f422be4799e14065474eb475f6dda19102026778/_data
+1.txt  2.txt 
+
+/ overigens, een container 	,
+[eric@almond cli]$ sudo ls /var/lib/docker/containers/403b3069fa10521fa5b743fb65f8ba054adab9471e0a0a3250c001219f256226
+403b3069fa10521fa5b743fb65f8ba054adab9471e0a0a3250c001219f256226-json.log  hostname	resolv.conf.hash
+config.v2.json								   hosts	shm
+hostconfig.json								   resolv.conf
+
+/ 1313	. 
+
+/ maar we kunnen het volume op de host zelf een naam geven	,
+
+[eric@almond misc]$  docker run -p 80  --rm --name web -h peanut.nuts.org -v foo:/logs/webapp my/fedora-misc
+/ OK
+[eric@almond cli]$ docker inspect web
+        "Mounts": [
+            {
+                "Name": "foo",
+                "Source": "/var/lib/docker/volumes/foo/_data",
+                "Destination": "/webapp",
+                "Driver": "local",
+                "Mode": "z",
+                "RW": true,
+                "Propagation": "rprivate"
+            }
+        ],
+
+[eric@almond cli]$  docker exec -ti web bash
+[root@peanut /]# touch /webapp/1.txt
+
+[eric@almond cli]$ sudo ls /var/lib/docker/volumes/foo/_data/
+1.txt
+
+/ 13	. 
+/ we kunnen ook zelf de dir op de host bepalen	,
+
+
+/ 1313	. 
+
+/ we maken zelf de dir	, maar dat hoeft niet	, de files er in zijn toch van root	,
+/ want	, 
+[eric@almond Logs]$ which docker | xargs ls -l
+-rwxr-xr-x. 1 root root 33486864 Mar 10  2016 /usr/bin/docker
+
+[eric@almond misc]$ mkdir volume			
+[eric@almond misc]$  docker run -p 80  --rm --name web -h peanut.nuts.org -v $(pwd)/volume:/webapp my/fedora-misc
+/ OK
+[eric@almond cli]$  docker exec -ti web bash
+[root@peanut /]# touch /webapp/1.txt
+[root@peanut /]# touch /webapp/2.txt
+
+[eric@almond cli]$ ls ../misc/ -l
+total 8
+-rw-r--r--. 1 eric eric  412 Feb 18 16:26 Dockerfile
+drwxrwxr-x. 2 eric eric 4096 Feb 18 20:28 volume
+[eric@almond cli]$ ls ../misc/volume/ -l
+total 0
+-rw-r--r--. 1 root root 0 Feb 18 20:29 1.txt
+-rw-r--r--. 1 root root 0 Feb 18 20:29 2.txt
+
+
+/ 1313	. 
+
+/ we maken NIET eerst volume/	, 
+
+
+[eric@almond misc]$  docker run -p 80  --rm --name web -h peanut.nuts.org -v $(pwd)/volume:/webapp my/fedora-misc
+/ OK
+[eric@almond cli]$ ls ../misc/ -l
+total 8
+-rw-r--r--. 1 eric eric  412 Feb 18 16:26 Dockerfile
+drwxr-xr-x. 2 root root 4096 Feb 18 20:20 volume				<- root heeft dir created	, 
+
+
+/ 13	 
+
+/ SELinux TODO
+
+/ 13	. 
+
+/ --volumes-from
+
+[eric@almond misc]$  docker run -p 80  --rm --name web -h peanut.nuts.org -v /logs/webapp my/fedora-misc
+/ OK
+[eric@almond cli]$  docker exec -ti web bash
+[root@peanut /]# ls /logs/webapp/
+[root@peanut /]# touch /logs/webapp/1.txt
+
+[eric@almond cli]$  docker run -p 80  --rm --name web2 -h hazelnut.nuts.org --volumes-from web my/fedora-misc
+/ OK
+[eric@almond cli]$ docker exec -it web2 bash
+[root@hazelnut /]# ls /logs/webapp/
+1.txt
+
+
+[eric@almond cli]$ docker inspect web
+/ of	,
+[eric@almond cli]$ docker inspect web2
+        "Mounts": [
+            {
+                "Name": "9147e62666f60a160da15bc4246a3674fbd7841d6558831ac0d9e0d69b200223",
+                "Source": "/var/lib/docker/volumes/9147e62666f60a160da15bc4246a3674fbd7841d6558831ac0d9e0d69b200223/_data",
+                "Destination": "/logs/webapp",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+            }
+        ],
+
+/ 1313	. 
+
+/ docker create builds a container, maar runs hem niet, zoals docker run dat wel doet	, 
+
+[eric@almond misc]$  docker create -v /logs/webapp --name webbase my/fedora-misc true
+e6eb1f17b995e75851eea4493bc2bd28f6f4de27156d007fdcf0d67cb91de549
+[eric@almond misc]$ docker inspect webbase
+        "Mounts": [
+            {
+                "Name": "0887a54dca65f937d2507c87ba5db907324b7a78545d56133fe3550f1824cb7e",
+                "Source": "/var/lib/docker/volumes/0887a54dca65f937d2507c87ba5db907324b7a78545d56133fe3550f1824cb7e/_data",
+                "Destination": "/logs/webapp",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+            }
+        ],
+
+
+[eric@almond misc]$  docker run -p 80  --rm --name web -h peanut.nuts.org --volumes-from webbase my/fedora-misc
+
+/ het beste is om omdat container web van image my/fedora-misc is	, webbase dat dan ook te laten zijn, ze share images	, saves memory	, 
+
+
+[eric@almond cli]$ docker inspect web
+        "Mounts": [
+            {
+                "Name": "0887a54dca65f937d2507c87ba5db907324b7a78545d56133fe3550f1824cb7e",
+                "Source": "/var/lib/docker/volumes/0887a54dca65f937d2507c87ba5db907324b7a78545d56133fe3550f1824cb7e/_data",
+                "Destination": "/logs/webapp",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+            }
+        ],
+
+[eric@almond cli]$ docker exec -ti web bash
+[root@peanut /]# echo foo bar >/logs/webapp/7.txt
+[root@peanut /]# cat /logs/webapp/7.txt 
+foo bar
+[root@peanut /]# exit
+exit
+[eric@almond misc]$  docker run -p 80  --rm --name web -h peanut.nuts.org --volumes-from webbase my/fedora-misc
+^C
+/ de edit in de container is persited on the host	,
+
+/ Als we een nieuwe container create, zien we dat de 7.txt in het volume er is,	
+[eric@almond misc] docker run -p 80  --rm --name web -h peanut.nuts.org --volumes-from webbase my/fedora-misc
+/ OK
+[eric@almond cli]$  docker exec -ti web bash
+[root@peanut /]# cat /logs/webapp/
+cat: /logs/webapp/: Is a directory
+[root@peanut /]# cat /logs/webapp/7.txt 
+foo bar
+
+/ 1313	. 
+
+/ Als je een container met docker create maakt (webbase),	 en je doet rum-all-containers.sh, dan is hij weg	, maar het volume is er nog	,
+[eric@almond misc]$ sudo ls /var/lib/docker/volumes/0887a54dca65f937d2507c87ba5db907324b7a78545d56133fe3550f1824cb7e/_data
+7.txt
+/ we maken webbase opnieuw	, 
+[eric@almond misc]$ docker create -v /var/lib/docker/volumes/0887a54dca65f937d2507c87ba5db907324b7a78545d56133fe3550f1824cb7e:/logs/webapp --name webbase my/fedora-misc true
+7665b5eb6c5db8625b0507ffa839f07696df64f7499e3e676577231175a07729
+/ Mag, want docker is een root app	,
+
+
+/ 7	. 
+
+/ Lees	, 
+https://docs.docker.com/engine/reference/commandline/create/
+
+/ docker create	,
+
+[eric@almond misc]$  docker create -ti --name tmp my/fedora-locale bash
+ea57ef5758894620a6d9db517980ca616a533ff31aab053750bbf80731ff1e53
+[eric@almond misc]$ docker start  -i tmp 
+[root@ea57ef575889 /]# exit
+exit
+/ OK
+/ Wat doet -a , 	attach	?
+/ TODO
+
+
+/ 7	. 
+
+/ we willen de shared volume backup	, 
+/ we maken een tar van het shared volumen in de current dir op de host	,
+
+/ we lezen	,
+$ docker create -v /dbdata --name dbstore training/postgres /bin/true
+$ docker run --rm --volumes-from dbstore -v $(pwd):/backup ubuntu tar cvf /backup/backup.tar /dbdata
+
+/ we doen op de host 	,
+[eric@almond misc]$ which tar | xargs dnf provides
+tar-2:1.28-6.fc23.x86_64 : A GNU file archiving program
+
+/ we maken my/fedora-misc met tar	,
+
+[eric@almond misc]$ vi Dockerfile 
+from my/fedora-locale
+run dnf -y install less procps-ng hostname iputils net-tools findutils
+run setcap cap_net_raw,cap_net_admin+p  /usr/bin/ping
+run dnf -y install httpd
+
+expose 80 443
+cmd ["httpd","-D","FOREGROUND"]
+run dnf -y install tar
+
+[eric@almond misc]$ docker build --rm -t my/fedora-misc .
+
+
+[eric@almond misc]$  docker run  --rm --volumes-from webbase -v $(pwd):/backup my/fedora-misc tar cvf /backup/logs.tar /logs/webapp 
+[eric@almond misc]$  docker run  --rm --volumes-from webbase -v $(pwd):/backup my/fedora-misc tar cvf /backup/logs.tar -C / /logs/webapp 
+/ of	,
+/logs/webapp/
+/logs/webapp/_data/
+/logs/webapp/_data/7.txt
+[eric@almond misc]$ ls
+Dockerfile  logs.tar  volume
+[eric@almond misc]$ tar tvf logs.tar 
+drwxr-xr-x root/root         0 2017-02-19 10:44 logs/webapp/
+drwxr-xr-x root/root         0 2017-02-19 10:57 logs/webapp/_data/
+-rw-r--r-- root/root         8 2017-02-19 10:57 logs/webapp/_data/7.txt
+/ van root	,
+
+/ 7	 . 
+
+/ sshd
+
+/ Om te oef	,
+[eric@almond misc]$ cat Dockerfile 
+from my/fedora-locale 
+run dnf -y install less procps-ng hostname iputils net-tools findutils
+run setcap cap_net_raw,cap_net_admin+p  /usr/bin/ping
+run dnf -y install httpd
+
+expose 80 443
+cmd ["httpd","-D","FOREGROUND"]
+run dnf -y install tar
+run dnf -y install openssh-server openssh-clients			<-
+
+[eric@almond misc]$ docker build --rm -t my/fedora-misc .
+Step 8 : RUN dnf -y install openssh-server openssh-clients
+ ---> Running in fa8b409ec666
+Last metadata expiration check: 2:16:00 ago on Sun Feb 19 10:43:16 2017.
+Dependencies resolved.
+================================================================================
+ Package               Arch       Version                     Repository   Size
+================================================================================
+Installing:
+ fipscheck             x86_64     1.4.1-10.fc24               fedora       26 k
+ fipscheck-lib         x86_64     1.4.1-10.fc24               fedora       15 k
+ libedit               x86_64     3.1-14.20150325cvs.fc24     fedora       98 k
+ openssh               x86_64     7.2p2-14.fc24               updates     442 k
+ openssh-clients       x86_64     7.2p2-14.fc24               updates     661 k
+ openssh-server        x86_64     7.2p2-14.fc24               updates     465 k
+ tcp_wrappers-libs     x86_64     7.6-83.fc24                 fedora       72 k
+
+[eric@almond misc]$ docker run --rm -ti my/fedora-misc bash
+[root@801471ed7373 /]# 
+
+/ lees	,
+https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
+
+/ lees	,
+https://www.openssh.com/portable.html			<-	 MORGENAVOND
+/ -> 
+http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/INSTALL
+
+/ lees	,
+http://www.tc.umn.edu/~hick0088/files/openssh-howto.html
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/ Lees	,
+http://www.systutorials.com/5217/how-to-statically-link-c-and-c-programs-on-linux-with-gcc/
+
+ 
+
+
+
+/ 7	. 
+
+/ networking	,
+
+/ lees	,
+https://docs.docker.com/engine/userguide/networking/
+
+/ 7	 .
+
+/ Lees	,
+https://severalnines.com/blog/mysql-docker-building-container-image
+
+
+/ 7	. 
+
+/ HERHALING 20180203
+
+/ Dockerfiles
+
+/ Lees	,
+https://docs.docker.com/v1.10/engine/reference/builder/
+https://docs.docker.com/v1.10/engine/userguide/eng-image/dockerfile_best-practices/
+
+/ 13	. 
+
+[eric@almond dockerfile]$ pwd
+/home/eric/Devel/Docker2/fedora/dockerfile
+
+[eric@almond dockerfile]$ cat Dockerfile 
+from my/fedora-locale
+run dnf -y upgrade --refresh --setopt=deltarpm=false
+run dnf -y install procps-ng
+run echo "π" >/pi.txt
+run echo "Π" >/cap_pi.txt
+run useradd postgres
+run echo "export LANG=en_US.utf8" >>/home/postgres/.bash_profile
+run cat /home/postgres/.bash_profile 
+run cat /pi.txt
+cmd cat pi.txt
+
+/ we hebben in locale met dnf -y upgrade fedora upgrade, door de regel voor dnf -y upgrade te veranderen	,
+/ als we hier docker build doen, dan is dus de regel from my/fedora-locale veranderd, en begint hij opnieuw vanaf regel 2 in deze Dockerfile	,
+
+/ bij docker build gaat hij alle RUN en ENV commands doen	,
+/ bij docker run gaat hij de CMD command doen	,
+
+[eric@almond dockerfile]$ docker build -t my/fedora-dockerfile .
+Sending build context to Docker daemon  7.68 kB
+Step 1 : FROM my/fedora-locale
+ ---> 771015c1e954
+Step 2 : RUN dnf -y upgrade --refresh --setopt=deltarpm=false
+ ---> Running in ddf64f369a21
+Dependencies resolved.
+Nothing to do.
+Complete!
+ ---> 66daf9aea3d5
+Removing intermediate container ddf64f369a21
+Step 3 : RUN dnf -y install procps-ng
+ ---> Running in 6303b6fdb118
+Last metadata expiration check: 0:00:06 ago on Sat Feb  3 18:58:23 2018.
+Package procps-ng-3.3.10-11.fc24.x86_64 is already installed, skipping.
+Dependencies resolved.
+Nothing to do.
+Complete!
+ ---> 9fb46bab78fc
+Removing intermediate container 6303b6fdb118
+Step 4 : RUN echo "π" >/pi.txt
+ ---> Running in cc570b5e946f
+ ---> 3575bc1a5e0a
+Removing intermediate container cc570b5e946f
+Step 5 : RUN echo "Π" >/cap_pi.txt
+ ---> Running in f6460a2582e7
+ ---> 4aa27f025423
+Removing intermediate container f6460a2582e7
+Step 6 : RUN useradd postgres
+ ---> Running in 74454c735afb
+ ---> 93008c24d247
+Removing intermediate container 74454c735afb
+Step 7 : RUN echo "export LANG=en_US.utf8" >>/home/postgres/.bash_profile
+ ---> Running in a134893b76ad
+ ---> 96fb064c5bee
+Removing intermediate container a134893b76ad
+Step 8 : RUN cat /home/postgres/.bash_profile
+ ---> Running in 2c2cba2486b9
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
+
+# User specific environment and startup programs
+
+PATH=$PATH:$HOME/.local/bin:$HOME/bin
+
+export PATH
+export LANG=en_US.utf8
+ ---> 99d4c438d3e1
+Removing intermediate container 2c2cba2486b9
+Step 9 : RUN cat /pi.txt
+ ---> Running in 11256620cd80
+π
+ ---> 0eacc3edbbab
+Removing intermediate container 11256620cd80
+Successfully built 0eacc3edbbab
+
+[eric@almond dockerfile]$ docker run -t -i --rm  --name fl my/fedora-dockerfile
+π
+
+/ 13	. 
+
+FROM busybox
+ENV foo /bar
+WORKDIR ${foo}   # WORKDIR /bar
+ADD . $foo       # ADD . /bar
+COPY \$foo /quux # COPY $foo /quux
+/ TODO
+
+/ 13	. 
+
+$ vi Dockerfile
+ENV abc=hello
+ENV abc=bye def=$abc
+ENV ghi=$abc
+RUN echo $abc $def $ghi
+
+[eric@almond dockerfile]$ docker build -t my/fedora-dockerfile .
+...
+Step 13 : RUN echo $abc $def $ghi
+ ---> Running in 822841dad604
+bye hello bye
+[eric@almond dockerfile]$ docker run -t -i --rm  --name fl my/fedora-dockerfile bash
+[root@06761f35702b /]# env
+def=hello
+ghi=bye
+abc=bye
+
+/ 13	. 
+
+/ Iedere RUN geeft een nieuwe layer, image	,
+/ Daarom zien we RUN exec bij $ docker build	,
+
+/ 13	. 
+
+/ als je alle RUNs, ENVs in de Dockerfile wilt laten exec	, doe dan 
+$ docker build ... --no-cache	,
+
+The cache for RUN instructions can be invalidated by ADD instructions. 
+/ TODO
+
+/ 13	. 
+
+/ LABEL geeft ook een layer, image	,
+
+/ 13	. 
+
+The EXPOSE instruction informs Docker that the container listens on the specified network ports at runtime. EXPOSE does not make the ports of the container accessible to the host. To do that, you must use either the -p flag to publish a range of ports or the -P flag to publish all of the exposed ports. You can expose one port number and publish it externally under another number.
+
+/ -P of -p : p betekent publish	,
+
+/ 13	. 
+
+/ add
+
+$ vi Dockerfile
+...
+add onhost.txt .
+cmd cat pi.txt
+
+[eric@almond dockerfile]$ docker build -t my/fedora-dockerfile .
+[eric@almond dockerfile]$ docker run -t -i --rm  --name fl my/fedora-dockerfile
+π
+
+/ lees over mtime, atime	,
+https://superuser.com/questions/234158/show-both-ctime-and-atime-in-ls-output
+
+[eric@almond dockerfile]$ stat -c "%x %z %n" *
+2018-02-03 19:58:20.480279910 +0100 2016-08-13 10:56:26.447189379 +0200 1
+2018-02-03 19:58:20.480279910 +0100 2016-08-13 10:56:36.276490431 +0200 2
+2018-02-03 19:58:20.482279970 +0100 2016-08-13 11:15:11.101635317 +0200 3
+2018-02-04 10:44:27.381343489 +0100 2018-02-04 10:44:07.305629536 +0100 Dockerfile
+2018-02-03 21:04:50.515400029 +0100 2018-02-03 20:59:18.293329262 +0100 onhost.txt
+
+%x     Time of last access
+ %z     Time of last change
+ %n     Name of file
+
+/ we kunnen dit ook in de container,
+[root@fb9569a5b69a /]# stat -c "%x %z %n" onhost.txt 
+2018-02-03 19:59:18.000000000 +0000 2018-02-04 09:44:29.333401417 +0000 onhost.txt
+
+/ 1313	. 
+
+/ we kunnen dit in de container, we hebben hiervoor Dockerfile aangepast	,
+$ vi Dockerfile
+...
+add onhost.txt .
+cmd cat pi.txt
+run dnf -y install findutils
+
+/ cmd hoeft dus niet als laatste	,
+
+[eric@almond dockerfile]$ docker build -t my/fedora-dockerfile .
+[eric@almond dockerfile]$ docker run -t -i --rm  --name fl my/fedora-dockerfile bash
+/ we override cmd uit Dockerfile	,
+[root@c80b87dd03f3 /]# which xargs | xargs dnf provides
+Last metadata expiration check: 0:00:49 ago on Sun Feb  4 10:06:31 2018.
+findutils-1:4.6.0-7.fc24.x86_64 : The GNU versions of find utilities (find and xargs)
+Repo        : @System
+...
+[root@c80b87dd03f3 /]# which stat | xargs dnf provides
+Last metadata expiration check: 0:01:21 ago on Sun Feb  4 10:06:31 2018.
+coreutils-8.25-9.fc24.x86_64 : A set of basic GNU tools commonly used in shell scripts
+Repo        : @System
+...
+
+/ 1313	.
+
+/ in de container is een tmp/	,
+
+/ als we	,
+add onhost.txt tmp
+/ of	,
+add onhost.txt tmp/
+/ dan komt onhost.txt in tmp/ 
+
+/ als we	,
+add onhost.txt tmp2
+/ dan verschijnt in de container in / een file tmp2 die de contents heeft van onhost.txt
+
+/ als we	, 
+add onhost.txt tmp2/
+/ dan verschijnt in de container in / een dir tmp2/ die een file onhost.txt heeft	, 
+
+/ 1313	. 
+
+/ workdir
+
+[eric@almond dockerfile]$ cat Dockerfile 
+...
+run echo "π" >pi.txt
+run echo "Π" >cap_pi.txt
+cmd cat /pi.txt						/ MOET /pi.txt	, 
+workdir tmp/
+add onhost.txt tmp2/ 
+
+/ workdir is net als cmd in containers	,
+/ pi.txt is in /	, want run is in images	, 
+/ als we cmd cat pi.txt	, dan door workdir zou pi.txt in tmp/ zijn	,
+/ door add komt onhost.txt in /tmp/tmp2/	,
+/ ook opent de container in /tmp/	,
+
+/ add is ook in images	, net als run	, env	, 
+
+[eric@almond dockerfile]$ docker build -t my/fedora-dockerfile .
+[eric@almond dockerfile]$ docker run -t -i --rm  --name fl my/fedora-dockerfile bash
+[root@320c895d1be1 tmp]# ls ..
+bin   cap_pi.txt  etc   lib    lost+found  mnt  pi.txt  root  sbin  sys  usr
+boot  dev         home  lib64  media       opt  proc    run   srv   tmp  var
+[root@320c895d1be1 tmp]# ls 
+anaconda-post.log  ks-script-8fapjnx0  tmp2
+[root@320c895d1be1 tmp]# ls tmp2/
+onhost.txt
+
+/ 1313	.
+
+$ vi Dockerfile
+...
+cmd cat /pi.txt
+#workdir /tmp
+add . tmp/ 
+
+[eric@almond dockerfile]$ docker build -t my/fedora-dockerfile .
+[eric@almond dockerfile]$ docker run -t -i --rm  --name fl my/fedora-dockerfile bash
+[root@4beaf6de5c01 /]# ls tmp/
+anaconda-post.log  Dockerfile  ks-script-8fapjnx0  onhost.txt
+
+/ dus we zien Dockerfile en onhost.txt	, 
+
+/ 13	. 
+
+/ copy	,
+
+/ google	,
+docker difference add copy
+/ lees	,
+https://stackoverflow.com/questions/24958140/what-is-the-difference-between-the-copy-and-add-commands-in-a-dockerfile
+
+ADD allows <src> to be an URL
+If the <src> parameter of ADD is an archive in a recognised compression format, it will be unpacked
+Note that the Best practices for writing Dockerfiles suggests using COPY where the magic of ADD is not required. Otherwise you (since you had to lookup this answer) are likely to get surprised someday when you mean to copy keep_this_archive_intact.tar.gz into your container, but instead you spray the contents onto your filesystem.
+
+/ we kunnen in Dockerfile	,
+copy . tmp/
+/ hetzelfde als 
+add . tmp/
+
+/ 1313	.
+
+$ vi Dockerfile
+env foo onhost.txt
+add $foo tmp/
+/ of	,
+copy $foo tmp/
+
+[eric@almond dockerfile]$ docker build -t my/fedora-dockerfile .
+[eric@almond dockerfile]$ docker run -t -i --rm  --name fl my/fedora-dockerfile ls /tmp
+anaconda-post.log  ks-script-8fapjnx0  onhost.txt
+
+/ 13	.
+
+/ entrypoint
+
+/ 1313	.
+
+/ er zijn een aantal options aan top die je zo herkent	,
+$ top -c : je ziet de command lines	, dus
+/opt/google/chrome/chrome --type=renderer+ 
+$ top -b : batch	, je ziet om de zoveel tijd alle processes, steeds weer	,
+$ top -H : je ziet de threads	,
+
+/ 1313	.
+
+$ vi Dockerfile
+...
+entrypoint ["top","-b"]
+/ of	,
+cmd ["top","-b"]
+
+[eric@almond dockerfile]$ docker build -t my/fedora-dockerfile .
+[eric@almond dockerfile]$ docker run -t -i --rm  --name fl my/fedora-dockerfile
+[eric@almond dockerfile]$ docker run -t -i --rm  --name fl my/fedora-dockerfile
+top - 11:45:28 up 25 days, 14:27,  0 users,  load average: 0.66, 0.68, 0.95
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 21.4 us, 12.2 sy,  0.1 ni, 62.4 id,  0.4 wa,  1.7 hi,  1.9 si,  0.0 st
+KiB Mem : 16308392 total,  1810440 free, 10578624 used,  3919328 buff/cache
+KiB Swap:  8191996 total,  8191328 free,      668 used.  4774636 avail Mem 
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+    1 root      20   0  154284   3776   3356 R   0.0  0.0   0:00.08 top
+
+top - 11:45:31 up 25 days, 14:27,  0 users,  load average: 0.61, 0.67, 0.94
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  5.3 us,  5.1 sy,  0.0 ni, 87.9 id,  0.1 wa,  0.8 hi,  0.8 si,  0.0 st
+KiB Mem : 16308392 total,  1810016 free, 10578276 used,  3920100 buff/cache
+KiB Swap:  8191996 total,  8191328 free,      668 used.  4775376 avail Mem 
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+    1 root      20   0  154284   3776   3356 R   0.0  0.0   0:00.08 top^C
+
+/ we zien inderdaad top in batch mode	,
+
+/ 1313	. 
+
+$ vi Dockerfile
+...
+entrypoint ["top","-b"]
+
+[eric@almond dockerfile]$ docker run -t -i --rm  --name fl my/fedora-dockerfile
+/ doet top -b in container	, 
+[eric@almond dockerfile]$ docker run -t -i --rm  --name fl my/fedora-dockerfile -H
+/ doet top -b -H in container,	
+
+/ het is altijd handig om top -c te doen	, want anders zie je in top als een van de processes alleen top	, met -c zie je ook de options die je hebt meegegeven	,
+[eric@almond dockerfile]$ docker run -t -i --rm  --name fl my/fedora-dockerfile -c
+...
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+    1 root      20   0  154312   3760   3344 R   0.0  0.0   0:00.09 top -b -c
+
+[eric@almond dockerfile]$ docker run -t -i --rm  --name fl my/fedora-dockerfile -c -H
+...
+  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
+    1 root      20   0  154312   3876   3452 R  0.0  0.0   0:00.06 top -b -c -H
+
+
+/ als we doen	,
+[eric@almond dockerfile]$ docker run -t -i --rm  --name fl my/fedora-dockerfile bash
+/ dan doet hij $ top -b bash
+/ ERR
+
+/ 1313	. 
+
+/ het is ook wat er staat:
+An ENTRYPOINT allows you to configure a container that will run as an executable.
+
+/ we kunnen met cmd opties toevoegen die je op de commmand line kan override	,
+
+$ vi Dockerfile
+...
+entrypoint ["top","-b"]
+cmd ["-c"]
+
+[eric@almond dockerfile]$ docker build -t my/fedora-dockerfile .
+[eric@almond dockerfile]$ docker run -t -i --rm  --name fl my/fedora-dockerfile
+...
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+...
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+    1 root      20   0  154312   3760   3348 R   0.0  0.0   0:00.09 top -b -c
+
+[eric@almond dockerfile]$ docker run -t -i --rm  --name fl my/fedora-dockerfile -H
+...
+Threads:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+...
+  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
+    1 root      20   0  154284   3876   3452 R  0.0  0.0   0:00.06 top
+
+/ we zien dat met -H op de command line -c er niet is, want we zien alleen top	, en niet top -H	, en we zien Threads	, dus -H is er	,
+
+/ 1313	. 
+
+$ vi Dockerfile
+entrypoint ["top","-b"]
+cmd ["bash"]
+
+[eric@almond dockerfile]$ docker build -t my/fedora-dockerfile .
+[eric@almond dockerfile]$ docker run -t -i --rm  --name fl my/fedora-dockerfile
+top: unknown option 'a'
+Usage:
+  top -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]
+
+/ hij doet $ top -b bash
+/ en dat is foute optie	,
+
+/ OPEN 2018-02-17
+
+
+
+
+
+
+
+
+
+
+/ Einde HERHALING 20180203
+
+/ HERHALING 20180413
+
+[eric@almond locale]$ sudo systemctl start docker
+[eric@almond locale]$ sudo systemctl enable docker
+Created symlink /etc/systemd/system/multi-user.target.wants/docker.service → /usr/lib/systemd/system/docker.service.
+
+[eric@almond locale]$  docker images
+
+[eric@almond locale]$  docker run --rm -ti my/fedora-locale bash
+[root@43dac20b68f9 /]# 
+
+/ working dir	,
+[eric@almond locale]$ docker run --rm -ti -w /home  my/fedora-locale   bash
+[root@d984b62a41ec home]# pwd
+/home
+
+/ 13	. 
+
+/ -v met default volume op de host	,
+
+[eric@almond locale]$ docker run --rm -ti -v /dbstore  my/fedora-locale   bash
+[root@f80b24714ad3 /]# ls
+bin   dbstore  etc   lib    lost+found  mnt  proc  run   srv  tmp  var
+boot  dev      home  lib64  media       opt  root  sbin  sys  usr
+[root@f80b24714ad3 /]# echo foo >dbstore/foo.txt
+[root@f80b24714ad3 /]# echo bar >dbstore/bar.txt
+[root@f80b24714ad3 /]# ls dbstore/
+bar.txt  foo.txt
+
+[root@almond volumes]# pwd
+/var/lib/docker/volumes
+[root@almond volumes]# ls 579be1edf6ad54419890d6e4a682e918507a1d0a275066025f3b4e15a29dcf42/_data/
+bar.txt  foo.txt
+
+/ 13	. 
+
+/ -v met opgegeven volume op de host	, als er al files staan, zien we ze ook in de docker container's volume	,
+
+[eric@almond locale]$ docker run --rm -ti -v /home/eric/tmp/myvolume:/dbstore  my/fedora-locale   bash
+[root@4853c23f93b9 /]# ls
+bin   dbstore  etc   lib    lost+found  mnt  proc  run   srv  tmp  var
+boot  dev      home  lib64  media       opt  root  sbin  sys  usr
+[root@4853c23f93b9 /]# ls dbstore/
+1.txt  2.txt
+
+/ 13	. 
+
+/ met een volume kun je ook de working dir daarop zetten	, de working dir is altijd een absoluut path in de container	,
+
+[eric@almond locale]$ docker run --rm -ti -v /home/eric/tmp/myvolume:/dbstore -w /dbstore my/fedora-locale   bash
+[root@e80cdea4c591 dbstore]# ls
+1.txt  2.txt
+
+/ 13	 .
+
+/ ga naar	, 
+https://docs.docker.com/
+
+/ in het menu in het midden van de pagina zien we 	,
+guides	reference
+/ bij reference vind je over 'docker inspect'	, bij guides over volumes	,
+
+
+
+/ lees	,
+https://docs.docker.com/engine/reference/commandline/inspect/ 
+/ reference, docker commands	, ...
+
+
+/ Einde HERHALING 20180413

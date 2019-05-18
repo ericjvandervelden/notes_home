@@ -1,0 +1,31 @@
+/ microsoft,
+https://www.youtube.com/watch?v=v7b4J2INq9c
+
+/ Khutoryansky
+https://www.youtube.com/watch?v=iVpXrbZ4bnU
+https://www.youtube.com/watch?annotation_id=annotation_1007993931&feature=iv&src_vid=iVpXrbZ4bnU&v=KKr91v7yLcM
+
+/ 
+https://www.youtube.com/watch?v=GO6TsdwxcwM			/ qcl !
+->
+https://en.wikipedia.org/wiki/Hadamard_transform
+
+https://www.youtube.com/watch?v=HH58VmUbOKM	/ polarized light ,
+https://www.youtube.com/watch?v=8YkfEft4p-w
+
+/7	. 
+
+/ Lees	,
+https://www.research.ibm.com/ibm-q/
+-> Breaking through the 49 qubit simulation barrier
+https://www.ibm.com/blogs/research/2017/10/quantum-computing-barrier/
+
+https://www.nextplatform.com/2018/01/10/quantum-computing-enters-2018-like-1968/
+https://medium.com/@decodoku/how-to-program-a-quantum-computer-982a9329ed02
+https://quantumcomputingreport.com/resources/tools/
+
+https://en.wikipedia.org/wiki/IBM_Quantum_Experience
+->
+https://en.wikipedia.org/wiki/Transmon
+
+

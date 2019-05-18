@@ -1,0 +1,64 @@
+/ 7	. 
+
+/ oxygen-2	, workspace-maven	, 
+
+/ parent,	Maven, update project	
+
+Errors occurred during the build.
+Errors running builder 'CDI (Contexts and Dependency Injection) Builder' on project 'simple-weather'.
+Unknown tag! pos=40 poolCount = 47
+/ TODO
+
+/ 7	. 
+
+export GDK_BACKEND=x11
+./eclipse
+
+
+/ 7	. 
+
+/ we hebben $ mvn clean package gedaan in eclipse	, en deployed in tomcat	,
+/ maar we zien error	,
+
+/ lees	,
+https://unix.stackexchange.com/questions/229188/journalctl-how-to-prevent-text-from-truncating-in-terminal
+
+[root@almond ~]# journalctl -xn --no-pager
+...
+
+/ 7	. 
+
+https://resources.oreilly.com/examples/9780596517335
+
+/ we copy geen ws	, maar maken opnieuw	,
+
+/ nieuwe dir	, de oude ws heet workspace-maven0	,
+[eric@almond workspace-maven1]$ pwd
+/home/eric/Devel/Eclipse/oxygen-2/workspace-maven1
+[eric@almond workspace-maven1]$ git clone https://resources.oreilly.com/examples/9780596517335.git  
+
+/ import existing maven project	,
+root directory: /home/eric/Devel/Eclipse/oxygen-2/workspace-maven1/9780596517335/mavenbook-examples-1-SNAPSHOT/ch07-multi-spring 
+/ TODO Problemen	,
+
+/ we maken een nieuwe ws workspace-maven2	, 
+
+[eric@almond maven]$ pwd
+/home/eric/Devel/Java/maven
+[eric@almond maven]$ git clone https://github.com/sonatype/maven-example-en.git
+
+/ import existing maven project	,
+Root Directory: /home/eric/Devel/Java/maven/maven-example-en/examples/ch-multi-spring
+
+/ we zien ERR	,
+Errors occurred during the build.
+Errors running builder 'CDI (Contexts and Dependency Injection) Builder' on project 'simple-weather'.
+Unknown tag! pos=40 poolCount = 47
+/ TODO
+
+Project configuration is not up-to-date with pom.xml. Select: Maven->Update Project... from the project context menu or use Quick Fix.
+/ TODO
+/ Wat is Project configuration?
+/ Kies proj. parent	, en doe Maven, Update Project...
+
+

@@ -1,0 +1,691 @@
+/ Lees	, 
+http://stackoverflow.com/questions/557844/java-io-implementation-of-unix-linux-tail-f
+http://stackoverflow.com/questions/22987170/apache-commons-io-tailer-example/22987713
+
+$ vi JmsCommunicator.java
+
+                logFileHandler.setRegex("(^.*" + fileId + ".*$)\n(^.*Message succesfully handled by consumer.*$)");
+
+[eric@localhost workspace]$ ls -ltr ~/Downloads/
+-rw-r-----. 1 eric eric       1490 Apr  4 13:46 FileTailerListener.java
+-rw-r-----. 1 eric eric       5547 Apr  4 13:46 JmsCommunicator.java
+-rw-r-----. 1 eric eric       2410 Apr  4 13:46 LogFileHandler.java
+
+2017-04-04 15:21:05,784 INFO  [monitor.message.customerorder] (MpoScsQueueContainer-1:) "message.customerorder","2017-04-04T15:21:05.595+02:00",1491312065595,188,"1491312054638","05","ecomm001-CO1491312054638_074","MPO-ECOMMERCE","true"
+2017-04-04 15:21:05,808 INFO  [com.mpobjects.interfacing.messages.handler.MessageConsumerHandler] (MpoScsQueueContainer-1:) Message succesfully handled by consumer (240ms)
+
+/ Lees	, 
+https://commons.apache.org/proper/commons-io/javadocs/api-2.5/index.html
+http://tutorials.jenkov.com/java-regex/syntax.html
+http://stackoverflow.com/questions/22987170/apache-commons-io-tailer-example
+
+/ 7	.
+
+/ ws workspace-wicket7_7
+/ proj io
+scs_6323/ : met wait & notify
+scs_6323_2: OK , maar verknoopt	, 
+
+/home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace-wicket7_7/io 
+
+/ 13	. 
+
+/ scs_6323
+
+$ less BooleanHolder.java
+
+public class BooleanHolder {
+	private boolean present=false;
+
+	public boolean isPresent() {
+		return present;
+	}
+
+	public void setPresent(boolean present) {
+		this.present = present;
+	}
+}
+
+$ less Waiter.java
+
+package scs_6323;
+
+public class Waiter implements Runnable {
+	
+	private BooleanHolder booleanHolder;
+
+	public Waiter(BooleanHolder booleanHolder) {
+		this.booleanHolder=booleanHolder;
+	}
+
+	@Override
+	public void run() {
+		
+		synchronized (booleanHolder) {
+			try{
+				booleanHolder.wait(10000);
+			}catch(InterruptedException e){
+				
+			}
+		}
+	}
+
+}
+
+$ less FileTailerListener.java
+
+package scs_6323;
+
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.io.input.Tailer;
+import org.apache.commons.io.input.TailerListener;
+import org.apache.commons.io.input.TailerListenerAdapter;
+
+/**
+ * An implementation for TailerListener. The FileListener will check each new line written to the file and raise a flag
+ * if the desired regular expression was found.
+ *
+ */
+public class FileTailerListener extends TailerListenerAdapter {  
+
+	private Pattern pattern;	
+	private static final int MAX_LISTEN_MILLIS=10000;
+	private long initTime; 
+
+
+	private static final Logger logger = Logger.getLogger(FileTailerListener.class.getName());
+	
+	private Tailer tailer;  
+	private Matcher matcher; 
+	private BooleanHolder booleanHolder;
+
+	public FileTailerListener(String regex,BooleanHolder booleanHolder) {
+		pattern = Pattern.compile(regex);
+		matcher=pattern.matcher("");  
+		this.booleanHolder=booleanHolder;
+	}
+
+	@Override
+    public void init(final Tailer tailer) {
+		this.tailer=tailer;
+		this.initTime=System.currentTimeMillis();
+		logger.info("A new tailer object was constructed");
+    }
+	/**
+	 * handle is being called each predefined time period.
+	 */
+	@Override
+	public void handle(String line) {
+		matcher.reset(line);
+		
+		if (matcher.find() ) {
+			tailer.stop();
+			synchronized (booleanHolder) {
+				booleanHolder.setPresent(true);
+				booleanHolder.notifyAll();
+			}
+		}
+	}
+
+	@Override
+	public void handle(Exception e) {
+		logger.warning("The file listener has handled an exception: " + e.getMessage());
+	}
+
+	
+
+	@Override
+	public void fileNotFound() {
+		logger.info("The tailed file is not found");
+	}
+
+	@Override
+	public void fileRotated() {
+		logger.info("The filename was changed");
+	}
+}
+
+$ less JmsCommunicator.java
+
+package scs_6323;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import javax.jms.Connection;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+import javax.swing.text.StyledEditorKit.BoldAction;
+
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.commons.io.input.Tailer;
+import org.apache.commons.io.input.TailerListener;
+
+import com.mpobjects.scs.fitnesse.commons.errorhandling.StopTestException;
+import com.mpobjects.scs.fitnesse.commons.fixture.ApplicationPropertiesFixture;
+
+public class JmsCommunicator {
+	private String brokerUrl = null;
+	private String queue = null;
+	private String fileLocation = null;
+	private String userName = null;
+	private String password = null;
+	private String fileId = null;
+
+	private ActiveMQConnectionFactory connectionFactory;
+	private Connection connection;
+	private Session session;
+	private MessageProducer producer;
+	private ApplicationPropertiesFixture applicationPropertiesFixture;
+	private LogFileHandler logFileHandler;
+	private String serverLogFileLocation;
+	
+	private String regex="Message succesfully handled by consumer";
+	private static final int	DEFAULT_DELAY_MILLIS=100;
+	private BooleanHolder booleanHolder=new BooleanHolder();
+	
+	
+	public JmsCommunicator() {
+		this.applicationPropertiesFixture = new ApplicationPropertiesFixture();
+		this.logFileHandler = new LogFileHandler();
+	}
+
+	public String postMessageToQueue() {
+		init();
+		
+		File file=new File(getJBossServerLog());
+		TailerListener listener=new FileTailerListener(regex,booleanHolder);		
+		new Thread(new Waiter(booleanHolder)).start();
+		Tailer tailer=new Tailer(file, listener, DEFAULT_DELAY_MILLIS, true);
+		send();
+		close();
+	
+		if (booleanHolder.isPresent() != true) {
+			throw new StopTestException("message post was unsuccessfull");
+		} else {
+			return ("posted successfully");
+		}
+	}
+
+	public void getMessageFromQueue() {
+		init();
+		receive();
+	}
+
+	public void init() {
+		try {
+			applicationPropertiesFixture.setApplicationProperties();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new StopTestException(e.toString());
+		}
+		this.userName = applicationPropertiesFixture.getQueueUsername();
+		// System.out.println("jms username: " + userName);
+		this.password = applicationPropertiesFixture.getQueuePassword();
+		// System.out.println("jms password: " + password);
+		this.brokerUrl = applicationPropertiesFixture.getQueueUrl();
+		// System.out.println("jms brokerurl: " + brokerUrl);
+		connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
+		try {
+			connection = connectionFactory.createConnection(userName, password);
+			connection.start();
+			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+		} catch (JMSException jmsException) {
+			jmsException.printStackTrace();
+			throw new StopTestException(jmsException.toString());
+		}
+
+	}
+
+	public void send() {
+		Destination destination = null;
+		try {
+			producer = session.createProducer(null);
+			destination = session.createQueue(queue);
+		} catch (JMSException jmsException) {
+			jmsException.printStackTrace();
+		}
+		Path path = Paths.get(this.fileLocation);		// msg to be send
+		byte[] bytes = null;
+		try {
+			bytes = Files.readAllBytes(path);
+		} catch (IOException ioException) {
+			throw new StopTestException(ioException.toString());
+		}
+		String file = new String(bytes, StandardCharsets.UTF_8);
+
+		try {
+			TextMessage message = session.createTextMessage(file);
+			producer.send(destination, message);
+		} catch (JMSException jmsException) {
+			jmsException.printStackTrace();
+			throw new StopTestException(jmsException.toString());
+		}
+	}
+
+	public void receive() {
+		Destination destination = null;
+		try {
+			destination = session.createQueue(queue);
+			MessageConsumer messageConsumer = session.createConsumer(destination);
+			messageConsumer.setMessageListener(new JmsQueueListener());
+		} catch (JMSException jmsException) {
+			jmsException.printStackTrace();
+			throw new StopTestException(jmsException.toString());
+		}
+	}
+
+	public void close() {
+		if (connection != null) {
+			try {
+				connection.close();
+			} catch (JMSException jmsException) {
+				jmsException.printStackTrace();
+				throw new StopTestException(jmsException.toString());
+			}
+		}
+	}
+
+	private String getJBossServerLog() {
+		String OS = System.getProperty("os.name").toLowerCase();
+		if (OS.contains("linux")) {
+			serverLogFileLocation = "/local/apps/jboss-4.0.5.GA/server/mposcs/log/server.log";
+		} else {
+			serverLogFileLocation = System.getenv("JBOSS_HOME") + "/server/mposcs/server.log";
+		}
+		return serverLogFileLocation;
+	}
+	
+	
+
+	public String getJmsFileLocation() {
+		return fileLocation;
+	}
+
+	public void setJmsFileLocation(String filelocation) {
+		if (filelocation != null && !filelocation.isEmpty()) {
+			this.fileLocation = filelocation;
+			// System.out.println("jms filelocation: " + filelocation);
+		} else {
+			throw new StopTestException("file location error. the file location is [" + filelocation + "].");
+		}
+	}
+
+	public String getJmsQueue() {
+		return queue;
+	}
+
+	public void setJmsQueue(String queue) {
+		if (queue != null && !queue.isEmpty()) {
+			this.queue = queue;
+			// System.out.println("jms queue: " + queue);
+		} else {
+			throw new StopTestException("queue name error. the queue name is [" + queue + "].");
+		}
+	}
+
+	public void setJmsFileId(String fileid) {
+		if (fileid != null && !fileid.isEmpty()) {
+			this.fileId = fileid;
+			// System.out.println("file id: " + fileId);
+		} else {
+			throw new StopTestException("file id error. the file id is set to [" + fileid + "].");
+		}
+	}
+
+}
+
+/ 7	. 
+
+/ we hebben ook de oude versie , OK	,
+
+$ less FileTailerListener.java
+
+package com.mpobjects.scs.fitnesse.commons.general;
+
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.io.input.Tailer;
+import org.apache.commons.io.input.TailerListener;
+
+/**
+ * An implementation for TailerListener. The FileListener will check each new line written to the file and raise a flag
+ * if the desired regular expression was found.
+ *
+ */
+public class FileTailerListener implements TailerListener {
+
+	private volatile boolean isProcessUp = false;
+	private volatile Pattern pattern;
+
+	private static final Logger logger = Logger.getLogger(FileTailerListener.class.getName());
+
+	public FileTailerListener(String regex) {
+		pattern = Pattern.compile(regex);
+	}
+
+	/**
+	 * handle is being called each predefined time period.
+	 */
+	@Override
+	public void handle(String line) {
+		Matcher matcher = pattern.matcher(line);
+		if (matcher.find()) {
+			isProcessUp = true;
+		}
+	}
+
+	public boolean isProcessUp() {
+		return isProcessUp;
+	}
+
+	@Override
+	public void handle(Exception e) {
+		logger.warning("The file listener has handled an exception: " + e.getMessage());
+	}
+
+	@Override
+	public void init(Tailer tailer) {
+		logger.info("A new tailer object was constructed");
+	}
+
+	@Override
+	public void fileNotFound() {
+		logger.info("The tailed file is not found");
+	}
+
+	@Override
+	public void fileRotated() {
+		logger.info("The filename was changed");
+	}
+}
+
+$ vi JmsCommunicator.java
+
+package com.mpobjects.scs.fitnesse.commons.general;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import javax.jms.Connection;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
+import org.apache.activemq.ActiveMQConnectionFactory;
+
+import com.mpobjects.scs.fitnesse.commons.errorhandling.StopTestException;
+import com.mpobjects.scs.fitnesse.commons.fixture.ApplicationPropertiesFixture;
+
+public class JmsCommunicator {
+	private String brokerUrl = null;
+	private String queue = null;
+	private String fileLocation = null;
+	private String userName = null;
+	private String password = null;
+	private String fileId = null;
+
+	private ActiveMQConnectionFactory connectionFactory;
+	private Connection connection;
+	private Session session;
+	private MessageProducer producer;
+	private ApplicationPropertiesFixture applicationPropertiesFixture;
+	private LogFileHandler logFileHandler;
+	private String serverLogFileLocation;
+
+	public JmsCommunicator() {
+		this.applicationPropertiesFixture = new ApplicationPropertiesFixture();
+		this.logFileHandler = new LogFileHandler();
+	}
+
+	public String postMessageToQueue() {
+		init();
+		logFileHandler.setFilePath(setJbossServerLog());
+		logFileHandler.setRegex("(^.*" + fileId + ".*$)\n(^.*Message succesfully handled by consumer.*$)");
+		boolean result = logFileHandler.readLogFile(this);
+		if (result != true) {
+			throw new StopTestException("message post was unsuccessfull");
+		} else {
+			return ("posted successfully");
+		}
+	}
+
+	public void getMessageFromQueue() {
+		init();
+		receive();
+	}
+
+	public void init() {
+		try {
+			applicationPropertiesFixture.setApplicationProperties();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new StopTestException(e.toString());
+		}
+		this.userName = applicationPropertiesFixture.getQueueUsername();
+		// System.out.println("jms username: " + userName);
+		this.password = applicationPropertiesFixture.getQueuePassword();
+		// System.out.println("jms password: " + password);
+		this.brokerUrl = applicationPropertiesFixture.getQueueUrl();
+		// System.out.println("jms brokerurl: " + brokerUrl);
+		connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
+		try {
+			connection = connectionFactory.createConnection(userName, password);
+			connection.start();
+			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+		} catch (JMSException jmsException) {
+			jmsException.printStackTrace();
+			throw new StopTestException(jmsException.toString());
+		}
+
+	}
+
+	public void send() {
+		Destination destination = null;
+		try {
+			producer = session.createProducer(null);
+			destination = session.createQueue(queue);
+		} catch (JMSException jmsException) {
+			jmsException.printStackTrace();
+		}
+		Path path = Paths.get(this.fileLocation);
+		byte[] bytes = null;
+		try {
+			bytes = Files.readAllBytes(path);
+		} catch (IOException ioException) {
+			throw new StopTestException(ioException.toString());
+		}
+		String file = new String(bytes, StandardCharsets.UTF_8);
+
+		try {
+			TextMessage message = session.createTextMessage(file);
+			producer.send(destination, message);
+		} catch (JMSException jmsException) {
+			jmsException.printStackTrace();
+			throw new StopTestException(jmsException.toString());
+		}
+	}
+
+	public void receive() {
+		Destination destination = null;
+		try {
+			destination = session.createQueue(queue);
+			MessageConsumer messageConsumer = session.createConsumer(destination);
+			messageConsumer.setMessageListener(new JmsQueueListener());
+		} catch (JMSException jmsException) {
+			jmsException.printStackTrace();
+			throw new StopTestException(jmsException.toString());
+		}
+	}
+
+	public void close() {
+		if (connection != null) {
+			try {
+				connection.close();
+			} catch (JMSException jmsException) {
+				jmsException.printStackTrace();
+				throw new StopTestException(jmsException.toString());
+			}
+		}
+	}
+
+	private String setJbossServerLog() {
+		String OS = System.getProperty("os.name").toLowerCase();
+		if (OS.contains("linux")) {
+			serverLogFileLocation = "/local/apps";
+		} else {
+			serverLogFileLocation = System.getenv("JBOSS_HOME") + "/server.log";
+		}
+		return serverLogFileLocation;
+	}
+
+	public String getJmsFileLocation() {
+		return fileLocation;
+	}
+
+	public void setJmsFileLocation(String filelocation) {
+		if (filelocation != null && !filelocation.isEmpty()) {
+			this.fileLocation = filelocation;
+			// System.out.println("jms filelocation: " + filelocation);
+		} else {
+			throw new StopTestException("file location error. the file location is [" + filelocation + "].");
+		}
+	}
+
+	public String getJmsQueue() {
+		return queue;
+	}
+
+	public void setJmsQueue(String queue) {
+		if (queue != null && !queue.isEmpty()) {
+			this.queue = queue;
+			// System.out.println("jms queue: " + queue);
+		} else {
+			throw new StopTestException("queue name error. the queue name is [" + queue + "].");
+		}
+	}
+
+	public void setJmsFileId(String fileid) {
+		if (fileid != null && !fileid.isEmpty()) {
+			this.fileId = fileid;
+			// System.out.println("file id: " + fileId);
+		} else {
+			throw new StopTestException("file id error. the file id is set to [" + fileid + "].");
+		}
+	}
+
+}
+
+$ less LogFileHandler.java
+
+package com.mpobjects.scs.fitnesse.commons.general;
+
+import java.io.File;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
+import org.apache.commons.io.input.Tailer;
+
+import com.mpobjects.scs.fitnesse.commons.errorhandling.StopTestException;
+
+public class LogFileHandler {
+
+	public static final String TIMEOUT_IN_SECONDS_KEY = "TimeoutInSeconds";
+	public static final String REGULAR_EXPRESSION_KEY = "regularExpression";
+	public static final String FILE_PATH_KEY = "FilePath";
+
+	private String filePath = "";
+	private String regex = "";
+	private int timeoutInSeconds = 10;
+
+	private static final Logger logger = Logger.getLogger(LogFileHandler.class.getName());
+
+	private static final int TIMEOUT_BETWEEN_FILE_QUERYING = 500;
+
+	public boolean readLogFile() {
+		if (this.regex.isEmpty() || this.filePath.isEmpty()) {
+			throw new StopTestException("When using the FileLivnessDetector, both the file path and regex should be defined.");
+		}
+		File file = new File(this.filePath);
+		final FileTailerListener listener = new FileTailerListener(this.regex);
+		Tailer tailer = null;
+		try {
+			final long startTime = System.currentTimeMillis();
+			while (System.currentTimeMillis() < startTime + TimeUnit.SECONDS.toMillis(timeoutInSeconds)) {
+				if (file.exists()) {
+					if (tailer == null) {
+						tailer = Tailer.create(file, listener, TIMEOUT_BETWEEN_FILE_QUERYING, false);
+					}
+					if (listener.isProcessUp()) {
+						logger.info("The regular expression " + this.regex + " was found in the process log");
+						return true;
+					}
+				}
+				try {
+					Thread.sleep(TIMEOUT_BETWEEN_FILE_QUERYING);
+				} catch (final InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		} finally {
+			if (tailer != null) {
+				tailer.stop();
+			}
+		}
+		logger.info("The regular expression " + this.regex + " was NOT found in the process log");
+		return false;
+
+	}
+
+	/**
+	 * @return the filePath
+	 */
+	public String getFilePath() {
+		return filePath;
+	}
+
+	/**
+	 * @param filePath
+	 *            the filePath to set
+	 */
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	/**
+	 * @return the regex
+	 */
+	public String getRegex() {
+		return regex;
+	}
+
+	/**
+	 * @param regex
+	 *            the regex to set
+	 */
+	public void setRegex(String regex) {
+		this.regex = regex;
+	}
+
+}
+
+

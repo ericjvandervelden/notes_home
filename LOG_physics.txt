@@ -1,0 +1,35 @@
+/ QUANTUM OCW
+
+/ 7	. 
+
+/ video 5
+
+/ Geef in google, 
+energy operator harmonic oscilator
+/ Lees	,
+https://en.wikipedia.org/wiki/Quantum_harmonic_oscillator
+
+http://hyperphysics.phy-astr.gsu.edu/hbase/quantum/hosc5.html
+->
+http://hyperphysics.phy-astr.gsu.edu/hbase/quantum/hosc.html#c1
+->
+http://hyperphysics.phy-astr.gsu.edu/hbase/pespr.html#pe2
+->
+http://hyperphysics.phy-astr.gsu.edu/hbase/pegrav.html#pe
+
+/ Lees	,
+https://en.wikipedia.org/wiki/Momentum_operator
+https://en.wikipedia.org/wiki/Energy_operator
+
+/ Einde QUANTUM OCW
+
+/ QUANTUM
+
+/ Lees	,
+https://en.wikipedia.org/wiki/Qubit
+/->
+https://en.wikipedia.org/wiki/Quantum_entanglement
+/->
+https://en.wikipedia.org/wiki/Polarization_(waves)
+
+/ Einde QUANTUM

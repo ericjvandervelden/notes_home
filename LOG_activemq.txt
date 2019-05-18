@@ -1,0 +1,140 @@
+/ 7	. 
+
+/ we download	,
+
+-rw-rw-r--. 1 eric eric    58561031 Mar 18 21:01  apache-activemq-5.15.8-bin.tar.gz
+-rw-rw-r--. 1 eric eric    49392344 Mar 18 21:02  apache-artemis-2.6.4-bin.tar.gz
+-rw-rw-r--. 1 eric eric      221907 Mar 18 21:03  AMQinA-src.zip
+
+[eric@almond amq-in-action-example-src]$ mkdir ch2
+[eric@almond amq-in-action-example-src]$ cp chapter8/pom.xml ch2
+[eric@almond amq-in-action-example-src]$ vi ch2/pom.xml 
+[eric@almond amq-in-action-example-src]$ mkdir ch2/jobs
+[eric@almond amq-in-action-example-src]$ mkdir ch2/portfolio
+[eric@almond amq-in-action-example-src]$ mv ch2/pom.xml ch2/jobs/
+[eric@almond amq-in-action-example-src]$ vi ch2/jobs/
+[eric@almond amq-in-action-example-src]$ vi ch2/jobs/pom.xml 
+[eric@almond amq-in-action-example-src]$ cp ch2/jobs/pom.xml ch2/portfolio/
+[eric@almond amq-in-action-example-src]$ vi ch2/portfolio/p;
+[eric@almond amq-in-action-example-src]$ vi ch2/portfolio/pom.xml 
+[eric@almond amq-in-action-example-src]$ mkdir ch2/jobs/src/main/java -p
+[eric@almond amq-in-action-example-src]$ mkdir ch2/jobs/src/main/resources 
+[eric@almond amq-in-action-example-src]$ mkdir ch2/jobs/src/test/java -p
+[eric@almond amq-in-action-example-src]$ mkdir ch2/jobs/src/test/resources
+[eric@almond amq-in-action-example-src]$ mkdir ch2/portfolio/src/main/java -p
+[eric@almond amq-in-action-example-src]$ mkdir ch2/portfolio/src/main/resources
+[eric@almond amq-in-action-example-src]$ mkdir ch2/portfolio/src/test/java -p
+[eric@almond amq-in-action-example-src]$ mkdir ch2/portfolio/src/test/resources
+[eric@almond amq-in-action-example-src]$ mkdir ch2/jobs/src/main/java/my/own
+mkdir: cannot create directory ‘ch2/jobs/src/main/java/my/own’: No such file or directory
+[eric@almond amq-in-action-example-src]$ mkdir ch2/jobs/src/main/java/my/own -p 
+[eric@almond amq-in-action-example-src]$ mkdir ch2/portfolio/src/main/java/my/own -p 
+[eric@almond amq-in-action-example-src]$ cp  src/main/java/org/apache/activemq/book/ch2/portfolio/Publisher.java ch2/portfolio/src/main/java/my/own/
+[eric@almond amq-in-action-example-src]$ cp  src/main/java/org/apache/activemq/book/ch2/portfolio/Consumer.java ch2/portfolio/src/main/java/my/own/
+[eric@almond amq-in-action-example-src]$ cp  src/main/java/org/apache/activemq/book/ch2/portfolio/Listener.java ch2/portfolio/src/main/java/my/own/
+[eric@almond amq-in-action-example-src]$ cp  src/main/java/org/apache/activemq/book/ch2/jobs/Producer.java ch2/jobs/src/main/java/my/own/
+[eric@almond amq-in-action-example-src]$ cp  src/main/java/org/apache/activemq/book/ch2/jobs/Consumer.java ch2/jobs/src/main/java/my/own/
+[eric@almond amq-in-action-example-src]$ cp  src/main/java/org/apache/activemq/book/ch2/jobs/Listener.java ch2/jobs/src/main/java/my/own/
+[eric@almond amq-in-action-example-src]$ mv ch2/portfolio/src/main/java/my/own/Consumer.java ch2/portfolio/src/main/java/my/own/Subscriber.java
+[eric@almond amq-in-action-example-src]$ vi ch2/jobs/src/main/java/my/own/Producer.java 
+[eric@almond amq-in-action-example-src]$ vi ch2/jobs/src/main/java/my/own/Listener.java 
+[eric@almond amq-in-action-example-src]$ vi ch2/jobs/src/main/java/my/own/Consumer.java 
+[eric@almond amq-in-action-example-src]$ vi ch2/portfolio/src/main/java/my/own/Publisher.java 
+[eric@almond amq-in-action-example-src]$ vi ch2/portfolio/src/main/java/my/own/Listener.java 
+[eric@almond amq-in-action-example-src]$ vi ch2/portfolio/src/main/java/my/own/Subscriber.java 
+
+[eric@almond amq-in-action-example-src]$ cat ch2/jobs/pom.xml 
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>my.own</groupId>
+  <artifactId>ch2-amq-jobs</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+	<dependencies>
+		<dependency>
+  		<groupId>org.apache.activemq</groupId>
+  		<artifactId>activemq-client</artifactId>
+  		<version>5.15.8</version>
+		</dependency>
+	</dependencies>
+</project>
+
+/ we maken Producer.java in package my.own	, alle andere ook	,
+
+[eric@almond amq-in-action-example-src]$  less ./src/main/java/org/apache/activemq/book/ch2/jobs/readme.txt
+1. Start ActiveMQ: ${ACTIVEMQ_HOME}/bin/activemq xbean:src/main/resources/org/apache/activemq/book/ch2/activemq.xml
+2. Run Publisher class
+3. Run Consumer class
+
+[eric@almond amq-in-action-example-src]$ cp ./src/main/java/org/apache/activemq/book/ch2/jobs/activemq.xml ch2/jobs
+
+[eric@almond amq-in-action-example-src]$ PATH=/home/eric/Devel/Java/activemq/apache-activemq-5.15.8/bin/:$PATH
+
+[eric@almond jobs]$ activemq console xbean:activemq.xml 
+
+INFO: Loading '/home/eric/Devel/Java/activemq/apache-activemq-5.15.8//bin/env'
+INFO: Using java '/usr/bin/java'
+INFO: Starting in foreground, this is just for debugging purposes (stop process by pressing CTRL+C)
+INFO: Creating pidfile /home/eric/Devel/Java/activemq/apache-activemq-5.15.8//data/activemq.pid
+Java Runtime: Oracle Corporation 1.8.0_161 /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-5.b14.fc26.x86_64/jre
+  Heap sizes: current=62976k  free=58712k  max=932352k
+    JVM args: -Xms64M -Xmx1G -Djava.util.logging.config.file=logging.properties -Djava.security.auth.login.config=/home/eric/Devel/Java/activemq/apache-activemq-5.15.8//conf/login.config -Dcom.sun.management.jmxremote -Djava.awt.headless=true -Djava.io.tmpdir=/home/eric/Devel/Java/activemq/apache-activemq-5.15.8//tmp -Dactivemq.classpath=/home/eric/Devel/Java/activemq/apache-activemq-5.15.8//conf:/home/eric/Devel/Java/activemq/apache-activemq-5.15.8//../lib/: -Dactivemq.home=/home/eric/Devel/Java/activemq/apache-activemq-5.15.8/ -Dactivemq.base=/home/eric/Devel/Java/activemq/apache-activemq-5.15.8/ -Dactivemq.conf=/home/eric/Devel/Java/activemq/apache-activemq-5.15.8//conf -Dactivemq.data=/home/eric/Devel/Java/activemq/apache-activemq-5.15.8//data
+Extensions classpath:
+  [/home/eric/Devel/Java/activemq/apache-activemq-5.15.8/lib,/home/eric/Devel/Java/activemq/apache-activemq-5.15.8/lib/camel,/home/eric/Devel/Java/activemq/apache-activemq-5.15.8/lib/optional,/home/eric/Devel/Java/activemq/apache-activemq-5.15.8/lib/web,/home/eric/Devel/Java/activemq/apache-activemq-5.15.8/lib/extra]
+ACTIVEMQ_HOME: /home/eric/Devel/Java/activemq/apache-activemq-5.15.8
+ACTIVEMQ_BASE: /home/eric/Devel/Java/activemq/apache-activemq-5.15.8
+ACTIVEMQ_CONF: /home/eric/Devel/Java/activemq/apache-activemq-5.15.8/conf
+ACTIVEMQ_DATA: /home/eric/Devel/Java/activemq/apache-activemq-5.15.8/data
+Loading message broker from: xbean:activemq.xml
+ INFO | Refreshing org.apache.activemq.xbean.XBeanBrokerFactory$1@73ad2d6: startup date [Mon Mar 18 21:43:09 CET 2019]; root of context hierarchy
+ WARN | Memory Usage for the Broker (1024mb) is more than the maximum available for the JVM: 910 mb - resetting to 70% of maximum available: 637 mb
+ INFO | Using Persistence Adapter: KahaDBPersistenceAdapter[/home/eric/Devel/Java/activemq/apache-activemq-5.15.8/data/localhost/KahaDB]
+ INFO | JMX consoles can connect to service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi
+ INFO | PListStore:[/home/eric/Devel/Java/activemq/apache-activemq-5.15.8/data/localhost/tmp_storage] started
+ INFO | Apache ActiveMQ 5.15.8 (localhost, ID:almond.nuts.org-35165-1552941789948-0:1) is starting
+ INFO | Listening for connections at: tcp://localhost.localdomain:61616
+ INFO | Connector openwire started
+ INFO | Apache ActiveMQ 5.15.8 (localhost, ID:almond.nuts.org-35165-1552941789948-0:1) started
+ INFO | For help or more information please see: http://activemq.apache.org
+
+[eric@almond jobs]$ cat activemq.xml 
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:amq="http://activemq.apache.org/schema/core"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
+  http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
+
+  <!-- Allows us to use system properties as variables in this configuration file -->
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+  
+  <broker xmlns="http://activemq.apache.org/schema/core" brokerName="localhost" dataDirectory="${activemq.base}/data">
+  
+    <!-- The transport connectors ActiveMQ will listen to -->
+    <transportConnectors>
+       <transportConnector name="openwire" uri="tcp://localhost:61616" />
+    </transportConnectors>
+
+  </broker>
+  
+</beans>
+
+/ 13	. 
+
+[eric@almond activemq-artemis]$ pwd
+/home/eric/git_codebase/activemq-artemis
+[eric@almond git_codebase]$ git clone https://github.com/apache/activemq-artemis.git
+Cloning into 'activemq-artemis'...
+remote: Enumerating objects: 957, done.
+remote: Counting objects: 100% (957/957), done.
+remote: Compressing objects: 100% (768/768), done.
+remote: Total 216523 (delta 405), reused 622 (delta 120), pack-reused 215566
+Receiving objects: 100% (216523/216523), 58.96 MiB | 818.00 KiB/s, done.
+Resolving deltas: 100% (91661/91661), done.
+
+
+
+
+

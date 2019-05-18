@@ -1,0 +1,1000 @@
+  450  stop-all-containers 
+  451  rm-all-containers 
+  452  sudo docker run --rm --name misc -t misc -c 3
+  453  sudo docker build --rm -t misc .
+  454  sudo docker run --rm --name misc -t misc
+  455   sudo docker ps a-
+  456   sudo docker ps -a
+  457  sudo docker build --rm -t misc .
+  458  sudo docker run --rm --name misc -t misc
+  459   sudo docker ps -a
+  460  sudo docker run --rm --name misc -t misc
+  461  sudo docker build --rm -t misc .
+  462  sudo docker run --rm --name misc -t misc
+  463  sudo docker build --rm -t misc .
+  464  sudo docker run --rm --name misc -t misc
+  465  sudo docker build --rm -t misc .
+  466  sudo docker run --rm --name misc -t misc
+  467  stop-all-containers 
+  468  sudo docker ps -a
+  469  rm-all-containers 
+  470  exit
+  471  cd 
+  472  cd Devel/Docker2
+  473  cd my
+  474  ls
+  475  ls mytraining/
+  476  mkdir misc
+  477  vi mytraining/postgres/
+  478  vi mytraining/postgres/Dockerfile
+  479  cd misc/
+  480  pwd
+  481  sudo docker images 
+  482  vi Dockerfile
+  483  exit
+  484  cd Devel/Logs/
+  485  vi LOG_2_nov_2015.txt 
+  486  exit
+  487  cd Devel/Logs/
+  488  vi LOG_2_nov_2015.txt 
+  489  exit
+  490  sudo dnf update --help
+  491  sudo dnf update --refresh
+  492  exit
+  493  cd Devel/Logs/
+  494  vi LOG_2_nov_2015.txt 
+  495  ls -ltr
+  496  exit
+  497  history 
+  498  sudo dnf list available *node*
+  499  sudo dnf list available nodejs
+  500  sudo dnf list available nvm
+  501  sudo dnf list available *nvm*
+  502  man curl
+  503  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.2/install.sh | bash
+  504  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.2/install.sh 
+  505   cd 
+  506  ls
+  507  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.2/install.sh | bash
+  508  exit
+  509  node -v
+  510  nvm 
+  511  nvm use 5.5
+  512  node -v
+  513  exit
+  514  node -v
+  515  nvm run 5.5 --version
+  516  nvm run 5.5
+  517  exit
+  518  node -v
+  519  nvm use 5.5
+  520  npm --help
+  521  npm --version
+  522  exit
+  523  cd 
+  524  cd Devel/Node/
+  525  mkdir videos/ryan_dahl
+  526  mkdir videos/ryan_dahl -p 
+  527  cd videos/ryan_dahl/
+  528  pwd
+  529  node -v
+  530  nvm use 5.5
+  531  node -v
+  532  node
+  533  ls
+  534  vi hello-world.js
+  535  node hello-world.js 
+  536  cat hello-world.js 
+  537  vi web-server.js
+  538  cat web-server.js 
+  539  node web-server.js 
+  540  vi web-server.js
+  541  node web-server.js 
+  542  vi web-server.js
+  543  node web-server.js 
+  544  vi web-server.js
+  545  node hello-world.js 
+  546  node web-server.js 
+  547  vi web-server.js
+  548  node web-server.js 
+  549  vi web-server.js
+  550  node web-server.js 
+  551  vi web-server.js
+  552  node web-server.js 
+  553  vi web-server.js
+  554  node web-server.js 
+  555  vi web-server.js
+  556  node web-server.js 
+  557  vi web-server.js
+  558  node web-server.js 
+  559  vi web-server.js
+  560  node web-server.js 
+  561  vi web-server.js
+  562  node web-server.js 
+  563  cat web-server.js 
+  564  exit
+  565  curl http://localhost:8000
+  566  curl -i http://localhost:8000
+  567  ab
+  568  ab -n 100 -c 100 http://localhost:8000
+  569  ab -n 100 -c 100 http://localhost:8000/
+  570  curl -i http://localhost:8000
+  571  ab -n 100 -c 100 http://localhost:8000
+  572  ab -n 100 -c 100 http://localhost:8000/
+  573  ab -n 10 -c 10 http://localhost:8000/
+  574  man ab
+  575  ab -n 1 -c 1 http://localhost:8000/
+  576  curl -i http://localhost:8000
+  577  ab -n 1 -c 1 http://localhost:8000/
+  578  ab -n 100 -c 100 http://localhost:8000/
+  579  exit
+  580  cd 
+  581  cat ~/.bash_profile 
+  582  less ~/.bashrc
+  583  cat ~/.bashrc
+  584  ls ~/.nvm
+  585  nvm
+  586  nvm install 5.5
+  587  node
+  588  node --help
+  589   node -v
+  590  which node
+  591  ls
+  592  cd Devel/
+  593  ls
+  594  mkdir Node
+  595  cd Node/
+  596  ls
+  597  node
+  598  exit
+  599  cd Devel/Logs/
+  600  vi LOG_2_nov_2015.txt 
+  601  exit
+  602  grep MIXAL -r *
+  603  vi LOG_7_aug_2015.txt
+  604  exit
+  605  cd Devel/Logs/
+  606  vi LOG_2_nov_2015.txt 
+  607  exit
+  608  sudo dnf install mdk
+  609  mixasm hello
+  610  mixvm -r hello
+  611  mixasm hello
+  612  mixvm -r hello
+  613  mixasm for3
+  614  mixvm -r for3
+  615  mixasm for3a
+  616  mixvm -r for3a
+  617  vi for3a.mixal 
+  618  less for3.mixal
+  619  cat hello.mixal
+  620  cat for5
+  621  cat for5.mix 
+  622  cat for5.mixal
+  623  mixasm for5
+  624  mixvm -r for5
+  625  mixvm for5
+  626  mixasm for5
+  627  mixvm 
+  628  mixvm -r for5
+  629  mixasm arr2
+  630  mixvm -r arr2
+  631  mixasm arr2
+  632  mixvm -r arr2
+  633  mixasm arr2
+  634  mixvm -r arr2
+  635  mixasm arr2
+  636  mixasm for6a
+  637  mixvm for6a
+  638  mixvm -r for7a
+  639  vi for7a.mixal
+  640  mixasm for7c
+  641  mixvm -r for7c
+  642  mixasm for7a
+  643  mixvm -r for7a
+  644  mixvm -for7a
+  645  mixvm for7a
+  646  mixasm for7a
+  647  mixvm -r for7a
+  648  mixvm for7a
+  649  mixasm for9
+  650  mixvm for9
+  651  mixasm for9
+  652  mixvm for9
+  653  mixasm for9;mixvm for9
+  654  cd ..
+  655  cd Manual/
+  656  mixasm for9;mixvm for9
+  657  mixasm for9a;mixvm -r for9a
+  658  mixasm for9a
+  659  mixvm -r for9a
+  660  mixasm for9a
+  661  mixvm -r for9a
+  662  mixvm  for9a
+  663  mixvm -r for9a
+  664  mixvm  for9a
+  665  mixasm for9a
+  666  mixvm  for9a
+  667  exit
+  668  gdb
+  669  cd ..
+  670  ls
+  671  cd ..
+  672  ls
+  673  cd Asm/
+  674  ls
+  675  vi add.c
+  676  exit
+  677  vi add.s
+  678  ls
+  679  man gcc
+  680  cp add.c foo.c
+  681  gcc -S foo.c 
+  682  ls -ltr
+  683  rm foo.s
+  684  gcc -S foo.c -o bar.s
+  685  ls -ltr
+  686  vi bar.s
+  687  vi fun2.c
+  688  vi fun.c
+  689  exit
+  690  gcc -g bar.s
+  691  gdb a.out
+  692  gcc -S fun.c
+  693  gcc -g fun.s
+  694  less fun.s
+  695  ls
+  696  cat add.c 
+  697  cp add.c square.c
+  698  vi square.c 
+  699  gcc -S square.c 
+  700  vi square.
+  701  vi square.s
+  702  exit
+  703  gdb a.out
+  704  exit
+  705  cd 
+  706  cd Devel/
+  707  ls
+  708  cd MIX/
+  709  ls
+  710  cd Manual/
+  711  ls
+  712  locate *.mixal
+  713  less /home/eric/Devel/MIX/Manual/for7a.mixal
+  714  vi hello.mix
+  715  vi hello.mixal
+  716  vi for3.mix
+  717  vi for3.mixal
+  718  ls
+  719  less for2.mixal
+  720  cp for3.mixal for3a.mixal
+  721  vi for3a.mixal 
+  722  mixasm for3a.mixal 
+  723  vi for3a.mixal 
+  724  ls
+  725  less add.mix
+  726  less add.mixal
+  727  vi add.mixal
+  728  rm .add.mixal.swp 
+  729  vi add.mixal
+  730  mixvm -h
+  731  mixvm hello
+  732  cat for5.mixal
+  733  ls
+  734  vi for5.mixal
+  735  vi pr_with_sub.mixal 
+  736  vi max.mixal
+  737  vi max2.mixal
+  738  rm .max2.mixal.swp 
+  739  vi max2.mix
+  740  vi max2.mixal
+  741  grep CHAR -r *
+  742  vi for6.mix
+  743  vi for6.mixal
+  744  vi for6a.mixal
+  745  vi arr.mixal 
+  746  ls
+  747  cp arr.mixal arr2.mixal
+  748  vi arr2.mixal 
+  749  mixasm arr
+  750  mixvm -r arr
+  751  vi arr2.mixal 
+  752  cat for6.mixal
+  753  mixvm for6
+  754  mixvm -r for6
+  755  vi for6a.mixal
+  756  mixvm -r for6a
+  757  vi for6a.mixal
+  758  rm .for7a.mixal.swp 
+  759  vi for7a.mixal
+  760  vi for7c.mixal 
+  761  rm .for7c.mixal.swp 
+  762  ls
+  763  vi for7c.mixal 
+  764  vi for7a.mixal
+  765  vi for9.mixal
+  766  cp -a for9.mixal for9a.mixal
+  767  vi for9a.mixal 
+  768  exit
+  769  ls -ltr
+  770  vi LOG_2_nov_2015.txt 
+  771  exit
+  772  cd Devel/Logs/
+  773  ls -ltr
+  774  vi LOG_7_aug_2015.txt
+  775  exit
+  776  cd ../MIX/
+  777  ls
+  778  cd Manual/
+  779  ls
+  780  ls -ltr
+  781  vi for9.mixal
+  782  vi for9a.mix
+  783  cp for9a.mixal  for9a_2.mixal
+  784  vi for9a_2.mixal 
+  785  mv for9a_2.mixal for9_2.mixal
+  786  cp for9a.mixal  for9a_2.mixal
+  787  vi for9a_2.mixal 
+  788  ls -ltr
+  789  vi for9a.mixal
+  790  cp for9a.mixal  for9a_2.mixal
+  791  vi for9a_2.mixal 
+  792  less for9_2.mixal 
+  793  vi for9.mixal
+  794  vi for9_2.mixal 
+  795  vi for9a.mixal 
+  796  vi for9a_2.mixal 
+  797  vi for9_2.mixal 
+  798  mv for9_2.mixal for9a_2.mixal
+  799  cp for9.mixal for9_2.mixal
+  800  mixasm for9a_2.mixal 
+  801  mixvm -r for9a_2.mixal 
+  802  mixvm -r for9a_2
+  803  mixvm for9a_2
+  804  mixasm for9a_2.mixal 
+  805  mixvm -r for9a_2.mixal 
+  806  mixvm -r for9a_2
+  807  mixvm  for9a_2
+  808  vi for9a_2.mix
+  809  vi for9a_2.mixal
+  810  mixasm for9a_2.mixal 
+  811  mixvm  -r for9a_2
+  812   mixasm jump
+  813  mixvm jump
+  814   mixasm jump
+  815  mixvm jump
+  816   mixasm jump
+  817  mixvm jump
+  818   mixasm jump
+  819  mixvm jump
+  820   mixasm jump
+  821  mixvm jump
+  822   mixasm jump
+  823  mixvm jump
+  824   mixasm jump
+  825  mixvm jump
+  826  vi for9a_2.mix
+  827  vi for9a_2.mixal
+  828  ls
+  829  vi pr_with_sub.mixal 
+  830  vi reg_to_reg.mixal
+  831  vi in.mixal
+  832  vi literallist.mixal
+  833  vi in.mix
+  834  vi in.mixal
+  835  mixasm pr_with_sub_2.mix
+  836  ls
+  837  mixasm pr_with_sub_2
+  838  mixvm -r pr_with_sub_2
+  839  mixasm pr_with_sub_2
+  840  mixvm -r pr_with_sub_2
+  841  w
+  842  exit
+  843  mixasm pr_with_sub_2.mixal 
+  844  mixvm pr_with_sub_2.mixal 
+  845  mixvm pr_with_sub_2
+  846  grep PRINTER -r *
+  847  exit
+  848  java -version
+  849  which java
+  850  ls -l /usr/bin/java
+  851  ls -l /etc/alternatives/java
+  852  ls /usr/lib/jvm
+  853  ls -l /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.65-3.b17.fc21.x86_64
+  854  ls -l /usr/lib/jvm/jre
+  855    exit
+  856  less for9a_2.mixal
+  857  vi  for9a_2.mixal
+  858  ls
+  859  vi jump.mixal
+  860  vi jump.mixal 
+  861  cp jump.mixal loop.mixal
+  862  vi loop.mixal 
+  863  cp loop.mixal loop_2.mixal
+  864  vi loop2
+  865  vi loop_2.mixal 
+  866  vi jump.mixal
+  867  cp jump.mixal jump_2.mixal
+  868  vi jump_2.mixal 
+  869  vi for9a_2.mixal
+  870  less loop.mixal
+  871  mixasm reg_to_reg.mixal 
+  872  mixvm reg_to_reg
+  873  mixasm reg_to_reg.mixal 
+  874  mixvm reg_to_reg
+  875  mixasm reg_to_reg.mixal 
+  876  mixvm reg_to_reg
+  877  mixasm reg_to_reg.mixal 
+  878  mixvm reg_to_reg
+  879  mixasm reg_to_reg.mixal 
+  880  mixvm reg_to_reg
+  881  mixasm in.mixal 
+  882  mixvm -r in
+  883  mixvm in
+  884  mixasm in.mixal 
+  885  mixvm in
+  886  mixasm in
+  887  mixvm in
+  888  mixasm pr_with_sub_2.mixal
+  889  mixasm tmp
+  890  mixvm tmp
+  891  mixasm tmp
+  892  mixvm tmp
+  893  mixasm tmp
+  894  mixvm tmp
+  895  mixasm tmp
+  896  mixvm tmp
+  897  vi pr_with_sub_2.mix
+  898  vi pr_with_sub_2.mixal 
+  899  exit
+  900  mixasm for9a_2
+  901  mixvm -r for9a_2
+  902  mixasm loop.mixal 
+  903  mixvm loop
+  904  mixasm loop_2
+  905  mvxvm loop_2
+  906  mixvm loop_2
+  907  mixasm loop_2
+  908  mixasm -r loop_2
+  909  mixvm -r loop_2
+  910  mixasm loop9a_2
+  911  mixasm for9a_2
+  912  mixvm -r for9a_2
+  913  mixvm for9a_2
+  914  mixvm -r for9a_2
+  915  mixasm for9a_2
+  916  mixvm -r for9a_2
+  917  ls
+  918  vi pr_with_sub_2.mixal 
+  919  vi tmp.mixal 
+  920  exit
+  921  gcc arr.c 
+  922  gdb a.out
+  923  gcc arr.c 
+  924  gcc -g arr.c 
+  925  gcc arr.c 
+  926  gcc -g arr.c 
+  927  gdb a.out
+  928  gcc -S arr.c 
+  929  vi arr.s
+  930  exit
+  931  cd 
+  932  cd Devel/
+  933  ls
+  934  cd Asm/
+  935  ls
+  936  vi arr.c
+  937  grep malloc -r *
+  938  vi arr.c
+  939  gcc arr.c 
+  940  vi arr.c
+  941  gcc arr.c 
+  942  vi arr.c
+  943  exit
+  944  cd ../MIX/Manual/
+  945  ls
+  946  vi pr_with_sub_2.mix
+  947  vi pr_with_sub_2.mixal
+  948  pwd
+  949  ls
+  950  exit
+  951  cd 
+  952  cd Devel/Golang/
+  953  ls
+  954  cd work/
+  955  ls
+  956  cd src/
+  957  ls
+  958  go install my/my_hello
+  959  head ../bin/my_hello
+  960  ls
+  961  ls my/
+  962  mkdir my/basics1
+  963  ../bin/my_hello
+  964  mv my/my_hello/hello.go my/my_hello/main.go
+  965  go install my/my_hello
+  966  ../bin/my_hello
+  967  my_hello
+  968  go tool compile -S my/my_hello
+  969  go tool compile -S my/my_hello/main.go 
+  970  ls ..
+  971  ls ../ibn
+  972  ls ../bin
+  973  ls
+  974  cd ../
+  975  cd ..
+  976  ls
+  977  mkdir work2
+  978  mkdir work2/src
+  979  mv work/src/my/ work2/src/
+  980  vi ~/.bash_profile 
+  981  . ~/.bash_profile 
+  982  echo $GOPATH
+  983  rm work/bin/my_hello*
+  984  mr work/bin/hello 
+  985  rm work/bin/hello 
+  986  cd work2/src/
+  987  go install my/my_hello
+  988  ls ..
+  989  ls ../../work2/bin
+  990  pwd
+  991  ls ../../work/bin
+  992  ls ../bin/
+  993  pd
+  994  pwd
+  995  . ~/.bash_profile
+  996  wpd
+  997  cat package.json 
+  998  exit
+  999  vi ks2.R 
+ 1000  exit
+ 1001  ls
+ 1002  vi index.js
+ 1003  ls
+ 1004  npm start
+ 1005  nvm use 5.5
+ 1006  npm start
+ 1007  cd ../blog
+ 1008  vi index.js
+ 1009  ls
+ 1010  less package.json 
+ 1011  pwd
+ 1012  ls
+ 1013  vi index.js
+ 1014  cd ..
+ 1015  ls
+ 1016  cd getting-started/
+ 1017  ls
+ 1018  vi package.json 
+ 1019  cd ..
+ 1020  ls
+ 1021  mkdir Manual
+ 1022  mkdir Manual/package-management
+ 1023  cd Manual/package-management/
+ 1024  npm init
+ 1025  vi index.js
+ 1026  cd ../
+ 1027  ls
+ 1028  cd ..
+ 1029  ls
+ 1030  cd getting-started/
+ 1031  ls
+ 1032  vi index.html 
+ 1033  cp index.html  ../Manual/package-management/
+ 1034  cd ../Manual/package-management/
+ 1035  ls
+ 1036  vi package.json 
+ 1037  cp ../../getting-started/package.json .
+ 1038  vi package.json 
+ 1039  vi .babelrc
+ 1040  vi package.json 
+ 1041  rm package.json 
+ 1042  npm init
+ 1043  vi package.json 
+ 1044  npm i --save react react-dom babelify babel-preset-react
+ 1045  vi index.html 
+ 1046  cat index.
+ 1047  ls
+ 1048  vi package.json 
+ 1049  npm start
+ 1050  npm i browserify
+ 1051  npm start
+ 1052   vi .babelrc 
+ 1053  npm start
+ 1054  vi index.js
+ 1055  vi index.html 
+ 1056  vi index.js
+ 1057  npm start
+ 1058  ls
+ 1059  less ../../jesse/package.json 
+ 1060  vi package.json 
+ 1061  npm i --save browserify
+ 1062  vi package.json 
+ 1063  npm start
+ 1064  ls
+ 1065  less ../../getting-started/package.json 
+ 1066  vi package.json 
+ 1067  npm start
+ 1068  vi package.json 
+ 1069  npm i --save-dev budo
+ 1070  cat package.json 
+ 1071  vi package.json 
+ 1072  npm i --save-dev budo browserify
+ 1073  less package.json 
+ 1074  vi package.json 
+ 1075  npm start
+ 1076  vi package.json 
+ 1077  npm start
+ 1078  ls
+ 1079  vi index.html 
+ 1080  vi index.js
+ 1081  ls
+ 1082  vi bundle.js 
+ 1083  vi index.js
+ 1084  cd ..
+ 1085  ls
+ 1086  mv package-management/ tmp
+ 1087  mkdir -p package-management/browserify
+ 1088  mv tmp/* package-management/browserify/
+ 1089  cd package-management/browserify/
+ 1090  vi package.json 
+ 1091  cd ../webpack/
+ 1092  vi package.json 
+ 1093  find -name .babel.rc
+ 1094  find -name .babelrc
+ 1095  find .. -name .babelrc
+ 1096  find ../.. -name .babelrc
+ 1097  cd ../
+ 1098  pwd
+ 1099  ls -al
+ 1100  cd browserify/
+ 1101  ls
+ 1102  cd ../webpack/
+ 1103  vi package.json 
+ 1104  npm start
+ 1105  ls
+ 1106  vi package.json 
+ 1107  pwd
+ 1108  less package.json 
+ 1109  ls
+ 1110  cat index.js
+ 1111  ls
+ 1112  cat .babelrc 
+ 1113  cd ../../
+ 1114  ls
+ 1115  ls tmp/
+ 1116  rmdir tmp
+ 1117  rm -rf tmp/
+ 1118  pwd
+ 1119  ls
+ 1120  ls package-management/
+ 1121  cd package-management/webpack/
+ 1122  ls
+ 1123  cat package.json 
+ 1124  vi package.json 
+ 1125  cat package.json 
+ 1126  npm start
+ 1127  vi package.json 
+ 1128  npm start
+ 1129  vi package.json 
+ 1130  npm start
+ 1131  cat package.json 
+ 1132  npm start
+ 1133  cd ../../
+ 1134  cd tutorial/
+ 1135  ls
+ 1136  npm start
+ 1137  vi package.json 
+ 1138  vi .babelrc 
+ 1139  ls
+ 1140  cd ../
+ 1141  cd tutorial/
+ 1142  pwd
+ 1143  ls ../../
+ 1144  npm i babel-preset-es2015
+ 1145  npm i babel-preset-es2015 --save-dev
+ 1146  cat package.json 
+ 1147  vi package.json 
+ 1148  vi .babelrc 
+ 1149  npm start
+ 1150  vi package.json 
+ 1151  npm i babel-preset-es2015 --save
+ 1152  vi package.json 
+ 1153  npm i babel-preset-es2015 --save
+ 1154  vi package.json 
+ 1155  cat package.json 
+ 1156  vi .babelrc 
+ 1157  vi package.json 
+ 1158  npm start
+ 1159  npm i
+ 1160  npm start
+ 1161  npm i babel-preset-es2015 --save
+ 1162  vi .babelrc 
+ 1163  npm start
+ 1164  pwd
+ 1165  cd ../../../
+ 1166  ls
+ 1167  cd Webpack/video2
+ 1168  ls
+ 1169  vi package.json 
+ 1170  npm start
+ 1171  ls
+ 1172  vi package.json 
+ 1173  vi index
+ 1174  vi index.js
+ 1175  vi bear.js
+ 1176  vi index.js
+ 1177  npm start
+ 1178  vi package.json 
+ 1179  npm start
+ 1180  vi package.json 
+ 1181  npm start
+ 1182  vi package.json 
+ 1183  npm start
+ 1184  vi package.json 
+ 1185  vi index
+ 1186  vi index2.js 
+ 1187  vi bear2.js 
+ 1188  vi index2.js
+ 1189  vi bear2.js 
+ 1190  vi index2.js 
+ 1191  vi bear2.js 
+ 1192  vi index2.js 
+ 1193  vi bear2.js 
+ 1194  vi index2.js 
+ 1195  vi bear2.js 
+ 1196  vi index2.js 
+ 1197  ls
+ 1198  vi index2.js 
+ 1199  vi index.js
+ 1200  vi bear.js
+ 1201  cat package.json 
+ 1202  vi package.json 
+ 1203  npm start
+ 1204  vi bundle.js 
+ 1205  vi index.js
+ 1206  ls
+ 1207  vi index.html 
+ 1208  vi index0.html
+ 1209  pwd
+ 1210  cd ..
+ 1211  ls
+ 1212  ls video3
+ 1213  ls video2
+ 1214  mkdir video3
+ 1215  cd video3
+ 1216  npm init
+ 1217  vi package.json 
+ 1218  npm i express --save
+ 1219  vi server.js
+ 1220  mkdir public 
+ 1221  mv ../video2/index0.html public/index.html
+ 1222  vi public/index.html 
+ 1223  cp ../video2/index.js ../video2/bear.js public/
+ 1224  vi public/index.
+ 1225  vi public/index.js
+ 1226  vi public/bear.js 
+ 1227  vi server.js 
+ 1228  ls
+ 1229  vi package.json 
+ 1230  vi server.js 
+ 1231  vi src/main.js 
+ 1232  vi src/bear.js
+ 1233  ls src/
+ 1234  vi src/bear.css 
+ 1235  vi src/bear.js
+ 1236  vi package.json 
+ 1237  vi webpack.config.js 
+ 1238  vi src/main.js 
+ 1239  vi src/bear.js
+ 1240  vi webpack.config.js 
+ 1241  cd ..
+ 1242  ls
+ 1243  mkdir bootstrap
+ 1244  cd bootstrap/
+ 1245  npm init
+ 1246  npm i bootstrap-webpack --save
+ 1247  npm i bootstrap --save
+ 1248  vi package.json 
+ 1249  npm i bootstrap --save
+ 1250  cat package.json 
+ 1251  npm i css-loader --save
+ 1252  npm i exports-loader --save
+ 1253  npm i extract-text-webpack-plugin --save
+ 1254  npm i file-loader --save
+ 1255  npm i imports-loader --save
+ 1256  npm i less-loader --save
+ 1257  npm i style-loader --save
+ 1258  npm i url-loader --save
+ 1259  npm i less webpack --save
+ 1260  npm i --help
+ 1261  npm --hel
+ 1262  npm --help
+ 1263  npm list --help
+ 1264  npm list
+ 1265  ls node_modules/
+ 1266  npm i bootstrap-webpack --save
+ 1267  ls
+ 1268  vi package.json 
+ 1269  cd ..
+ 1270  ls
+ 1271  pwd
+ 1272  git clone https://github.com/bline/bootstrap-webpack-example.git
+ 1273  pwd
+ 1274  cd bootstrap-webpack-example/
+ 1275  cd ..
+ 1276  mv bootstrap bootstrap-webpack-my
+ 1277  vi bootstrap-webpack-my/package.json 
+ 1278  ls
+ 1279  cd bootstrap-webpack-my
+ 1280  npm i bootstrap-webpack --save
+ 1281  cd ../bootstrap-webpack-example/
+ 1282  ls
+ 1283  vi package.json 
+ 1284  ls
+ 1285  vi webpack.config.js 
+ 1286  ls
+ 1287  vi README.md 
+ 1288  vi index.html
+ 1289  pwd
+ 1290  vi package.json 
+ 1291  vi index.js
+ 1292  ls
+ 1293  vi webpack.config.js 
+ 1294  webpack
+ 1295  vi webpack.config.js 
+ 1296  vi package.json 
+ 1297  npm start
+ 1298  ls
+ 1299  npm i
+ 1300  npm i ls
+ 1301  ls
+ 1302  npm start
+ 1303  ls
+ 1304  ls dist/
+ 1305  vi webpack.config.js 
+ 1306  vi index.js
+ 1307  vi index.html 
+ 1308  ln --help
+ 1309  ln -s index.js main.js
+ 1310  pwd
+ 1311  ls
+ 1312  vi index.html 
+ 1313   less main.js 
+ 1314  ls ..
+ 1315  cp ../video3/server.js .
+ 1316  vi server.js 
+ 1317  npm i express --save-dev
+ 1318  wd
+ 1319  pwd
+ 1320  vi index.js
+ 1321  ls
+ 1322  vi package.json 
+ 1323  vi webpack.config.js 
+ 1324  vi server.js 
+ 1325  mkdir public
+ 1326  mv index.html public/
+ 1327  vi public/index.html 
+ 1328  rm -f main.js 
+ 1329  vi server.js 
+ 1330  vi webpack.config.js 
+ 1331  vi public/index.html 
+ 1332  vi webpack.config.js 
+ 1333  mkdir src
+ 1334  ls
+ 1335  mv index.js src/
+ 1336  npm start
+ 1337  vi src/index.js 
+ 1338  npm start
+ 1339   node server
+ 1340  node server.js
+ 1341   vi public/index.html 
+ 1342  vi server.js 
+ 1343  vi webpack.config.js 
+ 1344  ls
+ 1345  ls -ltr
+ 1346  ls bin
+ 1347  vi package.json 
+ 1348  npm start
+ 1349    vi webpack.config.js 
+ 1350  ls
+ 1351  vi webpack.config.js 
+ 1352  ls dist/
+ 1353  rmdir dist
+ 1354  ls bootstrap.config.js
+ 1355  less bootstrap.config.js
+ 1356  less bootstrap.config.less 
+ 1357  ls
+ 1358  vi webpack.config.js 
+ 1359  npm start
+ 1360  vi webpack.config.js 
+ 1361  npm start
+ 1362  node server.js
+ 1363  vi webpack.config.js 
+ 1364  ls node_modules/bootstrap/dist/fonts/
+ 1365   node server
+ 1366  vi webpack.config.js 
+ 1367  node server
+ 1368  pwd
+ 1369  ls
+ 1370  vi server.js 
+ 1371  vi src/index.js 
+ 1372  ls
+ 1373  ls node_modules/
+ 1374  ls
+ 1375  less bootstrap.config.js
+ 1376  pwd
+ 1377  cd ..
+ 1378  ls
+ 1379  ls bootstrap-webpack-my
+ 1380  mkdir loaders
+ 1381  cd loaders/
+ 1382  npm init
+ 1383  cd ..
+ 1384  mkdir webpack-loaders-my
+ 1385  cd webpack-loaders-my/
+ 1386  wd
+ 1387  pwd
+ 1388  npm init
+ 1389  npm i express webpack --save-dev
+ 1390  npm i css-loader jquery --save-dev
+ 1391  vi server.java
+ 1392  vi server.js
+ 1393  pwd
+ 1394  vi server.js 
+ 1395  vi webpack.config.js
+ 1396  mkdir src
+ 1397  vi src/index.js
+ 1398  vi webpack.config.js 
+ 1399  vi public/index.html
+ 1400  ls
+ 1401  mkdir public
+ 1402  vi public/index.html
+ 1403  mv src/index.js src/main.js
+ 1404  ls src
+ 1405  vi src/main.css
+ 1406  vi package.json 
+ 1407  npm run webpack
+ 1408  vi src/main.js
+ 1409  npm run webpack
+ 1410  vi webpack.config.js 
+ 1411  npm run webpack
+ 1412  node server
+ 1413  vi server.js 
+ 1414  node server
+ 1415  vi bin/app.bundle.js 
+ 1416  cd ../video3
+ 1417  ls
+ 1418  node server
+ 1419  ls
+ 1420  vi webpack.config.js 
+ 1421  cd ../webpack-loaders-my/
+ 1422  vi src/main.js
+ 1423  npm i style-loader --save-dev
+ 1424  npm run webpack
+ 1425  node server
+ 1426  vi src/main.js
+ 1427  npm run webpack
+ 1428  node server
+ 1429  vi src/main.js
+ 1430  npm run webpack
+ 1431  node server
+ 1432  vi src/main.js
+ 1433  npm run webpack
+ 1434  node server
+ 1435  vi src/main.js
+ 1436  cd ../bootstrap-webpack-example/
+ 1437  vi webpack.config.js 
+ 1438  ls
+ 1439  vi src/index.js 
+ 1440  node server
+ 1441  less node_modules/bootstrap/dist/css/bootstrap.css
+ 1442  find node_modules/bootstrap -type f | xargs grep 'nav-affix'
+ 1443  find node_modules/bootstrap -type f | xargs grep 'affix'
+ 1444  find node_modules/bootstrap -type f -name "*.css" | xargs grep 'affix'
+ 1445  less node_modules/bootstrap/dist/css/bootstrap.css
+ 1446  ls
+ 1447  pwd
+ 1448  pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+ 1449  history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Webpack_bootstrap-webpack-example.txt

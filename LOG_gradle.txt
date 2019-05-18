@@ -1,0 +1,451 @@
+/ See BUILDSHIP 
+
+/ 7	.
+
+[eric@almond sts-3.8.2.RELEASE]$ pwd
+/home/eric/Devel/Eclipse/STS/sts-bundle/sts-3.8.2.RELEASE
+$ ./STS
+
+/ we maken een gradle proj first-gradle	,
+
+/ lees	,
+https://docs.gradle.org/current/userguide/userguide.html
+
+/ lees	,
+https://docs.gradle.org/current/userguide/installation.html
+/ we zien link You can download one of the Gradle distributions from the Gradle web site.
+
+/ lees	,
+https://gradle.org/gradle-download
+/ install gradle met sdkman	, 
+
+/ install	,
+[eric@almond gradle]$ sdk install gradle 3.1
+/ update	,
+[eric@almond gradle]$ sdk install gradle 3.4
+
+/ Lees over groovy, java, ...	
+http://sdkman.io/usage.html#installdefault
+
+/ Lees over tests in docker	,
+https://github.com/sdkman/sdkman-cli
+/ TODO
+
+/ Lees	,
+https://gradle.org/install
+
+/ Lees	,
+http://sdkman.io/install.html
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+/WH heeft install in ~/bash_profile	,
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/home/eric/.sdkman"
+[[ -s "/home/eric/.sdkman/bin/sdkman-init.sh" ]] && source "/home/eric/.sdkman/bin/sdkman-init.sh"
+ 
+
+
+/ we hebben eerder gradle install met zip	, 
+[eric@almond gradle]$ ls ~/Devel/Gradle/Java/
+gradle-2.13/ gradle-2.4/  my/          
+
+$ vi ~/.bash_profile
+#GRADLE_HOME=/home/eric/Devel/Gradle/Java/gradle-2.13
+#export GRADLE_HOME
+#PATH=$PATH:$GRADLE_HOME/bin
+
+[eric@almond gradle]$ . ~/.bash_profile 
+
+[eric@almond gradle]$ gradle -v
+
+------------------------------------------------------------
+Gradle 3.1
+------------------------------------------------------------
+
+Build time:   2016-09-19 10:53:53 UTC
+Revision:     13f38ba699afd86d7cdc4ed8fd7dd3960c0b1f97
+
+Groovy:       2.4.7
+Ant:          Apache Ant(TM) version 1.9.6 compiled on June 29 2015
+JVM:          1.8.0_72 (Oracle Corporation 25.72-b16)
+OS:           Linux 4.3.4-300.fc23.x86_64 amd64
+
+/ lees LOG_23_may_2016.txt	, 
+
+/ we zien  ook link naar Free Gradle online book	,
+
+/ lees	, 
+http://www.vogella.com/tutorials/EclipseGradle/article.html
+
+/ TODO
+
+/ 7	. 
+
+/ BUILDSHIP 
+
+/ Scala IDE
+/ workspace-spring
+/ buildship 2.0
+
+/ als je een bestaand gradle proj import,	 dan kijkt hij naar de laatste regel	, dat wordt de gradle version	,	 deze kun je edit	, 
+[eric@almond knight]$ cat gradle/wrapper/gradle-wrapper.properties 
+#Tue Apr 29 19:17:43 CDT 2014
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+distributionUrl=http\://services.gradle.org/distributions/gradle-3.3-bin.zip
+
+/ Als deze task er staat	, dan zien we in de gradle tasks view GEEN wrapper entry onder <project> build setup	, we zien alleen init	, 
+[eric@almond knight]$ cat build.gradle
+...
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.11'
+}
+/ Klopt	 	, 
+/ we kunnen in Gradle Tasks view bij V kiezen : show all tasks	, dan zien we wrapper onder 'Other', ipv. 'build setup'	, onder other zien we private tasks	, niet de public tasks	, 
+
+/ Als we in gradle-wrapper.properties de laatste line hebben edit naar 3.3, click dan in Gradle Tasks view op 'Refresh all tasks', dan zie dat als je een task run, dat hij Gradle 3.3 use	,
+
+/ Geef in google, 
+build ship custom tasks 
+/ lees	,
+https://discuss.gradle.org/t/custom-tasks-are-not-being-included-in-the-gradle-tasks-view/12760
+
+
+/ Einde BUILDSHIP 
+
+
+/ 7	.
+
+https://docs.gradle.org/current/userguide/tutorial_gradle_command_line.html
+
+/ ch 4
+
+[eric@almond gradle]$ pwd
+/home/eric/Devel/Java/gradle
+
+
+$ vi gradle.build
+
+task compile {
+  doLast{
+      println 'compiling source'
+  }
+}
+
+task compileTest(dependsOn: compile){
+  doLast{
+    println 'compiling unit tests'
+  }
+}
+
+task test(dependsOn: [compile, compileTest]) {
+  doLast{
+    println 'running unit tests'
+  }
+}
+
+task dist(dependsOn: [compile, test]) {
+  doLast{
+    println 'building the distribution'
+  }
+}
+
+[eric@almond gradle]$ vi sub/build.gradle
+task foo{
+  doLast{
+      println "using build file $buildFile.name in π$buildFile.parentFile.name π"
+  }
+}
+
+[eric@almond gradle]$ gradle -q test
+compiling source
+compiling unit tests
+running unit tests
+
+[eric@almond gradle]$ gradle -q -b sub/build.gradle foo
+using build file build.gradle in πsub π
+
+
+/ 13	.        
+
+[eric@almond first-gradle]$ pwd
+/home/eric/Devel/Eclipse/STS/workspace/first-gradle
+[eric@almond first-gradle]$ gradle -q projects
+...
+[eric@almond first-gradle]$ gradle -q tasks
+...
+
+[eric@almond first-gradle]$ gradle -q dependencies
+...
+testCompile - Compile classpath for source set 'test'.
++--- org.slf4j:slf4j-api:1.7.21
+\--- junit:junit:4.12
+     \--- org.hamcrest:hamcrest-core:1.3
+...
+
+/ we vragen op het root project, sub projects zoals webapp hebben we niet	,
+[eric@almond first-gradle]$ gradle -q dependencyInsight --dependency junit --configuration testCompile
+/ of	,
+[eric@almond first-gradle]$ gradle -q :dependencyInsight --dependency junit --configuration testCompile
+junit:junit:4.12
+\--- testCompile
+
+[eric@almond first-gradle]$ gradle -q :properties
+/ of	,
+[eric@almond first-gradle]$ gradle -q :properties
+------------------------------------------------------------
+Root project
+------------------------------------------------------------
+
+allprojects: [root project 'first-gradle']
+ant: org.gradle.api.internal.project.DefaultAntBuilder@7ceb4478
+antBuilderFactory: org.gradle.api.internal.project.DefaultAntBuilderFactory@7fdab70c
+...
+
+
+
+/ 13	 
+
+
+[eric@almond first-gradle]$ gradle -q  tasks  --all
+/ we zien compileJava niet	,
+
+/ doe daarom	,
+[eric@almond first-gradle]$ gradle -q  tasks  --all
+
+------------------------------------------------------------
+All tasks runnable from root project
+------------------------------------------------------------
+
+Build tasks
+-----------
+classes - Assembles main classes.
+    compileJava - Compiles main Java source.
+    processResources - Processes main resources.
+
+testClasses - Assembles test classes. [classes]
+    compileTestJava - Compiles test Java source.
+    processTestResources - Processes test resources.
+
+/ 13	. 
+
+/ zonder -q	, 
+[eric@almond first-gradle]$  gradle build
+:compileJava UP-TO-DATE
+:processResources UP-TO-DATE
+:classes UP-TO-DATE
+:jar UP-TO-DATE
+:assemble UP-TO-DATE
+:compileTestJava UP-TO-DATE
+:processTestResources UP-TO-DATE
+:testClasses UP-TO-DATE
+:test UP-TO-DATE
+:check UP-TO-DATE
+:build UP-TO-DATE
+
+BUILD SUCCESSFUL
+
+[eric@almond first-gradle]$ vi src/main/java/Library.java 
+        return false;
+    }
+
+/ 13	. 
+
+Verification tasks
+------------------
+check - Runs all checks. [test]
+test - Runs the unit tests. [classes, testClasses]
+
+/ check gaat nog 1 verder	, 
+
+[eric@almond first-gradle]$ gradle check
+:compileJava
+:processResources UP-TO-DATE
+:classes
+:compileTestJava
+:processTestResources UP-TO-DATE
+:testClasses
+:test
+:check
+
+BUILD SUCCESSFUL
+
+Total time: 1.5 secs
+[eric@almond first-gradle]$ gradle test
+:compileJava UP-TO-DATE
+:processResources UP-TO-DATE
+:classes UP-TO-DATE
+:compileTestJava UP-TO-DATE
+:processTestResources UP-TO-DATE
+:testClasses UP-TO-DATE
+:test UP-TO-DATE
+
+BUILD SUCCESSFUL
+
+/ 13	. 
+
+/ dry run	,
+
+[eric@almond first-gradle]$ gradle -m clean build
+:clean SKIPPED
+:compileJava SKIPPED
+:processResources SKIPPED
+:classes SKIPPED
+:jar SKIPPED
+:assemble SKIPPED
+:compileTestJava SKIPPED
+:processTestResources SKIPPED
+:testClasses SKIPPED
+:test SKIPPED
+:check SKIPPED
+:build SKIPPED
+
+BUILD SUCCESSFUL
+
+/ 7	.
+
+/ ch 5 
+
+[eric@almond gradle]$ pwd
+/home/eric/Devel/Java/gradle
+[eric@almond gradle]$ ls
+build.gradle 
+
+[eric@almond gradle]$ gradle -v
+Gradle 3.1
+
+[eric@almond gradle]$ gradle wrapper
+:wrapper
+
+BUILD SUCCESSFUL
+
+
+[eric@almond gradle]$ ls
+build.gradle  gradle  gradlew  gradlew.bat
+
+eric@almond first-gradle]$ gradle wrapper --gradle-version 3.1
+:wrapper UP-TO-DATE
+
+[eric@almond first-gradle]$ ./gradlew -version
+Downloading https://services.gradle.org/distributions/gradle-3.1-bin.zip
+................................................................................................................................................................
+Unzipping /home/eric/.gradle/wrapper/dists/gradle-3.1-bin/37qejo6a26ua35lyn7h1u9v2n/gradle-3.1-bin.zip to /home/eric/.gradle/wrapper/dists/gradle-3.1-bin/37qejo6a26ua35lyn7h1u9v2n
+Set executable permissions for: /home/eric/.gradle/wrapper/dists/gradle-3.1-bin/37qejo6a26ua35lyn7h1u9v2n/gradle-3.1/bin/gradle
+
+------------------------------------------------------------
+Gradle 3.1
+------------------------------------------------------------
+
+Build time:   2016-09-19 10:53:53 UTC
+Revision:     13f38ba699afd86d7cdc4ed8fd7dd3960c0b1f97
+
+Groovy:       2.4.7
+Ant:          Apache Ant(TM) version 1.9.6 compiled on June 29 2015
+JVM:          1.8.0_72 (Oracle Corporation 25.72-b16)
+OS:           Linux 4.3.4-300.fc23.x86_64 amd64
+
+[eric@almond first-gradle]$ ls ~/.gradle/wrapper/dists/
+... gradle-3.1-bin
+
+[eric@almond first-gradle]$ ./gradlew -version
+
+------------------------------------------------------------
+Gradle 3.1
+------------------------------------------------------------
+
+Build time:   2016-09-19 10:53:53 UTC
+Revision:     13f38ba699afd86d7cdc4ed8fd7dd3960c0b1f97
+
+Groovy:       2.4.7
+Ant:          Apache Ant(TM) version 1.9.6 compiled on June 29 2015
+JVM:          1.8.0_72 (Oracle Corporation 25.72-b16)
+OS:           Linux 4.3.4-300.fc23.x86_64 amd64
+
+[eric@almond first-gradle]$  which gradle
+~/.sdkman/candidates/gradle/current/bin/gradle
+
+[eric@almond gradle]$ cat gradle/wrapper/gradle-wrapper.properties 
+#Sun Oct 30 20:48:46 CET 2016
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-3.1-bin.zip
+
+/ hoe in eclipse
+gradle -v
+/ TODO
+
+If you build via the Wrapper, any existing Gradle distribution installed on the machine is ignored.
+
+/ die met sdk wordt ignored	, hij uses WH die in,	
+[eric@almond first-gradle]$ ls ~/.gradle/wrapper/dists/gradle-3.1-bin/37qejo6a26ua35lyn7h1u9v2n/gradle-3.1/bin/
+gradle  gradle.bat
+/ TODO
+
+
+/ 13	. 
+
+/ we zien in eclipse, in run configurations	,
+Gradle distribution 
+automatic						/ checked	, 
+gradlew
+...
+/ welke heeft hij nou run	?
+/ TODO
+
+/ 7	. 
+
+/ ch 6
+
+/ 7	. 
+
+/ ch 7	.
+
+/ lees over jcenter	,
+http://stackoverflow.com/questions/24852219/android-buildscript-repositories-jcenter-vs-mavencentral
+http://stackoverflow.com/questions/11277967/pros-and-cons-of-using-sbt-vs-maven-in-scala-project
+
+
+/ ga naar	,
+https://bintray.com/bintray/jcenter/
+/ en zoek op hibernate-core
+/ deze moet in build.gradle binnen dependencies	, 
+compile 'org.hibernate:hibernate-core:5.2.4.Final'
+/ in de maven variant staat er <type>pom</type> bij 
+/ TODO
+
+/ we zijn in first-gradle, in STS, gen door buildship	, 
+$ vi build.gradle
+
+dependencies {
+    compile 'org.hibernate:hibernate-core:5.2.4.Final'
+ 
+/ Save
+
+/ right click build.gradle
+Gradle, Refresh Gradle project
+
+/ we maken een class X, en we kunnen @Entity er op set	, en @Column op een property	,
+
+/ Dit was in 
+[eric@almond sts-3.8.2.RELEASE]$ pwd
+/home/eric/Devel/Eclipse/STS/sts-bundle/sts-3.8.2.RELEASE
+[eric@almond sts-3.8.2.RELEASE]$ ./STS 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

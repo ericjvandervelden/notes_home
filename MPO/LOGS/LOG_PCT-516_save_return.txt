@@ -1,0 +1,563 @@
+Shipment Order Finance
+Pre-calculated
+Post-calculated
+Actual
+Compare
+Cost
+ 	Code	Description	Amount	Entry type
+CREATE
+Price
+ 	Code	Description	Amount	Entry type	Reason	Invoice Status	Invoice Reference
+CREATE
+Margin
+Code	Description	Amount
+Lock Precalculation
+
+Approve Precalculation
+
+Approve Dtm
+ 
+Approved By
+ Save
+ 
+Calculation Log
+ DistributionDepot : RP-DISTRIBUTIONDEPOT ( MUTEX ) = DOR
+ CollectionDepot : IF_COLLECTIONDEPOT ( IF ) = EHV
+ RC-SHIPMENTTYPE : RT-SHIPMENT-TYPE_OUTPUT ( RATE TABLE ) = BENELUXFREIGHT
+ RC-REQUESTED-END-AFTER : IF_END_AFTER_014 ( IF ) = 2015-08-19 08:00:00 DATE
+ RC-HOLD : RP-HOLD ( IF ) = NL
+ 	RP-PRODUCT-HOLD ( IF ) = NL
+ 		RP-UNKNOWN-PC-HOLD ( IF ) = NL
+ 			RP-ADDRESS-HOLD ( IF ) = NL
+ 				RT-ADDRESS-HOLD_OUTPUT ( RATE TABLE ) = 0
+					 FROM_ADDRESS2 ( ) = 13
+					 TO CITY ( ) = Schiedam
+					 TO POSTALCODE ( ) = 3012cn
+					 TO ADDRESS 2 ( ) = 7
+					 TO COUNTRY ( ) = NL
+					 FROM POSTALCODE ( ) = 5626gh
+					 FROM COUNTRY ( ) = NL
+				 RP-BARCODE-HOLD ( IF ) = NL
+				 	RP-DUPLICATE-HOLD ( IF ) = NL
+				 		RP-COLLO-HOLD ( IF ) = NL
+				 			RP_ADR_HOLD ( IF ) = NL
+				 				TO COUNTRY ( ) = NL
+ 				RT-ADDRESS-HOLD_OUTPUT ( RATE TABLE ) = 0
+						 FROM_ADDRESS2 ( ) = 13
+						 TO CITY ( ) = Schiedam
+						 TO POSTALCODE ( ) = 3012cn
+						 TO ADDRESS 2 ( ) = 7
+						 TO COUNTRY ( ) = NL
+						 FROM POSTALCODE ( ) = 5626gh
+						 FROM COUNTRY ( ) = NL
+ RC_REQ_START_BEFORE : RP_REQ_START_BEFORE ( SET TIME ) = 2015-08-18 18:00:00 DATE
+ RC-REQUESTED-END-BEFORE : IF_END_BEFORE_014* ( IF ) = 2015-08-19 18:00:00 DATE
+ DefaultWeight : RP-SET-DEF-WEIGHT ( SUM ) = 40 KGM
+ RC_REQ_START_AFTER : RP_REQ_START_AFTER ( SET TIME ) = 2015-08-18 08:00:00 DATE
+ RC-PRODUCTCODE : RT-PRODUCTCODE_OUTPUT ( RATE TABLE ) = 3610
+ RC-SHIPPING_UNIT : ( ) =
+ RC-SHIPPING_UNIT : ( ) =
+  Detailed log
+ [15:19:18.189] Calculating rate agreement [VT-9148459-2015,RA-BUSINESSRULES SHO]
+ [15:19:18.189] Calculating rate agreement, no variables defined
+ [15:19:18.189] Starting evaluation of component [RC-VRACHT]
+ [15:19:18.189] FUNCTION TYPE: Sum
+ [15:19:18.189] PARAMETER: RT-PALLETSTAFFEL-CH-2_OUTPUT start evaluation of parameter
+ [15:19:18.189] Evaluating criteria for rate table [RT-PALLETSTAFFEL-CH-2]
+ [15:19:18.189] Retrieved value for detail [NR_OF_PALLET], for entity [ShipmentOrder: SH000002985RO], result: 0.0
+ [15:19:18.189] - Comparing [NR_OF_PALLET] with value [0.0] , converted to [0.0] with from-value [4] and to-value [9999] result [false]
+ [15:19:18.189] PARAMETER: RT-PALLETSTAFFEL-CH-2_OUTPUT evaluates to: null
+ [15:19:18.189] PARAMETER: RT-PALLETSTAFFEL-BE_OUTPUT start evaluation of parameter
+ [15:19:18.190] Evaluating criteria for rate table [RT-PALLETSTAFFEL-BE]
+ [15:19:18.190] Retrieved value for detail [NR_OF_PALLET], for entity [ShipmentOrder: SH000002985RO], result: 0.0
+ [15:19:18.190] - Comparing [NR_OF_PALLET] with value [0.0] , converted to [0.0] with from-value [1] and to-value [9999] result [false]
+ [15:19:18.190] PARAMETER: RT-PALLETSTAFFEL-BE_OUTPUT evaluates to: null
+ [15:19:18.190] PARAMETER: RT-PALLETSTAFFEL-CH-1_OUTPUT start evaluation of parameter
+ [15:19:18.190] Evaluating criteria for rate table [RT-PALLETSTAFFEL-CH-1]
+ [15:19:18.190] Retrieved value for detail [NR_OF_PALLET], for entity [ShipmentOrder: SH000002985RO], result: 0.0
+ [15:19:18.190] - Comparing [NR_OF_PALLET] with value [0.0] , converted to [0.0] with from-value [1] and to-value [3] result [false]
+ [15:19:18.190] PARAMETER: RT-PALLETSTAFFEL-CH-1_OUTPUT evaluates to: null
+ [15:19:18.190] PARAMETER: RT-Waddentoeslag Pallet 1_OUTPUT start evaluation of parameter
+ [15:19:18.190] Evaluating criteria for rate table [RT-Waddentoeslag Pallet 1]
+ [15:19:18.190] Retrieved value for detail [NR_OF_PALLET], for entity [ShipmentOrder: SH000002985RO], result: 0.0
+ [15:19:18.190] - Comparing [NR_OF_PALLET] with value [0.0] (No conversion) with from-value [1] and to-value [9999] result [false]
+ [15:19:18.190] PARAMETER: RT-Waddentoeslag Pallet 1_OUTPUT evaluates to: null
+ [15:19:18.190] PARAMETER: RT-PALLETSTAFFEL-PL-2_OUTPUT start evaluation of parameter
+ [15:19:18.190] Evaluating criteria for rate table [RT-PALLETSTAFFEL-PL-2]
+ [15:19:18.190] Retrieved value for detail [NR_OF_PALLET], for entity [ShipmentOrder: SH000002985RO], result: 0.0
+ [15:19:18.190] - Comparing [NR_OF_PALLET] with value [0.0] (No conversion) with from-value [4] and to-value [9999] result [false]
+ [15:19:18.190] PARAMETER: RT-PALLETSTAFFEL-PL-2_OUTPUT evaluates to: null
+ [15:19:18.190] PARAMETER: RT-PALLETSTAFFEL-AT-2_OUTPUT start evaluation of parameter
+ [15:19:18.190] Evaluating criteria for rate table [RT-PALLETSTAFFEL-AT-2]
+ [15:19:18.190] Retrieved value for detail [NR_OF_PALLET], for entity [ShipmentOrder: SH000002985RO], result: 0.0
+ [15:19:18.190] - Comparing [NR_OF_PALLET] with value [0.0] (No conversion) with from-value [4] and to-value [9999] result [false]
+ [15:19:18.190] PARAMETER: RT-PALLETSTAFFEL-AT-2_OUTPUT evaluates to: null
+ [15:19:18.190] PARAMETER: RT-PALLETSTAFFEL-DE-1_OUTPUT start evaluation of parameter
+ [15:19:18.190] Evaluating criteria for rate table [RT-PALLETSTAFFEL-DE-1]
+ [15:19:18.190] Retrieved value for detail [NR_OF_PALLET], for entity [ShipmentOrder: SH000002985RO], result: 0.0
+ [15:19:18.190] - Comparing [NR_OF_PALLET] with value [0.0] , converted to [0.0] with from-value [1] and to-value [3] result [false]
+ [15:19:18.190] PARAMETER: RT-PALLETSTAFFEL-DE-1_OUTPUT evaluates to: null
+ [15:19:18.190] PARAMETER: RT-PALLETSTAFFEL-AT-1_OUTPUT start evaluation of parameter
+ [15:19:18.191] Evaluating criteria for rate table [RT-PALLETSTAFFEL-AT-1]
+ [15:19:18.191] Retrieved value for detail [NR_OF_PALLET], for entity [ShipmentOrder: SH000002985RO], result: 0.0
+ [15:19:18.191] - Comparing [NR_OF_PALLET] with value [0.0] (No conversion) with from-value [1] and to-value [3] result [false]
+ [15:19:18.191] PARAMETER: RT-PALLETSTAFFEL-AT-1_OUTPUT evaluates to: null
+ [15:19:18.191] PARAMETER: RT-PALLETSTAFFEL-PL-1_OUTPUT start evaluation of parameter
+ [15:19:18.191] Evaluating criteria for rate table [RT-PALLETSTAFFEL-PL-1]
+ [15:19:18.191] Retrieved value for detail [NR_OF_PALLET], for entity [ShipmentOrder: SH000002985RO], result: 0.0
+ [15:19:18.191] - Comparing [NR_OF_PALLET] with value [0.0] (No conversion) with from-value [1] and to-value [3] result [false]
+ [15:19:18.191] PARAMETER: RT-PALLETSTAFFEL-PL-1_OUTPUT evaluates to: null
+ [15:19:18.191] PARAMETER: RT-PALLETSTAFFEL-LUX_OUTPUT start evaluation of parameter
+ [15:19:18.191] Evaluating criteria for rate table [RT-PALLETSTAFFEL-LUX]
+ [15:19:18.191] Retrieved value for detail [NR_OF_PALLET], for entity [ShipmentOrder: SH000002985RO], result: 0.0
+ [15:19:18.191] - Comparing [NR_OF_PALLET] with value [0.0] (No conversion) with from-value [1] and to-value [9999] result [false]
+ [15:19:18.191] PARAMETER: RT-PALLETSTAFFEL-LUX_OUTPUT evaluates to: null
+ [15:19:18.191] PARAMETER: RT-PALLETSTAFFEL-NL_OUTPUT start evaluation of parameter
+ [15:19:18.191] Evaluating criteria for rate table [RT-PALLETSTAFFEL-NL]
+ [15:19:18.191] Retrieved value for detail [TO COUNTRY], for entity [ShipmentOrder: SH000002985RO], result: NL
+ [15:19:18.191] - Comparing [TO COUNTRY] with value [NL] (No conversion) with from-value [NL] and to-value [null] result [true]
+ [15:19:18.191] Retrieved value for detail [NR_OF_PALLET], for entity [ShipmentOrder: SH000002985RO], result: 0.0
+ [15:19:18.191] - Comparing [NR_OF_PALLET] with value [0.0] (No conversion) with from-value [1] and to-value [3] result [false]
+ [15:19:18.191] PARAMETER: RT-PALLETSTAFFEL-NL_OUTPUT evaluates to: null
+ [15:19:18.191] PARAMETER: RT-PALLETSTAFFEL-FR-1_OUTPUT start evaluation of parameter
+ [15:19:18.191] Evaluating criteria for rate table [RT-PALLETSTAFFEL-FR-1]
+ [15:19:18.191] Retrieved value for detail [NR_OF_PALLET], for entity [ShipmentOrder: SH000002985RO], result: 0.0
+ [15:19:18.191] - Comparing [NR_OF_PALLET] with value [0.0] (No conversion) with from-value [1] and to-value [3] result [false]
+ [15:19:18.191] PARAMETER: RT-PALLETSTAFFEL-FR-1_OUTPUT evaluates to: null
+ [15:19:18.191] PARAMETER: RT-PALLETSTAFFEL-ES-1_OUTPUT start evaluation of parameter
+ [15:19:18.191] Evaluating criteria for rate table [RT-PALLETSTAFFEL-ES-1]
+ [15:19:18.191] Retrieved value for detail [NR_OF_PALLET], for entity [ShipmentOrder: SH000002985RO], result: 0.0
+ [15:19:18.191] - Comparing [NR_OF_PALLET] with value [0.0] , converted to [0.0] with from-value [1] and to-value [3] result [false]
+ [15:19:18.191] PARAMETER: RT-PALLETSTAFFEL-ES-1_OUTPUT evaluates to: null
+ [15:19:18.191] PARAMETER: RT-PALLETSTAFFEL-ES-2_OUTPUT start evaluation of parameter
+ [15:19:18.192] Evaluating criteria for rate table [RT-PALLETSTAFFEL-ES-2]
+ [15:19:18.192] Retrieved value for detail [NR_OF_PALLET], for entity [ShipmentOrder: SH000002985RO], result: 0.0
+ [15:19:18.192] - Comparing [NR_OF_PALLET] with value [0.0] , converted to [0.0] with from-value [4] and to-value [9999] result [false]
+ [15:19:18.192] PARAMETER: RT-PALLETSTAFFEL-ES-2_OUTPUT evaluates to: null
+ [15:19:18.192] PARAMETER: RT-PALLETSTAFFEL-FR-2_OUTPUT start evaluation of parameter
+ [15:19:18.192] Evaluating criteria for rate table [RT-PALLETSTAFFEL-FR-2]
+ [15:19:18.192] FUNCTION TYPE: RateTable
+ [15:19:18.192] Retrieved value for detail [NR_OF_PALLET], for entity [ShipmentOrder: SH000002985RO], result: 0.0
+ [15:19:18.192] Order detail [NR_OF_PALLET] results in:0.0 PC
+ [15:19:18.192] LOOKUP in table : RT-PALLETSTAFFEL-FR-2 results in: null
+ [15:19:18.192] PARAMETER: RT-PALLETSTAFFEL-FR-2_OUTPUT evaluates to: null
+ [15:19:18.192] PARAMETER: RT-PALLETSTAFFEL-DE-2_OUTPUT start evaluation of parameter
+ [15:19:18.192] Evaluating criteria for rate table [RT-PALLETSTAFFEL-DE-2]
+ [15:19:18.192] Retrieved value for detail [NR_OF_PALLET], for entity [ShipmentOrder: SH000002985RO], result: 0.0
+ [15:19:18.192] - Comparing [NR_OF_PALLET] with value [0.0] , converted to [0.0] with from-value [4] and to-value [9999] result [false]
+ [15:19:18.192] PARAMETER: RT-PALLETSTAFFEL-DE-2_OUTPUT evaluates to: null
+ [15:19:18.192] PARAMETER: RT-Rembourstoeslag_OUTPUT start evaluation of parameter
+ [15:19:18.192] Evaluating criteria for rate table [RT-Rembourstoeslag]
+ [15:19:18.192] Retrieved value for detail [COD], for entity [ShipmentOrder: SH000002985RO], result: 0.00000
+ [15:19:18.192] - Comparing [COD] with value [0.00000] (No conversion) with from-value [0.01] and to-value [9999] result [false]
+ [15:19:18.192] PARAMETER: RT-Rembourstoeslag_OUTPUT evaluates to: null
+ [15:19:18.192] DEBUG [RP-VRACHT] Parameter RT-PALLETSTAFFEL-CH-2_OUTPUT has no result, skipping unit conversion.
+ [15:19:18.192] DEBUG [RP-VRACHT] Parameter RT-PALLETSTAFFEL-BE_OUTPUT has no result, skipping unit conversion.
+ [15:19:18.192] DEBUG [RP-VRACHT] Parameter RT-PALLETSTAFFEL-CH-1_OUTPUT has no result, skipping unit conversion.
+ [15:19:18.192] DEBUG [RP-VRACHT] Parameter RT-Waddentoeslag Pallet 1_OUTPUT has no result, skipping unit conversion.
+ [15:19:18.193] DEBUG [RP-VRACHT] Parameter RT-PALLETSTAFFEL-PL-2_OUTPUT has no result, skipping unit conversion.
+ [15:19:18.193] DEBUG [RP-VRACHT] Parameter RT-PALLETSTAFFEL-AT-2_OUTPUT has no result, skipping unit conversion.
+ [15:19:18.193] DEBUG [RP-VRACHT] Parameter RT-PALLETSTAFFEL-DE-1_OUTPUT has no result, skipping unit conversion.
+ [15:19:18.193] DEBUG [RP-VRACHT] Parameter RT-PALLETSTAFFEL-AT-1_OUTPUT has no result, skipping unit conversion.
+ [15:19:18.193] DEBUG [RP-VRACHT] Parameter RT-PALLETSTAFFEL-PL-1_OUTPUT has no result, skipping unit conversion.
+ [15:19:18.193] DEBUG [RP-VRACHT] Parameter RT-PALLETSTAFFEL-LUX_OUTPUT has no result, skipping unit conversion.
+ [15:19:18.193] DEBUG [RP-VRACHT] Parameter RT-PALLETSTAFFEL-NL_OUTPUT has no result, skipping unit conversion.
+ [15:19:18.193] DEBUG [RP-VRACHT] Parameter RT-PALLETSTAFFEL-FR-1_OUTPUT has no result, skipping unit conversion.
+ [15:19:18.193] DEBUG [RP-VRACHT] Parameter RT-PALLETSTAFFEL-ES-1_OUTPUT has no result, skipping unit conversion.
+ [15:19:18.193] DEBUG [RP-VRACHT] Parameter RT-PALLETSTAFFEL-ES-2_OUTPUT has no result, skipping unit conversion.
+ [15:19:18.193] DEBUG [RP-VRACHT] Parameter RT-PALLETSTAFFEL-FR-2_OUTPUT has no result, skipping unit conversion.
+ [15:19:18.193] DEBUG [RP-VRACHT] Parameter RT-PALLETSTAFFEL-DE-2_OUTPUT has no result, skipping unit conversion.
+ [15:19:18.193] DEBUG [RP-VRACHT] Parameter RT-Rembourstoeslag_OUTPUT has no result, skipping unit conversion.
+ [15:19:18.193] All of the input parameters are null. Returning null
+ [15:19:18.193] COST COMPONENT : Totale Vrachtkosten with correction type: ADD evaluates to null
+ [15:19:18.193] Starting evaluation of component [RC-SHIPMENTTYPE]
+ [15:19:18.193] Evaluating criteria for rate table [RT-SHIPMENT-TYPE]
+ [15:19:18.193] FUNCTION TYPE: RateTable
+ [15:19:18.193] Retrieved value for detail [REF1], for entity [ShipmentOrder: SH000002985RO], result: 3610
+ [15:19:18.193] Order detail [REF1] results in:3610
+ [15:19:18.193] LOOKUP in table : RT-SHIPMENT-TYPE results in: BENELUXFREIGHT
+ [15:19:18.193] COST COMPONENT : SET SHIPMENT TYPE with correction type: SHIPMENT_TYPE evaluates to [BENELUXFREIGHT]
+ [15:19:18.193] Cost component [SHIPMENT_TYPE] is ignored.
+ [15:19:18.194] Starting evaluation of component [RC-HOLD]
+ [15:19:18.194] FUNCTION TYPE: If
+ [15:19:18.194] PARAMETER: RT-CUSTOMER-UNKNOWN-HOLD_OUTPUT start evaluation of parameter
+ [15:19:18.194] Evaluating criteria for rate table [RT-CUSTOMER-UNKNOWN-HOLD]
+ [15:19:19.057] Retrieved value for detail [CUST_KNOWN], for entity [ShipmentOrder: SH000002985RO], result: false
+ [15:19:19.057] - Comparing [CUST_KNOWN] with value [false] (No conversion) with from-value [true|1] and to-value [null] result [false]
+ [15:19:19.057] PARAMETER: RT-CUSTOMER-UNKNOWN-HOLD_OUTPUT evaluates to: null
+ [15:19:19.057] PARAMETER: RP-PRODUCT-HOLD start evaluation of parameter
+ [15:19:19.057] FUNCTION TYPE: If
+ [15:19:19.057] PARAMETER: RP-UNKNOWN-PC-HOLD start evaluation of parameter
+ [15:19:19.057] FUNCTION TYPE: If
+ [15:19:19.057] PARAMETER: RT-POSTALCODE-HOLD_OUTPUT start evaluation of parameter
+ [15:19:19.057] Evaluating criteria for rate table [RT-POSTALCODE-HOLD]
+ [15:19:19.057] FUNCTION TYPE: RateTable
+ [15:19:19.057] Retrieved value for detail [FROM COUNTRY], for entity [ShipmentOrder: SH000002985RO], result: NL
+ [15:19:19.057] Order detail [FROM COUNTRY] results in:NL
+ [15:19:19.057] Retrieved value for detail [TO POSTALCODE], for entity [ShipmentOrder: SH000002985RO], result: 3012cn
+ [15:19:19.057] Order detail [TO POSTALCODE] results in:3012cn
+ [15:19:19.057] Retrieved value for detail [FROM POSTALCODE], for entity [ShipmentOrder: SH000002985RO], result: 5626gh
+ [15:19:19.057] Order detail [FROM POSTALCODE] results in:5626gh
+ [15:19:19.058] Retrieved value for detail [TO COUNTRY], for entity [ShipmentOrder: SH000002985RO], result: NL
+ [15:19:19.058] Order detail [TO COUNTRY] results in:NL
+ [15:19:19.058] LOOKUP in table : RT-POSTALCODE-HOLD results in: null
+ [15:19:19.058] PARAMETER: RT-POSTALCODE-HOLD_OUTPUT evaluates to: null
+ [15:19:19.058] PARAMETER: RP-ADDRESS-HOLD start evaluation of parameter
+ [15:19:19.058] FUNCTION TYPE: If
+ [15:19:19.058] PARAMETER: RT-ADDRESS-HOLD_OUTPUT start evaluation of parameter
+ [15:19:19.058] Evaluating criteria for rate table [RT-ADDRESS-HOLD]
+ [15:19:19.058] FUNCTION TYPE: RateTable
+ [15:19:19.058] Retrieved value for detail [FROM_ADDRESS2], for entity [ShipmentOrder: SH000002985RO], result: 13
+ [15:19:19.058] Order detail [FROM_ADDRESS2] results in:13
+ [15:19:19.058] Retrieved value for detail [TO CITY], for entity [ShipmentOrder: SH000002985RO], result: Schiedam
+ [15:19:19.058] Order detail [TO CITY] results in:Schiedam
+ [15:19:19.058] Retrieved value for detail [TO POSTALCODE], for entity [ShipmentOrder: SH000002985RO], result: 3012cn
+ [15:19:19.058] Order detail [TO POSTALCODE] results in:3012cn
+ [15:19:19.058] Retrieved value for detail [TO ADDRESS 2], for entity [ShipmentOrder: SH000002985RO], result: 7
+ [15:19:19.058] Order detail [TO ADDRESS 2] results in:7
+ [15:19:19.058] Retrieved value for detail [TO COUNTRY], for entity [ShipmentOrder: SH000002985RO], result: NL
+ [15:19:19.058] Order detail [TO COUNTRY] results in:NL
+ [15:19:19.058] Retrieved value for detail [FROM POSTALCODE], for entity [ShipmentOrder: SH000002985RO], result: 5626gh
+ [15:19:19.058] Order detail [FROM POSTALCODE] results in:5626gh
+ [15:19:19.058] Retrieved value for detail [FROM COUNTRY], for entity [ShipmentOrder: SH000002985RO], result: NL
+ [15:19:19.058] Order detail [FROM COUNTRY] results in:NL
+ [15:19:19.058] LOOKUP in table : RT-ADDRESS-HOLD results in: 0
+ [15:19:19.058] PARAMETER: RT-ADDRESS-HOLD_OUTPUT evaluates to: 0
+ [15:19:19.058] PARAMETER: RP-BARCODE-HOLD start evaluation of parameter
+ [15:19:19.058] FUNCTION TYPE: If
+ [15:19:19.058] PARAMETER: RP-DUPLICATE-HOLD start evaluation of parameter
+ [15:19:19.058] FUNCTION TYPE: If
+ [15:19:19.058] PARAMETER: RT-DUPLICATE-HOLD_OUTPUT start evaluation of parameter
+ [15:19:19.058] Evaluating criteria for rate table [RT-DUPLICATE-HOLD]
+ [15:19:19.058] Retrieved value for detail [DUPLICATE_HOLD], for entity [ShipmentOrder: SH000002985RO], result: 0
+ [15:19:19.058] - Comparing [DUPLICATE_HOLD] with value [0] (No conversion) with from-value [1|true] and to-value [null] result [false]
+ [15:19:19.058] PARAMETER: RT-DUPLICATE-HOLD_OUTPUT evaluates to: null
+ [15:19:19.058] PARAMETER: RT-DUPLICATE-HOLD_OUTPUT start evaluation of parameter
+ [15:19:19.058] PARAMETER: RT-DUPLICATE-HOLD_OUTPUT evaluates to: null
+ [15:19:19.058] PARAMETER: RP-COLLO-HOLD start evaluation of parameter
+ [15:19:19.058] FUNCTION TYPE: If
+ [15:19:19.058] PARAMETER: RT-COLLI-HOLD_OUTPUT start evaluation of parameter
+ [15:19:19.058] Evaluating criteria for rate table [RT-COLLI-HOLD]
+ [15:19:19.058] Retrieved value for detail [COLLO_HOLD_CHECK], for entity [ShipmentOrder: SH000002985RO], result: 0
+ [15:19:19.058] - Comparing [COLLO_HOLD_CHECK] with value [0] (No conversion) with from-value [0] and to-value [null] result [true]
+ [15:19:19.058] Retrieved value for detail [HOLD_STATUS], for entity [ShipmentOrder: SH000002985RO], result: COLLO_HOLD
+ [15:19:19.058] - Comparing [HOLD_STATUS] with value [COLLO_HOLD] (No conversion) with from-value [!.+] and to-value [null] result [false]
+ [15:19:19.059] PARAMETER: RT-COLLI-HOLD_OUTPUT evaluates to: null
+ [15:19:19.059] PARAMETER: RP_ADR_HOLD start evaluation of parameter
+ [15:19:19.059] FUNCTION TYPE: If
+ [15:19:19.059] PARAMETER: RT_ADR_HOLD_OUTPUT start evaluation of parameter
+ [15:19:19.059] Evaluating criteria for rate table [RT_ADR_HOLD]
+ [15:19:19.059] Retrieved value for detail [UN_NUMBER(1043)], for entity [ShipmentOrder: SH000002985RO], result: 0.0
+ [15:19:19.059] - Comparing [UN_NUMBER(1043)] with value [0.0] (No conversion) with from-value [1] and to-value [99999] result [false]
+ [15:19:19.059] PARAMETER: RT_ADR_HOLD_OUTPUT evaluates to: null
+ [15:19:19.059] PARAMETER: RT_ADR_HOLD_OUTPUT start evaluation of parameter
+ [15:19:19.059] PARAMETER: RT_ADR_HOLD_OUTPUT evaluates to: null
+ [15:19:19.059] Retrieved value for detail [TO COUNTRY], for entity [ShipmentOrder: SH000002985RO], result: NL
+ [15:19:19.059] Order detail [TO COUNTRY] results in:NL
+ [15:19:19.059] DEBUG [RP_ADR_HOLD] Input parameter RT_ADR_HOLD_OUTPUT is false, returning value: NL
+ [15:19:19.059] PARAMETER: RP_ADR_HOLD evaluates to: NL
+ [15:19:19.059] PARAMETER: RT-COLLI-HOLD_OUTPUT start evaluation of parameter
+ [15:19:19.059] PARAMETER: RT-COLLI-HOLD_OUTPUT evaluates to: null
+ [15:19:19.059] DEBUG [RP-COLLO-HOLD] Input parameter RT-COLLI-HOLD_OUTPUT is false, returning value: NL
+ [15:19:19.059] PARAMETER: RP-COLLO-HOLD evaluates to: NL
+ [15:19:19.059] DEBUG [RP-DUPLICATE-HOLD] Input parameter RT-DUPLICATE-HOLD_OUTPUT is false, returning value: NL
+ [15:19:19.059] PARAMETER: RP-DUPLICATE-HOLD evaluates to: NL
+ [15:19:19.059] PARAMETER: RT-BARCODE-HOLD_OUTPUT start evaluation of parameter
+ [15:19:19.059] Evaluating criteria for rate table [RT-BARCODE-HOLD]
+ [15:19:19.059] Retrieved value for detail [BARCODE_HOLD], for entity [ShipmentOrder: SH000002985RO], result: 0
+ [15:19:19.059] - Comparing [BARCODE_HOLD] with value [0] (No conversion) with from-value [1|true] and to-value [null] result [false]
+ [15:19:19.059] PARAMETER: RT-BARCODE-HOLD_OUTPUT evaluates to: null
+ [15:19:19.059] PARAMETER: RT-BARCODE-HOLD_OUTPUT start evaluation of parameter
+ [15:19:19.059] PARAMETER: RT-BARCODE-HOLD_OUTPUT evaluates to: null
+ [15:19:19.059] DEBUG [RP-BARCODE-HOLD] Input parameter RT-BARCODE-HOLD_OUTPUT is false, returning value: NL
+ [15:19:19.059] PARAMETER: RP-BARCODE-HOLD evaluates to: NL
+ [15:19:19.059] PARAMETER: RT-ADDRESS-HOLD_OUTPUT start evaluation of parameter
+ [15:19:19.059] PARAMETER: RT-ADDRESS-HOLD_OUTPUT evaluates to: 0
+ [15:19:19.059] DEBUG [RP-ADDRESS-HOLD] Input parameter RT-ADDRESS-HOLD_OUTPUT is false, returning value: NL
+ [15:19:19.059] PARAMETER: RP-ADDRESS-HOLD evaluates to: NL
+ [15:19:19.059] PARAMETER: RT-POSTALCODE-HOLD_OUTPUT start evaluation of parameter
+ [15:19:19.059] PARAMETER: RT-POSTALCODE-HOLD_OUTPUT evaluates to: null
+ [15:19:19.059] DEBUG [RP-UNKNOWN-PC-HOLD] Input parameter RT-POSTALCODE-HOLD_OUTPUT is false, returning value: NL
+ [15:19:19.059] PARAMETER: RP-UNKNOWN-PC-HOLD evaluates to: NL
+ [15:19:19.059] PARAMETER: RT-UNKNOWN-PRODUCT-HOLD_OUTPUT start evaluation of parameter
+ [15:19:19.059] Evaluating criteria for rate table [RT-UNKNOWN-PRODUCT-HOLD]
+ [15:19:19.059] FUNCTION TYPE: RateTable
+ [15:19:19.059] Retrieved value for detail [SERVICE LEVEL], for entity [ShipmentOrder: SH000002985RO], result: 3610
+ [15:19:19.059] Order detail [SERVICE LEVEL] results in:3610
+ [15:19:19.059] LOOKUP in table : RT-UNKNOWN-PRODUCT-HOLD results in: null
+ [15:19:19.059] PARAMETER: RT-UNKNOWN-PRODUCT-HOLD_OUTPUT evaluates to: null
+ [15:19:19.059] PARAMETER: RT-UNKNOWN-PRODUCT-HOLD_OUTPUT start evaluation of parameter
+ [15:19:19.059] PARAMETER: RT-UNKNOWN-PRODUCT-HOLD_OUTPUT evaluates to: null
+ [15:19:19.059] DEBUG [RP-PRODUCT-HOLD] Input parameter RT-UNKNOWN-PRODUCT-HOLD_OUTPUT is false, returning value: NL
+ [15:19:19.059] PARAMETER: RP-PRODUCT-HOLD evaluates to: NL
+ [15:19:19.059] PARAMETER: RT-CUSTOMER-UNKNOWN-HOLD_OUTPUT start evaluation of parameter
+ [15:19:19.059] PARAMETER: RT-CUSTOMER-UNKNOWN-HOLD_OUTPUT evaluates to: null
+ [15:19:19.059] DEBUG [RP-HOLD] Input parameter RT-CUSTOMER-UNKNOWN-HOLD_OUTPUT is false, returning value: NL
+ [15:19:19.059] COST COMPONENT : ZET HOLD STATUS with correction type: HOLD_STATUS evaluates to [NL]
+ [15:19:19.059] Cost component [HOLD_STATUS] is ignored.
+ [15:19:19.060] Starting evaluation of component [RC_REQ_START_BEFORE]
+ [15:19:19.060] FUNCTION TYPE: SetTime
+ [15:19:19.060] Retrieved value for detail [REQ_START_BEFORE], for entity [ShipmentOrder: SH000002985RO], result: 2015-08-18 18:00:00
+ [15:19:19.060] Order detail [REQ_START_BEFORE] results in:2015-08-18 18:00:00 DATE
+ [15:19:19.060] PARAMETER: RT-END-TIME-118_OUTPUT start evaluation of parameter
+ [15:19:19.060] Evaluating criteria for rate table [RT-END-TIME-118]
+ [15:19:19.060] Retrieved value for detail [TIME_WINDOW], for entity [ShipmentOrder: SH000002985RO], result:
+ [15:19:19.060] - Comparing [TIME_WINDOW] with value [] (No conversion) with from-value [.+] and to-value [null] result [false]
+ [15:19:19.060] PARAMETER: RT-END-TIME-118_OUTPUT evaluates to: null
+ [15:19:19.060] PARAMETER: RT-END-TIME-ALL-OTHERS_OUTPUT start evaluation of parameter
+ [15:19:19.060] Evaluating criteria for rate table [RT-END-TIME-ALL-OTHERS]
+ [15:19:19.060] Retrieved value for detail [TIME_WINDOW], for entity [ShipmentOrder: SH000002985RO], result:
+ [15:19:19.060] - Comparing [TIME_WINDOW] with value [] (No conversion) with from-value [!.+] and to-value [null] result [true]
+ [15:19:19.060] Retrieved value for detail [OPTIE_SOORT], for entity [ShipmentOrder: SH000002985RO], result:
+ [15:19:19.060] - Comparing [OPTIE_SOORT] with value [] (No conversion) with from-value [!014] and to-value [null] result [true]
+ [15:19:19.060] FUNCTION TYPE: RateTable
+ [15:19:19.060] Retrieved value for detail [TIME_WINDOW], for entity [ShipmentOrder: SH000002985RO], result:
+ [15:19:19.060] Order detail [TIME_WINDOW] results in:
+ [15:19:19.060] LOOKUP in table : RT-END-TIME-ALL-OTHERS results in: 18:00
+ [15:19:19.060] PARAMETER: RT-END-TIME-ALL-OTHERS_OUTPUT evaluates to: 18:00
+ [15:19:19.060] No value found for time parameter [RT-END-TIME-118_OUTPUT], skipping this value
+ [15:19:19.118] COST COMPONENT : Req Start Before with correction type: REQUESTED_START_BEFORE evaluates to [2015-08-18 18:00:00]
+ [15:19:19.118] Cost component [REQUESTED_START_BEFORE] is ignored.
+ [15:19:19.118] Starting evaluation of component [RC_REQ_START_AFTER]
+ [15:19:19.118] FUNCTION TYPE: SetTime
+ [15:19:19.118] Retrieved value for detail [REQ_START_AFTER], for entity [ShipmentOrder: SH000002985RO], result: 2015-08-18 08:00:00
+ [15:19:19.118] Order detail [REQ_START_AFTER] results in:2015-08-18 08:00:00 DATE
+ [15:19:19.118] PARAMETER: RT-START-TIME-118_OUTPUT start evaluation of parameter
+ [15:19:19.118] Evaluating criteria for rate table [RT-START-TIME-118]
+ [15:19:19.118] Retrieved value for detail [TIME_WINDOW], for entity [ShipmentOrder: SH000002985RO], result:
+ [15:19:19.118] - Comparing [TIME_WINDOW] with value [] (No conversion) with from-value [.+] and to-value [null] result [false]
+ [15:19:19.118] PARAMETER: RT-START-TIME-118_OUTPUT evaluates to: null
+ [15:19:19.118] PARAMETER: RT-START-TIME-ALL-OTHERS_OUTPUT start evaluation of parameter
+ [15:19:19.118] Evaluating criteria for rate table [RT-START-TIME-ALL-OTHERS]
+ [15:19:19.118] Retrieved value for detail [TIME_WINDOW], for entity [ShipmentOrder: SH000002985RO], result:
+ [15:19:19.118] - Comparing [TIME_WINDOW] with value [] (No conversion) with from-value [!.+] and to-value [null] result [true]
+ [15:19:19.118] Retrieved value for detail [OPTIE_SOORT], for entity [ShipmentOrder: SH000002985RO], result:
+ [15:19:19.118] - Comparing [OPTIE_SOORT] with value [] (No conversion) with from-value [!014] and to-value [null] result [true]
+ [15:19:19.118] FUNCTION TYPE: RateTable
+ [15:19:19.118] Retrieved value for detail [TIME_WINDOW], for entity [ShipmentOrder: SH000002985RO], result:
+ [15:19:19.118] Order detail [TIME_WINDOW] results in:
+ [15:19:19.118] LOOKUP in table : RT-START-TIME-ALL-OTHERS results in: 08:00
+ [15:19:19.118] PARAMETER: RT-START-TIME-ALL-OTHERS_OUTPUT evaluates to: 08:00
+ [15:19:19.119] No value found for time parameter [RT-START-TIME-118_OUTPUT], skipping this value
+ [15:19:19.119] COST COMPONENT : Req Start After with correction type: REQUESTED_START_AFTER evaluates to [2015-08-18 08:00:00]
+ [15:19:19.119] Cost component [REQUESTED_START_AFTER] is ignored.
+ [15:19:19.119] Starting evaluation of component [DistributionDepot]
+ [15:19:19.119] FUNCTION TYPE: Mutex
+ [15:19:19.119] PARAMETER: RT-DISTRIBUTIONDEPOT-PHARMA_OUTPUT start evaluation of parameter
+ [15:19:19.119] Evaluating criteria for rate table [RT-DISTRIBUTIONDEPOT-PHARMA]
+ [15:19:19.119] - Comparing [RT-SHIPMENT-TYPE_OUTPUT] with value [BENELUXFREIGHT] (No conversion) with from-value [PHARMA] and to-value [null] result [false]
+ [15:19:19.119] PARAMETER: RT-DISTRIBUTIONDEPOT-PHARMA_OUTPUT evaluates to: null
+ [15:19:19.119] PARAMETER: RT-DISTRIBUTIONDEPOT-EUROFREIGHT-EXP_OUTPUT start evaluation of parameter
+ [15:19:19.119] Evaluating criteria for rate table [RT-DISTRIBUTIONDEPOT-EUROFREIGHT-EXP]
+ [15:19:19.119] - Comparing [RT-SHIPMENT-TYPE_OUTPUT] with value [BENELUXFREIGHT] (No conversion) with from-value [EUROFREIGHT] and to-value [null] result [false]
+ [15:19:19.119] PARAMETER: RT-DISTRIBUTIONDEPOT-EUROFREIGHT-EXP_OUTPUT evaluates to: null
+ [15:19:19.119] PARAMETER: RT-DISTRIBUTIONDEPOT-EUROFREIGHT-IMP_OUTPUT start evaluation of parameter
+ [15:19:19.119] Evaluating criteria for rate table [RT-DISTRIBUTIONDEPOT-EUROFREIGHT-IMP]
+ [15:19:19.119] - Comparing [RT-SHIPMENT-TYPE_OUTPUT] with value [BENELUXFREIGHT] (No conversion) with from-value [EUROFREIGHT] and to-value [null] result [false]
+ [15:19:19.119] PARAMETER: RT-DISTRIBUTIONDEPOT-EUROFREIGHT-IMP_OUTPUT evaluates to: null
+ [15:19:19.119] PARAMETER: RT-DISTRIBUTIONDEPOT-BNLF+SPECIALS_OUTPUT start evaluation of parameter
+ [15:19:19.119] Evaluating criteria for rate table [RT-DISTRIBUTIONDEPOT-BNLF+SPECIALS]
+ [15:19:19.119] - Comparing [RT-SHIPMENT-TYPE_OUTPUT] with value [BENELUXFREIGHT] (No conversion) with from-value [BENELUXFREIGHT|SPECIALSERVICES] and to-value [null] result [true]
+ [15:19:19.119] FUNCTION TYPE: RateTable
+ [15:19:19.119] Retrieved value for detail [TO COUNTRY], for entity [ShipmentOrder: SH000002985RO], result: NL
+ [15:19:19.119] Order detail [TO COUNTRY] results in:NL
+ [15:19:19.119] Retrieved value for detail [TO POSTALCODE], for entity [ShipmentOrder: SH000002985RO], result: 3012cn
+ [15:19:19.119] Order detail [TO POSTALCODE] results in:3012cn
+ [15:19:19.119] Retrieved value for detail [ORGANIZATION], for entity [ShipmentOrder: SH000002985RO], result: PNL-CARGO
+ [15:19:19.119] Order detail [ORGANIZATION] results in:PNL-CARGO
+ [15:19:19.119] LOOKUP in table : RT-DISTRIBUTIONDEPOT-BNLF+SPECIALS results in: DOR
+ [15:19:19.119] PARAMETER: RT-DISTRIBUTIONDEPOT-BNLF+SPECIALS_OUTPUT evaluates to: DOR
+ [15:19:19.119] COST COMPONENT : Set distribution depot with correction type: SET_PARTY evaluates to [DOR]
+ [15:19:19.119] Cost component [SET_PARTY] is ignored.
+ [15:19:19.119] Starting evaluation of component [CollectionDepot]
+ [15:19:19.119] FUNCTION TYPE: If
+ [15:19:19.119] PARAMETER: RT-COLLECTIONDEPOT-SPECIFIC_OUTPUT start evaluation of parameter
+ [15:19:19.119] Evaluating criteria for rate table [RT-COLLECTIONDEPOT-SPECIFIC]
+ [15:19:19.119] FUNCTION TYPE: RateTable
+ [15:19:19.119] Retrieved value for detail [TO COUNTRY], for entity [ShipmentOrder: SH000002985RO], result: NL
+ [15:19:19.119] Order detail [TO COUNTRY] results in:NL
+ [15:19:19.119] Retrieved value for detail [PRODUCT_KENMERKSOORT], for entity [ShipmentOrder: SH000002985RO], result:
+ [15:19:19.119] Order detail [PRODUCT_KENMERKSOORT] results in:
+ [15:19:19.119] Retrieved value for detail [BILL_TO_PARTY], for entity [ShipmentOrder: SH000002985RO], result: 9148459
+ [15:19:19.119] Order detail [BILL_TO_PARTY] results in:9148459
+ [15:19:19.119] LOOKUP in table : RT-COLLECTIONDEPOT-SPECIFIC results in: null
+ [15:19:19.119] PARAMETER: RT-COLLECTIONDEPOT-SPECIFIC_OUTPUT evaluates to: null
+ [15:19:19.119] PARAMETER: RT-COLLECTIONDEPOT-SPECIFIC_OUTPUT start evaluation of parameter
+ [15:19:19.119] PARAMETER: RT-COLLECTIONDEPOT-SPECIFIC_OUTPUT evaluates to: null
+ [15:19:19.119] PARAMETER: RP-COLLECTIONDEPOT start evaluation of parameter
+ [15:19:19.120] FUNCTION TYPE: Mutex
+ [15:19:19.120] PARAMETER: RT-COLLECTIONDEPOT-BNLF+SPECIALS_OUTPUT start evaluation of parameter
+ [15:19:19.120] Evaluating criteria for rate table [RT-COLLECTIONDEPOT-BNLF+SPECIALS]
+ [15:19:19.120] - Comparing [RT-SHIPMENT-TYPE_OUTPUT] with value [BENELUXFREIGHT] (No conversion) with from-value [BENELUXFREIGHT|SPECIALSERVICES] and to-value [null] result [true]
+ [15:19:19.120] FUNCTION TYPE: RateTable
+ [15:19:19.120] Retrieved value for detail [ORGANIZATION], for entity [ShipmentOrder: SH000002985RO], result: PNL-CARGO
+ [15:19:19.120] Order detail [ORGANIZATION] results in:PNL-CARGO
+ [15:19:19.120] Retrieved value for detail [FROM COUNTRY], for entity [ShipmentOrder: SH000002985RO], result: NL
+ [15:19:19.120] Order detail [FROM COUNTRY] results in:NL
+ [15:19:19.120] Retrieved value for detail [FROM POSTALCODE], for entity [ShipmentOrder: SH000002985RO], result: 5626gh
+ [15:19:19.120] Order detail [FROM POSTALCODE] results in:5626gh
+ [15:19:19.120] LOOKUP in table : RT-COLLECTIONDEPOT-BNLF+SPECIALS results in: EHV
+ [15:19:19.120] PARAMETER: RT-COLLECTIONDEPOT-BNLF+SPECIALS_OUTPUT evaluates to: EHV
+ [15:19:19.120] PARAMETER: RT-COLLECTIONDEPOT-PHARMA_OUTPUT start evaluation of parameter
+ [15:19:19.120] Evaluating criteria for rate table [RT-COLLECTIONDEPOT-PHARMA]
+ [15:19:19.120] - Comparing [RT-SHIPMENT-TYPE_OUTPUT] with value [BENELUXFREIGHT] (No conversion) with from-value [PHARMA] and to-value [null] result [false]
+ [15:19:19.120] PARAMETER: RT-COLLECTIONDEPOT-PHARMA_OUTPUT evaluates to: null
+ [15:19:19.120] PARAMETER: RT-COLLECTIONDEPOT-EUROFREIGHT-EXP_OUTPUT start evaluation of parameter
+ [15:19:19.120] Evaluating criteria for rate table [RT-COLLECTIONDEPOT-EUROFREIGHT-EXP]
+ [15:19:19.120] - Comparing [RT-SHIPMENT-TYPE_OUTPUT] with value [BENELUXFREIGHT] (No conversion) with from-value [EUROFREIGHT] and to-value [null] result [false]
+ [15:19:19.120] PARAMETER: RT-COLLECTIONDEPOT-EUROFREIGHT-EXP_OUTPUT evaluates to: null
+ [15:19:19.120] PARAMETER: RT-COLLECTIONDEPOT-EUROFREIGHT-IMP_OUTPUT start evaluation of parameter
+ [15:19:19.120] Evaluating criteria for rate table [RT-COLLECTIONDEPOT-EUROFREIGHT-IMP]
+ [15:19:19.120] Retrieved value for detail [FROM COUNTRY], for entity [ShipmentOrder: SH000002985RO], result: NL
+ [15:19:19.120] - Comparing [FROM COUNTRY] with value [NL] (No conversion) with from-value [!BE|NL|LU] and to-value [null] result [false]
+ [15:19:19.120] PARAMETER: RT-COLLECTIONDEPOT-EUROFREIGHT-IMP_OUTPUT evaluates to: null
+ [15:19:19.120] PARAMETER: RP-COLLECTIONDEPOT evaluates to: EHV
+ [15:19:19.120] DEBUG [IF_COLLECTIONDEPOT] Input parameter RT-COLLECTIONDEPOT-SPECIFIC_OUTPUT is false, returning value: EHV
+ [15:19:19.120] COST COMPONENT : Set collection depot with correction type: SET_PARTY evaluates to [EHV]
+ [15:19:19.120] Cost component [SET_PARTY] is ignored.
+ [15:19:19.120] Starting evaluation of component [EilandToeslag]
+ [15:19:19.120] Evaluating criteria for rate table [RT-WADDEN]
+ [15:19:19.120] FUNCTION TYPE: RateTable
+ [15:19:19.120] Retrieved value for detail [TO POSTALCODE], for entity [ShipmentOrder: SH000002985RO], result: 3012cn
+ [15:19:19.120] Order detail [TO POSTALCODE] results in:3012cn
+ [15:19:19.120] LOOKUP in table : RT-WADDEN results in: null
+ [15:19:19.120] COST COMPONENT : Bepaal Eilandtoeslag with correction type: ENTITY_DETAIL evaluates to null
+ [15:19:19.121] Starting evaluation of component [TotaalADRPuntenAantal]
+ [15:19:19.121] FUNCTION TYPE: Sum
+ [15:19:19.121] All of the input parameters are null. Returning null
+ [15:19:19.121] COST COMPONENT : SET TOTAL HAZ POINTS ON SHIPMENT ORDER HEADER with correction type: ENTITY_DETAIL evaluates to null
+ [15:19:19.121] Starting evaluation of component [RC-REQUESTED-END-AFTER]
+ [15:19:19.121] FUNCTION TYPE: If
+ [15:19:19.121] Retrieved value for detail [REQ_END_AFTER], for entity [ShipmentOrder: SH000002985RO], result: 2015-08-19 08:00:00
+ [15:19:19.121] Order detail [REQ_END_AFTER] results in:2015-08-19 08:00:00 DATE
+ [15:19:19.121] PARAMETER: RT_OPTIE14-copy_OUTPUT start evaluation of parameter
+ [15:19:19.121] Evaluating criteria for rate table [RT_OPTIE14-copy]
+ [15:19:19.121] FUNCTION TYPE: RateTable
+ [15:19:19.121] Retrieved value for detail [OPTIE_SOORT], for entity [ShipmentOrder: SH000002985RO], result:
+ [15:19:19.121] Order detail [OPTIE_SOORT] results in:
+ [15:19:19.121] LOOKUP in table : RT_OPTIE14-copy results in: null
+ [15:19:19.121] PARAMETER: RT_OPTIE14-copy_OUTPUT evaluates to: null
+ [15:19:19.121] PARAMETER: RP-REQ-END-AFTER-TI start evaluation of parameter
+ [15:19:19.121] FUNCTION TYPE: SetTime
+ [15:19:19.122] PARAMETER: RP-REQ-END-AFTER-1 start evaluation of parameter
+ [15:19:19.122] FUNCTION TYPE: Mutex
+ [15:19:19.122] PARAMETER: RT-START-TIME-118_OUTPUT start evaluation of parameter
+ [15:19:19.122] PARAMETER: RT-START-TIME-118_OUTPUT evaluates to: null
+ [15:19:19.122] PARAMETER: RT-START-TIME-ALL-OTHERS_OUTPUT start evaluation of parameter
+ [15:19:19.122] PARAMETER: RT-START-TIME-ALL-OTHERS_OUTPUT evaluates to: 08:00
+ [15:19:19.122] PARAMETER: RP-REQ-END-AFTER-1 evaluates to: 08:00
+ [15:19:19.122] PARAMETER: RP-REQ-END-AFTER start evaluation of parameter
+ [15:19:19.122] FUNCTION TYPE: EndDate
+ [15:19:19.122] PARAMETER: RT-DEFAULT-LEADTIME_OUTPUT start evaluation of parameter
+ [15:19:19.122] Evaluating criteria for rate table [RT-DEFAULT-LEADTIME]
+ [15:19:19.122] FUNCTION TYPE: RateTable
+ [15:19:19.122] PARAMETER: RT-SHIPMENT-TYPE_OUTPUT start evaluation of parameter
+ [15:19:19.122] PARAMETER: RT-SHIPMENT-TYPE_OUTPUT evaluates to: BENELUXFREIGHT
+ [15:19:19.122] LOOKUP in table : RT-DEFAULT-LEADTIME results in: 1
+ [15:19:19.122] PARAMETER: RT-DEFAULT-LEADTIME_OUTPUT evaluates to: 1
+ [15:19:19.123] Retrieved value for detail [REQ_START_AFTER], for entity [ShipmentOrder: SH000002985RO], result: 2015-08-18 08:00:00
+ [15:19:19.123] Order detail [REQ_START_AFTER] results in:2015-08-18 08:00:00 DATE
+ [15:19:19.124] PARAMETER: RP-REQ-END-AFTER evaluates to: 2015-08-19 08:00:00
+ [15:19:19.124] PARAMETER: RP-REQ-END-AFTER-TI evaluates to: 2015-08-19 08:00:00
+ [15:19:19.124] DEBUG [IF_END_AFTER_014] Input parameter RT_OPTIE14-copy_OUTPUT is false, returning value: 2015-08-19 08:00:00
+ [15:19:19.125] COST COMPONENT : SET REQUESTED END AFTER with correction type: REQUESTED_END_AFTER evaluates to [2015-08-19 08:00:00]
+ [15:19:19.125] Cost component [REQUESTED_END_AFTER] is ignored.
+ [15:19:19.125] Starting evaluation of component [DefaultWeight]
+ [15:19:19.125] FUNCTION TYPE: Sum
+ [15:19:19.126] PARAMETER: RT-DEFAULT-WEIGHT_OUTPUT start evaluation of parameter
+ [15:19:19.126] Evaluating criteria for rate table [RT-DEFAULT-WEIGHT]
+ [15:19:19.126] FUNCTION TYPE: RateTable
+ [15:19:19.126] Retrieved value for detail [SHIPUNIT], for entity [ShipmentItem: 020], result: C
+ [15:19:19.126] Order detail [SHIPUNIT] results in:C
+ [15:19:19.126] LOOKUP in table : RT-DEFAULT-WEIGHT results in: 20
+ [15:19:19.126] PARAMETER: RT-DEFAULT-WEIGHT_OUTPUT evaluates to: 20
+ [15:19:19.126] PARAMETER: RT-DEFAULT-WEIGHT_OUTPUT start evaluation of parameter
+ [15:19:19.126] Evaluating criteria for rate table [RT-DEFAULT-WEIGHT]
+ [15:19:19.126] FUNCTION TYPE: RateTable
+ [15:19:19.126] Retrieved value for detail [SHIPUNIT], for entity [ShipmentItem: 030], result: C
+ [15:19:19.126] Order detail [SHIPUNIT] results in:C
+ [15:19:19.126] LOOKUP in table : RT-DEFAULT-WEIGHT results in: 20
+ [15:19:19.127] PARAMETER: RT-DEFAULT-WEIGHT_OUTPUT evaluates to: 20
+ [15:19:19.127] COST COMPONENT : SET DEFAULT WEIGHT with correction type: ENTITY_DETAIL evaluates to [40]
+ [15:19:19.127] Cost component [ENTITY_DETAIL] is ignored.
+ [15:19:19.127] Starting evaluation of component [RC-REQUESTED-END-BEFORE]
+ [15:19:19.127] FUNCTION TYPE: If
+ [15:19:19.127] PARAMETER: RT_OPTIE14-copy_OUTPUT start evaluation of parameter
+ [15:19:19.127] PARAMETER: RT_OPTIE14-copy_OUTPUT evaluates to: null
+ [15:19:19.127] Retrieved value for detail [REQ_END_BEFORE], for entity [ShipmentOrder: SH000002985RO], result: 2015-08-19 18:00:00
+ [15:19:19.127] Order detail [REQ_END_BEFORE] results in:2015-08-19 18:00:00 DATE
+ [15:19:19.127] PARAMETER: RP-REQ-END-BEFORE-TI start evaluation of parameter
+ [15:19:19.127] FUNCTION TYPE: SetTime
+ [15:19:19.127] PARAMETER: RP-REQ-END-BEFORE start evaluation of parameter
+ [15:19:19.127] FUNCTION TYPE: EndDate
+ [15:19:19.127] PARAMETER: RT-DEFAULT-LEADTIME_OUTPUT start evaluation of parameter
+ [15:19:19.127] PARAMETER: RT-DEFAULT-LEADTIME_OUTPUT evaluates to: 1
+ [15:19:19.127] Retrieved value for detail [REQ_START_BEFORE], for entity [ShipmentOrder: SH000002985RO], result: 2015-08-18 18:00:00
+ [15:19:19.127] Order detail [REQ_START_BEFORE] results in:2015-08-18 18:00:00 DATE
+ [15:19:19.127] PARAMETER: RP-REQ-END-BEFORE evaluates to: 2015-08-19 18:00:00
+ [15:19:19.127] PARAMETER: RP-REQ-END-BEFORE-1 start evaluation of parameter
+ [15:19:19.127] FUNCTION TYPE: Mutex
+ [15:19:19.127] PARAMETER: RT-END-TIME-ALL-OTHERS_OUTPUT start evaluation of parameter
+ [15:19:19.128] PARAMETER: RT-END-TIME-ALL-OTHERS_OUTPUT evaluates to: 18:00
+ [15:19:19.128] PARAMETER: RT-END-TIME-118_OUTPUT start evaluation of parameter
+ [15:19:19.128] PARAMETER: RT-END-TIME-118_OUTPUT evaluates to: null
+ [15:19:19.128] PARAMETER: RP-REQ-END-BEFORE-1 evaluates to: 18:00
+ [15:19:19.128] PARAMETER: RP-REQ-END-BEFORE-TI evaluates to: 2015-08-19 18:00:00
+ [15:19:19.128] DEBUG [IF_END_BEFORE_014*] Input parameter RT_OPTIE14-copy_OUTPUT is false, returning value: 2015-08-19 18:00:00
+ [15:19:19.128] COST COMPONENT : SET REQUESTED END BEFORE with correction type: REQUESTED_END_BEFORE evaluates to [2015-08-19 18:00:00]
+ [15:19:19.128] Cost component [REQUESTED_END_BEFORE] is ignored.
+ [15:19:19.128] Starting evaluation of component [TijdsVenster]
+ [15:19:19.128] Evaluating criteria for rate table [RT-SET-TIMEWINDOW]
+ [15:19:19.128] Retrieved value for detail [KENMERKSOORT], for entity [ShipmentOrder: SH000002985RO], result:
+ [15:19:19.128] - Comparing [KENMERKSOORT] with value [] (No conversion) with from-value [118] and to-value [null] result [false]
+ [15:19:19.128] COST COMPONENT : Set field Tijdsvenster with correction type: ENTITY_DETAIL evaluates to null
+ [15:19:19.128] Starting evaluation of component [RC-PRODUCTCODE]
+ [15:19:19.128] Evaluating criteria for rate table [RT-PRODUCTCODE]
+ [15:19:19.128] FUNCTION TYPE: RateTable
+ [15:19:19.128] Retrieved value for detail [REF1], for entity [ShipmentOrder: SH000002985RO], result: 3610
+ [15:19:19.128] Order detail [REF1] results in:3610
+ [15:19:19.128] LOOKUP in table : RT-PRODUCTCODE results in: 3610
+ [15:19:19.128] COST COMPONENT : SET PRODUCT CODE ALS ACTUAL SERVICE LEVEL with correction type: ACTUAL_SERVICE_LEVEL evaluates to [3610]
+ [15:19:19.128] Cost component [ACTUAL_SERVICE_LEVEL] is ignored.
+ [15:19:19.128] FUNCTION TYPE: Max
+ [15:19:19.128] COST COMPONENT : Set maximum temperature field with correction type: ENTITY_DETAIL evaluates to [1]
+ [15:19:19.128] FUNCTION TYPE: String
+ [15:19:19.128] PARAMETER: RT-SHIPPING_UNIT_OUTPUT start evaluation of parameter
+ [15:19:19.128] Evaluating criteria for rate table [RT-SHIPPING_UNIT]
+ [15:19:19.128] Retrieved value for detail [SHIPUNIT], for entity [ShipmentItem: 020], result: C
+ [15:19:19.128] - Comparing [SHIPUNIT] with value [C] (No conversion) with from-value [!.+] and to-value [null] result [false]
+ [15:19:19.128] PARAMETER: RT-SHIPPING_UNIT_OUTPUT evaluates to: null
+ [15:19:19.129] PARAMETER: RT-SHIPPING_UNIT_OUTPUT start evaluation of parameter
+ [15:19:19.129] Evaluating criteria for rate table [RT-SHIPPING_UNIT]
+ [15:19:19.129] Retrieved value for detail [SHIPUNIT], for entity [ShipmentItem: 030], result: C
+ [15:19:19.129] - Comparing [SHIPUNIT] with value [C] (No conversion) with from-value [!.+] and to-value [null] result [false]
+ [15:19:19.129] PARAMETER: RT-SHIPPING_UNIT_OUTPUT evaluates to: null
+ [15:19:19.129] COST COMPONENT : SET DEFAULT SHIPPING UNIT with correction type: SHIPPING_UNIT evaluates to [1]
+ [15:19:19.129] FUNCTION TYPE: Max
+ [15:19:19.129] COST COMPONENT : Set minimum temperature field with correction type: ENTITY_DETAIL evaluates to [1]
+ [15:19:19.129] Cost component [MaxTemp] could not be calculated ignored. Iteration is missing or not used in other calculations
+ [15:19:19.129] Cost component [ADRPuntenAant] could not be calculated ignored. Iteration is missing or not used in other calculations
+ [15:19:19.129] Cost component [MinTemp] could not be calculated ignored. Iteration is missing or not used in other calculations
+ [15:19:19.312] Updated shipment order party type 'DistributionDepot' with party id 'DOR'
+ [15:19:19.312] Updated shipment order party type 'CollectionDepot' with party id 'EHV'
+ [15:19:19.322] Updated shipment order party type 'DistributionDepot' with party id 'DOR'
+ [15:19:19.322] Updated shipment order party type 'CollectionDepot' with party id 'EHV'
+ [15:19:19.334] Updated shipment order party type 'DistributionDepot' with party id 'DOR'
+ [15:19:19.334] Updated shipment order party type 'CollectionDepot' with party id 'EHV'
+ [15:19:19.359] Executed on: Thu Sep 17 15:19:19 CEST 2015
+ Π
+PostNL Order Management System
+version: pnllogistics - 2015.04.01 - development
+eric (ADMINISTRATOR)
+PNL-CARGO
+Events:
+off
+Configuration
+Planning
+Execution
+Report
+Finance
+Support
+Logout
+
+WICKET AJAX DEBUG

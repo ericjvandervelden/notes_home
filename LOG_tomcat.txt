@@ -1,0 +1,1348 @@
+/  See TOMCAT-MAVEN-PLUGIN 
+/ See SESSION
+/ See SIMPLE SERVLET 
+
+/ 7	. 
+
+/ de tomcat-servlet-api.jar en lib/servlet.api in onze tomcat zijn hetzelfde	,
+
+[eric@almond apache-tomcat-8.5.8]$ pwd
+/home/eric/Devel/Java/Tomcat/apache-tomcat-8.5.8
+[eric@almond apache-tomcat-8.5.8]$ ls -l lib/servlet-api.jar 
+-rw-r-----. 1 eric eric 243791 Nov  3 22:14 lib/servlet-api.jar
+[eric@almond apache-tomcat-8.5.8]$ ls -l ~/Downloads/tomcat-servlet-api-8.5.8.jar 
+-rw-rw-r--. 1 eric eric 243791 Feb 26 14:29 /home/eric/Downloads/tomcat-servlet-api-8.5.8.jar
+
+/ 7	. 
+/ lees	, 
+http://tomcat.apache.org/whichversion.html
+/ we zien dat tomcat 8.5.8 servlet 3.1 impl	, 
+
+/ geef in google	, 
+web.xml 3.1
+/ lees	, 
+https://www.mkyong.com/web-development/the-web-xml-deployment-descriptor-examples/
+
+Java EE 7 XML schema, namespace is http://xmlns.jcp.org/xml/ns/javaee/
+
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+		 http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+</web-app>
+
+Java EE 6 XML schema, namespace is http://java.sun.com/xml/ns/javaee
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	      xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+	      http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	      version="3.0">
+</web-app>
+
+/ SIMPLE SERVLET 
+
+/ 7	. 
+
+/ Lees	, 
+https://www.mkyong.com/servlet/a-simple-servlet-example-write-deploy-run/
+
+/ deploy servlet webapp	, 
+
+/ scala IDE
+/ ws workspace-spring
+/ proj tomcat-servlet
+
+$ vi my.MyServlet.java
+
+public class MyServlet extends HttpServlet {
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		resp.setContentType("text/html");
+		resp.setCharacterEncoding("utf-8");						<- zo niet	, dan zien we ? in de browser	,
+		PrintWriter pw=resp.getWriter();
+		pw.println("π");
+	}
+}
+
+/ maak in eclipse dir webapp/WEB-INF/	 
+$ vi web.xml
+
+<?xml version="1.0" encoding="utf-8"?>											<-  see hieronder,	
+
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+		 http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+         
+         <servlet>
+         	<servlet-name>my</servlet-name>
+         	<servlet-class>my.MyServlet</servlet-class>
+         </servlet>
+         <servlet-mapping>
+         	<servlet-name>my</servlet-name>
+         	<url-pattern>/</url-pattern>
+         </servlet-mapping>
+</web-app>
+
+/ WH is utf-8 de default	, 
+/ Als we 
+<?xml version="1.0" encoding="ascii"?>		
+/ dan nu OK	, 
+/ Maar als we de package name, nu my, veranderen in π	, en we hebben encoding="ascii", en we save de web.xml	, dan krijgen we err msg	, 
+/ Dus neem utf-8	,  deze encoding slaat op deze web.xml	,
+
+$ vi pom.xml
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>my.own</groupId>
+  <artifactId>tomcat-servlet</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>						<- MOET	, anders werkt tomcat7:deploy NIET	, 
+
+
+	<properties>
+	    <jdk.version>1.8</jdk.version>
+		<tomcat.version>2.2</tomcat.version>
+	</properties>
+
+	<dependencies>
+
+
+		
+		<dependency>
+		    <groupId>org.apache.tomcat</groupId>
+		    <artifactId>tomcat-servlet-api</artifactId>
+		    <version>8.5.8</version>
+		    <scope>provided</scope>
+		</dependency>
+
+
+	</dependencies>
+
+	<build>
+		<plugins>
+		    <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.0</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+				</configuration>
+			</plugin>
+			
+        
+			<plugin> 
+                    <groupId>org.apache.tomcat.maven</groupId>
+                    <artifactId>tomcat7-maven-plugin</artifactId>
+                    <version>${tomcat.version}</version>
+                    <configuration>
+	                    <port>8080</port>
+	                    <path>/${project.artifactId}</path>
+	                    <url>http://localhost:8080/manager/text</url>
+	                    <server>tomcat</server>
+                    </configuration>
+            </plugin>
+			
+		</plugins>
+	</build>
+	
+	</project>
+
+/ 7	. 
+
+/ we kunnen ook tomcat7:run	, eerst wel onze tomcat-8.5.8 uitzetten	, 
+/ hij runs een tomcat 7	, 
+/ TODO hoe werkt dit	? 
+/ Geef in chrome	, 
+localhost:8080/tomcat-servlet
+π
+/ OK	,
+
+/ Lees	, 
+http://tomcat.apache.org/maven-plugin-2.0/source-repository.html
+
+http://tomcat.apache.org/maven-plugin-trunk/tomcat7-maven-plugin/plugin-info.html
+
+
+/ 7	. 
+
+/ we zien de source van HttpServletRequest	, 
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		resp.setContentType("text/html");
+		resp.setCharacterEncoding("utf-8");
+		HttpSession session= req.getSession(false);			<-
+		PrintWriter pw=resp.getWriter();
+		pw.println("π");		
+	}
+
+/	7	. 
+
+/ we set een b in MyServlet.doGet	,
+
+/ als we tomcat's tomcat-server app remote debug	, vindt hij MyServlet.class's source code	, maar niet van de tomcat classes	, 
+
+/ we zien net als eerder, dat als we 'tomcat7:run' onder debug run	, eclipse de source niet vindt van MyServlet.class	, en ook niet van de tomcat classes	,
+
+/ SIMPLE SERVLET 
+
+/ TOMCAT-MAVEN-PLUGIN 
+
+/ Lees	, 
+http://tomcat.apache.org/maven-plugin-2.0/source-repository.html
+
+[eric@almond Tomcat]$ pwd
+/home/eric/Devel/Java/Tomcat
+[eric@almond Tomcat]$ svn co http://svn.apache.org/repos/asf/tomcat/maven-plugin/tags/tomcat-maven-plugin-2.0 tomcat-maven-plugin
+
+/ In scala IDE, 
+/ we delete project in eclipse	, 
+/ we verplaatsen tomcat-servlet naar een nieuwe workspace-tomcat	, 
+[eric@almond scala]$ mv workspace-spring/tomcat-servlet/ workspace-tomcat/
+/ en import hem in eclipse	, als we zijn overgeschakeld naar workspace-tomcat	, 
+
+/ we hebben ook tomcat-maven-plugin import in eclipse	, maar de hierarchy wordt niet gezien	, we krijgen 7 projects	, ipv 1	, 
+/ TODO
+
+/ Einde TOMCAT-MAVEN-PLUGIN 
+
+/ SESSION
+
+[eric@almond Tomcat]$ pwd
+/home/eric/Devel/Java/Tomcat
+[eric@almond Tomcat]$ cp -a ~/Downloads/apache-tomcat-8.5.11-src.zip .
+
+/ In eclipse als we in de b stap , waarvan src niet bekend, zien we 	,
+Edit source lookup path
+/ we voegen bij External Archive de zip file toe	, en we zien de lines	, met values	, 
+/ .tar.gz kent Eclipse niet	,
+
+/ we hebben nieuwe (binary) tomcat	, apache-tomcat-8.5.11
+$ bin/catalina.sh jpda run
+
+/ vergeet niet 
+$ vi conf/tomcat-users.xml
+<tomcat-users xmlns="http://tomcat.apache.org/xml"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://tomcat.apache.org/xml tomcat-users.xsd"
+              version="1.0">
+ <role rolename="manager-script"/>
+ <user username="tomcat" password="s3cret" roles="manager-script"/>
+
+</tomcat-users>
+/ TODO
+
+$ vi ~/.m2/settings.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+        <servers>
+                <server>
+                        <id>tomcat</id>
+                        <username>tomcat</username>
+                        <password>s3cret</password>
+                </server>
+        </servers>
+</settings>
+
+
+
+
+/ 13	. 
+
+$ vi MyServlet.java
+
+public class MyServlet extends HttpServlet {
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		resp.setContentType("text/html");
+		resp.setCharacterEncoding("utf-8");
+		HttpSession session= req.getSession(false);
+		PrintWriter pw=resp.getWriter();
+		pw.println("π");		
+	}
+}
+
+$ vi WEB-INF/web.xml
+
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+		 http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+         
+         <servlet>
+         	<servlet-name>my</servlet-name>
+         	<servlet-class>my.MyServlet</servlet-class>
+         </servlet>
+         <servlet-mapping>
+         	<servlet-name>my</servlet-name>
+         	<url-pattern>/</url-pattern>
+         </servlet-mapping>
+</web-app>
+
+/ Lees	, 
+http://stackoverflow.com/questions/30259153/do-i-really-need-web-xml-for-a-servlet-based-java-web-application
+->
+/ http://docs.oracle.com/javaee/6/tutorial/doc/bnafu.html
+
+/ we kunnen  ZONDER web.xml	, als we 	,
+
+@WebServlet("/tomcat-servlet")
+public class MyServlet extends HttpServlet {
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		resp.setContentType("text/html");
+		resp.setCharacterEncoding("utf-8");
+		HttpSession session= req.getSession(false);
+		PrintWriter pw=resp.getWriter();
+		pw.println("π");		
+	}
+}
+
+
+/ we geven 	, 
+http://localhost:8080/tomcat-servlet/
+
+/s
+...
+MyServlet.doGet(HttpServletRequest, HttpServletResponse) line: 19	
+		HttpSession session= req.getSession(true);
+...
+/s
+Request.doGetSession(boolean) line: 2998	
+        session = manager.createSession(sessionId);
+/s
+StandardManager(ManagerBase).createSession(String) line: 645	
+        // Recycle or create a Session instance
+        Session session = createEmptySession();
+...
+/s
+StandardManager(ManagerBase).getNewSession() line: 811	
+        return new StandardSession(this);
+/t
+Request.doGetSession(boolean) line: 2998	
+        session = manager.createSession(sessionId);
+/d
+session	StandardSession  (id=228)	
+	accessCount	null	
+	attributes	ConcurrentHashMap<K,V>  (id=231)	
+	authType	null	
+	creationTime	0	
+	expiring	false	
+	facade	null	
+	id	null	
+	isNew	false	
+	isValid	false	
+	lastAccessedTime	0	
+	listeners	ArrayList<E>  (id=235)	
+	manager	StandardManager  (id=170)	
+	maxInactiveInterval	-1	
+	notes	Hashtable<K,V>  (id=238)	
+	principal	null	
+	support	PropertyChangeSupport  (id=243)	
+	thisAccessedTime	0	
+
+       	// Initialize the properties of the new session and return it
+        session.setNew(true);
+        session.setValid(true);
+        session.setCreationTime(System.currentTimeMillis());
+        session.setMaxInactiveInterval(getContext().getSessionTimeout() * 60);
+        String id = sessionId;
+        if (id == null) {
+            id = generateSessionId();
+        }
+        session.setId(id);
+        sessionCounter++;
+
+        SessionTiming timing = new SessionTiming(session.getCreationTime(), 0);
+        synchronized (sessionCreationTiming) {
+            sessionCreationTiming.add(timing);
+            sessionCreationTiming.poll();			/ TODO
+        }
+        return (session);
+this	StandardManager  (id=170)	
+sessionId	null	
+session	StandardSession  (id=228)	
+	accessCount	null	
+	attributes	ConcurrentHashMap<K,V>  (id=231)	
+	authType	null	
+	creationTime	1488318649226	
+	expiring	false	
+	facade	StandardSessionFacade  (id=289)	
+	id	"962DFEF19DEC92B5278827C186B9C58E" (id=291)	
+	isNew	true	
+	isValid	true	
+	lastAccessedTime	1488318649226	
+	listeners	ArrayList<E>  (id=235)	
+	manager	StandardManager  (id=170)	
+	maxInactiveInterval	1800	
+	notes	Hashtable<K,V>  (id=238)	
+	principal	null	
+	support	PropertyChangeSupport  (id=243)	
+	thisAccessedTime	1488318649226	
+id	"962DFEF19DEC92B5278827C186B9C58E" (id=291)	
+timing	ManagerBase$SessionTiming  (id=343)	
+
+/t
+Request.doGetSession(boolean) line: 3001	
+        session = manager.createSession(sessionId);
+/d
+       	// Creating a new session cookie based on that session
+        if (session != null
+                && context.getServletContext()
+                        .getEffectiveSessionTrackingModes()
+                        .contains(SessionTrackingMode.COOKIE)) {
+            Cookie cookie =
+                ApplicationSessionCookieConfig.createSessionCookie(
+                        context, session.getIdInternal(), isSecure());
+/s
+session.getIdInternal()==session.id
+isSecure()==request.secure==false
+/s
+   /**
+     * Creates a new session cookie for the given session ID
+     *
+ApplicationSessionCookieConfig.createSessionCookie(Context, String, boolean) line: 166	
+        SessionCookieConfig scc =
+            context.getServletContext().getSessionCookieConfig();
+/= context.applicationContext.sessionCookieConfig	,
+/t
+ApplicationSessionCookieConfig.createSessionCookie(Context, String, boolean) line: 174	
+       SessionCookieConfig scc =
+            context.getServletContext().getSessionCookieConfig();
+/d
+        // NOTE: The priority order for session cookie configuration is:
+        //       1. Context level configuration
+        //       2. Values from SessionCookieConfig
+        //       3. Defaults
+
+        Cookie cookie = new Cookie(
+                SessionConfig.getSessionCookieName(context), sessionId);	/ context arg, omdat daar cookie kan zijn config	,
+/s
+SessionConfig.getSessionCookieName(Context) line: 36	
+        String result = getConfiguredSessionCookieName(context);
+/s
+SessionConfig.getConfiguredSessionCookieName(Context) line: 69	
+        // Priority is:
+        // 1. Cookie name defined in context				/ TODO Hoe doe je dit?
+        // 2. Cookie name configured for app	/ TODO Hoe doe je dit?
+        // 3. Default defined by spec
+        if (context != null) {
+            String cookieName = context.getSessionCookieName();	/= context.sessionCookieName
+null
+           SessionCookieConfig scc =
+                context.getServletContext().getSessionCookieConfig();
+            cookieName = scc.getName();
+null
+        return null;
+/t
+SessionConfig.getSessionCookieName(Context) line: 39	
+       String result = getConfiguredSessionCookieName(context);
+/d
+        if (result == null) {
+            result = DEFAULT_SESSION_COOKIE_NAME;
+JSESSIONID
+			return result;
+/t
+ApplicationSessionCookieConfig.createSessionCookie(Context, String, boolean) line: 174	
+       Cookie cookie = new Cookie(
+                SessionConfig.getSessionCookieName(context), sessionId);
+/pd
+/s
+Cookie.<init>(String, String) line: 118	
+/=
+    public Cookie(String name, String value) {
+name	"JSESSIONID" (id=444)	
+value	"962DFEF19DEC92B5278827C186B9C58E" (id=291)	
+
+
+/ intermezzo
+
+/ we zien in chrome de localhost cookie	, 
+
+Name:	JSESSIONID
+Content:	751FA3A349A108000B51204A5C52B9D3
+Domain:	localhost
+Path:	/spring-css
+Send for:	Any kind of connection
+Accessible to script:	No (HttpOnly)
+Created:	Sunday, February 26, 2017 at 9:48:01 PM
+Expires:	When the browsing session ends
+
+/ TODO : wanneer stopt de session? wordt dat server side bepaald of client side	?
+
+/ Einde intermezzo
+
+/t
+ApplicationSessionCookieConfig.createSessionCookie(Context, String, boolean) line: 178	
+        Cookie cookie = new Cookie(
+                SessionConfig.getSessionCookieName(context), sessionId);
+/d
+        // Just apply the defaults.
+        cookie.setMaxAge(scc.getMaxAge());
+/s
+    /**
+     * Sets the maximum age of the cookie in seconds.
+     * <p>
+     * A positive value indicates that the cookie will expire after that many
+     * seconds have passed. Note that the value is the <i>maximum</i> age when
+     * the cookie will expire, not the cookie's current age.
+     * <p>
+     * A negative value means that the cookie is not stored persistently and
+     * will be deleted when the Web browser exits. A zero value causes the
+     * cookie to be deleted.
+     *
+     * @param expiry
+     *            an integer specifying the maximum age of the cookie in
+     *            seconds; if negative, means the cookie is not stored; if zero,
+     *            deletes the cookie
+     * @see #getMaxAge
+     */
+    public void setMaxAge(int expiry) {
+        maxAge = expiry;									/ -1
+
+/ Intermezzo
+
+/ Als >0	, wordt de cookie dan persisted	? WH wel	, want als de browser session eerder eindigt	, 
+
+/ Lees, 	
+http://stackoverflow.com/questions/3804209/what-are-sessions-how-do-they-work
+
+/ Lees	,
+http://www.ibm.com/support/knowledgecenter/SSAE4W_9.5.1/com.ibm.etools.iseries.webtools.doc/topics/rbrsessn.html
+
+The mechanism for recognizing multiple requests from the same browser is called a session. A session recognizes requests from the same browser. A session also supports the maintaining of a Web application state among multiple Web interactions within the same browser instance and with the Web server. The Web server does not recognize whether multiple requests originate from the same browser or not because the HTTP protocol is stateless.
+Conceptually, a session can be thought of as an invisible "container" maintained by the WebSphere® Application Server. It keeps track of the specific browser instance that communicates with the Web server. A separate session exists for every separate browser instance communicating to the Web server.
+Information generated during a series of Web interactions can be placed into the session. This information can be retrieved for use in other parts of the Web application. The information stored is private to your browser instance and cannot be accessed by other browser instances. You can consider the session as a place to store your global information, or variables.
+
+/ session is per browser	,
+/ elke cookie==session wordt in de browswer bewaard, dus iedere browser een andere cookie, met een andere sessionid er in	,
+
+/ Lees	, 
+https://msdn.microsoft.com/en-us/library/bb894287(v=office.12).aspx
+
+/ Lees	, 
+http://machinesaredigging.com/2013/10/29/how-does-a-web-session-work/
+
+/ Einde Intermezzo
+
+        cookie.setComment(scc.getComment());
+null
+        if (context.getSessionCookieDomain() == null) {
+/n
+            // Avoid possible NPE
+            if (scc.getDomain() != null) {
+/n
+        // Always set secure if the request is secure
+        if (scc.isSecure() || secure) {
+/n
+        // Always set httpOnly if the context is configured for that
+        if (scc.isHttpOnly() || context.getUseHttpOnly()) {
+/j
+            cookie.setHttpOnly(true);
+
+        String contextPath = context.getSessionCookiePath();	 
+null
+        if (contextPath == null || contextPath.length() == 0) {
+            contextPath = scc.getPath();
+null
+        }
+
+        if (contextPath == null || contextPath.length() == 0) {
+            contextPath = context.getEncodedPath();
+/tomcat-servlet
+
+       if (context.getSessionCookiePathUsesTrailingSlash()) {
+/n
+            // Handle special case of ROOT context where cookies require a path of			/ TODO
+            // '/' but the servlet spec uses an empty string
+            // Also ensure the cookies for a context with a path of /foo don't get
+            // sent for requests with a path of /foobar
+            if (!contextPath.endsWith("/")) {
+                contextPath = contextPath + "/";
+            }
+        } else {
+            // Only handle special case of ROOT context where cookies require a
+            // path of '/' but the servlet spec uses an empty string
+            if (contextPath.length() == 0) {
+/n
+        cookie.setPath(contextPath);
+        return cookie;
+/t
+Request.doGetSession(boolean) line: 3009	
+            Cookie cookie =
+                ApplicationSessionCookieConfig.createSessionCookie(
+                        context, session.getIdInternal(), isSecure());
+/d
+            response.addSessionCookieInternal(cookie);
+/s
+Response.addSessionCookieInternal(Cookie) line: 956	
+        String name = cookie.getName();
+JSESSIONID
+        final String headername = "Set-Cookie";
+        final String startsWith = name + "=";
+JSESSIONID=
+        String header = generateCookieString(cookie);
+JSESSIONID=3C3D3F8325E2173293A0218438077446;path=/tomcat-servlet;HttpOnly
+
+       	boolean set = false;
+        MimeHeaders headers = getCoyoteResponse().getMimeHeaders();
+headers	MimeHeaders  (id=526)	
+	count	0	
+	headers	MimeHeaderField[8]  (id=528)	
+	limit	-1	
+
+        int n = headers.size();
+0
+        for (int i = 0; i < n; i++) {
+/n
+        if (!set) {
+            addHeader(headername, header);
+name	"JSESSIONID" (id=444)	
+header	"JSESSIONID=3C3D3F8325E2173293A0218438077446;path=/tomcat-servlet;HttpOnly" (id=525)	
+/t
+Request.doGetSession(boolean) line: 3012	
+            response.addSessionCookieInternal(cookie);
+/d
+this	Request  (id=98)	
+	response	Response  (id=69)	
+		coyoteResponse	Response  (id=80)	
+			headers	MimeHeaders  (id=526)	
+
+        session.access();
+/s
+StandardSession.access() line: 718	
+        this.thisAccessedTime = System.currentTimeMillis();
+/t
+Request.doGetSession(boolean) line: 3017	
+       	session.access();
+/d
+        return session;
+/t
+Request.getSession(boolean) line: 2368	
+        Session session = doGetSession(create);
+/d
+this	Request  (id=98)	
+	response	Response  (id=69)	
+		coyoteResponse	Response  (id=80)	
+			headers	MimeHeaders  (id=526)	
+=== MimeHeaders ===
+Set-Cookie = JSESSIONID=3C3D3F8325E2173293A0218438077446;path=/tomcat-servlet;HttpOnly
+
+        return session.getSession();	/= facade	,
+/t
+RequestFacade.getSession(boolean) line: 896	
+            return request.getSession(create);
+/d
+/t
+MyServlet.doGet(HttpServletRequest, HttpServletResponse) line: 20	
+		HttpSession session= req.getSession(false);
+/d
+
+/ 7	. 
+
+/ we doen vervolgens een request op 
+http://localhost:8080/tomcat-servlet/
+
+/ maar we hadden eerst een nieuwe deployment gedaan	, dus vindt deze session niet, en gaat toch een nieuwe maken	,
+
+/ dan in devtools	, maar ook in het request hieronder zien we de cookie in het request dus	, 
+/ stack	,
+/s
+	MyServlet.doGet(HttpServletRequest, HttpServletResponse) line: 17	
+	MyServlet(HttpServlet).service(HttpServletRequest, HttpServletResponse) line: 622	
+	MyServlet(HttpServlet).service(ServletRequest, ServletResponse) line: 729	
+	ApplicationFilterChain.internalDoFilter(ServletRequest, ServletResponse) line: 230	
+	ApplicationFilterChain.doFilter(ServletRequest, ServletResponse) line: 165	
+	WsFilter.doFilter(ServletRequest, ServletResponse, FilterChain) line: 52	
+	ApplicationFilterChain.internalDoFilter(ServletRequest, ServletResponse) line: 192	
+	ApplicationFilterChain.doFilter(ServletRequest, ServletResponse) line: 165	
+	StandardWrapperValve.invoke(Request, Response) line: 198	
+	StandardContextValve.invoke(Request, Response) line: 96	
+	NonLoginAuthenticator(AuthenticatorBase).invoke(Request, Response) line: 474	
+	StandardHostValve.invoke(Request, Response) line: 140	
+	ErrorReportValve.invoke(Request, Response) line: 79	
+	AccessLogValve(AbstractAccessLogValve).invoke(Request, Response) line: 624	
+	StandardEngineValve.invoke(Request, Response) line: 87	
+	CoyoteAdapter.service(Request, Response) line: 349	
+	Http11Processor.service(SocketWrapperBase<?>) line: 783	
+	Http11Processor(AbstractProcessorLight).process(SocketWrapperBase<?>, SocketEvent) line: 66	
+	AbstractProtocol$ConnectionHandler<S>.process(SocketWrapperBase<S>, SocketEvent) line: 798	
+	NioEndpoint$SocketProcessor.doRun() line: 1434	
+	NioEndpoint$SocketProcessor(SocketProcessorBase<S>).run() line: 49	
+	ThreadPoolExecutor(ThreadPoolExecutor).runWorker(ThreadPoolExecutor$Worker) line: 1142	
+	ThreadPoolExecutor$Worker.run() line: 617	
+	TaskThread$WrappingRunnable.run() line: 61	
+	TaskThread(Thread).run() line: 745	
+/ debug	, 
+MyServlet.doGet(HttpServletRequest, HttpServletResponse) line: 17	
+req	RequestFacade  (id=805)	
+	request	Request  (id=807)	
+		coyoteRequest	Request  (id=811)	
+			headers	MimeHeaders  (id=823)	
+				count	9	
+				headers	MimeHeaderField[16]  (id=874)	
+					[0]	MimeHeaderField  (id=879)	
+					[1]	MimeHeaderField  (id=880)	
+					[2]	MimeHeaderField  (id=881)	
+					[3]	MimeHeaderField  (id=882)	
+					[4]	MimeHeaderField  (id=883)	
+					[5]	MimeHeaderField  (id=888)	
+					[6]	MimeHeaderField  (id=893)	
+					[7]	MimeHeaderField  (id=898)	
+					[8]	MimeHeaderField  (id=899)	
+						nameB	MessageBytes  (id=904)	
+cookie
+						valueB	MessageBytes  (id=905)	
+JSESSIONID=3C3D3F8325E2173293A0218438077446
+
+/ allemaal	,
+=== MimeHeaders ===
+host = localhost:8080
+connection = keep-alive
+cache-control = max-age=0
+accept = text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+upgrade-insecure-requests = 1
+user-agent = Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36
+accept-encoding = gzip, deflate, sdch
+accept-language = en-US,en;q=0.8
+cookie = JSESSIONID=3C3D3F8325E2173293A0218438077446
+
+		HttpSession session= req.getSession(true);
+/s
+RequestFacade.getSession(boolean) line: 896	
+        if (SecurityUtil.isPackageProtectionEnabled()){		/ TODO
+/n
+        } else {
+            return request.getSession(create);
+/s
+Request.getSession(boolean) line: 2367	
+        Session session = doGetSession(create);
+/s
+Request.doGetSession(boolean) line: 2931	
+        if (session != null) {
+/n
+            return (session);
+/n
+        if (requestedSessionId != null) {
+/j
+this	Request  (id=807)	
+	requestedSessionId	"3C3D3F8325E2173293A0218438077446" (id=1092)	
+
+            try {
+                session = manager.findSession(requestedSessionId);	/= manager.sessions.get(requestedSessionId)
+null
+        // Re-use session IDs provided by the client in very limited
+        // circumstances.
+        String sessionId = getRequestedSessionId();
+3C3D3F8325E2173293A0218438077446
+        if (requestedSessionSSL) {
+/n
+        } else {
+            sessionId = null;
+
+        session = manager.createSession(sessionId);
+/s
+StandardManager(ManagerBase).createSession(String) line: 645	
+        if ((maxActiveSessions >= 0) &&
+                (getActiveSessions() >= maxActiveSessions)) {
+/n
+/ TODO Je kunt dus meerdere sessions hebben	?
+
+        // Recycle or create a Session instance
+        Session session = createEmptySession();
+/s
+StandardManager(ManagerBase).getNewSession() line: 811	
+        return new StandardSession(this);
+this= org.apache.catalina.session.StandardManager[/tomcat-servlet]
+        // Initialize the properties of the new session and return it
+        session.setNew(true);
+        session.setValid(true);
+        session.setCreationTime(System.currentTimeMillis());
+        session.setMaxInactiveInterval(getContext().getSessionTimeout() * 60);	/ 1800 TODO seconds? minutes ?
+        String id = sessionId;
+        if (id == null) {
+            id = generateSessionId();
+...
+/s
+StandardSessionIdGenerator.generateSessionId(String) line: 52	
+        while (resultLenBytes < sessionIdLength) {
+            getRandomBytes(random);
+/s
+StandardSessionIdGenerator(SessionIdGeneratorBase).getRandomBytes(byte[]) line: 206	
+        SecureRandom random = randoms.poll();																	/ TODO
+        if (random == null) {
+            random = createSecureRandom();
+        }
+        random.nextBytes(bytes);
+        randoms.add(random);
+/t
+StandardSessionIdGenerator.generateSessionId(String) line: 52	
+        while (resultLenBytes < sessionIdLength) {
+            getRandomBytes(random);
+/d
+        if (route != null && route.length() > 0) {
+/n
+        } else {
+            String jvmRoute = getJvmRoute();
+null
+        return buffer.toString();
+/t
+StandardManager(ManagerBase).createSession(String) line: 665	
+            id = generateSessionId();
+/d
+A4B8F507A2380820BDA5FC406E51E6FD
+
+        session.setId(id);
+        sessionCounter++;
+1
+        return (session);
+/t
+Request.doGetSession(boolean) line: 3001	
+        session = manager.createSession(sessionId);
+/d
+        // Creating a new session cookie based on that session
+        if (session != null
+                && context.getServletContext()
+                        .getEffectiveSessionTrackingModes()
+                        .contains(SessionTrackingMode.COOKIE)) {
+            Cookie cookie =
+                ApplicationSessionCookieConfig.createSessionCookie(
+                        context, session.getIdInternal(), isSecure());
+/s
+ApplicationSessionCookieConfig.createSessionCookie(Context, String, boolean) line: 174	
+
+        Cookie cookie = new Cookie(
+                SessionConfig.getSessionCookieName(context), sessionId);
+context=StandardEngine[Catalina].StandardHost[localhost].StandardContext[/tomcat-servlet]
+sessionId=A4B8F507A2380820BDA5FC406E51E6FD
+/ de cookie name wordt JSESSIONID												/ default TODO
+/ de cookie value wordt A4B8F507A2380820BDA5FC406E51E6FD
+/ de cookie's path wordt /tomcat/servlet	,
+
+            contextPath = context.getEncodedPath();
+/tomcat-servlet
+        cookie.setPath(contextPath);
+cookie	javax.servlet.http.Cookie  (id=1300)	
+	comment	null	
+	domain	null	
+	httpOnly	true	
+	maxAge	-1	
+	name	"JSESSIONID" (id=444)	
+	path	"/tomcat-servlet" (id=1188)	
+	secure	false	
+	value	"A4B8F507A2380820BDA5FC406E51E6FD" (id=1290)	
+	version	0	
+/t
+Request.doGetSession(boolean) line: 3009	
+            Cookie cookie =
+                ApplicationSessionCookieConfig.createSessionCookie(
+                        context, session.getIdInternal(), isSecure());
+/d
+            response.addSessionCookieInternal(cookie);
+/s
+Response.addSessionCookieInternal(Cookie) line: 952	
+        String name = cookie.getName();
+JSESSIONID
+        final String headername = "Set-Cookie";
+        final String startsWith = name + "=";
+JSESSIONID=
+        String header = generateCookieString(cookie);
+JSESSIONID=A4B8F507A2380820BDA5FC406E51E6FD;path=/tomcat-servlet;HttpOnly
+        boolean set = false;
+        MimeHeaders headers = getCoyoteResponse().getMimeHeaders();
+=== MimeHeaders ===
+        for (int i = 0; i < n; i++) {
+/n
+        if (!set) {
+            addHeader(headername, header);
+headername	"Set-Cookie" (id=523)	
+header	"JSESSIONID=A4B8F507A2380820BDA5FC406E51E6FD;path=/tomcat-servlet;HttpOnly" (id=1318)	
+/s
+Response.addHeader(String, String, Charset) line: 1060	
+        getCoyoteResponse().addHeader(name, value, charset);
+/s
+Response.addHeader(String, String, Charset) line: 307	
+        MessageBytes mb = headers.addValue(name);
+        mb.setString(value);
+headers	org.apache.tomcat.util.http.MimeHeaders  (id=1319)			/ Headers van de reponse	, !	
+=== MimeHeaders ===
+Set-Cookie = JSESSIONID=A4B8F507A2380820BDA5FC406E51E6FD;path=/tomcat-servlet;HttpOnly
+
+/t
+MyServlet.doGet(HttpServletRequest, HttpServletResponse) line: 20	
+		HttpSession session= req.getSession(true);
+/d
+
+/ we kijken in devtools	,
+
+Reponse Headers
+Content-Type:text/html;charset=utf-8
+Date:Sat, 04 Mar 2017 12:28:47 GMT
+Set-Cookie:JSESSIONID=8F37214253FB1720D3357E28AA3C7447;path=/tomcat-servlet;HttpOnly
+
+Request Headers
+Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Encoding:gzip, deflate, sdch
+Accept-Language:en-US,en;q=0.8
+Cache-Control:max-age=0
+Connection:keep-alive
+Cookie:JSESSIONID=3C3D3F8325E2173293A0218438077446
+Host:localhost:8080
+Upgrade-Insecure-Requests:1
+User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36
+
+/ Dus we zien request een andere session, die inmiddels niet meer bestond	, 
+
+/ we zien de chrome deze 8F37214253FB1720D3357E28AA3C7447 cookie	, 
+/ maar de vorige C3D3F8325E2173293A0218438077446 is weg	, 
+/ TODO
+
+/ 7	. 
+
+/ we geven (dus zonder een nieuwe deploy) dezelfde request	, 
+
+/ stack
+/s
+	MyServlet.doGet(HttpServletRequest, HttpServletResponse) line: 17	
+	MyServlet(HttpServlet).service(HttpServletRequest, HttpServletResponse) line: 622	
+	MyServlet(HttpServlet).service(ServletRequest, ServletResponse) line: 729	
+	ApplicationFilterChain.internalDoFilter(ServletRequest, ServletResponse) line: 230	
+	ApplicationFilterChain.doFilter(ServletRequest, ServletResponse) line: 165	
+	WsFilter.doFilter(ServletRequest, ServletResponse, FilterChain) line: 52	
+	ApplicationFilterChain.internalDoFilter(ServletRequest, ServletResponse) line: 192	
+	ApplicationFilterChain.doFilter(ServletRequest, ServletResponse) line: 165	
+	StandardWrapperValve.invoke(Request, Response) line: 198	
+	StandardContextValve.invoke(Request, Response) line: 96	
+	NonLoginAuthenticator(AuthenticatorBase).invoke(Request, Response) line: 474	
+	StandardHostValve.invoke(Request, Response) line: 140	
+	ErrorReportValve.invoke(Request, Response) line: 79	
+	AccessLogValve(AbstractAccessLogValve).invoke(Request, Response) line: 624	
+	StandardEngineValve.invoke(Request, Response) line: 87	
+	CoyoteAdapter.service(Request, Response) line: 349	
+	Http11Processor.service(SocketWrapperBase<?>) line: 783	
+	Http11Processor(AbstractProcessorLight).process(SocketWrapperBase<?>, SocketEvent) line: 66	
+	AbstractProtocol$ConnectionHandler<S>.process(SocketWrapperBase<S>, SocketEvent) line: 798	
+	NioEndpoint$SocketProcessor.doRun() line: 1434	
+	NioEndpoint$SocketProcessor(SocketProcessorBase<S>).run() line: 49	
+	ThreadPoolExecutor(ThreadPoolExecutor).runWorker(ThreadPoolExecutor$Worker) line: 1142	
+	ThreadPoolExecutor$Worker.run() line: 617	
+	TaskThread$WrappingRunnable.run() line: 61	
+	TaskThread(Thread).run() line: 745	
+/ debug	,
+/s
+MyServlet.doGet(HttpServletRequest, HttpServletResponse) line: 17	
+		HttpSession session= req.getSession(true);
+/s
+Request.doGetSession(boolean) line: 2911	
+        if (session != null) {
+            return (session);
+
+/ De session id wordt niet gecontrolleerd	, 
+/ TODO
+
+/ 7	. 
+
+/ we zien verschil request en session scope	, 
+
+/ scala IDE
+/ ws workspace-tomcat
+/ proj. tomcat-servlet
+
+
+$ vi MyServlet.java
+
+public class MyServlet extends HttpServlet {
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		resp.setContentType("text/html");
+		resp.setCharacterEncoding("utf-8");
+		
+		String r=(String)req.getAttribute("eps");
+		PrintWriter pw=resp.getWriter();
+		if(r!=null && r.isEmpty()==false){
+			pw.println(r);	
+			pw.println("<br>");
+		}
+		else{
+			pw.println("esp is not set yet.");
+			pw.println("<br>");
+		}
+		req.setAttribute("esp", "ε");
+		
+		HttpSession session= req.getSession(true);
+		String s=(String)session.getAttribute("pi");
+		if(s!=null && s.isEmpty()==false){
+			pw.println(s);	
+			pw.println("<br>");
+		}
+		else{
+			pw.println("pi is not set yet.");
+			pw.println("<br>");
+		}
+		session.setAttribute("pi", "π");
+			
+	}
+}
+
+$ vi web.xml
+
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+		 http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+         
+         <servlet>
+         	<servlet-name>my</servlet-name>
+         	<servlet-class>my.MyServlet</servlet-class>
+         </servlet>
+         <servlet-mapping>
+         	<servlet-name>my</servlet-name>
+         	<url-pattern>/</url-pattern>
+         </servlet-mapping>
+</web-app>
+
+/ deploy appl	,
+/ Geef	, 
+http://localhost:8080/tomcat-servlet/
+esp is not set yet. 
+pi is not set yet.
+
+/ Geef	, 
+http://localhost:8080/tomcat-servlet/
+esp is not set yet. 
+π 
+
+/ 7	. 
+
+/ @WebServlet	,
+
+/ ws workspace-tomcat
+/ proj tomcat-servlet2
+
+$ vi MyServlet.java
+
+@WebServlet("/")
+public class MyServlet extends HttpServlet {
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		resp.setContentType("text/html");
+		resp.setCharacterEncoding("utf-8");
+		
+		String r=(String)req.getAttribute("eps");
+		PrintWriter pw=resp.getWriter();
+		if(r!=null && r.isEmpty()==false){
+			pw.println(r);	
+			pw.println("<br>");
+		}
+		else{
+			pw.println("esp is not set yet.");
+			pw.println("<br>");
+		}
+		req.setAttribute("esp", "ε");
+		
+		HttpSession session= req.getSession(true);
+		String s=(String)session.getAttribute("pi");
+		if(s!=null && s.isEmpty()==false){
+			pw.println(s);	
+			pw.println("<br>");
+		}
+		else{
+			pw.println("pi is not set yet.");
+			pw.println("<br>");
+		}
+		session.setAttribute("pi", "π");
+			
+	}
+}
+
+$ vi src/main/webapps/WEB-INF/web.xml
+
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+		 				http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+</web-app>
+
+/ Geef	, 
+http://localhost:8080/tomcat-servlet2/
+esp is not yet set.
+pi is not yet set.
+
+/ Geef	, 
+http://localhost:8080/tomcat-servlet2/
+esp is not yet set.
+π
+
+/ 7	. 
+
+/ lees	, 
+https://dzone.com/articles/java-servlet-30-tutorial
+@WebServlet(asyncSupported = false, name = "MyServlet", urlPatterns = {"/"}, initParams = {@WebInitParam(name="webInitParam1", value="Hello"), @WebInitParam(name="webInitParam2", value="World")})
+public class MyServlet extends HttpServlet {
+/ TODO
+
+/ we zien ook "/test/*"
+/ TODO
+
+
+/ 7	. 
+
+http://www.javatpoint.com/servlet-with-annotation
+[eric@almond scala]$ unzip -l ~/Downloads/servletannotation.zip 
+Archive:  /home/eric/Downloads/servletannotation.zip
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+        0  12-16-2011 18:30   servletannotation/WEB-INF/
+        0  12-15-2011 23:40   servletannotation/WEB-INF/classes/
+     1149  12-12-2011 08:27   servletannotation/WEB-INF/classes/Simple.class
+      729  12-12-2011 08:27   servletannotation/WEB-INF/classes/Simple.java
+        0  12-16-2011 18:30   servletannotation/WEB-INF/lib/
+   176837  11-20-2011 19:38   servletannotation/WEB-INF/lib/servlet-api.jar
+---------                     -------
+   178715                     6 files
+/TODO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/ Einde SESSION
+
+/ TOMCAT
+
+/ ga naar	, 
+http://tomcat.apache.org/tomcat-8.5-doc/
+
+/ links in menu zien we Reference, configuration	,
+http://tomcat.apache.org/tomcat-8.5-doc/config/index.html
+
+/ in menu links is dit ook Config Ref. Home	,
+/=
+/ Overview	,
+
+/ context vs servlet context: misschien is servlet context dat deel van de context wat alles met servlets te maken heeft: cookies, session	, ...
+/ context is StandardContext implements Context
+/ servlet context is ApplicationContext implements ServletContext
+
+/ Lees	, 
+https://tomcat.apache.org/tomcat-8.5-doc/api/index.html	 Context, StandardContext	, ApplicationContext
+https://tomcat.apache.org/tomcat-8.5-doc/servletapi/			/ ServletContext
+
+
+
+/ Einde TOMCAT
+
+
+
+
+
+/ MKYOUNG 
+
+http://www.mkyong.com/spring3/spring-3-mvc-hello-world-example/
+http://www.mkyong.com/spring-mvc/spring-mvc-how-to-include-js-or-css-files-in-a-jsp-page/
+
+/ imported in scala IDE	, workspace-spring	,
+
+[eric@almond Spring]$ pwd
+/home/eric/Devel/Java/Spring
+[eric@almond Spring]$ git clone https://github.com/mkyong/spring3-mvc-maven-xml-hello-world.git
+
+[eric@almond Spring]$ unzip  ~/Downloads/spring-mvc-css-example.zip 
+[eric@almond Spring]$ rm -rf __MACOSX/
+[eric@almond Spring]$ cd spring-css/
+[eric@almond spring-css]$ rm -rf .classpath .DS_Store .project .settings/
+
+[eric@almond apache-tomcat-8.5.8]$ pwd
+/home/eric/Devel/Java/Tomcat/apache-tomcat-8.5.8
+[eric@almond apache-tomcat-8.5.8]$ bin/catalina.sh jpda run
+Description	Resource	Path	Location	Type
+Project configuration is not up-to-date with pom.xml. Select: Maven->Update Project... from the project context menu or use Quick Fix.	spring-css		line 1	Maven Configuration Problem
+/ TODO
+
+$ vi pom.xml
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>my.own</groupId>
+	<artifactId>spring-css</artifactId>
+	<packaging>war</packaging>
+	<version>1.0-SNAPSHOT</version>
+	
+	
+	<properties>
+	    <jdk.version>1.7</jdk.version>
+		<spring.version>4.3.4.RELEASE</spring.version>
+		<jstl.version>1.2</jstl.version>
+		<tomcat.version>2.2</tomcat.version>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>${jstl.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.tomcat</groupId>
+		    <artifactId>tomcat-servlet-api</artifactId>
+		    <version>8.5.8</version>
+		    <scope>provided</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+		    <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.0</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+				</configuration>
+			</plugin>
+			
+			<plugin> 
+                    <groupId>org.apache.tomcat.maven</groupId>
+                    <artifactId>tomcat7-maven-plugin</artifactId>
+                    <version>${tomcat.version}</version>
+                    <configuration>
+	                    <port>8080</port>
+	                    <path>/${project.artifactId}</path>
+	                    <url>http://localhost:8080/manager/text</url>
+	                    <server>tomcat</server>
+                    </configuration>
+            </plugin>
+			
+
+		</plugins>
+	</build>
+
+</project>
+
+
+/ we hoefden NIET voor de jsp pages dep. tomcat-servlet-api	, 
+/ TODO
+/ maar het moet wel voor debug	, als in DispatcherServlet(HttpServlet)	, 
+
+/ maak in eclipse een debug config	, tomcat-remote-debug-spring-css	,  met project : spring-css	, 
+/ anders krijgen we bij debug niet de sources te zien	,
+/ TODO
+
+[eric@almond apache-tomcat-8.5.8]$ cat ~/.m2/settings.xml 
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+	<servers>
+		<server>
+			<id>tomcat</id>
+			<username>tomcat</username>
+			<password>s3cret</password>
+		</server>
+	</servers>
+</settings>
+
+/ deze <id>tomcat</id> zien we terug in tomcat-maven-plugin's <server>tomcat</server>
+
+/ tomcat's
+$ vi conf/tomcat-user.xml
+  <role rolename="manager-script"/>
+  <user username="tomcat" password="s3cret" roles="manager-script"/>
+</tomcat-users>
+
+/ manager-script moet	, anders deploys niet	, met tomcat-maven-plugin	,
+
+
+/ op de een of andere manier is JAVA_HOME def in env, en omdat we een upgrade hebben gedaan	, is deze naar een oude versie	, 
+[eric@almond apache-tomcat-8.5.8]$ JAVA_HOME=/etc/alternatives/java_sdk
+/ of 
+[eric@almond apache-tomcat-8.5.8]$ unset JAVA_HOME
+
+[eric@almond apache-tomcat-8.5.8]$ bin/catalina.sh jpda run
+/ OK
+
+/ Geef in eclipse
+tomcat7:undeploy clean tomcat7:deploy
+/ Geef in chrome	, 
+http://localhost:8080/spring-css/
+
+
+
+/ Einde MKYOUNG 
+

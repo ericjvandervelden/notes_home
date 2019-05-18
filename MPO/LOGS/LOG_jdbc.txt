@@ -1,0 +1,2765 @@
+/ 7	. 
+
+/ eclipse-jee-test
+/ ws workspace
+/ proj jdbc
+/ run first
+
+9.3-1102-jdbc41
+
+first.<init>() line: 9	
+		String url="jdbc:postgresql://localhost/foo?user=foo&password=foo";
+		Connection con=DriverManager.getConnection(url);
+/s
+DriverManager.<clinit>() line: 100	
+    static {
+        loadInitialDrivers();
+/s
+DriverManager.loadInitialDrivers() line: 490	
+
+/s
+Thread [main] (Suspended (breakpoint at line 576 in URLClassLoader$3))	
+	URLClassLoader$3.next() line: 576	
+/=
+            private boolean next() {
+                if (url != null) {
+/n
+                do {
+                    URL u = AccessController.doPrivileged(
+                        new PrivilegedAction<URL>() {
+                            public URL run() {
+                                if (!e.hasMoreElements())
+
+	URLClassLoader$3.hasMoreElements() line: 605	
+	CompoundEnumeration<E>.next() line: 45	
+	CompoundEnumeration<E>.hasMoreElements() line: 54	
+	CompoundEnumeration<E>.next() line: 45	
+	CompoundEnumeration<E>.hasMoreElements() line: 54	
+	ServiceLoader$LazyIterator.hasNext() line: 346	
+            while ((pending == null) || !pending.hasNext()) {
+                if (!configs.hasMoreElements()) {
+
+	ServiceLoader$1.hasNext() line: 439	
+                    else
+                        configs = loader.getResources(fullName);
+	DriverManager$2.run() line: 509	
+	DriverManager$2.run() line: 490	
+	AccessController.doPrivileged(PrivilegedAction<T>) line: not available [native method]	
+	DriverManager.loadInitialDrivers() line: 490	
+	DriverManager.<clinit>() line: 100	
+	first.<init>() line: 9	
+	first.main(String...) line: 4	
+
+
+/s
+ServiceLoader$LazyIterator.hasNext() line: 340	
+                        configs = loader.getResources(fullName);
+fullName="META-INF/services/java.sql.Driver"
+/s
+Launcher$AppClassLoader(ClassLoader).getResources(String) line: 1181	
+this	Launcher$AppClassLoader  (id=366)	
+
+       if (parent != null) {
+            tmp[0] = parent.getResources(name);
+/s
+Launcher$ExtClassLoader(ClassLoader).getResources(String) line: 1185	
+this	Launcher$ExtClassLoader  (id=364)	
+        } else {
+            tmp[0] = getBootstrapResources(name);	/ todo
+        tmp[1] = findResources(name);
+
+this	Launcher$AppClassLoader  (id=366)	
+name	"META-INF/services/java.sql.Driver" (id=365)	
+tmp	Enumeration<E>[2]  (id=371)	
+	[0]	CompoundEnumeration<E>  (id=434)	
+		enums	Enumeration<E>[2]  (id=375)	
+			[0]	ClassLoader$2  (id=376)	
+				val$e	URLClassPath$2  (id=388)	
+					index	0	
+					res	null	
+					this$0	URLClassPath  (id=391)	
+						closed	false	
+						jarHandler	Handler  (id=473)	
+						lmap	HashMap<K,V>  (id=474)	
+						loaders	ArrayList<E>  (id=475)	
+						path	ArrayList<E>  (id=476)	
+						urls	Stack<E>  (id=477)	
+[file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/classes, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/jfr.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/rhino.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/charsets.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/jce.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/jsse.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/sunrsasign.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/rt.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/resources.jar]
+					val$check	true	
+					val$name	"META-INF/services/java.sql.Driver" (id=365)	
+			[1]	URLClassLoader$3  (id=451)	
+				this$0	Launcher$ExtClassLoader  (id=364)	
+				url	null	
+				val$e	URLClassPath$1  (id=423)	
+					index	0	
+					this$0	URLClassPath  (id=406)	
+						closed	false	
+						jarHandler	Handler  (id=409)	
+						lmap	HashMap<K,V>  (id=410)	
+						loaders	ArrayList<E>  (id=412)	
+						path	ArrayList<E>  (id=413)	
+						urls	Stack<E>  (id=415)	
+					url	null	
+					val$check	true	
+					val$name	"META-INF/services/java.sql.Driver" (id=365)	
+[]
+		index	0	
+	[1]	URLClassLoader$3  (id=429)	
+		this$0	Launcher$AppClassLoader  (id=366)	
+		url	null	
+		val$e	URLClassPath$1  (id=427)	
+			index	0	
+			this$0	URLClassPath  (id=426)	
+				closed	false	
+				jarHandler	Handler  (id=441)	
+				lmap	HashMap<K,V>  (id=442)	
+				loaders	ArrayList<E>  (id=444)	
+				path	ArrayList<E>  (id=445)	
+				urls	Stack<E>  (id=447)	
+[file:/home/eric/.m2/repository/com/h2database/h2/1.2.145/h2-1.2.145.jar,
+ file:/home/eric/.m2/repository/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar,
+ file:/home/eric/.m2/repository/junit/junit/4.10/junit-4.10.jar,
+ file:/home/eric/.m2/repository/org/slf4j/slf4j-simple/1.6.1/slf4j-simple-1.6.1.jar,
+ file:/home/eric/.m2/repository/org/postgresql/postgresql/9.3-1102-jdbc41/postgresql-9.3-1102-jdbc41.jar,
+ file:/home/eric/.m2/repository/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3.jar,
+ file:/home/eric/.m2/repository/log4j/log4j/1.2.17/log4j-1.2.17.jar,
+ file:/home/eric/.m2/repository/org/slf4j/slf4j-log4j12/1.7.7/slf4j-log4j12-1.7.7.jar,
+ file:/home/eric/.m2/repository/org/slf4j/slf4j-api/1.7.7/slf4j-api-1.7.7.jar,
+ file:/home/eric/.m2/repository/org/hibernate/common/hibernate-commons-annotations/4.0.4.Final/hibernate-commons-annotations-4.0.4.Final.jar,
+ file:/home/eric/.m2/repository/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar,
+ file:/home/eric/.m2/repository/org/eclipse/equinox/common/3.6.200-v20130402-1505/common-3.6.200-v20130402-1505.jar,
+ file:/home/eric/.m2/repository/org/eclipse/equinox/app/1.3.200-v20130910-1609/app-1.3.200-v20130910-1609.jar,
+ file:/home/eric/.m2/repository/org/eclipse/core/contenttype/3.4.200-v20140207-1251/contenttype-3.4.200-v20140207-1251.jar,
+ file:/home/eric/.m2/repository/org/eclipse/equinox/preferences/3.5.200-v20140224-1527/preferences-3.5.200-v20140224-1527.jar,
+ file:/home/eric/.m2/repository/org/eclipse/equinox/registry/3.5.400-v20140428-1507/registry-3.5.400-v20140428-1507.jar,
+ file:/home/eric/.m2/repository/org/eclipse/core/jobs/3.6.0-v20140424-0053/jobs-3.6.0-v20140424-0053.jar,
+ file:/home/eric/.m2/repository/org/eclipse/osgi/3.10.0-v20140606-1445/osgi-3.10.0-v20140606-1445.jar,
+ file:/home/eric/.m2/repository/org/eclipse/core/runtime/3.9.0-v20130326-1255/runtime-3.9.0-v20130326-1255.jar,
+ file:/home/eric/.m2/repository/org/eclipse/core/commands/3.3.0-I20070605-0010/commands-3.3.0-I20070605-0010.jar,
+ file:/home/eric/.m2/repository/org/eclipse/text/3.3.0-v20070606-0010/text-3.3.0-v20070606-0010.jar,
+ file:/home/eric/.m2/repository/org/eclipse/tycho/org.eclipse.jdt.core/3.9.1.v20130905-0837/org.eclipse.jdt.core-3.9.1.v20130905-0837.jar,
+ file:/home/eric/.m2/repository/org/hibernate/jtidy/r8-20060801/jtidy-r8-20060801.jar,
+ file:/home/eric/.m2/repository/freemarker/freemarker/2.3.8/freemarker-2.3.8.jar,
+ file:/home/eric/.m2/repository/ant/ant/1.6.5/ant-1.6.5.jar,
+ file:/home/eric/.m2/repository/javax/transaction/jta/1.1/jta-1.1.jar,
+ file:/home/eric/.m2/repository/org/hibernate/hibernate-entitymanager/4.3.1.Final/hibernate-entitymanager-4.3.1.Final.jar,
+ file:/home/eric/.m2/repository/org/hibernate/hibernate-tools/4.3.1.CR1/hibernate-tools-4.3.1.CR1.jar,
+ file:/home/eric/.m2/repository/org/jboss/jandex/1.1.0.Final/jandex-1.1.0.Final.jar,
+ file:/home/eric/.m2/repository/antlr/antlr/2.7.7/antlr-2.7.7.jar,
+ file:/home/eric/.m2/repository/org/javassist/javassist/3.18.1-GA/javassist-3.18.1-GA.jar,
+ file:/home/eric/.m2/repository/org/hibernate/javax/persistence/hibernate-jpa-2.1-api/1.0.0.Final/hibernate-jpa-2.1-api-1.0.0.Final.jar,
+ file:/home/eric/.m2/repository/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar,
+ file:/home/eric/.m2/repository/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar,
+ file:/home/eric/.m2/repository/org/jboss/spec/javax/transaction/jboss-transaction-api_1.2_spec/1.0.0.Final/jboss-transaction-api_1.2_spec-1.0.0.Final.jar,
+ file:/home/eric/.m2/repository/org/jboss/logging/jboss-logging-annotations/1.2.0.Beta1/jboss-logging-annotations-1.2.0.Beta1.jar,
+ file:/home/eric/.m2/repository/org/jboss/logging/jboss-logging/3.1.3.GA/jboss-logging-3.1.3.GA.jar,
+ file:/home/eric/.m2/repository/org/hibernate/hibernate-core/4.3.5.Final/hibernate-core-4.3.5.Final.jar]
+			url	null	
+			val$check	true	
+			val$name	"META-INF/services/java.sql.Driver" (id=365)	
+
+        return new CompoundEnumeration<>(tmp);
+/t
+ServiceLoader$LazyIterator.hasNext() line: 343	
+                        configs = loader.getResources(fullName);
+/d
+this	ServiceLoader$LazyIterator  (id=362)	
+	configs	CompoundEnumeration<E>  (id=441)	
+		enums	Enumeration<E>[2]  (id=445)	
+			[0]	CompoundEnumeration<E>  (id=446)	
+				enums	Enumeration<E>[2]  (id=448)	
+					[0]	ClassLoader$2  (id=449)	
+					[1]	URLClassLoader$3  (id=450)	
+				index	0	
+			[1]	URLClassLoader$3  (id=447)	
+		index	0	
+
+/ in meer detail,
+
+this	ServiceLoader$LazyIterator  (id=362)	
+	configs	CompoundEnumeration<E>  (id=431)	
+		enums	Enumeration<E>[2]  (id=371)	
+			[0]	CompoundEnumeration<E>  (id=434)	
+				enums	Enumeration<E>[2]  (id=448)	
+					[0]	ClassLoader$2  (id=449)	
+						val$e	URLClassPath$2  (id=467)	
+							index	0	
+							res	null	
+							this$0	URLClassPath  (id=469)	
+								closed	false	
+								jarHandler	Handler  (id=471)	
+								lmap	HashMap<K,V>  (id=472)	
+								loaders	ArrayList<E>  (id=473)	
+								path	ArrayList<E>  (id=475)	
+								urls	Stack<E>  (id=476)	
+file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/j...
+							val$check	true	
+							val$name	"META-INF/services/java.sql.Driver" (id=364)	
+					[1]	URLClassLoader$3  (id=450)	
+								urls
+[]
+				index	0	
+			[1]	URLClassLoader$3  (id=429)	
+				this$0	Launcher$AppClassLoader  (id=366)	
+				url	null	
+				val$e	URLClassPath$1  (id=427)	
+					index	0	
+					this$0	URLClassPath  (id=426)	
+						closed	false	
+						jarHandler	Handler  (id=441)	
+						lmap	HashMap<K,V>  (id=442)	
+						loaders	ArrayList<E>  (id=444)	
+						path	ArrayList<E>  (id=445)	
+						urls	Stack<E>  (id=447)	
+[file:/home/eric/.m2/repository/com/h2database/h2/1.2.145/h2-1.2.145.jar, ... 
+					url	null	
+					val$check	true	
+					val$name	"META-INF/services/java.sql.Driver" (id=365)	
+		index	0	
+	loader	Launcher$AppClassLoader  (id=366)	
+	nextName	null	
+	pending	null	
+	service	Class<T> (java.sql.Driver) (id=525)	
+	this$0	ServiceLoader<S>  (id=526)	
+
+            while ((pending == null) || !pending.hasNext()) {
+                if (!configs.hasMoreElements()) {
+...
+/s
+CompoundEnumeration<E>.hasMoreElements() line: 54	
+        return next();
+/s
+CompoundEnumeration<E>.next() line: 45	
+        while (index < enums.length) {
+2
+            if (enums[index] != null && enums[index].hasMoreElements()) {
+/ de 1ste, index=0,  is zelf ook een compound enum	, op system classes	, die vindt ... niet	, todo 
+/ index=1
+/s
+URLClassLoader$3.hasMoreElements() line: 605	
+/=
+   public Enumeration<URL> findResources(final String name)
+        throws IOException
+    {
+        final Enumeration<URL> e = ucp.findResources(name, true);	/ straks is deze enum this	, in recursive call	,
+
+        return new Enumeration<URL>() {								/= URLClassLoader$3	,
+            private URL url = null;
+
+           private boolean next() {	/ hier komen we straks	, vanuit hasMoreElements() waar we nu zijn, this=URLClassLoader$3
+                if (url != null) {
+                    return true;
+                }
+                do {
+                    URL u = AccessController.doPrivileged(
+                        new PrivilegedAction<URL>() {
+                            public URL run() {
+                                if (!e.hasMoreElements())	/ straks , recursive call dus,  this 
+                                    return null;
+                                return e.nextElement();
+                            }
+                        }, acc);
+                    if (u == null)
+                        break;
+                    url = ucp.checkURL(u);
+                } while (url == null);
+                return url != null;
+            }
+
+            public URL nextElement() {
+                if (!next()) {
+                    throw new NoSuchElementException();
+                }
+                URL u = url;
+                url = null;
+                return u;
+            }
+
+            public boolean hasMoreElements() {
+
+this	URLClassLoader$3  (id=447)	
+	this$0	Launcher$AppClassLoader  (id=442)	
+	url	null	
+	val$e	URLClassPath$1  (id=574)				/ straks is dit this	,
+		index	1	
+		this$0	URLClassPath  (id=575)	
+			closed	false	
+			jarHandler	Handler  (id=576)	
+			lmap	HashMap<K,V>  (id=577)	
+			loaders	ArrayList<E>  (id=578)	
+			path	ArrayList<E>  (id=579)	
+			urls	Stack<E>  (id=580)	
+[file:/home/eric/.m2/repository/com/h2database/h2/1.2.145/h2-1.2.145.jar, file:/home/eric/.m2/repository/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar,...
+		url	null	
+		val$check	true	
+		val$name	"META-INF/services/java.sql.Driver" (id=364)	
+
+                return next();
+/ fct staat erboven	,
+/s
+URLClassLoader$3.next() line: 580	
+...
+URLClassLoader$3$1.run() line: 583	
+/=
+            private boolean next() {
+                do {
+                    URL u = AccessController.doPrivileged(
+                        new PrivilegedAction<URL>() {
+                            public URL run() {
+                                if (!e.hasMoreElements())
+/s
+URLClassPath$1.hasMoreElements() line: 236	
+this	URLClassPath$1  (id=574)	
+	this$0	URLClassPath  (id=575)	
+		urls	Stack<E>  (id=580)	
+[file:/home/eric/.m2/repository/com/h2database/h2/1.2.145/h2-1.2.145.jar, file:/home/eric/.m2/repository/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar, ...
+                return next();
+/s
+URLClassPath$1.next() line: 225	
+                    while ((loader = getLoader(index++)) != null) {
+/s
+URLClassPath.getLoader(int) line: 312	
+this	URLClassPath  (id=575)	
+	loaders	ArrayList<E>  (id=578)	
+		elementData	Object[10]  (id=582)	
+			[0]	URLClassPath$FileLoader  (id=584)	
+				base	URL  (id=587)				
+file:/home/eric/Devel/Java/Jdbc/target/classes/	
+				dir	File  (id=588)	
+	urls	Stack<E>  (id=580)	
+[file:/home/eric/.m2/repository/com/h2database/h2/1.2.145/h2-1.2.145.jar, file:/home/eric/.m2/repository/o...
+
+                   while ((loader = getLoader(index++)) != null) {
+                        url = loader.findResource(name, check);
+this	URLClassPath$1  (id=574)	
+	val$name	"META-INF/services/java.sql.Driver" (id=364)	
+url null
+/ op file:/home/eric/Devel/Java/Jdbc/target/classes/ wordt hij niet gevonden	, 
+
+                   while ((loader = getLoader(index++)) != null) {
+                        url = loader.findResource(name, check);
+/ volgende	, 
+loader	URLClassPath$JarLoader  (id=673)	
+	base	URL  (id=675)	
+/ Hieronder steeds nieuwe loaders	, op 	,
+jar:file:/home/eric/.m2/repository/org/hibernate/hibernate-core/4.3.5.Final/hibernate-core-4.3.5.Final.jar!/
+url=null
+jar:file:/home/eric/.m2/repository/org/jboss/logging/jboss-logging-annotations/1.2.0.Beta1/jboss-logging-annotations-1.2.0.Beta1.jar!/
+url=null
+jar:file:/home/eric/.m2/repository/org/jboss/spec/javax/transaction/jboss-transaction-api_1.2_spec/1.0.0.Final/jboss-transaction-api_1.2_spec-1.0.0.Final.jar!/
+url=null
+jar:file:/home/eric/.m2/repository/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar!/
+url=null  
+jar:file:/home/eric/.m2/repository/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar!/
+jar:file:/home/eric/.m2/repository/org/hibernate/javax/persistence/hibernate-jpa-2.1-api/1.0.0.Final/hibernate-jpa-2.1-api-1.0.0.Final.jar!/
+jar:file:/home/eric/.m2/repository/org/javassist/javassist/3.18.1-GA/javassist-3.18.1-GA.jar!/
+jar:file:/home/eric/.m2/repository/antlr/antlr/2.7.7/antlr-2.7.7.jar!/
+jar:file:/home/eric/.m2/repository/org/jboss/jandex/1.1.0.Final/jandex-1.1.0.Final.jar!/
+jar:file:/home/eric/.m2/repository/org/hibernate/hibernate-tools/4.3.1.CR1/hibernate-tools-4.3.1.CR1.jar!/
+jar:file:/home/eric/.m2/repository/org/hibernate/hibernate-entitymanager/4.3.1.Final/hibernate-entitymanager-4.3.1.Final.jar!/
+...
+jar:file:/home/eric/.m2/repository/org/postgresql/postgresql/9.3-1102-jdbc41/postgresql-9.3-1102-jdbc41.jar!/
+...
+
+/ en dan	, 
+url=jar:file:/home/eric/.m2/repository/org/postgresql/postgresql/9.3-1102-jdbc41/postgresql-9.3-1102-jdbc41.jar!/META-INF/services/java.sql.Driver
+                            return true;
+/ MORGENOCHTEND 
+/ hoe als h2 eerder	?
+/ TODO
+Thread [main] (Suspended)	
+	URLClassLoader$3.next() line: 588	
+	URLClassLoader$3.hasMoreElements() line: 605	
+	CompoundEnumeration<E>.next() line: 45	
+	CompoundEnumeration<E>.hasMoreElements() line: 54	
+	ServiceLoader$LazyIterator.hasNext() line: 346	
+	ServiceLoader$1.hasNext() line: 439	
+	DriverManager$2.run() line: 509	
+	DriverManager$2.run() line: 490	
+	AccessController.doPrivileged(PrivilegedAction<T>) line: not available [native method]	
+	DriverManager.loadInitialDrivers() line: 490	
+	DriverManager.<clinit>() line: 100	
+	first.<init>() line: 9	
+	first.main(String...) line: 4	
+
+/ WH RM HIERBOVEN
+
+
+/ 7	. 
+
+/ DRIVERS REGISTER THEMSELVES	
+
+/ Als we een tijd door click komen we in ,
+/ stack
+/s
+	DriverManager.registerDriver(Driver) line: 296	
+	Driver.<clinit>() line: 67											/ postgres Driver	
+            java.sql.DriverManager.registerDriver(new Driver());
+/cb
+	ServiceLoader$LazyIterator.next() line: 373	
+                c = Class.forName(cn, false, loader);
+cn	"org.postgresql.Driver" (id=439)	
+                S p = service.cast(c.newInstance());
+/cb
+	ServiceLoader$1.next() line: 445	
+                return lookupIterator.next();
+/cb
+	DriverManager$2.run() line: 510	
+/=
+        AccessController.doPrivileged(new PrivilegedAction<Void>() {
+                        driversIterator.next();
+/cb
+	DriverManager$2.run() line: 490	
+	AccessController.doPrivileged(PrivilegedAction<T>) line: not available [native method]	
+	DriverManager.loadInitialDrivers() line: 490	
+	DriverManager.<clinit>() line: 100	
+        loadInitialDrivers();
+/cb
+	first.<init>() line: 10	
+	first.main(String...) line: 4	
+/
+/ debug
+/s
+DriverManager.registerDriver(Driver) line: 296	
+    private final static CopyOnWriteArrayList<DriverInfo> registeredDrivers = new CopyOnWriteArrayList<DriverInfo>();
+{}
+            registeredDrivers.addIfAbsent(new DriverInfo(driver));
+/t
+ServiceLoader$LazyIterator.next() line: 374	
+                S p = service.cast(c.newInstance());
+/d
+p	Driver  (id=486)	
+                providers.put(cn, p);
+/ providers in een ServiceLoader prop	,
+                return p;
+
+/c
+/s
+/stack
+	Driver.load() line: 136 [local variables unavailable]		/ org.h2.Driver
+	Driver.<clinit>() line: 40	
+        load();
+/cb
+	ServiceLoader$LazyIterator.next() line: 373	
+                S p = service.cast(c.newInstance());
+/cb
+	ServiceLoader$1.next() line: 445	
+        return new Iterator<S>() {
+                return lookupIterator.next();
+/cb
+	DriverManager$2.run() line: 510	
+        AccessController.doPrivileged(new PrivilegedAction<Void>() {
+                        driversIterator.next();
+/cb
+	DriverManager$2.run() line: 490	
+	AccessController.doPrivileged(PrivilegedAction<T>) line: not available [native method]	
+	DriverManager.loadInitialDrivers() line: 490	
+	DriverManager.<clinit>() line: 100	
+        loadInitialDrivers();
+/cb
+	first.<init>() line: 10	
+		Connection con=DriverManager.getConnection(url);
+/cb
+	first.main(String...) line: 4	
+/
+/ debug
+/s
+Driver.load() line: 136 [local variables unavailable]	
+    private static final Driver INSTANCE = new Driver();
+                DriverManager.registerDriver(INSTANCE);
+/s
+DriverManager.registerDriver(Driver) line: 296	
+            registeredDrivers.addIfAbsent(new DriverInfo(driver));
+[driver[className=org.postgresql.Driver@433a87a0], driver[className=org.h2.Driver@694435e5]]
+/t
+Driver.load() line: 136 [local variables unavailable]	
+                DriverManager.registerDriver(INSTANCE);
+        return INSTANCE;
+/t
+ServiceLoader$LazyIterator.next() line: 373	
+                S p = service.cast(c.newInstance());
+/d
+p	Driver  (id=510)	
+                providers.put(cn, p);
+{org.postgresql.Driver=org.postgresql.Driver@1cde0cc2, org.h2.Driver=org.h2.Driver@d2b87e5}
+                return p;
+
+/c
+	ServiceLoader$LazyIterator.hasNext() line: 346	
+	ServiceLoader$1.hasNext() line: 439	
+        return new Iterator<S>() {
+            public boolean hasNext() {
+                return lookupIterator.hasNext();
+/cb
+	DriverManager$2.run() line: 509	
+        AccessController.doPrivileged(new PrivilegedAction<Void>() {
+            public Void run() {
+                    while(driversIterator.hasNext()) {
+/cb
+	DriverManager$2.run() line: 490	
+	AccessController.doPrivileged(PrivilegedAction<T>) line: not available [native method]	
+	DriverManager.loadInitialDrivers() line: 490	
+	DriverManager.<clinit>() line: 100	
+        loadInitialDrivers();
+/cb
+	first.<init>() line: 10	
+	first.main(String...) line: 4	
+/
+/ debug
+ServiceLoader$LazyIterator.hasNext() line: 346	
+            if (nextName != null) {
+/n
+            if (configs == null) {
+/n
+            while ((pending == null) || !pending.hasNext()) {
+                if (!configs.hasMoreElements()) {
+
+
+
+/ Intermezzo
+
+public class URLClassLoader extends SecureClassLoader implements Closeable {
+ 	public Enumeration<URL> findResources(final String name)
+        throws IOException
+    {
+        final Enumeration<URL> e = ucp.findResources(name, true);
+
+        return new Enumeration<URL>() {							/= URLClassLoader$3
+            private URL url = null;
+
+            private boolean next() {
+                if (url != null) {
+                    return true;
+                }
+                do {
+                    URL u = AccessController.doPrivileged(
+                        new PrivilegedAction<URL>() {
+                            public URL run() {
+                                if (!e.hasMoreElements())
+                                    return null;
+                                return e.nextElement();
+                            }
+                        }, acc);
+                    if (u == null)
+                        break;
+                    url = ucp.checkURL(u);
+                } while (url == null);
+                return url != null;
+            }
+
+            public URL nextElement() {
+                if (!next()) {
+                    throw new NoSuchElementException();
+                }
+                URL u = url;
+                url = null;
+                return u;
+            }
+
+            public boolean hasMoreElements() {
+                return next();
+            }
+        };
+    }
+
+public class URLClassPath {
+   public Enumeration<Resource> getResources(final String name,
+                                    final boolean check) {
+        return new Enumeration<Resource>() {					/= URLClassPath$1
+            private int index = 0;
+            private Resource res = null;
+
+            private boolean next() {
+                if (res != null) {
+                    return true;
+                } else {
+                    Loader loader;
+                    while ((loader = getLoader(index++)) != null) {
+                        res = loader.getResource(name, check);
+                        if (res != null) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            }
+
+            public boolean hasMoreElements() {
+                return next();
+            }
+
+            public Resource nextElement() {
+                if (!next()) {
+                    throw new NoSuchElementException();
+                }
+                Resource r = res;
+                res = null;
+                return r;
+            }
+        };
+    }
+
+public abstract class ClassLoader {
+    private static Enumeration<URL> getBootstrapResources(String name)
+        throws IOException
+    {
+        final Enumeration<Resource> e =
+            getBootstrapClassPath().getResources(name);
+        return new Enumeration<URL> () {					/= ClassLoader$2 
+            public URL nextElement() {
+                return e.nextElement().getURL();
+            }
+            public boolean hasMoreElements() {
+                return e.hasMoreElements();
+            }
+        };
+    }
+
+    public Enumeration<URL> getResources(String name) throws IOException {			/ hier kwamen we ook	, TODO
+        Enumeration[] tmp = new Enumeration[2];
+        if (parent != null) {
+            tmp[0] = parent.getResources(name);
+        } else {
+            tmp[0] = getBootstrapResources(name);
+        }
+        tmp[1] = findResources(name);
+
+        return new CompoundEnumeration<>(tmp);
+    }
+
+
+this	java.util.ServiceLoader$LazyIterator  (id=370)	
+	configs	sun.misc.CompoundEnumeration<E>  (id=379)	
+		enums	java.util.Enumeration<E>[2]  (id=456)	
+			[0]	sun.misc.CompoundEnumeration<E>  (id=378)	
+				enums	java.util.Enumeration<E>[2]  (id=520)	
+					[0]	java.lang.ClassLoader$2  (id=521)	
+						val$e	sun.misc.URLClassPath$2  (id=548)	
+							index	7	
+							res	null	
+							this$0	sun.misc.URLClassPath  (id=550)	
+								closed	false	
+								jarHandler	sun.net.www.protocol.jar.Handler  (id=552)	
+								lmap	java.util.HashMap<K,V>  (id=553)	
+								loaders	java.util.ArrayList<E>  (id=554)	
+								path	java.util.ArrayList<E>  (id=556)	
+[file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/resources.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/rt.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/sunrsasign.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/jsse.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/jce.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/charsets.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/rhino.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/jfr.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/classes]
+								urls	java.util.Stack<E>  (id=557)	
+							val$check	true	
+							val$name	"META-INF/services/java.sql.Driver" (id=461)	
+					[1]	java.net.URLClassLoader$3  (id=377)	
+						this$0	sun.misc.Launcher$ExtClassLoader  (id=372)	
+						url	null	
+						val$e	sun.misc.URLClassPath$1  (id=536)	
+							index	7	
+							this$0	sun.misc.URLClassPath  (id=538)	
+								closed	false	
+								jarHandler	sun.net.www.protocol.jar.Handler  (id=541)	
+								lmap	java.util.HashMap<K,V>  (id=542)	
+								loaders	java.util.ArrayList<E>  (id=543)	
+								path	java.util.ArrayList<E>  (id=544)	
+[file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/ext/dnsns.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/ext/localedata.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/ext/zipfs.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/ext/sunpkcs11.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/ext/pulse-java.jar, file:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/ext/sunjce_provider.jar]
+								urls	java.util.Stack<E>  (id=545)	
+							url	null	
+							val$check	true	
+							val$name	"META-INF/services/java.sql.Driver" (id=461)	
+				index	2	
+			[1]	java.net.URLClassLoader$3  (id=382)	
+				this$0	sun.misc.Launcher$AppClassLoader  (id=373)	
+				url	null	
+				val$e	sun.misc.URLClassPath$1  (id=385)	
+					index	39	
+					this$0	sun.misc.URLClassPath  (id=459)	
+						closed	false	
+						jarHandler	sun.net.www.protocol.jar.Handler  (id=525)	
+						lmap	java.util.HashMap<K,V>  (id=526)	
+						loaders	java.util.ArrayList<E>  (id=527)	
+						path	java.util.ArrayList<E>  (id=528)	
+[file:/home/eric/Devel/Java/Jdbc/target/classes/, file:/home/eric/.m2/repository/org/hibernate/hibernate-core/4.3.5.Final/hibernate-core-4.3.5.Final.jar, file:/home/eric/.m2/repository/org/jboss/logging/jboss-logging/3.1.3.GA/jboss-logging-3.1.3.GA.jar, file:/home/eric/.m2/repository/org/jboss/logging/jboss-logging-annotations/1.2.0.Beta1/jboss-logging-annotations-1.2.0.Beta1.jar, file:/home/eric/.m2/repository/org/jboss/spec/javax/transaction/jboss-transaction-api_1.2_spec/1.0.0.Final/jboss-transaction-api_1.2_spec-1.0.0.Final.jar, file:/home/eric/.m2/repository/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar, file:/home/eric/.m2/repository/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar, file:/home/eric/.m2/repository/org/hibernate/javax/persistence/hibernate-jpa-2.1-api/1.0.0.Final/hibernate-jpa-2.1-api-1.0.0.Final.jar, file:/home/eric/.m2/repository/org/javassist/javassist/3.18.1-GA/javassist-3.18.1-GA.jar, file:/home/eric/.m2/repository/antlr/antlr/2.7.7/antlr-2.7.7.jar, file:/home/eric/.m2/repository/org/jboss/jandex/1.1.0.Final/jandex-1.1.0.Final.jar, file:/home/eric/.m2/repository/org/hibernate/hibernate-tools/4.3.1.CR1/hibernate-tools-4.3.1.CR1.jar, file:/home/eric/.m2/repository/org/hibernate/hibernate-entitymanager/4.3.1.Final/hibernate-entitymanager-4.3.1.Final.jar, file:/home/eric/.m2/repository/javax/transaction/jta/1.1/jta-1.1.jar, file:/home/eric/.m2/repository/ant/ant/1.6.5/ant-1.6.5.jar, file:/home/eric/.m2/repository/freemarker/freemarker/2.3.8/freemarker-2.3.8.jar, file:/home/eric/.m2/repository/org/hibernate/jtidy/r8-20060801/jtidy-r8-20060801.jar, file:/home/eric/.m2/repository/org/eclipse/tycho/org.eclipse.jdt.core/3.9.1.v20130905-0837/org.eclipse.jdt.core-3.9.1.v20130905-0837.jar, file:/home/eric/.m2/repository/org/eclipse/text/3.3.0-v20070606-0010/text-3.3.0-v20070606-0010.jar, file:/home/eric/.m2/repository/org/eclipse/core/commands/3.3.0-I20070605-0010/commands-3.3.0-I20070605-0010.jar, file:/home/eric/.m2/repository/org/eclipse/core/runtime/3.9.0-v20130326-1255/runtime-3.9.0-v20130326-1255.jar, file:/home/eric/.m2/repository/org/eclipse/osgi/3.10.0-v20140606-1445/osgi-3.10.0-v20140606-1445.jar, file:/home/eric/.m2/repository/org/eclipse/core/jobs/3.6.0-v20140424-0053/jobs-3.6.0-v20140424-0053.jar, file:/home/eric/.m2/repository/org/eclipse/equinox/registry/3.5.400-v20140428-1507/registry-3.5.400-v20140428-1507.jar, file:/home/eric/.m2/repository/org/eclipse/equinox/preferences/3.5.200-v20140224-1527/preferences-3.5.200-v20140224-1527.jar, file:/home/eric/.m2/repository/org/eclipse/core/contenttype/3.4.200-v20140207-1251/contenttype-3.4.200-v20140207-1251.jar, file:/home/eric/.m2/repository/org/eclipse/equinox/app/1.3.200-v20130910-1609/app-1.3.200-v20130910-1609.jar, file:/home/eric/.m2/repository/org/eclipse/equinox/common/3.6.200-v20130402-1505/common-3.6.200-v20130402-1505.jar, file:/home/eric/.m2/repository/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar, file:/home/eric/.m2/repository/org/hibernate/common/hibernate-commons-annotations/4.0.4.Final/hibernate-commons-annotations-4.0.4.Final.jar, file:/home/eric/.m2/repository/org/slf4j/slf4j-api/1.7.7/slf4j-api-1.7.7.jar, file:/home/eric/.m2/repository/org/slf4j/slf4j-log4j12/1.7.7/slf4j-log4j12-1.7.7.jar, file:/home/eric/.m2/repository/log4j/log4j/1.2.17/log4j-1.2.17.jar, file:/home/eric/.m2/repository/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3.jar, file:/home/eric/.m2/repository/org/postgresql/postgresql/9.3-1102-jdbc41/postgresql-9.3-1102-jdbc41.jar, file:/home/eric/.m2/repository/org/slf4j/slf4j-simple/1.6.1/slf4j-simple-1.6.1.jar, file:/home/eric/.m2/repository/junit/junit/4.10/junit-4.10.jar, file:/home/eric/.m2/repository/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar, file:/home/eric/.m2/repository/com/h2database/h2/1.2.145/h2-1.2.145.jar]
+						urls	java.util.Stack<E>  (id=529)	
+					url	null	
+					val$check	true	
+					val$name	"META-INF/services/java.sql.Driver" (id=461)	
+		index	1	
+	loader	sun.misc.Launcher$AppClassLoader  (id=373)	
+	nextName	null	
+	pending	java.util.ArrayList$Itr  (id=513)	
+	service	java.lang.Class<T> (java.sql.Driver) (id=431)	
+	this$0	java.util.ServiceLoader<S>  (id=451)	
+
+ Einde Intermezzo
+
+/ 13	. 
+
+/ we komen in	,
+/s
+/stack
+	DriverManager.registerDriver(Driver) line: 297	
+            registeredDrivers.addIfAbsent(new DriverInfo(driver));
+/cb
+	Driver.<clinit>() line: 67	
+            java.sql.DriverManager.registerDriver(new Driver());
+/cb
+	NativeConstructorAccessorImpl.newInstance0(Constructor, Object[]) line: not available [native method]	
+	NativeConstructorAccessorImpl.newInstance(Object[]) line: 57	
+	DelegatingConstructorAccessorImpl.newInstance(Object[]) line: 45	
+	Constructor<T>.newInstance(Object...) line: 526	
+	Class<T>.newInstance() line: 379	
+	ServiceLoader$LazyIterator.next() line: 373	
+                S p = service.cast(c.newInstance());
+/(*)
+	ServiceLoader$1.next() line: 445	
+                return lookupIterator.next();
+/cb
+	DriverManager$2.run() line: 510	
+                ServiceLoader<Driver> loadedDrivers = ServiceLoader.load(Driver.class);
+                Iterator driversIterator = loadedDrivers.iterator();
+                try{
+                    while(driversIterator.hasNext()) {
+->                    	driversIterator.next(); 				/calls lookupIterator !
+/ (**)
+/cb
+	DriverManager$2.run() line: 490	
+	AccessController.doPrivileged(PrivilegedAction<T>) line: not available [native method]	
+	DriverManager.loadInitialDrivers() line: 490	
+	DriverManager.<clinit>() line: 100	
+    static {
+        loadInitialDrivers();
+/cb
+	first.<init>() line: 10	
+	first.main(String...) line: 4	
+
+/ 1313	.
+
+/ ad (**)
+
+/ lookupIterator wordt steeds used	,
+
+loadedDrivers	java.util.ServiceLoader<S>  (id=432)	
+	loader	sun.misc.Launcher$AppClassLoader  (id=372)	
+	lookupIterator	java.util.ServiceLoader$LazyIterator  (id=371)	
+		configs	sun.misc.CompoundEnumeration<E>  (id=381)	
+			enums	java.util.Enumeration<E>[2]  (id=508)	
+				[0]	sun.misc.CompoundEnumeration<E>  (id=380)	
+				[1]	java.net.URLClassLoader$3  (id=384)	
+					this$0	sun.misc.Launcher$AppClassLoader  (id=372)	
+					url	null	
+					val$e	sun.misc.URLClassPath$1  (id=387)	
+						index	35	
+						this$0	sun.misc.URLClassPath  (id=474)	
+							closed	false	
+							jarHandler	sun.net.www.protocol.jar.Handler  (id=477)	
+							lmap	java.util.HashMap<K,V>  (id=478)	
+							loaders	java.util.ArrayList<E>  (id=479)	
+							path	java.util.ArrayList<E>  (id=481)	
+[file:/home/eric/Devel/Java/Jdbc/target/classes/, file:/home/eric/.m2/repository/org/hibernate/hibernate-core/4.3.5.Final/hibernate-core-4.3.5.Final.jar, file:/home/eric/.m2/repository/org/jboss/logging/jboss-logging/3.1.3.GA/jboss-logging-3.1.3.GA.jar, file:/home/eric/.m2/repository/org/jboss/logging/jboss-logging-annotations/1.2.0.Beta1/jboss-logging-annotations-1.2.0.Beta1.jar, file:/home/eric/.m2/repository/org/jboss/spec/javax/transaction/jboss-transaction-api_1.2_spec/1.0.0.Final/jboss-transaction-api_1.2_spec-1.0.0.Final.jar, file:/home/eric/.m2/repository/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar, file:/home/eric/.m2/repository/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar, file:/home/eric/.m2/repository/org/hibernate/javax/persistence/hibernate-jpa-2.1-api/1.0.0.Final/hibernate-jpa-2.1-api-1.0.0.Final.jar, file:/home/eric/.m2/repository/org/javassist/javassist/3.18.1-GA/javassist-3.18.1-GA.jar, file:/home/eric/.m2/repository/antlr/antlr/2.7.7/antlr-2.7.7.jar, file:/home/eric/.m2/repository/org/jboss/jandex/1.1.0.Final/jandex-1.1.0.Final.jar, file:/home/eric/.m2/repository/org/hibernate/hibernate-tools/4.3.1.CR1/hibernate-tools-4.3.1.CR1.jar, file:/home/eric/.m2/repository/org/hibernate/hibernate-entitymanager/4.3.1.Final/hibernate-entitymanager-4.3.1.Final.jar, file:/home/eric/.m2/repository/javax/transaction/jta/1.1/jta-1.1.jar, file:/home/eric/.m2/repository/ant/ant/1.6.5/ant-1.6.5.jar, file:/home/eric/.m2/repository/freemarker/freemarker/2.3.8/freemarker-2.3.8.jar, file:/home/eric/.m2/repository/org/hibernate/jtidy/r8-20060801/jtidy-r8-20060801.jar, file:/home/eric/.m2/repository/org/eclipse/tycho/org.eclipse.jdt.core/3.9.1.v20130905-0837/org.eclipse.jdt.core-3.9.1.v20130905-0837.jar, file:/home/eric/.m2/repository/org/eclipse/text/3.3.0-v20070606-0010/text-3.3.0-v20070606-0010.jar, file:/home/eric/.m2/repository/org/eclipse/core/commands/3.3.0-I20070605-0010/commands-3.3.0-I20070605-0010.jar, file:/home/eric/.m2/repository/org/eclipse/core/runtime/3.9.0-v20130326-1255/runtime-3.9.0-v20130326-1255.jar, file:/home/eric/.m2/repository/org/eclipse/osgi/3.10.0-v20140606-1445/osgi-3.10.0-v20140606-1445.jar, file:/home/eric/.m2/repository/org/eclipse/core/jobs/3.6.0-v20140424-0053/jobs-3.6.0-v20140424-0053.jar, file:/home/eric/.m2/repository/org/eclipse/equinox/registry/3.5.400-v20140428-1507/registry-3.5.400-v20140428-1507.jar, file:/home/eric/.m2/repository/org/eclipse/equinox/preferences/3.5.200-v20140224-1527/preferences-3.5.200-v20140224-1527.jar, file:/home/eric/.m2/repository/org/eclipse/core/contenttype/3.4.200-v20140207-1251/contenttype-3.4.200-v20140207-1251.jar, file:/home/eric/.m2/repository/org/eclipse/equinox/app/1.3.200-v20130910-1609/app-1.3.200-v20130910-1609.jar, file:/home/eric/.m2/repository/org/eclipse/equinox/common/3.6.200-v20130402-1505/common-3.6.200-v20130402-1505.jar, file:/home/eric/.m2/repository/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar, file:/home/eric/.m2/repository/org/hibernate/common/hibernate-commons-annotations/4.0.4.Final/hibernate-commons-annotations-4.0.4.Final.jar, file:/home/eric/.m2/repository/org/slf4j/slf4j-api/1.7.7/slf4j-api-1.7.7.jar, file:/home/eric/.m2/repository/org/slf4j/slf4j-log4j12/1.7.7/slf4j-log4j12-1.7.7.jar, file:/home/eric/.m2/repository/log4j/log4j/1.2.17/log4j-1.2.17.jar, file:/home/eric/.m2/repository/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3.jar, file:/home/eric/.m2/repository/org/postgresql/postgresql/9.3-1102-jdbc41/postgresql-9.3-1102-jdbc41.jar, file:/home/eric/.m2/repository/org/slf4j/slf4j-simple/1.6.1/slf4j-simple-1.6.1.jar, file:/home/eric/.m2/repository/junit/junit/4.10/junit-4.10.jar, file:/home/eric/.m2/repository/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar, file:/home/eric/.m2/repository/com/h2database/h2/1.2.145/h2-1.2.145.jar]
+							urls	java.util.Stack<E>  (id=483)	
+						url	null	
+						val$check	true	
+						val$name	"META-INF/services/java.sql.Driver" (id=519)	
+			index	1	
+		loader	sun.misc.Launcher$AppClassLoader  (id=372)	
+		nextName	null	
+		pending	java.util.ArrayList$Itr  (id=438)	
+		service	java.lang.Class<T> (java.sql.Driver) (id=434)	
+		this$0	java.util.ServiceLoader<S>  (id=432)	
+	providers	java.util.LinkedHashMap<K,V>  (id=433)	
+	service	java.lang.Class<T> (java.sql.Driver) (id=434)	
+
+
+/ 1313	.
+
+/ ad (*)
+
+        public boolean hasNext() {
+                pending = parse(service, configs.nextElement());
+            nextName = pending.next();
+        public S next() {
+            String cn = nextName;
+            nextName = null;                
+			S p = service.cast(c.newInstance());
+
+/ we zien configs dus weer	,
+
+this	java.util.ServiceLoader$LazyIterator  (id=371)	
+	configs	sun.misc.CompoundEnumeration<E>  (id=381)	
+		enums	java.util.Enumeration<E>[2]  (id=508)	
+			[0]	sun.misc.CompoundEnumeration<E>  (id=380)	
+			[1]	java.net.URLClassLoader$3  (id=384)	
+				this$0	sun.misc.Launcher$AppClassLoader  (id=372)	
+				url	null	
+				val$e	sun.misc.URLClassPath$1  (id=387)	
+					index	35	
+					this$0	sun.misc.URLClassPath  (id=474)	
+						closed	false	
+						jarHandler	sun.net.www.protocol.jar.Handler  (id=477)	
+						lmap	java.util.HashMap<K,V>  (id=478)	
+						loaders	java.util.ArrayList<E>  (id=479)	
+						path	java.util.ArrayList<E>  (id=481)	
+							elementData	java.lang.Object[49]  (id=541)	
+								[0]	java.net.URL  (id=543)	
+								[1]	java.net.URL  (id=544)	
+								[2]	java.net.URL  (id=545)	
+								[3]	java.net.URL  (id=546)	
+								[4]	java.net.URL  (id=548)	
+								[5]	java.net.URL  (id=550)	
+								[6]	java.net.URL  (id=551)	
+								[7]	java.net.URL  (id=553)	
+								[8]	java.net.URL  (id=555)	
+								[9]	java.net.URL  (id=556)	
+								[10]	java.net.URL  (id=558)	
+								[11]	java.net.URL  (id=560)	
+								[12]	java.net.URL  (id=561)	
+								[13]	java.net.URL  (id=563)	
+								[14]	java.net.URL  (id=565)	
+								[15]	java.net.URL  (id=566)	
+								[16]	java.net.URL  (id=568)	
+								[17]	java.net.URL  (id=569)	
+								[18]	java.net.URL  (id=571)	
+								[19]	java.net.URL  (id=573)	
+								[20]	java.net.URL  (id=574)	
+								[21]	java.net.URL  (id=576)	
+								[22]	java.net.URL  (id=578)	
+								[23]	java.net.URL  (id=579)	
+								[24]	java.net.URL  (id=581)	
+								[25]	java.net.URL  (id=583)	
+								[26]	java.net.URL  (id=584)	
+								[27]	java.net.URL  (id=586)	
+								[28]	java.net.URL  (id=588)	
+								[29]	java.net.URL  (id=589)	
+								[30]	java.net.URL  (id=591)	
+								[31]	java.net.URL  (id=592)	
+								[32]	java.net.URL  (id=594)	
+								[33]	java.net.URL  (id=596)	
+								[34]	java.net.URL  (id=597)	
+file:/home/eric/.m2/repository/org/postgresql/postgresql/9.3-1102-jdbc41/postgresql-9.3-1102-jdbc41.jar
+								[35]	java.net.URL  (id=599)	
+								[36]	java.net.URL  (id=601)	
+								[37]	java.net.URL  (id=602)	
+								[38]	java.net.URL  (id=604)	
+file:/home/eric/.m2/repository/com/h2database/h2/1.2.145/h2-1.2.145.jar
+							modCount	39	
+							size	39	
+						urls	java.util.Stack<E>  (id=483)	
+					url	null	
+					val$check	true	
+					val$name	"META-INF/services/java.sql.Driver" (id=519)	
+		index	1	
+	loader	sun.misc.Launcher$AppClassLoader  (id=372)	
+	nextName	null	
+	pending	java.util.ArrayList$Itr  (id=438)	
+	service	java.lang.Class<T> (java.sql.Driver) (id=434)	
+	this$0	java.util.ServiceLoader<S>  (id=432)	
+cn	"org.postgresql.Driver" (id=488)	
+c	java.lang.Class<T> (org.postgresql.Driver) (id=393)	
+
+
+/ Einde DRIVERS REGISTER THEMSELVES	
+
+/ RM BREAKPOINTS
+URLClassLoader [line: 570] - findResources(String)	
+URLClassLoader$3 [line: 576] - findResources(String)	
+URLClassLoader$3$1 [line: 583] - findResources(String)	
+ClassLoader [line: 1179] - getResources(String)	
+
+
+/ MAKE CONNECTION
+
+/ 	7. 
+
+	public first(){
+	try{
+//		String url="jdbc:postgresql://localhost/foo?user=foo&password=foo";
+		String url="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE";
+
+/c
+first.<init>() line: 10	
+		Connection con=DriverManager.getConnection(url);
+/s
+DriverManager.getConnection(String) line: 233	
+        return (getConnection(url, info, Reflection.getCallerClass()));
+/s
+DriverManager.getConnection(String, Properties, Class<?>) line: 547	
+
+        for(DriverInfo aDriver : registeredDrivers) {
+[driver[className=org.postgresql.Driver@433a87a0], driver[className=org.h2.Driver@694435e5]]
+aDriver	java.sql.DriverInfo  (id=656)	
+driver[className=org.postgresql.Driver@433a87a0]
+
+                    Connection con = aDriver.driver.connect(url, info);
+url	"jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE" (id=361)	
+/s
+Driver.connect(String, Properties) line: 232		/ org.postgresql.Driver
+        if (!url.startsWith("jdbc:postgresql:")) {
+            return null;
+        }
+/t
+DriverManager.getConnection(String, Properties, Class<?>) line: 572	
+                    Connection con = aDriver.driver.connect(url, info);
+null
+
+/ volgende	,
+       for(DriverInfo aDriver : registeredDrivers) {
+                    Connection con = aDriver.driver.connect(url, info);
+/s
+Driver.connect(String, Properties) line: 54		/ org.h2.Driver
+arg0	"jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE" (id=361)	
+
+            if (!acceptsURL(url)) {
+/s
+Driver.acceptsURL(String) line: 86	
+        return url != null && url.startsWith(Constants.START_URL);
+"jdbc:h2:"
+
+/ 7	. 
+
+	public first(){
+	try{
+		String url="jdbc:postgresql://localhost/foo?user=foo&password=foo";
+//		String url="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE";
+
+
+
+url=
+jdbc:postgresql://localhost/foo?user=foo&password=foo
+/s
+Driver.connect(String, Properties) line: 232	
+/=
+    public java.sql.Connection connect(String url, Properties info) throws SQLException
+url	"jdbc:postgresql://localhost/foo" (id=1664)	
+info={user=foo, password=foo}
+/s
+            defaults = getDefaultProperties();
+/s
+Driver.getDefaultProperties() line: 86	
+
+        // Make sure we load properties with the maximum possible
+        // privileges.
+       try
+        {
+            defaultProperties = (Properties)
+                AccessController.doPrivileged(new PrivilegedExceptionAction() {
+/ TODO
+                        public Object run() throws IOException {
+                            return loadDefaultProperties();
+/s
+Driver.loadDefaultProperties() line: 122	
+       Properties merged = new Properties();
+            merged.setProperty("user", System.getProperty("user.name"));
+{user=eric}
+        // When loading the driver config files we don't want settings found
+        // in later files in the classpath to override settings specified in
+        // earlier files.  To do this we've got to read the returned
+        // Enumeration into temporary storage.
+        ArrayList urls = new ArrayList();
+        Enumeration urlEnum = cl.getResources("org/postgresql/driverconfig.properties");
+/ GEEN	,
+/ Lees	,
+https://jkutner.github.io/2016/01/12/postgres-ssl.html
+Another method is setting this property on an app-by-app basis. That is, create a src/resources/org/postgresql/driverconfig.properties file in your project with the same contents shown above, and put it on the classpath for your app.
+/ we doen	,
+		String url="jdbc:postgresql://localhost/foo?user=foo&password=foo";
+/ maar we kunnen dus ook	,
+		String url="jdbc:postgresql://localhost/foo
+$ vi driverconfig.properties
+user=foo
+password=foo
+/ TODO
+/ Lees	,
+https://jdbc.postgresql.org/documentation/93/connect.html#connection-parameters
+
+        return merged;
+{user=eric}
+...
+/t
+Driver.getDefaultProperties() line: 103	
+                            return loadDefaultProperties();
+/d
+           if (!logLevelSet) {
+                String driverLogLevel = defaultProperties.getProperty("loglevel");
+
+/ probeer in driverconfig.properties
+loglevel=DEBUG
+/ TODO
+        return defaultProperties;
+{user=eric}
+/t
+
+Driver.connect(String, Properties) line: 268	
+            defaults = getDefaultProperties();
+/d
+{user=eric}
+       	Properties props = new Properties(defaults);
+        if (info != null)
+info={}
+           for (Enumeration e = info.propertyNames(); e.hasMoreElements(); )
+
+        // parse URL and add more properties
+        if ((props = parseURL(url, props)) == null)
+/s
+    public static Properties parseURL(String url, Properties defaults) throws SQLException
+
+url	jdbc:postgresql://localhost/foo?user=foo&password=foo
+        l_urlServer = l_urlServer.substring("jdbc:postgresql:".length());
+//localhost/foo
+       if (l_urlServer.startsWith("//")) {
+localhost/foo
+            l_urlServer = l_urlServer.substring(2);
+9
+            urlProps.setProperty("PGDBNAME", l_urlServer.substring(slash + 1));
+{PGDBNAME=foo}
+               } else {
+                    ports.append("5432");
+                    hosts.append(address);
+            urlProps.setProperty("PGPORT", ports.toString());
+            urlProps.setProperty("PGHOST", hosts.toString());
+        return urlProps;
+/t
+Driver.connect(String, Properties) line: 268	
+        if ((props = parseURL(url, props)) == null)
+/d
+{user=foo, PGDBNAME=foo, password=foo, PGPORT=5432, PGHOST=localhost}
+
+           long timeout = timeout(props);
+0
+            if (timeout <= 0)
+                return makeConnection(url, props);
+/s
+Driver.makeConnection(String, Properties) line: 410	
+        return new org.postgresql.jdbc4.Jdbc4Connection(hostSpecs(props),
+                                      user(props), database(props),
+                                      props, url);
+
+/ Intermezzo
+
+/ we zijn in 	,
+...
+/s
+	DriverManagerConnectionProviderImpl.configure(Map) line: 106	
+...
+/s
+	JdbcServicesImpl.configure(Map) line: 94	
+...
+
+/ Einde Intermezzo
+
+
+/s
+Jdbc4Connection.<init>(HostSpec[], String, String, Properties, String) line: 24	
+/=
+    public Jdbc4Connection(HostSpec[] hostSpecs, String user, String database, Properties info, String url) throws SQLException {
+hostSpecs	HostSpec[1]  (id=1607)	
+	[0]	HostSpec  (id=1617)	
+		host	"localhost" (id=1620)	
+		port	5432	
+user	"foo" (id=1588)	
+database	"foo" (id=1614)	
+info	Properties  (id=1591)	
+{PGDBNAME=foo, PGPORT=5432, PGHOST=localhost}
+url	"jdbc:postgresql://localhost/foo" (id=1576)	
+
+        super(hostSpecs, user, database, info, url);
+/s
+Jdbc4Connection(AbstractJdbc4Connection).<init>(HostSpec[], String, String, Properties, String) line: 31	
+        super(hostSpecs, user, database, info, url);
+/s
+Jdbc4Connection(AbstractJdbc3Connection).<init>(HostSpec[], String, String, Properties, String) line: 29	
+        super(hostSpec, user, database, info, url);
+/s
+Jdbc4Connection(AbstractJdbc2Connection).<init>(HostSpec[], String, String, Properties, String) line: 92	
+
+    //
+    // Driver-wide connection ID counter, used for logging
+    //
+    private static int nextConnectionID = 1;
+
+    // Per-connection logger
+    private final Logger logger;
+
+    /* URL we were created via */
+    private final String creatingURL;
+
+    // Connection's autocommit state.
+    public boolean autoCommit = true;
+
+    // Connection's readonly state.
+    public boolean readOnly = false;
+
+        this.creatingURL = url;
+jdbc:postgresql://localhost/foo
+
+        int logLevel = Driver.getLogLevel();
+0
+        String connectionLogLevel = info.getProperty("loglevel");
+null
+        if (connectionLogLevel != null) {
+            try {
+                logLevel = Integer.parseInt(connectionLogLevel);
+/ NIET
+/ TODO
+        synchronized (AbstractJdbc2Connection.class) {
+            logger = new Logger(nextConnectionID++);
+            logger.setLogLevel(logLevel);
+0
+        if (logLevel > 0)
+/ NEE
+            enableDriverManagerLogging();
+/ NIET
+/ TODO
+
+        prepareThreshold = 5;
+        try
+        {
+            prepareThreshold = Integer.parseInt(info.getProperty("prepareThreshold", "5"));
+5
+
+        boolean binaryTransfer = true;
+        try
+        {
+            binaryTransfer = Boolean.valueOf(info.getProperty("binaryTransfer", "true")).booleanValue();
+true
+
+        //Print out the driver version number
+        if (logger.logInfo())
+            logger.info(Driver.getVersion());
+
+        // Now make the initial connection and set up local state
+        this.protoConnection = ConnectionFactory.openConnection(hostSpecs, user, database, info, logger);
+/s
+ConnectionFactory.openConnection(HostSpec[], String, String, Properties, Logger) line: 55	
+        String protoName = info.getProperty("protocolVersion");
+null
+
+class ConnectionFactory
+   private static final Object[][] versions = {
+                { "3", new org.postgresql.core.v3.ConnectionFactoryImpl() },
+                { "2", new org.postgresql.core.v2.ConnectionFactoryImpl() },
+            };
+
+        for (int i = 0; i < versions.length; ++i)
+        {
+            String versionProtoName = (String) versions[i][0];
+3
+            ConnectionFactory factory = (ConnectionFactory) versions[i][1];
+/s
+package org.postgresql.core.v3;
+ConnectionFactoryImpl.openConnectionImpl(HostSpec[], String, String, Properties, Logger) line: 54	
+        String sslmode = info.getProperty("sslmode");
+null
+        if (sslmode==null)
+        { //Fall back to the ssl property
+          requireSSL = trySSL  = (info.getProperty("ssl") != null);
+false
+
+        //  - the TCP keep alive setting
+        boolean requireTCPKeepAlive = (Boolean.valueOf(info.getProperty("tcpKeepAlive")).booleanValue());
+false
+        for (int whichHost = 0; whichHost < hostSpecs.length; ++whichHost) {
+            HostSpec hostSpec = hostSpecs[whichHost];
+hostSpec	HostSpec  (id=1617)	
+	host	"localhost" (id=1620)	
+	port	5432	
+
+        int connectTimeout = 0;
+        String connectTimeoutProperty = info.getProperty("connectTimeout", "0");
+"0"
+        try {
+            connectTimeout = Integer.parseInt(connectTimeoutProperty) * 1000;
+0
+        PGStream newStream = null;
+        try
+        {
+            newStream = new PGStream(hostSpec, connectTimeout);		/ creates connection, sets streams on it	,
+/s
+PGStream.<init>(HostSpec, int) line: 57	
+        Socket socket = new Socket();
+        socket.connect(new InetSocketAddress(hostSpec.getHost(), hostSpec.getPort()), timeout);
+
+socket	Socket  (id=1715)	
+	factory	null	
+	bound	true	
+	closed	false	
+	closeLock	Object  (id=1718)	
+	connected	true	
+	created	true	
+	impl	SocksSocketImpl  (id=1719)	
+		address	Inet4Address  (id=1727)	
+		applicationSetProxy	false	
+		closePending	false	
+		cmdIn	null	
+		cmdOut	null	
+		cmdsock	null	
+		CONNECTION_NOT_RESET	0	
+		CONNECTION_RESET	2	
+		CONNECTION_RESET_PENDING	1	
+		external_address	null	
+		fd	FileDescriptor  (id=1749)	
+		fdLock	Object  (id=1751)	
+		fdUseCount	0	
+		localport	42520	
+		port	5432	
+		resetLock	Object  (id=1754)	
+		resetState	0	
+		server	null	
+		serverPort	1080	
+		serverSocket	null	
+		shut_rd	false	
+		shut_wr	false	
+		socket	Socket  (id=1715)	
+		socketInputStream	null	
+		stream	true	
+		timeout	0	
+		trafficClass	0	
+		useV4	false	
+	oldImpl	false	
+	shutIn	false	
+	shutOut	false	
+
+        changeSocket(socket);
+/s
+PGStream.changeSocket(Socket) line: 111	
+        this.connection = socket;
+
+        // Submitted by Jason Venner <jason@idiom.com>. Disable Nagle
+        // as we are selective about flushing output only when we
+        // really need to.
+        connection.setTcpNoDelay(true);
+/ TODO
+        // Buffer sizes submitted by Sverre H Huseby <sverrehu@online.no>
+        pg_input = new VisibleBufferedInputStream(connection.getInputStream(), 8192);
+        pg_output = new BufferedOutputStream(connection.getOutputStream(), 8192);
+
+        if (encoding != null)
+null
+            setEncoding(encoding);
+/ NIET
+/ TODO
+
+/t
+PGStream.<init>(HostSpec, int) line: 63	
+        changeSocket(socket);
+/d
+this	PGStream  (id=1714)	
+	_int2buf	null	
+	_int4buf	null	
+	connection	Socket  (id=1715)	Socket[addr=localhost/127.0.0.1,port=5432,localport=42520]
+	encoding	null	
+	encodingWriter	null	
+	hostSpec	HostSpec  (id=1617)	
+	pg_input	VisibleBufferedInputStream  (id=1775)	
+	pg_output	BufferedOutputStream  (id=1777)	
+	streamBuffer	null	
+
+        setEncoding(Encoding.getJVMEncoding("US-ASCII"));
+/s
+Encoding.getJVMEncoding(String) line: 103	
+        if (isAvailable(jvmEncoding))
+/s
+Encoding.isAvailable(String) line: 256	
+       try
+        {
+            "DUMMY".getBytes(encodingName);
+/ OK
+            return true;
+        }
+        catch (java.io.UnsupportedEncodingException e)
+/ NIET
+        {
+            return false;
+        }
+/t
+Encoding.getJVMEncoding(String) line: 105	
+        if (isAvailable(jvmEncoding))
+/ JA
+        {
+            if (jvmEncoding.equals("UTF-8") || jvmEncoding.equals("UTF8"))
+/ NEE
+                return new UTF8Encoding(jvmEncoding);
+            else
+/ JA
+                return new Encoding(jvmEncoding);
+/ TODO
+/t
+PGStream.<init>(HostSpec, int) line: 63	
+        setEncoding(Encoding.getJVMEncoding("US-ASCII"));
+/pd
+/s
+PGStream.setEncoding(Encoding) line: 138	
+/=
+    public void setEncoding(Encoding encoding) throws IOException {
+encoding	Encoding  (id=1796)	
+	encoding	"US-ASCII" (id=1794)	
+	fastASCIINumbers	true	
+
+        // Intercept flush() downcalls from the writer; our caller
+        // will call PGStream.flush() as needed.
+        OutputStream interceptor = new FilterOutputStream(pg_output) {
+                                       public void flush() throws IOException {
+                                       }
+                                       public void close() throws IOException {
+                                           super.flush();
+                                       }
+                                   };
+        encodingWriter = encoding.getEncodingWriter(interceptor);
+/s
+Encoding.getEncodingWriter(OutputStream) line: 233	
+        return new OutputStreamWriter(out, encoding);
+out	PGStream$1  (id=1798)									/ de stream hierboven	,
+
+/t
+PGStream.<init>(HostSpec, int) line: 65	
+        setEncoding(Encoding.getJVMEncoding("US-ASCII"));
+/d
+        _int2buf = new byte[2];
+        _int4buf = new byte[4];
+/t
+ConnectionFactoryImpl.openConnectionImpl(HostSpec[], String, String, Properties, Logger) line: 112	
+            newStream = new PGStream(hostSpec, connectTimeout);
+/d
+            // Construct and send an ssl startup packet if requested.
+            if (trySSL)
+/ NEE
+                newStream = enableSSL(newStream, requireSSL, info, logger, connectTimeout);
+/ NIET
+            String socketTimeoutProperty = info.getProperty("socketTimeout", "0");
+"0"
+            try {
+                int socketTimeout = Integer.parseInt(socketTimeoutProperty);
+0
+                if (socketTimeout > 0) {
+                    newStream.getSocket().setSoTimeout(socketTimeout*1000);
+/ NIET
+            // Enable TCP keep-alive probe if required.
+            newStream.getSocket().setKeepAlive(requireTCPKeepAlive);
+false
+            // Set SO_RECVBUF read buffer size
+            String receiveBufferSizeProperty = info.getProperty("receiveBufferSize", "-1");
+            try {
+                int receiveBufferSize = Integer.parseInt(receiveBufferSizeProperty);
+-1
+                if (receiveBufferSize > -1) {
+                    // value of 0 not a valid buffer size value
+                    if (receiveBufferSize > 0) {
+                        newStream.getSocket().setReceiveBufferSize(receiveBufferSize);
+/ NEE
+            // Set SO_SNDBUF write buffer size 
+            String sendBufferSizeProperty = info.getProperty("sendBufferSize", "-1");
+            try {
+                int sendBufferSize = Integer.parseInt(sendBufferSizeProperty);
+                if (sendBufferSize > -1) {
+                    if (sendBufferSize > 0) {
+                        newStream.getSocket().setSendBufferSize(sendBufferSize);
+/ NEE
+            // Construct and send a startup packet.
+            String[][] params = {
+                                    { "user", user },
+                                    { "database", database },
+                                    { "client_encoding", "UTF8" },	/ dit is een req, de server geeft hieronder antwoord, 
+                                    { "DateStyle", "ISO" },
+                                    { "extra_float_digits", "2" },
+                                    { "TimeZone",  createPostgresTimeZone() },                                    
+                                };
+/s
+ConnectionFactoryImpl.createPostgresTimeZone() line: 265	
+        String tz = TimeZone.getDefault().getID();
+Europe/Amsterdam
+            return tz;
+/t
+ConnectionFactoryImpl.openConnectionImpl(HostSpec[], String, String, Properties, Logger) line: 178	
+
+            sendStartupPacket(newStream, params, logger);
+params=
+[[user, foo], [database, foo], [client_encoding, UTF8], [DateStyle, ISO], [extra_float_digits, 2], [TimeZone, Europe/Amsterdam]]
+/s
+ConnectionFactoryImpl.sendStartupPacket(PGStream, String[][], Logger) line: 352	
+/=
+    private void sendStartupPacket(PGStream pgStream, String[][] params, Logger logger) throws IOException {
+params	java.lang.String[6][]  (id=443)	
+[[user, foo], [database, foo], [client_encoding, UTF8], [DateStyle, ISO], [extra_float_digits, 2], [TimeZone, Europe/Amsterdam]]
+this	org.postgresql.core.v3.ConnectionFactoryImpl  (id=440)	
+
+        /*
+         * Precalculate message length and encode params.
+         */
+        int length = 4 + 4;												/ voor .SendInteger4 en 2 keer .SendInteger2 hieronder,
+        byte[][] encodedParams = new byte[params.length * 2][];
+        for (int i = 0; i < params.length; ++i)
+        {
+            encodedParams[i*2] = params[i][0].getBytes("UTF-8");			/ key
+            encodedParams[i*2 + 1] = params[i][1].getBytes("UTF-8");		/ value
+            length += encodedParams[i * 2].length + 1 + encodedParams[i * 2 + 1].length + 1;
+        }
+        length += 1; // Terminating \0			/ voor de .sendChar(0) hieronder	,
+encodedParams	(id=453)	
+[117, 115, 101, 114]		/ user
+	[0]	(id=480)	
+[102, 111, 111]				/ foo
+	[1]	(id=481)	
+	[2]	(id=482)	
+	[3]	(id=483)	
+	[4]	(id=484)	
+	[5]	(id=486)	
+	[6]	(id=487)	
+	[7]	(id=488)	
+	[8]	(id=489)	
+	[9]	(id=490)	
+	[10]	(id=491)	
+	[11]	(id=492)	
+
+        pgStream.SendInteger4(length);
+        pgStream.SendInteger2(3); // protocol major
+        pgStream.SendInteger2(0); // protocol minor
+        for (int i = 0; i < encodedParams.length; ++i)
+        {
+            pgStream.Send(encodedParams[i]);
+            pgStream.SendChar(0);
+        }
+        pgStream.SendChar(0);
+
+        pgStream.flush();
+/s
+PGStream.flush() line: 530	
+        if (encodingWriter != null)
+            encodingWriter.flush();
+/ TODO
+        pg_output.flush();
+/t
+ConnectionFactoryImpl.openConnectionImpl(HostSpec[], String, String, Properties, Logger) line: 181	
+            sendStartupPacket(newStream, params, logger);
+/d
+            // Do authentication (until AuthenticationOk).
+            doAuthentication(newStream, hostSpec.getHost(), user, info, logger);
+/s
+ConnectionFactoryImpl.doAuthentication(PGStream, String, String, Properties, Logger) line: 382	
+        String password = info.getProperty("password");
+foo
+        while (true)
+        {
+            int beresp = pgStream.ReceiveChar();
+
+            switch (beresp)
+           case 'R':
+                // Authentication request.
+                // Get the message length
+                int l_msgLen = pgStream.ReceiveInteger4();
+12
+                // Get the type of request
+                int areq = pgStream.ReceiveInteger4();
+5
+               // Process the request.
+                switch (areq)
+                case AUTH_REQ_MD5:									/ auth request	,
+                    {
+                        byte[] md5Salt = pgStream.Receive(4);
+[-42, -79, 84, -109]
+                        byte[] digest = MD5Digest.encode(user.getBytes("UTF-8"), password.getBytes("UTF-8"), md5Salt);
+[109, 100, 53, 57, 97, 52, 48, 97, 97, 55, 55, 100, 56, 56, 100, 100, 50, 55, 49, 57, 51, 53, 49, 101, 54, 57, 53, 53, 51, 97, 100, 51, 50, 50, 57]
+                        pgStream.SendChar('p');
+                        pgStream.SendInteger4(4 + digest.length + 1);
+                        pgStream.Send(digest);
+                        pgStream.SendChar(0);
+                        pgStream.flush();
+                        break;
+
+/ volgende	,
+        while (true)
+        {
+            int beresp = pgStream.ReceiveChar();
+            case 'R':
+                // Authentication request.
+                // Get the message length
+                int l_msgLen = pgStream.ReceiveInteger4();
+8
+                // Get the type of request
+                int areq = pgStream.ReceiveInteger4();
+0
+                // Process the request.
+                switch (areq)
+                case AUTH_REQ_OK:
+                    return ; // We're done.
+/t
+ConnectionFactoryImpl.openConnectionImpl(HostSpec[], String, String, Properties, Logger) line: 184	
+            doAuthentication(newStream, hostSpec.getHost(), user, info, logger);
+/d
+            // Do final startup.
+            ProtocolConnectionImpl protoConnection = new ProtocolConnectionImpl(newStream, user, database, info, logger, connectTimeout);
+            readStartupMessages(newStream, protoConnection, logger);
+/s
+ConnectionFactoryImpl.readStartupMessages(PGStream, ProtocolConnectionImpl, Logger) line: 528	
+        while (true)
+        {
+            int beresp = pgStream.ReceiveChar();
+            switch (beresp)
+            {
+            case 'S':
+                // ParameterStatus
+                int l_len = pgStream.ReceiveInteger4();
+                String name = pgStream.ReceiveString();
+                String value = pgStream.ReceiveString();
+l_len	22	
+name	"application_name" (id=1621)	
+value	"" (id=1622)	
+
+/ volgende	,
+        while (true)
+        {
+            int beresp = pgStream.ReceiveChar();
+            switch (beresp)
+            {
+            case 'S':
+                // ParameterStatus
+                int l_len = pgStream.ReceiveInteger4();
+                String name = pgStream.ReceiveString();
+                String value = pgStream.ReceiveString();
+l_len	25	
+name	"client_encoding" (id=1623)		/ antwoord van hierboven 	,
+value	"UTF8" (id=1624)	
+                else if (name.equals("client_encoding"))
+                {
+                    if (!value.equals("UTF8"))
+                        throw new PSQLException(GT.tr("Protocol error.  Session setup failed."), PSQLState.PROTOCOL_VIOLATION);
+                    pgStream.setEncoding(Encoding.getDatabaseEncoding("UTF8"));
+/s
+Encoding.getDatabaseEncoding(String) line: 128	
+        // If the backend encoding is known and there is a suitable
+        // encoding in the JVM we use that. Otherwise we fall back
+        // to the default encoding of the JVM.
+
+        String[] candidates = (String[]) encodings.get(databaseEncoding);
+databaseEncoding	"UTF8" (id=1625)	
+candidates	String[2]  (id=1630)	
+	[0]	"UTF-8" (id=1633)	
+	[1]	"UTF8" (id=1625)	
+            for (int i = 0; i < candidates.length; i++)
+            {
+                if (isAvailable(candidates[i]))
+/s
+Encoding.isAvailable(String) line: 255	
+encodingName	"UTF-8" (id=1633)	
+            "DUMMY".getBytes(encodingName);
+            return true;
+/t
+                if (isAvailable(candidates[i]))
+/d
+                    return new Encoding(candidates[i]);
+/t
+/s
+PGStream.setEncoding(Encoding) line: 138	
+        // Close down any old writer.
+        if (encodingWriter != null)
+            encodingWriter.close();
+        this.encoding = encoding;
+UTF-8
+        // Intercept flush() downcalls from the writer; our caller
+        // will call PGStream.flush() as needed.
+        OutputStream interceptor = new FilterOutputStream(pg_output) {				/ interceptor -> pg_output
+                                       public void flush() throws IOException {
+                                       }
+                                       public void close() throws IOException {
+                                           super.flush();
+                                       }
+                                   };
+
+        encodingWriter = encoding.getEncodingWriter(interceptor);
+/ outputStreamWriter op interceptor	,
+/s
+Encoding.getEncodingWriter(OutputStream) line: 233	
+        return new OutputStreamWriter(out, encoding);
+encoding="UTF-8"
+
+/ Intermezzo
+
+encodingWriter -> interceptor -> pg_output -> outputstream op socket
+
+    public void flush() throws IOException
+    {
+        if (encodingWriter != null)
+            encodingWriter.flush();			/ Deze doet toch niets	? TODO
+        pg_output.flush();
+    }
+
+/ Einde Intermezzo
+
+/t
+ConnectionFactoryImpl.readStartupMessages(PGStream, ProtocolConnectionImpl, Logger) line: 529	
+
+/ volgende	,
+        while (true)
+        {
+            int beresp = pgStream.ReceiveChar();
+            switch (beresp)
+            {
+           case 'S':
+                // ParameterStatus
+                int l_len = pgStream.ReceiveInteger4();
+                String name = pgStream.ReceiveString();
+                String value = pgStream.ReceiveString();
+l_len	23	
+name	"DateStyle" (id=1662)	
+value	"ISO, MDY" (id=1663)			/ Not used	, WH vanwege volgende	,
+
+/ volgende,
+        while (true)
+        {
+            int beresp = pgStream.ReceiveChar();
+            switch (beresp)
+            {
+            case 'S':
+                // ParameterStatus
+                int l_len = pgStream.ReceiveInteger4();
+                String name = pgStream.ReceiveString();
+                String value = pgStream.ReceiveString();
+l_len	25	
+name	"integer_datetimes" (id=1664)	
+value	"on" (id=1665)	
+                else if (name.equals("integer_datetimes"))
+                {
+                    if (value.equals("on"))
+                        protoConnection.setIntegerDateTimes(true);
+
+   /**
+     * True if server uses integers for date and time fields. False if
+     * server uses double.
+     */
+    private boolean integerDateTimes;
+
+/ volgende,
+            case 'S':
+                // ParameterStatus
+                int l_len = pgStream.ReceiveInteger4();
+                String name = pgStream.ReceiveString();
+                String value = pgStream.ReceiveString();
+l_len	27	
+name	"IntervalStyle" (id=1666)	/ Not used	,	
+value	"postgres" (id=1667)	
+
+            case 'S':
+                // ParameterStatus
+                int l_len = pgStream.ReceiveInteger4();
+                String name = pgStream.ReceiveString();
+                String value = pgStream.ReceiveString();
+l_len	21	
+name	"is_superuser" (id=1668)	/ Not used	,	
+value	"off" (id=1669)	
+
+            case 'S':
+                // ParameterStatus
+                int l_len = pgStream.ReceiveInteger4();
+                String name = pgStream.ReceiveString();
+                String value = pgStream.ReceiveString();
+l_len	25	
+name	"server_encoding" (id=1670)	/ Not used	,	
+value	"UTF8" (id=1671)	
+
+            case 'S':
+                // ParameterStatus
+                int l_len = pgStream.ReceiveInteger4();
+                String name = pgStream.ReceiveString();
+                String value = pgStream.ReceiveString();
+l_len	25	
+name	"server_version" (id=1672)	
+value	"9.3.5" (id=1673)	
+                if (name.equals("server_version"))
+                    protoConnection.setServerVersion(value);
+
+            case 'S':
+                // ParameterStatus
+                int l_len = pgStream.ReceiveInteger4();
+                String name = pgStream.ReceiveString();
+                String value = pgStream.ReceiveString();
+l_len	30	
+name	"session_authorization" (id=1674)	/ Not used	,	
+value	"foo" (id=1676)	
+
+            case 'S':
+                // ParameterStatus
+                int l_len = pgStream.ReceiveInteger4();
+                String name = pgStream.ReceiveString();
+                String value = pgStream.ReceiveString();
+l_len	35	
+name	"standard_conforming_strings" (id=1677)	
+value	"on" (id=1678)	
+                else if (name.equals("standard_conforming_strings"))
+                {
+                    if (value.equals("on"))
+                        protoConnection.setStandardConformingStrings(true);
+/ TODO
+            case 'S':
+                // ParameterStatus
+                int l_len = pgStream.ReceiveInteger4();
+                String name = pgStream.ReceiveString();
+                String value = pgStream.ReceiveString();
+l_len	30	
+name	"TimeZone" (id=1679)	
+value	"Europe/Amsterdam" (id=1680)	/ Not used	,	
+
+/ Tot nu toe steeds case 'S'	, nu	,
+
+            case 'K':
+                // BackendKeyData
+                int l_msgLen = pgStream.ReceiveInteger4();
+                if (l_msgLen != 12)
+                    throw new PSQLException(GT.tr("Protocol error.  Session setup failed."), PSQLState.PROTOCOL_VIOLATION);
+
+                int pid = pgStream.ReceiveInteger4();
+                int ckey = pgStream.ReceiveInteger4();
+l_msgLen	12	
+pid	1502	
+ckey	1221689659	
+
+                protoConnection.setBackendKeyData(pid, ckey);
+/s
+    void setBackendKeyData(int cancelPid, int cancelKey) {
+        this.cancelPid = cancelPid;
+        this.cancelKey = cancelKey;
+/ TODO
+/t
+           case 'Z':
+                // Ready For Query; we're done.
+                if (pgStream.ReceiveInteger4() != 5)
+                    throw new IOException("unexpected length of ReadyForQuery packet");
+
+                char tStatus = (char)pgStream.ReceiveChar();
+                if (logger.logDebug())
+                    logger.debug(" <=BE ReadyForQuery(" + tStatus + ")");
+
+                // Update connection state.
+                switch (tStatus)
+                {
+                case 'I':
+                    protoConnection.setTransactionState(ProtocolConnection.TRANSACTION_IDLE);
+                    break;
+/t
+ConnectionFactoryImpl.openConnectionImpl(HostSpec[], String, String, Properties, Logger) line: 187	
+            readStartupMessages(newStream, protoConnection, logger);
+/d
+            runInitialQueries(protoConnection, info, logger);
+/s
+ConnectionFactoryImpl.runInitialQueries(ProtocolConnection, Properties, Logger) line: 646	
+        String dbVersion = protoConnection.getServerVersion();
+9.3.5
+        if (dbVersion.compareTo("9.0") >= 0) {
+            SetupQueryRunner.run(protoConnection, "SET extra_float_digits = 3", false);
+/s
+SetupQueryRunner.run(ProtocolConnection, String, boolean) line: 64	
+        QueryExecutor executor = protoConnection.getQueryExecutor();
+        Query query = executor.createSimpleQuery(queryString);
+queryString= SET extra_float_digits = 3
+/s
+QueryExecutorImpl.createSimpleQuery(String) line: 111	
+        return parseQuery(sql, false);
+/s
+QueryExecutorImpl.parseQuery(String, boolean) line: 122	
+        boolean standardConformingStrings = protoConnection.getStandardConformingStrings();
+true
+        char []aChars = query.toCharArray();
+/ hij wil char voor char gaan bekijken	, 
+/ in dit geval voor niets	,
+
+       for (int i = 0; i < aChars.length; ++i)
+        {
+            switch (aChars[i])
+/ GEEN exceptionele chars	,.
+
+        fragmentList.add(query.substring(fragmentStart));
+[SET extra_float_digits = 3]
+
+        if (fragmentList.size() > 1 || ((String)fragmentList.get(0)).trim().length() > 0)
+            statementList.add(fragmentList.toArray(new String[fragmentList.size()]));
+statementList	ArrayList<E>  (id=1693)	
+	elementData	Object[10]  (id=1702)	
+		[0]	String[1]  (id=1704)	
+			[0]	"SET extra_float_digits = 3" (id=1690)	
+
+        if (statementList.size() == 1)
+        {
+            // Only one statement.
+            return new SimpleQuery((String[]) statementList.get(0), protoConnection);
+/t
+SetupQueryRunner.run(ProtocolConnection, String, boolean) line: 66	
+        Query query = executor.createSimpleQuery(queryString);
+/d
+protoConnection	ProtocolConnectionImpl  (id=1607)	
+queryString	"SET extra_float_digits = 3" (id=1690)	
+wantResults	false	
+executor	QueryExecutorImpl  (id=1692)	
+query	SimpleQuery  (id=1738)	
+	cleanupRef	null	
+	encodedStatementName	null	
+	fields	null	
+	fragments	String[1]  (id=1704)	
+		[0]	"SET extra_float_digits = 3" (id=1690)	
+	portalDescribed	false	
+	preparedTypes	null	
+	protoConnection	ProtocolConnectionImpl  (id=1607)	
+		cancelKey	1221689659	
+		cancelPid	1502	
+		closed	false	
+		connectTimeout	0	
+		database	"foo" (id=1609)	
+		executor	QueryExecutorImpl  (id=1692)	
+		integerDateTimes	true	
+		logger	Logger  (id=1602)	
+		notifications	ArrayList<E>  (id=1747)	
+		pgStream	PGStream  (id=1592)	
+		serverVersion	"9.3.5" (id=1673)	
+		standardConformingStrings	true	
+		transactionState	0	
+		useBinaryForOids	HashSet<E>  (id=1748)	
+		user	"foo" (id=1600)	
+		warnings	null	
+	statementDescribed	false	
+	statementName	null	
+
+        SimpleResultHandler handler = new SimpleResultHandler(protoConnection);
+
+        int flags = QueryExecutor.QUERY_ONESHOT | QueryExecutor.QUERY_SUPPRESS_BEGIN;
+        if (!wantResults)
+            flags |= QueryExecutor.QUERY_NO_RESULTS | QueryExecutor.QUERY_NO_METADATA;
+
+            executor.execute(query, null, handler, 0, 0, flags);
+/s
+QueryExecutorImpl.execute(Query, ParameterList, ResultHandler, int, int, int) line: 228	
+/ MORGENOCHTEND
+       if (parameters == null)
+            parameters = SimpleQuery.NO_PARAMETERS;
+
+        boolean describeOnly = (QUERY_DESCRIBE_ONLY & flags) != 0;
+false
+
+        ((V3ParameterList)parameters).convertFunctionOutParameters();
+/ NIETS
+
+        // Check parameters are all set..
+        if (!describeOnly)
+            ((V3ParameterList)parameters).checkAllParametersSet();
+/ NIETS
+
+                handler = sendQueryPreamble(handler, flags);
+/ NIETS, handler blijft onveranderd	,
+/s
+QueryExecutorImpl.sendQueryPreamble(ResultHandler, int) line: 419	
+/=
+    private ResultHandler sendQueryPreamble(final ResultHandler delegateHandler, int flags) throws IOException {
+
+        // Send BEGIN on first statement in transaction.
+        if ((flags & QueryExecutor.QUERY_SUPPRESS_BEGIN) != 0 ||
+true
+                protoConnection.getTransactionState() != ProtocolConnection.TRANSACTION_IDLE)
+false
+            return delegateHandler;
+/t
+QueryExecutorImpl.execute(Query, ParameterList, ResultHandler, int, int, int) line: 251	
+                handler = sendQueryPreamble(handler, flags);
+/d
+               	ErrorTrackingResultHandler trackingHandler = new ErrorTrackingResultHandler(handler);
+                queryCount = 0;
+                sendQuery((V3Query)query, (V3ParameterList)parameters, maxRows, fetchSize, flags, trackingHandler);
+/s
+QueryExecutorImpl.sendQuery(V3Query, V3ParameterList, int, int, int, QueryExecutorImpl$ErrorTrackingResultHandler) line: 1120	
+
+query	SimpleQuery  (id=1738)	
+	cleanupRef	null	
+	encodedStatementName	null	
+	fields	null	
+	fragments	String[1]  (id=1704)	
+	portalDescribed	false	
+	preparedTypes	null	
+	protoConnection	ProtocolConnectionImpl  (id=1607)	
+	statementDescribed	false	
+	statementName	null	
+
+parameters	SimpleParameterList  (id=1764)	
+	encoded	(id=1769)	
+	flags	(id=1770)	
+	paramTypes	(id=1771)	
+	paramValues	Object[0]  (id=1772)	
+	protoConnection	null	
+
+        SimpleQuery[] subqueries = query.getSubqueries();
+null
+        SimpleParameterList[] subparams = parameters.getSubparams();
+null
+        boolean disallowBatching = (flags & QueryExecutor.QUERY_DISALLOW_BATCHING) != 0;
+false
+       if (subqueries == null)
+        {
+            ++queryCount;
+            if (disallowBatching || queryCount >= MAX_BUFFERED_QUERIES)
+/ NEE
+             // If we saw errors, don't send anything more.
+            if (!trackingHandler.hasErrors())
+                sendOneQuery((SimpleQuery)query, (SimpleParameterList)parameters, maxRows, fetchSize, flags);
+/s
+QueryExecutorImpl.sendOneQuery(SimpleQuery, SimpleParameterList, int, int, int) line: 1557	
+
+        boolean noResults = (flags & QueryExecutor.QUERY_NO_RESULTS) != 0;
+true
+        boolean noMeta = (flags & QueryExecutor.QUERY_NO_METADATA) != 0;
+true
+        boolean describeOnly = (flags & QueryExecutor.QUERY_DESCRIBE_ONLY) != 0;
+false
+        boolean usePortal = (flags & QueryExecutor.QUERY_FORWARD_CURSOR) != 0 && !noResults && !noMeta && fetchSize > 0 && !describeOnly;
+false
+        boolean oneShot = (flags & QueryExecutor.QUERY_ONESHOT) != 0 && !usePortal;
+true
+        boolean noBinaryTransfer = (flags & QUERY_NO_BINARY_TRANSFER) != 0;
+true
+
+        if (noResults)
+        {
+            rows = 1;             // We're discarding any results anyway, so limit data transfer to a minimum
+
+        sendParse(query, params, oneShot);
+/s
+QueryExecutorImpl.sendParse(SimpleQuery, SimpleParameterList, boolean) line: 1187	
+        byte[] encodedStatementName = query.getEncodedStatementName();
+null
+        String[] fragments = query.getFragments();
+[SET extra_float_digits = 3]
+
+       for (int i = 0; i < fragments.length; ++i)
+        {
+            parts[j] = Utils.encodeUTF8(fragments[i]);
+            encodedSize += parts[j].length;
+            ++j;
+        }
+parts=
+[[83, 69, 84, 32, 101, 120, 116, 114, 97, 95, 102, 108, 111, 97, 116, 95, 100, 105, 103, 105, 116, 115, 32, 61, 32, 51]]
+
+       encodedSize = 4
+                      + (encodedStatementName == null ? 0 : encodedStatementName.length) + 1
+                      + encodedSize + 1
+                      + 2 + 4 * params.getParameterCount();
+34
+        pgStream.SendChar('P'); // Parse
+        pgStream.SendInteger4(encodedSize);
+        if (encodedStatementName != null) pgStream.Send(encodedStatementName);
+        pgStream.SendChar(0);   // End of statement name
+        for (int i = 0; i < parts.length; ++i)
+        { // Query string
+            pgStream.Send(parts[i]);
+        }
+        pgStream.SendChar(0);       // End of query string.
+        pgStream.SendInteger2(params.getParameterCount());       // # of parameter types specified
+        for (int i = 1; i <= params.getParameterCount(); ++i) pgStream.SendInteger4(params.getTypeOID(i));
+/ NEE
+        pendingParseQueue.add(new Object[]{query, query.getStatementName()});
+/t
+QueryExecutorImpl.sendOneQuery(SimpleQuery, SimpleParameterList, int, int, int) line: 1589	
+        sendParse(query, params, oneShot);
+/d
+        boolean queryHasUnknown = query.hasUnresolvedTypes();
+true
+        boolean paramsHasUnknown = params.hasUnresolvedTypes();
+false
+        boolean describeStatement = describeOnly || (!oneShot && paramsHasUnknown && queryHasUnknown && !query.isStatementDescribed());
+false
+oneShot==true
+        sendBind(query, params, portal, noBinaryTransfer);
+/s
+QueryExecutorImpl.sendBind(SimpleQuery, SimpleParameterList, Portal, boolean) line: 1358	
+
+       	pgStream.SendChar('B');                  // Bind
+        pgStream.SendInteger4((int)encodedSize);      // Message size
+        if (encodedPortalName != null) pgStream.Send(encodedPortalName);    // Destination portal name.
+/ NEE
+        pgStream.SendChar(0);                    // End of portal name.
+        if (encodedStatementName != null) pgStream.Send(encodedStatementName); // Source statement name.
+/ NEE
+        pgStream.SendChar(0);                    // End of statement name.
+        pgStream.SendInteger2(params.getParameterCount());      // # of parameter format codes
+0
+        for (int i = 1; i <= params.getParameterCount(); ++i) pgStream.SendInteger2(params.isBinary(i) ? 1 : 0);  // Parameter format code
+/ NEE
+        pgStream.SendInteger2(params.getParameterCount());      // # of parameter values
+
+        pgStream.SendInteger2(numBinaryFields);   // # of result format codes
+0
+        for (int i = 0; i < numBinaryFields; ++i) { pgStream.SendInteger2(fields[i].getFormat());
+/ NEE
+        pendingBindQueue.add(portal);
+null
+/t
+QueryExecutorImpl.sendOneQuery(SimpleQuery, SimpleParameterList, int, int, int) line: 1635	
+        sendBind(query, params, portal, noBinaryTransfer);
+/d
+        sendExecute(query, portal, rows);
+/s
+QueryExecutorImpl.sendExecute(SimpleQuery, Portal, int) line: 1479	
+        byte[] encodedPortalName = (portal == null ? null : portal.getEncodedPortalName());
+null
+        int encodedSize = (encodedPortalName == null ? 0 : encodedPortalName.length);
+0
+        // Total size = 4 (size field) + 1 + N (source portal) + 4 (max rows)
+        pgStream.SendChar('E');              // Execute
+        pgStream.SendInteger4(4 + 1 + encodedSize + 4);  // message size
+        if (encodedPortalName != null) pgStream.Send(encodedPortalName); // portal name
+/ NEE
+        pgStream.SendChar(0);                 // portal name terminator
+        pgStream.SendInteger4(limit);       // row limit
+1
+        pendingExecuteQueue.add(new Object[] { query, portal });
+/t
+QueryExecutorImpl.execute(Query, ParameterList, ResultHandler, int, int, int) line: 254	
+               sendQuery((V3Query)query, (V3ParameterList)parameters, maxRows, fetchSize, flags, trackingHandler);
+/d
+                sendSync();
+/s
+QueryExecutorImpl.sendSync() line: 1180	
+    //
+    // Message sending
+    //
+
+    private void sendSync() throws IOException {
+        if (logger.logDebug())
+            logger.debug(" FE=> Sync");
+
+        pgStream.SendChar('S');     // Sync
+        pgStream.SendInteger4(4); // Length
+        pgStream.flush();
+/ TODO
+/t
+QueryExecutorImpl.execute(Query, ParameterList, ResultHandler, int, int, int) line: 255	
+               sendSync();
+               processResults(handler, flags);
+/s
+QueryExecutorImpl.processResults(ResultHandler, int) line: 1741	
+        boolean noResults = (flags & QueryExecutor.QUERY_NO_RESULTS) != 0;
+true
+        boolean bothRowsAndStatus = (flags & QueryExecutor.QUERY_BOTH_ROWS_AND_STATUS) != 0;
+false
+        while (!endQuery)
+        {
+            c = pgStream.ReceiveChar();
+            switch (c)
+            {
+            case '1':    // Parse Complete (response to Parse)
+                pgStream.ReceiveInteger4(); // len, discarded
+                Object[] parsedQueryAndStatement = (Object[])pendingParseQueue.get(parseIndex++);
+[SET extra_float_digits = 3, null]
+                SimpleQuery parsedQuery = (SimpleQuery)parsedQueryAndStatement[0];
+SET extra_float_digits = 3
+                String parsedStatementName = (String)parsedQueryAndStatement[1];
+null
+                registerParsedQuery(parsedQuery, parsedStatementName);
+/ NIETS, want parsedStatementName==null
+/ TODO
+
+                break;
+/ volgende
+            case '2':    // Bind Complete  (response to Bind)
+                pgStream.ReceiveInteger4(); // len, discarded
+
+                Portal boundPortal = (Portal)pendingBindQueue.get(bindIndex++);
+null
+                if (logger.logDebug())
+                    logger.debug(" <=BE BindComplete [" + boundPortal + "]");
+
+                registerOpenPortal(boundPortal);
+/ NIETS, want boundPortal==null
+                break;
+/ volgende	,
+            case 'C':  // Command Status (end of Execute)
+                // Handle status.
+                String status = receiveCommandStatus();
+/s
+QueryExecutorImpl.receiveCommandStatus() line: 2217	
+        //TODO: better handle the msg len
+        int l_len = pgStream.ReceiveInteger4();
+8
+        //read l_len -5 bytes (-4 for l_len and -1 for trailing \0)
+        String status = pgStream.ReceiveString(l_len - 5);
+SET
+        //now read and discard the trailing \0
+        pgStream.Receive(1);
+        return status;
+/t
+QueryExecutorImpl.processResults(ResultHandler, int) line: 1863	
+                String status = receiveCommandStatus();
+SET
+                    Object[] executeData = (Object[])pendingExecuteQueue.get(executeIndex++);
+                    SimpleQuery currentQuery = (SimpleQuery)executeData[0];
+SET extra_float_digits = 3
+                    Portal currentPortal = (Portal)executeData[1];
+null
+                    Field[] fields = currentQuery.getFields();
+null
+                    else
+                    {
+                        interpretCommandStatus(status, handler);
+/s
+QueryExecutorImpl.interpretCommandStatus(String, ResultHandler) line: 2252	
+        handler.handleCommandStatus(status, update_count, insert_oid);
+/s
+SetupQueryRunner$SimpleResultHandler.handleCommandStatus(String, int, long) line: 43	
+/ LEEG
+/t
+QueryExecutorImpl.processResults(ResultHandler, int) line: 2011	
+
+/ volgende	,
+            case 'Z':    // Ready For Query (eventual response to Sync)
+                receiveRFQ();
+/s
+QueryExecutorImpl.receiveRFQ() line: 2256		/ rfq=ready for query	,
+        if (pgStream.ReceiveInteger4() != 5)
+            throw new IOException("unexpected length of ReadyForQuery message");
+
+        char tStatus = (char)pgStream.ReceiveChar();
+I
+        switch (tStatus)
+        {
+        case 'I':
+            protoConnection.setTransactionState(ProtocolConnection.TRANSACTION_IDLE);
+            break;
+/t
+QueryExecutorImpl.processResults(ResultHandler, int) line: 2012	
+            case 'Z':    // Ready For Query (eventual response to Sync)
+                receiveRFQ();
+/d
+                endQuery = true;
+                pendingParseQueue.clear();              // No more ParseComplete messages expected.
+                pendingDescribeStatementQueue.clear();  // No more ParameterDescription messages expected.
+                pendingDescribePortalQueue.clear();     // No more RowDescription messages expected.
+                pendingBindQueue.clear();               // No more BindComplete messages expected.
+                pendingExecuteQueue.clear();            // No more query executions expected.
+                break;
+/t
+QueryExecutorImpl.execute(Query, ParameterList, ResultHandler, int, int, int) line: 284	
+                processResults(handler, flags);
+/d
+        handler.handleCompletion();
+/s
+SetupQueryRunner$SimpleResultHandler.handleCompletion() line: 60	
+           if (error != null)
+/ NEE
+/t
+SetupQueryRunner.run(ProtocolConnection, String, boolean) line: 78	
+            executor.execute(query, null, handler, 0, 0, flags);
+/d
+        }
+        finally
+        {
+            query.close();
+/s
+SimpleQuery.close() line: 55	
+        unprepare();
+/s
+SimpleQuery.unprepare() line: 166	
+        if (cleanupRef != null)
+/n
+        statementName = null;
+        encodedStatementName = null;
+        fields = null;
+        portalDescribed = false;
+        statementDescribed = false;
+/t
+SetupQueryRunner.run(ProtocolConnection, String, boolean) line: 82	
+            query.close();
+/d
+        }
+
+        if (!wantResults)
+            return null;
+/t
+ConnectionFactoryImpl.runInitialQueries(ProtocolConnection, Properties, Logger) line: 649	
+            SetupQueryRunner.run(protoConnection, "SET extra_float_digits = 3", false);
+/d
+        String appName = info.getProperty("ApplicationName");
+null
+        if (appName != null && dbVersion.compareTo("9.0") >= 0) {
+/n
+            StringBuffer sql = new StringBuffer();
+/n
+            sql.append("SET application_name = '");
+/n
+			...
+/t
+ConnectionFactoryImpl.openConnectionImpl(HostSpec[], String, String, Properties, Logger) line: 190	
+            runInitialQueries(protoConnection, info, logger);
+/d
+            // And we're done.
+            return protoConnection;
+/t
+Jdbc4Connection(AbstractJdbc2Connection).<init>(HostSpec[], String, String, Properties, String) line: 145	
+       // Now make the initial connection and set up local state
+        this.protoConnection = ConnectionFactory.openConnection(hostSpecs, user, database, info, logger);
+ /d
+       	this.dbVersionNumber = protoConnection.getServerVersion();
+9.3.5
+        this.compatible = info.getProperty("compatible", Driver.MAJORVERSION + "." + Driver.MINORVERSION);
+9.3
+
+/ intermezzo
+
+public class Oid {
+    public static final int UNSPECIFIED = 0;
+    public static final int INT2 = 21;
+    public static final int INT2_ARRAY = 1005;
+    public static final int INT4 = 23;
+    public static final int INT4_ARRAY = 1007;
+    public static final int INT8 = 20;
+...
+    public static final int VARCHAR = 1043;
+
+/ Dit zijn de types van de columns in postgres	, 
+
+23 = int
+21=smallint
+20=bigint
+1043=varchar
+1082=date
+
+foo=> \d sporter
+                                 Table "public.sporter"
+ Column |          Type          |                       Modifiers                       
+--------+------------------------+-------------------------------------------------------
+ id_    | bigint                 | not null default nextval('sporter_id__seq'::regclass)
+ name_  | character varying(255) | 
+ club_  | bigint                 | not null
+Indexes:
+    "sporter_pkey" PRIMARY KEY, btree (id_)
+Foreign-key constraints:
+    "fk_1k67yd2nymaoofah9faoxj0cl" FOREIGN KEY (club_) REFERENCES club(id_)
+
+
+
+foo=>
+SELECT * FROM pg_attribute
+WHERE attrelid = (SELECT oid FROM pg_class WHERE relname = 'sporter');
+
+ attrelid | attname  | atttypid | attstattarget | attlen | attnum | attndims | attcacheoff | atttypmod | attbyval | attstorage | a
+ttalign | attnotnull | atthasdef | attisdropped | attislocal | attinhcount | attcollation | attacl | attoptions | attfdwoptions
+----------+----------+----------+---------------+--------+--------+----------+-------------+-----------+----------+------------+--
+--------+------------+-----------+--------------+------------+-------------+--------------+--------+------------+---------------
+  3293291 | tableoid |       26 |             0 |      4 |     -7 |        0 |          -1 |        -1 | t        | p          | i
+        | t          | f         | f            | t          |           0 |            0 | NULL   | NULL       | NULL
+  3293291 | cmax     |       29 |             0 |      4 |     -6 |        0 |          -1 |        -1 | t        | p          | i
+        | t          | f         | f            | t          |           0 |            0 | NULL   | NULL       | NULL
+  3293291 | xmax     |       28 |             0 |      4 |     -5 |        0 |          -1 |        -1 | t        | p          | i
+        | t          | f         | f            | t          |           0 |            0 | NULL   | NULL       | NULL
+  3293291 | cmin     |       29 |             0 |      4 |     -4 |        0 |          -1 |        -1 | t        | p          | i
+        | t          | f         | f            | t          |           0 |            0 | NULL   | NULL       | NULL
+  3293291 | xmin     |       28 |             0 |      4 |     -3 |        0 |          -1 |        -1 | t        | p          | i
+        | t          | f         | f            | t          |           0 |            0 | NULL   | NULL       | NULL
+  3293291 | ctid     |       27 |             0 |      6 |     -1 |        0 |          -1 |        -1 | f        | p          | s
+        | t          | f         | f            | t          |           0 |            0 | NULL   | NULL       | NULL
+  3293291 | id_      |       20 |            -1 |      8 |      1 |        0 |          -1 |        -1 | t        | p          | d
+        | t          | t         | f            | t          |           0 |            0 | NULL   | NULL       | NULL
+  3293291 | name_    |     1043 |            -1 |     -1 |      2 |        0 |          -1 |       259 | f        | x          | i
+        | f          | f         | f            | t          |           0 |          100 | NULL   | NULL       | NULL
+  3293291 | club_    |       20 |            -1 |      8 |      3 |        0 |          -1 |        -1 | t        | p          | d
+        | t          | f         | f            | t          |           0 |            0 | NULL   | NULL       | NULL
+(9 rows)
+
+/ 
+
+/ einde intermezzo
+
+        if (!haveMinimumCompatibleVersion("8.0")) {
+/n
+        // driver supports only null-compatible arrays
+        if (!haveMinimumCompatibleVersion("8.3")) {
+/n
+        binaryOids.addAll(getOidSet(info.getProperty("binaryTransferEnable", "")));
+/ niets
+        binaryOids.removeAll(getOidSet(info.getProperty("binaryTransferDisable", "")));
+/ niets
+
+        // split for receive and send for better control
+        useBinarySendForOids = new HashSet<Integer>();
+        useBinarySendForOids.addAll(binaryOids);
+        useBinaryReceiveForOids = new HashSet<Integer>();
+        useBinaryReceiveForOids.addAll(binaryOids);
+
+        /*
+         * Does not pass unit tests because unit tests expect setDate to have
+         * millisecond accuracy whereas the binary transfer only supports
+         * date accuracy.
+         */
+        useBinarySendForOids.remove(Oid.DATE);
+
+        protoConnection.setBinaryReceiveOids(useBinaryReceiveForOids);
+/s
+ProtocolConnectionImpl.setBinaryReceiveOids(Set) line: 213	
+        useBinaryForOids.clear();
+[]	, was al []
+        useBinaryForOids.addAll(oids);
+
+        String stringType = info.getProperty("stringtype");
+null
+        } else {
+            bindStringAsVarchar = haveMinimumCompatibleVersion("8.0");
+true
+        // Initialize timestamp stuff
+        timestampUtils = new TimestampUtils(haveMinimumServerVersion("7.4"), haveMinimumServerVersion("8.2"),
+                                            !protoConnection.getIntegerDateTimes());
+protoConnection.getIntegerDateTimes()==true
+/ laatste arg is isDouble	,
+/ todo
+this	Jdbc4Connection  (id=251)	
+	timestampUtils	TimestampUtils  (id=1007)	
+		calCache	null	
+		calCacheZone	0	
+		defaultCal	GregorianCalendar  (id=1009)	
+		defaultTz	ZoneInfo  (id=1010)	
+		min74	true	
+		min82	true	
+		sbuf	StringBuffer  (id=1011)	
+		usesDouble	false	
+	typemap	null	
+	useBinaryReceiveForOids	HashSet<E>  (id=987)	
+	useBinarySendForOids	HashSet<E>  (id=983)	
+
+        // Initialize common queries.
+        commitQuery = getQueryExecutor().createSimpleQuery("COMMIT");
+/s
+QueryExecutorImpl.createSimpleQuery(String) line: 111	
+        return parseQuery(sql, false);
+/s
+QueryExecutorImpl.parseQuery(String, boolean) line: 122	
+/=
+    private Query parseQuery(String query, boolean withParameters) {
+        if (statementList.size() == 1)
+        {
+            // Only one statement.
+            return new SimpleQuery((String[]) statementList.get(0), protoConnection);
+/t
+this	Jdbc4Connection  (id=251)	
+	commitQuery	SimpleQuery  (id=1053)	
+		cleanupRef	null	
+		encodedStatementName	null	
+		fields	null	
+		fragments	String[1]  (id=1054)	
+			[0]	"COMMIT" (id=1043)	
+		portalDescribed	false	
+		preparedTypes	null	
+		protoConnection	ProtocolConnectionImpl  (id=990)	
+		statementDescribed	false	
+		statementName	null	
+
+        rollbackQuery = getQueryExecutor().createSimpleQuery("ROLLBACK");
+
+        int unknownLength = Integer.MAX_VALUE;
+        String strLength = info.getProperty("unknownLength");
+null
+/ unknownLenght blijft zo	,
+
+        // Initialize object handling
+        _typeCache = createTypeInfo(this, unknownLength);
+/s
+TypeInfoCache.<clinit>() line: 69	
+    // basic pg types info:
+    // 0 - type name	 	postgres type name	
+    // 1 - type oid			postgres type oid
+    // 2 - sql type			jdbc type
+    // 3 - java class		java type
+    // 4 - array type oid
+    private static final Object types[][] = {
+        {"int2", new Integer(Oid.INT2), new Integer(Types.SMALLINT), "java.lang.Integer", new Integer(Oid.INT2_ARRAY)},
+        {"int4", new Integer(Oid.INT4), new Integer(Types.INTEGER), "java.lang.Integer", new Integer(Oid.INT4_ARRAY)},
+        {"oid", new Integer(Oid.OID), new Integer(Types.BIGINT), "java.lang.Long", new Integer(Oid.OID_ARRAY)},
+        {"int8", new Integer(Oid.INT8), new Integer(Types.BIGINT), "java.lang.Long", new Integer(Oid.INT8_ARRAY)},
+        {"money", new Integer(Oid.MONEY), new Integer(Types.DOUBLE), "java.lang.Double", new Integer(Oid.MONEY_ARRAY)},
+        {"numeric", new Integer(Oid.NUMERIC), new Integer(Types.NUMERIC), "java.math.BigDecimal", new Integer(Oid.NUMERIC_ARRAY)},
+        {"float4", new Integer(Oid.FLOAT4), new Integer(Types.REAL), "java.lang.Float", new Integer(Oid.FLOAT4_ARRAY)},
+        {"float8", new Integer(Oid.FLOAT8), new Integer(Types.DOUBLE), "java.lang.Double", new Integer(Oid.FLOAT8_ARRAY)},
+        {"char", new Integer(Oid.CHAR), new Integer(Types.CHAR), "java.lang.String", new Integer(Oid.CHAR_ARRAY)},
+        {"bpchar", new Integer(Oid.BPCHAR), new Integer(Types.CHAR), "java.lang.String", new Integer(Oid.BPCHAR_ARRAY)},
+        {"varchar", new Integer(Oid.VARCHAR), new Integer(Types.VARCHAR), "java.lang.String", new Integer(Oid.VARCHAR_ARRAY)},
+        {"text", new Integer(Oid.TEXT), new Integer(Types.VARCHAR), "java.lang.String", new Integer(Oid.TEXT_ARRAY)},
+        {"name", new Integer(Oid.NAME), new Integer(Types.VARCHAR), "java.lang.String", new Integer(Oid.NAME_ARRAY)},
+        {"bytea", new Integer(Oid.BYTEA), new Integer(Types.BINARY), "[B", new Integer(Oid.BYTEA_ARRAY)},
+        {"bool", new Integer(Oid.BOOL), new Integer(Types.BIT), "java.lang.Boolean", new Integer(Oid.BOOL_ARRAY)},
+        {"bit", new Integer(Oid.BIT), new Integer(Types.BIT), "java.lang.Boolean", new Integer(Oid.BIT_ARRAY)},
+        {"date", new Integer(Oid.DATE), new Integer(Types.DATE), "java.sql.Date", new Integer(Oid.DATE_ARRAY)},
+        {"time", new Integer(Oid.TIME), new Integer(Types.TIME), "java.sql.Time", new Integer(Oid.TIME_ARRAY)},
+        {"timetz", new Integer(Oid.TIMETZ), new Integer(Types.TIME), "java.sql.Time", new Integer(Oid.TIMETZ_ARRAY)},
+        {"timestamp", new Integer(Oid.TIMESTAMP), new Integer(Types.TIMESTAMP), "java.sql.Timestamp", new Integer(Oid.TIMESTAMP_ARRAY)},
+        {"timestamptz", new Integer(Oid.TIMESTAMPTZ), new Integer(Types.TIMESTAMP), "java.sql.Timestamp", new Integer(Oid.TIMESTAMPTZ_ARRAY)},
+    };
+
+    static {
+        typeAliases = new HashMap();
+        typeAliases.put("smallint", "int2");	
+        typeAliases.put("integer", "int4");	 / klopt, we use in postgres altijd int , nooit int4	,
+        typeAliases.put("int", "int4");
+        typeAliases.put("bigint", "int8");
+        typeAliases.put("float", "float8");
+        typeAliases.put("boolean", "bool");
+        typeAliases.put("decimal", "numeric");
+    }
+/t
+/s
+TypeInfoCache.<init>(BaseConnection, int) line: 111	
+        _conn = conn;
+conn	Jdbc4Connection  (id=251)	
+        _unknownLength = unknownLength;
+        _oidToPgName = new HashMap();
+        _pgNameToOid = new HashMap();
+        _pgNameToJavaClass = new HashMap();
+        _pgNameToPgObject = new HashMap();
+        _pgArrayToPgType = new HashMap();
+        _arrayOidToDelimiter = new HashMap();
+
+        // needs to be synchronized because the iterator is returned
+        // from getPGTypeNamesWithSQLTypes()
+/todo
+        _pgNameToSQLType = Collections.synchronizedMap(new HashMap());
+
+        for (int i=0; i<types.length; i++) {
+            String pgTypeName = (String)types[i][0];
+            Integer oid = (Integer)types[i][1];
+            Integer sqlType = (Integer)types[i][2];
+            String javaClass = (String)types[i][3];
+            Integer arrayOid = (Integer)types[i][4];
+            addCoreType(pgTypeName, oid, sqlType, javaClass, arrayOid);
+/s
+TypeInfoCache.addCoreType(String, Integer, Integer, String, Integer) line: 140	
+/=
+    public synchronized void addCoreType(String pgTypeName, Integer oid, Integer sqlType, String javaClass, Integer arrayOid)
+
+        _pgNameToJavaClass.put(pgTypeName, javaClass);
+"int2", "java.lang.Integer"
+        _pgNameToOid.put(pgTypeName, oid);
+"int2",21									/ postgres internal	, waarom doen we dit ? todo					
+        _oidToPgName.put(oid, pgTypeName);
+21,"int2"									/ postgres internal	, waarom doen we dit ? todo
+        _pgArrayToPgType.put(arrayOid, oid);
+1005,21
+        _pgNameToSQLType.put(pgTypeName, sqlType);
+21, Types.SMALLINT
+
+        // Currently we hardcode all core types array delimiter
+        // to a comma.  In a stock install the only exception is
+        // the box datatype and it's not a JDBC core type.
+        //
+        Character delim = new Character(',');
+        _arrayOidToDelimiter.put(oid, delim);
+
+        String pgArrayTypeName = "_" + pgTypeName;
+"_int2"
+        _pgNameToJavaClass.put(pgArrayTypeName, "java.sql.Array");
+        _pgNameToSQLType.put(pgArrayTypeName, new Integer(Types.ARRAY));
+/ todo
+
+/t
+TypeInfoCache.<init>(BaseConnection, int) line: 126	
+        for (int i=0; i<types.length; i++) {
+            String pgTypeName = (String)types[i][0];
+            Integer oid = (Integer)types[i][1];
+            Integer sqlType = (Integer)types[i][2];
+            String javaClass = (String)types[i][3];
+            Integer arrayOid = (Integer)types[i][4];
+
+            addCoreType(pgTypeName, oid, sqlType, javaClass, arrayOid);
+        }
+/d
+this	TypeInfoCache  (id=1128)	
+	_arrayOidToDelimiter	HashMap<K,V>  (id=1176)	
+	_conn	Jdbc4Connection  (id=251)	
+	_getArrayDelimiterStatement	null	
+	_getArrayElementOidStatement	null	
+	_getNameStatement	null	
+	_getOidStatement	null	
+	_getTypeInfoStatement	null	
+	_oidToPgName	HashMap<K,V>  (id=1177)	
+{790=money, 1184=timestamptz, 1700=numeric, 1083=time, 17=bytea, 1082=date, 16=bool, 19=name, 700=float4, 701=float8, 18=char, 1266=timetz, 21=int2, 1560=bit, 20=int8, 23=int4, 1114=timestamp, 25=text, 1043=varchar, 26=oid, 1042=bpchar}
+	_pgArrayToPgType	HashMap<K,V>  (id=1178)	
+{1016=20, 791=790, 1185=1184, 1021=700, 1022=701, 1009=25, 1231=1700, 1028=26, 1014=1042, 1015=1043, 1270=1266, 1001=17, 1000=16, 1003=19, 1002=18, 1561=1560, 1005=21, 1115=1114, 1007=23, 1182=1082, 1183=1083}
+	_pgNameToJavaClass	HashMap<K,V>  (id=1179)	
+{numeric=java.math.BigDecimal, bpchar=java.lang.String, timetz=java.sql.Time, char=java.lang.String, _timestamp=java.sql.Array, _oid=java.sql.Array, _float8=java.sql.Array, _name=java.sql.Array, float8=java.lang.Double, _bool=java.sql.Array, _float4=java.sql.Array, date=java.sql.Date, _bytea=java.sql.Array, float4=java.lang.Float, timestamptz=java.sql.Timestamp, timestamp=java.sql.Timestamp, _money=java.sql.Array, _timestamptz=java.sql.Array, time=java.sql.Time, _text=java.sql.Array, _int8=java.sql.Array, _numeric=java.sql.Array, oid=java.lang.Long, name=java.lang.String, money=java.lang.Double, _date=java.sql.Array, _int4=java.sql.Array, _time=java.sql.Array, varchar=java.lang.String, _int2=java.sql.Array, text=java.lang.String, int8=java.lang.Long, int4=java.lang.Integer, _char=java.sql.Array, int2=java.lang.Integer, _timetz=java.sql.Array, bit=java.lang.Boolean, bytea=[B, _bit=java.sql.Array, _varchar=java.sql.Array, bool=java.lang.Boolean, _bpchar=java.sql.Array}
+	_pgNameToOid	HashMap<K,V>  (id=1164)	
+{text=25, numeric=1700, bpchar=1042, timetz=1266, int8=20, char=18, int4=23, float8=701, date=1082, float4=700, timestamptz=1184, int2=21, timestamp=1114, bit=1560, time=1083, bytea=17, oid=26, name=19, money=790, bool=16, varchar=1043}
+	_pgNameToPgObject	HashMap<K,V>  (id=1180)	
+{}
+	_pgNameToSQLType	Collections$SynchronizedMap<K,V>  (id=1139)	
+{numeric=2, bpchar=1, timetz=92, char=1, _timestamp=2003, _oid=2003, _float8=2003, _name=2003, float8=8, _bool=2003, _float4=2003, date=91, _bytea=2003, float4=7, timestamptz=93, timestamp=93, _money=2003, _timestamptz=2003, time=92, _text=2003, _int8=2003, _numeric=2003, oid=-5, name=12, money=8, _date=2003, _int4=2003, _time=2003, varchar=12, _int2=2003, text=12, int8=-5, int4=4, _char=2003, int2=5, _timetz=2003, bit=-7, bytea=-2, _bit=2003, _varchar=2003, bool=-7, _bpchar=2003}
+	_unknownLength	2147483647	
+conn	Jdbc4Connection  (id=251)	
+unknownLength	2147483647	
+
+        _pgNameToJavaClass.put("hstore", Map.class.getName());
+
+/ CONNECTION PARAMETERS
+
+/ Lees	,
+https://jdbc.postgresql.org/documentation/94/connect.html#connection-parameters
+https://jdbc.postgresql.org/documentation/94/ssl-client.html						/ Lees !
+https://www.postgresql.org/docs/9.1/static/locale.html		/ env LANG -> en_US.UTF8	, geeft \l
+
+
+/ In info kan	, 
+loglevel				0
+prepareThreshold		5
+binaryTransfer			true
+protocolVersion			null	
+sslmode					null
+ssl						null
+tcpKeepAlive			false
+connectionTimeout		0
+socketTimeout			0
+receiveBufferSize		-1
+sendBufferSize			-1
+ApplicationName			null
+compatible				null
+readOnly				null
+stringType				null
+allowEncodingChanges	false
+
+/ Einde CONNECTION PARAMETERS
+
+
+/ Einde MAKE CONNECTION
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/ Einde DEBUG HIBERNATE
+
+/ HIBERNATE LAZYINITIALIZATION 
+
+LOG_29_sep_2015.txt.2016.09.14:/ LazyInit ERR	, 
+
+/ 7	. 
+
+/ Oef	, 
+
+/ ws workspace
+/ proj hibernate_mappings
+/ pkg my.test.own.objects
+/ Sporter heeft fk naar Club	,
+$ vi Main2.java
+
+		{
+		Sporter sporter=new Sporter("sporter");
+		Club club=new Club("club");
+		sporter.setClub(club);
+		Session session=sessionFactory.openSession();
+		session.save(club);
+		session.save(sporter);
+		session.beginTransaction().commit();
+		session.close();
+		}
+		{
+		Session session=sessionFactory.openSession();
+		Sporter sporter=(Sporter)session.get(Sporter.class, 1l);
+		Club club=sporter.getClub();
+		session.close();									<-
+		session=sessionFactory.openSession();
+		String name=club.getName();							/ LazyInitializationException	,
+		System.out.println("************ "+name);
+		}
+		
+/ De session waar club=Proxy naar Club inzat is gesloten	, daarom LazyInitializationException 	
+/ Als je een session close, wordt alles in de session rm	, entityEntryContext.count=0, .reentrantSafeEntries=null	,
+/ club zit in de session via de sporter	, club zelf zit er niet in	, 
+/ we hebben een session=sessionFactory.openSession() ertussen	, maar dat heeft geen zin	, want dit is een nieuwe session	, en daar zit de Proxy naar Club niet in	, 
+/ Als we session.close() NIET,	 dan OK	, want de session is er nog , met de Club proxy er in (via sporter)	, en H. kan resolve	,
+
+/ OK (2017-04-14)
+
+/ 7	. 
+
+		{
+		Session session=sessionFactory.openSession();
+		Sporter sporter=(Sporter)session.get(Sporter.class, 1l);
+		Club club=sporter.getClub();
+		session.close();
+		session=sessionFactory.openSession();
+		session.merge(sporter);						<- NIETS	, TODO
+124:	String name=club.getName();
+		System.out.println("************ "+name);
+		}
+HibernateLog --> 09:04:37 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([club_3_12_0_] : [BIGINT]) - [1]
+org.hibernate.LazyInitializationException: could not initialize proxy - no Session
+	at org.hibernate.proxy.AbstractLazyInitializer.initialize(AbstractLazyInitializer.java:165)
+	at org.hibernate.proxy.AbstractLazyInitializer.getImplementation(AbstractLazyInitializer.java:286)
+	at org.hibernate.proxy.pojo.javassist.JavassistLazyInitializer.invoke(JavassistLazyInitializer.java:185)
+	at my.test.own.hibernate_mappings.Club_$$_jvst4d9_4.getName(Club_$$_jvst4d9_4.java)
+	at my.test.own.objects.Main2.testBasicUsage(Main2.java:124)
+	at my.test.own.objects.Main2.<init>(Main2.java:77)
+	at my.test.own.objects.Main2.main(Main2.java:71)
+
+/ 7	. 
+
+/ Maar Session.update OK	,
+
+		{
+		Session session=sessionFactory.openSession();
+		Sporter sporter=(Sporter)session.get(Sporter.class, 1l);
+		Club club=sporter.getClub();
+		session.close();
+		session=sessionFactory.openSession();
+		session.update(sporter);
+		String name=club.getName();
+		System.out.println("************ "+name);
+		}
+
+************ club
+
+/ We zien GEEN update query
+/ TODO
+
+/ we kunnen ook 	,
+		session=sessionFactory.openSession();
+		session.update(club);
+		String name=club.getName();
+
+/ Wat is logisch: update sporter of update club	?
+/ TODO
+
+/ 7	. 
+
+/ we hebben ook in 1 block	, 
+$ vi Main2a.java
+
+	public void testBasicUsage() {
+		
+		Sporter sporter=new Sporter("sporter");
+		Club club=new Club("club");
+		sporter.setClub(club);
+		Session session=sessionFactory.openSession();
+		session.save(club);
+		session.save(sporter);
+		session.beginTransaction().commit();
+		session.close();
+		session=sessionFactory.openSession();
+		Sporter sporter2=(Sporter)session.get(Sporter.class, 1l);
+		Club club2=sporter2.getClub();
+		session.close();
+		session=sessionFactory.openSession();
+		session.update(sporter2);				// of session.update(club2); TODO
+		String name=club2.getName();			// LazyInitializationException	, als je de 2 regels erboven NIET doet	,
+		System.out.println("************ "+name);
+	}
+
+
+/ 7	. 
+
+/ Einde HIBERNATE LAZYINITIALIZATION 
+
+
+/ HIBERNATE TX TRANSACTIONS  HQL
+
+/ 7	. 
+
+/ ws workspace
+/ project hibernate_mappings
+/ ns my.test.own.objects
+
+$ vi Main3.java
+
+	public void testBasicUsage() {
+		
+		Sporter sporter=new Sporter("sporter");
+		Club club=new Club("club");
+		sporter.setClub(club);
+		Session session=sessionFactory.openSession();
+		session.save(club);
+		session.save(sporter);
+		session.beginTransaction().commit();
+		session.close();
+
+		session=sessionFactory.openSession();
+		Sporter sporter2=(Sporter)session.get(Sporter.class, 1l);
+		Club club2=sporter2.getClub();
+//		Query query=session.createQuery("update Sporter set name=:name where id=:id");				// OK
+		Query query=session.createQuery("update Sporter s set s.name=:name where s.club.id=:id");
+		query.setParameter("id", 1l);
+		query.setParameter("name", "sporter2");
+		int n=query.executeUpdate();
+//		Query query2=session.createQuery("update Club set name=:name where id=:id");				// OK
+		Query query2=session.createQuery("update Club c set c.name=:name where id=:id");
+		query2.setParameter("id", 1l);
+		query2.setParameter("name", "club2");
+		int n2=query2.executeUpdate();
+		session.beginTransaction().commit();
+		System.out.println("+++++++++++++++: "+n);
+		System.out.println("+++++++++++++++: "+n2);
+		String name=club2.getName();	
+		System.out.println("************: "+name);
+		
+	}
+
+/ Waarom werkt deze transaction	, wanneer gestart	?	,  ook naar db is sporter2, club2	, 
+/ TODO
+
+/ Doe transactions in JDBC  
+/ TODO
+
+/ Einde HIBERNATE TX TRANSACTIONS HQL
+
+/ HIBERNATE TX TRANSACTIONS JTA
+
+/ H. book (427): verschil session, tx in JSE en JEE
+/ (701) Open session in view	,
+
+
+
+
+/ Einde HIBERNATE TX TRANSACTIONS JTA
+
+/ ATOMIKOS
+
+/ Geef in Google	, 
+Hibernate Atomikos
+/ Lees	, 
+https://www.atomikos.com/Documentation/HibernateIntegration 
+
+/ Einde ATOMIKOS
+
+

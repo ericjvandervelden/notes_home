@@ -1,0 +1,631 @@
+/ VIDEO 
+
+/ Video	, 
+https://www.youtube.com/watch?v=sbPSjI4tt10
+
+/ Ga naar 
+start.spring.io
+
+/ of	, 
+
+$ curl start.spring.io
+
+
+/ 7	. 
+
+$ curl start.spring.io
+
+[eric@almond Groovy]$ pwd
+/home/eric/Devel/Java/Groovy
+
+
+/ Lees	, 
+http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/
+
+10.2 Installing the Spring Boot CLI
+
+$ sdk install springboot
+
+[eric@almond Groovy]$ sdk install springboot
+
+Downloading: springboot 1.4.0.RELEASE
+
+In progress...
+
+######################################################################## 100.0%
+
+Installing: springboot 1.4.0.RELEASE
+Done installing!
+
+Do you want springboot 1.4.0.RELEASE to be set as default? (Y/n): 
+
+Setting springboot 1.4.0.RELEASE as default.
+
+[eric@almond Groovy]$ ls ~/.sdkman/candidates/
+groovy  springboot
+
+[eric@almond Groovy]$ which spring
+~/.sdkman/candidates/springboot/current/bin/spring
+
+[eric@almond Groovy]$ spring --version
+Spring CLI v1.4.0.RELEASE
+
+/ 13	 
+
+$ vi app.groovy 
+@RestController
+class ThiswillActuallyRun{
+	@RequestMapping("/")
+ 	String home(){	
+		"Hello World!"
+	}
+}
+
+/ Neem terminal breedte 100 voor comments hieronder	, 
+
+[eric@almond Groovy]$ spring run app.groovy 
+Resolving dependencies.....................
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v1.4.0.RELEASE)
+
+2016-09-10 10:30:02.204  INFO 14123 --- [       runner-0] o.s.boot.SpringApplication               : Starting application on almond.nuts.org with PID 14123 (started by eric in /home/eric/Devel/Java/Groovy)
+2016-09-10 10:30:02.209  INFO 14123 --- [       runner-0] o.s.boot.SpringApplication               : No active profile set, falling back to default profiles: default
+2016-09-10 10:30:02.579  INFO 14123 --- [       runner-0] ationConfigEmbeddedWebApplicationContext : Refreshing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@4b7b5085: startup date [Sat Sep 10 10:30:02 CEST 2016]; root of context hierarchy
+2016-09-10 10:30:04.486  INFO 14123 --- [       runner-0] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat initialized with port(s): 8080 (http)
+2016-09-10 10:30:04.509  INFO 14123 --- [       runner-0] o.apache.catalina.core.StandardService   : Starting service Tomcat
+2016-09-10 10:30:04.511  INFO 14123 --- [       runner-0] org.apache.catalina.core.StandardEngine  : Starting Servlet Engine: Apache Tomcat/8.5.4
+2016-09-10 10:30:04.604  INFO 14123 --- [ost-startStop-1] org.apache.catalina.loader.WebappLoader  : Unknown loader org.springframework.boot.cli.compiler.ExtendedGroovyClassLoader$DefaultScopeParentClassLoader@34178618 class org.springframework.boot.cli.compiler.ExtendedGroovyClassLoader$DefaultScopeParentClassLoader
+2016-09-10 10:30:04.634  INFO 14123 --- [ost-startStop-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2016-09-10 10:30:04.635  INFO 14123 --- [ost-startStop-1] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 2057 ms
+2016-09-10 10:30:04.876  INFO 14123 --- [ost-startStop-1] o.s.b.w.servlet.ServletRegistrationBean  : Mapping servlet: 'dispatcherServlet' to [/]
+2016-09-10 10:30:04.883  INFO 14123 --- [ost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'characterEncodingFilter' to: [/*]
+2016-09-10 10:30:04.883  INFO 14123 --- [ost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+2016-09-10 10:30:04.884  INFO 14123 --- [ost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'httpPutFormContentFilter' to: [/*]
+2016-09-10 10:30:04.884  INFO 14123 --- [ost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'requestContextFilter' to: [/*]
+2016-09-10 10:30:05.383  INFO 14123 --- [       runner-0] s.w.s.m.m.a.RequestMappingHandlerAdapter : Looking for @ControllerAdvice: org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@4b7b5085: startup date [Sat Sep 10 10:30:02 CEST 2016]; root of context hierarchy
+2016-09-10 10:30:05.472  INFO 14123 --- [       runner-0] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/]}" onto public java.lang.String ThiswillActuallyRun.home()
+2016-09-10 10:30:05.478  INFO 14123 --- [       runner-0] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2016-09-10 10:30:05.478  INFO 14123 --- [       runner-0] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2016-09-10 10:30:05.537  INFO 14123 --- [       runner-0] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2016-09-10 10:30:05.537  INFO 14123 --- [       runner-0] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2016-09-10 10:30:05.605  INFO 14123 --- [       runner-0] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2016-09-10 10:30:06.131  INFO 14123 --- [       runner-0] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
+2016-09-10 10:30:06.191  INFO 14123 --- [       runner-0] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8080 (http)
+2016-09-10 10:30:06.203  INFO 14123 --- [       runner-0] o.s.boot.SpringApplication               : Started application in 4.757 seconds (JVM running for 28.303)
+
+/ geef in chrome	, 
+localhost:8080
+Hello World!
+
+/ 13	. 
+
+$ vi hello.groovy
+
+@RestController
+class GreetingsRestController{
+  @RequestMapping("/hi/{name}")
+  def hi(@PathVariable String name){
+    [ greeting : "Hello, "+name+"!" ]
+	}
+}
+
+[eric@almond Groovy]$ spring run hello.groovy 
+
+/ Geef in chrome	, 
+localhost:8080/hi/π
+{"greeting":"Hello, π!"}
+
+/ 7	. 
+
+/ Ga naar	, 
+start.spring.io
+
+/ click: jump to the full version	,
+
+my.own:first-spring-boot
+
+/ we select 
+Web
+JPA
+H2
+Thymeleaf
+Actuator
+Remote Shell
+
+eric@almond workspace-spring]$ pwd
+/home/eric/Devel/Eclipse/Mars/workspace-spring
+[eric@almond workspace-spring]$ unzip first-spring-boot.zip 
+
+/ In Eclipse:
+File, Import..., Maven, Existing Maven Project	, 
+Root dir: /home/eric/Devel/Eclipse/Mars/workspace-spring/first-spring-boot
+Finish
+/ De .project	, .classpath worden create	, 
+/ Right click project , Refresh	: we zien de Maven file structure	: src/main/java, ...
+
+$ vi pom.xml
+
+?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>my.own</groupId>
+	<artifactId>first-spring-boot</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>first-spring-boot</name>														/ do NOT need	, 
+	<description>Demo project for Spring Boot</description>		/ do NOT need	, 
+
+	<parent>																									/ in ~/.m2/repository	,	 TODO
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.4.0.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->	/ do NOT need	, TODO	,
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-remote-shell</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+
+</project>
+
+[eric@almond first-spring-boot]$ less ~/.m2/repository/org/springframework/boot/spring-boot-dependencies/1.4.0.RELEASE/spring-boot-dependencies-1.4.0.RELEASE.pom
+
+        <properties>
+                <activemq.version>5.13.4</activemq.version>
+                <antlr2.version>2.7.7</antlr2.version>
+                <appengine.version>1.9.40</appengine.version>
+                <artemis.version>1.3.0</artemis.version>
+                <aspectj.version>1.8.9</aspectj.version>
+                <assertj.version>2.5.0</assertj.version>
+                <atomikos.version>3.9.3</atomikos.version>
+                <bitronix.version>2.1.4</bitronix.version>
+...
+
+/ versions	, importing moeten we zelf doen	, 
+
+/ De deps in de pom.xml doen zelf niets	, ze hebben zelf deps die wel wat doen	, 
+
+/ Hoe komt  in local repo	?
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.4.0.RELEASE</version>
+/ TODO
+
+/ 13	. 
+
+$ vi pom.xml
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+/ de dep spring-boot-starter-data-jpa brings in other deps	, that is the only thing it does	, 
+
+/ In de video	, 
+/ We use deze NIET	, 
+/ We use die met de zip van start.spring.io komt	, FirstSpringBootApplication	,  
+/ Hoe de test	?
+/ TODO
+
+/ in src/main/java
+
+$ vi DemoApplication.java
+
+package my.own;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(DemoApplication.class, args);
+
+	}
+}
+
+
+/ in src/test/java
+$ vi DemoApplicationTests.java
+
+package my.own;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes=DemoApplication.class)		/ deprecated	,
+@WebAppConfiguration
+public class DemoApplicationTests {
+	@Test
+	public void contextLoads(){
+		
+	}
+}
+
+
+/ 13	. 
+
+/ Java Config	, 
+
+class Foo{}
+class Bar{}
+@Bean public Foo f(Bar bar){
+	return new Foo(bar);
+}
+@Bean public Bar b(){
+	return new Bar();
+}
+	
+$ vi FirstSpringBootApplication.java
+
+interface ReservationRepository extends JpaRepository<Reservation, Long>{}
+
+/ als we F3 geven op JpaRepository	, dan zien we meteen	, 
+package org.springframework.data.jpa.repository;
+@NoRepositoryBean
+public interface JpaRepository<T, ID extends Serializable>
+		extends PagingAndSortingRepository<T, ID>, QueryByExampleExecutor<T> {
+...
+
+/ en in ~.m2/repository/	, 
+[eric@almond first-spring-boot]$ less ~/.m2/repository/org/springframework/data/spring-data-jpa/1.10.2.RELEASE/
+m2e-lastUpdated.properties
+_remote.repositories
+spring-data-jpa-1.10.2.RELEASE.jar
+spring-data-jpa-1.10.2.RELEASE.jar.sha1
+spring-data-jpa-1.10.2.RELEASE.pom
+spring-data-jpa-1.10.2.RELEASE.pom.sha1
+spring-data-jpa-1.10.2.RELEASE-sources.jar
+spring-data-jpa-1.10.2.RELEASE-sources.jar.sha1
+/ Dus we zien de src jar downloaded	, 
+
+/ we zien 	, PagingAndSortingRepository	, deze zit in spring-data-commons-....jar	, 
+package org.springframework.data.repository;
+@NoRepositoryBean
+public interface CrudRepository<T, ID extends Serializable> extends Repository<T, ID> {
+
+/ CrudRepository zit in hetzelfde package	, 
+
+/ uiteindelijk	, 
+
+$ vi FirstSpringBootApplication.java
+
+package my.own;
+
+import java.util.Arrays;
+import java.util.Collection;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+@SpringBootApplication
+public class FirstSpringBootApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(FirstSpringBootApplication.class, args);
+	}
+	
+	@Bean CommandLineRunner runner(ReservationRepository rr){
+		return args -> {
+			Arrays.asList("Les,Josh,Fhil,Sasha,Peter".split(","))
+				.forEach(n->rr.save(new Reservation(n)));	
+//		rr.findAll().forEach(r->System.out.println(r));
+			rr.findAll().forEach(System.out::println);
+			rr.findByReservationName("Les").forEach(System.out::println);
+		};
+	}
+}
+
+interface ReservationRepository extends JpaRepository<Reservation, Long>{
+	Collection<Reservation>findByReservationName(String rn);
+}
+
+@Entity
+class Reservation{
+
+	@Id @GeneratedValue private Long id;
+	private String reservationName;
+
+	Reservation() {  // for JPA TODO
+	}
+	public Reservation(String reservationName) {
+		super();
+		this.reservationName = reservationName;
+	}
+	
+	public String getReservationName() {
+		return reservationName;
+	}
+
+	public void setReservationName(String reservationName) {
+		this.reservationName = reservationName;
+	}
+
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	@Override
+	public String toString() {
+		return "Reservation [id=" + id + ", reservationName=" + reservationName + "]";
+	}
+
+}
+
+
+/ 7	. 
+
+/ Met Rest	,
+
+/ We install JSON View in chrome	, 
+
+$ vi pom.xml
+	<dependencies>
+		...
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency> 
+
+$ vi SpringBootApplication.java
+
+interface ReservationRepository extends JpaRepository<Reservation, Long>{
+	Collection<Reservation>findByReservationName(String rn);
+}
+
+@RestController
+class ReservationRestController{
+	@RequestMapping("/reservations")
+	Collection<Reservation>reservation(){
+		return this.repository.findAll();
+	}
+	@Autowired private ReservationRepository  repository;
+}
+
+/ Geef
+localhost:8080/reservations
+
+/ Maar we gaan het anders doen	, 
+
+$ vi pom.xml
+
+<!--
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency> 
+-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
+		</dependency> 
+
+$ vi SpringBootApplication.java
+
+@RepositoryRestResource
+interface ReservationRepository extends JpaRepository<Reservation, Long>{
+	Collection<Reservation>findByReservationName(String rn);
+}
+
+/ GEEN @RestController class ReservationRestController{	, 
+
+/ Geef 
+http://localhost:8080/reservations
+
+/ 7	. 
+
+/ maak extra entry	, 
+
+$ vi SpringBootApplication.java
+
+@Component
+class ReservationResourceProcessor implements ResourceProcessor<Resource<Reservation>>{
+	@Override
+	public Resource<Reservation> process(Resource<Reservation> reservationResource) {
+		Link link=new Link("http://s3.com/imgs/"+reservationResource.getContent().getId()+".jpg","profile-phpto");
+		reservationResource.add(link);
+		return reservationResource;
+	}
+}
+
+/ 7	. 
+
+/ classic SpringMvc	,
+
+/ in src/main/resources/ is al templates/	, 
+
+$ vi SpringBootApplication.java
+
+@Controller
+class ReservationMvcController{
+	@RequestMapping("/reservations.php")
+	String reservations(Model model){
+		model.addAttribute("reservations", reservationRepository.findAll());
+		return "reservations"; // src/main/resources/templates + $X + .html
+	}
+	
+	@Autowired
+	private ReservationRepository reservationRepository;
+}
+
+/ MORGENAVOND
+
+
+
+
+
+
+
+/ Einde VIDEO
+
+/ 7	. 
+
+/ spring videos
+http://stackoverflow.com/questions/32047563/kubernetes-vs-cloudfoundry	/ cloud foundry vs kubernetes
+https://www.youtube.com/watch?v=SFDYdslOvu8	 / cloudfoundry josh long
+https://www.youtube.com/watch?v=sbPSjI4tt10&t=2256s/ spring boot josh long
+
+/ SPRING 
+
+/ Lees	 
+https://spring.io/blog/2011/08/15/configuring-spring-and-jta-without-full-java-ee/
+https://spring.io/blog/2016/09/12/springone-platform-2016-replay-cloud-native-java
+https://www.mkyong.com/java8/java-8-foreach-examples/
+https://spring.io/guides/tutorials/bookmarks/					/ REST 
+http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/ / install spring boot cli
+
+/ Lees	, 
+https://spring.io/guides/gs/rest-service/	/ @RestController	, 
+http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html
+http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#beans-annotation-config	 / 7.10.2 spring annotations	,
+https://spring.io/guides/gs/accessing-data-rest/
+http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-sql.html
+
+http://zezutom.blogspot.nl/2014/02/spring-series-part-5-component-vs-bean.html  / !
+
+/ Einde SPRING
+
+/ SPRING BOOT TRANSACTIONS JTA 
+
+/ Geef in google	, 
+spring boot transaction 
+/ Lees	,
+http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-jta.html
+
+/ Geef in google
+spring boot jta
+/ Lees	, 
+https://spring.io/blog/2011/08/15/configuring-spring-and-jta-without-full-java-ee/
+
+http://www.javaworld.com/article/2077963/open-source-tools/distributed-transactions-in-spring--with-and-without-xa.html
+
+/ Einde SPRING BOOT TRANSACTIONS JTA 
+
+/ JAVAEE
+
+http://blog.eisele.net/  / Replacing legacy Java EE application servers with microservices and containers
+http://microprofile.io/ / via twitter's @jbossdeveloper	, JBoss Developer	,
+
+/ Einde JAVAEE
+
+/ 7	. 
+
+/ google
+/ cluster of spring boot
+/ lees,
+https://stackoverflow.com/questions/32947194/spring-boot-application-in-cluster
+->
+http://spring.io/projects/spring-cloud
+->
+http://spring.io/projects/spring-cloud-zookeeper		/ bijv	,
+
+/ 7	. 
+
+/ lees	,
+https://spring.io/guides/gs/rest-service/
+Accessing JPA Data with REST
+/->
+https://spring.io/guides/gs/accessing-data-rest/
+
+@RepositoryRestResource(collectionResourceRel = "people", path = "people")
+public interface PersonRepository extends PagingAndSortingRepository<Person, Long> {
+	List<Person> findByLastName(@Param("name") String name);
+}
+
+/ 7	. 
+
+/ functional ipv annotations	,
+
+/ google	,
+spring functional programming
+/ lees	,
+https://www.baeldung.com/spring-webflux
+functional style – routing and handling.
+->
+https://www.baeldung.com/spring-5-functional-web
+
+ 

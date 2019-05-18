@@ -1,0 +1,490 @@
+/ Lees	,
+https://www.cs.colorado.edu/~srirams/courses/csci2824-spr14/gmpTutorial.html
+
+$ vi basic.c
+#include<gmp.h>
+#include<stdio.h>
+#include<assert.h>
+
+[eric@almond misc]$ gcc -E basic.c  -lgmp
+# 1 "basic.c"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 1 "/usr/include/stdc-predef.h" 1 3 4
+# 1 "<command-line>" 2
+# 1 "basic.c"
+basic.c:1:16: fatal error: gmp.h: No such file or directory
+
+
+/ install gmp-devel	, 
+[eric@almond misc]$ sudo dnf install gmp-devel
+
+[eric@almond misc]$ gcc -E basic.c  -lgmp
+# 1 "basic.c"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 1 "/usr/include/stdc-predef.h" 1 3 4
+# 1 "<command-line>" 2
+# 1 "basic.c"
+# 1 "/usr/include/gmp.h" 1 3 4
+# 59 "/usr/include/gmp.h" 3 4
+...
+
+[eric@almond misc]$ dnf repoquery -l gmp
+Last metadata expiration check: 0:03:03 ago on Wed Feb  8 22:06:24 2017.
+/usr/lib/libgmp.so.10
+/usr/lib/libgmp.so.10.2.0
+/usr/lib/libgmpxx.so.4
+/usr/lib/libgmpxx.so.4.4.0
+/usr/lib/sse2/libgmp.so.10
+/usr/lib/sse2/libgmp.so.10.2.0
+/usr/lib/sse2/libgmpxx.so.4
+/usr/lib/sse2/libgmpxx.so.4.4.0
+/usr/share/doc/gmp
+/usr/share/doc/gmp/NEWS
+/usr/share/doc/gmp/README
+/usr/share/licenses/gmp
+/usr/share/licenses/gmp/COPYING
+/usr/share/licenses/gmp/COPYING.LESSERv3
+/usr/share/licenses/gmp/COPYINGv2
+/usr/share/licenses/gmp/COPYINGv3
+/usr/lib64/libgmp.so.10
+/usr/lib64/libgmp.so.10.2.0
+/usr/lib64/libgmpxx.so.4
+/usr/lib64/libgmpxx.so.4.4.0
+/usr/share/doc/gmp
+/usr/share/doc/gmp/NEWS
+/usr/share/doc/gmp/README
+/usr/share/licenses/gmp
+/usr/share/licenses/gmp/COPYING
+/usr/share/licenses/gmp/COPYING.LESSERv3
+/usr/share/licenses/gmp/COPYINGv2
+/usr/share/licenses/gmp/COPYINGv3
+[eric@almond misc]$ dnf repoquery -l gmp-devel
+Last metadata expiration check: 0:03:20 ago on Wed Feb  8 22:06:24 2017.
+/usr/include/gmp-i386.h
+/usr/include/gmp-mparam-i386.h
+/usr/include/gmp-mparam.h
+/usr/include/gmp.h
+/usr/include/gmpxx.h
+/usr/lib/libgmp.so
+/usr/lib/libgmpxx.so
+/usr/share/info/gmp.info-1.gz
+/usr/share/info/gmp.info-2.gz
+/usr/share/info/gmp.info.gz
+/usr/include/gmp-mparam-x86_64.h
+/usr/include/gmp-mparam.h
+/usr/include/gmp-x86_64.h
+/usr/include/gmp.h
+/usr/include/gmpxx.h
+/usr/lib64/libgmp.so
+/usr/lib64/libgmpxx.so
+/usr/share/info/gmp.info-1.gz
+/usr/share/info/gmp.info-2.gz
+/usr/share/info/gmp.info.gz
+
+/ Wat is verschil	,
+/usr/lib/libgmp.so.10 	/ uit gmp
+/usr/lib/libgmp.so		/ uit gmp-devel
+/ TODO
+
+/ 13	. 
+
+[eric@almond misc]$ pwd
+/home/eric/Devel/gmp
+
+$ vi basic.c
+
+#include<gmp.h>
+#include<stdio.h>
+#include<assert.h>
+
+int main(){
+  char input_str[1024];
+  mpz_t n;
+  int flag;
+
+  printf("Enter your number: ");
+  scanf("%1023s",input_str);
+
+  mpz_init(n);
+  mpz_set_ui(n,0);
+
+  flag=mpz_set_str(n,input_str,10);
+  assert(flag==0);
+
+  printf("n = ");
+  mpz_out_str(stdout,10,n);
+  printf("\n");
+
+  mpz_add_ui(n,n,1);
+
+  printf("n+1 = ");
+  mpz_out_str(stdout,10,n);
+  printf("\n");
+
+ 	mpz_mul(n,n,n);
+
+  printf("(n+1)^2 = ");
+  mpz_out_str(stdout,10,n);
+  printf("\n");
+
+  mpz_clear(n);
+
+  return 0;
+}
+
+[eric@almond misc]$ gcc -Wall -g  basic.c -lgmp
+[eric@almond misc]$ ./a.out
+Enter your number: 9
+n = 9
+n+1 = 10
+(n+1)^2 = 100
+
+[eric@almond misc]$ ./a.out 
+Enter your number: 2424239487234208249827424723423942734234 
+n = 2424239487234208249827424723423942734234
+n+1 = 2424239487234208249827424723423942734235
+(n+1)^2 = 5876937091465576943880461404375977028107960972746091537094242425720647841035225
+
+[eric@almond misc]$ ./a.out 
+Enter your number: 424174782342984723420482423478234248724230482342348273423423472342347234234234234234297424209842342093842342893423429834
+n = 424174782342984723420482423478234248724230482342348273423423472342347234234234234234297424209842342093842342893423429834
+n+1 = 424174782342984723420482423478234248724230482342348273423423472342347234234234234234297424209842342093842342893423429835
+(n+1)^2 = 179924245975718464690065373127248212657975695040356567802613698312686437411040156048326340709209093912276859939518521451835763210795375502136660053556829481094112975237223720655361279885277169644733115022933228225006044983572118135168127225
+
+/ 7	. 
+
+/ Lees	,
+http://unix.stackexchange.com/questions/83181/current-environmental-variables-of-a-process
+
+$ sleep 100 &
+[1] 17098
+$ gdb --pid=$! /bin/sleep
+[...]
+(gdb) p environ[0]
+$1 = 0x7fffd722d227 "STY=7498.pts-0.hostname"
+(gdb) p environ[1]
+$2 = 0x7fffd722d245 "TERM=screen-bce"
+(gdb) call system("env > /tmp/some-file")
+$4 = 0
+(gdb) detach
+Detaching from program: /bin/sleep, process 17098
+(gdb) quit
+$ cat /tmp/some-file
+GNOME_KEYRING_PID=6850
+SSH_AGENT_PID=6844
+SHLVL=1
+[...]
+
+/ 7	. 
+
+/ Lees	,
+https://gmplib.org/manual/Nomenclature-and-Types.html#Nomenclature-and-Types
+
+mpz_t sum;
+/ integer	, Z (integers), vandaar mpz	,
+
+mpq_t quotient	, 
+/ breuken	, Q	,
+
+mpf_t float	,
+
+[eric@almond misc]$ tar xvjf ~/Downloads/gmp-6.1.2.tar.bz2 
+
+mp_limb_t: limb=stukken van het getal die in een word past	,
+mp_size_t: aantal limbs	in het getal	,,
+mp_bitcount_t: aantal bits	in getal ,
+
+gmp_randstate_t TODO
+
+/ 13	 .
+
+/ functions beginnen met mpz_	, mpq_	, mpf_	, mpn_	, misc	,
+
+mpz_mul (x, y, z)	: x=y*z
+
+
+void
+foo (void)
+{
+  mpz_t  n;										<-
+  int    i;
+  mpz_init (n);								<-
+  for (i = 1; i < 100; i++)
+    {
+      mpz_mul (n, …);
+      mpz_fdiv_q (n, …);
+      …
+    }
+  mpz_clear (n);							<-
+}
+
+/ 13	. 
+
+/ Wat is mpz_t	?
+
+[eric@almond misc]$ less /usr/include/gmp-x86_64.h 
+
+typedef struct
+{
+  int _mp_alloc;                /* Number of *limbs* allocated and pointed
+                                   to by the _mp_d field.  */
+  int _mp_size;                 /* abs(_mp_size) is the number of limbs the
+                                   last field points to.  If _mp_size is
+                                   negative this is a negative number.  */
+  mp_limb_t *_mp_d;             /* Pointer to the limbs.  */
+} __mpz_struct;
+
+#endif /* __GNU_MP__ */
+
+
+typedef __mpz_struct MP_INT;    /* gmp 1 source compatibility */
+typedef __mpz_struct mpz_t[1];
+
+[eric@almond misc]$ gcc -E basic.c -lgmp | less
+
+
+
+typedef struct
+{
+  int _mp_alloc;
+
+  int _mp_size;
+
+
+  mp_limb_t *_mp_d;
+} __mpz_struct;
+
+
+
+
+typedef __mpz_struct MP_INT;
+typedef __mpz_struct mpz_t[1];
+
+/ 1313	. 
+
+/ WH is mpz_t een pointer 	, eig een array	, TODO
+
+$ vi types.c
+int main(){
+  int m[8];
+  int*i=m;
+  *i=7;
+  i++;
+  *i=8;
+  int j;
+  for(j=0;j<2;j++){
+    printf("%d\n",m[j]);
+  }
+  return 0;
+}
+/ OK
+
+/ 13	. 
+
+/ par 3.5
+
+When a GMP variable is used as a function parameter, it’s effectively a call-by-reference, meaning if the function stores a value there it will change the original in the caller. Parameters which are input-only can be designated const to provoke a compiler error or warning on attempting to modify them.
+
+$ pwd 
+manual/3.5
+$ vi ex.c
+void foo(mpz_t res,const mpz_t param,unsigned long n){
+  unsigned long i;
+  mpz_mul_ui(res,param,n);
+  for (i=1;i<n;i++){
+    mpz_add_ui(res,res,i*7);
+  }
+}
+
+int main(){
+  mpz_t r,n;
+  mpz_init(r);
+  mpz_init_set_str(n,"123456",0);
+  foo(r,n,20L);
+  gmp_printf("%Zd\n",r);
+  return 0;
+}
+
+[eric@almond 3.5]$ gdb a.out
+
+14		mpz_init(r);
+/ of	,
+(gdb) x/w r._mp_d
+0x602010:	0
+/ of	,	
+(gdb) p r._mp_d
+$7 = (mp_limb_t *) 0x602010
+(gdb) p *r._mp_d
+$8 = 0
+
+15		mpz_init_set_str(n,"123456",0);
+(gdb) p n
+$3 = {{
+    _mp_alloc = 2, 
+    _mp_size = 1, 
+    _mp_d = 0x602030
+  }}
+/ of	,
+(gdb) x/w n._mp_d
+0x602030:	123456
+/ of	,
+(gdb) p n._mp_d
+$5 = (mp_limb_t *) 0x602030
+(gdb) p *n._mp_d
+$6 = 123456
+
+(gdb) pt n
+type = struct {
+    int _mp_alloc;
+    int _mp_size;
+    mp_limb_t *_mp_d;
+} [1]
+
+(gdb) p &n
+$13 = (mpz_t *) 0x7fffffffd9e0
+
+
+  foo(r,n,20L);
+(gdb) s
+foo (res=0x7fffffffd9f0, param=0x7fffffffd9e0, n=20) at ex.c:6
+
+(gdb) p res
+$11 = (__mpz_struct *) 0x7fffffffd9f0
+(gdb) pt res
+type = struct {
+    int _mp_alloc;
+    int _mp_size;
+    mp_limb_t *_mp_d;
+} *
+
+6		mpz_mul_ui(res,param,n);
+(gdb) p *res._mp_d
+$16 = 2469120				/ klopt: 123456 * 20 
+
+ for (i=1;i<n;i++){
+    mpz_add_ui(res,res,i*7);
+  }
+/ je telt er eerst 7 bij op 	, dan 14	, ...
+/ dat 20 keer	,
+
+
+(gdb) p *res._mp_d
+$18 = 2469127
+(gdb) p *res._mp_d
+$19 = 2469141
+
+/t
+main () at ex.c:17
+  foo(r,n,20L);
+/d
+(gdb) p *r._mp_d		/ inderdaad	, call foo pass r bij ref	,
+$23 = 2470450
+
+ gmp_printf("%Zd\n",r);
+2470450
+
+
+For interest, the GMP types mpz_t etc are implemented as one-element arrays of certain structures. This is why declaring a variable creates an object with the fields GMP needs, but then using it as a parameter passes a pointer to the object. 
+
+
+/ 13	. 
+
+CFLAGS = -O2 -pedantic -fomit-frame-pointer -m64 -mtune=sandybridge -march=sandybridge
+
+[eric@almond gmp-6.1.2]$ bash --debugger configure ""
+ashdb<93> b 4090
+Breakpoint 2 set in file /home/eric/Devel/gmp/gmp-6.1.2/configure, line 4090.
+bashdb<94> c
+configure: WARNING: you should use --build, --host, --target
+checking build system type... ivybridge-pc-linux-gnu
+checking host system type... ivybridge-pc-linux-gnu
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether build environment is sane... yes
+checking for a thread-safe mkdir -p... /usr/bin/mkdir -p
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+checking whether make supports nested variables... yes
+checking whether to enable maintainer-specific portions of Makefiles... no
+Breakpoint 2 hit (1 times).
+(/home/eric/Devel/gmp/gmp-6.1.2/configure:4090):
+4090:	gcc_cflags="-O2 -pedantic"
+5531
+
+/Lees	, 
+      # Any user CFLAGS, even an empty string, takes precedence
+        if test "$test_CFLAGS" = set; then cflags=$CFLAGS; fi
+
+/ we proberen	,
+
+[eric@almond gmp-6.1.2]$ ./configure CFLAGS="-g -pedantic -fomit-frame-pointer -m64 -mtune=sandybridge -march=sandybridge" 
+
+/ of 
+
+[eric@almond gmp-6.1.2]$ CFLAGS="-g -pedantic -fomit-frame-pointer -m64 -mtune=sandybridge -march=sandybridge" ./configure
+
+[eric@almond gmp-6.1.2]$ make | tee LOG_make.txt
+[eric@almond gmp-6.1.2]$ make check | tee LOG_make_check.txt
+
+$ cd demos
+[eric@almond demos]$ make pexpr | tee LOG_make_pexpr.txt
+[eric@almond demos]$ ./pexpr 68^975+10
+49680949627732690685058008239182039930463625639491380862126485859510869500265590746635191130239455759350441317391105781176051383163953696096623401964190267257581076199348435527612099564192952664895521869808922084715440232906823000910599392730011530297242378359170817214805261408557191833889561977376694991182189092027796834839406885196893653749728726335877735339425769514809890427896630064970749745029812422319914354499295543904532513665520623008537882662204337718749663604033698005033961854304895443904333370653727056053497602799986602088383849020301006808773538704334233659790996184619147919479924753886925186837827135915118633668842997476917794907144718556765459416223783882235944884850523887015704924196775647896975570027717931675174341816080658407093998304815915526483771123108549408353322011581608089910721872517359213802884916984631511373987640310408116479043550885555547280256798461741228109807185786860956839504421611403186889310927383932520975172686347763720469052411137323688432222344759054323418970666877104492330999259966771028109046034812423721208532681325191431404230816408371925302968066521528790225487322018903692481963139092686233854295107470936918204135374142770081522606026003587607484835846384213552048265965819402724321974226736194876544670341271133753191810329105251940762740377801951583274924953328741862732543390022479261310003271463329323282099701828741164798817805369950532324325893450464437312118442909390377736813380046747954907150371760868951962536904305738389902208372788013778336373849183433570881217290988296932779721748480226128579081848424793547583807629446565611606573386713360833834799269088319924708523764737255235453768936751940979715132933017157019460711670588446592609547291568202802152735098559438039695913251598085167149028731629349457920786442
+
+[eric@almond demos]$ make primes | tee LOG_make_primes.txt
+/bin/sh ../libtool  --tag=CC   --mode=link gcc  -g -pedantic -fomit-frame-pointer -m64 -mtune=sandybridge -march=sandybridge   -o primes primes.o ../libgmp.la -lm 
+libtool: link: gcc -g -pedantic -fomit-frame-pointer -m64 -mtune=sandybridge -march=sandybridge -o .libs/primes primes.o  ../.libs/libgmp.so -lm -Wl,-rpath -Wl,/usr/local/lib
+
+[eric@almond demos]$ ./primes 15
+2
+3
+5
+7
+11
+13
+
+[eric@almond demos]$ make isprime | tee LOG_make_isprime.txt
+[eric@almond demos]$ ./isprime 14
+14 is composite
+[eric@almond demos]$ ./isprime 7
+7 is a prime
+
+[eric@almond demos]$ make factorize | tee LOG_make_factorize.txt
+gcc -DHAVE_CONFIG_H -I. -I..  -I..   -g -pedantic -fomit-frame-pointer -m64 -mtune=sandybridge -march=sandybridge -c -o factorize.o factorize.c
+/bin/sh ../libtool  --tag=CC   --mode=link gcc  -g -pedantic -fomit-frame-pointer -m64 -mtune=sandybridge -march=sandybridge   -o factorize factorize.o ../libgmp.la 
+libtool: link: gcc -g -pedantic -fomit-frame-pointer -m64 -mtune=sandybridge -march=sandybridge -o .libs/factorize factorize.o  ../.libs/libgmp.so -Wl,-rpath -Wl,/usr/local/lib
+
+[eric@almond demos]$ ./factorize 15
+15: 3 5
+[eric@almond demos]$ ./pexpr 2^100 | xargs ./factorize 
+1267650600228229401496703205376: 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+
+/ 7	 .
+
+/ Lees	,
+https://gmplib.org/manual/Integer-Functions.html#Integer-Functions
+
+/ 13	 
+
+/ we hadden open	 
+[eric@almond gmp-6.1.2]$ pwd
+/home/eric/Devel/gmp/gmp-6.1.2
+[eric@almond gmp-6.1.2]$ vi configure
+/ zochten naar CFLAGS
+
+
+/ 13	. 
+
+https://gmplib.org/manual/Simultaneous-Integer-Init-_0026-Assign.html#Simultaneous-Integer-Init-_0026-Assign
+
+5.3
+
+Function: void mpz_init_set (mpz_t rop, const mpz_t op)
+Function: void mpz_init_set_ui (mpz_t rop, unsigned long int op)		/ ui=unsigned int	,
+Function: void mpz_init_set_si (mpz_t rop, signed long int op)			/ si=signed int	, 
+Function: void mpz_init_set_d (mpz_t rop, double op)							/ d = double	,
+
+
+
+

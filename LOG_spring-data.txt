@@ -1,0 +1,31 @@
+/ 7	.
+
+[eric@almond Spring]$ pwd
+/home/eric/Devel/Java/Spring
+[eric@almond Spring]$ git clone https://github.com/spring-projects/spring-data-book.git
+
+/ in sts hebben we deze maven import	, 
+[eric@almond Eclipse]$ STS/sts-bundle/sts-3.8.2.RELEASE/STS 
+
+/ ERR bij tests	,
+spring-data book Failed to load ApplicationContext
+
+/ 7	. 
+
+/ lees	, 
+https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-integration-testing/
+/ TODO
+
+/ we hebben download het boek	
+https://www.petrikainulainen.net/wp-content/uploads/repository-integration-tests.pdf
+
+/ 7	. 
+
+/ Lees	, 
+http://projects.spring.io/spring-data/
+/ See	, 
+https://www.youtube.com/watch?v=sbPSjI4tt10&t=1466s	/ josh long spring data
+
+/ we zien GEEN @Repository	,  
+/ WH org.springframework.data.repository.Repository interface uit Spring Data	,
+

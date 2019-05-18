@@ -1,0 +1,4051 @@
+/ SELENIUM
+
+/ eclipse-jee-test
+/ ws wicket-testing
+/ in src/test/java XFramesTest.java
+/ in src/main/webapp FramesWithSeleniumPage.html, LinksWithSeleniumPage.html
+
+/ Geef in browser	,
+http://localhost:9090/wicket-testing/FramesWithSeleniumPage.html
+/ OK
+/ we zien FramesWithSeleniumPage.html	, met in elk frame een LinksWithSeleniumPage.html	, 
+
+requestUrl	"http://localhost:29999/session/13df524c7d466e5aab31baf54a8e9f57/element/0.984928360208869-1/click" (id=137)	
+
+
+
+/ Einde SELENIUM
+
+/ WICKET
+
+public class DefaultPageManagerProvider implements IPageManagerProvider
+	@Override
+	public IPageManager get(IPageManagerContext pageManagerContext)
+	{
+		IDataStore dataStore = newDataStore();
+
+		StoreSettings storeSettings = getStoreSettings();
+
+		if (dataStore.canBeAsynchronous())
+		{
+			int capacity = storeSettings.getAsynchronousQueueCapacity();
+			dataStore = new AsynchronousDataStore(dataStore, capacity);
+		}
+
+		IPageStore pageStore = newPageStore(dataStore);
+		return new PageStoreManager(application.getName(), pageStore, pageManagerContext);
+
+	}
+
+	protected IPageStore newPageStore(IDataStore dataStore)
+	{
+		int inmemoryCacheSize = getStoreSettings().getInmemoryCacheSize();
+		ISerializer pageSerializer = application.getFrameworkSettings().getSerializer();
+		return new DefaultPageStore(pageSerializer, dataStore, inmemoryCacheSize);
+	}
+
+	protected IDataStore newDataStore()
+	{
+		StoreSettings storeSettings = getStoreSettings();
+		Bytes maxSizePerSession = storeSettings.getMaxSizePerSession();
+		File fileStoreFolder = storeSettings.getFileStoreFolder();
+
+		return new DiskDataStore(application.getName(), fileStoreFolder, maxSizePerSession);
+	}
+
+public class DefaultPageStore extends AbstractCachingPageStore<DefaultPageStore.SerializedPage>
+
+	@Override
+	public void storePage(final String sessionId, final IManageablePage page)
+	{
+		SerializedPage serialized = createSerializedPage(sessionId, page);
+		if (serialized != null)
+		{
+			int pageId = page.getPageId();
+			pagesCache.storePage(sessionId, pageId, serialized);
+			storePageData(sessionId, pageId, serialized.getData());
+		}
+	}
+
+public class PageStoreManager extends AbstractPageManager
+/ TODO
+
+/ 7	.
+
+http://localhost:9090/wicket-testing
+
+LinkStudyTargetPage2
+
+/ Als we steeds Enter geven op url 	, dan
+http://localhost:9090/wicket-testing?0
+http://localhost:9090/wicket-testing?1
+http://localhost:9090/wicket-testing?2
+
+/ Als we de link click, die setResponsePage(LinkOnlyStudyPage.this ) doet	,  
+http://localhost:9090/wicket-testing?2
+http://localhost:9090/wicket-testing?2
+http://localhost:9090/wicket-testing?2
+...
+
+
+
+/ Einde WICKET
+
+/ DSVSOL-2716
+
+/ DEPLOY DSVFMS ON TEST/ACC/PROD
+
+/ 7	. 
+
+/ Als we dit niet doen, dan start scs niet	, 
+
+/ Lees comment DSVSOL-2739
+
+$ pwd
+/home/eric/Devel/Firebird/scripts/dsvfms/test-20160209
+$ vi  exec_deferred_events.sh
+#!/usr/bin/bash
+isql-fb -u sysdba -p masterkey mposerv8:/local/apps/firebird/dsvfms-20160209.fdb <<SQL
+
+delete from deferred_event_value dev where dev.DEFERRED_EVENT_SYSTEMID in (select SYSTEM_ID from DEFERRED_EVENT where created_on_date < '2016-02-05' and status = 'UNMATCHED');
+delete from DEFERRED_EVENT_IDENTIFIER dei where dei.DEFERRED_EVENT_SYSTEMID in (select SYSTEM_ID from DEFERRED_EVENT where created_on_date < '2016-02-05' and status = 'UNMATCHED');
+delete from deferred_event where created_on_date < '2016-02-05' and status = 'UNMATCHED';
+
+commit;
+SQL
+
+[eric@localhost test-20160209]$ chmod u+x exec_deferred_events.sh 
+
+[eric@localhost test-20160209]$ ./exec_deferred_events.sh 
+/ OK
+
+/ Ook (ingechecked)	,
+next to that I changed the following config in dsvfms.properties:
+module.event.deferred.event.purge.statusses=DISCARDED,MATCHED_EXPECTED,MATCHED_UNEXPECTED,UNMATCHED
+module.event.deferred.event.purge.offset=P1M
+module.event.deferred.event.purge.max=1000
+module.event.deferred.event.purge.interval=300000
+
+Above query should be done manually and with the date set to (current date - 1 month) when deploying to acc or prod.
+
+/ Ik heb 2 weken terug gedaan	, op 2016-01-21	,
+
+/ 7	. 
+
+/ check firebird-ds.xml	,
+
+$ dsvfms-ssh-t.sh
+$ sudo su - jboss
+$ vi deploy/firebird-ds.xml
+ <datasources>
+   <local-tx-datasource>
+     <jndi-name>tmsdevDS</jndi-name>
+        <connection-url>jdbc:firebirdsql://192.168.1.8//local/apps/firebird/dsvfms-20160209.fdb?no_result_set_tracking&amp;defaultResultSetHoldable=true&amp;columnLabelForName=true</connection-url>
+
+$ vi conf/application.properties	
+module.event.deferred.event.purge.statusses=DISCARDED,MATCHED_EXPECTED,MATCHED_UNEXPECTED,UNMATCHED
+module.event.deferred.event.purge.offset=P1M
+module.event.deferred.event.purge.max=1000
+module.event.deferred.event.purge.interval=300000
+/ OK	,
+
+
+
+
+
+/ 7	. 
+
+/ TODO
+
+/ Lees DSVSOL-2719
+
+MANUALLY_APPLIED:
+patch-364-fix-party-org-fk.sqlpatch-390-customer-order-line-detail.sql
+patch-390-customer-order-line-detail.sql
+patch-411-create_resource_binary.sql
+patch-459-price_cost_translation_privileges$firebird.sql
+SKIPPED:
+patch-389_productid_unique_constraint_drop.sql / was already done (probably by another patch) 
+patch-396-shi_shoid_uk.sql / PCT-4418
+patch-397-pi_shoid_uk.sql / PCT-4418
+patch-422-soc-correction-type-remove.sql / Need to discuss ( 8 views must be changed first).
+I saw an error, but probably in my firebird client I did not commit the previous manually applied patch, so probably is not an error, so set to 
+APPLIED:
+patch-061-invoice-header-status.sql
+
+
+/ DEPLOY TASKS. DEPLOY DSVFMS ON ACC
+
+/ SCS-1810
+/ xerces	,
+/ TODO
+
+/ SCS-3032
+[jboss@application-a dsvfms]$ rm ratecalc-listener-subscriber-service.xml 
+[jboss@application-a dsvfms]$ rm event-listener-subscriber-schedule-service.xml 
+
+/ SCS-3975
+
+/ See SCS-3909
+/ Download	,
+-rw-r-----. 1 eric eric       5438 Feb 19 10:23 hsqldb-jdbc2-service.xml
+-rw-r-----. 1 eric eric       3706 Feb 19 10:23 hsqldb-jdbc-state-service.xml
+/ Upload naar dsvfms-ssh-t	,
+[eric@localhost test-20160209]$ ssh eric@mposerv11 "mkdir Downloads2"
+[eric@localhost test-20160209]$ scp /home/eric/Downloads/hsqldb-jdbc2-service.xml /home/eric/Downloads/hsqldb-jdbc-state-service.xml eric@mposerv11:Downloads2
+/ Maar zijn hetzelfde als in deploy/jms	,
+
+$ vi conf/login-config.xml
+
+   <application-policy name = "jbossmq">
+        <authentication>
+            <login-module code = "org.jboss.security.auth.spi.DatabaseServerLoginModule" flag = "required">
+                <module-option name = "dsJndiName">java:/tmsdevDS</module-option>
+
+jboss@mposerv11:/local/apps/jboss-4.0.5.GA/server/dsvfms$ ls -l deploy/jms
+total 116
+-rw-rwxr-- 1 jboss jboss  5438 Dec 16 11:15 hsqldb-jdbc2-service.xml
+-rw-rwxr-- 1 jboss jboss  3706 Dec 16 11:15 hsqldb-jdbc-state-service.xml
+...
+
+/ SCS-4480  , 
+
+/ table cost_type kan ik niet drop  ,
+-there are 3 dependencies
+
+/ table rate_component_type with rct_group="COST' is a replacement for table cost_type, there will be a view cost_type on it	,
+/ table rate_component_type with rct_group="PRICE' is a replacement for table price_type, there will be a view price_type on it	,
+
+SQL> select rdb$dependent_name from rdb$dependencies where rdb$field_name='CODE' and rdb$depended_on_name='COST_TYPE';
+RDB$DEPENDENT_NAME                                                                            
+
+FREIGHT_COST_SHIPMENT                                                                         
+FUEL_COST_SHIPMENT                                                                            
+OTHER_COST_SHIPMENT  
+
+SQL> select rdb$dependent_name from rdb$dependencies where rdb$field_name='CODE' and rdb$depended_on_name='PRICE_TYPE';
+/ GEEN	,
+
+SQL> show view freight_cost_shipment;
+SHIPMENT_ORDER_SYSTEMID         INTEGER Nullable 
+AMOUNT                          DECIMAL(12, 5) Nullable 
+View Source:
+==== ======
+ 	SELECT SOCP.SHIPMENT_ORDER_SYSTEMID, SOCP.AMOUNT 
+	FROM SHIPMENT_ORDER_COST_PART SOCP 
+	JOIN SERVICE_ORDER_COST SOC ON SOC.SYSTEM_ID=SOCP.SERVICE_ORDER_COST_SYSTEMID 
+	WHERE SOC.COST_TYPE_SYSTEMID IN (
+		SELECT SYSTEM_ID 
+		FROM COST_TYPE 
+		WHERE CODE='FREIGHT')
+
+SQL> show view fuel_cost_shipment;
+SHIPMENT_ORDER_SYSTEMID         INTEGER Nullable 
+AMOUNT                          DECIMAL(12, 5) Nullable 
+View Source:
+==== ======
+ 	SELECT SOCP.SHIPMENT_ORDER_SYSTEMID, SOCP.AMOUNT 
+	FROM SHIPMENT_ORDER_COST_PART SOCP 
+	JOIN SERVICE_ORDER_COST SOC ON SOC.SYSTEM_ID=SOCP.SERVICE_ORDER_COST_SYSTEMID 
+	WHERE SOC.COST_TYPE_SYSTEMID IN (
+		SELECT SYSTEM_ID 
+		FROM COST_TYPE 
+		WHERE CODE='FUEL')
+
+SQL> show view other_cost_shipment;
+SHIPMENT_ORDER_SYSTEMID         INTEGER Expression
+AMOUNT                          BIGINT Expression
+View Source:
+==== ======
+  	SELECT SOCP.SHIPMENT_ORDER_SYSTEMID, sum(SOCP.AMOUNT) 
+	FROM SHIPMENT_ORDER_COST_PART SOCP 
+	JOIN SERVICE_ORDER_COST SOC ON SOC.SYSTEM_ID=SOCP.SERVICE_ORDER_COST_SYSTEMID 
+	WHERE SOC.COST_TYPE_SYSTEMID NOT IN (
+		SELECT SYSTEM_ID 
+		FROM COST_TYPE 
+		WHERE CODE='FREIGHT' 
+		OR CODE='FUEL') 
+	group by SOCP.SHIPMENT_ORDER_SYSTEMID
+
+SQL> show table cost_type;
+SYSTEM_ID                       INTEGER Nullable 
+CODE                            VARCHAR(50) Nullable 
+DESCRIPTION                     VARCHAR(100) Nullable 
+IS_DELETED                      SMALLINT Nullable DEFAULT 0
+REASON_MANDATORY                SMALLINT Nullable 
+SEQUENCE_NR                     INTEGER Nullable DEFAULT 0
+REASON_MANDATORY_               SMALLINT Nullable DEFAULT 0
+CONSTRAINT PK_COST_TYPE:
+  Primary key (SYSTEM_ID)
+
+SQL> show table price_type;
+SYSTEM_ID                       INTEGER Nullable 
+CODE                            VARCHAR(50) Nullable 
+DESCRIPTION                     VARCHAR(100) Nullable 
+IS_DELETED                      SMALLINT Nullable DEFAULT 0
+REASON_MANDATORY                SMALLINT Nullable 
+SEQUENCE_NR                     INTEGER Nullable DEFAULT 0
+CONSTRAINT PK_PRICE_TYPE:
+  Primary key (SYSTEM_ID)
+
+SQL> select count(*)from cost_type;
+
+       COUNT 
+============ 
+          63 
+
+SQL> select count(*)from price_type;
+
+       COUNT 
+============ 
+          65 
+
+/ Maar	,
+SQL> select count(*)  from rate_component_type where rct_group='COST';
+
+       COUNT 
+============ 
+          69 
+
+SQL> select count(*)  from rate_component_type where rct_group='PRICE';
+
+       COUNT 
+============ 
+          65 
+
+
+SQL> select *  from rate_component_type where system_id not in (select system_id from cost_type) and rct_group='COST';
+
+   SYSTEM_ID CODE                                               DESCRIPTION                                                                                          IS_DELETED REASON_MANDATORY  SEQUENCE_NR RCT_GROUP        
+============ ================================================== =============================================================================== ========== ================ ============ ================ 
+    72259472 WAITING DAYS                                       Waiting Days                                                                                                  0                0          550 COST             
+    93948754 HOME DELIVERY                                      Home Delivery                                                                                                 0                0          555 COST             
+    98169617 SECA                                               SECA surcharge                                                                                                0                0          560 COST             
+    99798198 CONVOY                                             Convoy                                                                                                        0                0          546 COST             
+   119594592 ROUNDING                                           Rounding                                                                                                      0                0           70 COST             
+   122137928 CAF-CUSTOMS                                        CAF-CUSTOMS                                                                                                   0                0            5 COST     
+/ TODO
+
+SQL> select count(*) from cost_type where code in ('WAITING DAYS','HOME DELIVERY','SECA','CONVOY','ROUNDING','CAF-CUSTOMS');
+
+       COUNT 
+============ 
+           0 
+
+[eric@localhost test-20160523]$ chmod u+x $(find  -name "*.sh")
+$ cd $SC-4480
+$ ./recreate-views.sh
+$ ./check-view.sh
+$ ./exec-scs-4480.sh
+/ er was geen table price_type	, maar OK	, er zijn ook geen views afhankelijk van price_type	,
+
+
+
+[eric@localhost SCS-4480]$ pwd
+/home/eric/Devel/Firebird/scripts/dsvfms/test-20160209/SCS-4480
+[eric@localhost SCS-4480]$ cat recreate-views.sh 
+#!/usr/bin/bash
+isql-fb -u sysdba -p masterkey mposerv8:/local/apps/firebird/dsvfms-20160209.fdb <<SQL
+
+recreate view freight_cost_shipment(shipment_order_systemid,amount) as
+    SELECT SOCP.SHIPMENT_ORDER_SYSTEMID, SOCP.AMOUNT
+    FROM SHIPMENT_ORDER_COST_PART SOCP
+    JOIN SERVICE_ORDER_COST SOC ON SOC.SYSTEM_ID=SOCP.SERVICE_ORDER_COST_SYSTEMID
+    WHERE SOC.COST_TYPE_SYSTEMID IN (
+        SELECT SYSTEM_ID 
+        FROM RATE_COMPONENT_TYPE
+        WHERE RCT_GROUP='COST'
+        AND CODE='FREIGHT');
+
+recreate view fuel_cost_shipment(shipment_order_systemid,amount) as
+    SELECT SOCP.SHIPMENT_ORDER_SYSTEMID, SOCP.AMOUNT
+    FROM SHIPMENT_ORDER_COST_PART SOCP
+    JOIN SERVICE_ORDER_COST SOC ON SOC.SYSTEM_ID=SOCP.SERVICE_ORDER_COST_SYSTEMID
+    WHERE SOC.COST_TYPE_SYSTEMID IN (
+        SELECT SYSTEM_ID
+        FROM RATE_COMPONENT_TYPE
+        WHERE RCT_GROUP='COST'
+        AND CODE='FUEL');
+
+recreate view other_cost_shipment(shipment_order_systemid,amount) as
+    SELECT SOCP.SHIPMENT_ORDER_SYSTEMID, sum(SOCP.AMOUNT)
+    FROM SHIPMENT_ORDER_COST_PART SOCP
+    JOIN SERVICE_ORDER_COST SOC ON SOC.SYSTEM_ID=SOCP.SERVICE_ORDER_COST_SYSTEMID
+    WHERE SOC.COST_TYPE_SYSTEMID NOT IN (
+        SELECT SYSTEM_ID
+        FROM RATE_COMPONENT_TYPE
+        WHERE RCT_GROUP='COST'
+        AND CODE='FREIGHT'
+        OR CODE='FUEL')
+    group by SOCP.SHIPMENT_ORDER_SYSTEMID;
+
+commit;
+SQL
+
+[eric@localhost SCS-4480]$ cat check-views.sh 
+#!/usr/bin/bash
+isql-fb -u sysdba -p masterkey mposerv8:/local/apps/firebird/dsvfms-20160209.fdb <<SQL
+
+select rdb\$dependent_name from rdb\$dependencies where rdb\$field_name='CODE' and rdb\$depended_on_name='COST_TYPE';
+select rdb\$dependent_name from rdb\$dependencies where rdb\$field_name='CODE' and rdb\$depended_on_name='PRICE_TYPE';
+
+rollback;
+SQL
+
+[eric@localhost SCS-4480]$ cat exec-scs-4480.sh 
+#!/usr/bin/bash
+isql-fb -u sysdba -p masterkey mposerv8:/local/apps/firebird/dsvfms-20160209.fdb <<SQL
+
+drop table cost_type;
+
+CREATE VIEW COST_TYPE (SYSTEM_ID, CODE, DESCRIPTION, IS_DELETED, REASON_MANDATORY, SEQUENCE_NR) AS
+    select rct.SYSTEM_ID,rct.CODE,rct.DESCRIPTION,rct.IS_DELETED, rct.REASON_MANDATORY, rct.SEQUENCE_NR
+    from RATE_COMPONENT_TYPE rct
+    where rct.RCT_GROUP = 'COST';
+
+GRANT ALL ON COST_TYPE TO PUBLIC;
+
+drop table price_type;
+
+CREATE VIEW PRICE_TYPE (SYSTEM_ID, CODE, DESCRIPTION, IS_DELETED, REASON_MANDATORY, SEQUENCE_NR) AS
+    select rct.SYSTEM_ID,rct.CODE,rct.DESCRIPTION,rct.IS_DELETED, rct.REASON_MANDATORY, rct.SEQUENCE_NR
+    from RATE_COMPONENT_TYPE rct
+    where rct.RCT_GROUP = 'PRICE';
+
+GRANT ALL ON PRICE_TYPE TO PUBLIC;
+
+commit;
+SQL
+
+/ Nu zien we in beide gevallen 4 rows meer	, 
+
+SQL> select count(*)from cost_type;
+
+       COUNT 
+============ 
+          67 
+/ TODO
+
+SQL> select count(*)from price_type;
+
+       COUNT 
+============ 
+          62 
+/ TODO
+
+
+SCS-4418
+/ See	,
+/ Ad SCS-4418
+
+
+/ SCS-2703
+[jboss@application-a dsvfms]$ rm oms-listener-subscriber-schedule-service.xml 
+
+
+/ SCS-3443
+[jboss@application-a dsvfms]$ rm omscarcon-fetch-carcon-events-service.xml 
+
+/ SCS-3172
+/ niets	,
+
+/ SCS-2286
+/ niets, is OK
+
+/ SCS-2694
+[eric@localhost dsvfms]$ scp deploy/jbossweb-tomcat55.sar/catalina.jar vanderveldene@application-a.intermax.mp-objects.com:
+/ op application-a	,
+[vanderveldene@application-a ~]$ ls -l
+-rw-r--r-- 1 vanderveldene vanderveldene  649860 Jan 21 15:46 catalina.jar
+[jboss@application-a ~]$ cp ~vanderveldene/catalina.jar /local/apps/jboss-4.0.5.GA/server/dsvfms/deploy/jbossweb-tomcat55.sar/ 
+[jboss@application-a ~]$ md5sum /local/apps/jboss-4.0.5.GA/server/dsvfms/deploy/jbossweb-tomcat55.sar/catalina.jar 
+a62c6aa65f92cb76c3f0509fd37d5d03 
+
+
+/ SCS-4534
+/ al	,
+
+/ SCS-4891
+/ Gedaan	,
+
+/ Einde DEPLOY TASKS DEPLOY DSVFMS ON ACC
+
+/ NOTES DEPLOY TASKS DEPLOY DSVFMS ON ACC
+
+/ op test	,
+select count(distinct shipment_order_systemid)
+from ( 
+	select shipment_order_systemid 
+	from shipment_item 
+	group by shipment_order_systemid, shipment_item_id 
+	having count(1)>1
+);
+
+select shipment_order_systemid, shipment_item_id, count(1) 
+from shipment_item 
+group by shipment_order_systemid, shipment_item_id 
+having count(1)>1;
+
+SQL> select  system_id,shipment_order_systemid, shipment_item_id  
+	from shipment_item 
+	where SHIPMENT_ORDER_SYSTEMID=11551839;
+
+   SYSTEM_ID SHIPMENT_ORDER_SYSTEMID SHIPMENT_ITEM_ID                                                                 
+============ ======================= ======================
+    11551843                11551839 1                                                                                
+    11551844                11551839 2                                                                                
+    11551845                11551839 3                                                                                
+    11551846                11551839 4                                                                                
+    11551847                11551839 5                                                                                
+    11552379                11551839 1           
+
+select system_id,shipment_order_systemid,shipment_item_id
+from shipment_item
+group by shipment_order_systemid,shipment_item_id
+having count(*)>1
+/ ERR
+
+select system_id,shipment_order_systemid,shipment_item_id 
+from shipment_item
+where shipment_order_systemid in 
+(select shipment_order_systemid
+from shipment_item
+group by shipment_order_systemid,shipment_item_id
+having count(*)>1)
+and shipment_order_systemid=11551839
+/ we zien alle shipment_item's bij een sho	, die duplicate shipment_item_id's heeft	,
+/ we willen alleen die shi's zien bij de sho, die duplicate shi_id's heeft,	
+/ TODO MICHEL
+
+/ we kunnen in de select alle columns geven die in de group by staat	, 
+/ als we hierboven system_id in 
+
+/ we moeten NIET NU	, 
+SCS-4891
+DSVFMS - Modify reports for patch-422-soc-correction-type-remove
+/ Later WEL	,
+
+
+/ Einde NOTES DEPLOY TASKS DEPLOY DSVFMS ON ACC
+
+/ DEPLOY DSVFMS ON ACC
+
+[eric@localhost tmp]$ scp eric@mposerv11:$(ssh eric@mposerv11 2>/dev/null "cd /local/apps/releases;find \$(pwd)  | grep 21224") .
+/ OK
+/ we moeten het hele path van de file hebben	,
+[eric@localhost tmp]$ tail -1 < <(ls -ltr)
+/=
+[eric@localhost tmp]$ ls -ltr | tail -1
+-rw-rw-r--.  1 eric     eric     36629008 Jan 21 16:45 tms-dsvfms-21224-2015.03_build3263.zip
+
+[eric@localhost tmp]$ tail -1 <(ls -ltr)
+/ dan ook	,
+
+/ Intermezzo 
+
+jboss@mposerv11:~/releases$ (cd /local/apps/releases/;grep 21224 <(find $(pwd)))
+/local/apps/releases/tms-dsvfms-21224-2015.03_build3263.zip
+
+/ we willen ook de size erbij
+/ TODO
+
+/ TODO 
+/ Afmaken	,
+
+/ Einde Intermezzo 
+
+[eric@localhost tmp]$ scp tms-dsvfms-21224-2015.03_build3263.zip vanderveldene@application-a.intermax.mp-objects.com:
+tms-dsvfms-21224-2015.03_build3263.zip                                         100%   35MB   2.2MB/s   00:16    
+
+/ 7	. 
+
+/ op dsvfms db on test	,
+SQL> SELECT rdb$Procedure_name as "Procedure Name" FROM rdb$procedures;
+
+Procedure Name                                                                                
+=============================================================================== 
+MAINTENANCE_SELECTIVITY                                                                       
+GET_SHIPMENT_ORDER_IDS                                                                        
+GET_MARK_NUMBERS      
+
+DROP_RELATION_IF_EXISTS                                                                       
+DROP_PROCEDURE_IF_EXISTS                                                                      
+COST_PRICE_PRIVILEGES                                                                         
+RM_SHIPMENT_ITEM_ID_DUPS                                                                      
+RM_TMS_PRODUCT_ITEM_ID_DUPS                                                                   
+
+/ 7	. 
+
+/ we proberen het local	,
+
+[eric@localhost dsvfms]$ pwd
+/home/eric/Devel/Firebird/scripts/dsvfms
+[eric@localhost dsvfms]$ ls 
+local  test  
+
+/ we kijken met de hand	,
+
+[eric@localhost Dsvfms]$ isql-fb -user sysdba -password masterkey /home/eric/DB_TAP/Firebird/Dsvfms/dsvfms.fdb_20151019-000019.fdb
+Database:  /home/eric/DB_TAP/Firebird/Dsvfms/dsvfms.fdb_20151019-000019.fdb, User: sysdba
+SQL> select count(distinct shipment_order_systemid)
+CON> from (
+CON>     select shipment_order_systemid
+CON>     from shipment_item
+CON>     group by shipment_order_systemid, shipment_item_id
+CON>     having count(1)>1
+CON> );
+
+       COUNT 
+============ 
+           0 
+
+SQL> show procedures;
+...
+/ of	
+SQL> SELECT rdb$Procedure_name as "Procedure Name" FROM rdb$procedures;
+
+Procedure Name                                                                                
+=============================================================================== 
+MAINTENANCE_SELECTIVITY                                                                       
+GET_SHIPMENT_ORDER_IDS                                                                        
+COST_PRICE_PRIVILEGES                                                                         
+GET_MARK_NUMBERS                                                                              
+
+DROP_RELATION_IF_EXISTS                                                                       
+DROP_PROCEDURE_IF_EXISTS                                                                      
+RM_SHIPMENT_ITEM_ID_DUPS                                                                      
+RM_TMS_PRODUCT_ITEM_ID_DUPS                                                                   
+STATS_DEFER_EVNT                                                                              
+CHECK_RM_SHIPMENT_ITEM_ID_DUPS     
+ 
+/ 7	.
+
+/ Lees LOG_29_sep_2015.txt	,
+
+/ bij	,  902 / FIX CHANGE SHIPMENT ITEM ID
+
+/ Ad SCS-4418
+
+$ pwd
+/home/eric/Devel/Firebird/scripts/dsvfms/local/SCS-4418
+/home/eric/Devel/Firebird/scripts/dsvfms/test/SCS-4418
+/home/eric/Devel/Firebird/scripts/dsvfms/test-20160209/SCS-4418
+
+/ In test-20160209, we run	,
+[eric@localhost test-20160209]$ target-db-in-scripts.sh 
+
+[eric@localhost bin]$ cat target-db-in-scripts.sh 
+#!/usr/bin/bash
+
+for f in $(find -name "*.sh");do awk '/^isql-fb/{$0="isql-fb -u sysdba -p masterkey mposerv8:/local/apps/firebird/dsvfms-20160209.fdb <<SQL"}{print}' "$f"  >tmp;mv tmp "$f";done
+chmod u+x $(find -name "*.sh")
+
+[eric@localhost test]$ ./def_drops2.sh					/ ERRs geeft NIET	, -Procedure DROP_RELATION_IF_EXISTS not found, ...
+[eric@localhost test]$ ./def_rm_dups_shi_fms.sh 
+[eric@localhost test]$ ./exec_rm_dups_shi_fms.sh 		/ duurt 
+[eric@localhost test]$ ./exec_chk_rm_dups_shi_fms_2.sh
+[eric@localhost test]$ ./exec_patch-396.sh
+
+[eric@localhost local]$ ./def_rm_dups_pri_fms.sh
+[eric@localhost local]$ ./exec_rm_dups_pri_fms.sh
+[eric@localhost local]$ ./exec_chk_rm_dups_pri_fms_2.sh
+[eric@localhost local]$ ./exec_patch-397.sh
+
+[eric@localhost local]$ ./exec_update_mpo_scs_patch.sh 
+
+/ als we ./exec_rm_dups_shi_fms.sh opnieuw willen doen, moeten we eerst  de unique constraint die exec_patch-396.sh erop heeft set, 	eraf halen	,
+SQL> alter table shipment_item
+CON> drop constraint shi_id_sho_uk;
+
+/ 7	. 
+
+/ see LOG_29_sep_2015.txt, 
+/ (902) FIX CHANGE SHIPMENT ITEM ID 
+/ CHANGE PRODUCT ITEM ID
+/ (945) FIX CHANGE PRODUCT ITEM ID
+
+/ PATCH-396-SHI_SHOID_UK.SQL
+/ TODO
+
+[eric@localhost dsvfms]$ cp -a test acc
+[eric@localhost dsvfms]$ cd acc
+[eric@localhost acc]$ cat  set_db_location_in_all_scripts.sh 
+#!/usr/bin/bash
+for f in $(find -name "*.sh")
+do awk '/^isql-fb/{$0="isql-fb -u sysdba -p +qjweLrf database-a.intermax.mp-objects.com:/local/apps/firebird/dsvfms.fdb <<SQL"}{print}' "$f"  >tmp;mv tmp "$f";chmod u+x "$f";done
+
+[eric@localhost acc]$ ./set_db_location_in_all_scripts.sh 
+
+[eric@localhost acc]$ ./def_drops2.sh 
+Statement failed, SQLSTATE = 42000
+unsuccessful metadata update
+-Procedure DROP_RELATION_IF_EXISTS not found
+Statement failed, SQLSTATE = 42000
+unsuccessful metadata update
+-Procedure DROP_PROCEDURE_IF_EXISTS not found
+[eric@localhost acc]$ ./def_drops2.sh 
+
+[eric@localhost acc]$ ./def_rm_dups_shi_fms.sh 
+[eric@localhost acc]$ ./exec_rm_dups_shi_fms.sh 
+[eric@localhost acc]$ ./exec_chk_rm_dups_shi_fms_2.sh
+[eric@localhost acc]$ ./exec_patch-396.sh
+
+[eric@localhost acc]$ ./def_rm_dups_pri_fms.sh
+[eric@localhost acc]$ ./exec_rm_dups_pri_fms.sh
+[eric@localhost acc]$ ./exec_chk_rm_dups_pri_fms_2.sh
+[eric@localhost acc]$ ./exec_patch-397.sh
+
+[eric@localhost acc]$ ./exec_update_mpo_scs_patch.sh 
+/ TODO
+
+/ 7	.
+
+[jboss@application-a releases]$ cp -a ~vanderveldene/tms-dsvfms-21224-2015.03_build3263.zip .
+jboss@mposerv11:~/releases$ deploy-dsvfms.sh /local/apps/releases/tms-dsvfms-21224-2015.03_build3263.zip /local/apps/jboss-4.0.5.GA/server/dsvfms/
+
+[jboss@application-a releases]$ dsvfms start track
+
+/ op laptop	, 
+
+/ let op dat je de $ escape	, \$	, niet vanwege ssh	, maar omdat het command van ssh tussen "" staat	,
+
+[eric@localhost bin]$ echo $(ssh vanderveldene@application-a.intermax.mp-objects.com "awk '/MUST_BE_REMOVED/ && /.jar/ && / 14:57:31/{print \$8}' /local/apps/jboss-4.0.5.GA/server/dsvfms/log/server.log")
+activeio-core-3.1.2.jar activemq-core-5.3.0.jar activemq-pool-5.3.0.jar activemq-ra-5.3.0.jar antlr.jar aspectjrt.jar aspectjweaver.jar bcprov-jdk16-139.jar commons-codec-1.4.jar commons-io.jar commons-lang-2.4.jar commons-pool.jar ehcache-1.5.0.jar hibernate-annotations.jar hibernate3.jar javassist.jar jaybird-2.2.4.jar joda-time-2.2.jar joda-time-hibernate-1.2.jar log4j-over-slf4j-1.4.2.jar quartz-1.6.0.jar slf4j-api-1.4.2.jar slf4j-log4j12-1.4.2.jar spring-agent.jar spring-aop.jar spring-aspects.jar spring-beans.jar spring-context-support.jar spring-context.jar spring-core.jar spring-jdbc.jar spring-jms_mpo.jar spring-orm.jar spring-test.jar spring-tomcat-weaver.jar spring-tx.jar spring-web.jar spring-webmvc-portlet.jar spring-webmvc.jar wicket-1.4.19.jar wicket-auth-roles-1.4.19.jar wicket-datetime-1.4.19.jar wicket-devutils-1.4.19.jar wicket-extensions-1.4.19.jar wicket-spring-1.4.19.jar wiquery-1.2.3.jar
+
+[eric@localhost bin]$ echo $(ssh vanderveldene@application-a.intermax.mp-objects.com "awk '/MISSING/ && /.jar/ && / 14:57:31/{print \$8}' /local/apps/jboss-4.0.5.GA/server/dsvfms/log/server.log")
+activeio-core-3.1.4.jar activemq-broker-5.10.2.jar activemq-client-5.10.2.jar activemq-kahadb-store-5.10.2.jar activemq-openwire-legacy-5.10.2.jar activemq-protobuf-1.1.jar activemq-spring-5.10.2.jar antlr-2.7.6.jar aspectjweaver-1.7.4.jar bcprov-jdk15on-1.52.jar commons-codec-1.9.jar commons-csv-1.1.jar commons-io-2.4.jar commons-lang-2.6.jar commons-lang3-3.3.2.jar commons-pool-1.5.7.jar disruptor-3.3.0.jar ehcache-2.10.0.jar esapi-2.0.1.jar hawtbuf-1.10.jar hibernate-jpa-2.0-api-1.0.0.Final.jar hibernate3.6.10.mpo.1.jar jackson-annotations-2.6.0.jar jackson-core-2.6.0.jar jackson-databind-2.6.0.jar javassist-3.12.0.GA.jar jaybird-full-2.1.6.jar joda-time-2.3.jar joda-time-hibernate-1.3.jar jta-1.1.jar kahadb-5.3.0.jar not-yet-commons-ssl-0.3.9.jar opensaml-2.6.1.jar openws-1.5.1.jar postgresql-9.4-1200.jdbc4.jar quartz-1.8.6.jar rtcalltree-0.1.0-SNAPSHOT.jar slf4j-api-1.6.1.jar slf4j-log4j12-1.6.1.jar spring-aop-3.2.14.RELEASE.jar spring-aspects-3.2.14.RELEASE.jar spring-beans-3.2.14.RELEASE.jar spring-context-3.2.14.RELEASE.jar spring-context-support-3.2.14.RELEASE.jar spring-core-3.2.14.RELEASE.jar spring-expression-3.2.14.RELEASE.jar spring-jdbc-3.2.14.RELEASE.jar spring-jms-3.2.14.RELEASE.jar spring-orm-3.2.14.RELEASE.jar spring-security-config-3.2.8.RELEASE.jar spring-security-core-3.2.8.RELEASE.jar spring-security-saml2-core-1.0.1.RELEASE.jar spring-security-web-3.2.8.RELEASE.jar spring-test-3.2.14.RELEASE.jar spring-tx-3.2.14.RELEASE.jar spring-web-3.2.14.RELEASE.jar velocity-1.7.jar wicket-1.4.23.jar wicket-auth-roles-1.4.23.jar wicket-datetime-1.4.23.jar wicket-extensions-1.4.23.jar wiquery-1.2.3.2-20150604.122120-1.jar xbean-spring-3.18.jar xmlsec-1.5.6.jar xmltooling-1.4.1.jar
+
+[eric@localhost dsvfms]$ pwd
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvfms
+
+[eric@localhost dsvfms]$ (cd lib;ls $(ssh vanderveldene@application-a.intermax.mp-objects.com "awk '/MISSING/ && /.jar/ && / 14:57:31/{print \$8}' /local/apps/jboss-4.0.5.GA/server/dsvfms/log/server.log"))
+/ OK
+[eric@localhost dsvfms]$ (cd lib;scp $(ssh vanderveldene@application-a.intermax.mp-objects.com "awk '/MISSING/ && /.jar/ && / 14:57:31/{print \$8}' /local/apps/jboss-4.0.5.GA/server/dsvfms/log/server.log") vanderveldene@application-a.intermax.mp-objects.com:Downloads2)
+activeio-core-3.1.4.jar                                                                                 100%  100KB 100.2KB/s   00:00    
+activemq-broker-5.10.2.jar                                                                              100% 1013KB   1.0MB/s   00:00    
+activemq-client-5.10.2.jar                                                                              100% 1151KB   1.1MB/s   00:00    
+...
+
+/ scripts die vanuit laptop sudo su - jboss	, en de MUST_BE_REMOVED files rm	, en de MISSING files in dsvfms/lib set	,
+/ TODO
+
+/ we gaan naar application-a	,
+
+/ check	,
+[vanderveldene@application-a ~]$ (cd /local/apps/jboss-4.0.5.GA/server/dsvfms/lib;ls -1 $(awk '/MUST_BE_REMOVED/ && /.jar/ && / 14:57:31/{print $8}' /local/apps/jboss-4.0.5.GA/server/dsvfms/log/server.log) | wc -l)
+46
+[vanderveldene@application-a ~]$ (cd /local/apps/jboss-4.0.5.GA/server/dsvfms/lib;ls -1 $(awk '/MUST_BE_REMOVED/ && /.jar/ && / 14:57:31/{print $8}' /local/apps/jboss-4.0.5.GA/server/dsvfms/log/server.log) | grep 'No such file' ) 
+/ leeg, OK	,
+
+[vanderveldene@application-a ~]$ (cd /local/apps/jboss-4.0.5.GA/server/dsvfms/lib;rm -f $(awk '/MUST_BE_REMOVED/ && /.jar/ && / 14:57:31/{print $8}' /local/apps/jboss-4.0.5.GA/server/dsvfms/log/server.log) )
+/ OK
+/ TODO (vanderveldene kan files rm uit /local/apps/jboss-4.0.5.GA/server/dsvfms/lib	)
+
+[vanderveldene@application-a ~]$  sudo su - jboss
+[jboss@application-a ~]$ cp -a  ~vanderveldene/Downloads2/* /local/apps/jboss-4.0.5.GA/server/dsvfms/lib
+
+/ 7	. 
+
+[jboss@application-a ~]$ dsvfms start track
+
+
+2016-01-22 16:12:17,466 INFO  [org.jboss.ejb.plugins.jms.JMSContainerInvoker] (JMSContainerInvoker(InvoiceMatchMDB) Reconnect:) Waiting for reconnect internal 10000ms for InvoiceMatchMDB
+2016-01-22 16:12:17,471 INFO  [org.jboss.ejb.plugins.jms.JMSContainerInvoker] (JMSContainerInvoker(ReportGeneratorMDB) Reconnect:) Trying t reconnect to JMS provider for ReportGeneratorMDB
+2016-01-22 16:12:17,458 INFO  [org.jboss.ejb.plugins.jms.JMSContainerInvoker] (JMSContainerInvoker(MailMDB) Reconnect:) Waiting for reconnect internal 10000ms for MailMDB
+/
+org.jboss.deployment.DeploymentException: Error during queue setup; - nested throwable: (javax.jms.JMSSecurityException: Connection not authorized to subscribe to destination: REPORTGENERATOR.QUEUE)
+org.jboss.deployment.DeploymentException: Error during queue setup; - nested throwable: (javax.jms.JMSSecurityException: Connection not authorized to subscribe to destination: INVOICEMATCH.QUEUE)
+org.jboss.deployment.DeploymentException: Error during queue setup; - nested throwable: (javax.jms.JMSSecurityException: Connection not authorized to subscribe to destination: MAIL.QUEUE)
+/ TODO
+
+/ RM
+
+2016-01-22 16:12:35,574 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-363-cost-old-corrtype$firebird.sql]: 
+2016-01-22 16:12:35,574 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) ALTER TABLE SERVICE_ORDER_COST DROP CORRECTION_TYPE
+2016-01-22 16:12:35,574 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.firebirdsql.jdbc.FBSQLException: GDS Exception. 335544351. unsuccessful metadata update
+cannot delete
+COLUMN SERVICE_ORDER_COST.CORRECTION_TYPE
+there are 8 dependencies, error code: HY000
+Reason: unsuccessful metadata update
+cannot delete
+COLUMN SERVICE_ORDER_COST.CORRECTION_TYPE
+there are 8 dependencies
+2016-01-22 16:12:35,584 ERROR [com.mpobjects.dbpatch.DatabasePatchService] (main:) Error while patching database
+
+/ MAANDAGOCHTEND
+/ Kijk in eclipse naar orig def	,
+/ Zoek in eclipse naar COSTS_STATUS_PER_SHIPMENT	, FREIGHT_PRICE_SHIPMENT 
+
+/ Lees	,
+LOG_29_sep_2015.txt	, (7838)	,
+
+/ PATCHES
+
+/ patch-422-soc-correction-type-remove.sql 
+
+/ 7	. 
+
+/ 8 oude views	,
+
+/ op productie	, waar nog de oude 8 views zijn , 
+
+SQL>  select * from RDB$DEPENDENCIES where rdb$field_name ='CORRECTION_TYPE_SYSTEMID';
+
+RDB$DEPENDENT_NAME                                                                            RDB$DEPENDED_ON_NAME                                                                          RDB$FIELD_NAME                                                                                RDB$DEPENDENT_TYPE RDB$DEPENDED_ON_TYPE 
+=============================================================================== =============================================================================== =============================================================================== ================== ==================== 
+COSTS_STATUS_PER_SHIPMENT                                                                     SERVICE_ORDER_COST                                                                            CORRECTION_TYPE_SYSTEMID                                                                                       1                    0 
+FREIGHT_DEL_COST_SHIPMENT                                                                     SERVICE_ORDER_COST                                                                            CORRECTION_TYPE_SYSTEMID                                                                                       1                    0 
+FREIGHT_LIN_COST_SHIPMENT                                                                     SERVICE_ORDER_COST                                                                            CORRECTION_TYPE_SYSTEMID                                                                                       1                    0 
+FUEL_DEL_COST_SHIPMENT                                                                        SERVICE_ORDER_COST                                                                            CORRECTION_TYPE_SYSTEMID                                                                                       1                    0 
+OTHER_LIN_COST_SHIPMENT                                                                       SERVICE_ORDER_COST                                                                            CORRECTION_TYPE_SYSTEMID                                                                                       1                    0 
+COSTS_PER_SHIPMENT                                                                            SERVICE_ORDER_COST                                                                            CORRECTION_TYPE_SYSTEMID                                                                                       1                    0 
+FUEL_LIN_COST_SHIPMENT                                                                        SERVICE_ORDER_COST                                                                            CORRECTION_TYPE_SYSTEMID                                                                                       1                    0 
+OTHER_DEL_COST_SHIPMENT                                                                       SERVICE_ORDER_COST                                                                            CORRECTION_TYPE_SYSTEMID                                                                                       1                    0 
+
+
+$ vi file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2015.03/dsvfms/dsvfms/src/sql/patch/patch-011_report_view-costactualestimated.sql 
+
+RECREATE VIEW COSTS_STATUS_PER_SHIPMENT (SHIPMENT_ORDER_SYSTEMID, ACTUAL_COSTS, ESTIMATED_COSTS)
+AS SELECT SHO.SYSTEM_ID AS SHIPMENT_ORDER_SYSTEMID,
+SUM(CASE WHEN socp.status = 'ACTUAL' THEN 
+(CASE CT.NAME WHEN 'ADD' THEN SOCP.AMOUNT WHEN 'SUBTRACT' THEN (-1*SOCP.AMOUNT) ELSE 0 END)
+ ELSE null END
+) AS ACTUAL_COSTS,
+SUM (CASE WHEN socp.status = 'ESTIMATED' THEN 
+(CASE CT.NAME WHEN 'ADD' THEN SOCP.AMOUNT WHEN 'SUBTRACT' THEN (-1*SOCP.AMOUNT) ELSE 0 END)
+ ELSE null END
+) AS ESTIMATED_COSTS
+FROM SHIPMENT_ORDER SHO
+JOIN SHIPMENT_ORDER_COST_PART SOCP ON SOCP.SHIPMENT_ORDER_SYSTEMID=SHO.SYSTEM_ID
+JOIN SERVICE_ORDER_COST SOC ON SOC.SYSTEM_ID=SOCP.SERVICE_ORDER_COST_SYSTEMID
+JOIN CORRECTION_TYPE CT ON SOC.CORRECTION_TYPE_SYSTEMID = CT.SYSTEM_ID
+WHERE SOCP.IS_DELETED = 0
+GROUP BY SHO.SYSTEM_ID;
+
+$ vi file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2015.03/dsvfms/dsvfms/src/sql/patch/patch-024_modified_shipment_cost_views.sql 
+
+----------------
+
+RECREATE VIEW FREIGHT_DEL_COST_SHIPMENT (SHIPMENT_ORDER_SYSTEMID, STATUS, AMOUNT)
+AS SELECT SOCP.SHIPMENT_ORDER_SYSTEMID, SOCP.STATUS, SUM(CASE CT.NAME WHEN 'ADD' THEN SOCP.AMOUNT WHEN 'SUBTRACT' THEN (-1*SOCP.AMOUNT) ELSE 0 END)
+FROM SHIPMENT_ORDER_COST_PART SOCP
+JOIN SERVICE_ORDER_COST SOC ON SOC.SYSTEM_ID=SOCP.SERVICE_ORDER_COST_SYSTEMID
+JOIN CORRECTION_TYPE CT ON SOC.CORRECTION_TYPE_SYSTEMID = CT.SYSTEM_ID
+JOIN SERVICE_ORDER SO ON SO.SYSTEM_ID=SOC.SERVICE_ORDER_SYSTEMID
+JOIN SERVICE_ORDER_TYPE SOT ON SO.SERVICE_ORDER_TYPE_SYSTEMID=SOT.SYSTEM_ID
+WHERE SOCP.IS_DELETED = 0 AND SOC.COST_TYPE_SYSTEMID IN (SELECT SYSTEM_ID FROM RATE_COMPONENT_TYPE WHERE CODE='FREIGHT' AND RCT_GROUP='COST') AND SOT.SERVICE_ORDER_TYPE='DELIVERY' GROUP BY SOCP.SHIPMENT_ORDER_SYSTEMID, SOCP.STATUS;
+
+GRANT DELETE, INSERT, REFERENCES, SELECT, UPDATE ON FREIGHT_DEL_COST_SHIPMENT TO  SYSDBA WITH GRANT OPTION;
+
+-------------
+
+RECREATE VIEW FREIGHT_LIN_COST_SHIPMENT (SHIPMENT_ORDER_SYSTEMID, STATUS, AMOUNT)
+AS SELECT SOCP.SHIPMENT_ORDER_SYSTEMID, SOCP.STATUS, SUM(CASE CT.NAME WHEN 'ADD' THEN SOCP.AMOUNT WHEN 'SUBTRACT' THEN (-1*SOCP.AMOUNT) ELSE 0 END)
+FROM SHIPMENT_ORDER_COST_PART SOCP
+JOIN SERVICE_ORDER_COST SOC ON SOC.SYSTEM_ID=SOCP.SERVICE_ORDER_COST_SYSTEMID
+JOIN CORRECTION_TYPE CT ON SOC.CORRECTION_TYPE_SYSTEMID = CT.SYSTEM_ID
+JOIN SERVICE_ORDER SO ON SO.SYSTEM_ID=SOC.SERVICE_ORDER_SYSTEMID
+JOIN SERVICE_ORDER_TYPE SOT ON SO.SERVICE_ORDER_TYPE_SYSTEMID=SOT.SYSTEM_ID
+WHERE SOCP.IS_DELETED = 0 AND SOC.COST_TYPE_SYSTEMID IN (SELECT SYSTEM_ID FROM RATE_COMPONENT_TYPE WHERE CODE='FREIGHT' AND RCT_GROUP='COST') AND SOT.SERVICE_ORDER_TYPE='LINEHAUL' GROUP BY SOCP.SHIPMENT_ORDER_SYSTEMID, SOCP.STATUS;
+
+GRANT DELETE, INSERT, REFERENCES, SELECT, UPDATE ON FREIGHT_LIN_COST_SHIPMENT TO  SYSDBA WITH GRANT OPTION;
+
+-------------
+
+RECREATE VIEW FUEL_DEL_COST_SHIPMENT (SHIPMENT_ORDER_SYSTEMID, STATUS, AMOUNT)
+AS SELECT SOCP.SHIPMENT_ORDER_SYSTEMID, SOCP.STATUS, SUM(CASE CT.NAME WHEN 'ADD' THEN SOCP.AMOUNT WHEN 'SUBTRACT' THEN (-1*SOCP.AMOUNT) ELSE 0 END)
+FROM SHIPMENT_ORDER_COST_PART SOCP
+JOIN SERVICE_ORDER_COST SOC ON SOC.SYSTEM_ID=SOCP.SERVICE_ORDER_COST_SYSTEMID
+JOIN CORRECTION_TYPE CT ON SOC.CORRECTION_TYPE_SYSTEMID = CT.SYSTEM_ID
+JOIN SERVICE_ORDER SO ON SO.SYSTEM_ID=SOC.SERVICE_ORDER_SYSTEMID
+JOIN SERVICE_ORDER_TYPE SOT ON SO.SERVICE_ORDER_TYPE_SYSTEMID=SOT.SYSTEM_ID
+WHERE SOCP.IS_DELETED = 0 AND SOC.COST_TYPE_SYSTEMID IN (SELECT SYSTEM_ID FROM RATE_COMPONENT_TYPE WHERE CODE='FUEL' AND RCT_GROUP='COST') AND SOT.SERVICE_ORDER_TYPE='DELIVERY' GROUP BY SOCP.SHIPMENT_ORDER_SYSTEMID, SOCP.STATUS;
+
+GRANT DELETE, INSERT, REFERENCES, SELECT, UPDATE ON FUEL_DEL_COST_SHIPMENT TO  SYSDBA WITH GRANT OPTION;
+
+-------------
+
+RECREATE VIEW OTHER_LIN_COST_SHIPMENT (SHIPMENT_ORDER_SYSTEMID, STATUS, AMOUNT)
+AS SELECT SOCP.SHIPMENT_ORDER_SYSTEMID, SOCP.STATUS, SUM(CASE CT.NAME WHEN 'ADD' THEN SOCP.AMOUNT WHEN 'SUBTRACT' THEN (-1*SOCP.AMOUNT) ELSE 0 END)
+FROM SHIPMENT_ORDER_COST_PART SOCP
+JOIN SERVICE_ORDER_COST SOC ON SOC.SYSTEM_ID=SOCP.SERVICE_ORDER_COST_SYSTEMID
+JOIN CORRECTION_TYPE CT ON SOC.CORRECTION_TYPE_SYSTEMID = CT.SYSTEM_ID
+JOIN SERVICE_ORDER SO ON SO.SYSTEM_ID=SOC.SERVICE_ORDER_SYSTEMID
+JOIN SERVICE_ORDER_TYPE SOT ON SO.SERVICE_ORDER_TYPE_SYSTEMID=SOT.SYSTEM_ID
+WHERE SOCP.IS_DELETED = 0 AND SOC.COST_TYPE_SYSTEMID NOT IN (SELECT SYSTEM_ID FROM RATE_COMPONENT_TYPE WHERE CODE='FREIGHT' OR CODE='FUEL' AND RCT_GROUP='COST') AND SOT.SERVICE_ORDER_TYPE='LINEHAUL' GROUP BY SOCP.SHIPMENT_ORDER_SYSTEMID, SOCP.STATUS;
+
+GRANT DELETE, INSERT, REFERENCES, SELECT, UPDATE ON OTHER_LIN_COST_SHIPMENT TO  SYSDBA WITH GRANT OPTION;
+
+---------------
+
+RECREATE VIEW COSTS_PER_SHIPMENT (SHIPMENT_ORDER_SYSTEMID, STATUS, COSTS)
+AS SELECT SHO.SYSTEM_ID AS SHIPMENT_ORDER_SYSTEMID, SOCP.STATUS, SUM(CASE CT.NAME WHEN 'ADD' THEN SOCP.AMOUNT WHEN 'SUBTRACT' THEN (-1*SOCP.AMOUNT) ELSE 0 END) AS COSTS 
+FROM SHIPMENT_ORDER SHO
+JOIN SHIPMENT_ORDER_COST_PART SOCP ON SOCP.SHIPMENT_ORDER_SYSTEMID=SHO.SYSTEM_ID
+JOIN SERVICE_ORDER_COST SOC ON SOC.SYSTEM_ID=SOCP.SERVICE_ORDER_COST_SYSTEMID
+JOIN CORRECTION_TYPE CT ON SOC.CORRECTION_TYPE_SYSTEMID = CT.SYSTEM_ID
+WHERE SOCP.IS_DELETED = 0
+GROUP BY SHO.SYSTEM_ID, SOCP.STATUS;
+
+GRANT DELETE, INSERT, REFERENCES, SELECT, UPDATE ON COSTS_PER_SHIPMENT TO  SYSDBA WITH GRANT OPTION;
+
+---------------
+
+CREATE VIEW FUEL_LIN_COST_SHIPMENT (SHIPMENT_ORDER_SYSTEMID, STATUS, AMOUNT)
+AS SELECT SOCP.SHIPMENT_ORDER_SYSTEMID, SOCP.STATUS, SUM(CASE CT.NAME WHEN 'ADD' THEN SOCP.AMOUNT WHEN 'SUBTRACT' THEN (-1*SOCP.AMOUNT) ELSE 0 END)
+FROM SHIPMENT_ORDER_COST_PART SOCP
+JOIN SERVICE_ORDER_COST SOC ON SOC.SYSTEM_ID=SOCP.SERVICE_ORDER_COST_SYSTEMID
+JOIN CORRECTION_TYPE CT ON SOC.CORRECTION_TYPE_SYSTEMID = CT.SYSTEM_ID
+JOIN SERVICE_ORDER SO ON SO.SYSTEM_ID=SOC.SERVICE_ORDER_SYSTEMID
+JOIN SERVICE_ORDER_TYPE SOT ON SO.SERVICE_ORDER_TYPE_SYSTEMID=SOT.SYSTEM_ID
+WHERE SOCP.IS_DELETED = 0 AND SOC.COST_TYPE_SYSTEMID IN (SELECT SYSTEM_ID FROM RATE_COMPONENT_TYPE WHERE CODE='FUEL' AND RCT_GROUP='COST') AND SOT.SERVICE_ORDER_TYPE='LINEHAUL' GROUP BY SOCP.SHIPMENT_ORDER_SYSTEMID, SOCP.STATUS;
+
+GRANT DELETE, INSERT, REFERENCES, SELECT, UPDATE ON FUEL_LIN_COST_SHIPMENT TO  SYSDBA WITH GRANT OPTION;
+
+-------------
+
+RECREATE VIEW OTHER_DEL_COST_SHIPMENT (SHIPMENT_ORDER_SYSTEMID, STATUS, AMOUNT)
+AS SELECT SOCP.SHIPMENT_ORDER_SYSTEMID, SOCP.STATUS, SUM(CASE CT.NAME WHEN 'ADD' THEN SOCP.AMOUNT WHEN 'SUBTRACT' THEN (-1*SOCP.AMOUNT) ELSE 0 END)
+FROM SHIPMENT_ORDER_COST_PART SOCP
+JOIN SERVICE_ORDER_COST SOC ON SOC.SYSTEM_ID=SOCP.SERVICE_ORDER_COST_SYSTEMID
+JOIN CORRECTION_TYPE CT ON SOC.CORRECTION_TYPE_SYSTEMID = CT.SYSTEM_ID
+JOIN SERVICE_ORDER SO ON SO.SYSTEM_ID=SOC.SERVICE_ORDER_SYSTEMID
+JOIN SERVICE_ORDER_TYPE SOT ON SO.SERVICE_ORDER_TYPE_SYSTEMID=SOT.SYSTEM_ID
+WHERE SOCP.IS_DELETED = 0 AND SOC.COST_TYPE_SYSTEMID NOT IN (SELECT SYSTEM_ID FROM RATE_COMPONENT_TYPE WHERE CODE='FREIGHT' OR CODE='FUEL' AND RCT_GROUP='COST') AND SOT.SERVICE_ORDER_TYPE='DELIVERY' GROUP BY SOCP.SHIPMENT_ORDER_SYSTEMID, SOCP.STATUS;
+
+GRANT DELETE, INSERT, REFERENCES, SELECT, UPDATE ON OTHER_DEL_COST_SHIPMENT TO  SYSDBA WITH GRANT OPTION;
+
+/ Nu	,
+SQL> select * from RDB$DEPENDENCIES where rdb$field_name ='CORRECTION_TYPE_SYSTEMID';
+/ LEEG	,
+
+/ 7	.
+
+
+
+
+
+SQL> show view COSTS_STATUS_PER_SHIPMENT;
+SHIPMENT_ORDER_SYSTEMID         INTEGER Expression
+ACTUAL_COSTS                    BIGINT Expression
+ESTIMATED_COSTS                 BIGINT Expression
+View Source:
+==== ======
+ SELECT SHO.SYSTEM_ID AS SHIPMENT_ORDER_SYSTEMID,
+SUM(CASE WHEN socp.status = 'ACTUAL' THEN 
+(CASE CT.NAME WHEN 'ADD' THEN SOCP.AMOUNT WHEN 'SUBTRACT' THEN (-1*SOCP.AMOUNT) ELSE 0 END)
+ ELSE null END
+) AS ACTUAL_COSTS,
+SUM (CASE WHEN socp.status = 'ESTIMATED' THEN 
+(CASE CT.NAME WHEN 'ADD' THEN SOCP.AMOUNT WHEN 'SUBTRACT' THEN (-1*SOCP.AMOUNT) ELSE 0 END)
+ ELSE null END
+) AS ESTIMATED_COSTS
+FROM SHIPMENT_ORDER SHO
+JOIN SHIPMENT_ORDER_COST_PART SOCP ON SOCP.SHIPMENT_ORDER_SYSTEMID=SHO.SYSTEM_ID
+JOIN SERVICE_ORDER_COST SOC ON SOC.SYSTEM_ID=SOCP.SERVICE_ORDER_COST_SYSTEMID
+JOIN CORRECTION_TYPE CT ON SOC.CORRECTION_TYPE_SYSTEMID = CT.SYSTEM_ID
+WHERE SOCP.IS_DELETED = 0
+GROUP BY SHO.SYSTEM_ID
+
+/ op acc hebben we al de nieuwe view	,
+
+SQL> show view COSTS_STATUS_PER_SHIPMENT;
+SHIPMENT_ORDER_SYSTEMID         INTEGER Expression
+ACTUAL_COSTS                    BIGINT Expression
+ESTIMATED_COSTS                 BIGINT Expression
+View Source:
+==== ======
+ SELECT SHO.SYSTEM_ID AS SHIPMENT_ORDER_SYSTEMID,
+SUM(CASE WHEN socp.status = 'ACTUAL' THEN
+(CASE soc.correction_type WHEN 'ADD' THEN SOCP.AMOUNT WHEN 'SUBTRACT' THEN (-1*SOCP.AMOUNT) ELSE 0 END)
+ ELSE null END
+) AS ACTUAL_COSTS,
+SUM (CASE WHEN socp.status = 'ESTIMATED' THEN
+(CASE soc.correction_type WHEN 'ADD' THEN SOCP.AMOUNT WHEN 'SUBTRACT' THEN (-1*SOCP.AMOUNT) ELSE 0 END)
+ ELSE null END
+) AS ESTIMATED_COSTS
+FROM SHIPMENT_ORDER SHO
+JOIN SHIPMENT_ORDER_COST_PART SOCP ON SOCP.SHIPMENT_ORDER_SYSTEMID=SHO.SYSTEM_ID
+JOIN SERVICE_ORDER_COST SOC ON SOC.SYSTEM_ID=SOCP.SERVICE_ORDER_COST_SYSTEMID
+WHERE SOCP.IS_DELETED = 0
+GROUP BY SHO.SYSTEM_ID
+
+
+
+/ 7	. 
+
+/ we set eerst de views van patch-422-soc-correction-type-remove.sql terug	,
+
+$ less ./dsvfms/dsvfms/src/sql/patch/patch-011_report_view-costactualestimated.sql
+
+VIEW COSTS_STATUS_PER_SHIPMENT
+
+$ less ./dsvfms/dsvfms/src/sql/patch/patch-024_modified_shipment_cost_views.sql
+
+VIEW FUEL_DEL_COST_SHIPMENT
+VIEW FUEL_LIN_COST_SHIPMENT 
+VIEW FREIGHT_LIN_COST_SHIPMENT
+VIEW OTHER_DEL_COST_SHIPMENT
+VIEW OTHER_LIN_COST_SHIPMENT
+VIEW COSTS_PER_SHIPMENT
+VIEW FREIGHT_DEL_COST_SHIPMENT 
+
+/ Einde RM
+
+/ 7	. 
+
+/ Lees	,
+https://system.mp-objects.com/xwiki/bin/view/Technology/Deployment+dsvfms+2015.03+to+test
+
+patch-364-fix-party-org-fk.sql:
+/ Deze zien we nu niet	, op acc	,
+/ TODO
+
+/ 7	.
+
+/ Patch error	,
+2016-01-25 10:17:31,447 INFO  [com.mpobjects.dbpatch.DataBasePatcher] (main:) Executing patch [oms/patch-389_productid_unique_constraint_drop.sql] ...
+2016-01-25 10:17:31,470 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-389_productid_unique_constraint_drop.sql]: 
+2016-01-25 10:17:31,470 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) alter table product drop constraint PRODUCTID_UK
+2016-01-25 10:17:31,470 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.firebirdsql.jdbc.FBSQLException: GDS Exception. 335544351. unsuccessful metadata update
+CONSTRAINT PRODUCTID_UK does not exist.
+
+SQL> update mpo_scs_patch set status='SKIPPED' where name='patch-389_productid_unique_constraint_drop.sql';
+SQL> commit;
+
+/ 7. 
+
+/ we kunnen ook	,
+[jboss@application-a ~]$ dsvfms stack | less
+[jboss@application-a ~]$ dsvfms log
+/ TODO
+
+/ 7	. 
+
+2016-01-25 10:39:27,627 INFO  [com.mpobjects.dbpatch.DataBasePatcher] (main:) Executing patch [oms/patch-390-customer-order-line-detail.sql] ...
+2016-01-25 10:39:27,704 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-390-customer-order-line-detail.sql]: 
+2016-01-25 10:39:27,704 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) ALTER TABLE CUSTOMER_ORDER_LINE ADD CONSTRAINT CUSTOMER_ORDER_LINE_PK PRIMARY KEY (SYSTEM_ID)
+2016-01-25 10:39:27,704 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.firebirdsql.jdbc.FBSQLException: GDS Exception. 335544351. unsuccessful metadata update
+STORE RDB$RELATION_CONSTRAINTS failed
+
+/ Dit ging OK	,
+CREATE TABLE CUSTOMER_ORDER_LINE_DETAIL
+(
+   ENTITY_SYSTEMID integer NOT NULL,
+   EDT_SYSTEMID integer NOT NULL,
+   FIELD_VALUE varchar(255),
+   CONSTRAINT PK_CUSTOMER_ORDER_LINE_DETAIL PRIMARY KEY (ENTITY_SYSTEMID, EDT_SYSTEMID)
+);
+
+/ Doe met de hand	, 
+
+ALTER TABLE CUSTOMER_ORDER_LINE_DETAIL
+ADD CONSTRAINT COLD_COL_FK FOREIGN KEY (ENTITY_SYSTEMID) REFERENCES CUSTOMER_ORDER_LINE (SYSTEM_ID);
+ALTER TABLE CUSTOMER_ORDER_LINE_DETAIL
+ADD CONSTRAINT COLD_EDT_FK FOREIGN KEY (EDT_SYSTEMID) REFERENCES ENTITY_DETAIL_TYPE (SYSTEM_ID);
+
+update  mpo_scs_patch set status='MANUALLY_APPLIED' where name='patch-390-customer-order-line-detail.sql';
+commit;
+
+/ 7. 	
+
+2016-01-25 10:46:27,291 INFO  [com.mpobjects.dbpatch.DataBasePatcher] (main:) Executing patch [oms/patch-391-product_add_shippingunit.sql] .
+..
+2016-01-25 10:46:27,324 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-391-
+product_add_shippingunit.sql]: 
+2016-01-25 10:46:27,324 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) ALTER TABLE SHIPPING_UNIT ADD CONSTRAINT SHIPPING_UNIT_PK PRIM
+ARY KEY (SYSTEM_ID)
+2016-01-25 10:46:27,324 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.firebirdsql.jdbc.FBSQLException: GDS Exception. 335544351.
+ unsuccessful metadata update
+Index SHIPPING_UNIT_PK already exists
+
+update mpo_scs_patch set status='SKIPPED' where name='patch-391-product_add_shippingunit.sql';
+commit;
+
+/ 7	.
+
+$ dsvfms start track
+^c
+shift f / resume,
+
+/ 7	. 
+
+2016-01-25 10:58:03,603 INFO  [com.mpobjects.dbpatch.DataBasePatcher] (main:) Patch [oms/patch-396-entity-log-blob$oracle.sql] not needed fo
+r DB [Firebird]
+2016-01-25 10:58:03,616 INFO  [com.mpobjects.dbpatch.DataBasePatcher] (main:) Patch [oms/patch-396-entity-log-blob$postgresql.sql] not neede
+d for DB [Firebird]
+2016-01-25 10:58:03,629 INFO  [com.mpobjects.dbpatch.DataBasePatcher] (main:) Executing patch [oms/patch-396-shi_shoid_uk.sql] ...
+2016-01-25 10:58:03,647 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-396-
+shi_shoid_uk.sql]: 
+2016-01-25 10:58:03,647 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) alter table SHIPMENT_ITEM
+add constraint SHI_ID_SHO_UK
+unique (SHIPMENT_ORDER_SYSTEMID, SHIPMENT_ITEM_ID)
+2016-01-25 10:58:03,647 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.firebirdsql.jdbc.FBSQLException: GDS Exception. 335544351.
+ unsuccessful metadata update
+Index SHI_ID_SHO_UK already exists
+
+update mpo_scs_patch set status='SKIPPED'  where name='patch-396-shi_shoid_uk.sql';
+commit;
+
+/ 7	. 
+
+2016-01-25 11:01:13,406 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-397-
+pi_shoid_uk.sql]: 
+2016-01-25 11:01:13,406 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) alter table TMS_PRODUCT_ITEM
+add constraint TPI_ID_SHO_UK
+unique (SHIPMENT_ORDER_SYSTEMID, PRODUCT_ITEM_ID)
+2016-01-25 11:01:13,406 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.firebirdsql.jdbc.FBSQLException: GDS Exception. 335544351.
+ unsuccessful metadata update
+Index TPI_ID_SHO_UK already exists
+
+update mpo_scs_patch set status='SKIPPED'  where name='patch-397-pi_shoid_uk.sql';
+commit;
+
+/ 7	. 
+
+2016-01-25 11:20:52,419 INFO  [com.mpobjects.dbpatch.DataBasePatcher] (main:) Executing patch [oms/patch-411-create_resource_binary.sql] ...
+2016-01-25 11:20:52,467 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-411-create_resource_binary.sql]: 
+2016-01-25 11:20:52,467 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) ALTER TABLE RESOURCE_BINARY ADD CONSTRAINT FK_RB_R FOREIGN KEY
+(RESOURCE_SYSTEMID) REFERENCES CTP_RESOURCE(SYSTEM_ID)
+2016-01-25 11:20:52,467 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.firebirdsql.jdbc.FBSQLException: GDS Exception. 335544351.
+ unsuccessful metadata update
+Table CTP_RESOURCE not found
+
+/ Doe wat er in notes staat	,
+
+/ 7	. 
+
+2016-01-25 11:38:08,236 INFO  [com.mpobjects.dbpatch.DataBasePatcher] (main:) Executing patch [oms/patch-422-soc-correction-type-remove.sql]
+ ...
+2016-01-25 11:38:08,258 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-422-
+soc-correction-type-remove.sql]: 
+2016-01-25 11:38:08,258 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) 
+
+alter table cost_component_specification drop correction_type_systemid
+2016-01-25 11:38:08,259 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.firebirdsql.jdbc.FBSQLException: GDS Exception. 335544351.
+ unsuccessful metadata update
+cannot delete
+COLUMN SERVICE_ORDER_COST.CORRECTION_TYPE_SYSTEMID
+there are 8 dependencies, error code: HY000
+Reason: unsuccessful metadata update
+cannot delete
+COLUMN SERVICE_ORDER_COST.CORRECTION_TYPE_SYSTEMID
+there are 8 dependencies
+
+SQL> select * from RDB$DEPENDENCIES where rdb$field_name ='CORRECTION_TYPE_SYSTEMID';
+
+RDB$DEPENDENT_NAME                                                                            RDB$DEPENDED_ON_NAME                                                                          RDB$FIELD_NAME                                                                                RDB$DEPENDENT_TYPE RDB$DEPENDED_ON_TYPE 
+=============================================================================== =============================================================================== =============================================================================== ================== ==================== 
+COSTS_STATUS_PER_SHIPMENT                                                                     SERVICE_ORDER_COST                                                                            CORRECTION_TYPE_SYSTEMID                                                                                       1                    0 
+FUEL_DEL_COST_SHIPMENT                                                                        SERVICE_ORDER_COST                                                                            CORRECTION_TYPE_SYSTEMID                                                                                       1                    0 
+FUEL_LIN_COST_SHIPMENT                                                                        SERVICE_ORDER_COST                                                                            CORRECTION_TYPE_SYSTEMID                                                                                       1                    0 
+FREIGHT_LIN_COST_SHIPMENT                                                                     SERVICE_ORDER_COST                                                                            CORRECTION_TYPE_SYSTEMID                                                                                       1                    0 
+OTHER_DEL_COST_SHIPMENT                                                                       SERVICE_ORDER_COST                                                                            CORRECTION_TYPE_SYSTEMID                                                                                       1                    0 
+OTHER_LIN_COST_SHIPMENT                                                                       SERVICE_ORDER_COST                                                                            CORRECTION_TYPE_SYSTEMID                                                                                       1                    0 
+COSTS_PER_SHIPMENT                                                                            SERVICE_ORDER_COST                                                                            CORRECTION_TYPE_SYSTEMID                                                                                       1                    0 
+FREIGHT_DEL_COST_SHIPMENT                                                                     SERVICE_ORDER_COST                                                                            CORRECTION_TYPE_SYSTEMID                                                                                       1                    0 
+
+/ rewrite deze 8 views zoals in notes,	
+
+/ 7	. 
+
+2016-01-25 11:54:03,906 INFO  [com.mpobjects.dbpatch.DataBasePatcher] (main:) Executing patch [oms/patch-459-price_cost_translation_privileges$firebird.sql] ...
+2016-01-25 11:54:03,940 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-459-price_cost_translation_privileges$firebird.sql]: 
+2016-01-25 11:54:03,940 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) INSERT INTO BUSINESS_OBJECT (SYSTEM_ID, NAME, DESCRIPTION, IS_DELETED) VALUES (GEN_ID(SYSID,1), 'price-type-translation', 'Pricetype Translation', 0)
+2016-01-25 11:54:03,940 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.firebirdsql.jdbc.FBSQLException: GDS Exception. 335544665.  violation of PRIMARY or UNIQUE KEY constraint "BUS_OBJ_UK" on table "BUSINESS_OBJECT"
+/ doe wat in de notes staat	,
+
+/ 7	. 
+
+2016-01-25 12:20:10,257 INFO  [com.mpobjects.dbpatch.DataBasePatcher] (main:) Executing patch [invoice/patch-061-invoice-header-status.sql] 
+...
+2016-01-25 12:20:10,956 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [invoice/patch-061-invoice-header-status.sql]: 
+2016-01-25 12:20:10,956 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) DROP TABLE INVOICE_HEADER_STATUS
+2016-01-25 12:20:10,956 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.firebirdsql.jdbc.FBSQLException: GDS Exception. 335544351. unsuccessful metadata update
+object INVOICE_HEADER_STATUS is in use, error code: HY000
+Reason: unsuccessful metadata update
+object INVOICE_HEADER_STATUS is in use
+
+/ 7	. 
+
+ DSVSOL-2719
+
+/ 7     . 
+
+/ Als we een DSV-NL-MDK sho open        , 
+
+/ open de error msg in devtools ,
+
+<div style="display: none;" id="details">
+        ...
+                java.lang.IllegalArgumentException
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.lang.reflect.Method.invoke(Method.java:606)
+        at org.hibernate.property.BasicPropertyAccessor$BasicSetter.set(BasicPropertyAccessor.java:66)
+        at org.hibernate.tuple.entity.AbstractEntityTuplizer.setPropertyValues(AbstractEntityTuplizer.java:583)
+        at org.hibernate.tuple.entity.PojoEntityTuplizer.setPropertyValues(PojoEntityTuplizer.java:229)
+        at org.hibernate.persister.entity.AbstractEntityPersister.setPropertyValues(AbstractEntityPersister.java:3848)
+        at org.hibernate.engine.TwoPhaseLoad.initializeEntity(TwoPhaseLoad.java:152)
+        at org.hibernate.loader.Loader.initializeEntitiesAndCollections(Loader.java:982)
+        at org.hibernate.loader.Loader.doQuery(Loader.java:857)
+        at org.hibernate.loader.Loader.doQueryAndInitializeNonLazyCollections(Loader.java:274)
+        at org.hibernate.loader.Loader.loadEntity(Loader.java:2037)
+        at org.hibernate.loader.entity.AbstractEntityLoader.load(AbstractEntityLoader.java:86)
+        at org.hibernate.loader.entity.AbstractEntityLoader.load(AbstractEntityLoader.java:76)
+        at org.hibernate.loader.entity.AbstractEntityLoader.load(AbstractEntityLoader.java:69)
+        at org.hibernate.loader.entity.BatchingEntityLoader.load(BatchingEntityLoader.java:113)
+        at org.hibernate.persister.entity.AbstractEntityPersister.load(AbstractEntityPersister.java:3294)
+        at org.hibernate.event.def.DefaultLoadEventListener.loadFromDatasource(DefaultLoadEventListener.java:496)
+        at org.hibernate.event.def.DefaultLoadEventListener.doLoad(DefaultLoadEventListener.java:477)
+        at org.hibernate.event.def.DefaultLoadEventListener.load(DefaultLoadEventListener.java:227)
+        at org.hibernate.event.def.DefaultLoadEventListener.onLoad(DefaultLoadEventListener.java:147)
+        at org.hibernate.impl.SessionImpl.fireLoad(SessionImpl.java:1090)
+        at org.hibernate.impl.SessionImpl.immediateLoad(SessionImpl.java:1026)
+        at org.hibernate.proxy.AbstractLazyInitializer.initialize(AbstractLazyInitializer.java:176)
+        at org.hibernate.proxy.AbstractLazyInitializer.getImplementation(AbstractLazyInitializer.java:215)
+        at org.hibernate.proxy.pojo.javassist.JavassistLazyInitializer.invoke(JavassistLazyInitializer.java:190)
+->      at com.mpobjects.oms.model.entity.CustomerOrderLine_$$_javassist_153.getCustomerOrder(CustomerOrderLine_$$_javassist_153.java)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.lang.reflect.Method.invoke(Method.java:606)
+        at org.apache.commons.el.ArraySuffix.evaluate(ArraySuffix.java:314)
+        at org.apache.commons.el.ComplexValue.evaluate(ComplexValue.java:145)
+        at org.apache.commons.el.ExpressionEvaluatorImpl.evaluate(ExpressionEvaluatorImpl.java:263)
+        at org.apache.commons.el.ExpressionEvaluatorImpl.evaluate(ExpressionEvaluatorImpl.java:190)
+        at org.apache.jasper.runtime.PageContextImpl.proprietaryEvaluate(PageContextImpl.java:917)
+->      at org.apache.jsp.tag.web.oms.sho_002dproductitems_tag._jspx_meth_c_if_50(sho_002dproductitems_tag.java:3280)
+        at org.apache.jsp.tag.web.oms.sho_002dproductitems_tag._jspx_meth_c_otherwise_1(sho_002dproductitems_tag.java:3204)
+        at org.apache.jsp.tag.web.oms.sho_002dproductitems_tag._jspx_meth_c_choose_1(sho_002dproductitems_tag.java:2984)
+        at org.apache.jsp.tag.web.oms.sho_002dproductitems_tag._jspx_meth_mpo_setFormVO_0(sho_002dproductitems_tag.java:2393)
+        at org.apache.jsp.tag.web.oms.sho_002dproductitems_tag._jspx_meth_c_forEach_0(sho_002dproductitems_tag.java:245)
+        at org.apache.jsp.tag.web.oms.sho_002dproductitems_tag.doTag(sho_002dproductitems_tag.java:187)
+        at org.apache.jsp.oms.jsp.shipment_002dorder_005fedit_jsp._jspx_meth_tmstags_sho$1productitems_0(shipment_002dorder_005fedit_jsp.java:7925)
+        at org.apache.jsp.oms.jsp.shipment_002dorder_005fedit_jsp._jspx_meth_mpo_tab_6(shipment_002dorder_005fedit_jsp.java:7900)
+        at org.apache.jsp.oms.jsp.shipment_002dorder_005fedit_jsp._jspx_meth_c_if_78(shipment_002dorder_005fedit_jsp.java:7869)
+        at org.apache.jsp.oms.jsp.shipment_002dorder_005fedit_jsp._jspx_meth_mpo_tabCollection_1(shipment_002dorder_005fedit_jsp.java:7241)
+        at org.apache.jsp.oms.jsp.shipment_002dorder_005fedit_jsp._jspService(shipment_002dorder_005fedit_jsp.java:642)
+
+[eric@localhost oms]$ pwd
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvfms/work/jboss.web/localhost/tms/org/apache/jsp/tag/web/oms
+[eric@localhost oms]$ vi sho_002dproductitems_tag.java 
+...
+        out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.proprietaryEvaluate("${currentItem.customerOrderLine.customerOrder.customerOrderNumber}", java.lang.String.class, (PageContext)this.getJspContext(), null, false));
+
+$ vi sho-productitems.tag
+
+                                        <c:otherwise>
+                                                <c:if test="${cf:property('oms', 'customerorder.fields.hidden', 'true')=='false'}">
+                                                        <td>${currentItem.originalCustomerOrderId}</td>
+                                                        <td>${currentItem.originalCustomerOrderLineId}</td>
+210:                                            <td>${currentItem.customerOrderLine.customerOrder.customerOrderNumber}</td>
+                                                        <td>${currentItem.customerOrderLine.customerOrderLineId}</td>
+                                                        <td>${currentItem.customerOrderLine.quantity}</td>
+                                                </c:if>
+
+
+SH001824676
+
+select ...
+from CUSTOMER_ORDER_LINE customeror0_ where customeror0_.SYSTEM_ID=?
+2016-01-26 12:29:27,944 DEBUG [org.hibernate.type.descriptor.sql.BasicBinder] (http-0.0.0.0-8080-1:) binding parameter [1] as [INTEGER] - 61541552
+2016-01-26 12:29:27,944 DEBUG [org.hibernate.type.descriptor.sql.BasicExtractor] (http-0.0.0.0-8080-1:) found [08051876] as column [CUSTOMER2_49_0_]
+2016-01-26 12:29:27,945 DEBUG [org.hibernate.type.descriptor.sql.BasicExtractor] (http-0.0.0.0-8080-1:) found [null] as column [QUANTITY49_0_]
+
+SQL> select CUSTOMER_ORDER_SYSTEMID from customer_order_line where system_id= 61541552; 
+
+CUSTOMER_ORDER_SYSTEMID 
+======================= 
+               61541551 
+
+/ 7     . 
+
+Edit Source Lookup Path...
+External archive
+ ~/Downloads/hibernate-core-3.6.10.Final-sources.jar
+/ OK
+
+/ bij breakpoints is er een icon Add Java exception breakpoint  ,
+Kies IllegalArgumentException   ,
+
+Daemon Thread [http-0.0.0.0-8080-8] (Suspended (exception IllegalArgumentException))    
+        NativeMethodAccessorImpl.invoke0(Method, Object, Object[]) line: not available [native method]  
+        NativeMethodAccessorImpl.invoke(Object, Object[]) line: 57      
+        DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: 43  
+        Method.invoke(Object, Object...) line: 606      
+        BasicPropertyAccessor$BasicSetter.set(Object, Object, SessionFactoryImplementor) line: 66       
+                        try {
+                                method.invoke( target, value );
+this    BasicPropertyAccessor$BasicSetter  (id=17192)   
+        clazz   Class (com.mpobjects.oms.model.entity.CustomerOrderLine) (id=11396)     
+        method  Method  (id=17191)      
+public void com.mpobjects.oms.model.entity.CustomerOrderLine.setDeleted(boolean)
+        propertyName    "deleted" (id=17476)    
+target  CustomerOrderLine  (id=17277)   
+
+
+        PojoEntityTuplizer(AbstractEntityTuplizer).setPropertyValues(Object, Object[]) line: 583        
+        PojoEntityTuplizer.setPropertyValues(Object, Object[]) line: 229        
+        SingleTableEntityPersister(AbstractEntityPersister).setPropertyValues(Object, Object[], EntityMode) line: 3848  
+        TwoPhaseLoad.initializeEntity(Object, boolean, SessionImplementor, PreLoadEvent, PostLoadEvent) line: 152       
+        EntityLoader(Loader).initializeEntitiesAndCollections(List, Object, SessionImplementor, boolean) line: 982      
+        EntityLoader(Loader).doQuery(SessionImplementor, QueryParameters, boolean) line: 857    
+        EntityLoader(Loader).doQueryAndInitializeNonLazyCollections(SessionImplementor, QueryParameters, boolean) line: 274     
+        EntityLoader(Loader).loadEntity(SessionImplementor, Object, Type, Object, String, Serializable, EntityPersister, LockOpti
+ons) line: 2037        
+        EntityLoader(AbstractEntityLoader).load(SessionImplementor, Object, Object, Serializable, LockOptions) line: 86 
+        EntityLoader(AbstractEntityLoader).load(Serializable, Object, SessionImplementor, LockOptions) line: 76 
+        EntityLoader(AbstractEntityLoader).load(Serializable, Object, SessionImplementor) line: 69      
+        BatchingEntityLoader.load(Serializable, Object, SessionImplementor, LockOptions) line: 113      
+        SingleTableEntityPersister(AbstractEntityPersister).load(Serializable, Object, LockOptions, SessionImplementor) line: 3294      
+        DefaultLoadEventListener.loadFromDatasource(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType) line: 496
+        
+        DefaultLoadEventListener.doLoad(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType) line: 477    
+        DefaultLoadEventListener.load(LoadEvent, EntityPersister, EntityKey, LoadEventListener$LoadType) line: 227      
+        DefaultLoadEventListener.onLoad(LoadEvent, LoadEventListener$LoadType) line: 147        
+        SessionImpl.fireLoad(LoadEvent, LoadEventListener$LoadType) line: 1090  
+        SessionImpl.immediateLoad(String, Serializable) line: 1026      
+        JavassistLazyInitializer(AbstractLazyInitializer).initialize() line: 176        
+        JavassistLazyInitializer(AbstractLazyInitializer).getImplementation() line: 215 
+        JavassistLazyInitializer.invoke(Object, Method, Method, Object[]) line: 190     
+        CustomerOrderLine_$$_javassist_153.getCustomerOrder() line: not available       
+        NativeMethodAccessorImpl.invoke0(Method, Object, Object[]) line: not available [native method]  
+        NativeMethodAccessorImpl.invoke(Object, Object[]) line: 57      
+        DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: 43  
+        Method.invoke(Object, Object...) line: 606      
+        PropertySuffix(ArraySuffix).evaluate(Object, VariableResolver, FunctionMapper, Logger) line: 314        
+        ComplexValue.evaluate(VariableResolver, FunctionMapper, Logger) line: 145       
+        ExpressionEvaluatorImpl.evaluate(String, Class, VariableResolver, FunctionMapper, Logger) line: 263     
+        ExpressionEvaluatorImpl.evaluate(String, Class, VariableResolver, FunctionMapper) line: 190     
+        PageContextImpl.proprietaryEvaluate(String, Class, PageContext, ProtectedFunctionMapper, boolean) line: 917     
+        sho-productitems.tag line: 212  
+                                        <c:otherwise>
+                                                <c:if test="${cf:property('oms', 'customerorder.fields.hidden', 'true')=='false'}">
+                                                        <td>${currentItem.originalCustomerOrderId}</td>
+                                                        <td>${currentItem.originalCustomerOrderLineId}</td>
+->                                                      <td>${currentItem.customerOrderLine.customerOrder.customerOrderNumber}</td>
+
+        sho-productitems.tag line: not available        
+        sho-productitems.tag line: not available        
+        sho-productitems.tag line: not available        
+        sho-productitems.tag line: not available        
+        sho-productitems.tag line: not available        
+        shipment-order_edit.jsp line: 688       
+        shipment-order_edit.jsp line: not available     
+        shipment-order_edit.jsp line: not available     
+        shipment-order_edit.jsp line: not available     
+        shipment-order_edit.jsp line: not available     
+        shipment_002dorder_005fedit_jsp(HttpJspBase).service(HttpServletRequest, HttpServletResponse) line: 97  
+        shipment_002dorder_005fedit_jsp(HttpServlet).service(ServletRequest, ServletResponse) line: 810 
+        JspServletWrapper.service(HttpServletRequest, HttpServletResponse, boolean) line: 334   
+        JspServlet.serviceJspFile(HttpServletRequest, HttpServletResponse, String, Throwable, boolean) line: 314        
+        JspServlet.service(HttpServletRequest, HttpServletResponse) line: 264   
+        JspServlet(HttpServlet).service(ServletRequest, ServletResponse) line: 810      
+        JSPEngineImpl.executeJSP(String, HttpServletRequest, HttpServletResponse, ServletContext) line: 75      
+
+/ FIX DSVSOL-2719
+
+SQL> update customer_order_line set is_deleted=0 where is_deleted is null;
+
+/ Ook op production     ,
+SQL> select distinct is_deleted from customer_order_line;
+
+IS_DELETED 
+========== 
+    <null> 
+
+$ vi patch-025_customer_order_line_is_deleted.sql
+
+update customer_order_line
+set is_deleted=0
+where is_deleted is null;
+
+/ Einde FIX DSVSOL-2719
+
+/ Einde DSVSOL-2719
+
+/ DSVSOL-2719
+
+/ we hadden we verkeerde versie op acc deployed	,
+[eric@localhost tmp]$ scp eric@mposerv11:/local/apps/releases/tms-dsvfms-22088-2015.03_build3630.zip .
+[eric@localhost tmp]$ scp tms-dsvfms-22088-2015.03_build3630.zip vanderveldene@application-a.intermax.mp-objects.com:
+
+/ Local	,
+QL> select count(*) from event_event e join event_type t on e.event_type_systemid=t.system_id where  EVENT_TEMPLATE_SYSTEMID is not null and t.name='ePOD';
+       COUNT 
+============ 
+       13495 
+/ TODO
+
+[vanderveldene@database-a ~]$ ls /backup/mpo-backup/db/
+dsvfms.fdb_20160126-002843.fbk.gz
+[eric@localhost Dsvfms]$ pwd
+/home/eric/DB_TAP/Firebird/Dsvfms
+[eric@localhost Dsvfms]$ scp vanderveldene@database-a.intermax.mp-objects.com:/backup/mpo-backup/db/dsvfms.fdb_20160126-002843.fbk.gz .
+
+/ 7	.
+
+/ Op acc/local is er een properties_value zonder properties_system_id	,
+SQL>  select properties_system_id from properties_value where system_id= 554188;
+
+PROPERTIES_SYSTEM_ID 
+==================== 
+              <null> 
+ 
+SQL> delete from properties_value where system_id= 554188;
+SQL> commit;
+
+/ Je kunt bijvoorbeeld ook doen	,
+
+SQL> select p.system_id,p.property_name,v.system_id,v.property_value  from properties p right join properties_value v on v.properties_system_id=p.system_id where user_system_id is null  and ORGANIZATION_SYSTEM_ID is null;
+/ of	,
+SQL> select p.system_id,p.property_name,v.system_id  from properties p right join properties_value v on v.properties_system_id=p.system_id where user_system_id is null  and ORGANIZATION_SYSTEM_ID is null;
+
+
+/ 7	. 
+
+/ we doen local	,
+
+[eric@localhost Dsvfms]$ scp vanderveldene@database-a.intermax.mp-objects.com:/backup/mpo-backup/db/dsvfms.fdb_20160127-003030.fbk.gz .
+[eric@localhost Dsvfms]$ gzip -d dsvfms.fdb_20160127-003030.fbk.gz
+[eric@localhost Dsvfms]$ gbak -c -user sysdba -password masterkey dsvfms.fdb_20160127-003030.fbk dsvfms.fdb_20160127-003030.fdb
+
+
+
+
+/ Einde DSVSOL-2719
+
+
+
+
+
+/ Einde DEPLOY DSVFMS ON ACC
+
+/ SCS-5049
+
+/ parties=PartyListPage
+/ zoals planning, inventory, stock transactions	,
+StockTransactionListPage	,
+
+/ <wicket:head/> verschijnt in HTML in <head/>	,
+
+$ vi AbstractPage.html
+
+<head>
+<wicket:head>
+	<title wicket:id="pageTitleHead"></title>
+</wicket:head>
+</head>
+
+$ vi AbstractMainPage.html
+
+	<wicket:extend>
+		<div id="pageHeader">
+
+			<div class="pageTitle" wicket:enclosure="pageTitle">
+				<h1>
+					<span wicket:id="pageTitle"></span>
+				</h1>
+			</div>
+
+/ We zien in HTML	,
+
+<head>
+<title>PostNL Order Management System</title>
+...
+</head>
+
+		<div id="pageHeader">
+			<div class="pageTitle" wicket:enclosure="pageTitle" id="inlineEnclosure-2" wicketpath="pageId___child11___extend12___child13___extend14_inlineEnclosure-2">
+				<h1>
+					<span wicket:id="pageTitle" wicketpath="pageTitle">Stock Transactions</span>
+				</h1>
+			</div>
+		</div>
+
+/ we zien de title PostNL Order Management System ook in de menu	,
+/ TODO
+
+/ 7	. 
+
+$ vi PartyListPage.java
+
+	IModel<String> deletePrompt = new StringResourceModel("rowaction.confirm.delete", null, new String[] { myPartyId }) .wrapOnAssignment(PartyListPage.this);
+conf/language_en.properties:rowaction.confirm.delete=Are you sure you want to delete {0} ?
+/ Dan wordt in de model de {0} resolve	,
+
+/ 7	. 
+
+/ Maar de edit party scherm is jsp	, geen wicket	,
+
+$ vi party_edit.jsp
+<%@taglib prefix="ctf" tagdir="/WEB-INF/tags/core/"%>
+<ctf:page title="party" type="form">
+	<ctf:pageBody>
+
+
+[eric@localhost trunk]$ ls ./base-framework/core/war/WEB-INF/tags/core/
+pageBody.tag       pageHeader.tag     page.tag           userLoginBody.tag  
+
+[eric@localhost trunk]$ cat ./base-framework/core/war/WEB-INF/tags/core/page.tag 
+<c:set var="pageTitle" scope="request" value="${title}"/>
+	<jsp:doBody/>
+
+[eric@localhost trunk]$ cat ./base-framework/core/war/WEB-INF/tags/core/pageBody.tag 
+<%@taglib uri="http://www.mp-objects.com/taglibs/mpo" prefix="mpo" %>
+
+<body>
+	<h1><mpo:label name="${pageTitle}"/></h1>
+	<jsp:doBody/>
+</body>
+
+/ 7	. 
+
+/ de party edit page is 
+				getRequestCycle().setRequestTarget(new RedirectRequestTarget("../oms/party_create?" + "base_sessionLevelOffset=1" + "&returnUrl=" + returnUrl));
+
+$ vi oms-sitemap.xmap
+
+			<map:action logger="party" name="partyForm" src="com.mpobjects.oms.control.party.action.PartyFormAction"/>
+<map:match type="regexp" pattern="^party_(edit|create)$">
+				<map:act type="partyForm"/>
+				<map:read mime-type="text/html" type="jsp" src="jsp/party_edit.jsp"/>
+			</map:match>
+
+$ vi PartyFormAction.java
+	public Map act() throws java.lang.Exception {
+		int mySystemId = getSystemIdFromRequest();
+		Party myVO;
+		if (mySystemId == 0) {
+			myVO = new PartyVO();
+...
+			}
+		} else {
+			myVO = MpoBeanFactory.getBean(PartyDAO.class).getBySystemId(getSystemIdFromRequest());
+		}
+
+		getSession().setAttribute("formVO", myVO);
+
+/ Dus formVO = 'n PartyVO	,
+
+
+$ vi party_edit.jsp
+
+	<ctf:pageBody>
+		<mpo:form>
+				<mpo:setFormVO valueObject="${formVO}">
+							<mpo:field name="reference1" />
+							<mpo:field name="reference2" />
+							<mpo:field name="reference3" />
+							<mpo:field name="reference4" />
+
+/ we set conditional b	,
+FieldTag.doStartTag() line: 316	
+this.getName().equals("reference1")
+
+/s
+FieldTag.doStartTag() line: 347	
+					appendLabelPart(myRet);
+/s
+FieldTag.appendLabelPart(StringBuffer) line: 1007	
+		aBuffer.append(getLabel());
+/s
+FieldTag.getLabel() line: 1166	
+		return getLabel(StringUtils.isEmpty(getLanguageKey()) ? getName() : getLanguageKey());
+/ er is geen languageKey attr,	 dus pakt hij name attr	,
+/s
+FieldTag.getLabel(String) line: 1176	
+/=
+	protected String getLabel(String aName) {
+aName="reference1"
+		return getLanguageManager().getByJavaName(getFieldOwner().getEntity(), aName);
+/s
+FieldTag.getFieldOwner() line: 1125	
+		return getActiveValueObjectHolder().getFieldOwner();
+/=
+this	FormTag  (id=20921)	
+	theEntity="party"
+
+/t
+FieldTag.getLabel(String) line: 1176	
+		return getLanguageManager().getByJavaName(getFieldOwner().getEntity(), aName);
+/pd
+/s
+LanguageManager.getByJavaName(String, String) line: 366	
+/=
+	public String getByJavaName(String anEntityName, String aFieldName) {
+anEntityName	"party" (id=21116)	
+aFieldName	"reference1" (id=20725)	
+
+			myRet = get(myTableName, myFieldName);
+/s
+LanguageManager.get(String, String) line: 270	
+		try {
+			myRet = get(myFullCode, true);
+myFullCode	"table_party_reference1" (id=21604)	
+/s
+LanguageManager.get(String, boolean) line: 247	
+		return get(aFullCode, StringUtils.EMPTY_STRING_MAP, aThrowExceptionIfNotFound);
+/s
+LanguageManager.get(String, Map<String,String>, boolean) line: 576	
+		Properties lang = getPropertiesFile();
+		myRet = lang.getProperty(myProductSpecificCode, null);
+null
+		if (myRet == null) {
+			myRet = lang.getProperty(myFullCode, null);
+null
+/ probeert	,
+pnllogistics.table_party_reference1
+table_party_reference1
+/t
+LanguageManager.get(String, String) line: 275	
+		try {
+			myRet = get(myFullCode, true);
+/d
+		} catch (IndexOutOfBoundsException e) {
+		}
+		if (myRet == null) {
+			try {
+				myRet = get(aField, true);
+/s
+LanguageManager.get(String, Map<String,String>, boolean) line: 576	
+		Properties lang = getPropertiesFile();
+		myRet = lang.getProperty(myProductSpecificCode, null);
+null
+		if (myRet == null) {
+			myRet = lang.getProperty(myFullCode, null);
+Reference1
+
+/ probeert	,
+pnllogistics.reference1
+Reference1
+
+
+
+
+
+
+
+
+
+
+
+/ Einde SCS-5049
+
+/ DEBUG SCS-5049
+
+/ 7	. 
+
+/ De title van party type page zit in de search list panel!
+
+PartyTypePage
+ext.
+EvoEditPage
+/ext.
+EvoListPage
+	EvoSearchListPanel
+
+/s
+PartyTypePage(EvoListPage).createListPanel() line: 83	
+		final IModel<String> editPageTitle = new StringResourceModel("listTitle", EvoListPage.this, new Model<EvoListPage<T>>(EvoListPage.this), "Search ${entityName}");
+		searchListPanel.setTitle(editPageTitle.getObject());
+/ editPageTitle.getObject()="Select Party Type" 
+
+/ SAMENVATTING STRINGRESOURCEMODEL
+	
+/ Hij kijkt eerst naar key, component	, de 1ste 2 args	, en WH component wordt used om property files te krijgen (met die van de parents erbij,)
+/ er wordt in de component's class (of parent classes) geen get fct called	,
+/
+/ In de component's (of de jongste parent's ) properties file wordt  "Select ${entityName}" gevonden	, 
+/ Daarna wordt in het model object gekeken	,   naar getEntityName()	, 
+
+/ Bij ons wordt in
+EvoEditPage.properties: pageTitle=Select ${entityName}
+EvoListPage.class: 	public String getEntityName() {
+		return dataProperties.getEntityNameModel().getObject();
+
+/ SAMENVATTING STRINGRESOURCEMODEL
+
+/ we zien 	,
+$ vi EvoEditPage.properties
+listTitle=Select ${entityName}
+
+/ Dus met de property files is het zo dat de hierarchy ook meedoet	, en de meest specifieke telt,	
+/ In StringResourceModel ctor is 2de arg PartyTypePage inst	, deze heeft als parents EvoEditPage en die heeft EvoListPage als parent	,
+$ vi EvoEditPage.properties
+listTitle=Select ${entityName}
+$ vi EvoListPage.properties
+listTitle=Search ${entityName}
+/ Dus 	,
+listTitle=Select ${entityName}
+
+/s
+Localizer.getStringIgnoreSettings(String, Component, IModel<?>, String) line: 220	
+			cacheKey = getCacheKey(key, component);
+
+		// Value not found are cached as well (value = null)
+		if ((cacheKey != null) && cache.containsKey(cacheKey))
+		{
+			value = getFromCache(cacheKey);
+
+value	"Select ${entityName}" (id=25258)	
+
+		if (value != null)
+		{
+			return substitutePropertyExpressions(component, value, model);
+/s
+Localizer.substitutePropertyExpressions(Component, String, IModel<?>) line: 471	
+/=
+	public String substitutePropertyExpressions(final Component component, final String string,
+		final IModel<?> model)
+
+/ component wordt niet used	,
+			return PropertyVariableInterpolator.interpolate(string, model.getObject());
+/s
+PropertyVariableInterpolator.interpolate(String, Object) line: 69	
+/=
+	public static String interpolate(final String string, final Object object)
+
+string	"Select ${entityName}" (id=25258)	
+object	PartyTypePage  (id=24532)	
+
+	// If there's any reason to go to the expense of property expressions
+		if (string.indexOf("${") != -1)
+/ JA
+		{
+			// Do property expression interpolation
+			return new PropertyVariableInterpolator(string, object).toString();
+...
+/s
+PartyTypePage(EvoListPage).getEntityName() line: 58	
+		return dataProperties.getEntityNameModel().getObject();
+
+
+
+
+
+
+/ Einde DEBUG SCS-5049
+
+/ DSVSOLNL-43
+
+/ 7	. 
+
+
+
+/ 7	. 
+
+/ we kijken eerst hoe inplannen op cargo	,
+
+/ install test & acc db local	,
+
+/ Eerst nieuwe db pnllogistics	,
+
+[eric@localhost bin]$ cat pnl-db-dump-t.sh 
+...
+cd ~/DB_TAP/Postgres/Backup
+PGPASSWORD=h^Zgcyr\&Q pg_dump -U vanderveldene -Fc -h  pnl-app-t.intermax.mp-objects.com "$@" >"$@-t-$(date +%F).dump" 
+
+[eric@localhost bin]$ pnl-db-dump-t.sh pnllogistics
+[eric@localhost bin]$ pnl-db-dump-a.sh pnllogistics
+
+pnllogistics4t2=# create database pnllogistics5t;
+CREATE DATABASE
+pnllogistics4t2=# create database pnllogistics5a;
+CREATE DATABASE
+
+[eric@localhost bin]$ local-pg_restore.sh pnllogistics5t pnllogistics-t-2016-01-28.dump
+[eric@localhost bin]$ local-pg_restore.sh pnllogistics5a pnllogistics-a-2016-01-28.dump
+
+/ we kiezen de test db	,
+
+[eric@localhost pnllogistics]$ pwd
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/pnllogistics
+[eric@localhost pnllogistics]$ vi deploy/postgres-ds.xml
+  //      <xa-datasource-property name="DatabaseName">pnllogistics4t2</xa-datasource-property>
+/->
+        <xa-datasource-property name="DatabaseName">pnllogistics3</xa-datasource-property>
+
+/ Als we , dan CPU op 350%	,
+        <xa-datasource-property name="DatabaseName">pnllogistics5t</xa-datasource-property>
+/ of	,
+        <xa-datasource-property name="DatabaseName">pnllogistics5a</xa-datasource-property>
+
+/ 7	. 
+
+/ als User account has expired	,   
+pnllogistics3=# update tms_user set last_password_update=now() where user_id='eric';
+UPDATE 1
+pnllogistics3=# commit;
+COMMIT
+vanmourikj
+pnllogistics3=# update tms_user set last_login=now() where user_id='vanmourikj';
+UPDATE 3
+pnllogistics3=# commit;
+COMMIT
+/ Moet allebei?
+/ TODO
+
+/ 7	. 
+
+pnllogistics3=# select shipment_order_id from shipment_order order by system_id desc limit 5;
+ shipment_order_id 
+-------------------
+ SH000002996
+ SH000002995
+ SH000002994
+ SH000002993
+ SH000002992
+(5 rows)
+
+
+planning, shipment order, create
+/ kies cons_test_gse template	,
+/ click 'Create order'	,
+
+/ we zien
+Status 1404 OPEN
+
+ in Shipment order details
+Shipment Order: SH000002997
+Actual productcode: 3610
+Req start after: <tomorrow> 8:00                    /= from client (waarvan afgehaald wordt)
+Req start before: <tomorrow> 18:00
+Req end after: <day after tomorrow> 8:00            /= to other client ( waarnaar geleverd wordt)   ,
+Req end before: <day after tomorrow> 18:00
+Requested Productcode: 3610             / = Actual productcode  ,
+Customer Reference: test by eric 
+
+/ In Ship from
+Address: xxx
+house number : 7
+/ In Ship to
+Address: yyy 
+house number : 13 
+/ Als we deze NIET invullen, niet echt heel erg: als we de sho save,    dan zien we ADDRESS_HOLD    , dus kunnen we deze addresses alsnog invullen  ,
+
+Save
+
+/ In pnllogistics3 moeten we Shipment Order (SH000002997) opgeven	,
+/ TODO
+
+pnllogistics3=# select shipment_order_id from shipment_order order by system_id desc limit 5;
+ shipment_order_id 
+-------------------
+ SH000002997
+ SH000002996
+ SH000002995
+ SH000002994
+ SH000002993
+(5 rows)
+
+/ we zien nog steeds	,
+Status 1404 OPEN
+
+/ we zien in Shipment order details, Hold Status: COLLO_HOLD    ,
+/ clear Hold Status, en     ,
+
+/ create shipment item  ,
+Unit type : C
+PostNL Reference: 3seve16012801     /= 3s+ <my name> + <date> + <number>
+weight:1.00
+
+Save shipment item  ,
+
+
+Save (shipment order)
+/ Nu is hij ingeplanned ,
+
+/ we zien   ,
+Status 1450 PLANNED
+
+/ 7	. 
+
+
+/ Einde DSVSOLNL-43
+
+/ DSVSOLNL-43
+
+/ 7	.
+
+[eric@localhost bin]$ dsvfms-scp-from-db-a.sh dsvfms.fdb_20160204-002837.fbk.gz
+[eric@localhost Dsvfms]$ gzip -d dsvfms.fdb_20160204-002837.fbk.gz 
+[eric@localhost Dsvfms]$ gbak -c -user sysdba -password masterkey dsvfms.fdb_20160204-002837.fbk dsvfms.fdb_20160204-002837.fdb 
+
+
+/ 7	. 
+
+[eric@localhost dsvfms]$ pwd
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvfms
+[eric@localhost dsvfms]$ vi deploy/firebird-ds.xml 
+
+/ WAS
+   <connection-url>jdbc:firebirdsql://127.0.0.1//home/eric/DB_TAP/Firebird/Dsvfms/dsvfms.fdb_20151019-000019.fdb?no_result_set_tracking&amp;defaultResultSetHoldable=true&amp;columnLabelForName=true</connection-url>
+
+/ NU	,
+    <connection-url>jdbc:firebirdsql://127.0.0.1//home/eric/DB_TAP/Firebird/Dsvfms/dsvfms.fdb_20160127-003030.fdb?no_result_set_tracking&amp;defaultResultSetHoldable=true&amp;columnLabelForName=true</connection-url>
+
+
+/ we zien op shipment order edit scherm	,
+
+Req. Departure
+Batch Date
+Req. Arrival (After)
+Req. Arrival (Before)
+ 
+/ Dit is fmsen	,
+conf/language_fmsen.properties~:table_shipment_order_requested_start_before = Batch date
+
+/ we hebben local ook de fmsen locale genomen, 
+/ we hebben reload config
+/ we zien geen verschil
+/ eric logs uit en in 	, 
+/ we zien het	, 
+/ TODO
+
+/ 7	. 
+
+/ open sho SH002516640, op dsvfms acc 	,
+/ Li zag: 
+Preferred Party:TNT4, 
+Bill to: 
+MDK000120
+NETGEAR INTERNATIONAL LTD
+
+/ Hieruit kun je de path template afleiden	,
+/ Ga naar plaaning, path templates
+/ filter op tnt
+/ we zien : TNT Delivery
+/ we zien path criteria:
+Preferred party: TNT0|TNT1|...
+Bill to party:MDK000120
+
+/ we zien dus dat dit path past	,
+
+/ 13	. 
+
+Shipments With Multiple Customer Orders [Open]
+SH002516640
+SH002516764
+SH002516776
+SH002516788
+SH002516799
+SH002516801
+SH002516822
+SH002516840
+SH002516850
+SH002516883
+
+/ we zien dat op acc deze orders wel inplan als we save click	, local NIET	,
+/ local = dsvfms.fdb_20160127-003030.fdb
+/ acc=dsvfms.fdb_20160204-002837
+/ TODO
+/ manual inplan werkt local WEL	,
+/ TODO
+/ Bijv, 
+SH002516776
+
+/ 7	. 
+
+/ we rm	,
+dsvfms.fdb_20151019-000019_cp.fdb
+svfms.fdb_20151019-000019.fdb
+
+/ 7	. 
+
+/ Michel heeft veranderd	,
+
+$ less ReceiptDAOImpl.class
+	@Override
+	public List getReceiptsForShipmentItem(ConsignmentVO aConsignmentVO, ShipmentItemVO aShipmentItemVO) throws DAOException {
+
+/ WAS	,
+		myDetachedCriteria.add(Restrictions.eq("consignmentSystemid", aConsignmentVO.getSystemId()));
+/ NU	,
+		myDetachedCriteria.add(Restrictions.eq("consignmentVO", aConsignmentVO));
+
+/ Michiel Hendriks heeft veranderd	,
+
+$ less ProductItemDAOImpl.class
+	public List<ProductItemVO> getByCustomerOrderIdCustomerOrderLineIdAndOrganization(String customerOrderId, String customerOrderLineId, Organization org) {
+
+/ WAS	,
+		myDetachedCriteria.add(Restrictions.eq("originalCustomerOrderId", customerOrderId).ignoreCase());
+/ NU	,
+		myDetachedCriteria.add(Restrictions.eq("originalCustomerOrderId", customerOrderId));
+
+/ 7	. 
+
+/ Vergl. ReceiptDAOImpl.java met die uit 2015.04	,
+/ right click, Compare with, Branches/Tag
+/ In URL , maak van 2015.03 -> 2015.04	,
+
+/ we veranderen ook	,
+
+$ ReceiptDAOImpl.java
+
+	public List<ReceiptVO> getReceiptsForConsignment(ConsignmentVO aConsignmentVO) throws DAOException {
+/ WAS	,
+		myDetachedCriteria.add(Restrictions.eq("consignmentSystemid", aConsignmentVO.getSystemId()));
+/ IS	,
+		myDetachedCriteria.add(Restrictions.eq("consignmentVO", aConsignmentVO));
+
+
+	@Override
+	public List getReceiptsForShipmentItem(ConsignmentVO aConsignmentVO, ShipmentItemVO aShipmentItemVO) throws DAOException {
+
+/ WAS	,
+		myDetachedCriteria.createAlias("shipmentItemVO", "shi");
+		..
+		myDetachedCriteria.add(Restrictions.eq("shi.hibernateSystemId", aShipmentItemVO.getSystemId()));
+/ IS	,
+		myDetachedCriteria.add(Restrictions.eq("shipmentItemVO", aShipmentItemVO));
+
+
+	public void removeReceiptsForConsignment(ConsignmentVO aConsignmentVO) throws DAOException {
+
+/ WAS	,
+		myDetachedCriteria.add(Restrictions.eq("consignmentSystemid", aConsignmentVO.getSystemId()));
+/ IS	,
+		myDetachedCriteria.add(Restrictions.eq("consignmentVO", aConsignmentVO));
+
+/ we deploy op test	(mposerv11),
+
+/ 13	. 
+
+Shipments With Multiple Customer Orders [Open]
+/ Wat zijn dit voor een sho	?
+/ Ze zijn 
+OPEN
+hebben >1 product items	,
+hoogstens 30 dagen oud	, 
+
+/ See DSVSOLNL-43 DEBUG	,
+
+
+/ Einde DSVSOLNL-43
+
+/ DEBUG DSVSOLNL-43
+
+Shipments With Multiple Customer Orders [Open]
+/ Wat zijn dit voor een sho	?
+
+$ vi oms-sitemap.xmap
+
+        <map:match pattern="dashboard_view">
+				<!-- an action should be called to make redirection by flow possible-->
+				<map:act type="setAttributes">
+					<map:parameter name="attributesType" value="session"/>
+				</map:act>
+				<map:read mime-type="text/html" type="jsp" src="jsp/dashboard-view.jsp"/>
+			</map:match>
+
+$ less dashboard_view.jsp
+
+<jsp:useBean id="myDashboardView" scope="session" class="com.mpobjects.oms.view.dashboard.DashboardView"/>
+<% 
+	myDashboardView.refreshDashboardQueryList(request);
+/ See debug beneden	,
+
+	<tmstags:dashboard-query-type queryList="${myDashboardView.shipmentOrderQueryList}" queryTypeCaption="${cf:label('', 'shipmentOrder')}" submitUrl="dashboardQuery_show_shipmentorder"/>
+	
+	<tmstags:dashboard-query-type queryList="${myDashboardView.serviceActionQueryList}" queryTypeCaption="${cf:label('', 'serviceAction')}" submitUrl="dashboardQuery_show_serviceaction"/>
+
+	<tmstags:dashboard-query-type queryList="${myDashboardView.serviceOrderQueryList}" queryTypeCaption="${cf:label('', 'serviceOrder')}" submitUrl="dashboardQuery_show_serviceorder"/>
+	
+	<tmstags:dashboard-query-type queryList="${myDashboardView.customerOrderLineQueryList}" queryTypeCaption="${cf:label('', 'customerOrderLine')}" submitUrl="dashboardQuery_show_customerorderline"/>
+
+$ less dashboard-query-type.tag
+<%@ attribute name="queryList" type="java.util.Collection" %>
+			<tms:dashboardQueryTableBody queryList="${queryList}" queryTypeCaption="${queryTypeCaption}">	
+
+/ we debug	,
+/s
+dashboard-view.jsp line: 10	
+	myDashboardView.refreshDashboardQueryList(request);
+/s
+DashboardView.refreshDashboardQueryList(HttpServletRequest) line: 199	
+		try {
+			Collection<DashboardQueryVO> myList = MpoBeanFactory.getBean(DashboardQueryDAO.class).getDashboardQueryList(screen);
+/ antwoord	,
+myList	ArrayList  (id=19051)	
+	size	52	
+/s
+/s
+DashboardQueryDAOImpl.getDashboardQueryList(String) line: 90 (out of synch)	
+		if (StringUtils.isEmpty(aScreen)) {
+/ JA
+			return getDashboardQueryList();
+/s
+DashboardQueryDAOImpl.getDashboardQueryList() line: 61 (out of synch)	
+		Collection<DashboardQueryVO> myCollection = getHibernateTemplate().findByCriteria(
+				DetachedCriteria
+				.forClass(DashboardQueryVO.class)
+				.add(Property.forName("testFlag").eq(false))
+				.add(Restrictions.or(Property.forName("screen").eq(""), Property.forName("screen").isNull()))
+				.add(Property.forName("testStatus").eq(TestStatus.PASSED))
+				.add(Restrictions.not(Restrictions.in("orderType", new OrderType[] { OrderType.CUSTOMER_STATUS, OrderType.CUSTOMER_STATUS_INBOUND, OrderType.WORKLOAD }))));
+		return myCollection;
+
+/ Intermezzo
+
+select
+from dashboard_query
+where is_test=false
+and (screen = "" or screen is null)
+and test_status='PASSED'
+and order_type not in ('CUSTOMER_STATUS','CUSTOMER_STATUS_INBOUND','WORKLOAD') 
+
+/ we doen	,
+
+SQL> select *  from dashboard_query where name like '%multiple customer%' and order_type='SHIPMENT_ORDER' and test_status='PASSED';
+
+   SYSTEM_ID SEQUENCE_NUMBER NAME                                               ORDER_TYPE                                                BASE_QUERY      IS_TEST ORGANIZATION_SYSTEMID DASHBOARD_TYPE       SCREEN                         LAST_CHANGED_ON LAST_CHANGED_BY TEST_STATUS                                                                                                                      
+============ =============== ================================================== ================================================== ================= ============ ===================== ==================== ==================== ========================= =============== =============================================================================== 
+         130          999999 Shipments with multiple customer orders            SHIPMENT_ORDER                                                ab:1f3            0                  3150                                                              <null>          <null> PASSED                                                                                                                           
+==============================================================================
+BASE_QUERY:  
+SELECT * FROM SHIPMENT_ORDER SHO WHERE SHO.STATUS_CODE_SYSTEMID IN (SELECT SYSTEM_ID FROM ORDER_STATUS OS WHERE ${STATUS_CLAUSE} ) AND (SELECT COUNT(*) FROM TMS_PRODUCT_ITEM PI WHERE PI.SHIPMENT_ORDER_SYSTEMID=SHO.SYSTEM_ID) > 1 AND IS_TEMPLATE = 0  AND SHO.SYSTEM_ENTRY_DATE >  ${TODAY-${DAYS_BACK}}
+==============================================================================
+       33130          999999 Shipments with multiple customer orders            SHIPMENT_ORDER                                                ab:969            0                  5600                                                              <null>          <null> PASSED                                                                                                                           
+==============================================================================
+BASE_QUERY:  
+SELECT * FROM SHIPMENT_ORDER SHO WHERE SHO.STATUS_CODE_SYSTEMID IN (SELECT SYSTEM_ID FROM ORDER_STATUS OS WHERE ${STATUS_CLAUSE} ) AND (SELECT COUNT(*) FROM TMS_PRODUCT_ITEM PI WHERE PI.SHIPMENT_ORDER_SYSTEMID=SHO.SYSTEM_ID) > 1 AND IS_TEMPLATE = 0  AND SHO.SYSTEM_ENTRY_DATE >  ${TODAY-${DAYS_BACK}}
+==============================================================================
+
+/ klopt,	 we zien op het scherm deze entry ook 2 keer	,
+
+/ we zien in log	,
+2016-02-04 16:48:31,290 DEBUG [org.hibernate.SQL] (http-0.0.0.0-8080-3:) 
+
+SELECT * FROM SHIPMENT_ORDER SHO 
+WHERE SHO.STATUS_CODE_SYSTEMID IN (
+	SELECT SYSTEM_ID 
+	FROM ORDER_STATUS OS 
+	WHERE  OS.STATUS_CODE = '1404' 
+) 
+AND (
+	SELECT COUNT(*) 
+	FROM TMS_PRODUCT_ITEM PI 
+	WHERE PI.SHIPMENT_ORDER_SYSTEMID=SHO.SYSTEM_ID
+) > 1 
+AND IS_TEMPLATE = 0  
+AND SHO.SYSTEM_ENTRY_DATE >  '2016-01-05 23:59:59' 
+and sho.ORGANIZATION_SYSTEMID in (?, ?, ?, ?, ?, ?, ?
+, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+
+/ we kunnen ook	,
+
+SQL> SELECT count(*) FROM SHIPMENT_ORDER SHO
+CON> WHERE SHO.STATUS_CODE_SYSTEMID IN (
+CON>     SELECT SYSTEM_ID
+CON>     FROM ORDER_STATUS OS
+CON>     WHERE  OS.STATUS_CODE = '1404'
+CON> )
+CON> AND (
+CON>     SELECT COUNT(*)
+CON>     FROM TMS_PRODUCT_ITEM PI
+CON>     WHERE PI.SHIPMENT_ORDER_SYSTEMID=SHO.SYSTEM_ID
+CON> ) > 1
+CON> AND IS_TEMPLATE = 0
+CON> AND SHO.SYSTEM_ENTRY_DATE >  '2016-01-05 23:59:59';
+
+       COUNT 
+============ 
+         119 
+/ Klopt	,
+
+/ Einde Intermezzo
+
+
+/t
+			for (DashboardQueryVO myVO : myList) {
+				myVO.setDaysBack(new Integer((String) aRequest.getSession().getAttribute(PARAM_SESSION_DAYS_BACK)));
+30
+				OrderType myOrderType = myVO.getOrderType();
+				if (myOrderType.equals(OrderType.SERVICE_ACTION)) {
+					serviceActionList.add(myVO);
+				} else if (myOrderType.equals(OrderType.SERVICE_ORDER)) {
+					serviceOrderList.add(myVO);
+				} else if (myOrderType.equals(OrderType.SHIPMENT_ORDER)) {
+					shipmentOrderList.add(myVO);
+
+
+
+
+/ Intermezzo
+
+$ less DashBoardQuery.standard.hbm.xml
+
+   <class name="com.mpobjects.oms.model.dashboard.vo.DashboardQueryVO" table="DASHBOARD_QUERY">
+...
+
+SQL> select *  from dashboard_query where name like '%multiple customer%' and order_type='SHIPMENT_ORDER';
+
+   SYSTEM_ID SEQUENCE_NUMBER NAME                                               ORDER_TYPE                                                BASE_QUERY      IS_TEST ORGANIZATION_SYSTEMID DASHBOARD_TYPE       SCREEN                         LAST_CHANGED_ON LAST_CHANGED_BY TEST_STATUS                                                                                                                      
+============ =============== ================================================== ================================================== ================= ============ ===================== ==================== ==================== ========================= =============== =============================================================================== 
+         130          999999 Shipments with multiple customer orders            SHIPMENT_ORDER                                                ab:1f3            0                  3150                                                              <null>          <null> PASSED                                                                                                                           
+==============================================================================
+BASE_QUERY:  
+SELECT * FROM SHIPMENT_ORDER SHO WHERE SHO.STATUS_CODE_SYSTEMID IN (SELECT SYSTEM_ID FROM ORDER_STATUS OS WHERE ${STATUS_CLAUSE} ) AND (SELECT COUNT(*) FROM TMS_PRODUCT_ITEM PI WHERE PI.SHIPMENT_ORDER_SYSTEMID=SHO.SYSTEM_ID) > 1 AND IS_TEMPLATE = 0  AND SHO.SYSTEM_ENTRY_DATE >  ${TODAY-${DAYS_BACK}}
+==============================================================================
+      476139          999999 Shipments with multiple customer orders            SHIPMENT_ORDER                                                ab:3e7            1                  3180                                                              <null>          <null> UNTESTED                                                                                                                         
+==============================================================================
+BASE_QUERY:  
+SELECT * FROM SHIPMENT_ORDER SHO WHERE SHO.STATUS_CODE_SYSTEMID IN (SELECT SYSTEM_ID FROM ORDER_STATUS OS WHERE ${STATUS_CLAUSE} ) AND (SELECT COUNT(*) FROM TMS_PRODUCT_ITEM PI WHERE PI.SHIPMENT_ORDER_SYSTEMID=SHO.SYSTEM_ID) > 1 AND IS_TEMPLATE = 0  AND SHO.SYSTEM_ENTRY_DATE >  ${TODAY-${DAYS_BACK}}
+==============================================================================
+       33130          999999 Shipments with multiple customer orders            SHIPMENT_ORDER                                                ab:969            0                  5600                                                              <null>          <null> PASSED                                                                                                                           
+==============================================================================
+BASE_QUERY:  
+SELECT * FROM SHIPMENT_ORDER SHO WHERE SHO.STATUS_CODE_SYSTEMID IN (SELECT SYSTEM_ID FROM ORDER_STATUS OS WHERE ${STATUS_CLAUSE} ) AND (SELECT COUNT(*) FROM TMS_PRODUCT_ITEM PI WHERE PI.SHIPMENT_ORDER_SYSTEMID=SHO.SYSTEM_ID) > 1 AND IS_TEMPLATE = 0  AND SHO.SYSTEM_ENTRY_DATE >  ${TODAY-${DAYS_BACK}}
+==============================================================================
+
+/ We zien dus steeds dezelfde query	,
+
+SELECT * FROM SHIPMENT_ORDER SHO 
+WHERE SHO.STATUS_CODE_SYSTEMID IN (
+	SELECT SYSTEM_ID 
+	FROM ORDER_STATUS OS 
+	WHERE ${STATUS_CLAUSE} 
+) 
+AND (
+	SELECT COUNT(*) 
+	FROM TMS_PRODUCT_ITEM PI 
+	WHERE PI.SHIPMENT_ORDER_SYSTEMID=SHO.SYSTEM_ID
+) > 1 
+AND IS_TEMPLATE = 0  
+AND SHO.SYSTEM_ENTRY_DATE >  ${TODAY-${DAYS_BACK}}
+
+
+
+/ Einde Intermezzo
+
+/ Einde DEBUG DSVSOLNL-43
+
+/ DEBUG DSVSOLNL-43
+/ DEBUG SAVE SHIPMENT ORDER CARGO 
+
+/ geef	,
+http://localhost:8080/tms
+/->
+http://localhost:8080/tms/authentication/login-form
+
+/ 7	.
+
+$ vi oms-sitemap.xmap
+
+			<map:action logger="shipmentorder" name="shipmentOrderSave" src="com.mpobjects.oms.control.shipmentorder.action.ShipmentOrderSaveAction"/>
+            <map:match pattern="shipment-order_save">
+                <!-- The shipment order is saved and via redirection send to the correct page -->
+				<map:act type="shipmentOrderSave">
+                    <map:parameter name="isSave" value="true"/>
+                </map:act>
+                <!-- This part is only reached when the path selection is manual (see ShipmentOrderSave.shouldTakeControl()-->
+                <map:act type="pathMatchAction"/>
+                <map:act type="redirectAfterSave">
+					<map:parameter name="redirectTo" value="path-template_list-for-shipment-order?refresh=true&amp;manuallyAssign={request-param:manuallyAssign}&amp;base_sessionLevelOffset=1"/>
+				</map:act>
+            </map:match>
+
+/ Kies sho template cons_test_gse	,
+/ click 'create order'	,
+/s
+ShipmentOrderCreateAction.act() line: 46	
+		int mySystemId = getSystemIdFromRequest();
+26770507
+/ Dit is het template cons_test_gse	,
+pnllogistics3=# select is_template from shipment_order where system_id=26770507;
+ is_template 
+-------------
+           1
+(1 row)
+
+		if (mySystemId != ValueObject.VOLATILE_SYSTEM_ID) {
+			myTemplate = MpoBeanFactory.getBean(ShipmentOrderDao.class).getBySystemId(mySystemId);
+myTemplate
+	theTemplateFlag	true	
+
+		ShipmentOrderVO myVO = MpoBeanFactory.getBean(ShipmentOrderService.class).create(myTemplate);
+/s
+PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).create(ShipmentOrderVO) line: 546	
+		return create(aShipmentOrderTemplate, false);
+/s
+PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).create(ShipmentOrderVO, boolean) line: 552	
+/=
+	public ShipmentOrderVO create(ShipmentOrderVO aShipmentOrderTemplate, boolean isTemplate) {
+/ isTemplate=false
+
+		} else {
+			myVO = aShipmentOrderTemplate.copy();
+			copyShipmentOrderParties(aShipmentOrderTemplate, myVO);
+/s
+PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).copyShipmentOrderParties(ShipmentOrderVO, ShipmentOrderVO) line: 527	
+			aNewShipmentOrder.getShipmentOrderParties().clear();
+[]
+/ WAS AL,  aNewShipmentOrder.getShipmentOrderParties()=[]  
+			Collection<ShipmentOrderParty> myShipmentOrderParties = anOriginal.getShipmentOrderParties();
+myShipmentOrderParties	PersistentBag  (id=25575)	
+	bag	ArrayList  (id=25578)	
+		elementData	Object[3]  (id=25585)	
+			[0]	ShipmentOrderParty  (id=25586)	
+			[1]	ShipmentOrderParty  (id=25587)	
+		size	2	
+/ TODO
+			if (myShipmentOrderParties != null) {
+				for (ShipmentOrderParty myParty : myShipmentOrderParties) {
+					ShipmentOrderParty myNewParty = new ShipmentOrderParty();
+					BeanUtils.copyProperties(myNewParty, myParty);
+					myNewParty.setSystemId(ValueObject.VOLATILE_SYSTEM_ID);
+/ WAS 26770508	, 26770509
+					myNewParty.setShipmentOrder(aNewShipmentOrder);
+					aNewShipmentOrder.addShipmentOrderParty(myNewParty);
+
+/ Intermezzo
+
+pnllogistics3=# select*from shipment_order_party where system_id=26770508;
+ system_id | name | name2 | address | address2 | city | postal_code | region_state | phone_number | fax_number | email_address | contact_n
+ame | shipment_order_systemid | is_deleted | country_systemid | party_id | sync_flag | party_type_group_systemid | reference1 | reference2
+ | reference3 | reference4 | reference5 | reference6 
+-----------+------+-------+---------+----------+------+-------------+--------------+--------------+------------+---------------+----------
+----+-------------------------+------------+------------------+----------+-----------+---------------------------+------------+-----------
+-+------------+------------+------------+------------
+  26770508 |      |       |         |          |      |             |              |              |            |               |          
+    |                26770507 |          0 |             NULL |          | DISABLED  |                  26681486 |            |           
+ |            |            |            | 
+(1 row)
+
+pnllogistics3=# select*from party_type_group where system_id=26681486;
+ system_id | party_type_group  |    description     | is_deleted | show_on_sho | show_on_so | is_system | show_on_co | show_on_col 
+-----------+-------------------+--------------------+------------+-------------+------------+-----------+------------+-------------
+  26681486 | DistributionDepot | Distribution Depot |          0 |           1 |          0 |         0 |          0 |           0
+(1 row)
+
+pnllogistics3=# select*from shipment_order_party where system_id=26770509;
+ system_id | name | name2 | address | address2 | city | postal_code | region_state | phone_number | fax_number | email_address | contact_n
+ame | shipment_order_systemid | is_deleted | country_systemid | party_id | sync_flag | party_type_group_systemid | reference1 | reference2
+ | reference3 | reference4 | reference5 | reference6 
+-----------+------+-------+---------+----------+------+-------------+--------------+--------------+------------+---------------+----------
+----+-------------------------+------------+------------------+----------+-----------+---------------------------+------------+-----------
+-+------------+------------+------------+------------
+  26770509 |      |       |         |          |      |             |              |              |            |               |          
+    |                26770507 |          0 |             NULL |          | DISABLED  |                  26681485 |            |           
+ |            |            |            | 
+(1 row)
+
+pnllogistics3=# select*from party_type_group where system_id=26681485;
+ system_id | party_type_group |   description    | is_deleted | show_on_sho | show_on_so | is_system | show_on_co | show_on_col 
+-----------+------------------+------------------+------------+-------------+------------+-----------+------------+-------------
+  26681485 | CollectionDepot  | Collection depot |          0 |           1 |          0 |         0 |          0 |           0
+(1 row)
+
+
+
+/ Einde Intermezzo
+
+
+/s
+ShipmentOrderVO.addShipmentOrderParty(ShipmentOrderParty) line: 379	
+		theShipmentOrderPartyList.add(aShipmentOrderParty);
+		aShipmentOrderParty.setShipmentOrder(this);
+/t
+PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).create(ShipmentOrderVO, boolean) line: 570	
+			copyShipmentOrderParties(aShipmentOrderTemplate, myVO);
+/d
+			EntityDetailUtil.copyCorrespondingEntityDetails(aShipmentOrderTemplate, myVO);
+/=
+	public static void copyCorrespondingEntityDetails(EntityDetailSupport aCopyFrom, EntityDetailSupport aCopyTo) {
+/s
+		Map<EntityDetailType, String> myTo = aCopyTo.getEntityDetails();
+myTo	HashMap  (id=27198)	
+	size	7	
+	table	HashMap$Entry[16]  (id=27210)	
+		[6]	HashMap$Entry  (id=27211)	
+SystemId:26684153	IsDeleted:false	Detail Type:ProductKenmerkSoort	ValueType:LIST	=
+		[9]	HashMap$Entry  (id=27212)	
+SystemId:26684152	IsDeleted:false	Detail Type:Goedgekeurd	ValueType:BOOLEAN	=0
+			hash	1639526265	
+			key	EntityDetailType_$$_javassist_8  (id=27746)	
+			next	HashMap$Entry  (id=27747)	
+SystemId:26684154	IsDeleted:false	Detail Type:OptieSoort	ValueType:LIST	=
+			value	"0" (id=27748)															/ Dit is de value van de entity detail	,
+		[10]	HashMap$Entry  (id=27213)	
+SystemId:26684149	IsDeleted:false	Detail Type:OntvangenBedragCash	ValueType:AMOUNT	=0 
+		[13]	HashMap$Entry  (id=27214)	
+SystemId:26684150	IsDeleted:false	Detail Type:OntvangenBedragPin	ValueType:AMOUNT	=0 
+		[14]	HashMap$Entry  (id=27215)	
+SystemId:26734011	IsDeleted:false	Detail Type:EilandToeslag	ValueType:BOOLEAN	=
+			hash	99694958	
+			key	EntityDetailType_$$_javassist_8  (id=27759)	
+			next	HashMap$Entry  (id=27761)	
+SystemId:26684151	IsDeleted:false	Detail Type:Checked	ValueType:BOOLEAN	=0
+			value	"" (id=27762)	
+	threshold	12	
+	values	null	
+
+		for (Entry<EntityDetailType, String> entry : aCopyFrom.getEntityDetails().entrySet()) {
+			EntityDetailType myType = entry.getKey();
+			if (myTo.containsKey(myType)) {
+				myTo.put(myType, entry.getValue());
+/t
+PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).create(ShipmentOrderVO, boolean) line: 571	
+			EntityDetailUtil.copyCorrespondingEntityDetails(aShipmentOrderTemplate, myVO);
+/d
+			myVO.setSystemId(ValueObject.VOLATILE_SYSTEM_ID);
+			myVO.setShipmentOrderId("");
+			myVO.setShipmentOrderTemplate(aShipmentOrderTemplate);
+			myVO.setTemplate(isTemplate);
+false
+/ Dus myVO	, de copy van de sho template	, is nu geen template meer,	
+
+		addShipmentOrderParties(myVO);
+/s
+PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).addShipmentOrderParties(ShipmentOrderVO) line: 296	
+			if (aShipmentOrder.getBillToPartyVO() == null) {
+/ NEE
+			if (aShipmentOrder.getEmployeeResponsiblePartyVO() == null) {
+/ NEE
+
+			myPartyGroupsToCreate.addAll(MpoBeanFactory.getBean(PartyTypeGroupDAO.class).getShowOnShipmentOrder());
+/s
+public class PartyTypeGroupDAOHibernate extends EnumeratedValueObjectHibernateDAO<PartyTypeGroupVO> implements PartyTypeGroupDAO {
+	@Override
+	public List<PartyTypeGroupVO> getShowOnShipmentOrder() {
+		DetachedCriteria myDetachedCriteria = DetachedCriteria.forClass(PartyTypeGroupVO.class).add(Property.forName("showOnSho").eq(true))
+				.add(Property.forName("system").eq(false)).add(Property.forName("deleted").eq(false));
+		HibernateTemplate myTemplate = getHibernateTemplate();
+		myTemplate.setCacheQueries(true);
+		return myTemplate.findByCriteria(myDetachedCriteria);
+/t
+			myPartyGroupsToCreate.addAll(MpoBeanFactory.getBean(PartyTypeGroupDAO.class).getShowOnShipmentOrder());
+myPartyGroupsToCreate	ArrayList  (id=28402)	
+	elementData	Object[10]  (id=28404)	
+		[0]	PartyTypeGroupVO_$$_javassist_94  (id=28405)	
+theSystemId: 26681486PartyTypeGroup :DistributionDepot
+		[1]	PartyTypeGroupVO_$$_javassist_94  (id=28406)	
+theSystemId: 26681485PartyTypeGroup :CollectionDepot
+	size	2	
+
+/ Klopt	,
+pnllogistics3=# select*from party_type_group where show_on_sho=1 and is_system=0 and is_deleted=false;
+ system_id | party_type_group  |    description     | is_deleted | show_on_sho | show_on_so | is_system | show_on_co | show_on_col 
+-----------+-------------------+--------------------+------------+-------------+------------+-----------+------------+-------------
+  26681486 | DistributionDepot | Distribution Depot |          0 |           1 |          0 |         0 |          0 |           0
+  26681485 | CollectionDepot   | Collection depot   |          0 |           1 |          0 |         0 |          0 |           0
+(2 rows)
+
+/ Deze 2 party groups zullen we zien op de laatste 2 tabs van de sho,  die we nu aan het maken zijn	, die een (aangepaste) copy is van de template	, 
+
+/ Intermezzo
+
+$ vi mpo-selector.js
+
+/ 13	. 
+
+/ als we select vergrootglas op Bill to party tab	, 
+<button class="small" href="#" id="billToBillToParty_href" onclick="javascript:PartySelector({partyTypeGroup: 'BILL_TO', contextType: 'ShipmentOrder', contextSystemId: '0', fieldId: 'billToBillToParty', populatePrefix: 'billTo' }); return false;"><img src="../lookandfeel/images/icons/lookup.png" border="0" id="billToBillToParty_icon" class="selector_icon" )=""></button>
+
+/ Inderdaad	,
+/ Als we click op het vergrootglas	, zien we party type 'OPDRACHTGEVER'	, en we achterhalen de party type group	,
+/ en	,
+pnllogistics3=# select*from party_type_group ptg join party_type_in_group ptig on ptg.system_id=ptig.party_type_group_systemid join party_type pt on ptig. party_type_systemid=pt.system_id where pt.party_type='ADRES';
+ system_id | party_type_group | description | is_deleted | show_on_sho | show_on_so | is_system | show_on_co | show_on_col | party_type_sys
+temid | party_type_group_systemid | system_id | is_deleted | party_type |          description           
+-----------+------------------+-------------+------------+-------------+------------+-----------+------------+-------------+---------------
+------+---------------------------+-----------+------------+------------+--------------------------------
+  26681481 | COLLECTION       | Ship from   |          0 |           0 |          0 |         0 |          0 |           0 |            268
+25641 |                  26681481 |  26825641 |          0 | ADRES      | Adres opgeslagen uit Interface
+(1 row)
+
+/ 13	. 
+
+/ als we op het vergrootglas click op Ship from	,
+<button class="small" href="#" id="fromParty_href" onclick="javascript:PartySelector({partyTypeGroup: 'COLLECTION', contextType: 'ShipmentOrder', contextSystemId: '0', fieldId: 'fromParty', populatePrefix: 'from' }); return false;"><img src="../lookandfeel/images/icons/lookup.png" border="0" id="fromParty_icon" class="selector_icon" )=""></button>
+
+/ Inderdaad	, als we click op het vergrootglas, zien we de party types	 ADRES, ADRES_VASTE_COLLECT	,  
+pnllogistics3=# select*from party_type_group ptg join party_type_in_group ptig on ptg.system_id=ptig.party_type_group_systemid join party_type pt on ptig. party_type_systemid=pt.system_id where pt.party_type='ADRES';
+ system_id | party_type_group | description | is_deleted | show_on_sho | show_on_so | is_system | show_on_co | show_on_col | party_type_sys
+temid | party_type_group_systemid | system_id | is_deleted | party_type |          description           
+-----------+------------------+-------------+------------+-------------+------------+-----------+------------+-------------+---------------
+------+---------------------------+-----------+------------+------------+--------------------------------
+  26681481 | COLLECTION       | Ship from   |          0 |           0 |          0 |         0 |          0 |           0 |            268
+25641 |                  26681481 |  26825641 |          0 | ADRES      | Adres opgeslagen uit Interface
+(1 row)
+
+/ Einde Intermezzo
+
+			for (ShipmentOrderParty myParty : aShipmentOrder.getShipmentOrderParties()) {
+				PartyTypeGroupVO myPartyTypeGroupVO = myParty.getPartyTypeGroup();
+theSystemId: 26681486PartyTypeGroup :DistributionDepot
+theSystemId: 26681485PartyTypeGroup :CollectionDepot
+				myPartyGroupsToCreate.remove(myPartyTypeGroupVO);
+/ want die hebben we dus al	, in  aShipmentOrder.getShipmentOrderParties()	, 
+
+/t
+PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).create(ShipmentOrderVO, boolean) line: 601	
+		addShipmentOrderParties(myVO);
+/d
+		MpoBeanFactory.getBean(EntityDetailService.class).initialize(myVO);
+/s
+EntityDetailServiceImpl.initialize(EntityDetailSupport) line: 126	
+		List<EntityDetailType> myList = entityDetailTypeDAO.getByEntity(anEntityDetailSupport.getEntity());
+anEntityDetailSupport.getEntity()="SHIPMENT_ORDER"
+/s
+	public List<EntityDetailType> getByEntity(EntityType anEntity) {
+		Criteria myCriteria = getCurrentSession().createCriteria(EntityDetailType.class);
+		myCriteria.add(Property.forName("entity").eq(anEntity))
+				.add(Property.forName("deleted").eq(false));
+		myCriteria.setCacheable(true);
+		return myCriteria.list();
+	}
+
+pnllogistics3=# select name from entity_detail_type where entity='SHIPMENT_ORDER' and is_deleted=false;
+         name          
+-----------------------
+ Checked
+ Goedgekeurd
+ BarcodeHold
+ DuplicateHold
+ ProductKenmerkSoort
+ DefaultWeight
+ KlantSpecifiek
+ OptieSoort
+ ShipmentReferentieNo
+ ManualPricing
+ ColloHoldChecked
+ ShipToOpmerkingen
+ OntvangenBedragCash
+ TotaalADRPuntenAantal
+ OntvangenBedragPin
+ EilandToeslag
+ Klantreferentie
+ LabelNodig
+ CashOnDeliveryRemarks
+ ShipFromOpmerkingen
+ TijdsVenster
+(21 rows)
+
+		if (anEntityDetailSupport.getEntityDetails() != null) {
+/ JA, 7	,
+			myList.removeAll(anEntityDetailSupport.getEntityDetails().keySet());
+/ myList heeft er nu nog 14	,
+
+		for (EntityDetailType myEntityDetailType : myList) {
+			anEntityDetailSupport.setEntityDetail(myEntityDetailType, spaceAsInitialValue ? " " : "");
+/ Deze gaan we nu ook in de sho zetten	, met "" als value	, of " "	,
+
+/t
+PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).create(ShipmentOrderVO, boolean) line: 602	
+		MpoBeanFactory.getBean(EntityDetailService.class).initialize(myVO);
+/d
+		myVO.setCreatedBy(myResource);
+
+		myVO.setSystemEntryDate(timeService.getPresentDate());
+		myVO.setOriginalSystemEntryDate(myVO.getSystemEntryDate());
+		myVO.setOrderStatusVO(orderStatusDAO.getByCode(OrderStatusVO.STATUS_UNPLANNED));
+/ Inderdaad	, zet 'm unplanned	,
+
+		ScheduleLineService myScheduleLineService = MpoBeanFactory.getBean(ScheduleLineService.class);
+/ TODO
+		ShipmentServiceLevelVO myServiceLevel = myVO.getActualServiceLevelVO();
+SystemId:26766188	isDeleted:false	Level:3096	Description:Pakket BNL Freight	HierarchyLevel:0	
+
+pnllogistics3=# select*from shipment_service_level;
+ system_id | is_deleted | service_level |                    description                     | hierarchy_level | schedule_systemid 
+-----------+------------+---------------+----------------------------------------------------+-----------------+-------------------
+  26766188 |          0 | 3096          | Pakket BNL Freight                                 |               0 |          26681488
+  26766227 |          0 | 3610          | Pallet NL BNL Freight                              |               0 |          26681488
+
+		if (myServiceLevel != null && myServiceLevel.getScheduleVO() != null) {
+			ScheduleLineVo myScheduleLine = myScheduleLineService.getNextCutOffScheduleLine(myServiceLevel.getScheduleVO(), myVO.getOrganization());
+			if (myScheduleLine != null) {
+/ NEE
+null
+
+		// Setting the order process
+		if (myVO.getOrderProcess() == null) {
+/ NEE
+
+		if (myVO.getSystemId() == ValueObject.VOLATILE_SYSTEM_ID) {
+			String defaultIncoTerm = ApplicationPropertyManager.getInstance().getProperty("module.oms.shipmentorder.default.incoterm", "");
+""
+			if (!StringUtils.isEmpty(defaultIncoTerm)) {
+/ NEE
+		return myVO;
+
+/t
+ShipmentOrderCreateAction.act() line: 53	
+		ShipmentOrderVO myVO = MpoBeanFactory.getBean(ShipmentOrderService.class).create(myTemplate);
+/d
+		Session mySession = myRequest.getSession();
+		mySession.setAttribute(ShipmentOrderView.ACTIVE_SHIPMENTORDER, myVO);
+/ Later used on the shipment-order_edit.jsp	,
+
+/ Herinner	,
+/ we hebben 'create order' clicked op de template line	,
+
+		// Reset the active item!
+		mySession.removeAttribute(ShipmentItemView.ACTIVE_SHIPMENTITEM);
+
+		String showCustomerOrderId = ApplicationPropertyManager.getInstance().getModuleProperty("oms", "productitem.showcustomerorderid", null);
+false
+		getRequest().setAttribute("hasCustomerOrderId", BooleanUtils.isTrue(showCustomerOrderId));
+
+		ProductItemVO myProductItemVO = (ProductItemVO) VOFactory.getValueObject(ProductItemVO.class);
+/ met new	,
+
+		MpoBeanFactory.getBean(EntityDetailService.class).initialize(myVO);
+/ Deze hebben we al gedaan	, bij create 	,
+/s
+EntityDetailServiceImpl.initialize(EntityDetailSupport) line: 126	
+		List<EntityDetailType> myList = entityDetailTypeDAO.getByEntity(anEntityDetailSupport.getEntity());
+/ 21 elems	,
+		if (anEntityDetailSupport.getEntityDetails() != null) {
+			myList.removeAll(anEntityDetailSupport.getEntityDetails().keySet());
+/ 0 elems	, allen rm	, want de sho heeft ze allemaal al	,
+
+/t
+ShipmentOrderCreateAction.act() line: 70	
+		MpoBeanFactory.getBean(EntityDetailService.class).initialize(myVO);
+/d
+		MpoBeanFactory.getBean(EntityDetailService.class).initialize(myProductItemVO);
+/s
+EntityDetailServiceImpl.initialize(EntityDetailSupport) line: 126	
+		List<EntityDetailType> myList = entityDetailTypeDAO.getByEntity(anEntityDetailSupport.getEntity());
+anEntityDetailSupport.getEntity()=PRODUCT_ITEM
+/ list van 9	,
+
+pnllogistics3=# select name from entity_detail_type where entity='PRODUCT_ITEM' and is_deleted=false;
+          name          
+------------------------
+ TunnelCd
+ SubsidiaryRiskLabel[1]
+ SubsidiaryRiskLabel[2]
+ SubsidiaryRiskLabel[3]
+ MinTemp
+ VerpakkingsGrpOmschr
+ ADRPuntenAant
+ MaxTemp
+ TransportCategorieCd
+(9 rows)
+
+		if (anEntityDetailSupport.getEntityDetails() != null) {
+{}
+			myList.removeAll(anEntityDetailSupport.getEntityDetails().keySet());
+/ list blijft 9 	,
+
+		for (EntityDetailType myEntityDetailType : myList) {
+			anEntityDetailSupport.setEntityDetail(myEntityDetailType, spaceAsInitialValue ? " " : "");
+/ krijgt alle 9	, met defaults	,
+
+/t
+ShipmentOrderCreateAction.act() line: 70	
+		MpoBeanFactory.getBean(EntityDetailService.class).initialize(myProductItemVO);
+/d
+		getSession().setAttribute(ShipmentItemView.ACTIVE_SHIPMENTITEM, myShipmentItemVO);
+null
+/ want eerder	ShipmentItemVO myShipmentItemVO = null;
+
+		getSession().setAttribute("productItemVO", myProductItemVO);
+		getSession().setAttribute("builder", ShipmentOrderUtil.getBuilder(myVO));
+/s
+ShipmentOrderUtil.getBuilder(ShipmentOrderVO) line: 26	
+		String myClass = "jsp";
+jsp
+		// Select the screen
+		String myProperty = ApplicationPropertyManager.getInstance().getOrganizationProperty(aShipmentOrder.getOrganization(),
+				"module.oms.shipmentorder.edit.screen.builder", myClass);
+/ de default	,
+jsp
+		if (!StringUtils.isEmpty(myProperty)) {
+			myClass = myProperty;
+		}
+		return myClass;
+/t
+ShipmentOrderCreateAction.act() line: 76	
+		getSession().setAttribute("builder", ShipmentOrderUtil.getBuilder(myVO));
+/d
+jsp
+		myVO.setSyncToFlag(getSyncFlag("to"));
+/s
+ShipmentOrderCreateAction.getSyncFlag(String) line: 37	
+		String myKey = "shipmentorder.sync." + aType + ".flag".toLowerCase();
+shipmentorder.sync.to.flag
+		return ApplicationPropertyManager.getInstance().getModuleProperty("oms", myKey, PartySyncFlag.DISABLED_CODE);
+module.oms.shipmentorder.sync.to.flag: "P"
+/ zit in de db	, niet in application.properties	,
+
+		myVO.setSyncFromFlag(getSyncFlag("from"));
+		myVO.setSyncBillToFlag(getSyncFlag("billto"));
+
+		return EMPTY_MAP;
+/c
+shipment-order_edit.jsp line: 30	
+<jsp:useBean id="myShipmentOrderView" scope="session" class="com.mpobjects.oms.view.shipmentorder.ShipmentOrderView" />
+<%
+	myShipmentOrderView.init(request);
+/s
+ShipmentOrderView.init(HttpServletRequest) line: 108	
+		super.init(aRequest, null);
+/s
+ShipmentOrderView(AbstractView).init(HttpServletRequest, HttpServletResponse) line: 97	
+		setRequest(aRequest);
+org.apache.cocoon.components.jsp.JSPEngineServletRequest@66794648
+		setResponse(aResponse);
+null
+		setSession(theRequest.getSession());
+org.apache.catalina.session.StandardSessionFacade@11fa74c5
+		setSessionManager(new SessionManagerImpl(getSession()));
+com.mpobjects.control.web.SessionManagerImpl@14740c1b
+		if (getRequest().getAttribute("requestManager") != null) {
+			setRequestManager((RequestManager) getRequest().getAttribute("requestManager"));
+com.mpobjects.control.web.RequestManager@7ee58e1d
+/t
+shipment-order_edit.jsp line: 35	
+	myShipmentOrderView.init(request);
+/d
+<jsp:useBean id="myShipmentItemView" scope="session" class="com.mpobjects.oms.view.shipmentorder.ShipmentItemView" />
+<%
+	myShipmentItemView.init(request);
+/s
+ShipmentItemView.init(HttpServletRequest) line: 45	
+		theRequest = aRequest;
+		theSession = theRequest.getSession();
+/t
+shipment-order_edit.jsp line: 40	
+	myShipmentItemView.init(request);
+/d
+<jsp:useBean id="theResource" scope="session" class="com.mpobjects.oms.view.resource.ResourceView" />
+<%
+	theResource.init(request);
+	ShipmentOrderVO myVO = myShipmentOrderView.getShipmentOrderVO();
+/s
+ShipmentOrderView.getShipmentOrderVO() line: 95	
+		return getActive();
+/s
+ShipmentOrderView.getActive() line: 117	
+		ShipmentOrderVO myActive = (ShipmentOrderVO) getSession().getAttribute(ACTIVE_SHIPMENTORDER);
+/ set in ShipmentOrderCreateAction.act	,
+
+/we geven /c	
+/ we zien het shipment-order_edit.jsp scherm, waar we zojuist in aan de debug waren	, en we zien de sho die created is in ShipmentOrderCreateAction.act	,
+
+/ We hebben dus de sho template cons_test_gse	, in mem	,
+/ hieronder:
+/ We fill in fields	, en Save past dus het sho aan, dat is wat 
+			ShipmentOrderVO shipmentOrderVO = (ShipmentOrderVO) getValueObject();
+/ doet	, 
+/ Normaal doen setters dat	, 
+/ Is dat bij JSF zo	, thuis	?
+/ Wicket writes in de model	, 
+/ TODO 
+/ Intermezzo
+
+/ Geef in google	,
+jsp calls setter	,
+
+http://www.java2s.com/Tutorial/Java/0360__JSP/CallSetterInJavaBeanToChangeitsPropertyValue.htm
+
+<HTML>
+    <HEAD>
+        <TITLE>Using Beans and Page Scope</TITLE>
+    </HEAD>
+
+    <BODY>
+        <H1>Using Beans and Page Scope</H1>
+
+        <jsp:useBean id="bean1" class="beans.Counter" scope="page" />
+
+        <% 
+        bean1.setCounter(bean1.getCounter() + 1);
+        %>
+        The counter value is: <jsp:getProperty name="bean1" property="counter" /> 
+    </BODY>
+</HTML>
+
+package beans;
+
+public class Counter 
+{
+
+    private int counter = 0;
+
+    public void setCounter(int value) 
+    {
+        this.counter = value;
+    }
+
+    public int getCounter() 
+    {
+        return this.counter;
+    }
+
+    public Counter() 
+    {
+    }
+}
+
+/ WH doet JSF dit zelf met #{model.name}	, 
+
+/ Einde Intermezzo
+
+System Order; SH000003000
+Actual productcode: 3610
+Req start after: <tomorrow> 8:04                    /= from client (waarvan afgehaald wordt)
+Req start before: <tomorrow> 18:04
+Req end after: <day after tomorrow> 8:04            /= to other client ( waarnaar geleverd wordt)   ,
+Req end before: <day after tomorrow> 18:04
+Requested Productcode: 3610             / = Actual productcode  ,
+Customer Reference: test by eric 
+
+/ In Ship from
+Address: xxx
+house number : 7
+/ In Ship to
+Address: yyy 
+house number : 13 
+
+////////////////////
+/ click Save
+
+/s
+ShipmentOrderSaveAction(ShipmentOrderSaveAction).handleSave() line: 61	
+/=
+package com.mpobjects.oms.control.shipmentorder.action;
+public class ShipmentOrderSaveAction extends AbstractShipmentSaveAction {
+
+			ShipmentOrderVO shipmentOrderVO = (ShipmentOrderVO) getValueObject();
+/s
+ShipmentOrderSaveAction(BoundSaveAction).getValueObject() line: 197	
+		return getFetchedData().iterator().next();
+/s
+ShipmentOrderSaveAction(BoundSaveAction).getFetchedData() line: 136	
+			if (theFetchedData == null) {
+				Collection<DataFetchable> myFetchFields = getForm().getDataFetchableFields();
+/ List van Tags,	 dus ListFieldTag, FieldTag	, ...
+/ 168 fields	,
+
+				for (DataFetchable myDataFetchable : myFetchFields) {
+					if (shouldHandle) {
+						myDataFetchable.fetchData();
+/s
+ListFieldTag.fetchData() line: 118	
+
+/ Intermezzo
+
+/ gets value from request (so of our form filled in in browser),	and sets in value obj=ShipmentOrderVO, for organization	,
+
+/ Dus de reden van de <mpo:setFormVO/> is dat de value van de organization in de valueObject wordt set	, = ShipmentOrderVO 	,
+$ vi shipment-order_edit.jsp
+	<mpo:form name="shipmentorder" action="shipment-order_save" entity="shipmentOrder" readOnly="${readOnly}">
+					<mpo:setFormVO valueObject="${formVO}">
+						<mpo:listField name="organization" type="organization" required="true" />
+
+/ In andere stukken van het form is bijv EntityDetails de valueObject	, dus dan worden parameters daarin geschreven	,
+
+$ vi shipment-order_edit.jsp
+
+	<mpo:form name="shipmentorder" action="shipment-order_save" entity="shipmentOrder" readOnly="${readOnly}">
+					<mpo:setFormVO valueObject="${formVO}">
+						<mpo:listField name="organization" type="organization" required="true" />
+					</mpo:setFormVO>
+					<mpo:setFormVO valueObject="${formVO.dateSetVO}">
+						<mpo:dateFieldTZ name="requestedStartAfter" timeZone="${formVO.fromPartyVO.timeZoneId}" type="DATE_TIME" overRideable="true" required="true" />
+
+				<tmstags:entity-detail-list extraFieldList="${formVO.entityDetailsForDisplay}" process="${formVO.shipmentOrderProcess}" organization="${formVO.organizationSystemid}" />
+
+				<tmstags:shipfrom formid="shipmentorder" />
+
+$ vi entity-detail-list.tag
+
+<c:forEach var="myEntry" items="${extraFieldList}">
+					<mpo:setFormVO valueObject="${myEntry}" prefix="${myDetailType.name}">
+
+
+$ vi shipfrom.tag
+			<mpo:setFormVO valueObject="${formVO}">
+				<mpo:listField name="fromParty" type="party" filter="COLLECTION" useEmptyLogic="true" populatePrefix="from" />
+			</mpo:setFormVO>
+			<mpo:setFormVO valueObject="${formVO.fromPartyVO}" prefix="from">
+				<mpo:field name="name" required="true" />
+...
+
+
+/ De fields op een form zijn request parameters	,
+
+/ Einde Intermezzo
+
+			String myCode = getValueFromRequest(getFormFieldName());
+/s
+ListFieldTag(FieldTag).getValueFromRequest(String) line: 1206	
+/=
+	protected String getValueFromRequest(String aName) {
+aName="organization"
+		return getRequest().getParameter(aName);
+"PNL-CARGO"
+
+/ Klopt	, wat we hebben filled in op scherm	, komen als paramaters in het request	, en dat komt de server in	, en dat zien we hier	,
+
+/t
+ListFieldTag.fetchData() line: 120	
+		if (isFetchData() && !isCurrentlyReadOnly()) {
+			String myCode = getValueFromRequest(getFormFieldName());
+/d
+PNL-CARGO
+			} else {
+				String myCurrentCode = "";
+				UniqueFieldValueObject myVO = VOReflectionInvoker.getValueAsUniqueVO(getActiveValueObject(), getName());
+getActiveValueObject()=ShipmentOrderVO
+getName()="organization"
+myVO=Organization
+SystemId:500	Id:PNL-CARGO	Description:PostNL Cargo
+
+/ Klopt	,
+$ vi shipment-order_edit.jsp
+	<mpo:form name="shipmentorder" action="shipment-order_save" entity="shipmentOrder" readOnly="${readOnly}">
+					<mpo:setFormVO valueObject="${formVO}">
+						<mpo:listField name="organization" type="organization" required="true" />
+/ value object=formVO=ShipmentOrderVO	,
+
+						} else {
+							myValue = proxy.getByCode(getType(), getFilter(), myCode);
+							VOReflectionInvoker.setUniqueFieldValue(getActiveValueObject(), getName(), myValue);
+////////////////////////////////////
+/ Sets the value PNL-CARGO" uit het request	, dus uit het form	, in de ShipmentOrderVO	, in de template dus	, we passen het template aan	,
+
+/t
+ShipmentOrderSaveAction(BoundSaveAction).getFetchedData() line: 136	
+				Collection<DataFetchable> myFetchFields = getForm().getDataFetchableFields();
+
+				boolean shouldHandle;
+				FieldTag myField = null;
+				for (DataFetchable myDataFetchable : myFetchFields) {
+/ volgende	,
+					shouldHandle = true;
+					if (myDataFetchable instanceof FieldTag) {
+						myField = (FieldTag) myDataFetchable;
+						shouldHandle = shouldHandleFieldPrefix(myField.getPrefix());
+					}
+					if (shouldHandle) {
+						myDataFetchable.fetchData();
+/d
+					}
+				}
+/c
+				theFetchedData = getForm().getValueObjects();
+/s
+FormTag.getValueObjects() line: 471	
+		return theValueObjects;
+this	FormTag  (id=23813)	
+	theValueObjects	ArrayList  (id=4293)	
+		elementData	Object[73]  (id=4295)	
+			[0]	ShipmentOrderVO  (id=2361)	
+			[1]	DateSetVO  (id=4296)	
+			[2]	ShipmentOrderVO  (id=2361)	
+			[3]	ShipmentOrderVO  (id=2361)	
+			[4]	EntityDetailWrapper  (id=4297)	
+				type	EntityDetailType_$$_javassist_8  (id=25897)	
+SystemId:26734011	IsDeleted:false	Detail Type:EilandToeslag	ValueType:BOOLEAN	
+			[5]	EntityDetailWrapper  (id=4298)	
+				type	EntityDetailType  (id=25920)	
+SystemId:26827907	IsDeleted:false	Detail Type:ManualPricing	ValueType:BOOLEAN	
+			[6]	EntityDetailWrapper  (id=4299)	
+type	EntityDetailType  (id=26133)	
+amount	null	
+SystemId:26774119	IsDeleted:false	Detail Type:DefaultWeight	ValueType:NUMBER	
+			[7]	EntityDetailWrapper  (id=4300)	
+			[8]	EntityDetailWrapper  (id=4301)	
+			[9]	EntityDetailWrapper  (id=4302)	
+			[10]	EntityDetailWrapper  (id=4303)	
+			[11]	EntityDetailWrapper  (id=4304)	
+			[12]	EntityDetailWrapper  (id=4305)	
+			[13]	EntityDetailWrapper  (id=4306)	
+			[14]	EntityDetailWrapper  (id=4307)	
+			[15]	EntityDetailWrapper  (id=4308)	
+			[16]	EntityDetailWrapper  (id=4309)	
+			[17]	EntityDetailWrapper  (id=4310)	
+			[18]	EntityDetailWrapper  (id=4311)	
+			[19]	EntityDetailWrapper  (id=4312)	
+			[20]	EntityDetailWrapper  (id=4418)	
+			[21]	EntityDetailWrapper  (id=4419)	
+			[22]	EntityDetailWrapper  (id=4420)	
+			[23]	EntityDetailWrapper  (id=4421)	
+			[24]	ShipmentOrderVO  (id=2361)	
+			[25]	ShipmentOrderVO  (id=2361)	
+			[26]	VirtualParty  (id=4422)	
+			[27]	VirtualParty  (id=4422)	
+			[28]	ShipmentOrderVO  (id=2361)	
+			[29]	ShipmentOrderVO  (id=2361)	
+			[30]	VirtualParty  (id=4531)	
+			[31]	VirtualParty  (id=4531)	
+			[32]	ShipmentOrderVO  (id=2361)	
+			[33]	ShipmentOrderVO  (id=2361)	
+			[34]	VirtualParty  (id=4532)	
+			[35]	VirtualParty  (id=4532)	
+			[36]	ShipmentOrderParty  (id=4533)	
+			[37]	ShipmentOrderParty  (id=4533)	
+			[38]	ShipmentOrderParty  (id=4533)	
+			[39]	ShipmentOrderParty  (id=4533)	
+			[40]	ShipmentOrderParty  (id=4549)	
+			[41]	ShipmentOrderParty  (id=4549)	
+			[42]	ShipmentOrderParty  (id=4549)	
+			[43]	ShipmentOrderParty  (id=4549)	
+			[44]	ProductItemVO  (id=4550)	
+			[45]	EntityDetailWrapper  (id=4551)	
+			[46]	EntityDetailWrapper  (id=4552)	
+			[47]	EntityDetailWrapper  (id=4716)	
+			[48]	EntityDetailWrapper  (id=4717)	
+			[49]	EntityDetailWrapper  (id=4718)	
+			[50]	EntityDetailWrapper  (id=4719)	
+			[51]	EntityDetailWrapper  (id=4720)	
+			[52]	EntityDetailWrapper  (id=4721)	
+			[53]	EntityDetailWrapper  (id=4722)	
+			[54]	ShipmentOrderVO  (id=2361)	
+			[55]	ShipmentOrderVO  (id=2361)	
+		size	56	
+
+/ elke EntityDetailWrapper  is een entity detail, zoals 'Default Weight'	,
+/ de type staat in type	, bijv 'DefaultWeight'	, 
+/ waar staat de value	, in amount?
+/ TODO
+
+/t
+ShipmentOrderSaveAction(BoundSaveAction).getValueObject() line: 197	
+		return getFetchedData().iterator().next();
+/ De 1ste is inderdaad de ShipmentOrderVO	,
+/ De 1ste value object in JSP is is formVO=ShipmentOrderVO	, en de andere value objects zijn te benaderen vanuit deze value object	,
+
+/t
+ShipmentOrderSaveAction(ShipmentOrderSaveAction).handleSave() line: 84	
+			ShipmentOrderVO shipmentOrderVO = (ShipmentOrderVO) getValueObject();
+/d
+/= ShipmentOrderVO inst, filled met request params uit het form	,
+
+			int mySystemid = shipmentOrderVO.getSystemId();
+0
+			if (mySystemid == ValueObject.VOLATILE_SYSTEM_ID) {
+				shipmentOrderVO = ShipmentOrderUtil.getShipmentOrderFacadeLocal().createShipmentOrder(shipmentOrderVO);
+/s
+PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).createShipmentOrder(ShipmentOrderVO) line: 829	
+
+/ hij krijgt als arg de sho template met values uit het form mee	,
+
+		return createShipmentOrder(aShipmentOrder, new TMSEventContext());
+/s
+/
+/ modifies aShipmentOrder,
+/
+PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).createShipmentOrder(ShipmentOrderVO, TMSEventContext) line: 837	
+/=
+	public ShipmentOrderVO createShipmentOrder(ShipmentOrderVO aShipmentOrder, TMSEventContext anEventContext) throws ShipmentOrderException {
+			// TODO: review when dealing with timezones.
+			Date myNow = timeService.getPresentDate(aShipmentOrder.getOrganization());
+/ Inderdaad nu	,
+			aShipmentOrder.setSystemEntryDate(myNow);
+			aShipmentOrder.setOriginalSystemEntryDate(myNow);
+			aShipmentOrder.setLastUpdate(myNow);
+			aShipmentOrder.setCreatedBy(AuthenticationUtils.getResource());
+
+			if (aShipmentOrder.isTemplate()) {
+/ NEE
+theTemplateFlag=false
+			} else {
+				setDatesAndStatus(aShipmentOrder);
+				applySyncFlags(aShipmentOrder);
+				handleTimeWindow(aShipmentOrder);
+
+				if (aShipmentOrder.getOrderProcess() == null) {
+/ NEE
+				shipmentOrderDao.setEventContext((TMSEventContext) anEventContext.clone());
+				myVO = shipmentOrderDao.save(aShipmentOrder);
+/s
+ShipmentOrderDaoImpl(GenericHibernateDAO).save(Type) line: 501	
+		if (anEntity.getSystemId() == 0) {
+			getHibernateTemplate().persist(anEntity);
+/t
+PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).createShipmentOrder(ShipmentOrderVO, TMSEventContext) line: 870	
+				myVO = shipmentOrderDao.save(aShipmentOrder);
+/d
+				MpoBeanFactory.getBean(EntityDetailService.class).initialize(myVO);
+/ alweer	,
+/s
+EntityDetailServiceImpl.initialize(EntityDetailSupport) line: 126	
+/=
+	public void initialize(EntityDetailSupport anEntityDetailSupport) {
+
+		List<EntityDetailType> myList = entityDetailTypeDAO.getByEntity(anEntityDetailSupport.getEntity());
+/anEntityDetailSupport.getEntity()=EntityType.SHIPMENT_ORDER
+/=
+pnllogistics3=# select count(*)from entity_detail_type where entity='SHIPMENT_ORDER' and is_deleted=0;
+ count 
+-------
+    21
+(1 row)
+		if (anEntityDetailSupport.getEntityDetails() != null) {
+			myList.removeAll(anEntityDetailSupport.getEntityDetails().keySet());
+/ list van 0	, want de sho heeft alles al	,
+
+/t
+PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).createShipmentOrder(ShipmentOrderVO, TMSEventContext) line: 871	
+				MpoBeanFactory.getBean(EntityDetailService.class).initialize(myVO);
+/d
+				getTriggerHandler().handleCreate(myVO);
+/s
+ShipmentOrderTriggerHandlerImpl.handleCreate(ShipmentOrderVO) line: 38	
+		Collection<ShipmentOrderTrigger> myList = MpoBeanFactory.getBean(ShipmentOrderTriggerDAO.class).getAll();
+[]
+/t
+PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).createShipmentOrder(ShipmentOrderVO, TMSEventContext) line: 872	
+				getTriggerHandler().handleCreate(myVO);
+/d
+				triggerEventHandler(null, myVO, new TMSEventContext());
+/s
+PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).triggerEventHandler(ShipmentOrderVO, ShipmentOrderVO, TMSEventContext) line: 2630	
+/=
+	private void triggerEventHandler(ShipmentOrderVO anOldVO, ShipmentOrderVO aNewVO, TMSEventContext anEventContext) throws AbstractException {
+		if (anOldVO == null) {
+			myEvent = new ShipmentOrderEvent(null, aNewVO, ShipmentOrderEvent.CREATED, anEventContext);
+		eventHandlerService.handleEvent(myEvent);
+/s
+EventHandlerServiceImpl.handleEvent(Event) line: 72	
+		String myEventType = anEvent.getEventType();
+shipmentorder.created
+
+				if (anEvent.getOldVO() != null && LogisticsOrderVO.class.isAssignableFrom(anEvent.getOldVO().getClass())
+/ NEE
+						|| anEvent.getNewVO() != null && LogisticsOrderVO.class.isAssignableFrom(anEvent.getNewVO().getClass())) {
+/ JA
+					LogisticsOrderVO myOldVO = (LogisticsOrderVO) anEvent.getOldVO();
+null
+					LogisticsOrderVO myNewVO = (LogisticsOrderVO) anEvent.getNewVO();
+/ Van form	,
+			listenerList.fireEvent(anEvent);
+/s
+ListenerList.fireEvent(Event<?>) line: 80	
+		for (EventListener myListener : theListenerList) {
+this	ListenerList  (id=23880)	
+	theListenerList	ArrayList  (id=23901)	
+		elementData	Object[22]  (id=23902)	
+			[0]	DocumentEventListener  (id=23904)	
+			[1]	CustomerOrderEventListener  (id=23905)	
+			[2]	ShoCostAllocationEventListener  (id=23906)	
+			[3]	ShoPriceAllocationServiceImpl  (id=23907)	
+			[4]	TMSCarConServiceOrderEventListener  (id=23908)	
+			[5]	SupplierInvoiceUpdateEventListener  (id=23987)	
+			[6]	StockTransactionEventListener  (id=23988)	
+			[7]	$Proxy417  (id=24006)						
+DeferredEventServiceImpl.handleEvent(Event<?>) line: 268	
+			[8]	EventEventListener  (id=24128)	
+			[9]	AllocationEventListener  (id=24156)	
+			[10]	CustomerInvoiceUpdateEventListener  (id=24160)	
+			[11]	CapableToPromiseEventListener  (id=24161)	
+			[12]	PnlLogisticsEventListener  (id=24195)	
+			[13]	EmailReportEventListener  (id=24219)	
+			[14]	InvoiceServiceOrderEventHandler  (id=24224)	
+			[15]	RateCalcEventListener  (id=24228)	
+		size	16	
+/s
+DocumentEventListener.handleEvent(Event) line: 54	
+		if (anEvent.getEventType().equals(LogisticsOrderEventEvent.SpecificPurposeCode.DOCUMENT_EVENT.name())) {
+/ NEE
+/t
+/s
+CustomerOrderEventListener.handleEvent(Event) line: 28	
+		if (anEvent.getEventType().equals(ShipmentOrderEvent.STATUS_UPDATED)) {
+/ NEE
+/t
+/s
+ShoCostAllocationEventListener.handleEvent(Event) line: 27	
+		if (myType.equals(ShipmentOrderEvent.UPDATED)) {
+/ NEE
+		} else if (myType.equals(ServiceActionEvent.UPDATED)) {
+/ NEE
+/t
+/s
+ShoPriceAllocationServiceImpl.handleEvent(Event) line: 108	
+		if (myEventType.equals(ShipmentOrderEvent.UPDATED)) {
+/ NEE
+		} else if (myEventType.equals(ConsignmentEvent.UPDATED)) {
+/ NEE
+		} else if (myEventType.equals(ServiceActionEvent.UPDATED)) {
+/ NEE
+/t
+/s
+TMSCarConServiceOrderEventListener.handleEvent(Event) line: 70	
+		if (myEventType.equals(ServiceOrderEvent.UPDATED)) {
+/ NEE
+/t
+/s
+SupplierInvoiceUpdateEventListener.handleEvent(Event) line: 35	
+		if (anEvent.getEventType().equals(LogisticsOrderEventEvent.SpecificPurposeCode.SUPPLIER_INVOICE_EVENT.name())) {
+/ NEE
+StockTransactionEventListener.handleEvent(Event<?>) line: 37	
+		boolean stockTransactionsEnabled = ApplicationPropertyManager.getInstance().getModuleProperty("inventory", "enable.stock.transactions", true);
+false
+		if (stockTransactionsEnabled) {
+/ NEE
+/t
+/s
+DeferredEventServiceImpl.handleEvent(Event<?>) line: 268	
+		if (anEvent.getEventType().equals(ServiceOrderEvent.UPDATED)) {
+/ NEE
+			handleServiceOrderUpdate((ServiceOrderEvent) anEvent);
+		} else if (anEvent.getEventType().equals(ServiceOrderContainerEvent.CREATED)) {
+/ NEE
+			handleServiceOrderContainerCreate((ServiceOrderContainerEvent) anEvent);
+		} else if (anEvent.getEventType().equals(ContainerEvent.CREATED)) {
+/ NEE
+			handleContainerCreate((ContainerEvent) anEvent);
+		} else if (anEvent.getEventType().equals(ShipmentOrderEvent.UPDATED)) {
+/ NEE
+			handleShipmentOrderUpdate((ShipmentOrderEvent) anEvent);
+		} else if (anEvent.getEventType().equals(ShipmentOrderEvent.CREATED)) {
+/ JA
+			handleShipmentOrderUpdate((ShipmentOrderEvent) anEvent);
+/s
+DeferredEventServiceImpl.handleShipmentOrderUpdate(ShipmentOrderEvent) line: 1160	
+		ShipmentOrderVO myNew = anEvent.getNewShipmentOrderVO();
+
+		Map<String, Object> myMap = getEventMappingService().getBaseEventIdentifiers(myNew);
+/ TODO (Later)
+myMap	HashMap  (id=26343)	
+	size	4	
+	table	HashMap$Entry[16]  (id=26344)	
+		[4]	HashMap$Entry  (id=26345)	
+			hash	82568356	
+			key	"shipmentOrderReferenceReference1" (id=26349)	
+			next	null	
+			value	"3610" (id=26350)	
+		[6]	HashMap$Entry  (id=26346)	
+			hash	82568358	
+			key	"shipmentOrderReferenceReference3" (id=26351)	
+			next	null	
+			value	"" (id=20287)	
+		[7]	HashMap$Entry  (id=26347)	
+			hash	82568359	
+			key	"shipmentOrderReferenceReference2" (id=26352)	
+			next	null	
+			value	"test by eric" (id=26353)	
+		[9]	HashMap$Entry  (id=26348)	
+			hash	-193588599	
+			key	"shipmentOrderId" (id=26354)	
+			next	null	
+			value	"SH000003000" (id=26355)	
+
+		for (DeferredEvent myEvent : findMatchingEvents(myMap)) {
+/ TODO (Later)
+[]
+/ GEEN
+
+		handleShipmentItemUpdate(anEvent);
+/s
+DeferredEventServiceImpl.handleShipmentItemUpdate(ShipmentOrderEvent) line: 1122	
+		try {
+			ShipmentOrderVO myNew = anEvent.getNewShipmentOrderVO();
+			Collection<ShipmentItemVO> myNewList = myNew.getShipmentItemList();
+[]
+/ Klopt	, dat doen we later	,
+			for (ShipmentItemVO myNewItem : myNewList) {
+/ GEEN
+/t
+/s
+EventEventListener.handleEvent(Event) line: 118	
+		String myType = anEvent.getEventType();
+shipmentorder.created
+		if (myType.equals(ServiceActionEvent.UPDATED)) {
+/ NEE
+		} else if (myType.equals(ServiceOrderEvent.UPDATED)) {
+/ NEE
+		} else if (myType.equals(ServiceOrderEvent.DELETED)) {
+/ NEE
+		} else if (myType.equals(ServiceActionEvent.CREATED)) {
+/ NEE
+		} else if (myType.equals(ServiceActionEvent.DELETED)) {
+/ NEE
+		} else if (myType.equals(LogisticsOrderEventEvent.CREATED)) {
+/ NEE
+		} else if (myType.equals(EventEvent.CREATED)) {
+/ NEE
+		} else if (myType.equals(EventEvent.UPDATED)) {
+/ NEE
+		} else if (myType.equals(EventEvent.CLOSE_ACTION)) {
+/ NEE
+		} else if (myType.equals(ServiceOrderContainerEvent.CREATED)) {
+/ NEE
+		} else if (myType.equals(ServiceOrderContainerEvent.UPDATED)) {
+/ NEE
+		} else {
+/t
+/s
+AllocationEventListener.handleEvent(Event) line: 36	
+		String myType = anEvent.getEventType();
+shipmentorder.created
+
+		if (myType.equals(ServiceOrderCostEvent.CREATED)) {
+/ NEE
+		} else if (myType.equals(ServiceOrderCostBatchEvent.BATCH_CREATED)) {
+/ NEE
+		} else if (myType.equals(ServiceOrderCostEvent.REALLOCATE)) {
+/ NEE
+		} else if (myType.equals(ServiceOrderCostEvent.UPDATED)) {
+/ NEE
+		} else if (myType.equals(ServiceOrderEvent.UPDATED)) {
+/ NEE
+		} else if (myType.equals(ShipmentOrderEvent.UPDATED)) {
+/ NEE
+		} else if (myType.equals(ShipmentOrderPriceEvent.UPDATED)) {
+/ NEE
+		} else if (myType.equals(ServiceActionEvent.UPDATED)) {
+/ NEE
+/t
+/s
+CustomerInvoiceUpdateEventListener.handleEvent(Event) line: 36	
+		if (anEvent.getEventType().equals(LogisticsOrderEventEvent.SpecificPurposeCode.CUSTOMER_INVOICE_EVENT.name())) {
+/ NEE
+/t
+/s
+CapableToPromiseEventListener.handleEvent(Event) line: 57	
+		if (anEvent.getEventType().equals(LogisticsOrderEventEvent.SpecificPurposeCode.RESOURCE_EVENT.name())) {
+/ NEE
+		} else if (CTPUtil.isServiceOrderEnabled()) {
+/ TODO
+/ JA
+			if (anEvent.getEventType().equalsIgnoreCase(ServiceOrderEvent.UPDATED) || anEvent.getEventType().equalsIgnoreCase(ServiceOrderEvent.CREATED)
+					|| anEvent.getEventType().equalsIgnoreCase(ServiceOrderEvent.DELETED)) {
+/ NEE
+/t
+/s
+PnlLogisticsEventListener.handleEvent(Event) line: 80	
+		if (ServiceOrderEvent.UPDATED.equals(anEvent.getEventType())) {
+/ NEE
+		} else if (EventEvent.CLOSE_ACTION.equals(anEvent.getEventType())) {
+/ NEE
+/t
+/s
+EmailReportEventListener(ReportEventListener).handleEvent(Event) line: 43	
+
+		List myNotificationsList = new ArrayList();
+		addReportNotificationEventProducers(myNotificationsList);
+myNotificationsList	ArrayList  (id=26866)	
+	elementData	Object[10]  (id=26869)	
+		[0]	ShipmentNotificationProducer  (id=26871)	
+		[1]	ManifestNotificationEventProducer  (id=26872)	
+		[2]	PreAlertNotificationProducer  (id=26873)	
+	size	3	
+
+			ReportNotificationEventProducer myReportNotification = (ReportNotificationEventProducer) myNotificationsList.get(i);
+
+			/*
+			 * The block below needs synchronization since the 'shouldBeSend' initializes the
+			 * ReportNotificationEventProducer. Not very beautiful...
+			 */
+			synchronized (this) {
+				if (myReportNotification.shouldBeSent(anEvent)) {
+/ TODO
+/ NEE
+/t
+/s
+InvoiceServiceOrderEventHandler.handleEvent(Event) line: 45	
+		String myEventType = anEvent.getEventType();
+shipmentorder.created
+		if (myEventType.equals(ServiceOrderEvent.UPDATED)) {
+/ NEE
+/t
+/s
+RateCalcEventListener.handleEvent(Event) line: 67	
+		if (anEvent.getEventContext().hasFlag(TMSEventContext.FLAG_MAY_RATE_CALC)) {
+			String myRecalcExecution = ApplicationPropertyManager.getInstance().getModuleProperty("ratecalc", "serviceorder.ratecalculation.execution");
+auto
+			if (myRecalcExecution.equalsIgnoreCase("auto")) {
+				recalcServiceOrderCost(anEvent);
+/s
+		if (myType.equals(ConsignmentEvent.UPDATED) || myType.equals(ConsignmentEvent.CREATED)) {
+/ NEE
+		} else if (myType.equals(ServiceOrderEvent.UPDATED) || myType.equals(ServiceOrderEvent.CREATED)) {
+/ NEE
+		} else if (myType.equals(ShipmentOrderEvent.UPDATED)) {
+/ NEE
+/t
+RateCalcEventListener.handleEvent(Event) line: 75	
+			if (myRecalcExecution.equalsIgnoreCase("auto")) {
+				recalcServiceOrderCost(anEvent);
+/ NIETS	,
+			String myPriceExecution = ApplicationPropertyManager.getInstance().getModuleProperty("ratecalc", "shipmentorderprice.ratecalculation.execution");
+auto
+			if (myPriceExecution.equalsIgnoreCase("auto")) {
+				recalcShipOrderPrice(anEvent);
+/s
+RateCalcEventListener.recalcShipOrderPrice(Event) line: 94	
+			if (myType.equals(ShipmentOrderEvent.CREATED)) {
+/ JA
+				ShipmentOrderVO myNewShipmentOrderVO = ((ShipmentOrderEvent) anEvent).getNewShipmentOrderVO();
+				recalculate(myNewShipmentOrderVO, AgreementType.SHIPMENT_ORDER, anEvent.getEventContext());
+/s
+RateCalcEventListener.recalculate(ShipmentOrderVO, AgreementType, TMSEventContext) line: 365	
+		boolean myCalcOffline = ApplicationPropertyManager.getInstance().getModuleOrganizationProperty(anOrder.getOrganization(), "ratecalc", "shipmentorder.recalculate.offline", false);
+false
+		if (myCalcOffline) {
+/ NEE
+		} else {
+			getCalculationService().recalculate(anOrder, aRateType, anEventContext);
+/s
+RateCalcEventListener.getCalculationService() line: 195	
+			calculationService = MpoBeanFactory.getBean(CalculationService.class);
+this	RateCalcEventListener  (id=35370)	
+	calculationService	$Proxy247  (id=35501)	
+		h	JdkDynamicAopProxy  (id=35802)	
+			advised	ProxyFactory  (id=35805)	
+				targetSource	SingletonTargetSource  (id=35826)	
+					target	CalculationServiceImpl  (id=35867)	
+/t
+RateCalcEventListener.recalculate(ShipmentOrderVO, AgreementType, TMSEventContext) line: 398	
+			getCalculationService().recalculate(anOrder, aRateType, anEventContext);
+/pd
+/s
+CalculationServiceImpl.recalculate(LogisticsOrderVO, AgreementType, TMSEventContext) line: 515	
+			List<RateAgreementVO> mySelectedRateAgreement = getMatchingRateAgreement(anOrder, aRateType);
+anOrder	ShipmentOrderVO  (id=26729)	
+aRateType	AgreementType  (id=27300)	
+SHIPMENT_ORDER
+/s
+CalculationServiceImpl.getMatchingRateAgreement(LogisticsOrderVO, AgreementType) line: 738	
+
+			/* First we need to check if there are contracts attached and if these contracts have rate agreements */
+			Collection<RateAgreementVO> myPreselectedList = new ArrayList<RateAgreementVO>();
+			if (ApplicationPropertyManager.getInstance().getModuleProperty("contract", "enabled", false)) {
+/ NEE
+			if (myPreselectedList.isEmpty()) {
+/ JA
+				/* First try if the previous match is still valid */
+				if (aLogisticsOrder.isPersistent()) {
+/ JA
+					} else if (aLogisticsOrder instanceof ShipmentOrderVO) {
+						myKey = "SHO-" + aRateType + aLogisticsOrder.getSystemId();
+SHO-SHIPMENT_ORDER26845996
+
+					} else {
+						myInt = (Integer[]) matching_cache.getObject(myKey);
+null
+					if (myInt != null) {
+/ NEE
+/ MAANDAGOCHTEND
+
+/ Intermezzo
+
+[eric@localhost bin]$  ps axjf
+/ tree	,
+
+/ Einde Intermezzo
+				myPreselectedList = getRateAgreementList(aRateType);
+/s
+CalculationServiceImpl.getRateAgreementList(AgreementType) line: 850	
+		return rateAgreementDao.getByType(aRateType);
+aRateType=AgreementType.SHIPMENT_ORDER
+/s
+RateAgreementHibernateDAOImpl.getByType(AgreementType) line: 61	
+		DetachedCriteria myCriteria = DetachedCriteria.forClass(RateAgreementVO.class);
+		myCriteria.add(Property.forName("agreementType").eq(aRateType)).add(Property.forName("template").eq(false))
+				.add(Property.forName("quotation").eq(false)).addOrder(Order.asc("priority"));
+		return findNonDeleted(myCriteria);
+
+/ Intermezzo
+
+$ vi RateAgreementVO.standard.hbm.xml
+<hibernate-mapping>
+	<class name="com.mpobjects.oms.ratecalc.model.rateagreement.vo.RateAgreementVO" table="RATE_AGREEMENT">
+		<property name="agreementType" column="RATE_TYPE" not-null="true">
+
+pnllogistics3=# select * from rate_agreement where rate_type='SHIPMENT_ORDER' and is_template=0 and is_quotation=0 and is_deleted=0 order by priority;
+/ aantal is 286
+
+/ Einde Intermezzo
+
+/t
+CalculationServiceImpl.getMatchingRateAgreement(LogisticsOrderVO, AgreementType) line: 793	
+				myPreselectedList = getRateAgreementList(aRateType);
+/d
+
+			for (RateAgreementVO myRateAgreementVO : myPreselectedList) {
+				if (myResultList.isEmpty() || !myResultList.contains(myRateAgreementVO)) {
+					if (myRateAgreementVO.matches(myContext)) {
+						myResultList.add(myRateAgreementVO);
+						if (myRateAgreementVO.isLast()) {
+							break;
+
+/ MAANDAGOCHTEND
+
+/ HIER HIER HIER
+
+
+
+
+/ Einde DEBUG DSVSOLNL-43
+
+/ DEPLOY ROLLSROYCE ON ISB-APP-P
+
+[eric@localhost bin]$ mk_ssh_passwordless_intermax.sh isb-app-p
+h^Zgcyr&Q
+
+/ vanaf nu	,
+[eric@localhost bin]$ cat isb-ssh-p.sh 
+#!/bin/bash
+ssh vanderveldene@isb-app-p.intermax.mp-objects.com
+
+
+
+
+
+/ Einde DEPLOY ROLLSROYCE ON ISB-APP-P
+
+/ DSVFMS
+
+[eric@localhost tmp]$ scp vanderveldene@application-a.intermax.mp-objects.com:/local/apps/jboss-4.0.5.GA/server/dsvfms/conf/language_fmsen.properties .
+[eric@localhost tmp]$ scp ~/vanderveldene@application-a.intermax.mp-objects.com:/local/apps/jboss-4.0.5.GA/server/dsvfms/conf/language_fmsen.properties .
+
+[eric@localhost bin]$ ls -l /tmp/language_fmsen.properties 
+-rw-rwxr--. 1 eric eric 49911 Feb 17 11:35 /tmp/language_fmsen.properties
+[eric@localhost bin]$ ls -l ~/Downloads/language_fmsen.properties 
+-rw-r-----. 1 eric eric 50260 Feb 17 12:29 /home/eric/Downloads/language_fmsen.properties
+
+/ Einde DSVFMS
+
+/ PAT-178
+
+/ In oms-menu.xml
+	<m:add path="configuration.planning.partyGroupsList" privilege="party-group.list" actionUrl="wicket?module=oms&amp;wicketpage=partygroupmy.PartyGroupListPage" index="1052" />
+
+/ Deze hebben we extra	, check nooit in	,
+
+/ 7	. 
+
+[eric@localhost workspace]$  svn co https://system.mp-objects.com/svn/tms/branches/2016.01
+[eric@localhost workspace]$ cp trunk/application.properties 2016.01
+[eric@localhost workspace]$ cp trunk/.project 2016.01
+[eric@localhost workspace]$ vi 2016.01/.project 
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+    <name>2016.01</name>
+...
+
+[eric@localhost workspace]$ cp trunk/.classpath 2016.01
+[eric@localhost workspace]$ vi 2016.01/.classpath 
+...
+    <classpathentry kind="con" path="org.dbpowder.plugins.LIB_CONTAINER/recurse~project/2016.01/base-framework/core/lib/jar"/>
+    <classpathentry kind="con" path="org.dbpowder.plugins.LIB_CONTAINER/recurse~project/2016.01/base-framework/buildscripts/build-lib"/>
+    <classpathentry kind="con" path="org.dbpowder.plugins.LIB_CONTAINER/recurse~project/2016.01/module/interfacing/lib"/>
+
+$ vi deploy/postgres-ds.xml
+
+    <xa-datasource>
+        <xa-datasource-property name="DatabaseName">pnllogistics5a</xa-datasource-property>
+
+   <local-tx-datasource>
+                <jndi-name>patchDS</jndi-name>
+                <connection-url>jdbc:postgresql://127.0.0.1:5432/pnllogistics5a</connection-url>
+
+/ Vergeet de laatste niet	, 
+
+/ in pnllogistics4t2 is er in de patch table 
+      1164 | 2016-02-16 10:39:40.801 | oms    | patch-398-party_reference_fields.sql | \r                                                 
+/ TODO (rm)	, 
+
+
+/ Einde PAT-178
+
+/ APPLE
+
+ericjvandervelden@icloud.com
+vlWalnoot27
+
+/ we maken apple id
+eric.vandervelden@mp-objects.com
+rtdMpo45
+
+
+
+
+/ Einde APPLE
+
+
+
+/ SCS
+
+/ Ga naar	,
+https://system.mp-objects.com/xwiki/bin/view/Main/ScsTroubleshooting#HApplicationstacktrace
+/ jstack
+
+/ of geeft	, 
+http://localhost:8080
+jmx console
+/ ga naar	,
+java.lang.String listThreadDump()
+/ click Invoke
+
+
+
+
+
+/ Einde SCS
+
+/ DEPLOY PNLTMS 
+
+/ op laptop	,
+
+[eric@localhost lib]$ ls $(ssh vanderveldene@pnl-app-t.intermax.mp-objects.com 2>/dev/null "awk '/MISSING/ && /.jar/ && /14:07/{print \$8}' /local/apps/jboss-4.0.5.GA/server/pnltms/log/server.log")
+
+[eric@localhost lib]$ scp $(ssh vanderveldene@pnl-app-t.intermax.mp-objects.com "awk '/MISSING/ && /.jar/ && /14:07/{print \$8}' /local/apps/jboss-4.0.5.GA/server/pnltms/log/server.log") vanderveldene@pnl-app-t.intermax.mp-objects.com:Downloads/pnltms/1
+
+------------------------------------------------------------------------------------------------------------------------
+                                   WAARSCHUWING \342\200\223 BELANGRIJKE MEDEDELING!
+------------------------------------------------------------------------------------------------------------------------
+
+...
+
+barcode4j-2.1.jar                                                                                       100%  268KB 268.0KB/s   00:00    
+batik-anim-1.7.jar                                                                                      100%   93KB  93.1KB/s   00:00    
+batik-awt-util-1.7.jar                                                                                  100%  392KB 392.4KB/s   00:00    
+batik-bridge-1.7.jar                                                                                    100%  546KB 545.8KB/s   00:00    
+batik-css-1.7.jar                                                                                       100%  304KB 303.6KB/s   00:00    
+batik-dom-1.7.jar                                                                                       100%  169KB 169.5KB/s   00:00    
+batik-ext-1.7.jar                                                                                       100%   10KB  10.0KB/s   00:00    
+batik-gvt-1.7.jar                                                                                       100%  237KB 237.2KB/s   00:00    
+batik-parser-1.7.jar                                                                                    100%   71KB  71.4KB/s   00:00    
+batik-script-1.7.jar                                                                                    100%   59KB  59.2KB/s   00:00    
+batik-svg-dom-1.7.jar                                                                                   100%  587KB 587.0KB/s   00:00    
+batik-svggen-1.7.jar                                                                                    100%  210KB 210.2KB/s   00:00    
+batik-util-1.7.jar                                                                                      100%  125KB 125.3KB/s   00:00    
+batik-xml-1.7.jar                                                                                       100%   30KB  30.1KB/s   00:00    
+xml-apis-ext-1.3.04.jar                                                                                 100%   84KB  83.7KB/s   00:00    
+
+/ we zien toch Intermax text	, terwijl we 2>/dev/null deden	,
+/ TODO
+
+/ op pnl-app-t	,
+[jboss@pnl-app-t releases]$ cp -a ~vanderveldene/Downloads/pnltms/1/* /local/apps/jboss-4.0.5.GA/server/pnltms/lib/
+
+/ 7	. 
+
+/ t -> a
+
+/ op laptop	,
+[eric@localhost tmp]$ scp vanderveldene@pnl-app-t.intermax.mp-objects.com:/local/apps/releases/tms-pnltms-22212-trunk_build3669.zip .
+[eric@localhost tmp]$ scp tms-pnltms-22212-trunk_build3669.zip vanderveldene@pnl-app-a.intermax.mp-objects.com:
+/ TODO (in 1 keer)	,
+/ TOOD (Laatste pnl-tms in /local/app/releases)
+
+/ op pnl-app-a	,
+[jboss@pnl-app-a ~]$ cp -a  ~vanderveldene/tms-pnltms-22212-trunk_build3669.zip releases/
+/ mv kan NIET	, Permission denied	,
+/ deploy pnltms	,
+
+/ op laptop	,
+[eric@localhost lib]$ pwd
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/pnllogistics/lib
+[eric@localhost lib]$ ls $(ssh vanderveldene@pnl-app-a.intermax.mp-objects.com 2>/dev/null "awk '/MISSING/ && /.jar/ && /2016-01-29 16:21:00/{print \$8}' /local/apps/jboss-4.0.5.GA/server/pnltms/log/server.log")
+barcode4j-2.1.jar       batik-bridge-1.7.jar  batik-ext-1.7.jar     batik-script-1.7.jar   batik-util-1.7.jar
+batik-anim-1.7.jar      batik-css-1.7.jar     batik-gvt-1.7.jar     batik-svg-dom-1.7.jar  batik-xml-1.7.jar
+batik-awt-util-1.7.jar  batik-dom-1.7.jar     batik-parser-1.7.jar  batik-svggen-1.7.jar   xml-apis-ext-1.3.04.jar
+
+[eric@localhost lib]$ ssh vanderveldene@pnl-app-a.intermax.mp-objects.com "mkdir -p Downloads/pnltms/1"
+
+[eric@localhost lib]$ scp $(ssh vanderveldene@pnl-app-a.intermax.mp-objects.com  "awk '/MISSING/ && /.jar/ && /2016-01-29 16:21:00/{print \$8}' /local/apps/jboss-4.0.5.GA/server/pnltms/log/server.log") vanderveldene@pnl-app-a.intermax.mp-objects.com:Downloads/pnltms/1
+barcode4j-2.1.jar                                                                                       100%  268KB 268.0KB/s   00:00    
+batik-anim-1.7.jar                                                                                      100%   93KB  93.1KB/s   00:00    
+batik-awt-util-1.7.jar                                                                                  100%  392KB 392.4KB/s   00:00    
+batik-bridge-1.7.jar                                                                                    100%  546KB 545.8KB/s   00:00    
+batik-css-1.7.jar                                                                                       100%  304KB 303.6KB/s   00:00    
+batik-dom-1.7.jar                                                                                       100%  169KB 169.5KB/s   00:00    
+batik-ext-1.7.jar                                                                                       100%   10KB  10.0KB/s   00:00    
+batik-gvt-1.7.jar                                                                                       100%  237KB 237.2KB/s   00:00    
+batik-parser-1.7.jar                                                                                    100%   71KB  71.4KB/s   00:00    
+batik-script-1.7.jar                                                                                    100%   59KB  59.2KB/s   00:00    
+batik-svg-dom-1.7.jar                                                                                   100%  587KB 587.0KB/s   00:00    
+batik-svggen-1.7.jar                                                                                    100%  210KB 210.2KB/s   00:00    
+batik-util-1.7.jar                                                                                      100%  125KB 125.3KB/s   00:00    
+
+/ op laptop	,
+[jboss@pnl-app-a ~]$ cp -a ~vanderveldene/Downloads/pnltms/1/* /local/apps/jboss-4.0.5.GA/server/pnltms/lib
+
+
+
+
+
+
+
+
+
+/ Einde DEPLOY PNLTMS 
+
+
+
+
+
+/ DEPLOY BARD
+
+/ 7	. 
+
+2016-01-22 10:00:39,040 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [bard/patch-0001-c-view-LAST_SHIPMENT_ORDER_EVENT$postgresql.sql]: 
+2016-01-22 10:00:39,040 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) drop view IF EXISTS LAST_SHIPMENT_ORDER_EVENT
+2016-01-22 10:00:39,040 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERROR: must be owner of relation last_shipment_order_event
+rd=> \dv
+                  List of relations
+ Schema |           Name            | Type |  Owner   
+--------+---------------------------+------+----------
+ public | chargeable_user           | view | bard
+ public | chargeable_user_detail    | view | bard
+ public | free_user                 | view | bard
+ public | full_user                 | view | bard
+ public | last_shipment_order_event | view | rastgarb
+
+/ Superuser role moet	,
+
+
+/ Einde DEPLOY BARD
+
+
+
+
+/ Einde DSVSOL-2716
+
+/ DEPLOY BARD
+
+/ op laptop	,
+[eric@localhost lib]$ ssh vanderveldene@bard-app-t.intermax.mp-objects.com "rm -f Downloads/*"
+
+[eric@localhost lib]$ scp  $(ssh vanderveldene@bard-app-t.intermax.mp-objects.com 2>/dev/null "awk '/MISSING/ && /.jar/{print \$8}' <(tail -32 /local/apps/jboss-4.0.5.GA/server/bard/log/server.log)") vanderveldene@bard-app-t.intermax.mp-objects.com:Downloads
+
+/ op bard-app-t	,
+[jboss@bard-app-t ~]$ cp -a ~vanderveldene/Downloads/* /local/apps/jboss-4.0.5.GA/server/bard/lib/
+
+
+
+
+/ Einde DEPLOY BARD
+
+/ DSVFMS DEPLOY
+
+/ op laptop	,
+[eric@localhost Dsvfms]$ pwd
+/home/eric/DB_TAP/Firebird/Dsvfms
+[eric@localhost Dsvfms]$ scp vanderveldene@application-a.intermax.mp-objects.com:/local/apps/jboss-4.0.5.GA/server/dsvfms/conf/language_fmsen.properties .
+-rw-rwxr--. 1 eric     eric           50252 Feb 22 09:56 language_fmsen.properties
+
+[eric@localhost Dsvfms]$ ssh vanderveldene@application-a.intermax.mp-objects.com "mkdir Downloads/2016-02-22"
+[eric@localhost Dsvfms]$ scp tms-dsvfms-22570-2015.03_build3786.zip vanderveldene@application-a.intermax.mp-objects.com:Downloads/2016-02-22
+tms-dsvfms-22570-2015.03_build3786.zip                                                                          100%   35MB   2.1MB/s   00:17    
+
+/ op application-a	,
+[jboss@application-a ~]$ cp ~vanderveldene/Downloads/2016-02-22/tms-dsvfms-22570-2015.03_build3786.zip releases/
+[jboss@application-a ~]$ ls -l /local/apps/jboss-4.0.5.GA/server/dsvfms/conf/language_fmsen.properties
+-rw-rwxr--+ 1 jboss jboss 50252 Feb 17 14:23 /local/apps/jboss-4.0.5.GA/server/dsvfms/conf/language_fmsen.properties
+
+[jboss@application-a ~]$ deploy-dsvfms.sh /local/apps/releases/tms-dsvfms-22570-2015.03_build3786.zip /local/apps/jboss-4.0.5.GA/server/dsvfms/
+
+/ we hebben handmatig merge	,
+
+
+
+/ Einde DSVFMS DEPLOY
+
+/ DEPLOY PSA
+
+[eric@localhost tmp]$ scp vanderveldene@geosco-app-t.intermax.mp-objects.com:/local/apps/releases/tms-geosco-22570-2016.01_build3787.zip .
+[eric@localhost tmp]$ ssh vanderveldene@geosco-app-a.intermax.mp-objects.com "mkdir Downloads/2016-02-23"
+[eric@localhost tmp]$ scp tms-geosco-22570-2016.01_build3787.zip  vanderveldene@geosco-app-a.intermax.mp-objects.com:Downloads/2016-02-23
+
+/ op geosco-app-a	,
+[jboss@geosco-app-a ~]$ cp -a ~vanderveldene/Downloads/2016-02-23/tms-geosco-22570-2016.01_build3787.zip releases/
+
+/ Als deploy 	, we missen jars	,
+
+/ op laptop	,
+
+[eric@localhost pnllogistics]$ (cd lib/;ssh   vanderveldene@geosco-app-a.intermax.mp-objects.com "awk '/MISSING/ && /2016-02-23 08:55:27/ && /.jar/{print}' /local/apps/jboss-4.0.5.GA/server/geosco/log/server.log" 2>/dev/null)
+2016-02-23 08:55:27,685 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : barcode4j-2.1.jar
+2016-02-23 08:55:27,685 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : batik-anim-1.7.jar
+2016-02-23 08:55:27,685 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : batik-awt-util-1.7.jar
+2016-02-23 08:55:27,685 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : batik-bridge-1.7.jar
+2016-02-23 08:55:27,685 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : batik-css-1.7.jar
+2016-02-23 08:55:27,686 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : batik-dom-1.7.jar
+2016-02-23 08:55:27,686 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : batik-ext-1.7.jar
+2016-02-23 08:55:27,686 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : batik-gvt-1.7.jar
+2016-02-23 08:55:27,686 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : batik-parser-1.7.jar
+2016-02-23 08:55:27,686 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : batik-script-1.7.jar
+2016-02-23 08:55:27,686 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : batik-svg-dom-1.7.jar
+2016-02-23 08:55:27,686 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : batik-svggen-1.7.jar
+2016-02-23 08:55:27,686 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : batik-util-1.7.jar
+2016-02-23 08:55:27,686 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : batik-xml-1.7.jar
+2016-02-23 08:55:27,697 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : xml-apis-ext-1.3.04.jar
+
+[eric@localhost pnllogistics]$ (cd lib/;ssh   vanderveldene@geosco-app-a.intermax.mp-objects.com "awk '/MISSING/ && /2016-02-23 08:55:27/ && /.jar/{count++}END{print count}' /local/apps/jboss-4.0.5.GA/server/geosco/log/server.log" 2>/dev/null)
+15
+/ Klopt	,
+[eric@localhost pnllogistics]$ (cd lib/; ls $(ssh   vanderveldene@geosco-app-a.intermax.mp-objects.com "awk '/MISSING/ && /2016-02-23 08:55:27/ && /.jar/{print \$8}' /local/apps/jboss-4.0.5.GA/server/geosco/log/server.log" 2>/dev/null))
+barcode4j-2.1.jar       batik-bridge-1.7.jar  batik-ext-1.7.jar     batik-script-1.7.jar   batik-util-1.7.jar
+batik-anim-1.7.jar      batik-css-1.7.jar     batik-gvt-1.7.jar     batik-svg-dom-1.7.jar  batik-xml-1.7.jar
+batik-awt-util-1.7.jar  batik-dom-1.7.jar     batik-parser-1.7.jar  batik-svggen-1.7.jar   xml-apis-ext-1.3.04.jar
+
+[eric@localhost pnllogistics]$ ssh vanderveldene@geosco-app-a.intermax.mp-objects.com "mkdir -p Downloads/23-02-16"
+
+[eric@localhost pnllogistics]$ (cd lib/; scp  $(ssh   vanderveldene@geosco-app-a.intermax.mp-objects.com "awk '/MISSING/ && /2016-02-23 08:55:27/ && /.jar/{print \$8}' /local/apps/jboss-4.0.5.GA/server/geosco/log/server.log" 2>/dev/null)  vanderveldene@geosco-app-a.intermax.mp-objects.com:Downloads/23-02-16)
+barcode4j-2.1.jar                                                              100%  268KB 268.0KB/s   00:00    
+batik-anim-1.7.jar                                                             100%   93KB  93.1KB/s   00:00    
+batik-awt-util-1.7.jar                                                         100%  392KB 392.4KB/s   00:00    
+batik-bridge-1.7.jar                                                           100%  546KB 545.8KB/s   00:00    
+batik-css-1.7.jar                                                              100%  304KB 303.6KB/s   00:00    
+batik-dom-1.7.jar                                                              100%  169KB 169.5KB/s   00:00    
+batik-ext-1.7.jar                                                              100%   10KB  10.0KB/s   00:00    
+batik-gvt-1.7.jar                                                              100%  237KB 237.2KB/s   00:00    
+batik-parser-1.7.jar                                                           100%   71KB  71.4KB/s   00:00    
+batik-script-1.7.jar                                                           100%   59KB  59.2KB/s   00:00    
+batik-svg-dom-1.7.jar                                                          100%  587KB 587.0KB/s   00:00    
+batik-svggen-1.7.jar                                                           100%  210KB 210.2KB/s   00:00    
+batik-util-1.7.jar                                                             100%  125KB 125.3KB/s   00:00    
+batik-xml-1.7.jar                                                              100%   30KB  30.1KB/s   00:00    
+xml-apis-ext-1.3.04.jar                                                        100%   84KB  83.7KB/s   00:00    
+
+/ we hadden naar Downloads/2016-02-23	,
+
+[vanderveldene@geosco-app-a ~]$ mv $(find Downloads/23-02-16/ -name "*.jar" ) Downloads/2016-02-23/
+[vanderveldene@geosco-app-a ~]$ rmdir Downloads/23-02-16/
+
+[jboss@geosco-app-a ~]$ awk '{count++}END{print count}' <(find ~vanderveldene/Downloads/2016-02-23/ -name "*.jar")
+15
+/ klopt	,
+
+[jboss@geosco-app-a ~]$ cp -a  $(find ~vanderveldene/Downloads/2016-02-23/ -name "*.jar") /local/apps/jboss-4.0.5.GA/server/geosco/lib/
+
+[jboss@geosco-app-a ~]$ geosco start track
+/ OK
+
+
+
+/ Einde DEPLOY PSA
+
+/ DEPLOY KRAMP
+
+/ op test	,
+
+localhost tmp]$ ssh vanderveldene@kramp-app-t.intermax.mp-objects.com "mkdir Downloads/2016-02-24"
+
+/ check	,
+[eric@localhost pnllogistics]$ (cd lib; ssh  vanderveldene@kramp-app-t.intermax.mp-objects.com "awk '/MISSING/ && /2016-02-24 17:10:22/ && /.jar/{count++}END{print count}' /local/apps/jboss-4.0.5.GA/server/kramp/log/server.log" 2>/dev/null)
+15
+
+[eric@localhost pnllogistics]$ (cd lib; scp $(ssh  vanderveldene@kramp-app-t.intermax.mp-objects.com "awk '/MISSING/ && /2016-02-24 17:10:22/ && /.jar/{print \$8}' /local/apps/jboss-4.0.5.GA/server/kramp/log/server.log" 2>/dev/null)  vanderveldene@kramp-app-t.intermax.mp-objects.com:Downloads/2016-02-24)
+
+/ check	,
+[eric@localhost pnllogistics]$ ssh vanderveldene@kramp-app-t.intermax.mp-objects.com "awk '{count++}END{print count}' <(ls Downloads/2016-02-24)" 2>/dev/null
+15
+
+/ op kramp-app-t	,
+[jboss@kramp-app-t ~]$ awk '{c++}END{print c}' <(find ~vanderveldene/Downloads/2016-02-24/ -name "*.jar")
+15
+
+[jboss@kramp-app-t ~]$ cp -a $(find ~vanderveldene/Downloads/2016-02-24/ -name "*.jar") /local/apps/jboss-4.0.5.GA/server/kramp/lib
+
+/ op acc	,
+
+/ Let op: escape $ en "	,
+[eric@localhost pnllogistics]$ ssh 2>/dev/null  vanderveldene@kramp-app-a.intermax.mp-objects.com "cd Downloads;echo \$(find -name \"*.jar\")"
+./openws-1.5.4.jar ./xmlsec-1.5.7.jar ./bcprov-jdk15on-1.53.jar ./opensaml-2.6.4.jar ./xmltooling-1.4.4.jar
+
+/ mv jars in Downloads/ naar Downloads/2016-02-25	,
+[eric@localhost pnllogistics]$ ssh 2>/dev/null  vanderveldene@kramp-app-a.intermax.mp-objects.com "cd Downloads;mv  \$(find -name \"*.jar\") previous_date"
+
+2016-02-25 10:49:55
+
+[eric@localhost pnllogistics]$ ssh 2>/dev/null  vanderveldene@kramp-app-a.intermax.mp-objects.com "awk '/MISSING/ && /2016-02-25 10:49:55/ && /.jar/{c++ }END{print c}' /local/apps/jboss-4.0.5.GA/server/kramp/log/server.log"
+15
+
+[eric@localhost pnllogistics]$ (cd lib;scp $(ssh 2>/dev/null  vanderveldene@kramp-app-a.intermax.mp-objects.com "awk '/MISSING/ && /2016-02-25 10:49:55/ && /.jar/{print \$8}' /local/apps/jboss-4.0.5.GA/server/kramp/log/server.log") vanderveldene@kramp-app-a.intermax.mp-objects.com:Downloads/2016-02-25)
+
+/ check	,
+[eric@localhost pnllogistics]$ ssh 2>/dev/null  vanderveldene@kramp-app-a.intermax.mp-objects.com "awk '{c++}END{print c}' <(ls Downloads/2016-02-25)"
+15
+
+/ op kramp-app-a	,
+[jboss@kramp-app-a releases]$ cp -a $(find ~vanderveldene/Downloads/2016-02-25/ -name "*.jar") /local/apps/jboss-4.0.5.GA/server/kramp/lib
+/ Dit gaat OK, want find geeft het hele path	,
+[jboss@kramp-app-a releases]$ ls $(find ~vanderveldene/Downloads/2016-02-25/ -name "*.jar")
+/home/vanderveldene/Downloads/2016-02-25/barcode4j-2.1.jar       /home/vanderveldene/Downloads/2016-02-25/batik-parser-1.7.jar
+...
+[jboss@kramp-app-a releases]$ kramp start track
+
+
+/ Einde DEPLOY KRAMP
+
+/ DEPLOY DSVFMS
+
+[eric@localhost pnllogistics]$ ssh 2>/dev/null eric@mposerv11 "awk '/dsvfms/{}END{print}' <(ls -ltr /local/apps/releases)"
+-rw-rw-r-- 1 jboss jboss 36644551 Feb 23 10:51 tms-dsvfms-22580-2015.03_build3795.zip
+
+/ Zoek uit hoe met scp , find  cp van de ene naar de andere machine	,
+/ TODO
+
+/ we doen het met de hand	,
+[eric@localhost tmp]$ scp  eric@mposerv11:/local/apps/releases/tms-dsvfms-22580-2015.03_build3795.zip .
+
+/ check	,
+[eric@localhost tmp]$ ssh 2>/dev/null  eric@mposerv11 "md5sum /local/apps/releases/tms-dsvfms-22580-2015.03_build3795.zip"
+a4a4520728a149ea1ac77f6ae1aecde9  /local/apps/releases/tms-dsvfms-22580-2015.03_build3795.zip
+[eric@localhost tmp]$ md5sum tms-dsvfms-22580-2015.03_build3795.zip 
+a4a4520728a149ea1ac77f6ae1aecde9  tms-dsvfms-22580-2015.03_build3795.zip
+
+[eric@localhost tmp]$ scp tms-dsvfms-22580-2015.03_build3795.zip vanderveldene@application-a.intermax.mp-objects.com:/local/apps/releases
+
+/ check	,
+[eric@localhost tmp]$ ssh  vanderveldene@application-a.intermax.mp-objects.com "md5sum \$(awk '/dsvfms/{}END{print \"/local/apps/releases/\" \$9}' <(ls -ltr /local/apps/releases))"
+a4a4520728a149ea1ac77f6ae1aecde9  /local/apps/releases/tms-dsvfms-22580-2015.03_build3795.zip
+
+
+/ Einde DEPLOY DSVFMS
+
+/ DEPLOY GEOSCO 
+
+[eric@localhost tmp]$ ssh vanderveldene@geosco-app-t.intermax.mp-objects.com "awk 'END{print \$0}' <(ls /local/apps/releases)" 2>/dev/null
+tms-geosco-22641-2016.01_geosco-patch_build3825.zip
+
+/ find geeft het hele path	, maar niet de laatste	,
+[eric@localhost tmp]$ (ssh vanderveldene@geosco-app-t.intermax.mp-objects.com "awk 'END{print \$0}' <(find /local/apps/releases)" 2>/dev/null)
+/local/apps/releases/tms-geosco-22347-2015.04_build3716.zip
+
+/ Lees	hoe find sort	,
+http://superuser.com/questions/294161/unix-linux-find-and-sort-by-date-modified
+[vanderveldene@geosco-app-t ~]$ find /local/apps/releases/ -exec ls -1tr "{}" +;
+/ TODO
+/ Geen path erbij	,
+
+/ Lees	, 
+http://serverfault.com/questions/335376/find-and-sort-results-by-date-created
+
+[vanderveldene@geosco-app-t ~]$ find /local/apps/releases/ -type f -printf '%T@ %p\n' | sort -k1 -n
+/ of	,
+[vanderveldene@geosco-app-t ~]$ find /local/apps/releases/ -type f -print0 | xargs -0 stat -c "%y %n" | sort
+
+/ we moeten	 met awk,
+[vanderveldene@geosco-app-t ~]$ awk 'END{print $2}' <(find /local/apps/releases/ -type f -printf '%T@ %p\n' | sort -k1 -n)
+/local/apps/releases/tms-geosco-22641-2016.01_geosco-patch_build3825.zip
+
+/ en	,
+
+[vanderveldene@geosco-app-t ~]$ awk 'END{print $4}' <(find /local/apps/releases/ -type f -print0 | xargs -0 stat -c "%y %n" | sort)
+/local/apps/releases/tms-geosco-22641-2016.01_geosco-patch_build3825.zip
+
+/ 13	. 
+
+$ man find
+find -printf '%T@ %p'
+/ %T = modification time	, @ is seconds since 1970	,
+/ %p = file name	, 
+
+/ sort -k1 -n: sort op key 1	, see string as numerical value	,
+
+/ 13	. 
+
+$ find /local/apps/releases/ -type f -print0
+/ sets \0 tussen de entries	, 
+/local/apps/releases/tms-geosco-21741-2015.04_build3498.zip/local/...
+/ maar met xargs kun je dit use	,
+
+[vanderveldene@geosco-app-t ~]$ find /local/apps/releases/ -type f -print0 | xargs -0 stat
+  File: `/local/apps/releases/tms-geosco-21741-2015.04_build3498.zip'
+  Size: 38179122  	Blocks: 74576      IO Block: 4096   regular file
+Device: fd00h/64768d	Inode: 2491014     Links: 1
+Access: (0664/-rw-rw-r--)  Uid: (  503/   jboss)   Gid: (  503/   jboss)
+Access: 2015-12-08 19:58:24.486522341 +0100
+Modify: 2015-12-08 19:57:57.665653987 +0100
+Change: 2015-12-08 19:57:57.665653987 +0100
+  File: `/local/apps/releases/tms-geosco-22609-2016.01_build3809.zip'
+  Size: 38539393  	Blocks: 75280      IO Block: 4096   regular file
+Device: fd00h/64768d	Inode: 2490699     Links: 1
+Access: (0664/-rw-rw-r--)  Uid: (  503/   jboss)   Gid: (  503/   jboss)
+Access: 2016-02-25 15:13:47.463468507 +0100
+Modify: 2016-02-25 15:13:16.379567094 +0100
+Change: 2016-02-25 15:13:16.379567094 +0100
+  File: `/local/apps/releases/tms-geosco-21973-2015.04_build3578.zip'
+  Size: 38190700  	Blocks: 74592      IO Block: 4096   regular file
+Device: fd00h/64768d	Inode: 2492116     Links: 1
+Access: (0664/-rw-rw-r--)  Uid: (  503/   jboss)   Gid: (  503/   jboss)
+Access: 2016-01-14 10:56:54.315197543 +0100
+Modify: 2016-01-07 11:24:31.205595073 +0100
+Change: 2016-01-07 11:24:31.205595073 +0100
+...
+
+/ specifieker, met -c "%y %n"	,
+
+       %y     time of last modification, human-readable
+       %n     file name
+/ geeft ook altijd \n	,
+
+[vanderveldene@geosco-app-t ~]$ find /local/apps/releases/ -type f -print0 | xargs -0 stat -c  "%y %n"  | sort 
+
+/ 13	. 
+
+/ we doen met de hand	,
+[eric@localhost tmp]$ ssh vanderveldene@geosco-app-t.intermax.mp-objects.com "awk 'END{print \$0}' <(find /local/apps/releases -type f -printf '%T@ %p\n' | sort)" 2>/dev/null
+1456818113.3941837500 /local/apps/releases/tms-geosco-22641-2016.01_geosco-patch_build3825.zip
+
+/ 1456818113 zijn seconds since 1970	, en 3941837500 de nano's zoals
+$ date +%s.%N
+/ zoals in 	,
+       date [OPTION]... [+FORMAT]
+
+[eric@localhost tmp]$ scp vanderveldene@geosco-app-t.intermax.mp-objects.com:/local/apps/releases/tms-geosco-22641-2016.01_geosco-patch_build3825.zip .
+
+[eric@localhost tmp]$ ssh vanderveldene@geosco-app-a.intermax.mp-objects.com "mkdir Downloads/2016-03-01"
+
+[eric@localhost tmp]$ scp tms-geosco-22641-2016.01_geosco-patch_build3825.zip vanderveldene@geosco-app-a.intermax.mp-objects.com:Downloads/2016-03-01
+
+[eric@localhost tmp]$ ssh vanderveldene@geosco-app-a.intermax.mp-objects.com "ls Downloads/2016-03-01" 2>/dev/null
+tms-geosco-22641-2016.01_geosco-patch_build3825.zip
+
+/ op geosco-app-a	,
+[jboss@geosco-app-a ~]$ cp ~vanderveldene/Downloads/2016-03-01/tms-geosco-22641-2016.01_geosco-patch_build3825.zip /local/apps/releases/
+
+
+
+/ 13	. 
+
+[eric@localhost tmp]$ find -printf "%T@ %p\n" | sort
+find: ‘./systemd-cups.service-XcKh1lT’: Permission denied
+find: ‘./systemd-colord.service-XT7TSNl’: Permission denied
+find: ‘./firebird’: Permission denied
+find: ‘./systemd-mariadb.service-XPdGscQ’: Permission denied
+find: ‘./systemd-rtkit-daemon.service-XeVIXgZ’: Permission denied
+1447053534.8824236400 ./.font-unix
+1447053534.8824236400 ./.Test-unix
+1447053534.8824236400 ./.XIM-unix
+1447053535.9684236720 ./systemd-rtkit-daemon.service-XeVIXgZ
+...
+/ We zien Permission denied	, 
+/ TODO
+
+$ find -user eric 
+/ werkt NIET	,
+/ TODO
+
+$ find ... -ls
+/ OK, 
+/ find doet ls -dils 	, 
+/ Kunnen we andere opties geven	aan ls, zoals -t	?
+/ TODO
+
+
+
+
+
+
+
+/ Einde DEPLOY GEOSCO 
+
+/ NVE
+
+eric.vandervelden@mp-objects.com
+rtdMpo45A
+
+
+/ Einde NVE
+
+

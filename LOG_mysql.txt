@@ -1,0 +1,35 @@
+/ 7	. 
+
+/ Lees	, 
+https://stackoverflow.com/questions/34758730/differences-between-rowtype-type-and-record-in-postgresql
+
+/ In 5.7 docs	,
+
+/ ch 12
+https://dev.mysql.com/doc/refman/5.7/en/functions.html
+
+/ ch 23
+https://dev.mysql.com/doc/refman/5.7/en/stored-programs-views.html
+	https://dev.mysql.com/doc/refman/5.7/en/stored-routines.html
+
+/ ch 28
+https://dev.mysql.com/doc/refman/5.7/en/extending-mysql.html
+	https://dev.mysql.com/doc/refman/5.7/en/adding-functions.html
+
+
+/ 7	. 
+
+/ memcached
+
+/ google
+memcached jdbc
+/ lees	,
+https://blog.yannickjaquier.com/linux/getting-started-with-memcached-and-mysql.html
+https://dev.mysql.com/doc/refman/5.6/en/ha-memcached-interfaces-java.html
+
+/ 7	. 
+
+/ google, 
+mysql ssl
+/ lees	,
+https://dev.mysql.com/doc/refman/5.7/en/encrypted-connections.html

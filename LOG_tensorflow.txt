@@ -1,0 +1,6 @@
+/ Lees	, 
+http://mattfortier.me/2017/01/09/nvidia-cuda-tensorflow-fedora-guide/
+
+http://hoolihan.net/blog-tim/2016/03/02/installing-tensorflow-on-centos/
+
+https://testinggetsreal.com/2016/12/27/how-to-install-tensorflow-on-fedora-with-cuda-gpu-acceleration/

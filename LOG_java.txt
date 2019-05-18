@@ -1,0 +1,178 @@
+/ 7	. 
+
+PrintWriter.class
+    public PrintWriter(String fileName) throws FileNotFoundException {
+        this(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName))),
+             false);
+    }
+
+/ 7	. 
+
+/ scala ide	, 
+/ ws workspace-spring
+/ proj asm-study
+
+[eric@almond asm-study]$  pwd
+/home/eric/Devel/Eclipse/scala/workspace-spring/asm-study
+
+$ vi src/test/java/IOTest.java
+
+	@Test
+	public void testFos() throws IOException{
+		FileWriter fw=new FileWriter("pi.txt");
+		fw.write("π");
+		fw.close();
+		fw=new FileWriter("src/main/java/pi.txt");
+		fw.write("π");
+		fw.close();
+	}
+	
+/ Dan verschijnt pi.txt in de root dir	, /home/eric/Devel/Eclipse/scala/workspace-spring/asm-study	, 
+/ en de 2de in src/main/java	, 
+/ de dir src/main/java moet bestaaan	, 
+
+/ 7	. 
+
+$ vi IOTest.java
+
+	@Test
+	public void testFos() throws IOException{
+		FileWriter fw=new FileWriter("/tmp/fw.res");
+		fw.write("π");
+		fw.close();
+	}
+	@Test
+	public void testDos() throws IOException {
+		FileOutputStream fos=new FileOutputStream("/tmp/dos.res");
+		DataOutputStream dos=new DataOutputStream(fos);
+//		dos.writeDouble(3.14);
+		dos.writeUTF("π");
+		dos.writeInt(13);
+//		dos.writeUTF("π");
+		dos.close();
+	}
+
+[eric@almond asm-study]$ od -t x1 -t c /tmp/fw.res 
+0000000  cf  80
+        317 200
+0000002
+/ we zien de 2 utf-8 bytes	, 
+
+[eric@almond asm-study]$ od -t x1 -t c /tmp/dos.res 
+0000000  00  02  cf  80  00  00  00  0d
+         \0 002 317 200  \0  \0  \0  \r
+0000010
+/ we zien dat 13 wordt 00  00  00  0d
+/ en "π" wordt 00  02  cf  80						: length + utf-8 bytes	,
+
+/ Waarom print DataOutputStream de length van een string erbij	?
+/ TODO
+
+/ 7	. 
+
+/ scala ide
+/ ws workspace-spring
+/ proj asm-study
+$ vi src/test/java/IOTest.java
+
+package first;
+
+public class IOTest {
+	@Test
+	public void testRelative() throws IOException{
+		FileWriter fw=new FileWriter("pi.txt");
+		fw.write("π");
+		fw.close();
+
+		FileReader fr=new FileReader("pi.txt");
+		int ch=fr.read();
+		Assert.assertEquals('π', ch);
+		
+
+		InputStream in=getClass().getResourceAsStream("eps.txt");	// or,
+
+//		InputStream in=getClass().getResourceAsStream("X.class");		// or	,
+//		InputStream in=getClass().getResourceAsStream("/first/X.class");
+		Assert.assertNotNull(in);
+		System.in.read(); 				/ to see the classpath	,
+
+	}
+
+/ google: getresourceasstream filereader
+/ lees	 ,
+http://stackoverflow.com/questions/40816634/changing-from-filereader-to-getresourceasstream
+http://stackoverflow.com/questions/11302531/how-to-place-a-file-on-classpath-in-eclipse
+http://stackoverflow.com/questions/15188335/reading-a-resource-with-bufferedreader					<-
+
+/ 13	. 
+
+/ we kunnen ook zoiets als	, 
+bReader = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("resources/" + fileName)));
+
+/ 13	. 
+
+this.getClass().getResourceAsStream("resources/" + fileName) loads file from classpath as new File("resources/" + fileName) loads file from your work dir(the project root dir in eclipse). To make the former work, you need to add the jar which containing resources dir to your classpath.
+
+/ we kunnen in IOTest.class 	,
+//		InputStream in=getClass().getResourceAsStream("X.class");		// or	,
+//		InputStream in=getClass().getResourceAsStream("/first/X.class");
+/ TODO
+		InputStream in=getClass().getResourceAsStream("eps.txt");			// or, 
+		InputStream in=getClass().getResourceAsStream("/first/eps.txt");	 
+/ TODO
+
+
+/ 13	. 
+
+/ we set in test: System.in.read()	, dan zien we met $ ps ajx	, 
+
+/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.111-1.b16.fc23.x86_64/bin/java 
+	-Dfile.encoding=UTF-8 
+	-classpath /home/eric/Devel/Eclipse/scala/workspace-spring/asm-study/bin
+		:/home/eric/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm-debug-all/5.2/3354e11e2b34215f06dab629ab88e06aca477c19/asm-debug-all-5.2.jar
+		:/home/eric/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/2973d150c0dc1fefe998f834810d68f278ea58ec/junit-4.12.jar:/home/eric/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar
+	:/home/eric/Devel/Eclipse/scala/eclipse/configuration/org.eclipse.osgi/178/0/.cp/:/home/eric/Devel/Eclipse/scala/eclipse/configuration/org.eclipse.osgi/177/0/.cp/ org.eclipse.jdt.internal.junit.runner.RemoteTestRunner 
+	-version 3 
+	-port 37479 
+	-testLoaderClass org.eclipse.jdt.internal.junit4.runner.JUnit4TestLoader 
+	-loaderpluginname org.eclipse.jdt.junit4.runtime 
+	-classNames first.IOTest
+
+[eric@almond asm-study]$ ls bin/first/
+eps.txt            FirstTest.class              FirstTest$MyVisitor$3.class  X.class
+FirstTest$1.class  FirstTest$MyVisitor$1.class  FirstTest$MyVisitor.class
+FirstTest$2.class  FirstTest$MyVisitor$2.class  IOTest.class
+
+/ 7	. 
+
+/ geef in google    ,
+weak reference tutorial
+/ Lees  ,
+http://javapapers.com/core-java/java-weak-reference/
+https://community.oracle.com/blogs/enicholas/2006/05/04/understanding-weak-references
+https://www.tutorialspoint.com/java/java_weakhashmap_class.htm
+
+$ vi MiscTest.java
+
+  @Test
+  public void testGc(){
+    X x=new X();
+    HashMap<X, String>map=new HashMap<>();
+
+    map.put(x, "");
+    x=null;   / map heeft nog steeds key = wat x was  , maar deze key is nu orphan  , dus wordt gc  ,
+
+    System.gc();
+    boolean b=map.containsKey(x);
+    Assert.assertEquals(false, b);
+
+    map.put(new X(),"");
+
+    System.gc();
+    b=map.containsKey(x);
+    Assert.assertEquals(false, b);
+  }
+
+/ Einde Intermezzo
+
+

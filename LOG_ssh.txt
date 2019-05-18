@@ -1,0 +1,151 @@
+[root@almond ~]# systemctl start sshd
+[root@almond ~]# systemctl enable sshd
+Created symlink /etc/systemd/system/multi-user.target.wants/sshd.service → /usr/lib/systemd/system/sshd.service.
+
+[eric@almond latex]$ ssh localhost
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ECDSA key sent by the remote host is
+SHA256:pYuzPpU4TI1ie7W0+1RW7rv84M4JHW7FYPk8udBZF7E.
+Please contact your system administrator.
+Add correct host key in /home/eric/.ssh/known_hosts to get rid of this message.
+Offending ECDSA key in /home/eric/.ssh/known_hosts:1
+ECDSA host key for localhost has changed and you have requested strict checking.
+Host key verification failed.
+
+/ we zien dus dat de entry op regel 1 ERR	,
+
+$ vi ~/.ssh/known_hosts
+localhost ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBD8G83A/yWpJmWeBRcafdv3EZQMhMdDi0+2SMNcR/n4tznH+7VFQD3C9ng48tRNsbS+CFmiJ7kr9Pw4ja2lanZA=
+...
+/ Als je deze regel rm	, dan krijg je weer	,
+
+[eric@almond latex]$ ssh -l eric localhost
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ECDSA key sent by the remote host is
+SHA256:pYuzPpU4TI1ie7W0+1RW7rv84M4JHW7FYPk8udBZF7E.
+Please contact your system administrator.
+Add correct host key in /home/eric/.ssh/known_hosts to get rid of this message.
+Offending ECDSA key in /home/eric/.ssh/known_hosts:1
+ECDSA host key for localhost has changed and you have requested strict checking.
+Host key verification failed.
+[eric@almond latex]$ ssh -l eric localhost
+The authenticity of host 'localhost (127.0.0.1)' can't be established.
+ECDSA key fingerprint is SHA256:pYuzPpU4TI1ie7W0+1RW7rv84M4JHW7FYPk8udBZF7E.
+ECDSA key fingerprint is MD5:2b:52:cf:fb:a3:6d:a8:10:0e:4e:2f:2e:a8:45:a6:e1.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'localhost' (ECDSA) to the list of known hosts.
+Authentication failed.
+[eric@almond latex]$ ssh -l eric localhost
+eric@localhost's password: 
+Last login: Mon Mar 19 20:13:39 2018
+$ 
+/ OK
+/ -l eric kunnen we ook weglaten	,
+/ we moeten steeds inloggen met password	,
+/ TODO
+
+/ de regel is toegevoegd als laatste regel	,
+$ vi ~/.ssh/known_hosts
+localhost ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAbrtFCbr+nZOKmIOUc/8C0wjIgGo06WywlDNlsBEVYndnoBN8i5B73m7JmXJ9wZ2RY0F45RbxQub3KLUCNjQfs=
+
+/ 13	. 
+
+[eric@almond latex]$ ssh almond.nuts.org
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ECDSA key sent by the remote host is
+SHA256:pYuzPpU4TI1ie7W0+1RW7rv84M4JHW7FYPk8udBZF7E.
+Please contact your system administrator.
+Add correct host key in /home/eric/.ssh/known_hosts to get rid of this message.
+Offending ECDSA key in /home/eric/.ssh/known_hosts:18
+ECDSA host key for almond.nuts.org has changed and you have requested strict checking.
+Host key verification failed.
+/ Dus nu op l. 18	,
+/ Klopt	, 
+$ vi known_hosts
+...
+almond.nuts.org ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBD8G83A/yWpJmWeBRcafdv3EZQMhMdDi0+2SMNcR/n4tznH+7VFQD3C9ng48tRNsbS+CFmiJ7kr9Pw4ja2lanZA=
+...
+/ we rm deze en doen opnieuw	,
+
+[eric@almond latex]$ ssh almond.nuts.org
+The authenticity of host 'almond.nuts.org (192.168.123.182)' can't be established.
+ECDSA key fingerprint is SHA256:pYuzPpU4TI1ie7W0+1RW7rv84M4JHW7FYPk8udBZF7E.
+ECDSA key fingerprint is MD5:2b:52:cf:fb:a3:6d:a8:10:0e:4e:2f:2e:a8:45:a6:e1.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'almond.nuts.org' (ECDSA) to the list of known hosts.
+Warning: the ECDSA host key for 'almond.nuts.org' differs from the key for the IP address '192.168.123.182'
+Offending key for IP in /home/eric/.ssh/known_hosts:17
+Are you sure you want to continue connecting (yes/no)? no
+Host key verification failed.
+[eric@almond latex]$ 
+
+
+$ vi known_hosts
+...
+almond,192.168.123.182 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBD8G83A/yWpJmWeBRcafdv3EZQMhMdDi0+2SMNcR/n4tznH+7VFQD3C9ng48tRNsbS+CFmiJ7kr9Pw4ja2lanZA=
+...
+/ we rm deze ook	,
+
+[eric@almond latex]$ ssh almond.nuts.org
+Warning: Permanently added the ECDSA host key for IP address '192.168.123.182' to the list of known hosts.
+eric@almond.nuts.org's password: 
+Last login: Sat Apr 14 14:20:59 2018 from 127.0.0.1
+[eric@almond ~]$
+
+$ vi known_hosts
+...
+localhost ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAbrtFCbr+nZOKmIOUc/8C0wjIgGo06WywlDNlsBEVYndnoBN8i5B73m7JmXJ9wZ2RY0F45RbxQub3KLUCNjQfs=
+almond.nuts.org ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAbrtFCbr+nZOKmIOUc/8C0wjIgGo06WywlDNlsBEVYndnoBN8i5B73m7JmXJ9wZ2RY0F45RbxQub3KLUCNjQfs=
+192.168.123.182 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAbrtFCbr+nZOKmIOUc/8C0wjIgGo06WywlDNlsBEVYndnoBN8i5B73m7JmXJ9wZ2RY0F45RbxQub3KLUCNjQfs=
+
+[eric@almond latex]$ ssh almond
+The authenticity of host 'almond (192.168.123.182)' can't be established.
+ECDSA key fingerprint is SHA256:pYuzPpU4TI1ie7W0+1RW7rv84M4JHW7FYPk8udBZF7E.
+ECDSA key fingerprint is MD5:2b:52:cf:fb:a3:6d:a8:10:0e:4e:2f:2e:a8:45:a6:e1.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'almond' (ECDSA) to the list of known hosts.
+eric@almond's password: 
+Last login: Sat Apr 14 14:27:09 2018 from 192.168.123.182
+[eric@almond ~]$ 
+
+ 
+ 
+
+
+
+enp0s25: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.123.182  netmask 255.255.255.0  broadcast 192.168.123.255
+        inet6 fe80::2e44:fdff:fe68:82d4  prefixlen 64  scopeid 0x20<link>
+        ether 2c:44:fd:68:82:d4  txqueuelen 1000  (Ethernet)
+        RX packets 6664136  bytes 9350673577 (8.7 GiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 4236673  bytes 391738551 (373.5 MiB)
+        TX errors 353  dropped 0 overruns 0  carrier 353  collisions 2134839
+        device interrupt 17  memory 0xd4700000-d4720000  
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 2414  bytes 265339 (259.1 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 2414  bytes 265339 (259.1 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+
+

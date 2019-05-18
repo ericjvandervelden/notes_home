@@ -1,0 +1,196 @@
+https://developer.jboss.org/wiki/OpenSessionInView
+/ ->
+https://developer.jboss.org/wiki/SessionsAndTransactions
+
+/ 7	. 
+
+/ volgorde filters 	,
+
+/ we lezen	,
+http://stackoverflow.com/questions/17086712/servlet-filters-order-of-execution
+
+<filter-mapping>
+    <filter-name>encodingFilter</filter-name>
+    <servlet-name>SpringMVCDispatcher</servlet-name>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>SpringFormMethodFilter</filter-name>
+    <url-pattern>/administration/*</url-pattern>
+</filter-mapping>
+/ eerst form filter	, /administration/*	, dan encoding filter, SpringMVCDispatcher
+
+<filter-mapping>
+    <filter-name>encodingFilter</filter-name>
+    <servlet-name>SpringMVCDispatcher</servlet-name>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>SpringFormMethodFilter</filter-name>
+    <servlet-name>SpringMVCDispatcher</servlet-name>
+</filter-mapping>
+/ eerst encoding filter	, SpringMVCDispatcher, dan form filter	, SpringMVCDispatcher
+
+/ dat is omdat	,
+
+When the container recives a request, it first finds all the filter mappings with a <url-pattern> that matches the request URI. This becomes the first set of filters in the filter chain.Next it finds all the filter mappings with a <servlet-name> that matches the request URI. This becomes the second set of filters in the filter chain.In both the sets the filters are executed in the order in which they are declared in the D.D.
+
+According to the specs
+
+The order the container uses in building the chain of filters to be applied for a particular request URI is as follows:
+
+First, the <url-pattern> matching filter mappings in the same order that these elements appear in the deployment descriptor.
+Next, the <servlet-name> matching filter mappings in the same order that these elements appear in the deployment descriptor.
+
+/ 7	. 
+
+/ spring's contextloaderlistener	,
+
+/ lees	,
+http://stackoverflow.com/questions/11815339/role-purpose-of-contextloaderlistener-in-spring
+
+/ 13	. 
+
+Your understanding is correct. The ApplicationContext is where your Spring beans live. The purpose of the ContextLoaderListener is two-fold:
+
+to tie the lifecycle of the ApplicationContext to the lifecycle of the ServletContext and
+to automate the creation of the ApplicationContext, so you don't have to write explicit code to do create it - it's a convenience function.
+Another convenient thing about the ContextLoaderListener is that it creates a WebApplicationContext and WebApplicationContext provides access to the ServletContext via ServletContextAware beans and the getServletContext method.
+
+does ContextLoaderListener implement a destroy method to destroy all beans when the web container shuts down? – asgs Sep 19 '13 at 6:50
+yes - it does that when contextDestroyed is called. See the API docs. – sourcedelica Sep 19 '13 at 14:24
+add a comment
+
+/ 13	. 
+
+For a simple Spring application, you don't have to define ContextLoaderListener in your web.xml; you can just put all your Spring configuration files in <servlet>:
+
+<servlet>
+    <servlet-name>hello</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:spring/mvc-core-config.xml, classpath:spring/business-config.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+</servlet>
+For a more complex Spring application, where you have multiple DispatcherServlet defined, you can have the common Spring configuration files that are shared by all the DispatcherServlet defined in the ContextLoaderListener:
+
+<context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:spring/common-config.xml</param-value>
+</context-param>
+<listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+</listener>
+
+<servlet>
+    <servlet-name>mvc1</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:spring/mvc1-config.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+</servlet>
+
+<servlet>
+    <servlet-name>mvc2</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:spring/mvc2-config.xmll</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+</servlet>
+Just keep in mind, ContextLoaderListener performs the actual initialization work for the root application context.
+
+I found this article helps a lot: Spring MVC – Application Context vs Web Application Context
+/ lees	,
+http://javabeat.net/spring-mvc-application-context/
+
+/ 13	. 
+
+/ boek	, 
+
+/ de dispatcher servlet heeft config file roadrantz-servlet.xml	,
+/ de contextloaderlistener heeft default config file WEB-INF/applicationContext.xml	, maar we kunnen deze op opsplitsen en deze opgeven in contextConfigLocation	, 
+
+/ in roadrantz-servlet.xml zien we de controllers	, ...
+/ in de andere, die tesamen WEB-INF/applicationContext.xml vormen ahw	, zien we 'gewone' beans, die we gewend zijn	, zoals services	, dao	, 
+
+[eric@localhost RoadRantz]$ pwd
+/home/eric/Devel/Java/Spring/sia2/RoadRantz
+[eric@localhost RoadRantz]$ cat ./src/main/webapp/WEB-INF/web.xml
+
+<web-app ...>
+
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>
+      classpath:roadrantz-security.xml
+      classpath:roadrantz-services.xml
+      classpath:roadrantz-email.xml
+      classpath:roadrantz-data.xml
+      classpath:roadrantz-data-jpa-pure.xml
+      classpath:roadrantz-transactions.xml
+      classpath:roadrantz-cache.xml
+      classpath:roadrantz-mbeans.xml
+    </param-value>
+  </context-param>
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+  <servlet>
+    <servlet-name>roadrantz</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath:roadrantz-servlet.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>roadrantz</servlet-name>
+    <url-pattern>*.htm</url-pattern>
+  </servlet-mapping>
+
+[eric@localhost RoadRantz]$ cat ./src/main/resources/roadrantz-servlet.xml
+<beans ...>
+  <bean id="homePageController"
+      class="com.roadrantz.mvc.HomePageController">
+    <property name="rantService" ref="rantService" />
+  </bean>
+
+  <bean id="urlMapping"
+      class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+...
+
+  <bean id="specialViewResolver"
+      class="org.springframework.web.servlet.view.XmlViewResolver">
+...
+
+[eric@localhost RoadRantz]$ cat ./src/main/resources/roadrantz-services.xml
+<beans ...>
+ <bean id="rantService"
+      class="com.roadrantz.service.RantServiceImpl">
+    <property name="rantDao" ref="rantDao" />
+
+    <property name="mailSender" ref="mailSender" /> <!-- Added in section 12.2.1, page 453 -->
+    <property name="mailMessage" ref="mailMessage" /> <!-- Added in section 12.2.2, page 455 -->
+    <!--
+    <property name="notificationPublisher"
+        ref="notificationPublisher" />
+        -->
+  </bean>
+</beans>
+
+/ lees	, 
+http://stackoverflow.com/questions/12036661/open-session-in-view-for-new-version-of-hibernate
+/ over 
+http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/orm/hibernate4/support/OpenSessionInViewFilter.html
+
+/ 13	. 
+
+/ lees	, 
+http://www.thoughts-on-java.org/criteria-updatedelete-easy-way-to/
+

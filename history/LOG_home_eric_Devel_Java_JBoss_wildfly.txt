@@ -1,0 +1,1000 @@
+   72  sudo docker exec misc ps ajx
+   73  sudo docker exec -it misc
+   74  sudo docker exec -it misc /bin/bash
+   75  sudo docker attach -it misc /bin/bash
+   76  sudo docker attach misc /bin/bash
+   77  sudo docker attach misc
+   78  sudo docker attach -it misc /bin/bash
+   79  sudo docker exec -it misc /bin/bash
+   80  sudo docker exec -it misc 
+   81  sudo docker exec -it misc bash
+   82  sudo docker exec -it misc ps ajx
+   83  sudo docker exec -it misc bash
+   84  sudo docker attach misc
+   85  which gcloud
+   86  gcloud compute --project "web-server-project-1148" ssh --zone "europe-west1-c" "instance-1"
+   87  kubectl
+   88  gcloud components update
+   89  . ~/.bash_profile
+   90  echo $PATH
+   91  pwd
+   92  exit
+   93  grep -i failed * | grep -i bus
+   94  exit
+   95  vi src/main.js
+   96  vi src/main.css
+   97  vi public/index.html 
+   98  vi webpack.config.js
+   99  vi public/index.html 
+  100  exit
+  101  cd ../../
+  102  ls
+  103  cd CodeSchool
+  104  mkdir Bootstrap
+  105  ls
+  106  cd Bootstrap/
+  107  ls
+  108  ls getting_started/
+  109  mv getting_started/* .
+  110  ls
+  111  ls getting_started/ -al
+  112  mv getting_started/.babelrc .
+  113  rmdir getting_started/
+  114  pwd
+  115  exit
+  116  cd /var/lib/pgsql/
+  117  sudo su -
+  118  exit
+  119  sudo su -
+  120  pwd
+  121  exit
+  122  docker ps 
+  123  docker commit -m "added: dnf repoquery" -a "Eric J." 4513a34660b8        my/fedora_postgres
+  124  exit
+  125  sudo su -
+  126  exit
+  127  docker ps 
+  128  docker commit -m "installed sudo passwd less vim" -a "Eric J." 847bb912ba10        my/fedora_postgres
+  129  exit
+  130  echo $PATH
+  131  PATH=/home/eric/Devel/Cloud/Google/google-cloud-sdk/bin:/home/eric/Devel/Cloud/Google/google-cloud-sdk/bin:/usr/lib64/qt-3.3/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/home/eric/.local/bin:/home/eric/bin:/home/eric/Devel/Gradle/Java/gradle-2.4/bin:/home/eric/Devel/Cloud/Google/appengine-java-sdk-1.9.30/bin:/home/eric/Devel/Golang/work/bin
+  132  gcloud components update
+  133  gcloud components install kubectl
+  134   sudo docker network ls
+  135  man usermod
+  136  groups eric
+  137  docker network 
+  138  docker network ls
+  139  docker images
+  140  docker network inspect bridge 
+  141  docker network disconnect bridge test 
+  142  docker network inspect bridge 
+  143  docker network connect bridge test 
+  144  docker network inspect bridge 
+  145  docker network create my-bridge-2
+  146  docker network ls
+  147  docker network inspect my-bridge-2
+  148  docker network disconnect bridge tst
+  149  docker network disconnect bridge test
+  150  docker network connect my-bridge-2 test
+  151  docker stop test 
+  152  docker rm test
+  153  docker network inspect my-bridge-2
+  154  docker network disconnect my-bridge-2 test 
+  155  docker network connect bridge test 
+  156  docker stop test
+  157  docker images
+  158  docker info 
+  159  docker images
+  160  docker images --help
+  161  docker images
+  162  docker images ubuntu 
+  163  docker pull ubuntu
+  164  docker images ubuntu 
+  165  docker pull training/postgres
+  166  vi Dockerfile 
+  167  docker build --help
+  168  docker build --rm -t misc .
+  169  pwd
+  170  cat Dockerfile 
+  171  docker image --help
+  172  docker images --help
+  173  docker images --format
+  174  docker history misc
+  175  docker run --rm --name test misc
+  176  docker history misc
+  177  docker history misc --no-trunc
+  178  docker history --no-trunc misc 
+  179  docker exec -it db
+  180  docker exec --help
+  181  docker exec -it db bash
+  182  docker exec -it db basg
+  183  docker exec -it db bash
+  184  docker images
+  185  docker ps 
+  186  docker commit -a
+  187  docker commit -h
+  188  docker commit -m "added postgres" -a "Eric J." 9d61e486652a my/fedora_postgres
+  189  docker images
+  190  docker run --rm --name db2 -it training/postgres 
+  191  pwd
+  192  ls
+  193  cat Dockerfile 
+  194  docker images
+  195  docker run --rm --name misc misc
+  196  docker run --rm --name fd -ti fedora  bash
+  197  cd ..
+  198  cd fedora/postgres/
+  199  vi Dockerfile 
+  200  pwd
+  201  cat Dockerfile 
+  202  vi Dockerfile 
+  203  cd ../locale/
+  204  ls
+  205  vi Dockerfile 
+  206  pwd
+  207  cat Dockerfile 
+  208  man su
+  209  vi Dockerfile 
+  210  locate pg_hba.conf
+  211  less Dockerfile 
+  212  which ps
+  213  dnf provides /usr/bin/ps
+  214  docker exec -it pg bash
+  215  docker exec -i pg bash
+  216  docker exec -it pg bash
+  217  exit
+  218  grep GOLANG -r *
+  219  vi LOG_2_nov_2015.txt 
+  220  docker exec -ti pg bash
+  221  exit
+  222  docker run --rm --name pg -t --net=my-bridge-2 my/fedora_postgres
+  223  docker run --rm --name pg2 -t --net=my-bridge-2 my/fedora_postgres
+  224  exit
+  225  cat Dockerfile 
+  226  cd ../
+  227  ls
+  228  docker exec -it training/postgres bash
+  229  docker exec -it db  bash
+  230  docker exec -it db2 bash
+  231  ls
+  232  less mytraining/postgres/Dockerfile 
+  233  docker exec -it db2 bash
+  234  docker ps -a
+  235  docker stop training/postgres
+  236  docker stop db2
+  237  docker rm db2
+  238  docker ps -a
+  239  docker images --filter dangling=true
+  240  docker images
+  241  docker rmi my/postgres
+  242  cd fedora/postgres/
+  243  ls
+  244  vi Dockerfile 
+  245  docker images
+  246  docker images --help
+  247  docker images --filter --help
+  248  docker images --filter postgres
+  249  docker images --filter name=postgres
+  250  docker images --filter repository=postgres
+  251  docker images --filter=repository=postgres
+  252  docker images | awk '/postgres/'
+  253  docker rmi my/fedora_postgres
+  254  docker images | awk '/postgres/'
+  255  docker tag my/postgres my/fedora_postgres
+  256  docker images | awk '/postgres/'
+  257  docker rmi my/postgres
+  258  docker images | awk '/postgres/'
+  259  ls
+  260  vi Dockerfile 
+  261  docker build -t my/fedora_postgres .
+  262  vi Dockerfile 
+  263  docker build -t my/fedora_postgres .
+  264  cat Dockerfile 
+  265  vi Dockerfile 
+  266  docker build -t my/fedora_postgres .
+  267  vi Dockerfile 
+  268  docker build -t my/fedora_postgres .
+  269  vi Dockerfile 
+  270  docker build -t my/fedora_postgres .
+  271  vi Dockerfile 
+  272  docker build -t my/fedora_postgres .
+  273  vi Dockerfile 
+  274  docker build -t my/fedora_postgres .
+  275  vi Dockerfile 
+  276  which xargs
+  277  dnf provides /usr/bin/xargs
+  278  vi Dockerfile 
+  279  docker build -t my/fedora_postgres .
+  280  vi Dockerfile 
+  281  docker build -t my/fedora_postgres .
+  282  vi Dockerfile 
+  283  docker build -t my/fedora_postgres .
+  284  vi Dockerfile 
+  285  docker build -t my/fedora_postgres .
+  286  vi Dockerfile 
+  287  whchcat Dockerfile 
+  288  cat Dockerfile 
+  289   which top
+  290  dnf provides /usr/bin/top
+  291  cd ../dockerfile/
+  292  vi Dockerfile 
+  293  docker exec -it dock bash
+  294  pwd
+  295  cat Dockerfile 
+  296  docker exec -it misc
+  297  docker exec -it misc bash
+  298  docker exec -it dock bash
+  299  docker exec dock bash
+  300  docker exec -i dock bash
+  301  docker exec -it dock bash
+  302  docker logs dock
+  303  cat do
+  304  cat Dockerfile 
+  305  cd ../postgres/
+  306  docker ps -a
+  307  stop-all-containers 
+  308  rm-all-containers 
+  309  docker run --rm --name pg -it my/fedora_postgres bash
+  310  cat ../locale/
+  311  cat ../locale/Dockerfile 
+  312  docker run --rm --name pg -it my/fedora_postgres bash
+  313  docker run --rm --name loc -it my/fedora-locale bash
+  314  docker build -t my/fedora_postgres .
+  315  docker run --rm --name pg -it my/fedora_postgres bash
+  316  docker build -t my/fedora_postgres .
+  317  docker run --rm --name pg -it my/fedora_postgres bash 
+  318  docker build -t my/fedora_postgres .
+  319  docker history my/fedora_postgres
+  320  docker build -t my/fedora_postgres .  
+  321  docker run --rm --name pg -it my/fedora_postgres bash 
+  322  docker build -t my/fedora_postgres .   
+  323  docker run --rm --name pg -it my/fedora_postgres bash 
+  324  docker build -t my/fedora_postgres .   
+  325  docker run --rm --name pg -it my/fedora_postgres bash 
+  326  docker build -t my/fedora_postgres .   
+  327  docker ps -a
+  328  docker run --rm --name pg my/fedora_postgres
+  329  docker build -t my/fedora_postgres .   
+  330  docker run --rm --name pg my/fedora_postgres
+  331  docker build -t my/fedora_postgres .   
+  332  docker run --rm --name pg my/fedora_postgres
+  333  docker run --rm --name pg -t my/fedora_postgres
+  334  docker run --rm --name pg -d my/fedora_postgres
+  335  docker run  --name pg -d my/fedora_postgres
+  336  stop-all-containers 
+  337  rm-all-containers 
+  338  docker build -t my/fedora_postgres .   
+  339  docker run  --name pg  my/fedora_postgres
+  340  docker ps -a
+  341  rm-all-containers 
+  342  docker run  --name pg -it my/fedora_postgres bash
+  343  docker build -t my/fedora_postgres .   
+  344  docker run  --name pg my/fedora_postgres
+  345  docker run --rm --name pg my/fedora_postgres
+  346  rm-all-containers 
+  347  docker run --rm --name pg my/fedora_postgres
+  348  docker build -t my/fedora_postgres .   
+  349  docker run --rm --name pg my/fedora_postgres
+  350  docker build -t my/fedora_postgres .   
+  351  docker run --rm --name pg my/fedora_postgres
+  352  docker build -t my/fedora_postgres .   
+  353  docker run --rm --name pg my/fedora_postgres
+  354  docker run --rm --name pg -t my/fedora_postgres
+  355  ls
+  356  ls ..
+  357  ls ../../
+  358  docker inspect web
+  359   docker network inspect bridge 
+  360  docker network disconnect bridge fd
+  361  docker network connect bridge fd
+  362   docker network inspect bridge 
+  363   docker network inspect my-bridge-2 
+  364  docker run --rm --name pg -t my/fedora_postgres
+  365  docker images
+  366  docker run --rm --name pg -t my/fedora_postgres
+  367  docker ps -a
+  368  stop-all-containers 
+  369  rm-all-containers 
+  370  top
+  371  docker run --rm --name pg -t my/fedora_postgres
+  372  docker run --rm --name fd -v /fd  -ti my/fedora-locale
+  373  docker run --rm --name fd -v /fd  -ti my/fedora-locale bash
+  374  docker run --rm --name fd   -ti my/fedora-locale bash
+  375  docker run --rm --name fd -v /fd  -ti my/fedora-locale bash
+  376  docker run --rm --name fd -v /fd:/tmp/fd  -ti my/fedora-locale bash
+  377  ls ~/tmp/
+  378  docker run --rm --name fd -v /fd:/tmp/fd  -ti my/fedora-locale bash
+  379  docker run --rm --name fd -v /fd  -ti my/fedora-locale bash
+  380  docker run --rm --name fd -v /fd:/home/eric/tmp/fd  -ti my/fedora-locale bash
+  381  ls /
+  382  ls /fd
+  383  ls -ld /fd
+  384  rmdir /fd
+  385  sudo rmdir /fd
+  386  docker run --rm --name fd -v /home/eric/tmp/fd:/fd  -ti my/fedora-locale bash
+  387  docker volume ls -f dangling=true 
+  388  docker volume ls -f dangling=true | awk 'NR>1{print $2}'
+  389  docker volume ls -f dangling=true | awk 'NR>1{print $2}' | xargs -I % echo docker rm %
+  390  docker rm --help
+  391  docker volume ls -f dangling=true | awk 'NR>1{print $2}' | xargs -I % docker rm %
+  392  docker volume ls -f dangling=true | awk 'NR>1{print $2}' | xargs -I % docker rm -v %
+  393  docker run --rm --name fd -v /home/eric/tmp/fd:/fd  -ti my/fedora-locale bash
+  394  docker run --rm --name fd -v my-fd:/fd  -ti my/fedora-locale bash
+  395  docker ps -a
+  396  docker volume ls -f dangling=true 
+  397  docker run --rm --name fd -v my-fd:/fd  -ti my/fedora-locale bash
+  398  docker create --rm --name fd -v my-fd:/fd  -ti my/fedora-locale bash
+  399  docker create  --name fd  -ti my/fedora-locale bash
+  400  docker start --help
+  401  docker start -a -i fd
+  402  docker create  --name fd  -t my/fedora-locale bash
+  403  docker start -ai --rm fd
+  404  docker start -ai  fd
+  405  exit
+  406  vi webpack.config.js 
+  407  ls
+  408  vi public/index.html 
+  409  vi src/index.js 
+  410  vi bootstrap.config.js
+  411  find -maxdepth 2 
+  412  find -maxdepth 2 | xarg grep bootstrap | grep css
+  413  find -maxdepth 2 | xargs grep bootstrap | grep css
+  414   vi webpack.config.js 
+  415  exit
+  416  vi server.js 
+  417  ls
+  418  vi public/index.html 
+  419  vi webpack.config.js
+  420  cd ..
+  421  ls
+  422  cd ..
+  423  ls
+  424  cd ..
+  425  ls
+  426  exit
+  427  cd ../
+  428  cd ..
+  429  pwd
+  430  cd ../../
+  431  ls
+  432  cd CodeSchool/Bootstrap/
+  433  ls src/
+  434  vi main.js
+  435  ls
+  436  ls src/
+  437  vi src/main.css 
+  438  vi src/main.js
+  439  vi public/index.html 
+  440  node server
+  441  nvm use v5.5.0
+  442  node server
+  443  pwd
+  444  vi public/index.html 
+  445  pwd
+  446  exit
+  447  node server
+  448  nvm use v5.5.0
+  449  node server
+  450  pwd
+  451  exit
+  452  cd ..
+  453  cd /home/eric/Devel/JavaScript/Node/Webpack/bootstrap-webpack-example
+  454  node server
+  455  nvm use v5.5.0
+  456  node server
+  457  exit
+  458  ls
+  459  pwd
+  460  ls
+  461  vi index.html 
+  462  cd ../
+  463  ls
+  464  pwd
+  465  exit
+  466  cd ..
+  467  ls
+  468  cd tutorial/
+  469  cat .babelrc 
+  470  vi webpack_dev_server/
+  471  ls
+  472  cd express_/
+  473  ls
+  474  vi .babelrc 
+  475  vi webpack.config.js 
+  476  vi server.js
+  477  vi public/index.html 
+  478  vi src/main
+  479  vi src/main.js
+  480  pwd
+  481  cd /home/eric/Devel/JavaScript/Node/Webpack/bootstrap-webpack-example
+  482  node server
+  483  nvm use v5.5.0
+  484  node server
+  485  pwd
+  486  exit
+  487  chmod o+x ~
+  488  ls -ld ~
+  489  exit
+  490  vi 
+  491  exit
+  492  vi LOG_physics.txt
+  493  exit
+  494  cd /home/eric/Devel/JavaScript/Node/CodeSchool/React
+  495  nvm use v5.5.0
+  496  less src/main.js
+  497  less src/main.js.old 
+  498  pwd
+  499  exit
+  500  cd ../../..
+  501  cd CodeSchool/
+  502  ls
+  503  cp -a /home/eric/Devel/JavaScript/Node/React/Manual/react-bootstrap-my .
+  504  ls
+  505  mv react-bootstrap-my/ React
+  506  cd React/
+  507  ls
+  508  vi package.json 
+  509  nvm use v5.5.0
+  510  node webpack
+  511  ls node_modules/
+  512  node webpack
+  513  npm run webpack
+  514  ls
+  515  vi src/main.js
+  516  pwd
+  517  vi src/main.js
+  518  mv src/main.js src/main.js.old
+  519  pwd
+  520  vi src/main.js
+  521  vi public/index.html 
+  522  vi src/main.css 
+  523  vi server.js 
+  524  pwd
+  525  npm run webpack
+  526  vi server.js 
+  527  pwd
+  528  vi src/main.js
+  529  npm run webpack
+  530  node server
+  531  vi src/main.js
+  532  npm run webpack
+  533  node server
+  534  vi src/main.js
+  535  npm run webpack
+  536  node server
+  537  vi src/main.js
+  538  npm run webpack
+  539  node server
+  540  vi src/main.js
+  541  npm run webpack
+  542  vi src/main.js
+  543  npm run webpack
+  544  node server
+  545  vi src/main.js
+  546  npm run webpack
+  547  node server
+  548  pwd
+  549  vi src/main.js
+  550  npm run webpack
+  551  node server
+  552  vi src/main.js
+  553  npm run webpack
+  554  node server
+  555  rm src/main.js.old 
+  556  pwd
+  557  mv src/main.js src/main1.js
+  558  cp src/main1.js src/main.js
+  559  vi src/main.js
+  560  npm run webpack
+  561  node server
+  562  cp src/main.js src/main2_1.js
+  563  cp src/main1.js src/main.js
+  564  npm run webpack
+  565  node server
+  566  vi src/main.js
+  567  cp src/main2_1.js src/main.js
+  568  pwd
+  569  vi src/main.js
+  570  npm run webpack
+  571  vi src/main.js
+  572  npm run webpack
+  573  node server
+  574  cp src/main.js src/main2_1.js 
+  575  vi src/main.js
+  576  vi src/main1.js 
+  577  vi src/main.js
+  578  vi src/main1.js 
+  579  vi src/main.js
+  580  vi src/main1.js 
+  581  vi src/main.js
+  582  npm run webpack
+  583   vi src/main1.js 
+  584  vi src/main.js
+  585  npm run webpack
+  586  vi src/main.js
+  587  npm run webpack
+  588  node server
+  589  vi src/main.js
+  590  npm run webpack
+  591  node server
+  592  vi src/main.js
+  593  npm run webpack
+  594  node server
+  595  vi src/main.js
+  596  npm run webpack
+  597  node server
+  598  vi src/main.js
+  599  npm run webpack
+  600  node server
+  601  cp src/main.js src/main2_1.js 
+  602  cp src/main.js src/main2_4.js 
+  603  vi src/main.js
+  604  npm run webpack
+  605  cp src/main.js src/main2_1.js 
+  606  cp src/main2_4.js src/main.js
+  607  vi src/main.js
+  608  npm run webpack
+  609  vi src/main.js
+  610  npm run webpack
+  611  vi src/main.js
+  612  npm run webpack
+  613  vi src/main.js
+  614  npm run webpack
+  615  node server
+  616  npm run webpack
+  617  vi src/main.js
+  618  npm run webpack
+  619  node server
+  620  vi src/main.js
+  621  npm run webpack
+  622  node server
+  623  vi src/main.js
+  624  npm run webpack
+  625  node server
+  626  vi src/main.js
+  627  npm run webpack
+  628  node server
+  629  cp src/main.js src/main3.js.nothing.functions
+  630  vi src/main.js
+  631  vi src/main3.js.nothing.functions 
+  632  vi src/main.js
+  633  npm run webpack
+  634  node server
+  635  rm src/main3.js.nothing.functions 
+  636  cp src/main.js src/main3.js.with.functions.insteadof.if
+  637  vi src/main.js
+  638  npm run webpack
+  639  cp src/main.js src/main3.js.if
+  640  vi src/main.js
+  641  npm run webpack
+  642  node server
+  643  vi src/main.js
+  644  npm run webpack
+  645  node server
+  646  cp src/main.js src/main3.js.encapsulate.with.immediately.invoked.function
+  647  vi src/main.js
+  648  npm run webpack
+  649  node server
+  650  vi src/main.js
+  651  cp src/main.js src/main3.js.setState.in.render
+  652  vi src/main.js
+  653  npm run webpack
+  654  node server
+  655  vi src/main.js
+  656  npm run webpack
+  657  node server
+  658  vi src/main.js
+  659  npm run webpack
+  660  node server
+  661  cd src/
+  662  ls
+  663  mv main3.js.encapsulate.with.immediately.invoked.function main3.js.OK.encapsulate.with.immediately.invoked.function 
+  664  mv main3.js.if main3.js.ERR.if
+  665  mv main3.js.setState.in.render main3.js.ERR.setState.in.render 
+  666  mv main3.js.with.functions.insteadof.if main3.js.OK.with.functions.insteadof.if 
+  667  ls
+  668  mv main3.js.OK.with.functions.insteadof.if main3.js.OK.if.with.functions
+  669  mv main3.js.OK.encapsulate.with.immediately.invoked.function main3.js.OK.if.encapsulate.with.immediately.invoked.function 
+  670  cp main.js main3.js.OK.setState.with.function
+  671  ls
+  672  vi main.js
+  673  npm run webpack
+  674  node server
+  675  cd ..
+  676  npm run webpack
+  677  node server
+  678  npm run webpack
+  679  vi main.js
+  680  vi src/main.js
+  681  npm run webpack
+  682  node server
+  683  vi src/main.js
+  684  npm run webpack
+  685  node server
+  686  vi src/main.js
+  687  npm run webpack
+  688  node server
+  689  vi src/main.js
+  690  cp src/main.js src/main3.js.ERR.setState.in.render.also.with.immediate.executing.function
+  691  vi src/main.js
+  692  npm run webpack
+  693  node server
+  694  ls
+  695  rm src/main3.js.ERR.setState.in.render.also.with.immediate.executing.function 
+  696  cp src/main.js src/main3.js.OK.setState.in.render.handler
+  697  vi src/main.js
+  698  npm run webpack
+  699  vi src/main.js
+  700  npm run webpack
+  701  node server
+  702  vi src/main.js
+  703  npm run webpack
+  704  cp src/main.js src/main3.js.final
+  705  pwd
+  706  exit
+  707  cd ../Bootstrap/
+  708  ls
+  709  less public/index.html 
+  710  vi public/index.html 
+  711  vi src/main.css 
+  712  vi server.js 
+  713  vi public/index.html 
+  714  pwd
+  715  vi public/index.html 
+  716  pwd
+  717  exit
+  718  node server
+  719  nvm use v5.5.0
+  720  node server
+  721  pwd
+  722  exit
+  723  ls
+  724  vi src/main.js
+  725  exit
+  726  cd /home/eric/Devel/JavaScript/Node/React/Manual/react-bootstrap-my
+  727  cd /home/eric/Devel/JavaScript/Node/CodeSchool/Bootstrap
+  728  ls
+  729  vi public/index.html 
+  730  grep form -r *
+  731  grep 'form-group' -r *
+  732  node server
+  733  nvm use v5.5.0
+  734  node server
+  735  ls
+  736  exit
+  737  npm run webpack
+  738  nvm use v5.5.0
+  739  npm run webpack
+  740  node server
+  741  npm run webpack
+  742  node server
+  743  npm run webpack
+  744  node server
+  745  npm run webpack
+  746  node server
+  747  npm run webpack
+  748  node server
+  749  npm run webpack
+  750  node server
+  751  npm run webpack
+  752  node server
+  753  npm run webpack
+  754  node server
+  755  npm run webpack
+  756  node server
+  757  npm run webpack
+  758  node server
+  759  npm run webpack
+  760  node server
+  761  npm run webpack
+  762  node server
+  763  npm run webpack
+  764  node server
+  765  npm run webpack
+  766  node server
+  767  npm run webpack
+  768  node server
+  769  npm run webpack
+  770  node server
+  771  npm run webpack
+  772  node server
+  773  npm run webpack
+  774  node server
+  775  npm run webpack
+  776  node server
+  777  npm run webpack
+  778  node server
+  779  npm run webpack
+  780  node server
+  781  npm run webpack
+  782  node server
+  783  npm run webpack
+  784  node server
+  785  npm run webpack
+  786  node server
+  787  npm run webpack
+  788  node server
+  789  npm run webpack
+  790  node server
+  791  npm run webpack
+  792  node server
+  793  exit
+  794  cd /home/eric/Devel/JavaScript/Node/CodeSchool/React
+  795  ls
+  796  ls public/
+  797  ls src
+  798  ls
+  799  vi src/main.js
+  800  ls src/
+  801  cp src/main.js src/main4.js
+  802  exit
+  803  cd 
+  804  cd Devel/Docker/scripts/
+  805  ls
+  806  cat rm-all-containers 
+  807  mv rm-all-containers rm-all-containers.sh
+  808  ls -l
+  809  exit
+  810  cd bin
+  811  cd 
+  812  cd bin
+  813  mv rm-all-containers rm-all-containers.sh
+  814  vi rm-all-containers.sh 
+  815  docker ps -a
+  816  cat rm-all-containers.sh 
+  817  vi rm-all-containers.sh 
+  818  cat rm-all-containers.sh 
+  819  docker ps -a | awk 'NR>1{print $1}' | xargs echo docker rm
+  820  ls
+  821  docker volume ls -f dangling=true 
+  822  docker volume ls -f dangling=true  |  awk 'NR>1{print $2}'
+  823  docker volume ls -f dangling=true  |  awk '{print $2}'
+  824  docker volume ls -f dangling=true  |  awk 'NR>1{print $2}'
+  825  docker volume ls -f dangling=true  |  awk 'NR>1{print $2}' | xargs echo docker volume rm 
+  826  mv rm-dangling-volumes rm-dangling-volumes.sh
+  827  vi rm-dangling-volumes.sh 
+  828  ls -l
+  829  ls /home/eric/Devel/Docker/scripts/
+  830  cat rm-all-containers.sh 
+  831  vi rm-all-containers.sh 
+  832  ls
+  833  rm -f rm-all-containers.sh 
+  834  ln --hlep
+  835  ln --help
+  836  ln -s /home/eric/Devel/Docker/scripts/rm-all-containers.sh .
+  837  ls
+  838  ls -l
+  839  groups
+  840  cat rm-dangling-volumes.sh 
+  841  mv rm-dangling-volumes.sh ~/Devel/Docker/scripts/
+  842  ln -s ~/Devel/Docker/scripts/rm-dangling-volumes.sh .
+  843  ls -l
+  844  cat rm-dangling-images.sh 
+  845  mv rm-dangling-images.sh ~/Devel/Docker/scripts/
+  846  ln -s ~/Devel/Docker/scripts/rm-dangling-images.sh 
+  847  ls
+  848  ls -l
+  849  mv rm-exited-containers ~/Devel/Docker/scripts/rm-exited-containers.sh
+  850  ln -s ~/Devel/Docker/scripts/rm-exited-containers.sh 
+  851  ls -l
+  852  exit
+  853  cd 
+  854  exit
+  855  echo "one
+  856  two"
+  857  echo "one
+  858  exit
+  859  docker ps
+  860  docker commit -m "dnf -y upgrade --setopt=deltarpm=false" 823675943b28 fedora
+  861  exit
+  862  pwd
+  863  ls
+  864  cat Dockerfile 
+  865  exit
+  866  cd 
+  867  cd tmp
+  868  ls
+  869  vi 1.sh
+  870  chmod u+x 1.sh 
+  871  ./1.sh 
+  872  exit
+  873  cd ../sshd/
+  874  vi Dockerfile 
+  875  vi script.sh 
+  876  cd ..
+  877  find -name Dockerfile | xargs grep dnf-command
+  878  cd postgres/
+  879  pwd
+  880  ls
+  881  vi script.sh 
+  882  exit
+  883  sudo su - postgres
+  884  exit
+  885  less ../polymer-first-elements/icon-toggle.html 
+  886  pwd
+  887  ls
+  888  less bower_components/iron-pages/iron-pages.html 
+  889  less ../polymer-first-elements/icon-toggle.html 
+  890  pwd
+  891  exit
+  892  docker ps 
+  893  docker commit --help
+  894  docker commit -m "added: LANG=en_US.UTF-8" -a "Eric J." 4d4e17a61dca my/ubuntu
+  895  exit
+  896  docker ps 
+  897  docker commit -m "added: /home/eric/psql" -a "Eric J." df24a7dc174b       my/fedora_postgres
+  898  exit
+  899  cd 
+  900  vi .bashrc
+  901  echo $PATH
+  902  vi .bash_profile 
+  903  exit
+  904  vi ~/.bash_profile 
+  905  exit
+  906  cd ../work2
+  907  go install methods
+  908  ls
+  909  . ~/.bash_profile 
+  910  go install methods
+  911  . ~/.bash_profile 
+  912  methods 
+  913  . ~/.bash_profile 
+  914  cd 
+  915  cd tmp/
+  916  gcc -Wall 1.c
+  917  vi 1.c
+  918  gcc -Wall 1.c
+  919  ./a.out
+  920  vi 1.c
+  921  gcc -Wall 1.c
+  922  ./a.out
+  923  exit
+  924  env | grep SDKMAN
+  925  ls ~/.sdkman/
+  926  which sdk
+  927  sdk install groovy
+  928  which groovy
+  929  groovy -versin
+  930  groovy -version
+  931  spring
+  932  which atom
+  933  cd 
+  934  cd Devel/Java
+  935  ls
+  936  cd Groovy
+  937  mkdir Groovy
+  938  cd Groovy/
+  939  ls
+  940  vi hello.groovy
+  941  sdk install springboot
+  942  spring -version
+  943  spring 
+  944  spring --version
+  945  which spring
+  946  ls ~/.sdkman/candidates/
+  947  ls
+  948  cp hello.groovy hello2.groovy
+  949  vi hello2.groovy 
+  950  cat hello2.groovy 
+  951  mv hello2.groovy app.groovy
+  952  spring run app.groovy 
+  953  spring run hello.groovy 
+  954  vi hello.groovy 
+  955  spring run hello.groovy 
+  956  vi hello.groovy 
+  957  spring run hello.groovy 
+  958  vi hello.groovy 
+  959  pwd
+  960  exit
+  961  vi src/basics/main.go 
+  962  vi src/flow/main.go
+  963  vi src/moretypes/main.go 
+  964  vi src/methods/main.go
+  965  vi src/methods/main.go
+  966  vi src/moretypes/main.go 
+  967  grep 'c<-' -r *
+  968  grep 'go fun' -r *
+  969  vi src//tmp/main.go 
+  970  grep rand -r *
+  971  pwd
+  972  ls
+  973  ls src/
+  974  ls
+  975  ls src/
+  976  env | grep GOPAH
+  977  env | grep GOPATH
+  978  pwd
+  979  go env 
+  980  cat ~/.bash_profile 
+  981  . ~/.bash_profile 
+  982  go env
+  983  go install video2/main
+  984  go install video2
+  985  video2
+  986  go install video2
+  987  video2
+  988  go install video2
+  989  video2
+  990  vi  ~/.bash_profile 
+  991  . ~/.bash_profile 
+  992  go install video2
+  993  pwd
+  994  ls src/video2
+  995  cat ~/.bash_profile 
+  996  go install video2
+  997  vi  ~/.bash_profile 
+  998  . ~/.bash_profile 
+  999  find -name DeploymentOverlayTestCase.java
+ 1000  less ./testsuite/integration/web/src/test/java/org/jboss/as/test/integration/deployment/deploymentoverlay/DeploymentOverlayTestCase.java
+ 1001  find -name DeploymentOverlayTestCase.java
+ 1002  less ./testsuite/integration/basic/src/test/java/org/jboss/as/test/integration/deployment/deploymentoverlay/DeploymentOverlayTestCase.java
+ 1003  less LOG_mvn_install.txt 
+ 1004  cp LOG_mvn_install.txt /tmp
+ 1005  vi /tmp/LOG_mvn_install.txt 
+ 1006  less ./testsuite/integration/web/src/test/java/org/jboss/as/test/integration/deployment/deploymentoverlay/DeploymentOverlayTestCase.java
+ 1007  cd ./testsuite/integration/web
+ 1008  ls
+ 1009  vi pom.xml 
+ 1010  cd ../../../
+ 1011  ls
+ 1012  cd ..
+ 1013  ls
+ 1014  mkdir second
+ 1015  mv wildfly/ second/
+ 1016  git clone https://github.com/wildfly/wildfly.git
+ 1017  find -name pom.xml | grep -i skiptest
+ 1018  find -name pom.xml | xargs grep -i skiptest
+ 1019  cd wildfly/ 
+ 1020  mvn -DskipTests install | tee LOG_install_skipTests.txt
+ 1021  less README.md 
+ 1022  build/target/wildfly-11.0.0.Alpha1-SNAPSHOT/bin/standalone.sh 
+ 1023  pwd
+ 1024  cat ~/Downloads/settings.xml 
+ 1025  pwd
+ 1026  ls
+ 1027  pwd
+ 1028  hist
+ 1029  history 
+ 1030  pwd
+ 1031  pwd | sed '.s/\/_/g'
+ 1032  pwd | sed 's/\/_/g'
+ 1033  pwd | sed 's/\/_/g/'
+ 1034  pwd | sed 's/\//_/g/'
+ 1035  pwd | sed 's///_/g/'
+ 1036  pwd | sed 's/o/_/g/'
+ 1037  pwd | sed 's/o/_/'
+ 1038  pwd | sed 's/o/_/g'
+ 1039  pwd | sed 's/\//_/g'
+ 1040  pwd | sed 's/\//_/g' | echo LOG
+ 1041  pwd | sed 's/\//_/g' | echo
+ 1042  pwd | sed 's/\//_/g' | echo $0
+ 1043  pwd | sed 's/\//_/g' | echo $1
+ 1044  pwd | sed 's/\//_/g' | xargs -I % echo LOG%
+ 1045  pwd | sed 's/\//_/g' | xargs -I % echo LOG%.txt
+ 1046  pwd | sed 's/\//_/g' | xargs -I % echo /tmp/LOG%.txt
+ 1047  pwd | sed 's/\//_/g' | xargs -I % echo "/tmp/LOG%.txt"
+ 1048  pwd | sed 's/\//_/g' | xargs -I % echo "/tmp/LOG%.txt" | xargs -I % echo "Foo Bar" >%
+ 1049  ls -ltr /tmp
+ 1050  pwd | sed 's/\//_/g' | xargs -I % echo "/tmp/LOG%.txt" | xargs -I % echo echo "Foo Bar" >%
+ 1051  pwd | sed 's/\//_/g' | xargs -I % echo "/tmp/LOG%.txt" | xargs -I % echo echo "Foo Bar" 
+ 1052  echo Foo Bar >/tmp/foobar
+ 1053  cat /tmp/foobar 
+ 1054  echo "/tmp/foobar"
+ 1055  echo "/tmp/foobar" | xargs -I % % 
+ 1056  echo "/tmp/foobar" | xargs -I % 
+ 1057  echo "/tmp/foobar" | xargs -I % echo %
+ 1058  echo "/tmp/foobar" | xargs -I % echo "Gee Hee" >%
+ 1059  cat /tmp/foobar 
+ 1060  history 
+ 1061  cat /tmp/foobar 
+ 1062  history 
+ 1063  echo "/tmp/foobar" | xargs -I % echo echo "Gee Hee" >%
+ 1064  echo "/tmp/foobar" | xargs -I % echo echo "Gee Hee" 
+ 1065  echo "/tmp/foobar" | xargs -I % echo  "Gee Hee" 
+ 1066  pwd | sed 's/\//_/g' | xargs -I % echo "/tmp/LOG%.txt"
+ 1067  pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+ 1068  history 
+ 1069  pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+ 1070  history  > home/eric/Devel/Logs/history/LOG_home_eric_Devel_Java_JBoss_wildfly.txt
+ 1071  history  > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Java_JBoss_wildfly.txt

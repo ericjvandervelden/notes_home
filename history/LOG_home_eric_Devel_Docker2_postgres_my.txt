@@ -1,0 +1,1000 @@
+    6  node bin/app.bundle.js 
+    7  vi src/main2.js 
+    8  npm start 
+    9  node bin/app.bundle.js 
+   10  vi src/main2.js 
+   11   vi src/baz2.js 
+   12  npm start 
+   13   vi src/baz2.js 
+   14  vi src/main2.js 
+   15  npm start 
+   16  node bin/app.bundle.js 
+   17  cat webpack.config.js 
+   18   cat src/main2.js 
+   19  cat src/bar2.js 
+   20  cat src/baz2.js 
+   21  cat src/bar.js 
+   22  cat src/bar2.js 
+   23  pwd
+   24  ls
+   25  vi webpack.config.js 
+   26  exit
+   27  cd /tmp
+   28  cd 
+   29  ls
+   30  cd Devel/
+   31  ls
+   32  mkdir JavaScript
+   33  cd Java
+   34  cd ../JavaScript/
+   35  mkdir Node
+   36  cd Node/
+   37  node --version
+   38  npm init
+   39  npm i browserify --save
+   40  pwd
+   41  npm i browserify --savels
+   42  ls
+   43  rm node_modules/
+   44  rm -rf node_modules/
+   45  npm i browserify -g
+   46  browserify 
+   47  which browserify 
+   48  vi ~/.bash_profile 
+   49  vi ~/.bash_rc
+   50  vi ~/.bashrc
+   51  echo $PATH
+   52  vi ~/.bash_profile 
+   53  npm --help
+   54  npm i -h
+   55   npm un -h
+   56  which browserify
+   57  npm un browserify -g
+   58  which browserify
+   59  pwd
+   60  ls ..
+   61  cd No
+   62  mkdir Browserify
+   63  cd Browserify/
+   64  pwd
+   65  mkdir video
+   66  cd video/
+   67  pwd
+   68  npm init
+   69  npm i browserify --save-dev
+   70  vi package.json 
+   71  vi ~/.vimrc
+   72  vi package.json 
+   73  vi index.js
+   74  vi index.html
+   75  npm bundle
+   76  npm build
+   77  vi pakc
+   78  vi package.json 
+   79  npm build
+   80  npm run build
+   81  vi package.json 
+   82  npm start
+   83  vi package.json 
+   84  npm run bundle
+   85  node index.js
+   86  npm i jquery --save
+   87  vi index.js
+   88  npm run bundle
+   89  vi index.html
+   90  npm run bundle
+   91  ls -ltr
+   92  cat package.json 
+   93  vi index.js
+   94  node debug index.js
+   95  vi index.js
+   96  npm run bundle
+   97  node debug index.js
+   98  vi index.js
+   99  npm run bundle
+  100  node debug index.js
+  101  vi index.js
+  102  node debug index.js
+  103  vi index.js
+  104  vi index.html 
+  105  vi index.js
+  106  npm run bundle
+  107  vi index.html 
+  108  vi index.js
+  109  vi index.html 
+  110  cat  index.html 
+  111  cat  index.js
+  112  cd ../../
+  113  mkdir Webpack
+  114  cd Webpack/
+  115  mkdir video
+  116  cd video/
+  117  pwd
+  118  npm init
+  119   npm i webpack --save-dev
+  120  vi package.json 
+  121  cp ../../Browserify/video/index.html  .
+  122  cat index.html 
+  123  vi index.js
+  124  cat index..js
+  125  cat index.js
+  126  npm start
+  127  ls
+  128  cd ../../Browserify/
+  129  ls
+  130  cd video/
+  131  ls
+  132  ls node_modules/
+  133  https://www.irado.nl/bewoners/afvalkalenderls
+  134  ls
+  135  vi index.
+  136  vi index.js
+  137  ls node_modules/browserify
+  138  less node_modules/browserify/package.json 
+  139  cd ..
+  140  cd my
+  141  npm init
+  142  cp ../video/index.js .
+  143  vi index.js 
+  144  npm i jquery --save
+  145  pwd
+  146  cd ..
+  147  pwd
+  148  vi index.js 
+  149  cd my
+  150  vi index.js 
+  151  cd ..
+  152  cp -a my/ video/node_modules/
+  153  cd video/
+  154  cp -a index.js index2.js
+  155  vi index2.js 
+  156  vi package.json 
+  157  npm run bundle
+  158  less bundle.js 
+  159  ls
+  160  vi package.json 
+  161  npm run bundle
+  162  vi bundle.js 
+  163  vi ../my/index.js 
+  164  cp -a ../my/ node_modules/
+  165  vi node_modules/my/index.js 
+  166  vi package.json 
+  167  npm run bundle
+  168  vi index2.js 
+  169  cp index.html index2.html
+  170  vi index2.
+  171  vi index2.html 
+  172  vi package.json 
+  173  npm run bundle
+  174  vi package.json 
+  175  vi index.html 
+  176  vi index2.html 
+  177  npm run bundle2
+  178  vi package.json 
+  179  npm run bundle2
+  180  npm run bundle
+  181  vi index
+  182  vi index.js
+  183  vi index2.js
+  184  vi node_modules/my/index.js 
+  185  npm run bundle2
+  186  vi package.json 
+  187  vi index2.html 
+  188  ls
+  189  vi bundle2.js 
+  190  ls node_modules/my/package.json 
+  191  cat node_modules/my/package.json 
+  192  cd ..
+  193  vi my/index.js 
+  194  cd video/
+  195  cp -a ../my/ node_modules/
+  196  npm run bundle2
+  197  ls node_modules/
+  198  vi node_modules/my/node_modules/
+  199  vi node_modules/my/index.js 
+  200  npm run bundle2
+  201  vi node_modules/my/index.js 
+  202  vi index2.
+  203  vi index2.js
+  204  npm run bundle2
+  205  vi bundle2.js 
+  206  vi index2.
+  207  vi index2.js
+  208  vi index2.html 
+  209  vi index2.js
+  210  npm run bundle2
+  211  vi index2.js
+  212  vi node_modules/my/index.js 
+  213  npm run bundle2
+  214  vi node_modules/my/index.js 
+  215  vi indexjs
+  216  vi index.js
+  217  vi index2..js
+  218  vi index2.js 
+  219  vi index2..h
+  220  vi index2.html 
+  221  npm run bundle2
+  222  cp -a node_modules/my ..
+  223  vi node_modules/my/index.js 
+  224  vi ../my/index.js 
+  225  cat index2.html 
+  226  cat index2.js 
+  227  ls
+  228  cp index2.html index3.html
+  229  rm index3.html 
+  230  vi index2.js
+  231  vi node_modules/my/index.js 
+  232  npm run bundle2
+  233  vi index2.
+  234  vi index2.js
+  235  npm run bundle2
+  236  cat index2.js
+  237  cat node_modules/my/index.js 
+  238  cp -a node_modules/my/ ../
+  239  ls ..
+  240  pwd
+  241  ls
+  242  vi index2.js
+  243  vi index.js
+  244  vi index2.js
+  245  cd ..
+  246  ls
+  247  mv my/ my-button
+  248  vi my-button/package.json 
+  249  vi my-button/index.js 
+  250  pwd
+  251  cd ../Babel/
+  252  ls
+  253  cd video/
+  254  ls
+  255  vi package.json 
+  256  npm start
+  257  ls
+  258  vi index
+  259  pwd
+  260  npm start
+  261  pwd
+  262  ls
+  263  npm start
+  264  ls
+  265  npm start
+  266  cat >index.js
+  267  npm start
+  268  cd ../../React/getting-started/
+  269  ls
+  270  npm start
+  271  browserify -t [babelify --presets [react]] index.js
+  272  node_modules/.bin/browserify -t [babelify --presets [react]] index.js
+  273  vi package.json 
+  274  npm i babel-preset-es2015 --save-dev
+  275  node_modules/.bin/browserify -t [babelify --presets [react,es2015]] index.js -o bundle.js
+  276  cat ../../Browserify/p
+  277  cat ../../Browserify/video/package.json 
+  278  cat package.json 
+  279  vi package.json 
+  280  npm start
+  281  vi package.json 
+  282  npm start
+  283  ls
+  284  vi bundle.js 
+  285  vi index.js
+  286  npm start
+  287  pwd
+  288  vi index.html 
+  289  vi index.
+  290  vi index.html 
+  291  vi index.js
+  292  npm start
+  293  vi index.js
+  294  npm start
+  295  vi index.html 
+  296  cat index.html 
+  297  cat package.json 
+  298  cat index.js
+  299  cat package.json 
+  300  npm start
+  301  cat package.json 
+  302  npm i watchify --save-dev
+  303  vi index.
+  304  vi index.html 
+  305  vi index.js
+  306  cat index.js 
+  307  cat package.json  
+  308  less ../../Babel/video/package.json 
+  309  vi package.json 
+  310  npm i budo --save-dev
+  311  vi package.json 
+  312  npm start
+  313  pwd
+  314  cd ..
+  315  ls
+  316  cd ../Babel/video/
+  317  vi index.js 
+  318  cat package.json 
+  319  pwd
+  320  cd ../../React/getting-started/
+  321  vi index.js
+  322  cd ../blog/
+  323  vi index.js
+  324  cat index.html 
+  325  cat index.js
+  326  cat package.json 
+  327  cat index.js
+  328  vi index.js
+  329  ls
+  330  pwd
+  331  vi index.js
+  332  cd ../../../Flanagan/
+  333  ls
+  334  node
+  335  node debug p168.js 
+  336  pwd
+  337  cat p168.js 
+  338  vi p168.js 
+  339  node debug p168.js 
+  340  node  p168.js 
+  341  node debug p168.js 
+  342  node  p168.js 
+  343  node debug p168.js 
+  344  node  p168.js 
+  345  node debug p168.js 
+  346  ls
+  347  node debug p168.js 
+  348  node debug p168+2.js 
+  349  node debug p168_2.js 
+  350  pwd
+  351  cat p168_2.js 
+  352  node debug p168_2.js 
+  353  pwd
+  354  cd ../Node/React/jesse/
+  355  less index.js
+  356  vi index.
+  357  vi index.js
+  358  cd ../levelup/
+  359  less index0.js 
+  360  vi contactlist.js
+  361  ls
+  362  ls node_modules/
+  363  vi package.json 
+  364  ls node_modules/node-fetch/
+  365  mkdir node_modules/contactlist
+  366  mv contactlist.js node_modules/contactlist/index.js
+  367  cd node_modules/contactlist/
+  368  npm init
+  369  ls
+  370  cd ..
+  371  vi index.js
+  372  vi node_modules/node-fetch/index.js 
+  373  vi node_modules/contactlist/index.js 
+  374  mv node_modules/contactlist/index.js contactlist.js
+  375  vi contactlist.js 
+  376  ls
+  377  vi index4.js 
+  378  vi contactlist4.js 
+  379  pwd
+  380  cd ../../CodeSchool/Express/
+  381  curl http:localhost:3000
+  382  curl http://localhost:3000
+  383  man curl
+  384  curl -i http://localhost:3000
+  385  curl -i -X GET http://localhost:3000
+  386  curl -i -X POST http://localhost:3000
+  387  curl -i -X PUT http://localhost:3000
+  388  vi index.js 
+  389  curl -i http://localhost:8080/blocks
+  390  curl -i http://localhost:3000/blocks
+  391  curl -i http://localhost:3000/parts
+  392  curl -i http://localhost:3000/blocks
+  393  curl -i http://localhost:3000/parts
+  394  curl -i http://localhost:3000/blocks
+  395  curl -i -L  http://localhost:3000/blocks
+  396  curl -i   http://localhost:3000/blocks
+  397  curl -i -L  http://localhost:3000/blocks
+  398  curl -i   http://localhost:3000/blocks
+  399  curl -i -L  http://localhost:3000/blocks
+  400  ls
+  401  mkdir level1
+  402  cp index.js level1/
+  403  vi index.html
+  404  mkdir public 
+  405  mv index.html public/
+  406  curl -i -L  http://localhost:3000
+  407  grep -i serveStatic -r node_modules/express/
+  408  ls ~/Pictures/
+  409  ls
+  410  cp ~/Pictures/gerbra.jpg public/
+  411  vi public/index.html 
+  412  curl -i -L  http://localhost:3000
+  413  curl --help
+  414  curl --help | grep img
+  415  curl --help | xargs grep img
+  416  curl --help | grep verbose
+  417  curl -i -L  http://localhost:3000/blocks
+  418  vi level2partII/index.js 
+  419  vi level2partII/logger.js 
+  420  vi level2partII/index.js 
+  421  ls
+  422  vi level2partII/public/client.js 
+  423  vi level2partII/public/index.html 
+  424  ls
+  425  curl -i -L  http://localhost:3000/blocks?limit=1
+  426  curl -i -L  http://localhost:3000/blocks?limit=2
+  427  curl -i -L  http://localhost:3000/blocks/Fixed
+  428  curl -i -L  http://localhost:3000/blocks/Movable
+  429  curl -i -L  http://localhost:3000/blocks/Orange
+  430  curl -i -L  http://localhost:3000/blocks/FIxed
+  431  curl -i -L  http://localhost:3000/blocks/Fixed
+  432  curl -i -L  http://localhost:3000/blocks/fixed
+  433  curl -i -L  http://localhost:3000/blocks/fIxed
+  434  curl -i -L  http://localhost:3000/locations/fIxed
+  435  vi level2partII/index.js 
+  436  curl -i -L  http://localhost:3000/blocks
+  437  curl -i -L  http://localhost:3000/blocks/fIxed
+  438  pwd
+  439  vi public/client.js 
+  440  vi index.js 
+  441  vi public/index.html 
+  442  vi package.json 
+  443  vi level2partI/index.js 
+  444  vi level2partI/public/client.js 
+  445  vi public/client.js 
+  446  vi level3partII/public/client.js 
+  447  cp public/client.js level3partII/public/
+  448  vi public/index.html 
+  449  vi public/client.js 
+  450  vi level3partII/public/client.js 
+  451  vi level3partI/public/client.js 
+  452  vi level2partII/public/client.js 
+  453  vi level2partI/public/client.js 
+  454  diff level2partI/public/client.js  /tmp/client.js 
+  455  ls -al level2partI/public/
+  456  rm level2partI/public/.client.js.swp 
+  457  vi level2partI/public/client.js 
+  458  vi public/client.js 
+  459  vi ~/tmp/urlencode.txt 
+  460  set
+  461  set | grep LANG
+  462  set | grep VC
+  463  ls
+  464  cp mkdir level4part**
+  465  mkdir level4part**
+  466  ls
+  467  mv level4part\*\*/ level4partII
+  468  cp -a index.js public/ level4partII/
+  469  vi index.js 
+  470  vi public/client.js 
+  471  vi public/index.html 
+  472  vi public/client.js 
+  473  ls public/
+  474  man tcpdump
+  475  ifconfig 
+  476  tcpdump -A -i lo
+  477  sudo tcpdump -A -i lo
+  478  man tcpdum
+  479  man tcpdump
+  480   man tcpdump
+  481  sudo tcpdump  -i lo
+  482  sudo tcpdump -vv -i lo
+  483  tcpdump --help
+  484  man tcpdump
+  485  vi public/client.js 
+  486  vi public/index.html 
+  487  vi public/client.js 
+  488  ls
+  489  ls level3partI/index.js 
+  490  less level3partI/index.js 
+  491  less level3partI/public/index.html 
+  492  less level3partI/public/client.js 
+  493  less level3partI/index.js 
+  494  less level3partII/index.js 
+  495  ls
+  496  mv level1/index.js level1/server.js
+  497  diff level5partII/server.js server.js 
+  498  mv level1/server.js .
+  499  npm run run
+  500  ps ajx | grep node
+  501  npm run run
+  502  vi server.js 
+  503  man diff
+  504  diff -r public/ level5partII/public/
+  505  ls public/
+  506  ls
+  507  less level2partI/public/index.html 
+  508  less level2partI/public/client.js 
+  509  less level2partI/index.js 
+  510  ls
+  511  ls level2partI/public/
+  512  rm -rf public/
+  513  cp -a  level2partI/public/ .
+  514  cp -a  level2partI/index.js server.js
+  515  vi public/index.html 
+  516  vi server.js 
+  517  vi public/index.html 
+  518  less public/client.js 
+  519  vi server.js 
+  520  vi public/client.js 
+  521  cp server.js level2partI
+  522  rm level2partI/index.js 
+  523  cp -a public/ level2partI
+  524  less level2partII/index.js 
+  525  vi 
+  526  cp level4partII/index.js server.js 
+  527  cp -a level4partII/public/ .
+  528  less public/client.js 
+  529  less public/index.html 
+  530  less public/client.js 
+  531  pwd
+  532  ls
+  533  less level2partI/public/index.html 
+  534  less level2partI/public/client.js 
+  535  vi level2partI/server.js 
+  536  pwd
+  537  cd ../
+  538  cd React/Manual/tutorial_with_express/
+  539  node server.js 
+  540  cd ..
+  541  ls
+  542  cd ./
+  543  cd ..
+  544  cd Manual/package-management/express_/
+  545  ls
+  546  npm start
+  547  ls
+  548  ls node_modules/
+  549  npm i express --save
+  550  less package.json 
+  551  npm start
+  552  ls
+  553  cp node_modules/jquery/dist/jquery.js public/
+  554  cp node_modules/react/dist/react.js public/
+  555  cp node_modules/react-dom/dist/react-dom.js  public/
+  556  cp node_modules/babel-core/lib/api/browser.js public/
+  557  vi public/index.html 
+  558  npm start
+  559  ls .babelrc 
+  560  cat .babelrc 
+  561  cd ../webpack/
+  562  ls
+  563  vi package.json 
+  564  cd ../express_/
+  565  vi public/index.html 
+  566  npm start
+  567  vi public/index.html 
+  568  npm start
+  569  vi server.js 
+  570  vi public/index.html 
+  571  vi server.js 
+  572  npm start
+  573  vi public/index.html 
+  574  mv .babelrc my
+  575  vi public/index.html 
+  576  cp public/index.html public/index.html.OK 
+  577  vi server.js 
+  578  vi public/index.html
+  579  ls
+  580  cd ../webpack/
+  581  ls
+  582  vi package.json 
+  583  vi index.js
+  584  vi index.html 
+  585  pwd
+  586  cd ..
+  587  ls
+  588  exit
+  589  pwd
+  590  ls
+  591  cd express_/
+  592  ls
+  593  vi package.json 
+  594  ls
+  595  ls src/
+  596  vi src/main.js 
+  597  less package.json 
+  598  ls node_modules/
+  599  less package.json 
+  600  less webpack.config.js 
+  601  exit
+  602  cd ..
+  603  pwd
+  604  cd ../../
+  605  cd ../
+  606  ls
+  607  mkdir JQuery
+  608  pwd
+  609  cd JQuery/
+  610  ls
+  611  mkdir Xss
+  612  cd Xss/
+  613  pwd
+  614  ls
+  615  cd express_/
+  616  nvm use v5.5.0
+  617  npm run run
+  618  vi src/main.js 
+  619  npm run webpack
+  620  npm run run
+  621  ls
+  622  vi server.js 
+  623  npm run run
+  624  vi server.js 
+  625  npm run webpack
+  626  npm run run
+  627  vi server.js 
+  628  vi src/main.js 
+  629  npm run webpack
+  630  npm run run
+  631  vi src/main.js 
+  632  npm run webpack
+  633  npm run run
+  634  ls
+  635  vi server.js 
+  636  vi src/cli
+  637  rm src/main0.js 
+  638  vi src/main.js 
+  639  npm run webpack
+  640  npm run run
+  641  pwd
+  642  cat server.js 
+  643  cat src/main.js 
+  644  vi server.js 
+  645  vi src/main.js 
+  646  npm run webpack
+  647  npm run run
+  648  npm run webpack
+  649  vi src/main.js 
+  650  npm run webpack
+  651  npm run run
+  652  vi src/main.js 
+  653  pwd
+  654  exit
+  655  less public/index.html 
+  656  vi server.js 
+  657  vi public/client.js 
+  658  vi server.js 
+  659  vi public/client.js 
+  660  vi server.js 
+  661  vi public/client.js 
+  662  pwd
+  663  exit
+  664  cd ../
+  665  ls
+  666  cd CodeSchool/Express/
+  667  ls
+  668  less level4partII/server.js 
+  669  cd ..
+  670  ls
+  671  cd ..
+  672  l
+  673  ls
+  674  cd Webpack/video3/
+  675  less src/bear.css 
+  676  ls
+  677  less package.json 
+  678  less webpack.config.js 
+  679  ls
+  680  vi server.js 
+  681  vi src/main.js 
+  682  vi src/bear.js
+  683  vi src/bear.css 
+  684  vi src/main.js 
+  685  vi src/bear.css 
+  686  vi src/base.css 
+  687  vi src/bear.js
+  688  npm run webpack
+  689  nvm use v5.5.0
+  690  npm run webpack
+  691  vi package.json 
+  692  npm start
+  693  node bin/app.bundle.js 
+  694  vi src/main.js 
+  695  npm start
+  696  node server
+  697  vi webpack.config.js 
+  698  vi server.js 
+  699  vi src/main.js 
+  700  vi src/bear.js
+  701  vi bin/app.bundle.js 
+  702  vi webpack.config.js 
+  703  cat package.json 
+  704  ls node_modules/webpack/LICENSE 
+  705  less node_modules/webpack/LICENSE 
+  706  vi package.json 
+  707  cat .babelrc 
+  708  exit
+  709  cd ..
+  710  cd 
+  711  ls
+  712  cd Devel/Docker2/
+  713  ls
+  714  sudo docker info
+  715  sudo docker images
+  716   ls
+  717  ls ubuntu/
+  718  ls ubuntu/sinatra/Dockerfile 
+  719  less ubuntu/sinatra/Dockerfile 
+  720  sudo docker run -it ubuntu /bin/bash
+  721  sudo docker images
+  722  sudo docker ps -a
+  723  sudo docker ps -a  | awk 'NR>1{print $1}'
+  724  sudo docker ps -a  | awk 'NR>1{print $1}'  | xargs sudo docker rm -f
+  725  sudo docker ps -a  | awk 'NR>1{print $1}'
+  726  sudo docker images  | awk 'NR>1{print $1}'
+  727  sudo docker images  | xargs awk 'NR>1{print $1}'
+  728  awk 'NR>1' 
+  729  sudo docker images
+  730  awk 'NR>1'  <(sudo docker images)
+  731  awk 'NR>1'  < <(sudo docker images)
+  732  awk 'NR>1{print $1]'  < <(sudo docker images)
+  733  awk 'NR>1{print $1}'  < <(sudo docker images)
+  734  awk 'NR>1{print $1}'  <(sudo docker images)
+  735  echo <(sudo docker images)
+  736  sudo docker images >/tmp/images
+  737  awk 'NR>1{print $1}'  /tmp/images
+  738  awk 'NR>1{print $1}' < /tmp/images
+  739  echo <(sudo docker images)
+  740  ls
+  741  sudo docker run --help
+  742   sudo docker --rm ubuntu /bin/sh
+  743   sudo docker run  -ti --rm ubuntu /bin/sh
+  744   sudo docker imaggs
+  745   sudo docker images
+  746   sudo docker ps -a
+  747  sudo docker run --rm ubuntu /bin/sh -c 'while true;do echo Hello, world!;sleep 1;done'
+  748   sudo docker ps -a
+  749  sudo docker run -d --rm ubuntu /bin/sh -c 'while true;do echo Hello, world!;sleep 1;done'
+  750  JOB=$(sudo docker run -d  ubuntu /bin/sh -c 'while true;do echo Hello, world!;sleep 1;done')
+  751  top
+  752  ps ajx | grep docker
+  753  echo $JOB
+  754  sudo docker ps -a
+  755  sudo docker log $JOBS
+  756  sudo docker logs $JOBS
+  757  sudo docker logs $JOB
+  758   sudo docker help
+  759   sudo docker kill --help
+  760   sudo docker stop $JOB
+  761  sudo docker ps -a
+  762   sudo docker rm $JOB
+  763  sudo docker ps -a
+  764  JOB=$(sudo docker run -d  ubuntu /bin/sh -c 'while true;do echo Hello, world!;sleep 1;done')
+  765   sudo docker kill $JOB
+  766  sudo docker ps -a
+  767   sudo docker rm $JOB
+  768  sudo docker run --rm -p 4444 ubuntu /bin/nc -l 4444
+  769  sudo docker ps -a
+  770  JOB=$(sudo docker run -d -p 4444 ubuntu /bin/nc -l 4444)
+  771  sudo docker ps -a
+  772  sudo docker port "$JOB" 4444
+  773  sudo docker stop $JOB
+  774  sudo docker rm  $JOB
+  775  JOB=$(sudo docker run -d  ubuntu /bin/sh -c 'while true;do echo Hello, world!;sleep 1;done')
+  776  sudo docker logs $JOB
+  777  sudo docker stop $JOB
+  778  sudo docker rm $JOB
+  779  sudo docker images
+  780  sudo docker run --rm -P training/webapp python app.py
+  781  sudo iptables --help
+  782  sudo iptables -L
+  783  sudo iptables --help
+  784  sudo iptables -F
+  785  sudo iptables -L
+  786  sudo docker run --rm -P training/webapp python app.py
+  787  ps ajx | grep firewall
+  788  sudo systemctl restart docker
+  789  sudo docker run --rm -P training/webapp python app.py
+  790  sudo docker run --rm -it busybox
+  791  sudo docker ps -a
+  792  sudo docker search wildfly
+  793  sudo docker search openshift
+  794   ls
+  795  cd misc/
+  796  ls
+  797  vi Dockerfile 
+  798  sudo docker build -t misc .
+  799  sudo docker ps -a
+  800  sudo docker images
+  801  sudo docker run --rm misc
+  802  ls
+  803  cat Dockerfile 
+  804  vi Dockerfile 
+  805  sudo docker build -t misc .
+  806  sudo docker run --rm misc
+  807  sudo docker ps -a
+  808  vi Dockerfile 
+  809  sudo docker build -t misc .
+  810  sudo docker run --rm misc
+  811  which stop-all-containers 
+  812  vi ~/bin/stop-all-containers 
+  813  vi Dockerfile 
+  814  sudo docker build -t misc .
+  815  sudo docker run --rm misc
+  816  vi Dockerfile 
+  817  sudo docker build -t misc .
+  818  sudo docker run --rm misc
+  819  vi Dockerfile 
+  820  sudo docker build -t misc .
+  821  sudo docker run --rm misc
+  822  vi Dockerfile 
+  823  sudo docker build -t misc .
+  824  sudo docker run --rm misc
+  825  top -c
+  826  top -c -b
+  827  top -c -b | grep top
+  828  vi Dockerfile 
+  829  sudo docker build -t misc .
+  830  sudo docker run --rm misc
+  831  vi Dockerfile 
+  832  sudo docker build -t misc .
+  833  sudo docker run --rm misc
+  834  vi Dockerfile 
+  835  sudo docker build -t misc .
+  836  vi do
+  837  vi Dockerfile 
+  838  sudo docker build -t misc .
+  839  sudo docker run --rm misc
+  840  vi Dockerfile 
+  841  man top
+  842  top
+  843  top -c
+  844  man top
+  845  vi Dockerfile 
+  846  sudo docker build -t misc .
+  847  sudo docker run --rm misc
+  848  vi Dockerfile 
+  849  sudo docker build -t misc .
+  850  sudo docker run --rm misc
+  851  vi Dockerfile 
+  852  sudo docker build -t misc .
+  853  vi Dockerfile 
+  854  sudo docker build -t misc .
+  855  vi Dockerfile 
+  856  sudo docker build -t misc .
+  857  sudo docker run --rm misc
+  858  vi Dockerfile 
+  859  sudo docker build -t misc .
+  860  sudo docker run --rm misc
+  861  vi Dockerfile 
+  862  sudo docker build -t misc .
+  863  vi Dockerfile 
+  864  sudo docker build -t misc .
+  865  sudo docker run --rm --name misc misc
+  866  man top
+  867  top -S
+  868  ps ajx
+  869  sudo docker exec --help
+  870  vi Dockerfile 
+  871  sudo docker run --rm --name misc misc
+  872  pwd
+  873  cat Dockerfile 
+  874  sudo docker build -t misc .
+  875  sudo docker run --rm --name misc misc
+  876  sudo docker network ls
+  877  sudo docker run  --help
+  878  sudo docker run -it --name test ubuntu
+  879  sudo docker ps -a
+  880  sudo docker run -it --name test2 ubuntu
+  881  sudo docker ps -a
+  882  sudo docker run -it --name test3 centos
+  883  sudo docker ps -a
+  884  cat rm-all-containers 
+  885  cat ~/bin/rm-all-containers 
+  886  vi ~/bin/rm-all-containers 
+  887  sudo docker ps -a
+  888  sudo docker ps -a | awk 'NR>1{print $1}'
+  889  sudo docker ps -a | awk 'NR>1{print $1}' | xargs sudo docker rm 
+  890  vi ~/bin/rm-all-containers 
+  891  sudo docker run -d --name test misc
+  892  sudo docker logs test
+  893  sudo docker ps -a
+  894  sudo docker run -d --name test2 misc
+  895  sudo docker run -itd --name test3 centos
+  896  sudo docker exec -it test3
+  897  sudo docker exec -it test3 /bin/bash
+  898  sudo docker rm test3
+  899  sudo docker ps -a
+  900  sudo docker stop test3
+  901  sudo docker rm test3
+  902  sudo docker run -d --name test3 centos
+  903  sudo docker exec  test3 
+  904  sudo docker ps -a
+  905  sudo docker rm test3
+  906  sudo docker run  --name test3 centos
+  907  sudo docker ps -a
+  908  sudo docker rm test3
+  909  sudo docker run -i  --name test3 centos
+  910  sudo docker run  -t  --name test3 centos
+  911  sudo docker run  -it  --name test3 centos
+  912  sudo docker run  -i  --name test3 centos
+  913  sudo docker network inspect
+  914  sudo docker network inspect bridge
+  915   sudo docker network disconnect bridge test
+  916   sudo docker network inspect
+  917   sudo docker network inspect bridge
+  918   sudo docker network connect bridge test
+  919   sudo docker network inspect bridge
+  920    pwd
+  921  sudo docker attach test
+  922  sudo docker ps -a
+  923  sudo docker attach test
+  924  sudo docker attach --help
+  925  sudo docker attach --no-stdin
+  926  sudo docker attach --no-stdin test
+  927  sudo docker attach test
+  928  sudo docker ps
+  929  sudo docker ps -a
+  930  sudo docker ps -l
+  931  sudo docker --help
+  932  sudo docker port --help
+  933  sudo docker port test
+  934  stop-all-containers 
+  935  rm-all-containers 
+  936  sudo docker port test
+  937   sudo docker post test
+  938   sudo docker port test
+  939  sudo docker top test
+  940  sudo docker logs -f test
+  941  sudo docker port test
+  942  sudo docker logs -f test
+  943  sudo docker exec ps ajx
+  944  sudo docker exec misc ps ajx
+  945  sudo docker exec -it misc
+  946  sudo docker exec -it misc /bin/bash
+  947  sudo docker attach -it misc /bin/bash
+  948  sudo docker attach misc /bin/bash
+  949  sudo docker attach misc
+  950  sudo docker attach -it misc /bin/bash
+  951  sudo docker exec -it misc /bin/bash
+  952  sudo docker exec -it misc 
+  953  sudo docker exec -it misc bash
+  954  sudo docker exec -it misc ps ajx
+  955  sudo docker exec -it misc bash
+  956  sudo docker attach misc
+  957  which gcloud
+  958  gcloud compute --project "web-server-project-1148" ssh --zone "europe-west1-c" "instance-1"
+  959  kubectl
+  960  gcloud components update
+  961  . ~/.bash_profile
+  962  echo $PATH
+  963  pwd
+  964  exit
+  965  grep -i failed * | grep -i bus
+  966  exit
+  967  vi src/main.js
+  968  vi src/main.css
+  969  vi public/index.html 
+  970  vi webpack.config.js
+  971  vi public/index.html 
+  972  exit
+  973  cd ../../
+  974  ls
+  975  cd CodeSchool
+  976  mkdir Bootstrap
+  977  ls
+  978  cd Bootstrap/
+  979  ls
+  980  ls getting_started/
+  981  mv getting_started/* .
+  982  ls
+  983  ls getting_started/ -al
+  984  mv getting_started/.babelrc .
+  985  rmdir getting_started/
+  986  pwd
+  987  exit
+  988  cd /var/lib/pgsql/
+  989  sudo su -
+  990  exit
+  991  sudo su -
+  992  pwd
+  993  exit
+  994  docker ps 
+  995  docker commit -m "added: dnf repoquery" -a "Eric J." 4513a34660b8        my/fedora_postgres
+  996  exit
+  997  sudo su -
+  998  exit
+  999  docker ps 
+ 1000  docker commit -m "sudoers.d/wheel drwx------ /home/eric" -a "Eric J." 92661e581d73 my/fedora_postgres
+ 1001  docker ps 
+ 1002  docker commit -m "userdel eric" -a "Eric J." 7b71dc01c42d my/fedora_postgres
+ 1003  pwd
+ 1004  pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+ 1005  history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Docker2_postgres_my.txt

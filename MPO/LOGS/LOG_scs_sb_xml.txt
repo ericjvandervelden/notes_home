@@ -1,0 +1,566 @@
+/ See WAAROM NIET INJECTED
+/ See SERVICEORDEREXPORTSERVICEIMPL.ONMESSAGE CONFIGURED IN XML	WH WEL
+/ 7	. 
+
+/ queue	,
+
+$ vi core-jms-service.sb.xml
+
+	<!-- Embedded ActiveMQ Broker -->
+	<amq:broker id="embeddedActiveMQBroker" brokerName="AMQBroker.${base.product}" useJmx="true" persistent="true" dataDirectory="${module.core.data.dir}/activemq"
+		useShutdownHook="false">
+		<amq:destinationPolicy>
+			<amq:policyMap>
+				<amq:policyEntries>
+					<amq:policyEntry queue=">">
+						<amq:deadLetterStrategy>
+							<amq:sharedDeadLetterStrategy />
+						</amq:deadLetterStrategy>						
+					</amq:policyEntry>
+				</amq:policyEntries>
+			</amq:policyMap>
+		</amq:destinationPolicy>
+		<amq:managementContext>
+			<!-- we'll use an existing one instead of creating one -->
+			<amq:managementContext useMBeanServer="true" createConnector="false" />
+		</amq:managementContext>
+		<amq:persistenceAdapter>
+			<amq:kahaDB directory="${module.core.data.dir}/activemq/kahadb" checkForCorruptJournalFiles="true" checksumJournalFiles="true"></amq:kahaDB>
+		</amq:persistenceAdapter>
+		<amq:plugins>
+			<amq:loggingBrokerPlugin logProducerEvents="false" logTransactionEvents="false" />
+			<amq:statisticsBrokerPlugin />
+		</amq:plugins>
+		<amq:systemUsage>
+			<amq:systemUsage sendFailIfNoSpaceAfterTimeout="300000">
+				<!-- fail sending of messages when there is no space for 5 minutes (300k msec) -->
+				<amq:memoryUsage>
+					<amq:memoryUsage percentOfJvmHeap="10" />
+				</amq:memoryUsage>
+				<amq:storeUsage>
+					<amq:storeUsage limit="${module.core.internal.activemq.maxstorage:1 gb}" />
+				</amq:storeUsage>
+				<amq:tempUsage>
+					<amq:tempUsage limit="${module.core.internal.activemq.maxtemp:1 gb}" />
+				</amq:tempUsage>
+			</amq:systemUsage>
+		</amq:systemUsage>
+		<amq:transportConnectors>
+		</amq:transportConnectors>
+	</amq:broker>
+
+	<!-- JMS ConnectionFactory to use, configuring the embedded broker using XML -->
+	<amq:connectionFactory id="jmsEmbeddedBrokerConnectionFactory" brokerURL="vm://AMQBroker.${base.product}">
+		<amq:prefetchPolicy>
+			<amq:prefetchPolicy all="1" />
+			<!-- by default: use a low prefetch for everything -->
+		</amq:prefetchPolicy>
+		<amq:redeliveryPolicyMap>
+			<amq:redeliveryPolicyMap>
+				<amq:defaultEntry>
+					<amq:redeliveryPolicy maximumRedeliveries="6" initialRedeliveryDelay="1000" redeliveryDelay="1000" />
+				</amq:defaultEntry>
+				<amq:redeliveryPolicyEntries>
+					<!-- To tweak settings for specific queues, shouldn't be needed -->
+					<!-- <amq:redeliveryPolicy queue="foo.bar.quux" maximumRedeliveries="6" initialRedeliveryDelay="1000" redeliveryDelay="1000" /> -->
+				</amq:redeliveryPolicyEntries>
+			</amq:redeliveryPolicyMap>
+		</amq:redeliveryPolicyMap>
+	</amq:connectionFactory>
+
+
+	<!-- JMS Producer Configuration -->
+	<bean id="jmsEmbeddedProducerConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory" depends-on="embeddedActiveMQBroker" p:targetConnectionFactory-ref="jmsEmbeddedBrokerConnectionFactory">
+		<property name="sessionCacheSize" value="${module.core.internal.jms.producer.sessioncache:10}" />
+	</bean>
+
+	<bean id="jmsProducerTemplate" class="org.springframework.jms.core.JmsTemplate" p:connectionFactory-ref="jmsEmbeddedProducerConnectionFactory">
+		<description>JMS Template for producing messages on a Queue</description>
+		<property name="sessionTransacted" value="true" />
+	</bean>
+
+
+$ vi oms-service.sb.xml
+
+/ BLI-78
+
+	<!-- Destination for TriggerRequest objects -->
+	<amq:queue id="com.mpobjects.triggerrequest" physicalName="com.mpobjects.triggerrequest" />
+
+	<!-- The producer for TriggerRequest -->
+	<bean id="com.mpobjects.oms.service.trigger.TriggerRequestProducer" parent="transactionRequiredTemplate">
+		<property name="target">
+			<bean class="com.mpobjects.oms.service.trigger.TriggerRequestProducerImpl">
+				<property name="destination" ref="com.mpobjects.triggerrequest" />
+				<property name="jmsTemplate" ref="jmsProducerTemplate" /> 				/ See core-jms-service.sb.xml
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="org.springframework.jms.listener.DefaultMessageListenerContainer" name="internaljms.com.mpobjects.oms.service.trigger.TriggerRequestHandler">
+		<property name="concurrentConsumers" value="${module.oms.triggerrequest.concurrentConsumers}" />
+		<property name="connectionFactory" ref="jmsEmbeddedBrokerConnectionFactory" />
+		<property name="destination" ref="com.mpobjects.triggerrequest" />
+		<property name="messageListener" ref="com.mpobjects.oms.service.trigger.TriggerRequestHandler" />				<-
+		<property name="maxConcurrentConsumers" value="${module.oms.triggerrequest.maxConcurrentConsumers}" />
+	</bean>
+/ Hier vallen we inderdaad in	, onderaan in de stack trace	, erboven in de stack trace zien we TriggerRequestHandler	, in .onMessage	,
+
+	<bean id="com.mpobjects.oms.service.trigger.TriggerRequestHandler" parent="transactionRequiredTemplate">
+		<property name="target">
+			<bean class="com.mpobjects.oms.service.trigger.TriggerRequestHandlerImpl">
+				<property name="triggerActionExecutionService" ref="com.mpobjects.oms.service.trigger.TriggerActionExecutionService" />
+			</bean>
+		</property>
+	</bean>
+
+
+	<amq:queue id="com.mpobjects.messageexport" physicalName="com.mpobjects.messageexport" />
+
+	<bean id="com.mpobjects.oms.model.service.export.ServiceOrderExportService" parent="transactionRequiredTemplate">
+		<property name="target">
+			<bean class="com.mpobjects.oms.model.service.export.ServiceOrderExportServiceImpl" parent="com.mpobjects.core.servicequeue.AbstractJmsServiceRequestHandler">
+				<property name="outgoingJmsService" ref="com.mpobjects.interfacing.service.OutgoingJmsService" />		<-
+				<property name="keyGenService" ref="com.mpobjects.oms.model.keygen.service.KeyGenService" />
+				<property name="serviceOrderDao" ref="com.mpobjects.oms.dao.ServiceOrderDao" />
+				<property name="shipmentItemDAO" ref="com.mpobjects.oms.model.shipmentorder.dao.ShipmentItemDAO" />
+				<property name="updateDateDuringExport" value="${module.oms.serviceorder.export.update.date.during:true}" />
+				<property name="xmlDocumentIdService" ref="com.mpobjects.oms.xml.documentid.service.XmlDocumentIdService" />
+				<property name="interfaceTriggerEventService" ref="com.mpobjects.interfacing.service.InterfaceTriggerEventService" />
+				<property name="monitoringService" ref="com.mpobjects.core.monitoring.MonitoringService" />
+				<property name="jxpathService" ref="com.mpobjects.oms.service.jxpath.JXPathService" />
+				<property name="serviceOrderService" ref="com.mpobjects.oms.model.service.ServiceOrderService" />
+				<property name="defaultJmsRequestDestination" value="com.mpobjects.messageexport" />					<-
+			</bean>
+		</property>
+	</bean>
+/ We vallen inderdaad in ServiceOrderExportServiceImpl(AbstractJmsServiceRequestHandler).onMessage(Message)	, 
+
+	<jms:listener-container connection-factory="jmsEmbeddedBrokerConnectionFactory" acknowledge="transacted"
+		concurrency="${module.oms.serviceorderexport.concurrentConsumers}-${module.oms.serviceorderexport.maxConcurrentConsumers}">
+		<jms:listener destination="com.mpobjects.messageexport" ref="com.mpobjects.oms.model.service.export.ServiceOrderExportService" selector="JMSType='SERVICE_ORDER_MSG'"
+			id="internaljms.com.mpobjects.oms.model.service.export.ServiceOrderExportService" />
+	</jms:listener-container>
+/ TODO Is dit de config dat .onMessage wordt called?
+/ SERVICEORDEREXPORTSERVICEIMPL.ONMESSAGE CONFIGURED IN XML	WH WEL	, 
+/ Lees	http://www.springbyexample.org/examples/simple-spring-jms-listener-config.html
+
+
+	<bean id="com.mpobjects.core.servicequeue.AbstractJmsServiceRequestHandler" abstract="true">
+		<description>Template for AbstractJmsServiceRequestHandler subclasses to reduce copying</description>
+		<property name="simpleMessageProducer" ref="com.mpobjects.core.jms.SimpleMessageProducer" />				<-
+		<property name="runAsService" ref="com.mpobjects.auth.service.RunAsService" />
+		<property name="queueInfoProvider" ref="com.mpobjects.core.servicequeue.QueueInfoProvider" />
+	</bean>
+
+/ we komen 2 keer in .onMessage	, vanaf een internal queue	, 
+    TriggerRequestHandlerImpl.onMessage(Message) line: 38																/ com.mpobjects.triggerrequest internal queue	,
+    ServiceOrderExportServiceImpl(AbstractJmsServiceRequestHandler).onMessage(Message) line: 109            <-			/ com.mpobjects.messageexport internal queue	, 
+		/ writes to MPOBJECTS.FROM.BAKKER
+
+ServiceOrderExportServiceImpl.createInterfaceTriggerEvent(ServiceOrderVO, ServiceOrderExportMode, String, Date, boolean, boolean) line: 145	
+			sendRequest(request);
+/s
+ServiceOrderExportServiceImpl(AbstractJmsServiceRequestHandler).sendRequest(T, Map<String,Object>) line: 127	
+		simpleMessageProducer.sendMessage(dest, aRequest, getJmsRequestProperties(aRequest, aHeaders));
+
+$ vi interfacing-service.sb.xml
+	<bean id="com.mpobjects.interfacing.service.OutgoingJmsService" parent="transactionRequiredTemplate">
+		<property name="target">
+			<bean class="com.mpobjects.interfacing.service.OutgoingJmsServiceImpl">
+				<property name="defaultDestination" value="${module.interfacing.jmsmessage.from.destination}" />
+				<property name="jmsTemplate">
+					<bean class="org.springframework.jms.core.JmsTemplate" p:connectionFactory-ref="jmsOutgoingConnectionFactory">
+						<property name="sessionTransacted" value="true" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+$ vi bakker.properties
+module.interfacing.jmsmessage.from.destination=MPOBJECTS.FROM.BAKKER
+
+
+
+
+
+
+/ MORGENOCHTEND IV
+/ Kijk in deze file naar com.mpobjects.messageexport
+
+$ vi oms-integration.sb.xml
+
+	<bean id="JmsCustomerOrderMsgListener" parent="jmsMessageListener" lazy-init="true">			/ See interfacing-jms.sb.xml
+		<constructor-arg index="0" value="CustomerOrder" />
+		<constructor-arg index="1">
+			<bean class="com.mpobjects.interfacing.messages.handler.MessageHandler">
+				<constructor-arg index="0" ref="defaultExchangeHandlers" />
+				<constructor-arg>
+					<array>
+						<ref bean="CustomerOrderMsgHandler" />
+					</array>
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+	</bean>
+
+$ vi ./module/interfacing/src/java/interfacing-jms.sb.xml:
+
+	<!-- Template for message listeners -->
+	<bean id="jmsMessageListener" class="com.mpobjects.interfacing.jms.MpoMessageListener" abstract="true">				<-
+		<property name="messageConverter" ref="com.mpobjects.interfacing.jms.JmsMessageConverter" />
+		<property name="logHeaders" value="${module.interfacing.jms.listener.log.headers:true}" />
+		<property name="logProperties" value="${module.interfacing.jms.listener.log.properties:false}" />
+		<property name="logPayload" value="${module.interfacing.jms.listener.log.payload:false}" />
+		<property name="monitoringService" ref="com.mpobjects.core.monitoring.MonitoringService" />
+	</bean>
+
+	<!-- Default JMS message listener which accepts all kinds of messages (generic message listener) -->
+	<bean id="JmsGenericDemuxMsgListener" parent="jmsMessageListener" lazy-init="true">						/ See interfacing-jms.sb.xml
+		<constructor-arg index="0" value="GenericQueue" />
+		<constructor-arg index="1">
+			<bean class="com.mpobjects.interfacing.messages.handler.MessageHandler">
+				<constructor-arg index="0" ref="defaultExchangeHandlers" />
+				<constructor-arg>
+					<array>
+						<ref bean="com.mpobjects.interfacing.messages.handler.DemuxExchangeHandler" />
+					</array>
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+	</bean>
+
+
+$ vi bakker-integration.sb.xml
+
+	<!-- Customer Order queue -->
+	<bean id="CustomerOrderQueueContainer" parent="messageListenerContainer">
+		<property name="destination">
+			<bean parent="jmsQueue">
+				<constructor-arg index="0" value="${module.interfacing.jms.customerorder.queue}" />	 			/ BAKKER.CUSTOMERORDERS
+			</bean>
+		</property>
+		<property name="messageListener" ref="JmsCustomerOrderMsgListener" />								/ See oms-integration.sb.xml: MpoMessageListener	,
+		<property name="concurrentConsumers" value="${module.interfacing.jms.customerorder.concurrentConsumers}" />		 			/ 1
+		<property name="maxConcurrentConsumers" value="${module.interfacing.jms.customerorder.maxConcurrentConsumers}" />			/ 1
+	</bean>
+
+
+	<!-- The generic BAKKER queue for other messages -->
+	<bean id="BakkerQueueContainer" parent="messageListenerContainer">
+		<property name="destination">
+			<bean parent="jmsQueue">
+				<constructor-arg index="0" value="${module.interfacing.jms.bakker.queue}" />		/ MPOBJECTS.TO.BAKKER
+			</bean>
+		</property>
+		<property name="messageListener" ref="JmsGenericDemuxMsgListener" />		/ See interfacing-jms.sb.xml: MpoMessageListener	, 
+	</bean>
+
+$ vi bakker.properties
+
+module.interfacing.jms.shipmentorder.queue=BAKKER.SHIPMENTORDERS
+module.interfacing.jms.customerorder.queue=BAKKER.CUSTOMERORDERS
+module.interfacing.jms.serviceorder.queue=BAKKER.SERVICEORDERS
+module.interfacing.jms.event.queue=BAKKER.LOGISTICSORDEREVENTS
+module.interfacing.jms.bakker.queue=MPOBJECTS.TO.BAKKER
+module.interfacing.jmsmessage.destination=MPOBJECTS.TO.BAKKER
+module.interfacing.jmsmessage.from.destination=MPOBJECTS.FROM.BAKKER
+
+module.interfacing.jmsmessage.serverid=default
+
+module.interfacing.jms.customerorder.concurrentConsumers=1
+module.interfacing.jms.customerorder.maxConcurrentConsumers=1
+module.interfacing.jms.serviceorder.concurrentConsumers=1
+module.interfacing.jms.serviceorder.maxConcurrentConsumers=1
+
+/ 7	. 
+
+/ WAAROM NIET INJECTED
+
+$ vi core-service.sb.xml
+
+	<bean id="com.mpobjects.core.jms.SimpleMessageProducer" class="com.mpobjects.core.jms.SimpleMessageProducerImpl">
+		<property name="jmsTemplate" ref="jmsProducerTemplate" />
+	</bean>
+
+TriggerRequestProducerImpl.produce(TriggerExecutionRequest<?>) line: 25	
+/cb
+ServiceOrderTriggerHandlerImpl.evaluateAndExecuteRequest(ServiceOrderVO, ServiceOrderTypeTrigger) line: 42	
+/cb
+ServiceOrderServiceImpl.updateServiceOrder(ServiceOrderVO, TMSEventContext, boolean, boolean) line: 1726	
+/cb
+ServiceOrderSaveAction(ServiceOrderSaveAction).handleSave() line: 239	
+
+    ServiceOrderExportServiceImpl.exportServiceOrder(ServiceOrderVO) line: 204
+/cb
+ServiceOrderSaveAction(ServiceOrderSaveAction).handleSave() line: 239
+
+$ vi oms-service.sb.xml
+	<bean id="com.mpobjects.oms.model.service.ServiceOrderService" parent="transactionRequiredTemplate">
+		<property name="target" ref="-com.mpobjects.oms.model.service.ServiceOrderServiceImpl" />
+	</bean>
+	<bean id="-com.mpobjects.oms.model.service.ServiceOrderServiceImpl" class="com.mpobjects.oms.model.service.ServiceOrderServiceImpl">
+		<!-- DO NOT USE THIS BEAN. This construction exists only to solve the circular dependency problem with ProxyFactoryBeans -->
+		<property name="consignmentService" ref="com.mpobjects.oms.model.service.ConsignmentService" />
+		<property name="contractService" ref="com.mpobjects.oms.service.ContractService" />
+		<property name="currencyDAO" ref="com.mpobjects.oms.model.currency.dao.CurrencyDAO" />
+		<property name="customerStatusService" ref="com.mpobjects.oms.model.customerstatus.service.CustomerStatusService" />
+		<property name="entityDetailService" ref="com.mpobjects.oms.service.EntityDetailService" />
+		<property name="eventHandlerService" ref="com.mpobjects.oms.service.event.EventHandlerService" />
+		<property name="orderStatusDAO" ref="com.mpobjects.oms.model.orderstatus.dao.OrderStatusDAO" />
+		<property name="partyDAO" ref="com.mpobjects.oms.dao.PartyDAO" />
+		<property name="serviceOrderCostService" ref="com.mpobjects.oms.model.serviceordercost.service.ServiceOrderCostService" />
+		<property name="serviceOrderDAO" ref="com.mpobjects.oms.dao.ServiceOrderDao" />
+		<property name="serviceOrderTypeDAO" ref="com.mpobjects.oms.dao.serviceordertype.ServiceOrderTypeDAO" />
+		<property name="shipmentItemDAO" ref="com.mpobjects.oms.model.shipmentorder.dao.ShipmentItemDAO" />
+		<property name="timeService" ref="com.mpobjects.core.model.service.TimeService" />
+		<property name="tracer" ref="com.mpobjects.core.tracing.Tracer" />
+		<property name="serviceActionDAO" ref="com.mpobjects.oms.dao.ServiceActionDAO" />
+		<property name="simpleMessageProducer" ref="com.mpobjects.core.jms.SimpleMessageProducer" />
+		<property name="serviceOrderStopService" ref="com.mpobjects.oms.service.serviceorderstop.ServiceOrderStopService" />
+		<property name="containerService" ref="com.mpobjects.oms.service.container.ContainerService" />
+		<property name="serviceOrderContainerService" ref="com.mpobjects.oms.model.service.ServiceOrderContainerService" />
+		<property name="organizationDAO" ref="com.mpobjects.oms.dao.organization.OrganizationDAO" />
+	</bean>
+
+ServiceOrderServiceImpl.updateServiceOrder(ServiceOrderVO, TMSEventContext, boolean, boolean) line: 1726	
+
+					MpoBeanFactory.getBean(ServiceOrderExportService.class).exportServiceOrder(aServiceOrder);		/ Waarom niet injected	?
+
+				getTriggerHandler().handleUpdate(getOld(aServiceOrder), aServiceOrder);
+/s
+	private ServiceOrderTriggerHandler getTriggerHandler() {
+		if (triggerHandler == null) {
+			triggerHandler = MpoBeanFactory.getBean(ServiceOrderTriggerHandler.class);
+		}
+
+		return triggerHandler;
+	}
+/ TODO Waarom niet injected	?
+
+/ Maar	,  
+
+$ vi oms-service.sb.xml
+
+	<bean id="com.mpobjects.oms.service.trigger.ServiceOrderTriggerHandler" class="com.mpobjects.oms.service.trigger.ServiceOrderTriggerHandlerImpl">
+		<property name="serviceOrderTypeTriggerDAO" ref="com.mpobjects.oms.dao.trigger.ServiceOrderTypeTriggerDAO" />
+		<property name="triggerRequestProducer" ref="com.mpobjects.oms.service.trigger.TriggerRequestProducer" />
+	</bean>
+	<!-- The producer for TriggerRequest -->
+	<bean id="com.mpobjects.oms.service.trigger.TriggerRequestProducer" parent="transactionRequiredTemplate">
+		<property name="target">
+			<bean class="com.mpobjects.oms.service.trigger.TriggerRequestProducerImpl">
+				<property name="destination" ref="com.mpobjects.triggerrequest" />							<-
+				<property name="jmsTemplate" ref="jmsProducerTemplate" />
+			</bean>
+		</property>
+	</bean>
+	<!-- Destination for TriggerRequest objects -->
+	<amq:queue id="com.mpobjects.triggerrequest" physicalName="com.mpobjects.triggerrequest" />
+
+$ vi core-jms-service.sb.xml
+
+	<bean id="jmsProducerTemplate" class="org.springframework.jms.core.JmsTemplate" p:connectionFactory-ref="jmsEmbeddedProducerConnectionFactory">
+		<description>JMS Template for producing messages on a Queue</description>
+		<property name="sessionTransacted" value="true" />
+	</bean>
+
+ServiceOrderServiceImpl.updateServiceOrder(ServiceOrderVO, TMSEventContext, boolean, boolean) line: 1726	
+			getTriggerRequestProducer().produce(myRequest);
+/s
+public class AbstractTriggerHandlerImpl {
+	public TriggerRequestProducer getTriggerRequestProducer() {
+		return triggerRequestProducer;
+	}
+/ Dat is Spring	, 
+
+/ Einde WAAROM NIET INJECTED
+
+/ 7	. 
+
+/ topic	,
+
+$ vi oms-service.sb.xml
+
+	<!-- Note that this is a singleton, it has attributes, but these are all singletons as well -->
+	<bean id="com.mpobjects.oms.service.event.EventHandlerService" class="com.mpobjects.oms.service.event.EventHandlerServiceImpl">
+		<property name="listenerList" ref="com.mpobjects.oms.model.eventhandler.util.ListenerList" />
+		<property name="jmsTemplate" ref="jmsTopicProducerTemplate" />
+		<property name="jmsTopicName" value="com.mpobjects.eventhandler" />
+	</bean>
+	<amq:topic name="com.mpobjects.eventhandler" physicalName="com.mpobjects.eventhandler" />
+
+	<bean id="com.mpobjects.oms.model.eventhandler.util.ListenerList" class="com.mpobjects.oms.model.eventhandler.util.ListenerList" />
+
+
+$ vi core-jms-service.sb.xml
+
+	<bean id="jmsTopicProducerTemplate" class="org.springframework.jms.core.JmsTemplate" p:connectionFactory-ref="jmsEmbeddedProducerConnectionFactory">
+		<description>JMS Template for producing messages on a Topic</description>
+		<property name="sessionTransacted" value="true" />
+		<property name="pubSubDomain" value="true" />
+	</bean>
+
+/ 7	. 
+
+/ IMPORT
+
+/ find, not in bin/	, 
+/ voeg toe: -path ./bin -prune -o 
+
+[eric@localhost 2016.12]$ find . -path ./bin -prune -o -name "*sb.xml"  | xargs grep MessageListener | grep -v ref
+/ of	,
+[eric@localhost 2016.12]$ find -path ./bin -prune -o -name "*sb.xml"  | xargs grep MessageListener | grep -v ref
+
+/ we kunnen WH ook 	, 
+[eric@localhost 2016.12]$ find module/ -name "*sb.xml"  | xargs grep MessageListener | grep -v ref
+
+$ vi module/event/src/java/event-service.sb.xml:
+
+$ vi module/oms/src/java/oms-service.sb.xml
+
+$ vi module/oms/src/java/oms-integration.sb.xml:
+
+	<bean id="JmsShipmentOrderMsgListener" parent="jmsMessageListener" lazy-init="true">
+...
+
+
+$ vi module/inventory/src/java/inventory-integration.sb.xml:
+
+$ vi module/massupdate/src/java/massupdate-service.sb.xml:
+
+$ vi module/carconserver/src/java/carconserver-integration.sb.xml:
+
+$ vi module/ratecalc/src/java/ratecalc-service.sb.xml:
+
+$ vi module/invoice/src/java/invoice-integration.sb.xml:
+
+$ vi module/invoice/src/java/invoice-service.sb.xml:
+
+/ 7	. 
+
+$ vi bakker-integration.sb.xml
+
+/ 13	. 
+
+	<!-- Shipment order queue -->
+	<bean id="ShipmentOrderQueueContainer" parent="messageListenerContainer">		/ inderdaad een container van een message listener	, 
+		<property name="destination">
+			<bean parent="jmsQueue">
+				<constructor-arg index="0" value="${module.interfacing.jms.shipmentorder.queue}" />
+			</bean>
+		</property>
+		<property name="messageListener" ref="JmsShipmentOrderMsgListener" />		/ MpoMessageListener	,
+	</bean>
+
+$ vi interfacing-jms.sb.xml
+
+	<!-- Template for the message listener container -->
+	<bean id="messageListenerContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer"
+		abstract="true">
+		<property name="concurrentConsumers" value="1" />
+		<property name="maxConcurrentConsumers" value="1" />
+		<property name="connectionFactory" ref="jmsConnectionFactory" />
+		<property name="autoStartup" value="${module.interfacing.jms.listener.autostartup}" />
+		<property name="sessionTransacted" value="${module.interfacing.jms.listener.sessiontransacted}" />
+	</bean>
+
+$ vi oms-integration.sb.xml
+
+	<bean id="JmsShipmentOrderMsgListener" parent="jmsMessageListener" lazy-init="true">		/ MpoMessageListener
+		<constructor-arg index="0" value="ShipmentOrder" />
+		<constructor-arg index="1">
+			<bean class="com.mpobjects.interfacing.messages.handler.MessageHandler">
+				<constructor-arg index="0" ref="defaultExchangeHandlers" />
+				<constructor-arg>
+					<array>
+						<ref bean="ShipmentOrderMsgHandler" />
+					</array>
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+	</bean>
+
+$ vi module/interfacing/interfacing.properties
+# When set to false the spring based message listeners will not start consuming automatically.
+module.interfacing.jms.listener.autostartup=true													/ dus is set true	, 
+
+$ vi ./module/interfacing/src/java/interfacing-jms.sb.xml
+<!-- Template for the message listener container -->																		/ pakt msgs of external queue MPOBJECTS.TO.BAKKER
+	<bean id="messageListenerContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer"
+		abstract="true">
+		<property name="concurrentConsumers" value="1" />
+		<property name="maxConcurrentConsumers" value="1" />
+		<property name="connectionFactory" ref="jmsConnectionFactory" />
+		<property name="autoStartup" value="${module.interfacing.jms.listener.autostartup}" />									<-
+		<property name="sessionTransacted" value="${module.interfacing.jms.listener.sessiontransacted}" />
+	</bean>
+
+	<!-- Template for message listeners -->
+	<bean id="jmsMessageListener" class="com.mpobjects.interfacing.jms.MpoMessageListener" abstract="true">
+
+	<!-- Default JMS message listener which accepts all kinds of messages (generic message listener) -->
+	<bean id="JmsGenericDemuxMsgListener" parent="jmsMessageListener" lazy-init="true">
+
+/ 13	. 
+
+	<!-- Service Order queue -->
+	<bean id="ServiceOrderQueueContainer" parent="messageListenerContainer">
+		<property name="destination">
+			<bean parent="jmsQueue">
+				<constructor-arg index="0" value="${module.interfacing.jms.serviceorder.queue}" />
+			</bean>
+		</property>
+		<property name="messageListener" ref="JmsServiceOrderMsgListener" />														/ MpoMessageListener	, 
+		<property name="concurrentConsumers" value="${module.interfacing.jms.serviceorder.concurrentConsumers}" />
+		<property name="maxConcurrentConsumers" value="${module.interfacing.jms.serviceorder.maxConcurrentConsumers}" />
+	</bean>
+
+/ 13	. 
+
+	<!-- Customer Order queue -->
+	<bean id="CustomerOrderQueueContainer" parent="messageListenerContainer">
+		<property name="destination">
+			<bean parent="jmsQueue">
+				<constructor-arg index="0" value="${module.interfacing.jms.customerorder.queue}" />
+			</bean>
+		</property>
+		<property name="messageListener" ref="JmsCustomerOrderMsgListener" />											/ MpoMessageListener	,
+		<property name="concurrentConsumers" value="${module.interfacing.jms.customerorder.concurrentConsumers}" />
+		<property name="maxConcurrentConsumers" value="${module.interfacing.jms.customerorder.maxConcurrentConsumers}" />
+	</bean>
+
+/ 13	. 
+
+	<!-- The generic BAKKER queue for other messages -->
+	<bean id="BakkerQueueContainer" parent="messageListenerContainer">
+		<property name="destination">
+			<bean parent="jmsQueue">
+				<constructor-arg index="0" value="${module.interfacing.jms.bakker.queue}" />
+			</bean>
+		</property>
+		<property name="messageListener" ref="JmsGenericDemuxMsgListener" />	 /	MpoMessageListener	,
+	</bean>
+
+/ 7	. 
+
+$ vi mpo-integration.sb.xml
+
+	<bean id="com.mpobjects.mpo.integration.jms.ShipmentOrderListener" class="com.mpobjects.mpo.integration.jms.ShipmentOrderListener">
+	</bean>
+
+	<bean id="ShipmentOrderQueueContainer" parent="messageListenerContainer">
+		<property name="destination">
+			<bean parent="jmsQueue">
+				<constructor-arg index="0" value="${module.interfacing.jms.shipmentorder.queue}" />
+			</bean>
+		</property>
+		<property name="messageListener" ref="com.mpobjects.mpo.integration.jms.ShipmentOrderListener" />
+	</bean>
+
+/ ShipmentOrderListener heeft .onMessage , maar calls superclass's method AbstractJmsListener.handleMessage	, 
+
+
+
+/ Einde IMPORT

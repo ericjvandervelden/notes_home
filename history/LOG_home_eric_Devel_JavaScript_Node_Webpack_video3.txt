@@ -1,0 +1,1000 @@
+  452  cat my-bear/index.js 
+  453  cd video/
+  454  vi ../my-bear/index.js 
+  455  cat ../my-bear/index.js 
+  456  cp -a ../my-bear/ node_modules/
+  457  npm run bundle
+  458  cd ../my_css/
+  459  ls
+  460  vi index.css 
+  461  vi base.css
+  462  cat index.css 
+  463  vi base.css 
+  464  cd ../video/
+  465  cp -a ../my_css/ node_modules/
+  466  npm run bundle
+  467  cd ../my_css/
+  468  pwd
+  469  ls
+  470  cat base.css 
+  471  cat index.css 
+  472  cd ../video/
+  473  vi webpack.config.js
+  474  vi ../my-bear/index.js 
+  475  cp -a ../my-bear/ node_modules/
+  476  npm run bundle
+  477  ls
+  478  vi webpack.config.js 
+  479  npm run bundle
+  480  pwd
+  481  cat webpack.config.js 
+  482   cat ../my-bear/index.js 
+  483  pwd
+  484  cd ../../
+  485  ls
+  486  mkdir Babel
+  487  cd Babel/
+  488  mkdir video
+  489  cd video/
+  490  npm init
+  491  pwd
+  492  npm i babel --save-dev
+  493  less node_modules/babel/package.json 
+  494  npm i babelify --save-dev
+  495  npm i budo --save-dev
+  496  pwd
+  497  vi index.js
+  498  rm index.js 
+  499  vi index.js 
+  500  node index.js 
+  501  vi index.js 
+  502  vi package.json 
+  503  vi index.js 
+  504  ls node_modules/
+  505   less package.json 
+  506  vi package.json 
+  507  vi index.js 
+  508  ls node_modules/
+  509  vi package.json 
+  510  npm i babel-preset-es2015 --save-dev
+  511  vi package.json 
+  512  npm i babel-preset-react --save-dev
+  513  vi package.json 
+  514  vi index.js 
+  515  cat package.json 
+  516  vi index.js 
+  517  cd ../../
+  518  ls
+  519  mkdir React
+  520  mkdir React/website
+  521  cd React/website/
+  522  npm init
+  523  pwd
+  524  vi index.js
+  525  cd ..
+  526  mv website/ getting_started
+  527  cd getting_started/
+  528  ls
+  529  vi package.json 
+  530  vi index.js
+  531  cd ..
+  532  mv getting_started/ getting-started/
+  533  cd getting-started/
+  534  vi package.json 
+  535  vi index.js 
+  536  vi index.html
+  537  vi index.js
+  538  npm i  --save-dev react react-dom babelify babel-preset-react
+  539  ls node_modules/
+  540  npm i --save-dev browserify
+  541  vi package.json 
+  542  npm start
+  543  vi package.json 
+  544  npm start
+  545  ls
+  546  node_modules/.bin/browserify -t [babelify --presets [react]] index.js -o bundle.js
+  547  ls
+  548  node_modules/.bin/browserify -t [babelify --presets [react]] ./index.js -o bundle.js
+  549  ls
+  550  vi index.
+  551  vi index.js
+  552  node_modules/.bin/browserify -t [babelify --presets [react]] index.js -o bundle.js
+  553  vi index.js
+  554  less node_modules/react-dom/index.js 
+  555  less node_modules/react-dom/server.js 
+  556  less node_modules/react-dom/dist/react-dom.js
+  557  less node_modules/react-dom/dist/react-dom-server.js 
+  558  grep render node_modules/react-dom/
+  559  grep render -r node_modules/react-dom/
+  560  less node_modules/r
+  561  grep render -r node_modules/react
+  562  less node_modules/react/lib/ReactDOM.js
+  563  vi index.js
+  564  npm start
+  565  vi index.js
+  566  npm start
+  567  vi index.js
+  568  npm start
+  569  vi package.json 
+  570  less ../../Browserify/video/package.json 
+  571  vi  ../../Browserify/video/package.json 
+  572  vi package.json 
+  573  npm start
+  574  cd ..
+  575  ls
+  576  mv getting-started/ getting-started-with-browserify
+  577  vi getting-started-with-browserify/package.json 
+  578  mkdir getting-started-with-webpack
+  579  cd getting-started-with-
+  580  cd getting-started-with-webpack/
+  581  npm ini
+  582  npm init
+  583  cd ../getting-started-with-browserify/
+  584  vi index.js
+  585  cat package.json 
+  586  pwd
+  587   cd ..
+  588  cd ../Babel/video/
+  589  npm start
+  590  cd ../../React/getting-started/
+  591  vi package.json 
+  592  npm start
+  593  npm i camelize --save-dev
+  594  npm start
+  595  npm i emptyfunction --save-dev
+  596  npm start
+  597  npm un --help
+  598  npm un emptyfunction --save-dev
+  599  npm i emptyFunction --save-dev
+  600  npm un camelize --save-dev
+  601  vi package.json 
+  602  npm start
+  603  cat package.json 
+  604  pwd
+  605  cd ../blog/
+  606  ls
+  607  vi index.js 
+  608  ls
+  609  ls ..
+  610  cd ..
+  611  tar cvzf blog.tgz blog/
+  612  cd blog/
+  613  ls
+  614  vi index.js
+  615  vi package.json 
+  616  vi index.js
+  617  vi package.json 
+  618  pwd
+  619  less ../../Browserify/video/package.json 
+  620  ls ..
+  621  cd ../getting-started/
+  622  ls
+  623  less package.json 
+  624  vi index.js
+  625  budo --help
+  626  ls
+  627  node_modules/.bin/budo --help
+  628  ls
+  629  vi package.json 
+  630  cat package.json 
+  631  npm start
+  632  ls
+  633  vi index.html 
+  634  vi index.js
+  635  vi index.html 
+  636  vi index.js
+  637  cd ../blog/
+  638  ls
+  639  vi index.html 
+  640  vi index.js
+  641  vi package.json 
+  642  vi index.js
+  643  vi index.html 
+  644  vi index.js
+  645  npm start
+  646  ls -ltr ~/Downloads/
+  647  ls -ltr ~/Downloads/ | grep sublime
+  648  ls
+  649  vi index.js
+  650  ps ajx 
+  651  kill -9 31296
+  652  ps ajx 
+  653  kill -9 31301 31339
+  654  ps ajx 
+  655  kill -9 31334
+  656  ps ajx 
+  657  ps ajxw
+  658  ps auxw
+  659  ps ajxw
+  660  kill -9 31494
+  661  ps ajxw
+  662  kill -9 31499
+  663  ps ajxw
+  664  ps ajx 
+  665  kill -9 31614  31619 
+  666  ps ajx 
+  667  kill -9 31614  31619 
+  668  ps ajx 
+  669  kill -9 31684  31689
+  670  ps ajx 
+  671  kill -9 31747
+  672  ps ajx 
+  673  cd ../jesse/
+  674  vi index.js
+  675  pwd
+  676  ls
+  677  vi radio.js
+  678  cd ../levelup/
+  679  vi index.js
+  680  cp index.js index0.js
+  681  vi index.js
+  682  pwd
+  683  ls
+  684  vi index.js
+  685  vi contactlist.js 
+  686  v index.js
+  687  vi index.js
+  688  ls
+  689  cp -a index.js index4.js
+  690  cp -a contactlist.js contactlist4.js
+  691  cp -a contact.js contact4.js
+  692  vi package.json 
+  693  vi index.js
+  694  less ../../Webpack/video/package.json 
+  695  less package.json 
+  696  less node_modules/babelify/package.json 
+  697  less ../../Webpack/video/package.json 
+  698  find ../../Webpack/video/ -name package.json 
+  699  grep 'babel-loader' < <(find ../../Webpack/video/ -name package.json  )
+  700  grep 'babel-loader' <(find ../../Webpack/video/ -name package.json  )
+  701  grep 'babel-loader' $(find ../../Webpack/video/ -name package.json  )
+  702  mv ~/Downloads/fourier_spectal.pdf ~/Documents/
+  703  top
+  704  ls
+  705  vi index.html 
+  706  cd ../
+  707  cd ..
+  708  cd Webpack/video/
+  709  ls
+  710  vi webpack.config.js 
+  711  ls
+  712  pwd
+  713  cd ..
+  714  ls
+  715  mkdir video2
+  716  cd video2
+  717  npm init
+  718  npm i --save-dev webpack
+  719  vi package.json 
+  720  vi index.js
+  721  cp ../video/index.html .
+  722  cat index.html 
+  723  npm start
+  724  pwd
+  725  vi bear.js
+  726  vi index.js
+  727  vi index.html 
+  728  cat package.json 
+  729  cat index2.js 
+  730  cat bear2.js 
+  731  vi index2.js 
+  732  vi bear2.js 
+  733  cat ../video/bear2.js 
+  734  cat ../video/index.js
+  735  vi index2.js
+  736  vi bear2.js 
+  737  vi index2.js 
+  738  cat bear2.js 
+  739  vi index2.js 
+  740  vi bear2.js 
+  741  cat bear2.js 
+  742  cat index2.js 
+  743  vi bear2.js 
+  744  cat package.json 
+  745  vi bear2.js 
+  746  vi index2.js 
+  747  vi bear2.js 
+  748  vi ~/.vimrc 
+  749  vi bear2.js 
+  750  vi bear3.css
+  751  cp bear2.js bear3.js
+  752  mv bear3.css style3.css
+  753  vi bear3.js
+  754  cp index2.js index3.js
+  755  vi index3.js 
+  756  vi package.json 
+  757  vi index3.js 
+  758  cat package.json 
+  759  cat index3.js 
+  760  cat bear3.js 
+  761  cat style3.css 
+  762  cd ..
+  763  ls
+  764  mkdir CodeSchool
+  765  mkdir CodeSchool/Express
+  766  cd CodeSchool/Express/
+  767  pwd
+  768  npm init
+  769  cd ..
+  770  cd Express/
+  771  ls
+  772  npm i express --save
+  773  vi package.json 
+  774  npm i express --save
+  775  vi package.json 
+  776  vi index.js
+  777  cat level1/index.js 
+  778  vi public/index.html 
+  779  vi level1/index.js 
+  780  vi index.js 
+  781  cat public/index.html 
+  782  vi public/index.html 
+  783  npm i --save jquery
+  784  cp -a node_modules/jquery/dist/jquery.js public/
+  785  vi public/index.html 
+  786  vi public/client.js
+  787  vi public/index.html 
+  788  vi index.js 
+  789  vi public/index.html 
+  790  vi public/client.js 
+  791  vi logger.js 
+  792  vi index.js 
+  793   ls
+  794  mkdir level2
+  795  mv level2 level2partII
+  796  cp index.js logger.js public/ level2partII
+  797  cp -a index.js logger.js public/ level2partII
+  798  ls
+  799  vi index.js 
+  800  rm logger.js 
+  801  vi index.js 
+  802  ls
+  803  mkdir level3part*
+  804  ls
+  805  mv level3part\*/ level3partI
+  806  cp -a index.js public/ level3partI/
+  807  vi index.js 
+  808  vi level3partI/index.js 
+  809  vi index.js 
+  810  vi level3partI/index.js 
+  811  vi public/index.html 
+  812  vi public/client.js 
+  813  vi public/index.html 
+  814  vi public/client.js 
+  815  vi index.js 
+  816  ls
+  817  vi level2partII/index.js 
+  818  vi index.js 
+  819  vi public/client.js 
+  820  vi index.js 
+  821  vi public/client.js 
+  822  vi index.js 
+  823  mkdir level3partII
+  824  cp -a index.js public/ level3partII
+  825  vi index.js 
+  826  npm i --save body-parser
+  827  vi index.js 
+  828  vi public/client.js 
+  829  mv index.js server.js
+  830  vi package.json 
+  831  vi public/index.html 
+  832  vi public/client.js 
+  833  cp ~/Pictures/add.png ~/Pictures/delete.png public/
+  834  vi public/client.js 
+  835  rm public/delete.png public/add.png 
+  836  rm ~/Pictures/add.png  
+  837  mv ~/Pictures/delete.png public/
+  838  vi public/client.js 
+  839  rm public/delete.png 
+  840  ls
+  841  ls public/
+  842  vi public/client.js 
+  843  vi server.js 
+  844  vi public/li
+  845  vi public/client.js 
+  846  vi server.js 
+  847  mkdir fileupload
+  848  ls
+  849  mv fileupload/ level4_fileupload
+  850  cp -a server.js public/ level4_fileupload/
+  851  vi server.js 
+  852  mkdir level5partI
+  853  cp -a server.js public/ level5partI/
+  854  vi server.js 
+  855  mkdir routes
+  856  vi routes/blocks.js
+  857  vi server.js 
+  858  ls
+  859  mkdir level5partI*
+  860  mkdir level5partII
+  861  cp -a server.js public/ level5partII
+  862  cd ..
+  863  ls
+  864  mkdir Polymer
+  865  cd Polymer/
+  866  ls
+  867  npm init
+  868  vi package.json 
+  869  npm i -g bower
+  870  npm --help
+  871  npm un --help
+  872  npm r -g bower
+  873  ls /home/eric/.nvm/versions/node/v5.5.0/lib/node_modules
+  874  npm i -g bower
+  875  ls /home/eric/.nvm/versions/node/v5.5.0/lib/node_modules
+  876  npm i -g polymer-cli
+  877  ls /home/eric/.nvm/versions/node/v5.5.0/lib/node_modules
+  878  ls /home/eric/.nvm/versions/node/v5.5.0/lib/node_modules/polymer-cli/node_modules/
+  879  polymer help
+  880  pwd
+  881  mkdir my-el && cd my-el
+  882  polymer help
+  883  polymer help init
+  884  polymer init
+  885  ls
+  886  ls bower_components/
+  887  ls
+  888  vi index.html 
+  889  ls ..
+  890  pwd
+  891  cd ..
+  892  ls
+  893  vi package.json 
+  894  rm package.json 
+  895  cd my-el/
+  896  ls
+  897  less my-el.html 
+  898  ls bower_components/
+  899  ls bower_components/polymer/
+  900  less bower.json 
+  901  ls
+  902  less bower.json 
+  903  cd ..
+  904  ls
+  905  pwd
+  906  mkdir app
+  907  cd app
+  908  polymer init
+  909  ls
+  910  ls ..
+  911  vi bower.json 
+  912  vi index.html 
+  913  vi src/my-app/my-app.html 
+  914  ls
+  915  ls ..
+  916  ls src/
+  917  ls 
+  918  ls src/
+  919  find src
+  920  less src/my-app/my-app.html 
+  921  find test
+  922  less test/my-app/my-app_test.html 
+  923  polymer test
+  924  polymer help
+  925  polymer help test
+  926   polymer serve
+  927  cd ../my-el/
+  928   polymer serve
+  929  cd ../app/
+  930   polymer serve
+  931  cd ../my-el/
+  932   polymer serve
+  933  cd ../app
+  934   polymer serve
+  935  polymer test --browser Chrome
+  936  polymer lint --input src/my-app/my-app.html 
+  937  polymer lint --input my-app.html
+  938  cd ../my-el/
+  939  find
+  940  ls
+  941  polymer lint --help
+  942  polymer lint my-el.html 
+  943  polymer help
+  944  polymer help lint
+  945  polymer lint
+  946  polymer lint -h
+  947  polymer lint -h -v
+  948  polymer lint  -v
+  949  polymer lint  -v my-el.html 
+  950  polymer lint  -v ./my-el.html 
+  951  polymer lint  -v --input my-el.html 
+  952  polymer build --entrypoint index.html
+  953   npm
+  954   cd ..
+  955  ls
+  956  pwd
+  957  find /home/eric/Downloads/ | ls -ltr
+  958  find /home/eric/Downloads/ | xargs ls -ltr
+  959  find /home/eric/Downloads/ | xargs ls -1tr | 
+  960  find /home/eric/Downloads/ | xargs ls -1tr |  awk 'END{print}'
+  961  find /home/eric/Downloads/ -print0 | xargs -0 ls -1tr |  awk 'END{print}'
+  962  find /home/eric/Downloads/ -print0 | xargs -0 ls -1tr |  awk 'END{print}' | xargs unzip -l 
+  963  find /home/eric/Downloads/
+  964  find /home/eric/Downloads/ | xargs ls -1tr
+  965  find /home/eric/Downloads/ | xargs ls -ltr
+  966  find /home/eric/Downloads/ 
+  967  find /home/eric/Downloads/ | xargs ls -ltr
+  968  find /home/eric/Downloads/ 
+  969  find /home/eric/Downloads/ | xargs ls -1tr
+  970  unzip -l ~/Downloads/polymer-first-elements.zip
+  971  unzip  ~/Downloads/polymer-first-elements.zip
+  972  pwd
+  973  exit
+  974  ls
+  975  cd ..
+  976  ls
+  977  cd icon-toggle-finished/
+  978  ls
+  979  less demo/icon-toggle-demo.html 
+  980  less icon-toggle.html 
+  981  cd ..
+  982  ls
+  983  cd icon-toggle-finished/
+  984  ls
+  985  vi demo/index.html 
+  986  vi demo/icon-toggle-demo.html 
+  987  vi icon-toggle.html 
+  988  vi demo/icon-toggle-demo.html 
+  989  vi icon-toggle.html 
+  990  vi demo/icon-toggle-demo.html 
+  991  vi icon-toggle.html 
+  992  vi demo/icon-toggle-demo.html 
+  993  exit
+  994  vi ~/bin/stop-all-containers 
+  995  exit
+  996  cd ../../Webpack/video2
+  997  ls
+  998  vi package.json 
+  999  npm start
+ 1000  vi package.json 
+ 1001  npm start
+ 1002  vi package.json 
+ 1003  npm start
+ 1004  vi package.json 
+ 1005  npm start
+ 1006  vi package.json 
+ 1007  npm start
+ 1008  ps ajx | grep node
+ 1009  ps ajx | grep webpack
+ 1010  vi package.json 
+ 1011  npm start
+ 1012  vi package.json 
+ 1013  npm start
+ 1014  vi package.json 
+ 1015  npm start
+ 1016  cd ../video3
+ 1017  vi package.json 
+ 1018  npm start
+ 1019  ls
+ 1020  ls public/
+ 1021  cat server.js 
+ 1022  cat public/index.
+ 1023  cat public/index.js
+ 1024  cat public/bear.js 
+ 1025  vi public/index.js
+ 1026  vi public/bear.js 
+ 1027  cd ..
+ 1028  cd video2/
+ 1029  cd ../video3
+ 1030  ls
+ 1031  vi public/index.js
+ 1032  vi server.js 
+ 1033  less public/index.js
+ 1034  less public/index.html 
+ 1035  vi public/index.html 
+ 1036  node server.js 
+ 1037  less public/index.js
+ 1038  less public/bear.js 
+ 1039  ls
+ 1040  vi public/bear.js 
+ 1041  vi public/index.js
+ 1042  vi public/bear.js 
+ 1043  vi public/index.js
+ 1044  node server.js 
+ 1045  cd ../video2
+ 1046  ls
+ 1047  cd ../video3
+ 1048  ls
+ 1049  vi public/index.js
+ 1050  vi public/index.html 
+ 1051  vi package.json 
+ 1052  npm i webpack --save-dev
+ 1053  pwd
+ 1054  cat package.json 
+ 1055  vi package.json 
+ 1056  cat package.json 
+ 1057  npm run bundle
+ 1058  cd ..
+ 1059  ls
+ 1060  mkdir Docs/Usage -p
+ 1061  cd Docs/Usage/
+ 1062  pwd
+ 1063  npm init
+ 1064  npm i webpack --save-dev
+ 1065  vi cats.js
+ 1066  vi app.js
+ 1067  vi package.json 
+ 1068  npm start
+ 1069  vi package.json 
+ 1070  npm start
+ 1071  vi package.json 
+ 1072  npm start
+ 1073  vi app.bundle.js 
+ 1074  less app.bundle.js 
+ 1075  ls
+ 1076  cat cats.js 
+ 1077  cat app.js
+ 1078  cat package.json 
+ 1079  npm start
+ 1080  ls
+ 1081  node app.bundle.js 
+ 1082  ls
+ 1083  mkdir src bin
+ 1084  mv app.js  cats.js src
+ 1085  rm app.bundle.js 
+ 1086  ls
+ 1087  vi webpack.config.js
+ 1088  vi package.json 
+ 1089  npm start
+ 1090  vi webpack.config.js 
+ 1091  npm start
+ 1092  cat webpack.config.js 
+ 1093  cat package.json 
+ 1094   node bin/app.bundle.js 
+ 1095  npm install babel-core babel-preset-es2015 --save-dev
+ 1096  npm install babel-loader --save-dev
+ 1097  vi .babelrc
+ 1098  cat .babelrc 
+ 1099  vi webpack.config.js 
+ 1100  cat webpack.config.js 
+ 1101  npm i jquery --save
+ 1102  vi src/app.js 
+ 1103  cat package.json 
+ 1104  npm start
+ 1105  vi .babelrc 
+ 1106  npm start
+ 1107   vi src/app.js 
+ 1108  npm start
+ 1109  vi index.html
+ 1110  pwd
+ 1111  cat index.html 
+ 1112  vi webpack.config.js 
+ 1113  npm start
+ 1114   ls
+ 1115  ls bin
+ 1116  vi webpack.config.js 
+ 1117   vi webpack.config.js 
+ 1118  npm start
+ 1119  less bin/app.bundle.js 
+ 1120  cat webpack.config.js 
+ 1121   less webpack.config.js 
+ 1122  ls
+ 1123  pwd
+ 1124  cd ../../../
+ 1125  ls
+ 1126  cd React/Manual/package-management/webpack/
+ 1127  ls
+ 1128  cat package.json 
+ 1129  ls -al
+ 1130  cd ../express_/
+ 1131  ls
+ 1132  ls -al
+ 1133  cat .babelrc 
+ 1134  ls
+ 1135  vi server.js 
+ 1136  vi public/index.html
+ 1137  vi package.json 
+ 1138  node server
+ 1139  vi public/index.html
+ 1140  cat server.js 
+ 1141  ls public/
+ 1142  rm public/jquery.js public/react* public/browser.js 
+ 1143  vi public/index.html.OK 
+ 1144  rm public/index.html.OK
+ 1145  ls
+ 1146  ls -al
+ 1147  npm i --save react react-dom babel-preset-react babel-loader babel-core
+ 1148  npm i --save webpack react react-dom babel-preset-react babel-loader babel-core
+ 1149   ls
+ 1150  ls public/
+ 1151  vi webpack.config.js
+ 1152  ls
+ 1153  vi server.js 
+ 1154  mkdir src
+ 1155  vi src/main.js
+ 1156  cat src/main.js 
+ 1157  vi webpack.config.js
+ 1158  cat webpack.config.js 
+ 1159  vi package.json 
+ 1160  npm run bundle
+ 1161   vi webpack.config.js 
+ 1162  npm run bundle
+ 1163   vi webpack.config.js 
+ 1164  npm run bundle
+ 1165  npm i babel-preset-es2015 --save
+ 1166  npm run bundle
+ 1167   vi src/main.js 
+ 1168  npm run bundle
+ 1169  cat package.json 
+ 1170    vi server.js 
+ 1171  vi public/index.html 
+ 1172  cp public/index.html public/index.html.in-browser_transpiling
+ 1173  vi public/index.html
+ 1174  vi public/index.html.in-browser_transpiling 
+ 1175  vi public/index.html
+ 1176  node server
+ 1177  cat public/index.html
+ 1178  pwd
+ 1179  cd ../
+ 1180  cd ../tutorial
+ 1181  ls
+ 1182  cd ../
+ 1183  ls
+ 1184  ls tutorial_with_express/
+ 1185  cd tutorial
+ 1186  ls
+ 1187  mkdir webpack_dev_server
+ 1188  mv client-side/ comments.json index.* node_modules/ package.json tutorial* webpack_dev_server/
+ 1189  ls
+ 1190  mkdir express_
+ 1191  cd webpack_dev_server/
+ 1192  pwd
+ 1193  ls
+ 1194  cd ..
+ 1195  ls
+ 1196  cd express_/
+ 1197  ls
+ 1198  cd ../../
+ 1199  ls
+ 1200  rm -rf tutorial_with_express/
+ 1201  cd tutorial/express_/
+ 1202  npm init
+ 1203  cd ../
+ 1204  cd express_/
+ 1205  pwd
+ 1206  node server
+ 1207  npm run webpack
+ 1208  npm start
+ 1209  npm run webpack
+ 1210  npm start
+ 1211  npm run webpack
+ 1212  npm run run
+ 1213  npm run webpack
+ 1214  npm run run
+ 1215  npm run webpack
+ 1216  npm run run
+ 1217  npm run webpack
+ 1218  npm run run
+ 1219  npm run webpack
+ 1220  npm run run
+ 1221  npm run webpack
+ 1222  npm run run
+ 1223  npm run webpack
+ 1224  npm run run
+ 1225  npm run webpack
+ 1226  npm run run
+ 1227  pwd
+ 1228  npm run webpack
+ 1229  cat package.json 
+ 1230  npm run run
+ 1231  vi public/index.html 
+ 1232  npm run webpack
+ 1233  npm run run
+ 1234  vi public/index.html 
+ 1235  npm run webpack
+ 1236  npm run run
+ 1237  vi src/mainj.s
+ 1238  vi src/main.js
+ 1239  npm run webpack
+ 1240  npm run run
+ 1241  pwd
+ 1242  cp src/main.js src/main1.js
+ 1243  vi src/main.js
+ 1244  vi src/
+ 1245  vi server.js 
+ 1246  vi data.json 
+ 1247  vi server.js
+ 1248  vi server.js 
+ 1249  vi data.json 
+ 1250  vi server.js
+ 1251  vi data.json 
+ 1252  vi server.js
+ 1253  cp data.json data.json.bak
+ 1254  vi server.js
+ 1255  cat data.json
+ 1256  vi server.js
+ 1257  top
+ 1258  vi server.js
+ 1259  cat data.json
+ 1260  vi server.js
+ 1261  diff data.json data.json.bak 
+ 1262  cat data.json
+ 1263  cat data.json.bak 
+ 1264  diff data.json data.json.bak 
+ 1265  vi data.json
+ 1266  vi server.js
+ 1267  cat data.json
+ 1268  mv data.json.bak data_init.json
+ 1269  vi data_init.json 
+ 1270  cp data_init.json data.json 
+ 1271  less data.json 
+ 1272  less -F data.json 
+ 1273  man less
+ 1274   less +F data.json 
+ 1275  cat data.json 
+ 1276  cp data_init.json data.json 
+ 1277   less +F data.json 
+ 1278  cat data.json 
+ 1279  cp data_init.json data.json 
+ 1280  cat data.json 
+ 1281  cd ../../../
+ 1282  cd ../
+ 1283  l
+ 1284  ls
+ 1285  mkdir Bootstrap
+ 1286  cd Bootstrap/
+ 1287  mkdir getting_started
+ 1288  cd getting_started/
+ 1289* 
+ 1290  vi server.js
+ 1291  pwd
+ 1292  vi server.js
+ 1293  npm i --save jquery express bootstrap
+ 1294  ls node_modules/bootstrap/
+ 1295  ls node_modules/bootstrap/dist/
+ 1296  ls node_modules/bootstrap/dist/css
+ 1297  ls node_modules/bootstrap/dist/js
+ 1298  mkdir public src bin
+ 1299  vi public/index.html
+ 1300  pwd
+ 1301  vi package.json 
+ 1302  npm run run
+ 1303  npm i --save-dev webpack
+ 1304  vi webpack.config.js
+ 1305  vi src/main.js
+ 1306  vi webpack.config.js
+ 1307  npm i --save-dev babel-loader babel-core babel-preset-es2015
+ 1308  vi webpack.config.js 
+ 1309  vi src/main.js 
+ 1310  npm run webpack
+ 1311  vi webpack.config.js 
+ 1312  npm run webpack
+ 1313  npm run run
+ 1314  vi src/main.css
+ 1315  npm i --save-dev css-loader style-loader
+ 1316  vi webpack.config.js 
+ 1317  vi src/main.css 
+ 1318  npm run webpack
+ 1319  npm run run
+ 1320  cd ..
+ 1321  ls
+ 1322  ls -ltr ~/Downloads/
+ 1323  mv ~/Pictures/bootstrap-3.3.6.zip ~/Downloads/
+ 1324  unzip -l ~/Downloads/bootstrap-3.3.6.zip 
+ 1325   unzip ~/Downloads/bootstrap-3.3.6.zip 
+ 1326   ls bootstrap-3.3.6/docs/examples/
+ 1327   ls bootstrap-3.3.6/docs/examples/starter-template/index.html 
+ 1328   less bootstrap-3.3.6/docs/examples/starter-template/index.html 
+ 1329  pwd
+ 1330  cd getting_started/
+ 1331  cat package.json 
+ 1332  npm run webpack.config.js
+ 1333  npm run webpack
+ 1334  vi public/index.html 
+ 1335  npm run run
+ 1336  vi webpack.config.js
+ 1337  vi src/main.css 
+ 1338  vi bin/app.bundle.js 
+ 1339  vi src/main.css 
+ 1340  npm run webpack
+ 1341  npm run run
+ 1342  vi src/main.css 
+ 1343  npm run webpack
+ 1344  vi src/main.css 
+ 1345  npm run webpack
+ 1346  ls
+ 1347  vi webpack.config.js
+ 1348  vi public/index.html 
+ 1349  vi server.js 
+ 1350  vi public/index.html 
+ 1351  npm start webpack
+ 1352  npm run webpack
+ 1353  vi src/main.css 
+ 1354  ls src
+ 1355  ls
+ 1356  vi src/main.css 
+ 1357  vi src/main.js
+ 1358  npm run webpack
+ 1359  npm run run
+ 1360  vi public/index.html 
+ 1361  npm run run
+ 1362  vi public/index.html 
+ 1363  vi src/
+ 1364  vi server.js 
+ 1365  npm run webpack
+ 1366  vi webpack.config.js
+ 1367  npm run run
+ 1368  vi server.js 
+ 1369  pwd
+ 1370  cd ..
+ 1371  pwd
+ 1372  cp -a getting_started/ ../CodeSchool/Bootstrap/
+ 1373  pwd
+ 1374  cd getting_started/
+ 1375  pwd
+ 1376  cd ../../CodeSchool/Bootstrap/
+ 1377  pwd
+ 1378  ls
+ 1379  pwd
+ 1380  ls
+ 1381  vi public/index.html 
+ 1382  npm run run
+ 1383  vi src/main.js
+ 1384  vi public/index.html 
+ 1385  vi webpack.config.js
+ 1386  vi src/main.js
+ 1387  npm run webpack.config.js
+ 1388  npm run webpack
+ 1389  npm run run
+ 1390  pwd
+ 1391  vi webpack.config.js
+ 1392  npm run webpack
+ 1393  ls node_modules/
+ 1394  vi webpack.config.js
+ 1395  npm run webpack
+ 1396  npm run run
+ 1397  vi public/index.html 
+ 1398  npm run run
+ 1399  vi public/index.html 
+ 1400  npm run run
+ 1401  vi public/index.html 
+ 1402  npm run run
+ 1403  cp public/index.html public/index2_1.html
+ 1404  ls public/
+ 1405  cp public/index.html public/index2_2.html
+ 1406  vi public/index.html 
+ 1407  npm run run
+ 1408  vi server.js 
+ 1409  ls bin
+ 1410  cp src/main.css bin
+ 1411  npm run run
+ 1412  ls bin
+ 1413  cd bin
+ 1414  cd ..
+ 1415  vi src/main.css 
+ 1416  npm run webpack.config.js
+ 1417  npm run webpack
+ 1418  vi webpack.config.js
+ 1419  less bin/main.css 
+ 1420  cp src/main.css bin
+ 1421  npm run run
+ 1422  ls node_modules/bootstrap/dist/css/bootstrap.css
+ 1423  vi bin/main.css 
+ 1424  vi webpack.config.js
+ 1425  vi server.js 
+ 1426  vi public/index.html 
+ 1427  npm run run
+ 1428  vi server.js 
+ 1429  npm run run
+ 1430  vi server.js 
+ 1431  npm run run
+ 1432  pwd
+ 1433  ls
+ 1434  cat package.json 
+ 1435  ls
+ 1436  cat webpack.config.js
+ 1437  ls
+ 1438  less node_modules/jquery/dist/jquery.js
+ 1439   pwd
+ 1440  ls ../../
+ 1441  pwd
+ 1442  cd ../../Webpack/video2
+ 1443  ls
+ 1444  cd ../video3
+ 1445  ls
+ 1446  vi webpack.config.js 
+ 1447  vi src/main.js 
+ 1448  vi src/bear.js
+ 1449  pwd
+ 1450  pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+ 1451  history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Webpack_video3.txt

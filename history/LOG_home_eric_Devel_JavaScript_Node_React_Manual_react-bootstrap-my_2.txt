@@ -1,0 +1,1000 @@
+  200  gcloud compute instances create container-vm-test1 --image container-vm --metadata-from-file google-container-manifest=containers2.yaml --machine-type=f1-micro
+  201  gcloud compute ssh container-vm-test1
+  202  gcloud compute instances delete container-vm-test1
+  203  gcloud compute instances create container-vm-test1 --image container-vm --metadata-from-file google-container-manifest=containers.yaml --machine-type=f1-micro
+  204  gcloud compute ssh container-vm-test1
+  205  gcloud compute instances delete container-vm-test1
+  206  gcloud compute instances create container-vm-test1 --image container-vm --metadata-from-file google-container-manifest=containers.yaml --machine-type=f1-micro
+  207  gcloud compute ssh container-vm-test1
+  208  gcloud compute instances delete container-vm-test1
+  209  gcloud compute instances create container-vm-test1 --image container-vm --metadata-from-file google-container-manifest=containers3.yaml --machine-type=f1-micro
+  210  gcloud compute ssh container-vm-test1
+  211  gcloud compute instances delete container-vm-test1
+  212  gcloud compute instances create container-vm-test1 --image container-vm --metadata-from-file google-container-manifest=containers3.yaml --machine-type=f1-micro
+  213  gcloud compute ssh container-vm-test1
+  214  gcloud compute instances delete container-vm-test1
+  215  gcloud compute instances create container-vm-test1 --image container-vm --metadata-from-file google-container-manifest=containers3.yaml --machine-type=f1-micro
+  216  gcloud compute ssh container-vm-test1
+  217  gcloud compute instances delete container-vm-test1
+  218  ls
+  219  cd ../
+  220  cd ..
+  221  exit
+  222  cd 
+  223  cd Devel/Cloud/Google/
+  224  ls
+  225  cd my
+  226  ls
+  227  rm -rf my-project/
+  228  pwd
+  229  vi containers.yaml
+  230  ps ajx | grep bash
+  231  ps ajx
+  232  ps ajx --width=2000
+  233  kill -9 4457
+  234  vi containers.yaml
+  235  vi containers2.yaml
+  236  vi containers.yaml
+  237  vi containers.yaml 
+  238  diff containers2.yaml containers.yaml 
+  239  vi containers.yaml 
+  240  diff containers2.yaml containers.yaml 
+  241  vi containers.yaml 
+  242  diff containers2.yaml containers.yaml 
+  243  vi containers.yaml 
+  244  vi my.yaml
+  245  od -t x1 -t c my.yaml 
+  246   vi ~/.vimrc
+  247  vi my.yaml
+  248   vi ~/.vimrc
+  249  vi my.yaml
+  250  od -t x1 -t c my.yaml 
+  251  rm my.yaml 
+  252  vi containers.yaml 
+  253  vi containers3.yaml
+  254  exit
+  255  cd Devel/Logs/
+  256  vi LOG_2_nov_2015.txt 
+  257  exit
+  258  grep docker | grep jboss
+  259  grep docker -r * | grep jboss
+  260  exit
+  261  cd 
+  262  cd Devel/Docker
+  263  sudo docker ps -a
+  264  curl localhost:8080/ping
+  265  curl http://localhost:8080/ping
+  266  sudo docker start pingpong
+  267  curl http://localhost:8080/ping
+  268  cd ../Docker2/
+  269  ls
+  270  cd java/
+  271  ls
+  272  vi Dockerfile 
+  273  sudo docker build --rm -t my/pingpong .
+  274  sudo docker images
+  275  sudo docker images | awk '/<none>'
+  276  sudo docker images | awk '/<none>/'
+  277  sudo docker images | awk '/<none>/{print $3}'
+  278  sudo docker images | awk '/<none>/{print $3}' | echo 
+  279  sudo docker images | awk '/<none>/{print $3}' | xargs
+  280  sudo docker images | awk '/<none>/{print $3}' | xargs echo 
+  281  sudo docker images | awk '/<none>/{print $3}' | xargs sudo docker rmi 
+  282  stop-all-containers 
+  283  rm-all-containers 
+  284  sudo docker images | awk '/<none>/{print $3}' | xargs sudo docker rmi 
+  285  sudo docker images
+  286  sudo docker images | awk '/pingpong/'
+  287  sudo docker run -d -p 8080:8080 --name pingpong my/pingpong
+  288  curl http://localhost:8080/ping
+  289  vi Dockerfile 
+  290  sudo docker build --rm -t my/pingpong .
+  291  sudo docker run -d -p 8080:8080 --name pingpong my/pingpong
+  292  stop-all-containers 
+  293  sudo docker run -d -p 8080:8080 --name pingpong my/pingpong
+  294  rm-all-containers 
+  295  sudo docker run -d -p 8080:8080 --name pingpong my/pingpong
+  296  curl http://localhost:8080/ping
+  297  stop-all-containers 
+  298  rm-all-containers 
+  299  sudo docker run -d -p 8080:8080 --name pingpong my/pingpong java PingPong
+  300  curl http://localhost:8080/ping
+  301  pwd
+  302  vi Dockerfile 
+  303  sudo docker run -d -p 8080:8080 --name pingpong my/pingpong java PingPong
+  304  stop-all-containers 
+  305  rm-all-containers 
+  306  exit
+  307  sudo docker exec -it pingpong bash
+  308  exit
+  309  cd Devel/Logs/
+  310  vi LOG_2_nov_2015.txt 
+  311  exit
+  312  ps ajxf
+  313   kill -9 4652
+  314  sudo  kill -9 4652
+  315  sudo docker exec -it /bin/bash
+  316  sudo docker exec -it misc /bin/bash
+  317  stop-all-containers 
+  318  sudo docker exec -it misc /bin/bash
+  319  stop-all-containers 
+  320  rm-all-containers 
+  321  sudo docker exec -it misc /bin/bash
+  322  host almond.nuts.org
+  323  ping almond.nuts.org
+  324  ping 69.172.201.208
+  325  sudo docker exec -it misc /bin/bash
+  326  sudo docker stop misc
+  327  sudo docker rm misc
+  328  sudo docker exec -it misc /bin/bash
+  329  exit
+  330  sudo docker build --rm -t misc .
+  331  sudo docker run --rm --name misc misc 
+  332  sudo docker run --rm --name misc -t misc 
+  333  stop-all-containers 
+  334  rm-all-containers 
+  335  sudo docker run --rm --name misc -t misc 
+  336  stop-all-containers 
+  337  rm-all-containers 
+  338  sudo docker run --rm --name misc -t misc 
+  339  rm-all-containers 
+  340  stop-all-containers 
+  341  sudo docker run --rm --name misc misc 
+  342  sudo docker run --rm --name misc -t $(hostname)
+  343  sudo docker run --rm --name misc -t misc $(hostname)
+  344  sudo docker run --rm --name misc -t misc ping $(hostname)
+  345  stop-all-containers 
+  346  rm-all-containers 
+  347  sudo docker run --rm --name misc -t misc ping $(hostname)
+  348  ifconfig 
+  349  sudo docker run --rm --name misc -t misc ping $(hostname)
+  350  clear
+  351  stop-all-containers 
+  352  rm-all-containers 
+  353  sudo docker run --rm --name misc -t misc hostname
+  354  sudo docker ps -a
+  355  sudo docker run --rm --name misc -t misc --entryname hostname
+  356  sudo docker run --rm --name misc -t misc --entrypoint hostname
+  357  sudo docker run --rm --name misc -t  --entrypoint hostname misc
+  358  sudo docker build --rm -t misc .
+  359  sudo docker run --rm --name misc -t misc
+  360  sudo docker build --rm -t misc .
+  361  sudo docker run --rm --name misc -t misc
+  362  stop-all-containers 
+  363  rm-all-containers 
+  364  sudo docker run --rm --name misc -t misc hostname
+  365  sudo docker ps -a
+  366  sudo docker run --rm --name misc -t misc
+  367  sudo docker ps -a
+  368  sudo docker exec -ti misc 
+  369  sudo docker exec -ti misc bash
+  370  sudo docker run --rm --name misc -t misc
+  371   stop-all-containers 
+  372  rm-all-containers 
+  373  sudo docker run --rm --name misc -t misc
+  374  sudo docker ps -a
+  375  sudo docker run --rm --name misc -t misc -c 3
+  376  stop-all-containers 
+  377  rm-all-containers 
+  378  sudo docker run --rm --name misc -t misc -c 3
+  379  sudo docker build --rm -t misc .
+  380  sudo docker run --rm --name misc -t misc
+  381   sudo docker ps a-
+  382   sudo docker ps -a
+  383  sudo docker build --rm -t misc .
+  384  sudo docker run --rm --name misc -t misc
+  385   sudo docker ps -a
+  386  sudo docker run --rm --name misc -t misc
+  387  sudo docker build --rm -t misc .
+  388  sudo docker run --rm --name misc -t misc
+  389  sudo docker build --rm -t misc .
+  390  sudo docker run --rm --name misc -t misc
+  391  sudo docker build --rm -t misc .
+  392  sudo docker run --rm --name misc -t misc
+  393  stop-all-containers 
+  394  sudo docker ps -a
+  395  rm-all-containers 
+  396  exit
+  397  cd 
+  398  cd Devel/Docker2
+  399  cd my
+  400  ls
+  401  ls mytraining/
+  402  mkdir misc
+  403  vi mytraining/postgres/
+  404  vi mytraining/postgres/Dockerfile
+  405  cd misc/
+  406  pwd
+  407  sudo docker images 
+  408  vi Dockerfile
+  409  exit
+  410  cd Devel/Logs/
+  411  vi LOG_2_nov_2015.txt 
+  412  exit
+  413  cd Devel/Logs/
+  414  vi LOG_2_nov_2015.txt 
+  415  exit
+  416  sudo dnf update --help
+  417  sudo dnf update --refresh
+  418  exit
+  419  cd Devel/Logs/
+  420  vi LOG_2_nov_2015.txt 
+  421  ls -ltr
+  422  exit
+  423  history 
+  424  sudo dnf list available *node*
+  425  sudo dnf list available nodejs
+  426  sudo dnf list available nvm
+  427  sudo dnf list available *nvm*
+  428  man curl
+  429  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.2/install.sh | bash
+  430  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.2/install.sh 
+  431   cd 
+  432  ls
+  433  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.2/install.sh | bash
+  434  exit
+  435  node -v
+  436  nvm 
+  437  nvm use 5.5
+  438  node -v
+  439  exit
+  440  node -v
+  441  nvm run 5.5 --version
+  442  nvm run 5.5
+  443  exit
+  444  node -v
+  445  nvm use 5.5
+  446  npm --help
+  447  npm --version
+  448  exit
+  449  cd 
+  450  cd Devel/Node/
+  451  mkdir videos/ryan_dahl
+  452  mkdir videos/ryan_dahl -p 
+  453  cd videos/ryan_dahl/
+  454  pwd
+  455  node -v
+  456  nvm use 5.5
+  457  node -v
+  458  node
+  459  ls
+  460  vi hello-world.js
+  461  node hello-world.js 
+  462  cat hello-world.js 
+  463  vi web-server.js
+  464  cat web-server.js 
+  465  node web-server.js 
+  466  vi web-server.js
+  467  node web-server.js 
+  468  vi web-server.js
+  469  node web-server.js 
+  470  vi web-server.js
+  471  node hello-world.js 
+  472  node web-server.js 
+  473  vi web-server.js
+  474  node web-server.js 
+  475  vi web-server.js
+  476  node web-server.js 
+  477  vi web-server.js
+  478  node web-server.js 
+  479  vi web-server.js
+  480  node web-server.js 
+  481  vi web-server.js
+  482  node web-server.js 
+  483  vi web-server.js
+  484  node web-server.js 
+  485  vi web-server.js
+  486  node web-server.js 
+  487  vi web-server.js
+  488  node web-server.js 
+  489  cat web-server.js 
+  490  exit
+  491  curl http://localhost:8000
+  492  curl -i http://localhost:8000
+  493  ab
+  494  ab -n 100 -c 100 http://localhost:8000
+  495  ab -n 100 -c 100 http://localhost:8000/
+  496  curl -i http://localhost:8000
+  497  ab -n 100 -c 100 http://localhost:8000
+  498  ab -n 100 -c 100 http://localhost:8000/
+  499  ab -n 10 -c 10 http://localhost:8000/
+  500  man ab
+  501  ab -n 1 -c 1 http://localhost:8000/
+  502  curl -i http://localhost:8000
+  503  ab -n 1 -c 1 http://localhost:8000/
+  504  ab -n 100 -c 100 http://localhost:8000/
+  505  exit
+  506  cd 
+  507  cat ~/.bash_profile 
+  508  less ~/.bashrc
+  509  cat ~/.bashrc
+  510  ls ~/.nvm
+  511  nvm
+  512  nvm install 5.5
+  513  node
+  514  node --help
+  515   node -v
+  516  which node
+  517  ls
+  518  cd Devel/
+  519  ls
+  520  mkdir Node
+  521  cd Node/
+  522  ls
+  523  node
+  524  exit
+  525  cd Devel/Logs/
+  526  vi LOG_2_nov_2015.txt 
+  527  exit
+  528  grep MIXAL -r *
+  529  vi LOG_7_aug_2015.txt
+  530  exit
+  531  cd Devel/Logs/
+  532  vi LOG_2_nov_2015.txt 
+  533  exit
+  534  sudo dnf install mdk
+  535  mixasm hello
+  536  mixvm -r hello
+  537  mixasm hello
+  538  mixvm -r hello
+  539  mixasm for3
+  540  mixvm -r for3
+  541  mixasm for3a
+  542  mixvm -r for3a
+  543  vi for3a.mixal 
+  544  less for3.mixal
+  545  cat hello.mixal
+  546  cat for5
+  547  cat for5.mix 
+  548  cat for5.mixal
+  549  mixasm for5
+  550  mixvm -r for5
+  551  mixvm for5
+  552  mixasm for5
+  553  mixvm 
+  554  mixvm -r for5
+  555  mixasm arr2
+  556  mixvm -r arr2
+  557  mixasm arr2
+  558  mixvm -r arr2
+  559  mixasm arr2
+  560  mixvm -r arr2
+  561  mixasm arr2
+  562  mixasm for6a
+  563  mixvm for6a
+  564  mixvm -r for7a
+  565  vi for7a.mixal
+  566  mixasm for7c
+  567  mixvm -r for7c
+  568  mixasm for7a
+  569  mixvm -r for7a
+  570  mixvm -for7a
+  571  mixvm for7a
+  572  mixasm for7a
+  573  mixvm -r for7a
+  574  mixvm for7a
+  575  mixasm for9
+  576  mixvm for9
+  577  mixasm for9
+  578  mixvm for9
+  579  mixasm for9;mixvm for9
+  580  cd ..
+  581  cd Manual/
+  582  mixasm for9;mixvm for9
+  583  mixasm for9a;mixvm -r for9a
+  584  mixasm for9a
+  585  mixvm -r for9a
+  586  mixasm for9a
+  587  mixvm -r for9a
+  588  mixvm  for9a
+  589  mixvm -r for9a
+  590  mixvm  for9a
+  591  mixasm for9a
+  592  mixvm  for9a
+  593  exit
+  594  gdb
+  595  cd ..
+  596  ls
+  597  cd ..
+  598  ls
+  599  cd Asm/
+  600  ls
+  601  vi add.c
+  602  exit
+  603  vi add.s
+  604  ls
+  605  man gcc
+  606  cp add.c foo.c
+  607  gcc -S foo.c 
+  608  ls -ltr
+  609  rm foo.s
+  610  gcc -S foo.c -o bar.s
+  611  ls -ltr
+  612  vi bar.s
+  613  vi fun2.c
+  614  vi fun.c
+  615  exit
+  616  gcc -g bar.s
+  617  gdb a.out
+  618  gcc -S fun.c
+  619  gcc -g fun.s
+  620  less fun.s
+  621  ls
+  622  cat add.c 
+  623  cp add.c square.c
+  624  vi square.c 
+  625  gcc -S square.c 
+  626  vi square.
+  627  vi square.s
+  628  exit
+  629  gdb a.out
+  630  exit
+  631  cd 
+  632  cd Devel/
+  633  ls
+  634  cd MIX/
+  635  ls
+  636  cd Manual/
+  637  ls
+  638  locate *.mixal
+  639  less /home/eric/Devel/MIX/Manual/for7a.mixal
+  640  vi hello.mix
+  641  vi hello.mixal
+  642  vi for3.mix
+  643  vi for3.mixal
+  644  ls
+  645  less for2.mixal
+  646  cp for3.mixal for3a.mixal
+  647  vi for3a.mixal 
+  648  mixasm for3a.mixal 
+  649  vi for3a.mixal 
+  650  ls
+  651  less add.mix
+  652  less add.mixal
+  653  vi add.mixal
+  654  rm .add.mixal.swp 
+  655  vi add.mixal
+  656  mixvm -h
+  657  mixvm hello
+  658  cat for5.mixal
+  659  ls
+  660  vi for5.mixal
+  661  vi pr_with_sub.mixal 
+  662  vi max.mixal
+  663  vi max2.mixal
+  664  rm .max2.mixal.swp 
+  665  vi max2.mix
+  666  vi max2.mixal
+  667  grep CHAR -r *
+  668  vi for6.mix
+  669  vi for6.mixal
+  670  vi for6a.mixal
+  671  vi arr.mixal 
+  672  ls
+  673  cp arr.mixal arr2.mixal
+  674  vi arr2.mixal 
+  675  mixasm arr
+  676  mixvm -r arr
+  677  vi arr2.mixal 
+  678  cat for6.mixal
+  679  mixvm for6
+  680  mixvm -r for6
+  681  vi for6a.mixal
+  682  mixvm -r for6a
+  683  vi for6a.mixal
+  684  rm .for7a.mixal.swp 
+  685  vi for7a.mixal
+  686  vi for7c.mixal 
+  687  rm .for7c.mixal.swp 
+  688  ls
+  689  vi for7c.mixal 
+  690  vi for7a.mixal
+  691  vi for9.mixal
+  692  cp -a for9.mixal for9a.mixal
+  693  vi for9a.mixal 
+  694  exit
+  695  ls -ltr
+  696  vi LOG_2_nov_2015.txt 
+  697  exit
+  698  cd Devel/Logs/
+  699  ls -ltr
+  700  vi LOG_7_aug_2015.txt
+  701  exit
+  702  cd ../MIX/
+  703  ls
+  704  cd Manual/
+  705  ls
+  706  ls -ltr
+  707  vi for9.mixal
+  708  vi for9a.mix
+  709  cp for9a.mixal  for9a_2.mixal
+  710  vi for9a_2.mixal 
+  711  mv for9a_2.mixal for9_2.mixal
+  712  cp for9a.mixal  for9a_2.mixal
+  713  vi for9a_2.mixal 
+  714  ls -ltr
+  715  vi for9a.mixal
+  716  cp for9a.mixal  for9a_2.mixal
+  717  vi for9a_2.mixal 
+  718  less for9_2.mixal 
+  719  vi for9.mixal
+  720  vi for9_2.mixal 
+  721  vi for9a.mixal 
+  722  vi for9a_2.mixal 
+  723  vi for9_2.mixal 
+  724  mv for9_2.mixal for9a_2.mixal
+  725  cp for9.mixal for9_2.mixal
+  726  mixasm for9a_2.mixal 
+  727  mixvm -r for9a_2.mixal 
+  728  mixvm -r for9a_2
+  729  mixvm for9a_2
+  730  mixasm for9a_2.mixal 
+  731  mixvm -r for9a_2.mixal 
+  732  mixvm -r for9a_2
+  733  mixvm  for9a_2
+  734  vi for9a_2.mix
+  735  vi for9a_2.mixal
+  736  mixasm for9a_2.mixal 
+  737  mixvm  -r for9a_2
+  738   mixasm jump
+  739  mixvm jump
+  740   mixasm jump
+  741  mixvm jump
+  742   mixasm jump
+  743  mixvm jump
+  744   mixasm jump
+  745  mixvm jump
+  746   mixasm jump
+  747  mixvm jump
+  748   mixasm jump
+  749  mixvm jump
+  750   mixasm jump
+  751  mixvm jump
+  752  vi for9a_2.mix
+  753  vi for9a_2.mixal
+  754  ls
+  755  vi pr_with_sub.mixal 
+  756  vi reg_to_reg.mixal
+  757  vi in.mixal
+  758  vi literallist.mixal
+  759  vi in.mix
+  760  vi in.mixal
+  761  mixasm pr_with_sub_2.mix
+  762  ls
+  763  mixasm pr_with_sub_2
+  764  mixvm -r pr_with_sub_2
+  765  mixasm pr_with_sub_2
+  766  mixvm -r pr_with_sub_2
+  767  w
+  768  exit
+  769  mixasm pr_with_sub_2.mixal 
+  770  mixvm pr_with_sub_2.mixal 
+  771  mixvm pr_with_sub_2
+  772  grep PRINTER -r *
+  773  exit
+  774  java -version
+  775  which java
+  776  ls -l /usr/bin/java
+  777  ls -l /etc/alternatives/java
+  778  ls /usr/lib/jvm
+  779  ls -l /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.65-3.b17.fc21.x86_64
+  780  ls -l /usr/lib/jvm/jre
+  781    exit
+  782  less for9a_2.mixal
+  783  vi  for9a_2.mixal
+  784  ls
+  785  vi jump.mixal
+  786  vi jump.mixal 
+  787  cp jump.mixal loop.mixal
+  788  vi loop.mixal 
+  789  cp loop.mixal loop_2.mixal
+  790  vi loop2
+  791  vi loop_2.mixal 
+  792  vi jump.mixal
+  793  cp jump.mixal jump_2.mixal
+  794  vi jump_2.mixal 
+  795  vi for9a_2.mixal
+  796  less loop.mixal
+  797  mixasm reg_to_reg.mixal 
+  798  mixvm reg_to_reg
+  799  mixasm reg_to_reg.mixal 
+  800  mixvm reg_to_reg
+  801  mixasm reg_to_reg.mixal 
+  802  mixvm reg_to_reg
+  803  mixasm reg_to_reg.mixal 
+  804  mixvm reg_to_reg
+  805  mixasm reg_to_reg.mixal 
+  806  mixvm reg_to_reg
+  807  mixasm in.mixal 
+  808  mixvm -r in
+  809  mixvm in
+  810  mixasm in.mixal 
+  811  mixvm in
+  812  mixasm in
+  813  mixvm in
+  814  mixasm pr_with_sub_2.mixal
+  815  mixasm tmp
+  816  mixvm tmp
+  817  mixasm tmp
+  818  mixvm tmp
+  819  mixasm tmp
+  820  mixvm tmp
+  821  mixasm tmp
+  822  mixvm tmp
+  823  vi pr_with_sub_2.mix
+  824  vi pr_with_sub_2.mixal 
+  825  exit
+  826  mixasm for9a_2
+  827  mixvm -r for9a_2
+  828  mixasm loop.mixal 
+  829  mixvm loop
+  830  mixasm loop_2
+  831  mvxvm loop_2
+  832  mixvm loop_2
+  833  mixasm loop_2
+  834  mixasm -r loop_2
+  835  mixvm -r loop_2
+  836  mixasm loop9a_2
+  837  mixasm for9a_2
+  838  mixvm -r for9a_2
+  839  mixvm for9a_2
+  840  mixvm -r for9a_2
+  841  mixasm for9a_2
+  842  mixvm -r for9a_2
+  843  ls
+  844  vi pr_with_sub_2.mixal 
+  845  vi tmp.mixal 
+  846  exit
+  847  gcc arr.c 
+  848  gdb a.out
+  849  gcc arr.c 
+  850  gcc -g arr.c 
+  851  gcc arr.c 
+  852  gcc -g arr.c 
+  853  gdb a.out
+  854  gcc -S arr.c 
+  855  vi arr.s
+  856  exit
+  857  cd 
+  858  cd Devel/
+  859  ls
+  860  cd Asm/
+  861  ls
+  862  vi arr.c
+  863  grep malloc -r *
+  864  vi arr.c
+  865  gcc arr.c 
+  866  vi arr.c
+  867  gcc arr.c 
+  868  vi arr.c
+  869  exit
+  870  cd ../MIX/Manual/
+  871  ls
+  872  vi pr_with_sub_2.mix
+  873  vi pr_with_sub_2.mixal
+  874  pwd
+  875  ls
+  876  exit
+  877  cd 
+  878  cd Devel/Golang/
+  879  ls
+  880  cd work/
+  881  ls
+  882  cd src/
+  883  ls
+  884  go install my/my_hello
+  885  head ../bin/my_hello
+  886  ls
+  887  ls my/
+  888  mkdir my/basics1
+  889  ../bin/my_hello
+  890  mv my/my_hello/hello.go my/my_hello/main.go
+  891  go install my/my_hello
+  892  ../bin/my_hello
+  893  my_hello
+  894  go tool compile -S my/my_hello
+  895  go tool compile -S my/my_hello/main.go 
+  896  ls ..
+  897  ls ../ibn
+  898  ls ../bin
+  899  ls
+  900  cd ../
+  901  cd ..
+  902  ls
+  903  mkdir work2
+  904  mkdir work2/src
+  905  mv work/src/my/ work2/src/
+  906  vi ~/.bash_profile 
+  907  . ~/.bash_profile 
+  908  echo $GOPATH
+  909  rm work/bin/my_hello*
+  910  mr work/bin/hello 
+  911  rm work/bin/hello 
+  912  cd work2/src/
+  913  go install my/my_hello
+  914  ls ..
+  915  ls ../../work2/bin
+  916  pwd
+  917  ls ../../work/bin
+  918  ls ../bin/
+  919  pd
+  920  pwd
+  921  . ~/.bash_profile
+  922  wpd
+  923  cat package.json 
+  924  exit
+  925  vi ks2.R 
+  926  exit
+  927  cd 
+  928  ls
+  929  cd Devel/
+  930  ls
+  931  cd Gradle/
+  932  ls
+  933  ls Java/
+  934  ls -ltr ~/Downloads/
+  935  ls -ltr ~/Downloads/ | grep gradle
+  936  unzip -l ~/Downloads/gradle-2.13-bin.zip 
+  937  echo $GRADLE_HOME
+  938  vi ~/.bash_profile 
+  939  unzip  ~/Downloads/gradle-2.13-bin.zip 
+  940  vi ~/.bash_profile 
+  941  wpd
+  942  pwd
+  943  ls
+  944  mv gradle-2.13/ Java/
+  945  cd Java/
+  946  ls
+  947  cd gradle-2.13/
+  948  ls
+  949  pwd
+  950  vi ~/.bash_profile 
+  951  . ~/.bash_profile 
+  952  which gradle
+  953  cd ..
+  954  cat ~/.bash_profile 
+  955  gradle
+  956  ls
+  957  gradle
+  958  ls
+  959  cd my
+  960  ls
+  961  gradlew
+  962  gradle wrapper
+  963  ls
+  964  ./gradlew 
+  965  ls
+  966  ls -ltr
+  967  rm -rf gradle gradlew gradlew.bat 
+  968  ls
+  969  ls ch6.6
+  970  vi ch6.6/build.gradle 
+  971  mkdir ch5
+  972  cd ch5
+  973  pwd
+  974  gradle wrapper
+  975  ls
+  976  vi build.properties
+  977  find
+  978  gradle --help
+  979  gradle -v
+  980  which gradle
+  981  vi ~/.bash_profile 
+  982  echo $PATH
+  983  vi ~/.bashrc
+  984  vi ~/.bash_profile 
+  985  gradle -v
+  986  . ~/.bash_profile 
+  987  gradle -v
+  988  echo $PATJH
+  989  echo $PATH
+  990  vi ~/.bash_profile 
+  991  PATH=
+  992  echo $PATH
+  993  vi ~/.bash_profile 
+  994  exit
+  995  cd 
+  996  cd Devel/Gradle/Java/my
+  997  echo $PATH
+  998  . ~/.bash_profile 
+  999  less chisq2a.R 
+ 1000  exit
+ 1001  ls
+ 1002  vi index0.js 
+ 1003  cp index.js index1.js
+ 1004  cp contactlist.js contactlist1.js
+ 1005  vi index1.js
+ 1006  pwd
+ 1007  vi contact.js
+ 1008  ls
+ 1009  cp index.js index2.js
+ 1010  cp contactlist.js contactlist2.js
+ 1011  cp contact.js contact2.js
+ 1012  vi contact.js
+ 1013  gdb
+ 1014  od -t x1 -c ~/tmp/urlencode.txt 
+ 1015  gdb
+ 1016  sudo tcpdump -i lo -x
+ 1017  sudo tcpdump -i lo -X
+ 1018   vi 
+ 1019  vi ~/tmp/urlencode.txt 
+ 1020  cat ~/tmp/urlencode.txt 
+ 1021  cat ~/tmp/urlencode.txt  | od -t x1 -t 
+ 1022  cat ~/tmp/urlencode.txt  | od -t x1 -t c
+ 1023  sudo tcpdump -i lo -X
+ 1024  pwd
+ 1025  cd ../
+ 1026  ls
+ 1027  cd ..
+ 1028  ls
+ 1029  cd Node/Polymer/
+ 1030  cd polymer-first-elements/
+ 1031  nvm use v5.5.0
+ 1032  polymer serve
+ 1033  ls
+ 1034  cd my/
+ 1035  vi index.html 
+ 1036  vi icon-toggle.html 
+ 1037  cd ..
+ 1038  polymer serve
+ 1039  ls
+ 1040  vi bower.json 
+ 1041  vi my/index.html 
+ 1042  grep demo -r 8
+ 1043  grep demo -r *
+ 1044  ls
+ 1045  mv demo/ demo_orig
+ 1046  mv my demo
+ 1047  polymer serve
+ 1048  ls
+ 1049  polymer serve
+ 1050  find -name "*polymer*"
+ 1051  ls
+ 1052  polymer serve
+ 1053  ls
+ 1054  less bower_components/iron-icon/iron-icon.html 
+ 1055  find -name "*.png"
+ 1056  polymer serve
+ 1057  ls bower_components/iron-icons/iron-icons.html 
+ 1058  less bower_components/iron-icons/iron-icons.html 
+ 1059  polymer serve
+ 1060  less bower_components/iron-icons/iron-icons.html 
+ 1061  less bower_components/iron-icons/demo/index.html 
+ 1062  less bower_components/iron-icons/iron-icons.html 
+ 1063  polymer serve
+ 1064  find -name "*.svg"
+ 1065  polymer serve
+ 1066  ls
+ 1067  vi icon-toggle-finished/icon-toggle.html 
+ 1068  vi icon-toggle-finished/demo/icon-toggle-demo.html 
+ 1069  vi icon-toggle-finished/icon-toggle.html 
+ 1070  vi icon-toggle-finished/demo/icon-toggle-demo.html 
+ 1071  vi icon-toggle-finished/icon-toggle.html 
+ 1072  vi icon-toggle-finished/demo/icon-toggle-demo.html 
+ 1073  polymer serve
+ 1074  pwd
+ 1075  polymer serve
+ 1076  ls
+ 1077  vi icon-toggle.html 
+ 1078  polymer serve
+ 1079  pwd
+ 1080  polymer serve
+ 1081  cd ../my-el/
+ 1082  less bower_components/iron-demo-helpers/demo-snippet.html 
+ 1083  cd ../
+ 1084  ls
+ 1085  ls app
+ 1086  mkdir my-app && cd my-app
+ 1087  cd ../
+ 1088  mkdir app2
+ 1089  cd app2
+ 1090  ls
+ 1091  cd ..
+ 1092  rmdir app2
+ 1093  ls
+ 1094  cd my-app/
+ 1095  polymer init app-drawer-template
+ 1096  ls
+ 1097  polymer serve --open
+ 1098  cd ../app
+ 1099  ls
+ 1100  ls src
+ 1101  polymer serve
+ 1102  ls
+ 1103  vi src/my-app/my-app.html 
+ 1104  cd ../my-app/
+ 1105  ls
+ 1106  vi index.html 
+ 1107  pwd
+ 1108  ls
+ 1109  cd ..
+ 1110  ls
+ 1111  cd polymer-first-elements/
+ 1112  vi icon-toggle-orig/icon-toggle.html 
+ 1113  ls
+ 1114  cd icon-toggle-orig/
+ 1115  ls
+ 1116  cd ..
+ 1117  ls
+ 1118  cd icon-toggle-my-first/
+ 1119  ls
+ 1120  cd demo/
+ 1121  ls
+ 1122  vi index.html 
+ 1123  vi icon-toggle.html 
+ 1124  cd ..
+ 1125  ls
+ 1126  cd ..
+ 1127  ls
+ 1128  cp -a icon-toggle-orig/ icon-toggle-orig-my
+ 1129  cd icon-toggle-orig-my/
+ 1130  ls
+ 1131  mv icon-toggle.html demo/
+ 1132  vi demo/icon-toggle-demo.html 
+ 1133  polymer serve
+ 1134  cd ../icon-toggle-orig
+ 1135  polymer serve
+ 1136  ls
+ 1137  vi icon-toggle.html 
+ 1138  cd ../icon-toggle-orig-my/
+ 1139  ls
+ 1140  mv demo/icon-toggle.html .
+ 1141  vi icon-toggle.html 
+ 1142  vi demo/icon-toggle-demo.html 
+ 1143  polymer serve
+ 1144  cd ..
+ 1145  ls
+ 1146  polymer serve
+ 1147  ls
+ 1148  vi icon-toggle-finished/icon-toggle.html 
+ 1149  polymer serve
+ 1150  vi demo/icon-toggle-demo.html 
+ 1151  vi icon-toggle.html 
+ 1152  pwd
+ 1153  vi icon-toggle.html 
+ 1154  pwd
+ 1155  cp icon-toggle.html icon-toggle-my-third/
+ 1156  cp -a demo/ icon-toggle-my-third/
+ 1157  vi icon-toggle.html 
+ 1158  cp icon-toggle.html icon-toggle-my-third/
+ 1159  vi icon-toggle.html 
+ 1160  cp icon-toggle-my-fourth/demo/ . -a
+ 1161  cp icon-toggle-my-fourth/icon-toggle.html .
+ 1162  vi icon-toggle.html 
+ 1163  cp icon-toggle-my-fifth/icon-toggle.html .
+ 1164  cp -a icon-toggle-my-fifth/demo/ .
+ 1165  vi icon-toggle.html 
+ 1166  cd ../my-el/
+ 1167  ls
+ 1168  vi demo/index.html 
+ 1169  vi my-el.html 
+ 1170  vi demo/index.html 
+ 1171  ls bower_components/iron-demo-helpers/index.html 
+ 1172  less bower_components/iron-demo-helpers/index.html 
+ 1173  less bower_components/iron-component-page/iron-component-page.html 
+ 1174  ls
+ 1175  vi index.html 
+ 1176  cd bower_components/iron-component-page/
+ 1177  ls
+ 1178  polymer serve
+ 1179  cd ..
+ 1180  ls ~/tmp/pgdata2
+ 1181  ls ~/tmp/pgdata2 -l
+ 1182  man tar
+ 1183  cd /home/eric/Devel/JavaScript/Node/React/Manual/react-bootstrap-my/
+ 1184  ls
+ 1185  vi src/main.js
+ 1186  pwd
+ 1187  ls
+ 1188  pwd
+ 1189  ls
+ 1190  vi src/main.js
+ 1191  pwd
+ 1192  vi src/main.js
+ 1193   vi src/main.js
+ 1194  wd
+ 1195  pwd
+ 1196  ssh-keygen --help
+ 1197  man ssh-keygen
+ 1198  pwd
+ 1199  history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_React_Manual_react-bootstrap-my_2.txt

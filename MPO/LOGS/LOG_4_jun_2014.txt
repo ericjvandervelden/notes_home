@@ -1,0 +1,169 @@
+/ VOORDRACHT PRIVILEGES
+
+\l
+\dn+ 
+\z my.*
+
+\l pg_default.*				/ tablespace
+
+$ psql -U foo foo
+password:
+foo=> grant all on database foo to bar\g
+foo=> \l+
+ foo       | foo      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =Tc/foo              +| 7602 kB | pg_default | 
+           |          |          |             |             | foo=CTc/foo          +|         |            | 
+/ C: create schema
+
+/ u bar
+foo=> create schema my\g
+ERROR:  permission denied for database fee
+
+/ u foo
+foo=> grant all on database foo to bar\g
+GRANT
+
+foo=> \l
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   
+-----------+----------+----------+-------------+-------------+-----------------------
+ foo       | foo      | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =Tc/foo              +
+           |          |          |             |             | foo=CTc/foo          +
+           |          |          |             |             | bar=CTc/foo
+
+ 
+/ u bar
+foo=> create schema me\g
+CREATE SCHEMA
+
+/ u foo
+
+foo=> create table me.walnut(s varchar(32))\g
+ERROR:  permission denied for schema me
+
+/ u bar
+foo=> grant all on schema me to foo\g
+GRANT
+
+foo=> create table me.walnut(s varchar(32))\g
+CREATE TABLE
+foo=> insert into me.walnut values ('foo'),('bar')\g
+INSERT 0 2
+
+foo=> \z me.*
+                           Access privileges
+ Schema |  Name  | Type  | Access privileges | Column access privileges 
+--------+--------+-------+-------------------+--------------------------
+ me     | walnut | table |                   | 
+(1 row)
+
+ /we zien geen privs	,
+foo=> grant all on me.walnut to bar\g
+GRANT
+foo=> revoke all on me.walnut from bar\g
+REVOKE
+foo=> \z me.*
+                           Access privileges
+ Schema |  Name  | Type  | Access privileges | Column access privileges 
+--------+--------+-------+-------------------+--------------------------
+ me     | walnut | table | foo=arwdDxt/foo   | 
+(1 row)
+
+/ 13	. 
+
+/ we doen hetzelfde voor db gee	, naast db foo , ook van u foo	,
+
+/ u foo	,
+foo=> alter database nut rename to gee\g
+ALTER DATABASE
+
+
+
+
+
+
+
+ 
+
+
+/ Einde VOORDRACHT PRIVILEGES
+/ VOORDRACHT
+
+/ W1
+[eric@localhost deploy]$ psql -U foo foo
+Password for user foo: 
+
+/ W2
+[eric@localhost deploy]$ psql -U foo foo
+Password for user foo: 
+
+/  dirty reads= a transaction reads uncommitted data from another transaction	,
+/ nonrepeatable read= a transaction reads a row twice and sees different results	, 
+/ read committed: no dirty reads, yes nonrepeatable reads	,
+
+/ W1
+
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | a
+   2 | fourth | a
+(2 rows)
+
+foo=> begin\g
+
+/ W2
+
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | a
+   2 | fourth | a
+(2 rows)
+
+foo=> begin\g
+foo=> update item set city='Y'\g
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | Y 
+   2 | fourth | Y
+(2 rows)
+
+/ W1
+foo=> select*from item
+foo-> \g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | a
+   2 | fourth | a 
+(2 rows)
+/ No dirty read in W1	,
+
+/ W2
+
+foo=> commit\g
+
+/ W1
+
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | Y
+   2 | fourth | Y
+(2 rows)
+/ Non repeatable read in W1	,
+
+
+=> rollback\g
+ROLLBACK
+foo=> select*from item\g
+ id_ |  name  | city 
+-----+--------+------
+   1 | first  | Y
+   2 | fourth | Y
+(2 rows)
+
+
+
+
+/ Einde VOORDRACHT

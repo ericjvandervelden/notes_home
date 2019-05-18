@@ -1,0 +1,84 @@
+/ 7	. 
+
+/ Lees	,
+https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes
+
+/ 7	. 
+
+/ kijk	,
+https://www.youtube.com/watch?v=PVHDIiqvBaU&feature=push-u-sub&attr_tag=Q-2YX4AdpPREmpR0-6
+-> 
+
+/ google
+p-256 cryptography
+/ lees	,
+https://www.dnssec.nl/nieuws/algemeen/sidn-ondersteunt-nu-ook-cryptografische-dnssec-algoritmen-13-en-14.html
+cryptografische DNSSEC-algoritmen nummer 13 (ECDSA Curve P-256 with SHA-256) en 14 (ECDSA Curve P-384 with SHA-384).
+
+/ google,
+p-256 cryptography boringssl
+/ lees	,
+https://boringssl.googlesource.com/boringssl/+/2564/crypto/ec/p256-x86_64.c
+
+/ google	,
+p-256 crypto chrome
+https://www.websecurity.symantec.com/content/dam/websitesecurity/digitalassets/desktop/pdfs/whitepaper/Elliptic_Curve_Cryptography_ECC_WP_en_us.pdf
+
+/ lees	,
+https://boringssl.googlesource.com/
+
+/ google,	
+/ boringssl 25519
+/ lees	,
+https://boringssl.googlesource.com/boringssl/+/HEAD/crypto/curve25519
+
+/ google,
+p-256 cryptography
+/ lees	,
+https://crypto.stackexchange.com/questions/52983/why-is-there-the-option-to-use-nist-p-256-in-gnupg
+->
+https://safecurves.cr.yp.to/index.html
+/ content:
+Because P-256 is the most used elliptic curve and there are no certain reasons to believe it's insecure. It's the first standardized curve at the 128 bit security level (which is very popular).
+
+The rumors about its backdoor came from 3 factors:
+
+The Snowden's revelations included a generic claim of the NSA trying to backdoor NIST standardized crypto
+DualEC DRBG being a NIST standard actually backdoored by the NSA
+Daniel J. Bernstein trying to push for his own curve25519
+But there is no backdoor connection between DuelEC DRBG and NIST Curves and we have no idea about how to backdoor an elliptic curve. Bernstein and Lange built a site claiming P-256 is not safe. But it actually boils down to the fact that NIST curves, generated in the 90s, lack some of the fancy features of more modern elliptic curves, as the fancy techniques were not known at the time.
+
+To address your questions directly:
+
+For compatibility reasons, since it's the most used elliptic curve.
+Yes of course, e.g. TLS.
+No, we believe it's secure.
+
+/ lees	,
+https://safecurves.cr.yp.to/index.html
+
+/ google	,
+cryptography 128 bit security level
+/ lees	,
+https://crypto.stackexchange.com/questions/46739/128-bit-security-or-128-bits-of-security
+
+/ 7	. 
+
+/ kijk,	
+https://www.youtube.com/watch?v=PVHDIiqvBaU&feature=push-u-sub&attr_tag=Q-2YX4AdpPREmpR0-6
+-> Coq proof assistant
+https://coq.inria.fr/
+
+/ coqide is in fedora 26	, 27	,
+
+/ tutorial	,
+https://www.youtube.com/watch?v=7sk8hPWAMSw
+
+/ 7 .
+
+/ video,
+https://www.youtube.com/watch?v=6H_9l9N3IXU
+/ BB84 ->
+https://en.wikipedia.org/wiki/BB84
+
+

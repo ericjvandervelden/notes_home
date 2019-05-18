@@ -1,0 +1,125 @@
+/ 7 .
+
+/ Nadat we naar f25 zijn gegaan ,
+
+$ dmesg
+
+[    5.705041] tpm tpm0: A TPM error (7) occurred attempting to read a pcr value
+
+[    5.918925] kvm: disabled by bios
+
+[    6.024552] b43 bcma0:1: Direct firmware load for b43/ucode30_mimo.fw failed with error -2
+[    6.024565] b43 bcma0:1: Direct firmware load for b43/ucode30_mimo.fw failed with error -2
+[    6.024730] b43 bcma0:1: Direct firmware load for b43-open/ucode30_mimo.fw failed with error -2
+[    6.024748] b43 bcma0:1: Direct firmware load for b43-open/ucode30_mimo.fw failed with error -2
+[    6.024750] b43-phy0 ERROR: Firmware file "b43/ucode30_mimo.fw" not found
+[    6.024788] b43-phy0 ERROR: Firmware file "b43-open/ucode30_mimo.fw" not found
+[    6.024842] b43-phy0 ERROR: You must go to http://wireless.kernel.org/en/users/Drivers/b43#devicefirmware and download the correct firmware for this driver version. Please carefully read all instructions on this website.
+
+[   90.503681] chrome[2500]: segfault at 83813e ip 000055c89cef8553 sp 00007ffcc8ef1b50 error 6 in chrome[55c89aa27000+5bb2000]
+[   90.885260] chrome[2621]: segfault at 8b813e ip 000055b277219553 sp 00007ffc852405d0 error 6 in chrome[55b274d48000+5bb2000]
+[   92.117979] chrome[2639]: segfault at 8e813e ip 000055b7a69fa553 sp 00007ffcbe5b5610 error 6 in chrome[55b7a4529000+5bb2000]
+
+/ 7	. 
+
+/ google 
+fedora 25 kvm disabled by bios
+
+/ 13	. 
+
+/ Dit is het antwoord	,
+
+/ lees	,
+https://askubuntu.com/questions/263179/get-rid-of-kvm-disabled-by-bios
+
+1) Turn on the computer and press f2 to see the setup (BIOS) when you see a screen with black background.
+
+2) Go to "Configuration" tab.
+
+3) Select the option "Intel Virtual Technology" and enable it by pressing F5 or F6.
+
+4) Press F10 to save and exit. When a prompt message appears asking you to confirm this action, select yes.
+
+5) Your computer will turn off for 10 seconds. Then, it will boot and load your OS without showing that error.
+
+/ 13	. 
+
+/ press herhaaldelijk f10	, je komt in bios	,
+/ ga naar	,
+System configuration
+	Device configuration	
+		Virtualization technology: check (geef Enter als je op de entry bent, of met de muis	,
+Save
+/ de computer gaat uit, en weer aan	,
+
+/ 13	. 
+
+/ lees	,
+https://forums.fedoraforum.org/showthread.php?237318-kvm-disabled-by-bios
+
+[eric@almond Logs]$ more /proc/cpuinfo
+model name  : Intel(R) Core(TM) i5-3230M CPU @ 2.60GHz
+lags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm cpuid_fault epb tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm ida arat pln pts
+/ vmx staat erbij	,
+
+/ 13 .
+
+/ lees	,
+
+KVM (for Kernel-based Virtual Machine) is a full virtualization solution for Linux on x86 hardware containing virtualization extensions (Intel VT or AMD-V). It consists of a loadable kernel module, kvm.ko, that provides the core virtualization infrastructure and a processor specific module, kvm-intel.ko or kvm-amd.ko. KVM also requires a modified QEMU although work is underway to get the required changes upstream.
+
+Using KVM, one can run multiple virtual machines running unmodified Linux or Windows images. Each virtual machine has private virtualized hardware: a network card, disk, graphics adapter, etc.
+
+/ lees	,
+https://fedoraproject.org/wiki/How_to_debug_Virtualization_problems#Ensuring_system_is_KVM_capable
+Ensuring system is KVM capable
+
+
+If that command did not list kvm_intel or kvm_amd, KVM is not properly configured. See this KVM wiki page to ensure your hardware supports virtualization extensions. If it doesn't, you cannot use KVM acceleration, only plain QEMU is an option.
+->
+http://www.linux-kvm.org/page/FAQ#How_can_I_tell_if_I_have_Intel_VT_or_AMD-V.3F%7C
+http://www.linux-kvm.org/page/FAQ#.22KVM:_disabled_by_BIOS.22_error%7C 
+
+/ voor install	,
+https://docs.fedoraproject.org/quick-docs/en-US/getting-started-with-virtualization.html
+/ see LOG_virtualization.txt
+
+/ 13	. 
+
+/ Voordat we in de bios Virtualization technology hadden enabled, zagen we	,
+$ lsmod | grep kvm
+kvm										 585728	0
+irqbypass              16384  1 kvm
+
+/ nu we in de bios Virtualization technology hebben enabled, zien we	,
+kvm_intel             204800  0
+kvm                   585728  1 kvm_intel
+irqbypass              16384  1 kvm
+
+/ 7	. 
+
+/ google	,
+Firmware file "b43/ucode30_mimo.fw" not found
+/ lees	,
+https://ubuntuforums.org/showthread.php?t=2243945
+->
+https://wireless.wiki.kernel.org/en/users/Drivers/b43#devicefirmware
+
+[eric@almond Logs]$ lspci -nn -d 14e4:
+24:00.0 Network controller [0280]: Broadcom Limited BCM43228 802.11a/b/g/n [14e4:4359]
+
+/ we zien op de site	,
+14e4:4359	yes (3.17+)	BCM43228	a/b/g/n	N (r16)	wl
+
+/ lees	,
+https://bbs.archlinux.org/viewtopic.php?id=185607
+
+[eric@almond Logs]$  lspci -vnn | grep -i net
+00:19.0 Ethernet controller [0200]: Intel Corporation 82579V Gigabit Network Connection [8086:1503] (rev 04)
+24:00.0 Network controller [0280]: Broadcom Limited BCM43228 802.11a/b/g/n [14e4:4359]
+
+/ lees	,
+http://blog.kosmokaryote.org/2015/08/technology-installing-fedora-22-again.html
+/ Hier staat WH het antwoord	,
+->
+http://linuxwireless.sipsolutions.net/en/users/Drivers/b43/#Fedora

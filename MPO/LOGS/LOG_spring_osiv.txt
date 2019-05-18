@@ -1,0 +1,14 @@
+http://ojitha.blogspot.nl/2013/05/spring-3-part-8-spring-hibernate-open.html
+https://dzone.com/articles/open-session-view-design
+http://smartkey.co.uk/development/open-session-in-view-pattern-spring-jpa/
+http://stackoverflow.com/questions/1103363/why-is-hibernate-open-session-in-view-considered-a-bad-practice
+
+http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/orm/hibernate4/support/OpenSessionInViewFilter.html
+
+/ Geef in google	: 	opensessioninviewfilter example
+http://stackoverflow.com/questions/23877900/spring-opensessioninviewfilter-with-transactional-annotation
+https://cchweblog.wordpress.com/2009/10/10/using-opensessioninviewfilter-in-spring-web-application/
+
+https://www.youtube.com/watch?v=ZEbWcLKnMXo
+
+http://stackoverflow.com/questions/36979281/using-spring-boot-and-data-jpa-getting-lazyinitializationexception-despite-the

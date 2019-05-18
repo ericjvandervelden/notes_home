@@ -1,0 +1,121 @@
+/ 7	. 
+
+/ Einstein
+
+username: 
+password: 
+ervelden
+ku2XM12c
+
+/ 13	. 
+
+[begin met: ...jouwnaam... is een ...jouwfunctie... Beschrijf (in de hij-vorm) welke specialistische kennis je hebt, in welke branches je ervaring hebt (meest recente ervaringen vooraan!). Verder is dit de plek om aan te geven wat je sterke eigenschappen zijn. Schrijf ook in de voltooid tegenwoordige tijd, dit leest plezieriger. Dus niet: "Jerom was ...", maar "Jerom is ... geweest".Geef aan het eind van dit stuk ook (beknopt) aan wat je in je vrije tijd bezig houdt. Dit geeft je CV meer diepgang en bevat vaak interessante gespreksonderwerpen voor een intake-gesprek.]
+
+/ 13	. 
+
+Eric is een Java developer en ook een wiskundige. Hij heeft in zijn laatste functie ervaring opgedaan met Wicket, Spring, Hibernate, PostgreSQL en jQuery. Daarnaast schreef hij unit testen met JUnit, Mockito en WicketTester. Ook gebruikte hij Svn, Ant en Maven. In functies daarvoor werkte hij onder andere met Drupal(PHP), Sybase(C) en Java Swing. Hij is analytisch, volhoudend, en krijgt voldoening uit het helpen van anderen. Zijn vrije tijd gebruikt hij om bij te blijven. Dat kan van alles zijn: Docker, PostgreSQL en Angular bijvoorbeeld, maar ook wiskunde (getaltheorie en meetkunde voor versleuteling, en statistiek). Ook hardlopen in de polder tussen Vlaardingen en Schipluiden vind hij leuk. 
+ 
+Kennis
+[geef in volledige zinnen beknopt aan hoe jouw vakkennis verworven is. Start ook hier met de meest recent opgedane kennis. Besteed met name aandacht aan soort opleidingen, certificeringstrajecten, en opleidingsinstituten.]
+
+Hij heeft in de avonduren aan de Rijksuniversiteit te Leiden zijn propaedeuse Informatica gehaald, en voor het overige heeft hij alles thuis geleerd en tijdens het werk. Hij heeft twee Sun certificaten gehaald, SCJP en SCBCD. Eerder haalde hij zijn doctoraal Wiskunde, ook in Leiden.
+
+/ 13	 .
+
+Vooropleiding
+
+26 augustus 1988:
+Doctoraal wiskunde aan de Faculteit der Wiskunde en Natuurwetenschappen
+van de Rijksuniversiteit te Leiden
+
+10 februari 1998:
+Lerarenbevoegdheid in wiskunde aan de Faculteit der Technische Wiskunde en
+Informatica van de Technische Universiteit Delft
+
+28 augustus 1992:
+Propaedeuse Informatica aan de Faculteit der Wiskunde en
+Natuurwetenschappen van de Rijksuniversiteit te Leiden
+
+Aanvullende cursussen
+23 Sep. 2009:
+Sun Certified Programmer for the Java 2 Platform, Standard Edition 6.0 (SCJP)
+30 Sep. 2009:
+Sun Certified Business Component Developer Java EE Platform 5 (SCBCD) 
+
+/ 13	 .
+
+Eric's werkzaamheden waren onderhoud verrichten (bugs fixen, database schema’s aanpassen), changes implementeren en unit- en integratietests maken. De applicatie, SCS genaamd, is een logistiek programma dat bepaalt in welke vrachtwagen, boot of vliegtuig dozen vervoerd worden, bijvoorbeeld voor Wehkamp of Geodis (Frankrijk), en door welke transporteur. Als op het kantoor de consultants (de mensen van de business) een fout in het programma vonden, dan moest hij deze met een debugger opsporen en repareren. Daarnaast moest hij ook nieuwe functionaliteiten toevoegen, zoals het maken van nieuwe pagina’s in de GUI, of bestaande aanpassen, of het maken van nieuwe services en het bewaren van data in de database. Hij heeft daarmee ervaring opgedaan met het maken van Hibernate bindings, queries en transacties, en met het maken van Spring beans, en met het maken van GUIs met Wicket. Denk daarbij aan tabellen, die in een form staan, omdat je wilt sorteren of filteren op een bepaalde kolom, of aan modal dialogs en natuurlijk aan buttons, links, etc. Het waren vrijwel allemaal AJAX componenten: Wicket is weliswaar een server-side framework,
+maar het heeft ook een groot client-side gedeelte Daarnaast maakte ik tests, voor Wicket is er WicketTester, die de rol van Tomcat overneemt, zodat je de tests naast de applicatie kunt draaien.
+
+Eric's werkzaamheden waren het beheren van alle sites van het Leger des Heils in Nederland (ongeveer 70 sites): de hoofdsite, de korps sites (ongeveer 50), de W&G sites (Jeudgzorg, daklozenopvang), de Reshare site (kleding distributie) en de webwinkel. Ook moest hij nieuwe korps en W&G sites maken en heeft hij IDeal 3 geïmplementereerd (voor de webwinkel). Daarnaast moest hij de RHEL machines waar alle sites op draaiden beheren: backups en replicaties maken van de sites en de databases, updaten van RHEL, PHP (voor IDeal 3). Hij deed het allemaal alleen.  Hij werkte op het Hoofdkwartier. Mensen van het Leger vanuit het hele land belde hem op om aanpassingen te doen of fouten uit de sites te halen. Hij gebruikte XDebug hiervoor. Hij deed zoveel mogelijk met Drush. Met rsync maakte hij de replicaties en had de sites altijd werkend op twee RHEL machines. Gewoonlijk is er een tussenpartij die IDeal in orde maakt, maar bij het Leger des Heils was deze er niet, en moest hij het zelf doen. Sleutels en certificaten maakte hij met OpenSSL, en moest ddarvoor de Drupal module voor IDeal aanpassen. Ook hiervoor moest hij de code debuggen met XDebug. Voor Reshare heeft hij met Google Maps een kaart geprogrammeerd die de locaties van de containers weergaf. Verder heeft hij een formulier gemaakt, over meerdere pagina’s, waarbij de mogelijk moest zijn om op elke pagina uit het formulier te gaan. Hij moest hiervoor de Drupal module aanpassen (met hook_form_alter).
+
+Eric heeft  een storingsmonitor (een GUI) voor een PLC machine gemaakt met jQueryUI, jqGrid en PHP. Om telegrammen in ASCII te versturen naar een zogenaamde Kardex machine, maakte hij een GUI met Java Swing. Hij heeft een Delphi GUI omgeschreven naar JavaScript, in jQuery. Ook heeft hij een besturing gemaakt naar een andere PLC machine, in PHP met sockets, en met MySQL.
+
+Eric werkte aan ATIS, een webapplicatie voor DRSH Zuiveringsslib N.V., Dordrecht. Hij programmeerde hiervoor met Struts2 en JDBC. Daarnaast werkte hij aan Digitaal Journaal, voor Rijkswaterstaat. Dit was een webapplicatie waar alles mee kon worden geregistreerd wat er op de Nederlandse rivieren gebeurt. Hiervoor programmeerde hij met Struts2, jQuery en Hibernate.
+
+Eric onderhield Bash scripts die een onderdeel uitmaakten van een text based menu in een risk management systeem. Hij onderhield ook C programma’s in het risk management systeem. Hij maakte SQL queries voor rapporten zoals het berekenen van gemiddelden over bepaalde perioden voor bepaalde groepen van effecten, etc. Ook maakte hij met Java Swing en JDBC een GUI, waarmee handelaren hun positities konden bijhouden.
+
+Eric deed onderzoek binnen de groep “Applied Mathematics” naar een klasse van partiële differentiaalvergelijkingen. Ook gaf hij onderwijs aan eerstejaarsstudenten wis- en natuurkunde, scheikunde, informatica en gezondheidswetenschappen.
+
+Eric gaf onderwijs aan eerstejaarsstudenten wis- en natuurkunde, scheikunde, informatica en gezondheidswetenschappen.
+
+/ 7	. 
+
+/ Mail Rogier Oranje
+
+Vraag:
+HBO/WO werk- en denkniveau:
+Antwoord:
+26 augustus 1988:
+Doctoraal wiskunde aan de Faculteit der Wiskunde en Natuurwetenschappen
+van de Rijksuniversiteit te Leiden
+10 februari 1998:
+Propaedeuse Informatica aan de Faculteit der Wiskunde en
+Natuurwetenschappen van de Rijksuniversiteit te Leiden
+
+Vraag:
+Minimaal 5 jaar recente aantoonbare hands-on JAVA-development ervaring binnen verschillende organisaties in vergelijkbare rollen (medior-niveau).      
+Antwoord:
+3 jaar Java developer bij MP Objects (Logistiek): Wicket, Spring, Hibernate, ActivevMQ, Maven, PostgreSQL, jQuery, UNIX scripting, en testen maakte ik met JUnit, Mockito en WicketTester, een framework waarmee je unit tests maakt voor Wicket.
+1 jaar Java developer bij Technico Automatisering B.V.: Java Swing
+1 jaar Java developer bij E.Novation: Struts, Spring, JDBC, Hibernate
+2 jaar Java developer bij Fortisbank: Java Swing
+
+Vraag:
+Aantoonbare werkervaring in het werken in een agile (scrum)team:
+Antwoord:
+3 jaar bij MP Objects: stand-ups
+
+Vraag:
+Concepten en industriestandaarden zoals HTTP, XML/XSD, WSDL, JAX-WS, SQL.
+Ervaring in het gebruik van tools zoals Java SE, Relationele Database (Oracle DB 12), Versiebeheersysteem (Git), Jenkins, Sonar, SQL Developer (of vergelijkbaar), Eclipse of IntelliJ
+Ervaring in het gebruik van testtools en methoden zoals RQM, Jira, SoapUI, JMeter, JUnit, Cucumber en Test Driven Development;
+Aantoonbare ervaring met toepassing van testontwerptechnieken;              
+Antwoord:
+Ervaring met HTTP, XML/XSD, SQL. 
+Ervaring met JavaSE, PostgreSQL & MySQL, Svn & Git, Eclipse
+Ervaring met JUnit, Mockito, WicketTester,  Test Driven Development
+Testontwerptechnieken: Nee. 
+
+Vraag:
+Goede beheersing Nederlandse taal in woord en geschrift
+Antwoord:
+Ja.
+
+Vraag:
+Kandidaat gaat bij de start van de opdracht akkoord met een (beperkt) achtergrondonderzoek dat bestaat uit:
+Antwoord:
+Ja.
+
+Motivatie.
+
+Ik vind de NS een interessant bedrijf, omdat ik nooit een auto heb gehad en dus altjd met het OV reis. Eerder werkte ik bij het Leger des Heils. Zij hadden vroeger mijn vader opgevoed, want hij had zijn vader op vroege leeftijd verloren en kwam zo in het Jongenshuis in Amersfoort terecht. Ik had ddardoor een enorme affiniteit met het Leger en heb daarom een fantastische tijd gehad daar als programmeur. Ik vind dat wel belangrijk, de organisatie zelf waar je werkt.
+
+Ik vind de NS ook interessant omdat ik weet dat u met Wicket werkt. Misschien kan ik dat bij u doen in een volgende rol. Ik heb dat in mijn vorige functie helemaal doorgenomen, en ik was de eerste op de zaak die unit testen ging maken met WicketTester, een framework van Wicket die daarvoor is gemaakt. Ik vind testen leuk, en het moet altijd gebeuren. Met JMeter bijvoorbeeld heb ik geen ervaring, maar ik zal me dat zo snel mogelijk eigen maken. Ik heb ervaring met JUnit, Mockito en WicketTester. 
+
+Ook vind ik het medior niveau prettig, want van dat niveau ben ik. Ik kom uit een iets andere hoek; de laatste jaren heb ik web development gedaan (Wicket) en met transactionele software gewerkt (two-phase commit). 
+
+
+
+
+

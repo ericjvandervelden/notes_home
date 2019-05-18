@@ -1,0 +1,355 @@
+/ LOG FILES OPEN
+
+LOG_31_jan.txt
+
+/ Einde LOG FILES OPEN
+
+/ COMMAND LINE
+
+[eric@localhost scripts]$ pwd
+/home/eric/Devel/Docker/scripts
+[eric@localhost scripts]$ ls
+rm-all-containers  stop-all-containers    template-run-image
+rm-unused-images   template-create-image
+
+[eric@localhost scripts]$ sudo docker run --rm --name fd -it fedora /usr/bin/bash
+[eric@localhost bash-4.3.30]$ pwd
+/home/eric/Devel/Bash/bash-4.3.30
+
+[eric@localhost My]$ pwd
+/home/eric/Devel/Bash/My
+[eric@localhost My]$ ls
+a.out     bash_source.bash  exec.bash  foo3.bash  inline.sh   s.bash  t.class   top.sh
+awk.txt   dist              fact.sh    foo.bash   myfile.txt  sub     t.java    u.bash
+bar.bash  dist2             foo2.bash  foo.c      s2.bash     t.bash  tmp.bash  v.bash
+
+[eric@almond openssl]$ pwd
+/home/eric/Devel/OpenSSL/openssl
+
+[eric@almond quickstart]$ pwd
+/home/eric/Devel/Gradle/Java/gradle-2.4/samples/java/quickstart
+[eric@almond ch7.2]$  pwd
+/home/eric/Devel/Gradle/Java/my/ch7.2
+
+[eric@almond ~]$ cd Devel/Eclipse/sts-bundle/
+[eric@almond sts-bundle]$ sts-3.6.4.RELEASE/STS 
+[eric@almond sia2]$ pwd
+/home/eric/Devel/Java/Spring/sia2
+[eric@almond spring-mvc-step-by-step]$ pwd
+/home/eric/Devel/Eclipse/sts-bundle/workspace/spring-mvc-step-by-step
+
+[eric@almond ~]$ cd Devel/Java/Tomcat/
+[eric@almond Tomcat]$ cd apache-tomcat-7.0.62/
+[eric@almond apache-tomcat-7.0.62]$ bin/catalina.sh run
+
+[eric@localhost postgresql]$ pwd
+/home/eric/Devel/Docker/postgresql
+[eric@localhost postgresql]$  sudo docker run --rm --name fd fedora /usr/bin/bash
+[eric@localhost postgresql]$  sudo docker run --rm --name pg -it local/fd-postgres 
+[eric@localhost postgresql]$  sudo docker run --rm --name fd-systemd -it local/fd-systemd /usr/bin/bash
+
+
+bash-4.3# ls /var/lib/pgsql/data/
+PG_VERSION       pg_hba.conf      pg_notify/       pg_stat_tmp/     pg_xlog/         
+base/            pg_ident.conf    pg_serial/       pg_subtrans/     postgresql.conf  
+global/          pg_log/          pg_snapshots/    pg_tblspc/       postmaster.opts  
+pg_clog/         pg_multixact/    pg_stat/         pg_twophase/     postmaster.pid   
+
+[eric@localhost postgresql]$  sudo yum install mongodb-org
+[eric@localhost postgresql]$ sudo vi  /etc/yum.repos.d/mongodb-org-3.0.repo 
+
+[eric@localhost fedora2]$ pwd
+/home/eric/Devel/Docker/mongod/fedora2
+[eric@localhost fedora2]$ sudo docker run --rm --name mongod -it local/fd-mongod-tar
+bash-4.3# mongo
+MongoDB shell version: 3.0.2
+connecting to: test
+Server has startup warnings: 
+...
+> db.inventory.createIndex({item:1})
+> db.inventory.find({item:"ABC2"}).explain("executionStats")
+
+[eric@localhost pari-2.7.3]$  pwd
+/home/eric/Devel/Math/pari-2.7.3
+
+[eric@almond PL]$ pwd
+/home/eric/Devel/Postgres/PL
+
+[eric@almond cpp]$ pwd
+/home/eric/Devel/Eclipse/cpp
+[eric@almond cpp]$ eclipse/eclipse 
+
+[eric@almond tmp]$ PGPASSWORD=foo psql -U foo -h almond
+
+
+/ Einde COMMAND LINE
+
+/ HADOOP
+
+[eric@localhost Docker]$ pwd
+/home/eric/Devel/Docker
+[eric@localhost Docker]$ sudo docker run --rm --name hadoop --privileged -ti -v /sys/fs/cgroup:/sys/fs/cgroup:ro -P local/fd-systemd-sshd-java-hadoop-single-cluster
+[eric@localhost Docker]$ sudo docker exec -it hadoop /usr/bin/bash
+[eric@localhost Docker]$ sudo docker run --rm --name pg2 --link pg:mypg -it -P local/fd-postgres-sshd
+[eric@localhost Docker]$ sudo docker run --rm --name ssh2 -it -P local/fd-sshd-3
+bash-4.3# vi hadoop-yarn/yarn-yarn-resourcemanager-d619c3294a5e.log 
+[eric@localhost Docker]$ PGPASSWORD=foo psql -U foo -h localhost -p 49184 postgres
+[eric@localhost Docker]$ psql -U postgres -h 172.17.42.1 -p 49184
+
+ 834   sudo docker run --rm --name hadoop --privileged -ti -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v /opt/hadoop-2.6.0:/opt/hadoop-2.6.0 -P local/fd-systemd-sshd-java-hadoop
+  835   exit
+  836  help 
+  837  help shell
+  838  exit
+  839  l
+  840  exit
+  841  ls
+  842  cd Devel/
+  843  l
+  844  ls
+  845  cd Logs/
+  846  ls
+  847  vi LOG_31_jan_2015.txt 
+  848  ls
+  849  vi LOG_31_jan_2015.txt 
+  850  vi LOG_27_mrt_2015.txt 
+  851  vi LOG_31_jan_2015.txt 
+  852  man bash
+  853  exit
+  854  cd 
+  855  cd Devel/Bash/My/
+  856  ls
+  857  rm 0
+  858  ls
+  859  vi top.bash
+  860  mv top.bash top.sh
+  861  vi inline.sh
+  862  vi top.sh 
+  863  chmod u+x top.sh inline.sh 
+  864  ./top.sh
+  865  vi top.sh 
+  866  ./top.sh
+  867  vi top.sh 
+  868  ./top.sh
+  869  vi top.sh 
+  870  ./top.sh
+  871  exit
+  872  cd 
+  873  cd Devel/
+  874  ls
+  875  cd Java/
+  876  ls
+  877  ls -ltr ~/Downloads/
+  878  pwd
+  879  mkdir Hadoop
+  880  cd Hadoop/
+  881  pwd
+  882  tar xvzf ~/Downloads/hadoop-2.6.0-src.tar.gz 
+  883  find -name FsShell.java
+  884  vim ./hadoop-2.6.0-src/hadoop-common-project/hadoop-common/src/main/java/org/apache/hadoop/fs/FsShell.java
+  885  find -name Configured.java
+  886  vim $(find -name Configured.java_
+  887  vim $(find -name Configured.java)
+  888  grep mkdir -name $(find -name "*.java")
+  889  grep mkdir -r $(find -name "*.java")
+  890  grep put -r $(find -name "*.java")
+  891  grep " mkdir " -r $(find -name "*.java")
+  892  grep "mkdir" -r $(find -name "*.java") | grep public
+  893  grep "mkdir(" -r $(find -name "*.java") | grep public
+  894  vi ./hadoop-2.6.0-src/hadoop-hdfs-project/hadoop-hdfs/src/main/java/org/apache/hadoop/fs/Hdfs.java 
+  895  ls
+  896  exit
+  897  ls
+  898  ls logs/
+  899  vi sbin/start-dfs.sh
+  900  pwd
+  901  exit
+  902  vi /tmp/start-dfs.sh 
+  903  vi /tmp/hdfs 
+  904  vim /opt/hadoop-2.6.0/libexec/hadoop-config.sh
+  905  vi /tmp/hdfs 
+  906  vi /tmp/start-dfs.sh 
+  907  cd /opt/hadoop-2.6.0/
+  908  su
+  909  sudo which bash
+  910  sudo string bash | grep main
+  911  sudo strings bash | grep main
+  912  sudo strings /bin/bash | grep main
+  913  sudo bash --debugger bin/hdfs namenode -format
+  914  export JAVA_HOME=/etc/alternatives/java_sdk
+  915  sudo bash --debugger bin/hdfs namenode -format
+  916  su
+  917  pwd
+  918  vim sbin/start-dfs.sh 
+  919  vi bin/hdfs
+  920  vim bin/hdfs
+  921  vi sbin/start-dfs.sh
+  922  vim sbin/hadoop-daemons.sh
+  923  ls /opt/hadoop-2.6.0/sbin/hadoop-daemons.sh
+  924  vim sbin/hadoop-daemons.sh
+  925  ls sbin
+  926  vim sbin/hadoop-daemons.sh
+  927  ls bin/
+  928  ls sbin
+  929  find -name hdfs
+  930  vi sbin/hadoop-daemons.sh 
+  931  vi sbin/hadoop-daemons.hs
+  932  vi sbin/start-dfs.sh
+  933  vi sbin/:q
+  934  find -name "*.bak"
+  935  grep ERICJ -r *
+  936  grep ERIC -r *
+  937  ls
+  938  rm '--config'
+  939  rm \--config
+  940  ls
+  941  ls -ltr
+  942  rm -- --config
+  943  sudo rm -- --config
+  944  ls
+  945  grep ERIC -r *
+  946   vi sbin/start-dfs.sh
+  947  ls
+  948  grep ERIC -r *
+  949   vi sbin/hadoop-daemons.sh
+  950  vi sbin/start-dfs.sh
+  951   vi sbin/hadoop-daemons.sh
+  952  cp -a sbin/hadoop-daemons.sh sbin/hadoop-daemons.sh.bak
+  953  vi sbin/hadoop-daemons.sh
+  954  vi libexec/hadoop-config.sh
+  955  vi etc/hadoop/slaves 
+  956  vi sbin/slaves.sh 
+  957  vi libexec/hadoop-config.
+  958  vi libexec/hadoop-config.sh
+  959  vi sbin/slaves.sh 
+  960  vi etc/hadoop/hadoop-env.sh
+  961  vi sbin/slaves.sh 
+  962  vi etc/hadoop/hadoop-env.sh
+  963  cp etc/hadoop/hadoop-env.sh etc/hadoop/hadoop-env.sh.bak
+  964  vi etc/hadoop/hadoop-env.sh
+  965  vi sbin/hadoop-daemon.sh
+  966  vi etc/hadoop/hadoop-env.sh
+  967  vi sbin/hadoop-daemon.sh
+  968  ls
+  969  ls -ltr
+  970  vi sbin/hadoop-daemon.sh
+  971  grep HOSTNAME -r *
+  972  grep HOSTNAME -r $(find -name ".sh")
+  973  grep HOSTNAME -r <(find -name ".sh")
+  974  echo $(find -name ".sh")
+  975  find -name "*.sh"
+  976  echo $(find -name "*.sh")
+  977  grep HOSTNAME -r <(find -name "*.sh")
+  978  grep HOSTNAME -r $(find -name "*.sh")
+  979  vi sbin/hadoop-daemon.sh
+  980  vi bin/hdfs
+  981   vi bin/hdfs
+  982  vi sbin/hadoop-daemon.sh
+  983  vi bin/hdfs
+  984  vi sbin/hadoop-daemon.sh
+  985  vim sbin/start-dfs.sh.bak 
+  986  vim sbin/start-dfs.sh
+  987  vi sbin/hadoop-daemons.sh
+  988  vi sbin/slaves.sh 
+  989  cat etc/hadoop/slaves 
+  990  vi sbin/slaves.sh 
+  991  vi sbin/hdfs
+  992  vi bin/hdfs
+  993  vi sbin/hadoop-daemon.sh
+  994  vi etc/hadoop/hadoop-env.sh
+  995  vi sbin/hadoop-daemon.sh
+  996  vi bin/hdfs
+  997  vim sbin/start-dfs.sh
+  998  vim bin/hdfs
+  999  exit
+ 1000  sudo docker run -it --rm --link mydb:myalias  test/postgres /bin/bash
+ 1001  sudo docker run -it --rm --link db:myalias  test/postgres /bin/bash
+ 1002  sudo docker run --name use_db -it --rm --link db:myalias  test/postgres /bin/bash
+ 1003  sudo docker port sshd
+ 1004  sudo su -
+ 1005  sudo docker port sshd
+ 1006  sudo su - postgres -c "psql"
+ 1007  psql -U postgres 
+ 1008  sudo su - postgres -c "psql"
+ 1009  psql -U postgres 
+ 1010  sudo docker port pg
+ 1011  sudo docker ps
+ 1012  sudo docker port pg
+ 1013  psql
+ 1014  psql -U postgres -h localhost -p 49178
+ 1015  ifconfig
+ 1016  psql -U postgres -h localhost -p 49178
+ 1017  psql -U postgres -h 172.17.42.1 -p 49178
+ 1018  psql -U postgres -h 172.17.42.1 
+ 1019  psql -U eric -h 172.17.42.1 
+ 1020  psql -U eric
+ 1021  psql -U postgres -h 172.17.42.1 -p 49178
+ 1022  psql -U postgres -h 172.17.0.64 -p 49178
+ 1023  psql -U postgres -h 172.17.42.1 -p 49177
+ 1024  psql -U postgres -h 172.17.42.1 -p 49178
+ 1025  psql -U postgres -h 172.17.42.1
+ 1026  psql -U postgres -h 172.17.42.1 -p 5432
+ 1027  ifconfig
+ 1028  psql -U postgres -h 172.17.42.1 -p 5432
+ 1029  psql -U postgres -h 172.17.42.1 
+ 1030  sudo docker port pg
+ 1031  psql -U postgres -h 172.17.42.1 -p 49184
+ 1032  ping 172.17.42.1
+ 1033  ping 172.17.42.1 -p 49184
+ 1034  sudo docker run --rm --name pg2 -it -P local/fd-postgres
+ 1035  sudo docker port pg
+ 1036  sudo docker port pg2
+ 1037  ping 172.17.42.1 -p 49184
+ 1038  psql -U postgres -h 172.17.42.1 -p 49184
+ 1039  psql -U postgres -h localhsot -p 49184
+ 1040  psql -U postgres -h localhost -p 49184
+ 1041  psql -U postgres -h 172.17.42.1 -p 49184
+ 1042  psql -U postgres -h localhost -p 49184
+ 1043  psql -U postgres -h 172.17.42.1
+ 1044  PGPASSWORD=foo psql -U foo -h localhost -p 49184
+ 1045  psql -U postgres -h 172.17.42.1
+ 1046  psql -U postgres -h 172.17.42.1 -p 49184
+ 1047  PGPASSWORD=foo psql -U foo -h localhost -p 49184
+ 1048  PGPASSWORD=foo psql -U foo -h localhost -p 49184 postgres
+ 1049  sudo docker port pgssh
+ 1050  sudo su -
+ 1051  sudo docker port pgssh
+ 1052  sudo su -
+ 1053  sudo docker restart pg
+ 1054  sudo docker port hadoop
+ 1055  sudo docker exec -it hadoop /usr/bin/bash
+ 1056  pwd
+ 1057  history 
+
+
+
+/ Einde HADOOP
+
+/ OPEN IN CHROME
+
+/ videos
+https://www.youtube.com/channel/UC6Ak0hMzttpQYAxzTe8kx7A / coding with jessie, 
+https://www.youtube.com/watch?v=0AAIbEAyFxg	/ chai-mocha testing, git
+https://www.youtube.com/channel/UCpqYfSWEcyBGorRGvPsHkgg	/ kyle robinson
+
+/ android	,
+https://github.com/GoogleCloudPlatform/endpoints-codelab-android
+https://docs.google.com/presentation/d/11zUaraMhtgZitxL0Xi8NQedCVLXr0dv00mP46xVFbEQ/edit#slide=id.g1d4e015bb_551
+
+http://yeoman.io/generators/
+
+http://www.sitepoint.com/unit-test-javascript-mocha-chai/
+
+https://facebook.github.io/react/docs/tutorial.html
+
+http://codeutopia.net/blog/2016/01/17/learning-react-basics-and-building-a-basic-application-prototype/
+
+http://stats.stackexchange.com/questions/10030/difference-between-k-s-manual-test-and-k-s-test-with-r			/ !
+http://stackoverflow.com/questions/21639392/make-frequency-histogram-for-factor-variables
+https://cran.r-project.org/doc/manuals/r-release/R-data.html#Export-to-text-files
+http://www.r-bloggers.com/a-fast-intro-to-plyr-for-r/
+http://stackoverflow.com/questions/1660124/how-to-sum-a-variable-by-group
+http://r.789695.n4.nabble.com/Basic-aggregate-help-td867127.html
+
+
+/ Einde OPEN IN CHROME

@@ -1,0 +1,44 @@
+/ 7	 .
+
+/ lees	,
+https://www.tug.org/twg/mactex/tutorials/ltxprimer-1.0.pdf
+
+/ lees	,
+https://wiki.debian.org/Latex
+
+/ we kunnen direct 
+$ pdflatex <file>.tex
+$ evince <file>.pdf
+
+/ na pdflatex zijn er	,
+[eric@almond latex]$ ls
+first.aux  first.log  first.pdf  first.tex
+
+
+/ we kunnen ook	, 
+$ latex <file>.tex
+$ xdvi <file>.dvi
+
+/ na latex zijn er	,
+[eric@almond latex]$ ls
+first.aux  first.dvi  first.log  first.tex
+
+/ 7	. 
+
+/ lees	,
+https://www.tug.org/twg/mactex/tutorials/ltxprimer-1.0.pdf
+
+/ 13	. 
+
+$ vi I.1.1.tex
+\documentclass{article}
+\begin{document}
+This is my \emph{first} document in \LaTeX. 
+\end{document}
+
+[eric@almond latex]$ pdflatex I.1.1.tex 
+[eric@almond latex]$ evince I.1.1.pdf 
+/ OK
+
+
+

@@ -1,0 +1,1637 @@
+/ See CREATE DOMREADY JAVASCRIPT
+
+/ 7	. 
+
+/ ws workspace-wicket7_7
+/ proj wicket-examples-step-by-step
+/ page, 
+package org.apache.wicket.examples.ajax.builtin.modal;
+public class ModalWindowMyPage extends WebPage {
+
+/ Geef	,
+http://localhost:9090/wicket-examples-step-by-step/ajax/modal-mywindow
+
+/ We zien js 	, 
+/ Waar created	?
+
+/ stack	,
+/s
+	RequestCycle.processRequest() line: 220	
+			IRequestHandler handler = resolveRequestHandler();
+/d
+handler	RenderPageRequestHandler  (id=10163)	
+				execute(handler);
+/cb
+	RequestCycle.processRequestAndDetach() line: 293	
+	WicketFilter.processRequestCycle(RequestCycle, WebResponse, HttpServletRequest, HttpServletResponse, FilterChain) line: 261	
+	WicketFilter.processRequest(ServletRequest, ServletResponse, FilterChain) line: 203	
+	WicketFilter.doFilter(ServletRequest, ServletResponse, FilterChain) line: 284	
+	ApplicationFilterChain.internalDoFilter(ServletRequest, ServletResponse) line: 239	
+	ApplicationFilterChain.doFilter(ServletRequest, ServletResponse) line: 206	
+	StandardWrapperValve.invoke(Request, Response) line: 217	
+	StandardContextValve.invoke(Request, Response) line: 106	
+	NonLoginAuthenticator(AuthenticatorBase).invoke(Request, Response) line: 502	
+	StandardHostValve.invoke(Request, Response) line: 142	
+	ErrorReportValve.invoke(Request, Response) line: 79	
+	AccessLogValve(AbstractAccessLogValve).invoke(Request, Response) line: 616	
+	StandardEngineValve.invoke(Request, Response) line: 88	
+	CoyoteAdapter.service(Request, Response) line: 518	
+	Http11NioProcessor(AbstractHttp11Processor<S>).process(SocketWrapper<S>) line: 1091	
+	Http11NioProtocol$Http11ConnectionHandler(AbstractProtocol$AbstractConnectionHandler<S,P>).process(SocketWrapper<S>, SocketStatus) line: 673	
+	NioEndpoint$SocketProcessor.doRun() line: 1500	
+	NioEndpoint$SocketProcessor.run() line: 1456	
+	ThreadPoolExecutor(ThreadPoolExecutor).runWorker(ThreadPoolExecutor$Worker) line: 1145	
+	ThreadPoolExecutor$Worker.run() line: 615	
+	TaskThread$WrappingRunnable.run() line: 61	
+	TaskThread(Thread).run() line: 745	
+
+/c
+/stack
+/s
+	ModalWindow.init() line: 258	
+	ModalWindow.<init>(String) line: 236	
+	ModalWindowMyPage.<init>() line: 20	
+	NativeConstructorAccessorImpl.newInstance0(Constructor, Object[]) line: not available [native method]	
+	NativeConstructorAccessorImpl.newInstance(Object[]) line: 57	
+	DelegatingConstructorAccessorImpl.newInstance(Object[]) line: 45	
+	Constructor<T>.newInstance(Object...) line: 526	
+	DefaultPageFactory.newPage(Constructor<C>, PageParameters) line: 175	
+	DefaultPageFactory.newPage(Class<C>) line: 67	
+	DefaultMapperContext.newPageInstance(Class<IRequestablePage>, PageParameters) line: 102	
+	PageProvider.resolvePageInstance(Integer, Class<IRequestablePage>, PageParameters, Integer) line: 271	
+	PageProvider.getPageInstance() line: 169	
+	WebPageRenderer(PageRenderer).getPage() line: 78	
+	WebPageRenderer.isPageStateless() line: 287	
+	WebPageRenderer.shouldRenderPageAndWriteResponse(RequestCycle, Url, Url) line: 329	
+	WebPageRenderer.respond(RequestCycle) line: 193	
+	RenderPageRequestHandler.respond(IRequestCycle) line: 175	
+	RequestCycle$HandlerExecutor.respond(IRequestHandler) line: 895	
+	RequestCycle$HandlerExecutor(RequestHandlerStack).execute(IRequestHandler) line: 64	
+	RequestCycle.execute(IRequestHandler) line: 265	
+	RequestCycle.processRequest() line: 222	
+	RequestCycle.processRequestAndDetach() line: 293	
+	WicketFilter.processRequestCycle(RequestCycle, WebResponse, HttpServletRequest, HttpServletResponse, FilterChain) line: 261	
+	WicketFilter.processRequest(ServletRequest, ServletResponse, FilterChain) line: 203	
+	WicketFilter.doFilter(ServletRequest, ServletResponse, FilterChain) line: 284	
+	ApplicationFilterChain.internalDoFilter(ServletRequest, ServletResponse) line: 239	
+	ApplicationFilterChain.doFilter(ServletRequest, ServletResponse) line: 206	
+	StandardWrapperValve.invoke(Request, Response) line: 217	
+	StandardContextValve.invoke(Request, Response) line: 106	
+	NonLoginAuthenticator(AuthenticatorBase).invoke(Request, Response) line: 502	
+	StandardHostValve.invoke(Request, Response) line: 142	
+	ErrorReportValve.invoke(Request, Response) line: 79	
+	AccessLogValve(AbstractAccessLogValve).invoke(Request, Response) line: 616	
+	StandardEngineValve.invoke(Request, Response) line: 88	
+	CoyoteAdapter.service(Request, Response) line: 518	
+	Http11NioProcessor(AbstractHttp11Processor<S>).process(SocketWrapper<S>) line: 1091	
+	Http11NioProtocol$Http11ConnectionHandler(AbstractProtocol$AbstractConnectionHandler<S,P>).process(SocketWrapper<S>, SocketStatus) line: 673	
+	NioEndpoint$SocketProcessor.doRun() line: 1500	
+	NioEndpoint$SocketProcessor.run() line: 1456	
+	ThreadPoolExecutor(ThreadPoolExecutor).runWorker(ThreadPoolExecutor$Worker) line: 1145	
+	ThreadPoolExecutor$Worker.run() line: 615	
+	TaskThread$WrappingRunnable.run() line: 61	
+	TaskThread(Thread).run() line: 745	
+
+/ debug	, 
+/s
+ModalWindow.init() line: 263	
+		add(empty = new WebMarkupContainer(getContentId()));
+		add(newCloseButtonBehavior());
+/s
+ModalWindow(Component).add(Behavior...) line: 4559	
+		new Behaviors(this).add(behaviors);
+/s
+Behaviors.add(Behavior...) line: 59	
+		for (Behavior behavior : behaviors)
+		{
+			internalAdd(behavior);
+			// Give handler the opportunity to bind this component
+			behavior.bind(component);
+/s
+ModalWindow$CloseButtonBehavior(AbstractAjaxBehavior).bind(Component) line: 56	
+		component = hostComponent;
+
+		// call the callback
+		onBind();
+/s
+ModalWindow$CloseButtonBehavior(AbstractDefaultAjaxBehavior).onBind() line: 84	
+		getComponent().setOutputMarkupId(true);
+
+/c
+/ stack
+/s
+	ModalWindow.setPageCreator(ModalWindow$PageCreator) line: 327	
+		setContent(empty);
+		pageCreator = creator;
+		return this;
+/cb
+	ModalWindowMyPage.<init>() line: 33	
+		modalWindow.setPageCreator(new ModalWindow.PageCreator() {
+			@Override
+			public Page createPage() {
+				return new ModalContentMyPage(){
+					...
+/cb
+	NativeConstructorAccessorImpl.newInstance0(Constructor, Object[]) line: not available [native method]	
+	NativeConstructorAccessorImpl.newInstance(Object[]) line: 57	
+	DelegatingConstructorAccessorImpl.newInstance(Object[]) line: 45	
+	Constructor<T>.newInstance(Object...) line: 526	
+	DefaultPageFactory.newPage(Constructor<C>, PageParameters) line: 175	
+	DefaultPageFactory.newPage(Class<C>) line: 67	
+	DefaultMapperContext.newPageInstance(Class<IRequestablePage>, PageParameters) line: 102	
+	PageProvider.resolvePageInstance(Integer, Class<IRequestablePage>, PageParameters, Integer) line: 271	
+	PageProvider.getPageInstance() line: 169	
+	WebPageRenderer(PageRenderer).getPage() line: 78	
+	WebPageRenderer.isPageStateless() line: 287	
+	WebPageRenderer.shouldRenderPageAndWriteResponse(RequestCycle, Url, Url) line: 329	
+	WebPageRenderer.respond(RequestCycle) line: 193	
+	RenderPageRequestHandler.respond(IRequestCycle) line: 175	
+	RequestCycle$HandlerExecutor.respond(IRequestHandler) line: 895	
+	RequestCycle$HandlerExecutor(RequestHandlerStack).execute(IRequestHandler) line: 64	
+	RequestCycle.execute(IRequestHandler) line: 265	
+	RequestCycle.processRequest() line: 222	
+	RequestCycle.processRequestAndDetach() line: 293	
+	WicketFilter.processRequestCycle(RequestCycle, WebResponse, HttpServletRequest, HttpServletResponse, FilterChain) line: 261	
+	WicketFilter.processRequest(ServletRequest, ServletResponse, FilterChain) line: 203	
+	WicketFilter.doFilter(ServletRequest, ServletResponse, FilterChain) line: 284	
+	ApplicationFilterChain.internalDoFilter(ServletRequest, ServletResponse) line: 239	
+	ApplicationFilterChain.doFilter(ServletRequest, ServletResponse) line: 206	
+	StandardWrapperValve.invoke(Request, Response) line: 217	
+	StandardContextValve.invoke(Request, Response) line: 106	
+	NonLoginAuthenticator(AuthenticatorBase).invoke(Request, Response) line: 502	
+	StandardHostValve.invoke(Request, Response) line: 142	
+	ErrorReportValve.invoke(Request, Response) line: 79	
+	AccessLogValve(AbstractAccessLogValve).invoke(Request, Response) line: 616	
+	StandardEngineValve.invoke(Request, Response) line: 88	
+	CoyoteAdapter.service(Request, Response) line: 518	
+	Http11NioProcessor(AbstractHttp11Processor<S>).process(SocketWrapper<S>) line: 1091	
+	Http11NioProtocol$Http11ConnectionHandler(AbstractProtocol$AbstractConnectionHandler<S,P>).process(SocketWrapper<S>, SocketStatus) line: 673	
+	NioEndpoint$SocketProcessor.doRun() line: 1500	
+	NioEndpoint$SocketProcessor.run() line: 1456	
+	ThreadPoolExecutor(ThreadPoolExecutor).runWorker(ThreadPoolExecutor$Worker) line: 1145	
+	ThreadPoolExecutor$Worker.run() line: 615	
+	TaskThread$WrappingRunnable.run() line: 61	
+	TaskThread(Thread).run() line: 745	
+/debug	, 
+/s
+ModalWindow.setPageCreator(ModalWindow$PageCreator) line: 327	
+		setContent(empty);
+/s
+ModalWindow.setContent(Component) line: 946	
+		component.setOutputMarkupPlaceholderTag(true);
+		component.setVisible(false);
+		replace(component);
+/ niets nu	,
+		shown = false;
+		pageCreator = null;
+		return this;
+
+/c
+/ stack
+/s
+	AjaxLink$1(AbstractAjaxBehavior).bind(Component) line: 56	
+	Behaviors.add(Behavior...) line: 59	
+	ModalWindowMyPage$1(Component).add(Behavior...) line: 4559	
+		new Behaviors(this).add(behaviors);
+/cb
+	ModalWindowMyPage$1(AjaxLink<T>).onInitialize() line: 67	
+		super.onInitialize();
+		add(newAjaxEventBehavior("click"));
+/cb
+	ModalWindowMyPage$1(Component).fireInitialize() line: 877	
+			onInitialize();
+/cb
+	MarkupContainer$3.component(Component, IVisit<Void>) line: 1090	
+		visitChildren(new IVisitor<Component, Void>()
+		{
+			@Override
+			public void component(final Component component, final IVisit<Void> visit)
+			{
+				component.fireInitialize();			<-
+			}
+/cb
+	MarkupContainer$3.component(Object, IVisit) line: 1086	
+	Visits.visitChildren(Iterable<? super S>, IVisitor<S,R>, IVisitFilter, Visit<R>) line: 144	
+	Visits.visitChildren(Iterable<? super S>, IVisitor<S,R>, IVisitFilter) line: 123	
+	Visits.visitChildren(Iterable<? super S>, IVisitor<S,R>) line: 192	
+	ModalWindowMyPage(MarkupContainer).visitChildren(IVisitor<Component,R>) line: 981	
+	ModalWindowMyPage(MarkupContainer).internalInitialize() line: 1085	
+		visitChildren(new IVisitor<Component, Void>()													<-
+		{
+			@Override
+			public void component(final Component component, final IVisit<Void> visit)
+			{
+				component.fireInitialize();
+			}
+/cb
+	ModalWindowMyPage(Page).isPageStateless() line: 465	
+	WebPageRenderer.isPageStateless() line: 287	
+	WebPageRenderer.shouldRenderPageAndWriteResponse(RequestCycle, Url, Url) line: 329	
+	WebPageRenderer.respond(RequestCycle) line: 193	
+	RenderPageRequestHandler.respond(IRequestCycle) line: 175	
+	RequestCycle$HandlerExecutor.respond(IRequestHandler) line: 895	
+	RequestCycle$HandlerExecutor(RequestHandlerStack).execute(IRequestHandler) line: 64	
+	RequestCycle.execute(IRequestHandler) line: 265	
+	RequestCycle.processRequest() line: 222	
+	RequestCycle.processRequestAndDetach() line: 293	
+	WicketFilter.processRequestCycle(RequestCycle, WebResponse, HttpServletRequest, HttpServletResponse, FilterChain) line: 261	
+	WicketFilter.processRequest(ServletRequest, ServletResponse, FilterChain) line: 203	
+	WicketFilter.doFilter(ServletRequest, ServletResponse, FilterChain) line: 284	
+	ApplicationFilterChain.internalDoFilter(ServletRequest, ServletResponse) line: 239	
+	ApplicationFilterChain.doFilter(ServletRequest, ServletResponse) line: 206	
+	StandardWrapperValve.invoke(Request, Response) line: 217	
+	StandardContextValve.invoke(Request, Response) line: 106	
+	NonLoginAuthenticator(AuthenticatorBase).invoke(Request, Response) line: 502	
+	StandardHostValve.invoke(Request, Response) line: 142	
+	ErrorReportValve.invoke(Request, Response) line: 79	
+	AccessLogValve(AbstractAccessLogValve).invoke(Request, Response) line: 616	
+	StandardEngineValve.invoke(Request, Response) line: 88	
+	CoyoteAdapter.service(Request, Response) line: 518	
+	Http11NioProcessor(AbstractHttp11Processor<S>).process(SocketWrapper<S>) line: 1091	
+	Http11NioProtocol$Http11ConnectionHandler(AbstractProtocol$AbstractConnectionHandler<S,P>).process(SocketWrapper<S>, SocketStatus) line: 673	
+	NioEndpoint$SocketProcessor.doRun() line: 1500	
+	NioEndpoint$SocketProcessor.run() line: 1456	
+	ThreadPoolExecutor(ThreadPoolExecutor).runWorker(ThreadPoolExecutor$Worker) line: 1145	
+	ThreadPoolExecutor$Worker.run() line: 615	
+	TaskThread$WrappingRunnable.run() line: 61	
+	TaskThread(Thread).run() line: 745	
+
+/c
+/ stack
+/s
+	ModalWindow$CloseButtonBehavior(AbstractDefaultAjaxBehavior).renderHead(Component, IHeaderResponse) line: 94	
+/ or	,
+	AjaxLink$1(AjaxEventBehavior).renderHead(Component, IHeaderResponse) line: 94	
+	ModalWindow(Component).internalRenderHead(HtmlHeaderContainer) line: 2727	
+			// Then ask all behaviors
+			for (Behavior behavior : getBehaviors())
+			{
+				if (isBehaviorAccepted(behavior))
+				{
+					if (response.wasRendered(behavior) == false)
+					{
+						behavior.renderHead(this, response);
+/cb
+	ChildFirstHeaderRenderStrategy$1.component(Component, IVisit<Void>) line: 85	
+			new DeepChildFirstVisitor()
+			{
+				@Override
+				public void component(final Component component, final IVisit<Void> visit)
+				{
+					if (component != rootComponent)
+					{
+						component.internalRenderHead(headerContainer);									<-
+/cb
+	ChildFirstHeaderRenderStrategy$1(DeepChildFirstVisitor).visit(Component, Visit<Void>) line: 96	
+		// visit "this"
+		component(rootComponent, visit);
+/cb
+	ChildFirstHeaderRenderStrategy$1(DeepChildFirstVisitor).visit(Component, Visit<Void>) line: 87	
+	ChildFirstHeaderRenderStrategy$1(DeepChildFirstVisitor).visit(Component) line: 51	
+
+	ChildFirstHeaderRenderStrategy.renderChildHeaders(HtmlHeaderContainer, Component) line: 78	
+			new DeepChildFirstVisitor()
+			{
+				@Override
+				public void component(final Component component, final IVisit<Void> visit)
+				{
+					if (component != rootComponent)
+					{
+						component.internalRenderHead(headerContainer);
+/cb
+	ChildFirstHeaderRenderStrategy.renderHeader(HtmlHeaderContainer, HtmlHeaderContainer$HeaderStreamState, Component) line: 57	
+		// Then its child hierarchy
+		renderChildHeaders(headerContainer, rootComponent);
+/cb
+	HtmlHeaderContainer.onComponentTagBody(MarkupStream, ComponentTag) line: 171	
+			// Render the header sections of all components on the page
+			AbstractHeaderRenderStrategy.get().renderHeader(this,
+				new HeaderStreamState(markupStream, openTag), getPage());
+/cb
+	DefaultMarkupSourcingStrategy.onComponentTagBody(Component, MarkupStream, ComponentTag) line: 70	
+	HtmlHeaderContainer(Component).internalRenderComponent() line: 2565	
+				renderComponentTag(tag);									/ eerst de tag	,
+			}
+			markupStream.next();
+
+			// Render the body only if open-body-close. Do not render if open-close.
+			if (tag.isOpen())
+			{
+				// Render the body. The default strategy will simply call the component's
+				// onComponentTagBody() implementation.
+				getMarkupSourcingStrategy().onComponentTagBody(this, markupStream, tag);		/ dan de body	,
+/cb
+	HtmlHeaderContainer(MarkupContainer).onRender() line: 1698	
+	HtmlHeaderContainer(Component).internalRender() line: 2380	
+	HtmlHeaderContainer(Component).render() line: 2308	
+	ModalWindowMyPage(MarkupContainer).renderNext(MarkupStream) line: 1524	
+	ModalWindowMyPage(MarkupContainer).renderAll(MarkupStream, ComponentTag) line: 1759	
+	ModalWindowMyPage(Page).onRender() line: 879	
+	ModalWindowMyPage(WebPage).onRender() line: 141	
+	ModalWindowMyPage(Component).internalRender() line: 2380	
+	ModalWindowMyPage(Component).render() line: 2308	
+	ModalWindowMyPage(Page).renderPage() line: 1018	
+	WebPageRenderer.renderPage(Url, RequestCycle) line: 124	
+	WebPageRenderer.respond(RequestCycle) line: 236	
+	RenderPageRequestHandler.respond(IRequestCycle) line: 175	
+	RequestCycle$HandlerExecutor.respond(IRequestHandler) line: 895	
+	RequestCycle$HandlerExecutor(RequestHandlerStack).execute(IRequestHandler) line: 64	
+	RequestCycle.execute(IRequestHandler) line: 265	
+	RequestCycle.processRequest() line: 222	
+	RequestCycle.processRequestAndDetach() line: 293	
+	WicketFilter.processRequestCycle(RequestCycle, WebResponse, HttpServletRequest, HttpServletResponse, FilterChain) line: 261	
+	WicketFilter.processRequest(ServletRequest, ServletResponse, FilterChain) line: 203	
+	WicketFilter.doFilter(ServletRequest, ServletResponse, FilterChain) line: 284	
+	ApplicationFilterChain.internalDoFilter(ServletRequest, ServletResponse) line: 239	
+	ApplicationFilterChain.doFilter(ServletRequest, ServletResponse) line: 206	
+	StandardWrapperValve.invoke(Request, Response) line: 217	
+	StandardContextValve.invoke(Request, Response) line: 106	
+	NonLoginAuthenticator(AuthenticatorBase).invoke(Request, Response) line: 502	
+	StandardHostValve.invoke(Request, Response) line: 142	
+	ErrorReportValve.invoke(Request, Response) line: 79	
+	AccessLogValve(AbstractAccessLogValve).invoke(Request, Response) line: 616	
+	StandardEngineValve.invoke(Request, Response) line: 88	
+	CoyoteAdapter.service(Request, Response) line: 518	
+	Http11NioProcessor(AbstractHttp11Processor<S>).process(SocketWrapper<S>) line: 1091	
+	Http11NioProtocol$Http11ConnectionHandler(AbstractProtocol$AbstractConnectionHandler<S,P>).process(SocketWrapper<S>, SocketStatus) line: 673	
+	NioEndpoint$SocketProcessor.doRun() line: 1500	
+	NioEndpoint$SocketProcessor.run() line: 1456	
+	ThreadPoolExecutor(ThreadPoolExecutor).runWorker(ThreadPoolExecutor$Worker) line: 1145	
+	ThreadPoolExecutor$Worker.run() line: 615	
+	TaskThread$WrappingRunnable.run() line: 61	
+	TaskThread(Thread).run() line: 745	
+/ debug	, 
+/s
+AjaxLink$1(AjaxEventBehavior).renderHead(Component, IHeaderResponse) line: 94	
+		super.renderHead(component, response);
+
+		if (component.isEnabledInHierarchy())
+		{
+			CharSequence js = getCallbackScript(component);	/ component=[AjaxLink [Component id = show]]
+Wicket.Ajax.ajax({"u":"./modal-mywindow?11-1.IBehaviorListener.0-show","c":"show2e","e":"click"});
+			response.render(OnDomReadyHeaderItem.forScript(js.toString()));
+/s
+OnDomReadyHeaderItem.forScript(CharSequence) line: 47	
+		return new OnDomReadyHeaderItem(javaScript);
+/t
+/s
+ResourceAggregator.render(HeaderItem) line: 258	
+		if (item instanceof OnDomReadyHeaderItem || item instanceof OnEventHeaderItem)
+		{
+			renderDependencies(item, new LinkedHashSet<HeaderItem>());
+			domReadyItemsToBeRendered.add(item);
+
+/c
+/ stack
+/s
+	AjaxLink$1(AjaxEventBehavior).renderHead(Component, IHeaderResponse) line: 94	
+		super.renderHead(component, response);
+
+		if (component.isEnabledInHierarchy())	/ component=[AjaxLink [Component id = show2]]
+		{
+			CharSequence js = getCallbackScript(component);
+Wicket.Ajax.ajax({"u":"./modal-mywindow?11-1.IBehaviorListener.0-show2","c":"show22f","e":"click"});
+			response.render(OnDomReadyHeaderItem.forScript(js.toString()));
+/cb
+	ModalWindowMyPage$8(Component).internalRenderHead(HtmlHeaderContainer) line: 2727	
+	ChildFirstHeaderRenderStrategy$1.component(Component, IVisit<Void>) line: 85	
+	ChildFirstHeaderRenderStrategy$1(DeepChildFirstVisitor).visit(Component, Visit<Void>) line: 96	
+	ChildFirstHeaderRenderStrategy$1(DeepChildFirstVisitor).visit(Component, Visit<Void>) line: 87	
+	ChildFirstHeaderRenderStrategy$1(DeepChildFirstVisitor).visit(Component) line: 51	
+	ChildFirstHeaderRenderStrategy.renderChildHeaders(HtmlHeaderContainer, Component) line: 78	
+	ChildFirstHeaderRenderStrategy.renderHeader(HtmlHeaderContainer, HtmlHeaderContainer$HeaderStreamState, Component) line: 57	
+	HtmlHeaderContainer.onComponentTagBody(MarkupStream, ComponentTag) line: 171	
+	DefaultMarkupSourcingStrategy.onComponentTagBody(Component, MarkupStream, ComponentTag) line: 70	
+	HtmlHeaderContainer(Component).internalRenderComponent() line: 2565	
+	HtmlHeaderContainer(MarkupContainer).onRender() line: 1698	
+	HtmlHeaderContainer(Component).internalRender() line: 2380	
+	HtmlHeaderContainer(Component).render() line: 2308	
+	ModalWindowMyPage(MarkupContainer).renderNext(MarkupStream) line: 1524	
+	ModalWindowMyPage(MarkupContainer).renderAll(MarkupStream, ComponentTag) line: 1759	
+	ModalWindowMyPage(Page).onRender() line: 879	
+	ModalWindowMyPage(WebPage).onRender() line: 141	
+	ModalWindowMyPage(Component).internalRender() line: 2380	
+	ModalWindowMyPage(Component).render() line: 2308	
+	ModalWindowMyPage(Page).renderPage() line: 1018	
+	WebPageRenderer.renderPage(Url, RequestCycle) line: 124	
+	WebPageRenderer.respond(RequestCycle) line: 236	
+	RenderPageRequestHandler.respond(IRequestCycle) line: 175	
+	RequestCycle$HandlerExecutor.respond(IRequestHandler) line: 895	
+	RequestCycle$HandlerExecutor(RequestHandlerStack).execute(IRequestHandler) line: 64	
+	RequestCycle.execute(IRequestHandler) line: 265	
+	RequestCycle.processRequest() line: 222	
+	RequestCycle.processRequestAndDetach() line: 293	
+	WicketFilter.processRequestCycle(RequestCycle, WebResponse, HttpServletRequest, HttpServletResponse, FilterChain) line: 261	
+	WicketFilter.processRequest(ServletRequest, ServletResponse, FilterChain) line: 203	
+	WicketFilter.doFilter(ServletRequest, ServletResponse, FilterChain) line: 284	
+	ApplicationFilterChain.internalDoFilter(ServletRequest, ServletResponse) line: 239	
+	ApplicationFilterChain.doFilter(ServletRequest, ServletResponse) line: 206	
+	StandardWrapperValve.invoke(Request, Response) line: 217	
+	StandardContextValve.invoke(Request, Response) line: 106	
+	NonLoginAuthenticator(AuthenticatorBase).invoke(Request, Response) line: 502	
+	StandardHostValve.invoke(Request, Response) line: 142	
+	ErrorReportValve.invoke(Request, Response) line: 79	
+	AccessLogValve(AbstractAccessLogValve).invoke(Request, Response) line: 616	
+	StandardEngineValve.invoke(Request, Response) line: 88	
+	CoyoteAdapter.service(Request, Response) line: 518	
+	Http11NioProcessor(AbstractHttp11Processor<S>).process(SocketWrapper<S>) line: 1091	
+	Http11NioProtocol$Http11ConnectionHandler(AbstractProtocol$AbstractConnectionHandler<S,P>).process(SocketWrapper<S>, SocketStatus) line: 673	
+	NioEndpoint$SocketProcessor.doRun() line: 1500	
+	NioEndpoint$SocketProcessor.run() line: 1456	
+	ThreadPoolExecutor(ThreadPoolExecutor).runWorker(ThreadPoolExecutor$Worker) line: 1145	
+	ThreadPoolExecutor$Worker.run() line: 615	
+	TaskThread$WrappingRunnable.run() line: 61	
+	TaskThread(Thread).run() line: 745	
+
+/c
+/ stack
+/s
+	JavaScriptUtils.writeJavaScriptUrl(Response, CharSequence, String, boolean, String, boolean) line: 156	
+	JavaScriptReferenceHeaderItem(JavaScriptHeaderItem).internalRenderJavaScriptReference(Response, String, String, boolean, String, String, boolean) line: 367	
+		JavaScriptUtils.writeJavaScriptUrl(response, escapedUrl, id, defer, charset, async);
+/cb
+	JavaScriptReferenceHeaderItem.render(Response) line: 106	
+		internalRenderJavaScriptReference(response, getUrl(), getId(), isDefer(), getCharset(),
+			getCondition(), isAsync());
+/cb
+	HtmlHeaderContainer$1(HeaderResponse).render(HeaderItem) line: 54	
+/=
+	public void render(HeaderItem item)
+item=JavaScriptReferenceHeaderItem(scope: org.apache.wicket.resource.JQueryResourceReference; name: jquery/jquery-2.2.0.js; locale: null; style: null; variation: null, null)
+	ResourceAggregator.renderHeaderItems() line: 311	
+		for (RecordedHeaderItem curRenderItem : sortedItemsToBeRendered)
+		{
+			if (markItemRendered(curRenderItem.getItem()))
+			{
+				getRealResponse().render(curRenderItem.getItem());					<-
+/cb
+	ResourceAggregator.close() line: 280	
+		renderHeaderItems();
+/cb
+	HtmlHeaderContainer.onComponentTagBody(MarkupStream, ComponentTag) line: 176	
+			// Render the header sections of all components on the page
+			AbstractHeaderRenderStrategy.get().renderHeader(this,
+				new HeaderStreamState(markupStream, openTag), getPage());
+/d
+			// Close the header response before rendering the header container itself
+			// See https://issues.apache.org/jira/browse/WICKET-3728
+			headerResponse.close();														<-
+/cb
+	DefaultMarkupSourcingStrategy.onComponentTagBody(Component, MarkupStream, ComponentTag) line: 70	
+	HtmlHeaderContainer(Component).internalRenderComponent() line: 2565	
+	HtmlHeaderContainer(MarkupContainer).onRender() line: 1698	
+	HtmlHeaderContainer(Component).internalRender() line: 2380	
+	HtmlHeaderContainer(Component).render() line: 2308	
+	ModalWindowMyPage(MarkupContainer).renderNext(MarkupStream) line: 1524	
+	ModalWindowMyPage(MarkupContainer).renderAll(MarkupStream, ComponentTag) line: 1759	
+	ModalWindowMyPage(Page).onRender() line: 879	
+	ModalWindowMyPage(WebPage).onRender() line: 141	
+	ModalWindowMyPage(Component).internalRender() line: 2380	
+	ModalWindowMyPage(Component).render() line: 2308	
+	ModalWindowMyPage(Page).renderPage() line: 1018	
+	WebPageRenderer.renderPage(Url, RequestCycle) line: 124	
+	WebPageRenderer.respond(RequestCycle) line: 236	
+	RenderPageRequestHandler.respond(IRequestCycle) line: 175	
+	RequestCycle$HandlerExecutor.respond(IRequestHandler) line: 895	
+	RequestCycle$HandlerExecutor(RequestHandlerStack).execute(IRequestHandler) line: 64	
+	RequestCycle.execute(IRequestHandler) line: 265	
+	RequestCycle.processRequest() line: 222	
+	RequestCycle.processRequestAndDetach() line: 293	
+	WicketFilter.processRequestCycle(RequestCycle, WebResponse, HttpServletRequest, HttpServletResponse, FilterChain) line: 261	
+	WicketFilter.processRequest(ServletRequest, ServletResponse, FilterChain) line: 203	
+	WicketFilter.doFilter(ServletRequest, ServletResponse, FilterChain) line: 284	
+	ApplicationFilterChain.internalDoFilter(ServletRequest, ServletResponse) line: 239	
+	ApplicationFilterChain.doFilter(ServletRequest, ServletResponse) line: 206	
+	StandardWrapperValve.invoke(Request, Response) line: 217	
+	StandardContextValve.invoke(Request, Response) line: 106	
+	NonLoginAuthenticator(AuthenticatorBase).invoke(Request, Response) line: 502	
+	StandardHostValve.invoke(Request, Response) line: 142	
+	ErrorReportValve.invoke(Request, Response) line: 79	
+	AccessLogValve(AbstractAccessLogValve).invoke(Request, Response) line: 616	
+	StandardEngineValve.invoke(Request, Response) line: 88	
+	CoyoteAdapter.service(Request, Response) line: 518	
+	Http11NioProcessor(AbstractHttp11Processor<S>).process(SocketWrapper<S>) line: 1091	
+	Http11NioProtocol$Http11ConnectionHandler(AbstractProtocol$AbstractConnectionHandler<S,P>).process(SocketWrapper<S>, SocketStatus) line: 673	
+	NioEndpoint$SocketProcessor.doRun() line: 1500	
+	NioEndpoint$SocketProcessor.run() line: 1456	
+	ThreadPoolExecutor(ThreadPoolExecutor).runWorker(ThreadPoolExecutor$Worker) line: 1145	
+	ThreadPoolExecutor$Worker.run() line: 615	
+	TaskThread$WrappingRunnable.run() line: 61	
+	TaskThread(Thread).run() line: 745	
+/ debug
+/s
+JavaScriptUtils.writeJavaScriptUrl(Response, CharSequence, String, boolean, String, boolean) line: 156	
+		response.write("<script type=\"text/javascript\" ");
+		response.write("src=\"");
+		response.write(url); 
+url=
+./wicket/resource/org.apache.wicket.resource.JQueryResourceReference/jquery/jquery-2.2.0-ver-1484236344000.js
+/ or	,
+./wicket/resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/res/js/wicket-event-jquery-ver-1484236344000.js
+/ or	,
+./wicket/resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/res/js/wicket-ajax-jquery-ver-1484236344000.js
+/ or	,
+./wicket/resource/org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow/res/modal-ver-1484236344000.js
+		response.write("\"></script>");
+		response.write("\n");
+
+/c
+	JavaScriptUtils.writeOpenTag(Response, String) line: 231	
+	JavaScriptUtils.writeJavaScript(Response, CharSequence, String) line: 206	
+		writeOpenTag(response, id);													<-
+		response.write(Strings.replaceAll(text, "</", "<\\/"));			/ text=Wicket.Ajax.baseUrl="modal-mywindow?13";
+		writeCloseTag(response);
+/cb
+	JavaScriptContentHeaderItem.render(Response) line: 71	
+		JavaScriptUtils.writeJavaScript(response, getJavaScript(), getId());
+/cb
+	HtmlHeaderContainer$1(HeaderResponse).render(HeaderItem) line: 54	
+		if (!closed && !wasItemRendered(item))
+		{
+			item.render(getResponse());
+/cb
+	ResourceAggregator.renderHeaderItems() line: 311	
+		for (RecordedHeaderItem curRenderItem : sortedItemsToBeRendered) / curRenderItem=JavaScriptHeaderItem(Wicket.Ajax.baseUrl="modal-mywindow?13";)
+/ TODO
+		{
+			if (markItemRendered(curRenderItem.getItem()))
+			{
+				getRealResponse().render(curRenderItem.getItem());
+/cb
+	ResourceAggregator.close() line: 280	
+		renderHeaderItems();
+/cb
+	HtmlHeaderContainer.onComponentTagBody(MarkupStream, ComponentTag) line: 176	
+	DefaultMarkupSourcingStrategy.onComponentTagBody(Component, MarkupStream, ComponentTag) line: 70	
+	HtmlHeaderContainer(Component).internalRenderComponent() line: 2565	
+	HtmlHeaderContainer(MarkupContainer).onRender() line: 1698	
+	HtmlHeaderContainer(Component).internalRender() line: 2380	
+	HtmlHeaderContainer(Component).render() line: 2308	
+	ModalWindowMyPage(MarkupContainer).renderNext(MarkupStream) line: 1524	
+	ModalWindowMyPage(MarkupContainer).renderAll(MarkupStream, ComponentTag) line: 1759	
+	ModalWindowMyPage(Page).onRender() line: 879	
+	ModalWindowMyPage(WebPage).onRender() line: 141	
+	ModalWindowMyPage(Component).internalRender() line: 2380	
+	ModalWindowMyPage(Component).render() line: 2308	
+	ModalWindowMyPage(Page).renderPage() line: 1018	
+	WebPageRenderer.renderPage(Url, RequestCycle) line: 124	
+	WebPageRenderer.respond(RequestCycle) line: 236	
+	RenderPageRequestHandler.respond(IRequestCycle) line: 175	
+	RequestCycle$HandlerExecutor.respond(IRequestHandler) line: 895	
+	RequestCycle$HandlerExecutor(RequestHandlerStack).execute(IRequestHandler) line: 64	
+	RequestCycle.execute(IRequestHandler) line: 265	
+	RequestCycle.processRequest() line: 222	
+	RequestCycle.processRequestAndDetach() line: 293	
+	WicketFilter.processRequestCycle(RequestCycle, WebResponse, HttpServletRequest, HttpServletResponse, FilterChain) line: 261	
+	WicketFilter.processRequest(ServletRequest, ServletResponse, FilterChain) line: 203	
+	WicketFilter.doFilter(ServletRequest, ServletResponse, FilterChain) line: 284	
+	ApplicationFilterChain.internalDoFilter(ServletRequest, ServletResponse) line: 239	
+	ApplicationFilterChain.doFilter(ServletRequest, ServletResponse) line: 206	
+	StandardWrapperValve.invoke(Request, Response) line: 217	
+	StandardContextValve.invoke(Request, Response) line: 106	
+	NonLoginAuthenticator(AuthenticatorBase).invoke(Request, Response) line: 502	
+	StandardHostValve.invoke(Request, Response) line: 142	
+	ErrorReportValve.invoke(Request, Response) line: 79	
+	AccessLogValve(AbstractAccessLogValve).invoke(Request, Response) line: 616	
+	StandardEngineValve.invoke(Request, Response) line: 88	
+	CoyoteAdapter.service(Request, Response) line: 518	
+	Http11NioProcessor(AbstractHttp11Processor<S>).process(SocketWrapper<S>) line: 1091	
+	Http11NioProtocol$Http11ConnectionHandler(AbstractProtocol$AbstractConnectionHandler<S,P>).process(SocketWrapper<S>, SocketStatus) line: 673	
+	NioEndpoint$SocketProcessor.doRun() line: 1500	
+	NioEndpoint$SocketProcessor.run() line: 1456	
+	ThreadPoolExecutor(ThreadPoolExecutor).runWorker(ThreadPoolExecutor$Worker) line: 1145	
+	ThreadPoolExecutor$Worker.run() line: 615	
+	TaskThread$WrappingRunnable.run() line: 61	
+	TaskThread(Thread).run() line: 745	
+
+/c
+/ stack
+/s
+	ResourceAggregator.renderCombinedEventScripts() line: 321	
+	ResourceAggregator.close() line: 284	
+		renderHeaderItems();
+
+		if (RequestCycle.get().find(IPartialPageRequestHandler.class) == null)
+		{
+			renderCombinedEventScripts();												<-
+/cb
+	HtmlHeaderContainer.onComponentTagBody(MarkupStream, ComponentTag) line: 176	
+	DefaultMarkupSourcingStrategy.onComponentTagBody(Component, MarkupStream, ComponentTag) line: 70	
+	HtmlHeaderContainer(Component).internalRenderComponent() line: 2565	
+	HtmlHeaderContainer(MarkupContainer).onRender() line: 1698	
+	HtmlHeaderContainer(Component).internalRender() line: 2380	
+	HtmlHeaderContainer(Component).render() line: 2308	
+	ModalWindowMyPage(MarkupContainer).renderNext(MarkupStream) line: 1524	
+	ModalWindowMyPage(MarkupContainer).renderAll(MarkupStream, ComponentTag) line: 1759	
+	ModalWindowMyPage(Page).onRender() line: 879	
+	ModalWindowMyPage(WebPage).onRender() line: 141	
+	ModalWindowMyPage(Component).internalRender() line: 2380	
+	ModalWindowMyPage(Component).render() line: 2308	
+	ModalWindowMyPage(Page).renderPage() line: 1018	
+	WebPageRenderer.renderPage(Url, RequestCycle) line: 124	
+	WebPageRenderer.respond(RequestCycle) line: 236	
+	RenderPageRequestHandler.respond(IRequestCycle) line: 175	
+	RequestCycle$HandlerExecutor.respond(IRequestHandler) line: 895	
+	RequestCycle$HandlerExecutor(RequestHandlerStack).execute(IRequestHandler) line: 64	
+	RequestCycle.execute(IRequestHandler) line: 265	
+	RequestCycle.processRequest() line: 222	
+	RequestCycle.processRequestAndDetach() line: 293	
+	WicketFilter.processRequestCycle(RequestCycle, WebResponse, HttpServletRequest, HttpServletResponse, FilterChain) line: 261	
+	WicketFilter.processRequest(ServletRequest, ServletResponse, FilterChain) line: 203	
+	WicketFilter.doFilter(ServletRequest, ServletResponse, FilterChain) line: 284	
+	ApplicationFilterChain.internalDoFilter(ServletRequest, ServletResponse) line: 239	
+	ApplicationFilterChain.doFilter(ServletRequest, ServletResponse) line: 206	
+	StandardWrapperValve.invoke(Request, Response) line: 217	
+	StandardContextValve.invoke(Request, Response) line: 106	
+	NonLoginAuthenticator(AuthenticatorBase).invoke(Request, Response) line: 502	
+	StandardHostValve.invoke(Request, Response) line: 142	
+	ErrorReportValve.invoke(Request, Response) line: 79	
+	AccessLogValve(AbstractAccessLogValve).invoke(Request, Response) line: 616	
+	StandardEngineValve.invoke(Request, Response) line: 88	
+	CoyoteAdapter.service(Request, Response) line: 518	
+	Http11NioProcessor(AbstractHttp11Processor<S>).process(SocketWrapper<S>) line: 1091	
+	Http11NioProtocol$Http11ConnectionHandler(AbstractProtocol$AbstractConnectionHandler<S,P>).process(SocketWrapper<S>, SocketStatus) line: 673	
+	NioEndpoint$SocketProcessor.doRun() line: 1500	
+	NioEndpoint$SocketProcessor.run() line: 1456	
+	ThreadPoolExecutor(ThreadPoolExecutor).runWorker(ThreadPoolExecutor$Worker) line: 1145	
+	ThreadPoolExecutor$Worker.run() line: 615	
+	TaskThread$WrappingRunnable.run() line: 61	
+	TaskThread(Thread).run() line: 745	
+/ debug
+/s
+ResourceAggregator.renderCombinedEventScripts() line: 321	
+		for (HeaderItem curItem : domReadyItemsToBeRendered)
+
+this	ResourceAggregator  (id=10351)	
+	domReadyItemsToBeRendered	ArrayList<E>  (id=10356)	
+		[0]	OnDomReadyHeaderItem  (id=10352)	
+			javaScript	"Wicket.Ajax.ajax({"u":"./modal-mywindow?13-1.IBehaviorListener.0-show","c":"show3c","e":"click"});" (id=10354)	
+		[1]	OnDomReadyHeaderItem  (id=10357)	
+			javaScript	"Wicket.Ajax.ajax({"u":"./modal-mywindow?13-1.IBehaviorListener.0-show2","c":"show23d","e":"click"});" (id=10359)	
+
+		for (HeaderItem curItem : domReadyItemsToBeRendered)
+		{
+			if (markItemRendered(curItem))
+			{
+				combinedScript.append('\n');
+				if (curItem instanceof OnDomReadyHeaderItem)
+				{
+					combinedScript.append(((OnDomReadyHeaderItem)curItem).getJavaScript());
+				} else if (curItem instanceof OnEventHeaderItem)
+				{
+					combinedScript.append(((OnEventHeaderItem)curItem).getCompleteJavaScript());
+				}
+				combinedScript.append(';');
+			}
+		}
+		if (combinedScript.length() > 0)
+		{
+			combinedScript.append("\nWicket.Event.publish(Wicket.Event.Topic.AJAX_HANDLERS_BOUND);");
+			getRealResponse().render(
+				OnDomReadyHeaderItem.forScript(combinedScript.append('\n').toString()));
+combinedScript	StringBuilder  (id=10508)	
+
+Wicket.Ajax.ajax({"u":"./modal-mywindow?13-1.IBehaviorListener.0-show","c":"show3c","e":"click"});;
+Wicket.Ajax.ajax({"u":"./modal-mywindow?13-1.IBehaviorListener.0-show2","c":"show23d","e":"click"});;
+Wicket.Event.publish(Wicket.Event.Topic.AJAX_HANDLERS_BOUND);
+/s
+HtmlHeaderContainer$1(HeaderResponse).render(HeaderItem) line: 54	
+			item.render(getResponse());
+/s
+OnDomReadyHeaderItem.render(Response) line: 83	
+/=
+	public void render(Response response)
+response=
+<script type="text/javascript" src="./wicket/resource/org.apache.wicket.resource.JQueryResourceReference/jquery/jquery-2.2.0-ver-1484236344000.js"></script>
+<script type="text/javascript" src="./wicket/resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/res/js/wicket-event-jquery-ver-1484236344000.js"></script>
+<script type="text/javascript" src="./wicket/resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/res/js/wicket-ajax-jquery-ver-1484236344000.js"></script>
+<script type="text/javascript" src="./wicket/resource/org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow/res/modal-ver-1484236344000.js"></script>
+<link rel="stylesheet" type="text/css" href="./wicket/resource/org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow/res/modal-ver-1484236344000.css" />
+<script type="text/javascript" id="wicket-ajax-base-url">
+/*<![CDATA[*/
+Wicket.Ajax.baseUrl="modal-mywindow?13";
+/*]]>*/
+</script>
+
+		CharSequence js = getJavaScript();
+Wicket.Ajax.ajax({"u":"./modal-mywindow?13-1.IBehaviorListener.0-show","c":"show3c","e":"click"});;
+Wicket.Ajax.ajax({"u":"./modal-mywindow?13-1.IBehaviorListener.0-show2","c":"show23d","e":"click"});;
+Wicket.Event.publish(Wicket.Event.Topic.AJAX_HANDLERS_BOUND);
+
+		if (Strings.isEmpty(js) == false)
+		{
+			JavaScriptUtils.writeJavaScript(response, "Wicket.Event.add(window, \"domready\", " +
+				"function(event) { " + js + ";});");
+/ CREATE DOMREADY JAVASCRIPT
+
+response=
+<script type="text/javascript" src="./wicket/resource/org.apache.wicket.resource.JQueryResourceReference/jquery/jquery-2.2.0-ver-1484236344000.js"></script>
+<script type="text/javascript" src="./wicket/resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/res/js/wicket-event-jquery-ver-1484236344000.js"></script>
+<script type="text/javascript" src="./wicket/resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/res/js/wicket-ajax-jquery-ver-1484236344000.js"></script>
+<script type="text/javascript" src="./wicket/resource/org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow/res/modal-ver-1484236344000.js"></script>
+<link rel="stylesheet" type="text/css" href="./wicket/resource/org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow/res/modal-ver-1484236344000.css" />
+<script type="text/javascript" id="wicket-ajax-base-url">
+/*<![CDATA[*/
+Wicket.Ajax.baseUrl="modal-mywindow?13";
+/*]]>*/
+</script>
+
+<script type="text/javascript" >
+/*<![CDATA[*/
+Wicket.Event.add(window, "domready", function(event) { 
+Wicket.Ajax.ajax({"u":"./modal-mywindow?13-1.IBehaviorListener.0-show","c":"show3c","e":"click"});;
+Wicket.Ajax.ajax({"u":"./modal-mywindow?13-1.IBehaviorListener.0-show2","c":"show23d","e":"click"});;
+Wicket.Event.publish(Wicket.Event.Topic.AJAX_HANDLERS_BOUND);
+;});
+/*]]>*/
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/ 7	. 
+
+/ ws workspace-wicket7_7
+/ proj wicket-examples-step-by-step
+/ page, 
+package org.apache.wicket.examples.ajax.builtin.modal;
+public class ModalWindowMyPage extends WebPage {
+
+/ we hebben gegeven	,
+http://localhost:9090/wicket-examples-step-by-step/ajax/modal-mywindow
+/ we click 'Show modal'	, 
+
+/stack
+/s
+	MountedMapper(AbstractBookmarkableMapper).processListener(PageComponentInfo, Class<IRequestablePage>, PageParameters) line: 318	
+			listenerInterface = requestListenerInterfaceFromString(componentInfo.getListenerInterface());
+			return new ListenerInterfaceRequestHandler(provider, listenerInterface,
+				componentInfo.getBehaviorId());
+/cb
+	MountedMapper(AbstractBookmarkableMapper).mapRequest(Request) line: 370	
+				// with both page instance and component+listener this is a listener interface URL
+				return processListener(info, pageClass, pageParameters);	/ pageClass=class org.apache.wicket.examples.ajax.builtin.modal.ModalWindowMyPage
+/cb
+	SystemMapper(CompoundRequestMapper).mapRequest(Request) line: 150	
+			IRequestHandler handler = mapper.mapRequest(request);	/ mapper=MountedMapper [mountSegments=modal-mywindow]
+/cb
+	RequestCycle.resolveRequestHandler() line: 189	
+		return requestMapper.mapRequest(request);
+/cb
+	RequestCycle.processRequest() line: 219	
+			IRequestHandler handler = resolveRequestHandler();		/ vind de controller	,
+/cb
+	RequestCycle.processRequestAndDetach() line: 293	
+	WicketFilter.processRequestCycle(RequestCycle, WebResponse, HttpServletRequest, HttpServletResponse, FilterChain) line: 261	
+	WicketFilter.processRequest(ServletRequest, ServletResponse, FilterChain) line: 203	
+	WicketFilter.doFilter(ServletRequest, ServletResponse, FilterChain) line: 284	
+	ApplicationFilterChain.internalDoFilter(ServletRequest, ServletResponse) line: 239	
+	ApplicationFilterChain.doFilter(ServletRequest, ServletResponse) line: 206	
+	StandardWrapperValve.invoke(Request, Response) line: 217	
+	StandardContextValve.invoke(Request, Response) line: 106	
+	NonLoginAuthenticator(AuthenticatorBase).invoke(Request, Response) line: 502	
+	StandardHostValve.invoke(Request, Response) line: 142	
+	ErrorReportValve.invoke(Request, Response) line: 79	
+	AccessLogValve(AbstractAccessLogValve).invoke(Request, Response) line: 616	
+	StandardEngineValve.invoke(Request, Response) line: 88	
+	CoyoteAdapter.service(Request, Response) line: 518	
+	Http11NioProcessor(AbstractHttp11Processor<S>).process(SocketWrapper<S>) line: 1091	
+	Http11NioProtocol$Http11ConnectionHandler(AbstractProtocol$AbstractConnectionHandler<S,P>).process(SocketWrapper<S>, SocketStatus) line: 673	
+	NioEndpoint$SocketProcessor.doRun() line: 1500	
+	NioEndpoint$SocketProcessor.run() line: 1456	
+	ThreadPoolExecutor(ThreadPoolExecutor).runWorker(ThreadPoolExecutor$Worker) line: 1145	
+	ThreadPoolExecutor$Worker.run() line: 615	
+	TaskThread$WrappingRunnable.run() line: 61	
+	TaskThread(Thread).run() line: 745	
+
+/ debug
+/s
+MountedMapper(AbstractBookmarkableMapper).processListener(PageComponentInfo, Class<IRequestablePage>, PageParameters) line: 318	
+
+			listenerInterface = requestListenerInterfaceFromString(componentInfo.getListenerInterface());
+
+pageComponentInfo	org.apache.wicket.request.mapper.info.PageComponentInfo  (id=9919)	
+	componentInfo	org.apache.wicket.request.mapper.info.ComponentInfo  (id=9925)	
+		behaviorId	java.lang.Integer  (id=10053)				0
+		componentPath	"show" (id=10054)	
+		listenerInterface	"IBehaviorListener" (id=10055)	
+		renderCount	java.lang.Integer  (id=9923)				1
+	pageInfo	org.apache.wicket.request.mapper.info.PageInfo  (id=9930)	
+		pageId	java.lang.Integer  (id=10056)					6
+/ we hebben gedaan	, 
+Request URL:http://localhost:9090/wicket-examples-step-by-step/ajax/modal-mywindow?6-1.IBehaviorListener.0-show&_=1492932214225
+/ dus IBehaviorListener nummer 0	, 
+/ page id 6	, render count 1	, 
+/ dus IBehaviorListener nummer 0	, 
+/ page id 6	, render count 1	, 
+/ dus IBehaviorListener nummer 0	, 
+/ page id 6	, render count 1	, 
+/ dus IBehaviorListener nummer 0	, 
+/ page id 6	, render count 1	, 
+/ dus IBehaviorListener nummer 0	, 
+/ page id 6	, render count 1	, 
+/ dus IBehaviorListener nummer 0	, 
+/ page id 6	, render count 1	, 
+																					/ show constants in variables view in eclipse
+listenerInterface	org.apache.wicket.RequestListenerInterface  (id=9926)	
+	interfaces	java.util.Collections$SynchronizedMap<K,V>  (id=9987)			/ static list
+		[0]	java.util.HashMap$Entry<K,V>  (id=9991)	
+			key	"IFormSubmitListener" (id=9997)	
+			value	org.apache.wicket.RequestListenerInterface  (id=9998)	
+		[1]	java.util.HashMap$Entry<K,V>  (id=9992)	
+			key	"IBehaviorListener" (id=9938)	
+			value	org.apache.wicket.RequestListenerInterface  (id=9926)		/ we zijn in deze	,
+		[2]	java.util.HashMap$Entry<K,V>  (id=9993)	
+			key	"IOnChangeListener" (id=9999)	
+			value	org.apache.wicket.RequestListenerInterface  (id=10000)	
+		[3]	java.util.HashMap$Entry<K,V>  (id=9994)	
+			key	"ILinkListener" (id=10001)	
+			value	org.apache.wicket.RequestListenerInterface  (id=10002)	
+		[4]	java.util.HashMap$Entry<K,V>  (id=9995)	
+			key	"IResourceListener" (id=10003)	
+			value	org.apache.wicket.RequestListenerInterface  (id=10004)	
+	log	org.apache.logging.slf4j.Log4jLogger  (id=9988)	
+	includeRenderCount	true	
+	listenerInterfaceClass	java.lang.Class<T> (org.apache.wicket.behavior.IBehaviorListener) (id=6036)	
+	method	java.lang.reflect.Method  (id=9937)	/ public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()
+	name	"IBehaviorListener" (id=9938)	
+	renderPageAfterInvocation	true	
+
+			return new ListenerInterfaceRequestHandler(provider, listenerInterface, 			/ de controller	,
+				componentInfo.getBehaviorId());
+
+/ Intermezzo
+
+/**
+ * Listens for requests to behaviors. When {@link org.apache.wicket.behavior.Behavior}s are
+ * 'enriched' with this interface, they can receive requests themselves. You can use this for
+ * example to implement AJAX behavior, though you'll probably want to extend from
+ * {@link org.apache.wicket.behavior.AbstractAjaxBehavior} directly instead in that case.
+ * 
+ * @author Eelco Hillenius
+ */
+public interface IBehaviorListener extends IRequestListener
+{
+	/** Behavior listener interface */
+	public static final RequestListenerInterface INTERFACE = new RequestListenerInterface(
+		IBehaviorListener.class);
+
+	/**
+	 * Called when a request to a behavior is received.
+	 */
+	void onRequest();
+}
+
+ * Request handler that invokes the listener interface on component and renders page afterwards.
+ */
+public class ListenerInterfaceRequestHandler	/ misnomer: moet zijn RequestListenerInterfaceHandler 
+														/ WH is dit uit Spring MVC: RequestDispatcher	, front-end controller	, deze gaat de echte 
+															/ controller vinden, dit kan een behavior zijn	, 
+	@Override
+	public void respond(final IRequestCycle requestCycle)
+	{
+		invokeListener();
+	}
+
+	private void invokeListener()
+	{
+		if (getBehaviorIndex() == null)
+		{
+			listenerInterface.invoke(getComponent());
+		}
+		else
+		{
+				Behavior behavior = getComponent().getBehaviorById(behaviorId);
+				listenerInterface.invoke(getComponent(), behavior);
+		}
+	}
+
+$ vi RequestListenerInterface.java
+
+	public final void invoke(final IRequestableComponent rcomponent)
+	{
+		internalInvoke(component, component);
+					 	not used 	used	
+	}
+
+	public final void invoke(final IRequestableComponent rcomponent, final Behavior behavior)
+	{
+		internalInvoke(component, behavior);
+					 	not used	used	
+	}
+
+	private void internalInvoke(final Component component, final Object target)
+	{
+			method.invoke(target);		/ dus call target.method
+
+
+/ Einde Intermezzo
+
+/ Intermezzo
+
+$ vi ModalWindowMyPage.java
+
+		modalWindow.setPageCreator(new ModalWindow.PageCreator() {
+			@Override
+			public Page createPage() {
+				return new ModalContentMyPage(){
+					@Override
+					protected void click(AjaxRequestTarget ajaxRequestTarget) {
+						...
+					}
+				};
+
+$ vi ModalContentMyPage.java
+
+public abstract class ModalContentMyPage extends WebPage {
+	
+	public ModalContentMyPage() {
+		AjaxLink<Void>close=new AjaxLink<Void>("close") {
+			@Override
+			public void onClick(AjaxRequestTarget ajaxRequestTarget) {
+				click(ajaxRequestTarget);		
+			}
+		};
+		add(close);
+	}
+	protected abstract void click(AjaxRequestTarget ajaxRequestTarget);
+}
+
+
+public abstract class AjaxLink<T> extends AbstractLink implements IAjaxLink, IGenericComponent<T>
+
+	protected void onInitialize()
+	{
+		super.onInitialize();
+		add(newAjaxEventBehavior("click"));
+	}
+
+	protected AjaxEventBehavior newAjaxEventBehavior(String event)
+	{
+		return new AjaxEventBehavior(event)
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onEvent(AjaxRequestTarget target)
+			{
+				onClick(target);
+			}
+
+			@Override
+			protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
+			{
+				super.updateAjaxAttributes(attributes);
+				AjaxLink.this.updateAjaxAttributes(attributes);
+			}
+		};
+	}
+
+/ Dus hier de inst van een anonymous ext van 
+AjaxEventBehavior	, die extends
+AbstractDefaultAjaxBehavior	, die extends
+AbstractAjaxBehavior	, die extends
+Behavior
+Object
+
+/ Einde Intermezzo
+
+/ 7	. 
+
+/ we hebben click op link 'Show modal' op modal-mywindow
+
+/ stack
+
+ModalWindow.show(IPartialPageRequestHandler) line: 366	
+		if (shown == false)
+		{
+			getContent().setVisible(true);
+			target.add(this);
+			target.appendJavaScript(getWindowOpenJavaScript());
+			shown = true;
+/cb
+	ModalWindowMyPage$1.onClick(AjaxRequestTarget) line: 27	
+/=
+		AjaxLink<Void>show=new AjaxLink<Void>("show") {
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				modalWindow.show(target);
+/cb
+	AjaxLink$1.onEvent(AjaxRequestTarget) line: 84	
+/=
+	protected AjaxEventBehavior newAjaxEventBehavior(String event)
+	{
+		return new AjaxEventBehavior(event)
+		{
+			@Override
+			protected void onEvent(AjaxRequestTarget target)
+			{
+				onClick(target);											<-
+/cb
+	AjaxLink$1(AjaxEventBehavior).respond(AjaxRequestTarget) line: 155	
+		onEvent(target);
+/cb
+	AjaxLink$1(AbstractDefaultAjaxBehavior).onRequest() line: 587	
+		WebApplication app = (WebApplication)getComponent().getApplication();				/ AjaxApplication	,
+		AjaxRequestTarget target = app.newAjaxRequestTarget(getComponent().getPage());	/ behavior heeft de component=AjaxLink	, see (*) beneden	, 
+																							/ en de AjaxRequestTarget gaat per page	,
+		RequestCycle requestCycle = RequestCycle.get();
+		requestCycle.scheduleRequestHandlerAfterCurrent(target);			/ TODO
+
+		respond(target);
+/cb
+	RequestListenerInterface.internalInvoke(Component, Object) line: 258	
+			method.invoke(target);	/ method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()
+									/ IBehaviorListener: kan requests voor behaviors ontvangen . Als een behavior zelf een IBehaviorListener is	, kan de behavior requests ontvangen	, de onRequest method wordt dan called	,
+		/ en: public abstract class AbstractAjaxBehavior extends Behavior implements IBehaviorListener	, dus een AbstractAjaxBehavior luistert naar requests op zichzelf	, 
+		/ dus de IBehaviorListener is de Behavior zelf	,
+
+/ zo is Form een IFormSubmitListener	, dus een Form ontvangt  de requests	,
+/ en CheckBox is een IOnChangeListener	,
+
+										/ target=org.apache.wicket.ajax.markup.html.AjaxLink$1@4fef965f
+									/ dus call target.method
+/cb
+	RequestListenerInterface.invoke(IRequestableComponent, Behavior) line: 231	
+		internalInvoke(component, behavior);
+/cb
+	ListenerInterfaceRequestHandler.invokeListener() line: 248	
+		if (getBehaviorIndex() == null)
+/n
+		else
+				Behavior behavior = getComponent().getBehaviorById(behaviorId);	/ org.apache.wicket.ajax.markup.html.AjaxLink$1@4fef965f
+				listenerInterface.invoke(getComponent(), behavior);
+/cb
+	ListenerInterfaceRequestHandler.respond(IRequestCycle) line: 234	
+		invokeListener();
+/cb
+	RequestCycle$HandlerExecutor.respond(IRequestHandler) line: 895	
+	RequestCycle$HandlerExecutor(RequestHandlerStack).execute(IRequestHandler) line: 64	
+	RequestCycle.execute(IRequestHandler) line: 265	
+	RequestCycle.processRequest() line: 222	
+			IRequestHandler handler = resolveRequestHandler();	/ WH front-end controller
+				execute(handler);
+/cb
+	RequestCycle.processRequestAndDetach() line: 293	
+	WicketFilter.processRequestCycle(RequestCycle, WebResponse, HttpServletRequest, HttpServletResponse, FilterChain) line: 261	
+	WicketFilter.processRequest(ServletRequest, ServletResponse, FilterChain) line: 203	
+	WicketFilter.doFilter(ServletRequest, ServletResponse, FilterChain) line: 284	
+	ApplicationFilterChain.internalDoFilter(ServletRequest, ServletResponse) line: 239	
+	ApplicationFilterChain.doFilter(ServletRequest, ServletResponse) line: 206	
+	StandardWrapperValve.invoke(Request, Response) line: 217	
+	StandardContextValve.invoke(Request, Response) line: 106	
+	NonLoginAuthenticator(AuthenticatorBase).invoke(Request, Response) line: 502	
+	StandardHostValve.invoke(Request, Response) line: 142	
+	ErrorReportValve.invoke(Request, Response) line: 79	
+	AccessLogValve(AbstractAccessLogValve).invoke(Request, Response) line: 616	
+	StandardEngineValve.invoke(Request, Response) line: 88	
+	CoyoteAdapter.service(Request, Response) line: 518	
+	Http11NioProcessor(AbstractHttp11Processor<S>).process(SocketWrapper<S>) line: 1091	
+	Http11NioProtocol$Http11ConnectionHandler(AbstractProtocol$AbstractConnectionHandler<S,P>).process(SocketWrapper<S>, SocketStatus) line: 673	
+	NioEndpoint$SocketProcessor.doRun() line: 1500	
+	NioEndpoint$SocketProcessor.run() line: 1456	
+	ThreadPoolExecutor(ThreadPoolExecutor).runWorker(ThreadPoolExecutor$Worker) line: 1145	
+	ThreadPoolExecutor$Worker.run() line: 615	
+	TaskThread$WrappingRunnable.run() line: 61	
+	TaskThread(Thread).run() line: 745	
+
+/ debug	, 
+
+ModalWindow.show(IPartialPageRequestHandler) line: 368	
+		if (shown == false)
+		{
+			getContent().setVisible(true);
+			target.add(this);
+/s
+AjaxRequestHandler.add(Component...) line: 221	
+		for (final Component component : components)	/ compnent=ModalWindow	,
+			add(component, component.getMarkupId());
+/s
+AjaxRequestHandler.add(Component, String) line: 238	
+		update.add(component, markupId);
+/s
+AjaxRequestHandler$1(PartialPageUpdate).add(Component, String) line: 369	
+		component.setMarkupId(markupId);
+		markupIdToComponent.put(markupId, component);
+/t
+ModalWindow.show(IPartialPageRequestHandler) line: 370	
+			target.add(this);
+			target.appendJavaScript(getWindowOpenJavaScript());
+/s
+ModalWindow.getWindowOpenJavaScript() line: 1015	
+	...
+		if (isCustomComponent() == false)
+		{
+			Page page = createPage();
+/s
+ModalWindow.createPage() line: 844	
+			return pageCreator.createPage();
+/s
+ModalWindowMyPage$2.createPage() line: 38	
+		// Modal window met page
+		final ModalWindow modalWindow=new ModalWindow("modal");
+
+		modalWindow.setPageCreator(new ModalWindow.PageCreator() {
+			@Override
+			public Page createPage() {
+				return new ModalContentMyPage(){
+/t
+ModalWindow.getWindowOpenJavaScript() line: 1051	
+			Page page = createPage();								/ Page die in de modal window komt	, 
+			if (page.isPageStateless())
+/n
+			else
+			{
+				IRequestHandler handler = new RenderPageRequestHandler(new PageProvider(page));
+				pageUrl = requestCycle.urlFor(handler); / ./wicket/page?7
+
+/ Intermezzo
+
+/ we zijn nog steeds in	,
+RequestCycle.processRequest() line: 222	
+			IRequestHandler handler = resolveRequestHandler(); / org.apache.wicket.core.request.handler.ListenerInterfaceRequestHandler@33705350
+				execute(handler);
+
+/ dus je hebt RenderPageRequestHandler en ListenerInterfaceRequestHandler	, 
+
+/**
+ * Request handler that invokes the listener interface on component and renders page afterwards.
+ *
+ * @author Matej Knopp
+ */
+public class ListenerInterfaceRequestHandler
+	implements
+		IPageRequestHandler,
+		IComponentRequestHandler,
+		ILoggableRequestHandler
+
+/**
+ * {@link IRequestHandler} that renders page instance. Depending on the <code>redirectPolicy</code>
+ * flag and current request strategy the handler either just renders the page to the response, or
+ * redirects to render the page. <code>REDIRECT_TO_BUFFER</code> strategy is also supported.
+ * <p>
+ *
+ * @author Matej Knopp
+ */
+public class RenderPageRequestHandler
+	implements
+		IPageRequestHandler,
+		IPageClassRequestHandler,
+		ILoggableRequestHandler
+
+/ Einde Intermezzo
+
+			appendAssignment(buffer, "settings.src", pageUrl);
+
+		// in case user is interested in window close callback or we have a pagemap to clean attach
+		// notification request
+		if (windowClosedCallback != null)
+		{
+			WindowClosedBehavior behavior = getBehaviors(WindowClosedBehavior.class).get(0);	/ added in ModalWindow.init	,
+			buffer.append("settings.onClose = function() { ");
+			buffer.append(behavior.getCallbackScript());
+/s
+ModalWindow$WindowClosedBehavior(AbstractDefaultAjaxBehavior).getCallbackScript() line: 453	
+		return getCallbackScript(getComponent());	/ component=ModalWindow	,
+/s
+ModalWindow$WindowClosedBehavior(AbstractDefaultAjaxBehavior).getCallbackScript(Component) line: 465	
+		CharSequence ajaxAttributes = renderAjaxAttributes(component);
+/s
+	/**
+	 * <pre>
+	 * 				{
+	 * 					u: 'editable-label?6-1.IBehaviorListener.0-text1-label',  // url
+	 * 					m: 'POST',          // method name. Default: 'GET'
+	 * 					c: 'label7',        // component id (String) or window for page
+	 * 					e: 'click',         // event name
+	 * 					sh: [],             // list of success handlers
+	 * 					fh: [],             // list of failure handlers
+	 * 					pre: [],            // list of preconditions. If empty set default : Wicket.$(settings{c}) !== null
+	 * 					ep: {},             // extra parameters
+	 * 					async: true|false,  // asynchronous XHR or not
+	 * 					ch: 'someName|d',   // AjaxChannel
+	 * 					i: 'indicatorId',   // indicator component id
+	 * 					ad: true,           // allow default
+	 * 				}
+	 * </pre>
+	 */
+ModalWindow$WindowClosedBehavior(AbstractDefaultAjaxBehavior).renderAjaxAttributes(Component) line: 184	
+
+		AjaxRequestAttributes attributes = getAttributes();
+		return renderAjaxAttributes(component, attributes);
+/s
+ModalWindow$WindowClosedBehavior(AbstractDefaultAjaxBehavior).renderAjaxAttributes(Component, AjaxRequestAttributes) line: 201	
+			attributesJson.put(AjaxAttributeName.URL.jsonName(), getCallbackUrl());
+/s
+ModalWindow$WindowClosedBehavior(AbstractAjaxBehavior).getCallbackUrl() line: 86	
+
+		final RequestListenerInterface rli;
+
+		rli = IBehaviorListener.INTERFACE;	 / de interface naar de requestlistener	, dus de name , listener interface class and the Method ,
+
+		return getComponent().urlFor(this, rli, new PageParameters());	/ ./modal-mywindow?6-1.IBehaviorListener.1-modal	
+																				/ behavior 1 = ModalWindow$WindowClosedBehavior inst	,
+/s
+ModalWindow(Component).urlFor(Behavior, RequestListenerInterface, PageParameters) line: 3347	
+		int id = getBehaviorId(behaviour);
+1 
+/ want
+/s
+ModalWindow(Component).getBehaviorId(Behavior) line: 4547	
+		return new Behaviors(this).getBehaviorId(behavior);
+/s
+/s
+Behaviors.getBehaviorId(Behavior) line: 252	
+
+this	Behaviors  (id=10349)	
+	component	ModalWindow  (id=10175)	
+		data	Object[4]  (id=10343)	
+			[0]	MetaDataEntry<T>  (id=10351)	
+			[1]	ModalWindow$CloseButtonBehavior  (id=10352)	
+			[2]	Behaviors$BehaviorIdList  (id=10353)				<- hier haalt hij de index uit	, (dus niet uit data)	,	
+				[0]	ModalWindow$CloseButtonBehavior  (id=9998)	
+				[1]	ModalWindow$WindowClosedBehavior  (id=9909)	
+			[3]	ModalWindow$WindowClosedBehavior  (id=10238)	
+
+/ Intermezzo
+
+/ zonet waren we in	,
+Behaviors.getBehaviors(Class<M>) line: 75	
+
+/ Einde Intermezzo
+
+		ArrayList<Behavior> ids = getBehaviorsIdList(true);
+ids	Behaviors$BehaviorIdList  (id=9999)	
+	[0]	ModalWindow$CloseButtonBehavior  (id=9998)	
+	[1]	ModalWindow$WindowClosedBehavior  (id=9909)	
+
+		int id = ids.indexOf(behavior);
+0
+		return id;
+/t
+ModalWindow(Component).urlFor(Behavior, RequestListenerInterface, PageParameters) line: 3347	
+		int id = getBehaviorId(behaviour);
+/d
+		IRequestHandler handler = createRequestHandler(listener, parameters, id);
+/s
+ModalWindow(Component).createRequestHandler(RequestListenerInterface, PageParameters, Integer) line: 3358	
+		Page page = getPage();
+		PageAndComponentProvider provider = new PageAndComponentProvider(page, this, parameters);
+
+			return new BookmarkableListenerInterfaceRequestHandler(provider, listener, id);
+/t
+ModalWindow(Component).urlFor(Behavior, RequestListenerInterface, PageParameters) line: 3347	
+		IRequestHandler handler = createRequestHandler(listener, parameters, id);
+/d
+		return getRequestCycle().urlFor(handler);
+/ pakt name uit de RequestListenerInterface	, en dat is IBehaviorListener	,
+/ de  RequestListenerInterfaceHandler heeft ook de behavior index == 1	, TODO
+/t
+ModalWindow$WindowClosedBehavior(AbstractAjaxBehavior).getCallbackUrl() line: 86	
+		final RequestListenerInterface rli;
+		rli = IBehaviorListener.INTERFACE;
+		return getComponent().urlFor(this, rli, new PageParameters());	/ ./modal-mywindow?6-1.IBehaviorListener.1-modal	
+
+/ Intermezzo
+
+rli	RequestListenerInterface  (id=9926)	
+	interfaces	Collections$SynchronizedMap<K,V>  (id=9987)	
+		[0]	HashMap$Entry<K,V>  (id=9991)	
+			key	"IFormSubmitListener" (id=9997)	
+			value	RequestListenerInterface  (id=9998)	
+				listenerInterfaceClass	Class<T> (org.apache.wicket.markup.html.form.IFormSubmitListener) (id=2425)	
+				method	Method  (id=10301)	
+				name	"IFormSubmitListener" (id=9997)	
+		[1] ...
+		[2] ...
+		...
+
+/ WH is het een interface naar alle request listeners: iedere entry heeft de method van de request listeners en de name	, 
+/ de name verschijnt in de urls, die in de urls in de links verschijnen	, 
+/ en op de een of andere manier wordt bij een call de request listener gevonden	, op name	, TODO
+/ zo'n listener is of een Form, of een CheckBox	, of een Behavior	,
+
+ModalWindow$WindowClosedBehavior(AbstractDefaultAjaxBehavior).renderAjaxAttributes(Component, AjaxRequestAttributes) line: 202	
+			attributesJson.put(AjaxAttributeName.URL.jsonName(), getCallbackUrl());
+/d
+				String componentId = component.getMarkupId();						/ modal22	, component=ModalWindow	,
+				attributesJson.put(AjaxAttributeName.MARKUP_ID.jsonName(), componentId);
+
+attributesJson	JSONObject  (id=10269)	
+	map	LinkedHashMap<K,V>  (id=10271)	
+		[0]	LinkedHashMap$Entry<K,V>  (id=10473)	
+			key	"u" (id=10268)	
+			value	"./modal-mywindow?6-1.IBehaviorListener.1-modal" (id=10475)	
+		[1]	LinkedHashMap$Entry<K,V>  (id=10474)	
+			key	"c" (id=10467)	
+			value	"modal22" (id=10465)	
+/ tot nu toe	,
+
+/ Intermezzo 
+
+/ we zijn in 	,
+
+/ stack
+/s
+	ModalWindow$WindowClosedBehavior(AbstractDefaultAjaxBehavior).renderAjaxAttributes(Component, AjaxRequestAttributes) line: 214	
+	ModalWindow$WindowClosedBehavior(AbstractDefaultAjaxBehavior).renderAjaxAttributes(Component) line: 185	
+	ModalWindow$WindowClosedBehavior(AbstractDefaultAjaxBehavior).getCallbackScript(Component) line: 465	
+	ModalWindow$WindowClosedBehavior(AbstractDefaultAjaxBehavior).getCallbackScript() line: 453	
+	ModalWindow.getWindowOpenJavaScript() line: 1110	
+	ModalWindow.show(IPartialPageRequestHandler) line: 370	
+	ModalWindowMyPage$1.onClick(AjaxRequestTarget) line: 27	
+	AjaxLink$1.onEvent(AjaxRequestTarget) line: 84	
+	AjaxLink$1(AjaxEventBehavior).respond(AjaxRequestTarget) line: 155	
+	AjaxLink$1(AbstractDefaultAjaxBehavior).onRequest() line: 593	
+	NativeMethodAccessorImpl.invoke0(Method, Object, Object[]) line: not available [native method]	
+	NativeMethodAccessorImpl.invoke(Object, Object[]) line: 57	
+	DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: 43	
+	Method.invoke(Object, Object...) line: 606	
+	RequestListenerInterface.internalInvoke(Component, Object) line: 258	
+	RequestListenerInterface.invoke(IRequestableComponent, Behavior) line: 241	
+	ListenerInterfaceRequestHandler.invokeListener() line: 248	
+	ListenerInterfaceRequestHandler.respond(IRequestCycle) line: 234	
+	RequestCycle$HandlerExecutor.respond(IRequestHandler) line: 895	
+	RequestCycle$HandlerExecutor(RequestHandlerStack).execute(IRequestHandler) line: 64	
+	RequestCycle.execute(IRequestHandler) line: 265	
+	RequestCycle.processRequest() line: 222	
+	RequestCycle.processRequestAndDetach() line: 293	
+	WicketFilter.processRequestCycle(RequestCycle, WebResponse, HttpServletRequest, HttpServletResponse, FilterChain) line: 261	
+	WicketFilter.processRequest(ServletRequest, ServletResponse, FilterChain) line: 203	
+	WicketFilter.doFilter(ServletRequest, ServletResponse, FilterChain) line: 284	
+	ApplicationFilterChain.internalDoFilter(ServletRequest, ServletResponse) line: 239	
+	ApplicationFilterChain.doFilter(ServletRequest, ServletResponse) line: 206	
+	StandardWrapperValve.invoke(Request, Response) line: 217	
+	StandardContextValve.invoke(Request, Response) line: 106	
+	NonLoginAuthenticator(AuthenticatorBase).invoke(Request, Response) line: 502	
+	StandardHostValve.invoke(Request, Response) line: 142	
+	ErrorReportValve.invoke(Request, Response) line: 79	
+	AccessLogValve(AbstractAccessLogValve).invoke(Request, Response) line: 616	
+	StandardEngineValve.invoke(Request, Response) line: 88	
+	CoyoteAdapter.service(Request, Response) line: 518	
+	Http11NioProcessor(AbstractHttp11Processor<S>).process(SocketWrapper<S>) line: 1091	
+	Http11NioProtocol$Http11ConnectionHandler(AbstractProtocol$AbstractConnectionHandler<S,P>).process(SocketWrapper<S>, SocketStatus) line: 673	
+	NioEndpoint$SocketProcessor.doRun() line: 1500	
+	NioEndpoint$SocketProcessor.run() line: 1456	
+	ThreadPoolExecutor(ThreadPoolExecutor).runWorker(ThreadPoolExecutor$Worker) line: 1145	
+	ThreadPoolExecutor$Worker.run() line: 615	
+	TaskThread$WrappingRunnable.run() line: 61	
+	TaskThread(Thread).run() line: 745	
+
+/ Einde Intermezzo
+
+		String attributesAsJson = attributesJson.toString();
+{"u":"./modal-mywindow?9-1.IBehaviorListener.1-modal","c":"modal29"}
+
+		return attributesAsJson;
+/t
+ModalWindow$WindowClosedBehavior(AbstractDefaultAjaxBehavior).getCallbackScript(Component) line: 466	
+		CharSequence ajaxAttributes = renderAjaxAttributes(component);
+		return "Wicket.Ajax.ajax(" + ajaxAttributes + ");";
+/t
+ModalWindow.getWindowOpenJavaScript() line: 1111	
+			buffer.append(behavior.getCallbackScript());
+/d
+buffer=
+var settings = new Object();
+settings.minWidth=200;
+settings.minHeight=200;
+settings.className="w_blue";
+settings.width=600;
+settings.height=400;
+settings.resizable=true;
+settings.src="./wicket/page?10";
+settings.mask="semi-transparent";
+settings.autoSize=false;
+settings.unloadConfirmation=true;
+settings.onClose = function() { Wicket.Ajax.ajax({"u":"./modal-mywindow?9-1.IBehaviorListener.1-modal","c":"modal29"});
+
+			buffer.append(" };\n");
+
+			haveCloseCallback = true;
+
+		// in case we didn't set windowclosecallback, we need at least callback on close button, to
+		// close window property (thus cleaning the shown flag)
+		if ((closeButtonCallback != null) || (haveCloseCallback == false))
+		{
+			CloseButtonBehavior behavior = getBehaviors(CloseButtonBehavior.class).get(0);
+/s
+ModalWindow(Component).getBehaviors(Class<M>) line: 3695	
+		return new Behaviors(this).getBehaviors(type);
+/s
+Behaviors.getBehaviors(Class<M>) line: 75	
+/=
+	public <M extends Behavior> List<M> getBehaviors(Class<M> type)
+type	Class<T> (org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow$CloseButtonBehavior) (id=29)	
+
+this	Behaviors  (id=9938)	
+	component	ModalWindow  (id=9896)	
+		data	Object[4]  (id=9989)	
+			[0]	MetaDataEntry<T>  (id=9997)	
+			[1]	ModalWindow$CloseButtonBehavior  (id=9998)	
+			[2]	Behaviors$BehaviorIdList  (id=9999)	
+			[3]	ModalWindow$WindowClosedBehavior  (id=9909)	
+
+		for (int i = component.data_start(); i < len; i++)
+		{
+			Object obj = component.data_get(i);
+			if (obj != null && obj instanceof Behavior)
+			{
+				if (type == null || type.isAssignableFrom(obj.getClass()))
+				{
+					subset.add((M)obj);
+
+subset	ArrayList<E>  (id=10057)	
+	[0]	ModalWindow$CloseButtonBehavior  (id=9998)	
+
+		return Collections.unmodifiableList(subset);
+/t
+ModalWindow.getWindowOpenJavaScript() line: 1121	
+			CloseButtonBehavior behavior = getBehaviors(CloseButtonBehavior.class).get(0);
+/d
+			buffer.append("settings.onCloseButton = function() { ");
+			buffer.append(behavior.getCallbackScript());
+/s
+ModalWindow$CloseButtonBehavior(AbstractDefaultAjaxBehavior).getCallbackScript() line: 453	
+		return getCallbackScript(getComponent());
+/s
+ModalWindow$CloseButtonBehavior(AbstractDefaultAjaxBehavior).getCallbackScript(Component) line: 465	
+		CharSequence ajaxAttributes = renderAjaxAttributes(component);
+/s
+	/**
+	 * <pre>
+	 * 				{
+	 * 					u: 'editable-label?6-1.IBehaviorListener.0-text1-label',  // url
+	 * 					m: 'POST',          // method name. Default: 'GET'
+	 * 					c: 'label7',        // component id (String) or window for page
+	 * 					e: 'click',         // event name
+	 * 					sh: [],             // list of success handlers
+	 * 					fh: [],             // list of failure handlers
+	 * 					pre: [],            // list of preconditions. If empty set default : Wicket.$(settings{c}) !== null
+	 * 					ep: {},             // extra parameters
+	 * 					async: true|false,  // asynchronous XHR or not
+	 * 					ch: 'someName|d',   // AjaxChannel
+	 * 					i: 'indicatorId',   // indicator component id
+	 * 					ad: true,           // allow default
+	 * 				}
+	 * </pre>
+	 * 
+	 * @param component
+	 *            the component with that behavior
+	 * @return the attributes as string in JSON format
+	 */
+ModalWindow$CloseButtonBehavior(AbstractDefaultAjaxBehavior).renderAjaxAttributes(Component) line: 184	
+		AjaxRequestAttributes attributes = getAttributes();
+		return renderAjaxAttributes(component, attributes);
+/s
+ModalWindow$CloseButtonBehavior(AbstractDefaultAjaxBehavior).renderAjaxAttributes(Component, AjaxRequestAttributes) line: 201	
+			attributesJson.put(AjaxAttributeName.URL.jsonName(), getCallbackUrl());
+/s
+ModalWindow$CloseButtonBehavior(AbstractAjaxBehavior).getCallbackUrl() line: 88	
+		final RequestListenerInterface rli;
+		rli = IBehaviorListener.INTERFACE;
+		return getComponent().urlFor(this, rli, new PageParameters());
+/s
+ModalWindow(Component).urlFor(Behavior, RequestListenerInterface, PageParameters) line: 3347	
+		int id = getBehaviorId(behaviour);
+behaviour	ModalWindow$CloseButtonBehavior  (id=9998)	
+/s
+ModalWindow(Component).getBehaviorId(Behavior) line: 4547	
+		return new Behaviors(this).getBehaviorId(behavior);
+/s
+Behaviors.getBehaviorId(Behavior) line: 252	
+
+/ Intermezzo
+
+/ zonet waren we in	,
+Behaviors.getBehaviors(Class<M>) line: 75	
+
+/ Einde Intermezzo
+
+		ArrayList<Behavior> ids = getBehaviorsIdList(true);
+ids	Behaviors$BehaviorIdList  (id=9999)	
+	[0]	ModalWindow$CloseButtonBehavior  (id=9998)	
+	[1]	ModalWindow$WindowClosedBehavior  (id=9909)	
+
+		int id = ids.indexOf(behavior);
+0
+		return id;
+/t
+ModalWindow(Component).urlFor(Behavior, RequestListenerInterface, PageParameters) line: 3348	
+		int id = getBehaviorId(behaviour);
+/d
+/ We geloven het	, 
+
+
+
+
+
+
+
+
+
+
+/ Intermezzo
+
+/ (*)
+
+Component.class
+	public Component add(final Behavior... behaviors)
+	{
+		new Behaviors(this).add(behaviors);
+		return this;
+	}
+
+Behaviors.class
+	public void add(Behavior... behaviors)
+	{
+		for (Behavior behavior : behaviors)
+			internalAdd(behavior);
+			...
+			// Give handler the opportunity to bind this component
+			behavior.bind(component);									
+		}
+	}
+
+AbstractAjaxBehavior.class
+	@Override
+	public final void bind(final Component hostComponent)
+	{
+		component = hostComponent; 											<-
+		// call the callback
+		onBind();
+	}
+
+
+AbstractDefaultAjaxBehavior.class
+	@Override
+	protected void onBind()
+	{
+		getComponent().setOutputMarkupId(true);
+	}
+
+/ Einde Intermezzo
+
+/ Intermezzo
+
+public class ModalWindow extends Panel
+
+	private void init()
+	{
+		setVersioned(false);
+		cookieName = null;
+
+		add(empty = new WebMarkupContainer(getContentId()));	/ deze moet er zijn, is een panel in html	, maar is niet wat we zien op het scherm	, 
+																		/ die wordt in js create	,
+																/ TODO Waarom moet deze er zijn	?
+
+		add(newCloseButtonBehavior());
+		add(new WindowClosedBehavior());
+
+		// install a default callback that will force
+		// WindowClosedBehavior to be executed
+		setWindowClosedCallback(new WindowClosedCallback()
+		{
+			@Override
+			public void onClose(AjaxRequestTarget target)
+			{
+				// noop
+			}
+		});
+
+	protected class CloseButtonBehavior extends AbstractDefaultAjaxBehavior
+	{
+		private static final long serialVersionUID = 1L;
+
+		public CloseButtonBehavior()
+		{
+		}
+
+		@Override
+		protected final void respond(final AjaxRequestTarget target)
+		{
+			if ((closeButtonCallback == null) ||
+				(closeButtonCallback.onCloseButtonClicked(target)))
+			{
+				close(target);
+			}
+		}
+	}
+
+/ Einde Intermezzo
+
+
+
+

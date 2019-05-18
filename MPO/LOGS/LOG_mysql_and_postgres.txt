@@ -1,0 +1,463 @@
+/ See ENGINE
+/ See HELP
+/ See PRIMARY KEY
+/ See FOREIGN KEY
+/ See VERSCHIL MET POSTGRES (meerdere)
+/ See AUTO_INCREMENT SERIAL 
+/ See GROUP BY HAVING
+
+/ 7	. 
+
+/ Lees LOG_1_mei_2014.txt
+
+[eric@localhost my]$ sudo yum install mariadb-server mariadb
+[eric@localhost my]$ sudo systemctl enable mariadb.service
+[eric@localhost my]$ sudo systemctl start mariadb.service
+
+[eric@localhost my]$ mysql -uroot
+MariaDB [(none)]> grant all privileges on foo.* to foo@localhost identified by "foo"\g
+[eric@localhost my]$ mysql -ufoo  -pfoo
+/ OK
+
+/ Lees	,
+https://www.digitalocean.com/community/tutorials/a-basic-mysql-tutorial
+
+/ Lees
+https://fedoraproject.org/wiki/MariaDB
+/ TODO
+
+
+/ 7	. 
+
+[eric@localhost bin]$ mysql -u root
+MariaDB [(none)]> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| foo                |
+| mysql              |
+| performance_schema |
+| test               |
++--------------------+
+
+MariaDB [(none)]> select current_user();
++----------------+
+| current_user() |
++----------------+
+| root@localhost |
++----------------+
+1 row in set (0.00 sec)
+
+/ 7	. 
+
+
+[eric@localhost bin]$ mysql -ufoo -pfoo
+MariaDB [(none)]> show databases;		/ we komen dus NIET automatisch in database foo	,
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| foo                |
+| test               |
++--------------------+
+3 rows in set (0.00 sec)
+
+/ In MySQL moet je ook opgeven welke database je wilt	,  
+[eric@localhost bin]$ mysql -ufoo -pfoo foo
+MariaDB [foo]> 
+
+/ 7	. 
+
+[eric@localhost bin]$ mysql -u root
+MariaDB [foo]> grant all privileges on bar.* to bar@localhost identified by 'bar';
+/ Maar hiermee is er geen database bar	, 
+
+/ 7	. 
+
+[eric@localhost Documents]$ mysql -ubar -pbar
+MariaDB [(none)]> create database bar;
+MariaDB [(none)]> use bar;
+/ OK
+
+MariaDB [bar]> show grants for current_user();
++------------------------------------------------------------------------------------------------------------+
+| Grants for bar@localhost                                                                                   |
++------------------------------------------------------------------------------------------------------------+
+| GRANT USAGE ON *.* TO 'bar'@'localhost' IDENTIFIED BY PASSWORD '*E8D46CE25265E545D225A8A6F1BAF642FEBEE5CB' |
+| GRANT ALL PRIVILEGES ON `bar`.* TO 'bar'@'localhost'                                                       |
++------------------------------------------------------------------------------------------------------------+
+2 rows in set (0.00 sec)
+
+/ Maar hoe zie ik de owner van de database	, of heb je dat niet in MySQL?
+/ MySQL werkt misschien alles met grants	,
+
+/ 7	. 
+
+[eric@localhost Documents]$ mysql -ufoo -pfoo foo
+
+MariaDB [foo]> show grants for foo@localhost;
+/ of	,
+MariaDB [foo]> show grants for current_user();
+
++------------------------------------------------------------------------------------------------------------+
+| Grants for foo@localhost                                                                                   |
++------------------------------------------------------------------------------------------------------------+
+| GRANT USAGE ON *.* TO 'foo'@'localhost' IDENTIFIED BY PASSWORD '*F3A2A51A9B0F2BE2468926B4132313728C250DBF' |
+| GRANT ALL PRIVILEGES ON `foo`.* TO 'foo'@'localhost'                                                       |
++------------------------------------------------------------------------------------------------------------+
+2 rows in set (0.00 sec)
+
+MariaDB [foo]> show grants for bar@localhost;
+ERROR 1044 (42000): Access denied for user 'foo'@'localhost' to database 'mysql'
+
+/ Dus foo kan niet de grants voor bar@localhost zien	, 
+
+/ 7	. 
+
+/ ENGINE
+
+/ welke engine is er	? 
+
+/ er is niet of zoiets	, 
+show current engine
+
+MariaDB [foo]>  show engines;
+| InnoDB             | DEFAULT | Percona-XtraDB, Supports transactions, row-level locking, and foreign keys | YES          | YES  | YES        |
+
+MariaDB [foo]> create table t;
+ERROR 1113 (42000): A table must have at least 1 column
+MariaDB [foo]> create table t(i int);
+/ OK
+MariaDB [foo]> show create table t;
++-------+--------------------------------------------------------------------------------------+
+| Table | Create Table                                                                         |
++-------+--------------------------------------------------------------------------------------+
+| t     | CREATE TABLE `t` (
+  `i` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 |
+
+MariaDB [foo]> drop table if exists t;
+
+MariaDB [foo]> select @@autocommit;
++--------------+
+| @@autocommit |
++--------------+
+|            1 |
++--------------+
+MariaDB [foo]> SHOW VARIABLES WHERE Variable_name='autocommit';
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| autocommit    | ON    |
++---------------+-------+
+1 row in set (0.07 sec)
+
+/ 13	. 
+
+[eric@localhost Documents]$ mysql -ufoo -pfoo foo
+
+MariaDB [foo]> set autocommit=0;
+/ Nu kunnen we commit en rollback	, 
+/ Maar is per session	,
+/ create table kun je niet rollback	,
+
+MariaDB [foo]> show global variables like 'autocommit';
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| autocommit    | ON    |
++---------------+-------+
+
+MariaDB [foo]> show session variables like 'autocommit';
+/=
+MariaDB [foo]> show session variables where variable_name ='autocommit';
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| autocommit    | OFF   |
++---------------+-------+
+1 row in set (0.00 sec)
+
+/ Lees	,
+https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_autocommit
+
+[eric@localhost bin]$ sudo vi /etc/my.cnf.d/server.cnf 
+# this is only for the mysqld standalone daemon
+[mysqld]
+autocommit=0
+[eric@localhost bin]$ sudo systemctl restart mariadb
+
+[eric@localhost Documents]$ mysql -ufoo -pfoo foo
+MariaDB [foo]> select @@autocommit;
++--------------+
+| @@autocommit |
++--------------+
+|            0 |
++--------------+
+
+/ we hoeven dus niet per session	, 
+> set autocommit=0 
+/ we kunnen rollback	, commit	,
+
+
+
+/ 7	. 
+
+/ HELP
+
+MariaDB [foo]> ? show
+...
+/ Maar variables staat er niet bij	, 
+/ TODO
+
+MariaDB [foo]> ? show variables;
+Syntax:
+SHOW [GLOBAL | SESSION] VARIABLES
+    [LIKE 'pattern' | WHERE expr]
+
+
+
+
+
+
+
+
+/ 7	. 
+
+/ PRIMARY KEY
+
+/ MYSQL
+
+MariaDB [foo]> create table par(s text primary key);
+ERROR 1170 (42000): BLOB/TEXT column 's' used in key specification without a key length
+/ VERSCHIL MET POSTGRES
+
+MariaDB [foo]> create table par(s varchar(128) primary key);
+/ of	,
+MariaDB [foo]> create table par(s varchar(128), primary key(s));
+/ of	,
+MariaDB [foo]> create table par(s varchar(128));
+MariaDB [foo]> alter table par add primary key(s);
+
+/ OK
+MariaDB [foo]> show create table par;
++-------+--------------------------------------------------------------------------------------------------------------+
+| Table | Create Table                                                                                                 |
++-------+--------------------------------------------------------------------------------------------------------------+
+| par   | CREATE TABLE `par` (
+  `s` varchar(128) NOT NULL,
+  PRIMARY KEY (`s`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 |
++-------+--------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+/ of	, met alter table 	, use altijd add	,
+
+MariaDB [foo]> drop table if exists par;
+Query OK, 0 rows affected (0.00 sec)
+
+MariaDB [foo]> create table par (s varchar(128));
+Query OK, 0 rows affected (0.00 sec)
+
+MariaDB [foo]> alter table par add primary key(s);
+Query OK, 0 rows affected (0.01 sec)               
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [foo]> show create table par;
++-------+-------------------------------------------------------------------------------------------------------------------------+
+| Table | Create Table                                                                                                            |
++-------+-------------------------------------------------------------------------------------------------------------------------+
+| par   | CREATE TABLE `par` (
+  `s` varchar(128) NOT NULL DEFAULT '',
+  PRIMARY KEY (`s`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 |
++-------+-------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+/ POSTGRES
+
+foo=> create table par7(s text primary key);
+/ of	,
+foo=> create table par7(s text, primary key(s));
+/ of	,
+foo=> create table par7(s text);
+foo=> alter table par7 add primary key(s);
+
+
+
+
+/ Einde PRIMARY KEY 
+
+/ FOREIGN KEY 
+
+/ MYSQL
+
+MariaDB [foo]> create table par (s varchar(32) primary key);
+/ of	,
+MariaDB [foo]> create table par (s varchar(32) unique);
+
+MariaDB [foo]> create table chld(t varchar(128),foreign key(t)references par(s));
+/ of	,
+MariaDB [foo]> create table chld(t varchar(128));
+MariaDB [foo]> alter table chld add foreign key(t) references par(s);
+
+MariaDB [foo]> create table par(s varchar(32)unique);
+/ of	,
+MariaDB [foo]> create table par(s varchar(32),unique(s));
+/ of	,
+MariaDB [foo]> create table par(s varchar(32));
+MariaDB [foo]> alter table par add unique(s);
+
+
+/ NIET	,
+MariaDB [foo]> create table chld(t varchar(32) references par(s));				/ geen ERR, maar doet niets	, er is geen constraint	,
+MariaDB [foo]> create table chld(t varchar(32) foreign key references par(s));
+
+
+MariaDB [foo]> show create table chld;
++-------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table | Create Table                                                                                                                                                                       |
++-------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| chld  | CREATE TABLE `chld` (
+  `t` varchar(128) DEFAULT NULL,
+  KEY `t` (`t`),
+  CONSTRAINT `chld_ibfk_1` FOREIGN KEY (`t`) REFERENCES `par` (`s`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 |
+
+MariaDB [foo]> select*from par;
+Empty set (0.00 sec)
+MariaDB [foo]> insert into par values('foo');
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [foo]> insert into chld values('bar');
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`foo`.`chld`, CONSTRAINT `chld_ibfk_1` FOREIGN KEY (`t`) REFERENCES `par` (`s`))
+MariaDB [foo]> insert into chld values('foo');
+Query OK, 1 row affected (0.01 sec)
+
+
+
+
+/ POSTGRES
+
+/ Lees	,
+http://www.postgresqltutorial.com/postgresql-unique-constraint/
+
+foo=> create table par7(s text primary key);
+/ of	,
+foo=> create table par7 (s text, primary key(s));
+/ of	,
+foo=> create table par7 (s text);
+foo=> alter table par7 add primary key(s);
+
+foo=> create table par7(s text unique);
+/ of
+foo=> create table par7(s text,unique(s));
+/ of	,
+foo=> create table par7(s text);
+foo=> alter table par7 add unique(s);
+
+foo=> create table chld7(t text references par7(s));
+/ of	,
+foo=> create table chld7(s text ,foreign key(s) references par7(s));
+/ of	,
+foo=> create table chld7(s text ,foreign key(s) references par7);	/ Dit kan NIET in mysql	,
+/ of	,
+foo=> create table chld7(s text);
+foo=> alter table chld7 add foreign key(s) references par7;
+
+/ Einde FOREIGN KEY 
+
+/ AUTO_INCREMENT SERIAL 
+
+/ POSTGRES
+
+foo=> create table par7 (i serial, s text);
+
+foo=> insert into par7(s) values('bar');
+/ of    ,
+foo=> insert into par7 values(default,'bar');
+
+foo=> insert into par7 values(default,'bar') returning i;
+ i
+---
+ 5
+(1 row)
+
+foo=> insert into par7 values(0,'bar');
+foo=> insert into par7 values(0,'bar');
+foo=> insert into par7 values(-1,'bar');
+foo=> select*from par7;
+ i  |  s  
+----+-----
+  1 | foo
+  2 | bar
+  3 | bar
+  4 | bar
+  0 | bar
+ -1 | bar
+  5 | bar
+  0 | bar
+(8 rows)
+
+
+
+
+/ MYSQL
+
+MariaDB [foo]> create table par(i int primary key auto_increment,s varchar(32));	/ mysql: auto_increment column moet primary key zijn, 
+MariaDB [foo]> insert into par(s)values('foo'),('bar');
+/ OK
+MariaDB [foo]> insert into par values(default,'baz');
+/ OK
+MariaDB [foo]> insert into par values(0,'baz'); / autoincrements!	, VERSCHIL MET POSTGRES
+MariaDB [foo]> insert into par values(-1,'baz');	/ inserts -1 , net als postgres	,
+
+MariaDB [foo]> insert into par values(13,'baz');
+
+/ we kunnen multiple times	,
+MariaDB [foo]> insert into par values(0,'baz'); 
+MariaDB [foo]> insert into par values(0,'baz'); 
+/ Hij gaat verder met de hoogste	,
+
+MariaDB [foo]> select*from par;
++----+------+
+| i  | s    |
++----+------+
+| -1 | baz  |
+|  1 | foo  |
+|  2 | bar  |
+|  3 | baz  |
+|  4 | baz  |
+| 13 | baz  |
+| 14 | baz  |
+| 15 | baz  |
+
+
+/ Einde AUTO_INCREMENT SERIAL 
+
+/ GROUP BY HAVING
+
+/ POSTGRES
+
+/ Lees	,
+http://www.postgresqltutorial.com/postgresql-group-by/
+
+/ group by zonder aggregate function	,
+
+
+
+
+/ Einde GROUP BY HAVING
+
+
+
+ 
+
+
+
+
+
+
+
+

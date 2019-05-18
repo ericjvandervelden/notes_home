@@ -1,0 +1,26 @@
+/ 7	. 
+
+/ Lees	,
+http://stats.stackexchange.com/questions/7853/justification-of-one-tailed-hypothesis-testing 			<-
+http://stats.stackexchange.com/questions/8196/why-is-the-null-hypothesis-always-a-point-value-rather-than-a-range-in-hypothesi?noredirect=1&lq=1
+http://stats.stackexchange.com/questions/240230/why-are-test-hypotheses-not-symmetric
+http://stats.stackexchange.com/questions/85903/why-do-statisticians-say-a-non-significant-result-means-you-cant-reject-the-nu?noredirect=1&lq=1
+
+http://stats.stackexchange.com/questions/190791/what-is-the-empirical-size-of-a-test
+http://www.statsblogs.com/2015/07/16/questions-about-the-size-and-power-of-a-test/
+http://www.statisticssolutions.com/data-levels-and-measurement/
+
+/ Geef in google	, 
+/ composite hypothesis	,
+http://math.arizona.edu/~jwatkins/R_composite.pdf
+rejecting the null hypothesis when it is indeed true.
+failing to reject the null hypothesis when it is false.
+
+/ boek (201) 
+/ geef in google: jones tukey statistics
+http://forrest.psych.unc.edu/jones-tukey112399.html
+http://www.psychologie-aktuell.com/fileadmin/download/ptam/1-2012_20120326/06_Rasch.pdf
+http://core.ecu.edu/psyc/wuenschk/StatHelp/Type_III.htm
+
+/ Lees	, 
+https://www.moresteam.com/whitepapers/download/dummy-variables.pdf

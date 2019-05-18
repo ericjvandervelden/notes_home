@@ -1,0 +1,50 @@
+/ 7	. 
+
+/ kind of recursive	,
+
+See linked ticket.
+A DB unique constraint has been added for the SHIPMENT_ITEM table on SHIPMENT_ORDER_SYSTEMID and SHIPMENT_ITEM_ID.
+
+- Find the duplicates:
+SHI: 
+select shipment_order_systemid, shipment_item_id, count(1) from shipment_item group by shipment_order_systemid, shipment_item_id having count(1)>1;
+PI: 
+select SHIPMENT_ORDER_SYSTEMID, PRODUCT_ITEM_ID from TMS_PRODUCT_ITEM group by SHIPMENT_ORDER_SYSTEMID, PRODUCT_ITEM_ID having count(1)>1;
+
+- Review them
+
+- Update the shipment item / product item ids
+
+If there are too many duplicates you can use this query that will set the first item id to 0 and increment the next ids (like 0, 1, 2, etc.)
+
+SHI:
+update shipment_item 
+set shipment_item_id = 0 
+where shipment_order_systemid = ?shipment_order_systemid;
+
+update shipment_item 
+set shipment_item_id = CAST((
+	select max(CAST(shipment_item_id AS INT)) 
+	from shipment_item 
+	where shipment_order_systemid = ?shipment_order_systemid) AS INTEGER) + 1 
+where system_id in (
+	select SYSTEM_ID 
+	from shipment_item 
+	where shipment_order_systemid = ?shipment_order_systemid);
+
+PI:
+update TMS_PRODUCT_ITEM 
+set PRODUCT_ITEM_ID = 0 
+where shipment_order_systemid = ?shipment_order_systemid;
+
+update TMS_PRODUCT_ITEM 
+set PRODUCT_ITEM_ID = CAST((
+	select max(CAST(PRODUCT_ITEM_ID AS INT) 
+	from TMS_PRODUCT_ITEM 
+	where shipment_order_systemid = ?shipment_order_systemid) AS INTEGER) + 1 
+where system_id in (
+	select SYSTEM_ID 
+	from TMS_PRODUCT_ITEM 
+	where shipment_order_systemid = ?shipment_order_systemid);
+
+Note: it was possible to add this in a patch but it's better to review the duplicated values.

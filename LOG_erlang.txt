@@ -1,0 +1,1512 @@
+/ See HERHALING 2018-12-29	,
+
+/ 7	 
+
+[root@almond ~]#  dnf install erlang
+Last metadata expiration check: 1:22:23 ago on Mon Jan 30 20:13:05 2017.
+Dependencies resolved.
+==================================================================================
+ Package                          Arch    Version                  Repository
+                                                                             Size
+==================================================================================
+Installing:
+ SDL                              x86_64  1.2.15-20.fc23           updates  213 k
+ erlang                           x86_64  17.4-7.fc23              updates   35 k
+ erlang-asn1                      x86_64  17.4-7.fc23              updates  783 k
+ erlang-common_test               x86_64  17.4-7.fc23              updates  743 k
+ erlang-compiler                  x86_64  17.4-7.fc23              updates  1.1 M
+ erlang-cosEvent                  x86_64  17.4-7.fc23              updates  159 k
+ erlang-cosEventDomain            x86_64  17.4-7.fc23              updates  125 k
+ erlang-cosFileTransfer           x86_64  17.4-7.fc23              updates  179 k
+ erlang-cosNotification           x86_64  17.4-7.fc23              updates  741 k
+ erlang-cosProperty               x86_64  17.4-7.fc23              updates  172 k
+ erlang-cosTime                   x86_64  17.4-7.fc23              updates  117 k
+ erlang-cosTransactions           x86_64  17.4-7.fc23              updates  177 k
+ erlang-crypto                    x86_64  17.4-7.fc23              updates  129 k
+ erlang-debugger                  x86_64  17.4-7.fc23              updates  417 k
+ erlang-dialyzer                  x86_64  17.4-7.fc23              updates  624 k
+ erlang-diameter                  x86_64  17.4-7.fc23              updates  682 k
+ erlang-edoc                      x86_64  17.4-7.fc23              updates  332 k
+ erlang-eldap                     x86_64  17.4-7.fc23              updates  112 k
+ erlang-erl_docgen                x86_64  17.4-7.fc23              updates  159 k
+ erlang-erl_interface             x86_64  17.4-7.fc23              updates  191 k
+ erlang-erts                      x86_64  17.4-7.fc23              updates  2.6 M
+ erlang-et                        x86_64  17.4-7.fc23              updates  172 k
+ erlang-eunit                     x86_64  17.4-7.fc23              updates  157 k
+ erlang-gs                        x86_64  17.4-7.fc23              updates  632 k
+ erlang-hipe                      x86_64  17.4-7.fc23              updates  2.6 M
+ erlang-ic                        x86_64  17.4-7.fc23              updates  890 k
+ erlang-inets                     x86_64  17.4-7.fc23              updates  805 k
+ erlang-jinterface                x86_64  17.4-7.fc23              updates  108 k
+ erlang-kernel                    x86_64  17.4-7.fc23              updates  1.1 M
+ erlang-megaco                    x86_64  17.4-7.fc23              updates  5.6 M
+ erlang-mnesia                    x86_64  17.4-7.fc23              updates  707 k
+ erlang-observer                  x86_64  17.4-7.fc23              updates  761 k
+ erlang-odbc                      x86_64  17.4-7.fc23              updates   75 k
+ erlang-orber                     x86_64  17.4-7.fc23              updates  950 k
+ erlang-os_mon                    x86_64  17.4-7.fc23              updates  120 k
+ erlang-ose                       x86_64  17.4-7.fc23              updates   33 k
+ erlang-otp_mibs                  x86_64  17.4-7.fc23              updates   37 k
+ erlang-parsetools                x86_64  17.4-7.fc23              updates  183 k
+ erlang-percept                   x86_64  17.4-7.fc23              updates  155 k
+ erlang-public_key                x86_64  17.4-7.fc23              updates  557 k
+ erlang-reltool                   x86_64  17.4-7.fc23              updates  365 k
+ erlang-runtime_tools             x86_64  17.4-7.fc23              updates  194 k
+ erlang-sasl                      x86_64  17.4-7.fc23              updates  300 k
+ erlang-snmp                      x86_64  17.4-7.fc23              updates  1.6 M
+ erlang-ssh                       x86_64  17.4-7.fc23              updates  423 k
+ erlang-ssl                       x86_64  17.4-7.fc23              updates  617 k
+ erlang-stdlib                    x86_64  17.4-7.fc23              updates  2.3 M
+ erlang-syntax_tools              x86_64  17.4-7.fc23              updates  349 k
+ erlang-test_server               x86_64  17.4-7.fc23              updates  300 k
+ erlang-tools                     x86_64  17.4-7.fc23              updates  577 k
+ erlang-typer                     x86_64  17.4-7.fc23              updates   72 k
+ erlang-webtool                   x86_64  17.4-7.fc23              updates   55 k
+ erlang-wx                        x86_64  17.4-7.fc23              updates  3.0 M
+ erlang-xmerl                     x86_64  17.4-7.fc23              updates  1.0 M
+ graphviz                         x86_64  2.38.0-29.fc23           fedora   3.2 M
+ gts                              x86_64  0.7.6-26.20111025.fc23   fedora   225 k
+ lasi                             x86_64  1.1.2-5.fc23             fedora    46 k
+ netpbm                           x86_64  10.75.99-1.fc23          updates  189 k
+ unixODBC                         x86_64  2.3.4-1.fc23             fedora   426 k
+ wxBase                           x86_64  2.8.12-26.fc23           updates  596 k
+ wxGTK                            x86_64  2.8.12-26.fc23           updates  3.1 M
+ wxGTK-gl                         x86_64  2.8.12-26.fc23           updates   39 k
+ xorg-x11-fonts-ISO8859-1-100dpi  noarch  7.5-15.fc23              fedora   1.1 M
+
+Transaction Summary
+==================================================================================
+Install  63 Packages
+
+Total download size: 45 M
+Installed size: 146 M
+Is this ok [y/N]: 
+
+/ 7	. 
+
+/ 13	. 
+
+/ kill erl met ^g, q
+
+[eric@almond Devel]$ erl
+Erlang/OTP 17 [erts-6.3] [source] [64-bit] [smp:4:4] [async-threads:10] [hipe] [kernel-poll:false]
+
+Eshell V6.3  (abort with ^G)
+1> 
+User switch command
+ --> q
+[eric@almond Devel]$ 
+
+/ of
+> q().
+
+
+/ 13	. 
+
+/ pattern matching	,
+
+1> X=2+4.
+6
+2> X=6
+2> X=1+5.
+6
+3> X=3+4.
+** exception error: no match of right hand side value 7
+
+/ vars altijd hoofdleter	,
+
+/ strings tussen ""	,  
+/ met '' maak je atoms	, die met een hoofdletter kunnen beginnen	, 
+/ hieronder is 'foo' dus NIET een string, maar een atom	,
+
+/ 13	. 
+
+/ pattern matching	,
+
+6> P={h,'foo',7}.
+{h,foo,7}
+7> P.
+{h,foo,7}
+8> {h,Q,7}=P.
+{h,foo,7}
+9> Q.
+foo
+
+11> {q,S,T}=P.        
+** exception error: no match of right hand side value {h,foo,7}			/ het atom moet kloppen,
+12> {h,S,T}=P.
+{h,foo,7}
+13> S.
+foo
+14> T.
+7
+
+19> Q.
+foo
+16> Q=P.
+** exception error: no match of right hand side value {h,foo,7}
+20> R.
+* 1: variable 'R' is unbound
+17> R=P.
+{h,foo,7}
+18> R=P.							/ matches helemaal	, maar er gebeurt ook niets verder	,
+{h,foo,7}
+
+22> {_,A,_}=P.
+{h,foo,7}
+23> A.
+foo
+
+/ verschillende _'s hoeven niet te bind aan dezelfde value	,
+
+/ 13	. 
+
+/ unbind all variables:
+
+/ use the forget function:
+
+24> f().
+ok
+
+/ unbind a variable:
+
+27> P=1.
+1
+29> f(P).
+ok
+30> P.
+* 1: variable 'P' is unbound
+
+/ 13	. 
+
+/ lists met [,,,]
+
+37> L=[1,'foo',7].
+[1,foo,7]
+38> [H|T]=L.
+[1,foo,7]
+39> H.
+1
+40> T.
+[foo,7]
+41> f(H).
+ok
+42> f(T).
+ok
+43> [H,T]=L.
+** exception error: no match of right hand side value [1,foo,7]
+44> [H,S,T]=L.
+[1,foo,7]
+45> H.
+1
+46> S.
+foo
+47> T.
+7
+
+/ 13	. 
+
+/ lees	,
+http://erlang.org/doc/reference_manual/data_types.html
+
+52> $A.
+65
+53> $π.
+960
+
+59> 16#a.
+10
+/ Dit is van hex -> dec
+/ Andersom
+60> integer_to_list($π,16).
+"3C0"
+
+/ lees	,
+http://erldocs.com/
+/ zoek daar 	,
+
+/ lees
+https://stackoverflow.com/questions/965038/hex-to-64-signed-decimal
+/ TODO
+
+/ 13	. 
+
+/////////////////////////////////////////////////////////
+/ lees	,
+http://erlang.org/doc/apps/stdlib/unicode_usage.html
+
+/ eerst utf-8 van π	,
+[eric@almond Erlang]$ echo π >/tmp/pi
+[eric@almond Erlang]$ od -t x1 -t c /tmp/pi
+0000000  cf  80  0a
+
+[eric@almond Erlang]$ erl +pc unicode
+Eshell V6.3  (abort with ^G)
+1> [960].
+"π"
+15> [16#3c0].
+"π"
+
+5> <<207,128>>.
+<<"π"/utf8>>
+17> <<16#cf,16#80>>.
+<<"π"/utf8>>
+
+/ lees	,
+https://www.safaribooksonline.com/library/view/introducing-erlang-2nd/9781491973363/ch12.html
+
+
+/ 13	. 
+
+10> A=<<207,128>>.
+* 1: syntax error before: '<'
+/ TODO
+
+/ lees	, 
+https://stackoverflow.com/questions/30125546/using-hexadecimal-in-erlang
+
+/ lees	, 
+http://erlang.org/doc/man/erl.html
+
+
+/ 13	. 
+
+6> binary_to_integer(<<"3c0">>,16).
+960
+/ of	,
+12> 16#3c0.
+960
+
+/ andersom	,
+13> integer_to_list(960,16).
+"3C0"
+/ TODO
+
+/ 13	. 
+
+[eric@almond Erlang]$ cat geo.erl 
+-module(geo).
+-export([area/1]).
+area({rect,W,H})->W*H;
+area({cirl,R})->3.14*R*R.
+
+/ de file naam moet die van de module zijn, geo 	,
+
+[eric@almond Erlang]$ erl +pc unicode
+1> c(geo).
+{ok,geo}
+2> geo:area({rect,3,7}).
+21
+3> geo:area({cirl,5}).
+78.5
+
+/ 13	. 
+
+[eric@almond Erlang]$ cat shop.erl 
+-module(shop).
+-export([cost/1]).
+
+cost(oranges)->5;
+cost(newspaper)->8;
+cost(apples)->2;
+cost(pears)->9;
+cost(milk)->7.
+
+4> c(shop).
+{ok,shop}
+5> shop:cost(apples).
+2
+6> shop:cost(socks).
+** exception error: no function clause matching shop:cost(socks) (shop.erl, line 4)
+
+
+
+
+
+
+
+
+
+/ 13	. 
+
+/ 7	. 
+
+/ lees	,
+http://erlide.org/articles/eclipse/120_Installing-and-updating.html
+
+/ 7	. 
+
+/ HERHALING 2018-12-29	,
+
+/ 13	. 
+
+/ lees	,
+http://erlang.org/doc/index.html
+/ klik in het midden op: modules	, en kies: shell	, we zien b(), f(), ...
+
+/ 13	. 
+
+/ forget fct f	,
+
+15> A=7+6.
+13
+16> A.
+13
+17> f().
+ok
+18> A.
+* 1: variable 'A' is unbound
+25> b().
+A = 7
+ok
+
+/ 13	. 
+
+34> P={point,me,10,5}.
+{point,me,10,5}
+/ dit mag ook	, 
+/ TODO	.
+
+35> {_,_,X,Y}=P.
+{point,me,10,5}
+36> X.
+10
+37> Y.
+5
+38> {_,A,X,Y}=P.
+{point,me,10,5}
+39> A.
+me
+41> hello.
+hello
+43> 2.
+2
+40> b().
+A = me
+P = {point,me,10,5}
+X = 10
+Y = 5
+ok
+/ hello is een atom,  net als 2 een int	, is niet een bound var	, dus je ziet hem niet onder b()	,
+
+/ 13	. 
+
+/ {_} matches niet {apples,10}	, {_,_} wel	,
+
+52> L=[{apples,10},hello,foo,{"bar"}].
+53> [_,A,B,C]=L.
+[{apples,10},hello,foo,{"bar"}]
+54> C.
+{"bar"}
+56> [{_},A,B,C]=L.
+** exception error: no match of right hand side value [{apples,10},hello,foo,{"bar"}]
+57> [{_,_},A,B,C]=L.
+[{apples,10},hello,foo,{"bar"}]
+
+/ head, tail	,
+
+58> [H|T]=L.
+[{apples,10},hello,foo,{"bar"}]
+59> H.
+{apples,10}
+60> T.
+[hello,foo,{"bar"}]
+
+/ 13	. 
+
+61> "bar".
+"bar"
+68> π 			/ type ctrl+shift+u 3c0
+* 1: illegal character
+68> [π] 
+* 1: illegal character
+62> "π".						/ geef eerst quotes	,
+[960]
+/ klopt: 0x3c0=3*256+12*16=960	,
+
+65> 61.
+61
+66> [61].
+"="
+/ klopt	, een string is een list 	,
+
+67> [960].
+[960]
+/ TODO
+
+68> "å".		/ typ ctrl+shift+u e5
+"å"
+/ dit is latin-1, itt π	, bij π zagen we [960]	,
+
+71> [72]. 	/ 16#48
+"H"
+77> [229].	 / 16#e5
+"å"
+78> [72,229].
+"Hå"
+/ OK	,
+84> [16#48,16#e5].
+"Hå"
+
+/ lees	,
+http://erlang.org/doc/reference_manual/data_types.html
+
+/ lees	, 
+http://erlang.org/doc/man/erl.html
+
+/ lees	,
+http://erlang.org/doc/apps/stdlib/unicode_usage.html
+
+[eric@almond Erlang]$ erl +pc unicode
+1> [960].
+"π"
+3> [72,229].
+"Hå"
+4> [16#3c0].
+"π"
+
+/ 13	. 
+
+/ list all modules	,
+>  m().
+Module                File
+application           /usr/lib64/erlang/lib/kernel-5.2/ebin/application.beam
+...
+
+/ lees	,
+https://stackoverflow.com/questions/2065990/defining-erlang-functions-in-the-shell
+
+/ maak lambda fct in erl	, 
+/ TODO
+/ zoals hieronder kan het WH niet in erl	,
+
+/ 13	. 
+
+/ open 2 unix shells	, 1 voor vi , ander voor erl	,
+
+[eric@almond Erlang]$ cat geo2.erl 
+-module(geo2).
+-export([area/1]).
+area({r,W,H})->W*H;
+area({c,R})->3.14159*R*R.
+
+7> c(geo2).
+{ok,geo2}
+8> geo2:area({r,4,8}).
+32
+9> geo2:area({c,1}).
+3.14159
+
+/ 13	. 
+
+[eric@almond Erlang]$ cat shop2.erl 
+-module(shop2).
+-export([cost/1]).
+cost(oranges)->5;
+cost(newspaper)->8;
+cost(apples)->2;
+cost(pears)->9;
+cost(milk)->7.
+
+[eric@almond Erlang]$ cat shop3.erl 
+-module(shop3).
+-export([total/1]).
+total([])->0;
+total([{What,A}|T])->shop2:cost(What)*A+total(T).
+
+/ What is een var van atoms	, dus moet met een hoofdletter	,
+
+10> c(shop2).
+{ok,shop2}
+11> c(shop3).
+{ok,shop3}
+12> L=[{oranges,4},{newspaper,1},{apples,3}].
+[{oranges,4},{newspaper,1},{apples,3}]
+13> E=[].
+[]
+14> total(E).
+** exception error: undefined shell command total/1
+15> shop3:total(E).
+0
+21> shop3:total(L).                          
+34
+
+/ 13	. 
+
+/ sum	,
+
+[eric@almond Erlang]$ cat my.erl 
+-export([sum/1,sum2/1]).
+sum([],N)->N;
+sum([H|T],N)->sum(T,H+N).
+sum(L)->sum(L,0).
+sum2([])->0;
+sum2([H|T])->H+sum2(T).
+
+/ het boek maakt sum, maar waarom niet gewoon zoals sum2?
+
+
+36> c(my).
+{ok,my}
+37> my:sum([]).
+0
+38> my:sum([3,9,0]).
+12
+38> my:sum2([3,9,0]).
+12
+
+/ c(my). kun je zo vaak doen als je wilt,	 
+/ dit is dus precies het tegenovergestelde als X=5. bijvoorbeeld	,
+
+/ 13	. 
+
+/ lambdas
+
+/ als je een lambda fct def	, moet je eerst f(). voordat je hem opnieuw kunt def	,/ bij een module (waarin de fcts def) is dat anders	,
+
+51> Z=fun(X)->X end.
+#Fun<erl_eval.6.118419387>
+52> f().
+ok
+53> Z=fun(X)->0 end.
+#Fun<erl_eval.6.118419387>
+54> Z(8).
+0
+
+55> f().
+ok
+56> Z=fun([])->0 end.
+#Fun<erl_eval.6.118419387>
+57> Z([]).
+0
+58> Z([9]).
+** exception error: no function clause matching 
+                    erl_eval:'-inside-an-interpreted-fun-'("\t") 
+
+
+60> Z=fun([])->0;fun([H|T])->H+fun(T)end.
+* 1: syntax error before: 'fun'
+60> f().
+ok
+61> Z=fun([H|T])->H+fun(T)end.           
+* 1: syntax error before: 'end'
+/ fun is niet de name van de fct	,
+
+/ closure	,
+66> Z=fun(L)->(fun(X)->L*X end)end.
+#Fun<erl_eval.6.118419387>
+67> T=Z(9).
+#Fun<erl_eval.6.118419387>
+68> T(5).
+45
+
+/ Intermezzo
+
+/ recursive lambda fcts	,
+
+/ 1313	. 
+
+/ google	,
+erlang recursive lambda functions
+/ lees	,
+https://stackoverflow.com/questions/867418/how-do-you-write-a-fun-thats-recursive-in-erlang
+/->
+https://stackoverflow.com/questions/23199177/funs-names-in-erlang-17
+https://learnyousomeerlang.com/higher-order-functions
+http://erlang.org/doc/programming_examples/funs.html
+
+27> f().
+ok
+1> Z=fun Z([])->0;Z([H|T])->H+Z(T)end.
+#Fun<erl_eval.30.118419387>
+2> Z([1,3,4,0]).
+8
+27> f().
+ok
+28> Z=fun F([])->0;F([H|T])->H+F(T)end.
+#Fun<erl_eval.30.118419387>
+29> Z([1,2,3]).                        
+6
+
+/ 1313	. 
+
+3> Z=fun F([])->0;([H|T])->H+F(T)end. 
+* 1: head mismatch
+43> Z=fun ([])->0;([H|T])->H+F(T)end. 
+* 1: variable 'F' is unbound
+44> Z=fun ([])->0;([H|T])->H+Z(T)end.
+* 1: variable 'Z' is unbound
+45> Z=fun Z([])->0;Z([H|T])->H+Z(T)end.
+#Fun<erl_eval.30.118419387>
+47> f().                               
+ok
+48> Z=fun F([])->0;F([H|T])->H+F(T)end.
+#Fun<erl_eval.30.118419387>
+
+
+/ 1313	. 
+
+/ google,
+erlang y combinator
+/ lees	,
+http://erlang.org/pipermail/erlang-questions/2003-January/006639.html
+
+10> Z=fun([],F)->0;([H|T],F)->H+F(T,F)end.
+#Fun<erl_eval.12.118419387>
+11> Z([1,2,3],Z).
+6
+22> Z=fun([],Z)->0;([H|T],Z)->H+Z(T,Z)end.
+#Fun<erl_eval.12.118419387>
+23> Z([1,2,3],Z).                         
+6
+25> Z=fun(Z,[])->0;(Z,[H|T])->H+Z(Z,T)end.
+#Fun<erl_eval.12.118419387>
+26> Z(Z,[1,2,3]).                         
+6
+
+/ Einde Intermezzo
+
+/ 1313	.
+
+/ (42)	.
+
+/ je mag F schrijven	,
+/ maar hier gebruiken we hem niet	,
+30> f().
+ok
+31> Z=fun F(X,Y)->X*Y end.
+#Fun<erl_eval.36.118419387>
+32> Z(3,4).
+12
+
+/ 1313	.
+
+50> Z=fun (X)->(X rem 2)=:=0 end.
+#Fun<erl_eval.6.118419387>
+51> Z(7).
+false
+52> Z(8).
+true
+53> lists:map(Z,[1,2,3,4,5]).
+[false,true,false,true,false]
+54> lists:filter(Z,[1,2,3,4,5]).
+[2,4]
+
+
+/ 13	.
+
+/ (45)
+
+/ IsFruit=MakeTest(Fruit) is de closure, want IsFruit is de inner fct		, die de local L, een list, van de outer fct MakeTest heeft ingesloten	,
+
+/ 13	. 
+
+/ (46)
+
+/ for	,
+
+$ cat my.erl
+
+-module(my).
+-export([sum/1,sum2/1,for/3]).
+...
+for(M,M,F)->[F(M)];
+for(I,M,F)->[F(I)|for(I+1,M,F)].
+
+57> c(my).
+{ok,my}
+59> my:for(1,10,fun (I)->I*I end).
+[1,4,9,16,25,36,49,64,81,100]
+
+/ maar we kunnen ook een lambda maken	,
+
+68> f().                                                    
+ok
+82> For=fun G(M,M,F)->[F(M)];G(I,M,F)->[F(I)|G(I+1,M,F)]end.
+#Fun<erl_eval.42.118419387>
+70> For(1,10,fun (X)->X*X end).
+[1,4,9,16,25,36,49,64,81,100]
+
+/ we kunnen ook	,
+77> For=fun __(M,M,F)->[F(M)];__(I,M,F)->[F(I)|__(I+1,M,F)]end.
+
+/ we zien dat de fct in my.erl GEEN hoofdletter heeft, en de variable die de anon. fct is wel, 
+/ de fct in de erl file mag ook GEEN hoofletter hebben	,
+
+/ 13
+
+/ map	,
+
+$ cat my.erl
+
+-module(my).
+-export([sum/1,sum2/1,for/3,map/2]).
+...
+map([],F)->[];
+map([H|T],F)->[F(H)|map(T,F)].
+
+84> c(my).
+my.erl:13: Warning: variable 'F' is unused
+{ok,my}
+86> my:map([1,2,3,4],fun (X)->X*X end).
+[1,4,9,16]
+
+/ of als lambda,
+87> Map=fun G([],F)->[];G([H|T],F)->[F(H)|G(T,F)]end.
+#Fun<erl_eval.36.118419387>
+88> Map([1,2,3,4],fun (X)->X*X end).
+[1,4,9,16]
+
+/ De oplossing van de warning is:
+
+$ cat my.erl
+
+-module(my).
+-export([sum/1,sum2/1,for/3,map/2]).
+...
+map([],_)->[];
+map([H|T],F)->[F(H)|map(T,F)].
+
+/ 1313	. 
+
+/ is map een alt voor for	?
+/ TODO
+
+/ 13	. 
+
+/ 1313	. 
+
+/ oefen	,
+
+105> my:map([{oranges,5},{newspaper,2}],fun ({X,A})->shop2:cost(X)*A end).
+[25,16]
+108> my:sum(my:map([{oranges,5},{newspaper,2}],fun ({X,A})->shop2:cost(X)*A end)).
+41
+
+/ 1313	. 
+
+$ vi my.erl
+
+-module(my).
+-export([sum2/1,map/2,total/1]).
+
+sum2([])->0;
+sum2([H|T])->H+sum2(T).
+
+map([],_)->[];
+map([H|T],F)->[F(H)|map(T,F)].
+
+total(L)->sum(map(L,fun ({X,A})->shop2:cost(X)*A end)).
+
+/ toch: L moet van bepaald type zijn: de items moeten er zo uitzien: {X,A}	, en dat zie je aan L niet af	,
+/ TODO
+
+112> my:total([{oranges,5},{newspaper,2}]).
+41
+
+/ 1313	. 
+
+/ import module	,
+
+$ vi my.erl
+
+-module(my).
+-import(shop2,[cost/1]).
+-export([sum2/1,map/2,total/1]).
+
+sum2([])->0;
+sum2([H|T])->H+sum2(T).
+
+map([],_)->[];
+map([H|T],F)->[F(H)|map(T,F)].
+
+total(L)->sum(map(L,fun ({X,A})->cost(X)*A end)).
+
+113> c(my).                                
+{ok,my}
+114> my:total([{oranges,5},{newspaper,2}]).
+41
+
+
+/ 1313	.
+
+/ lists:map (fun,L), my:map(L,fun)	,
+
+117> lists:map(fun ({X,A})->shop2:cost(X)*A end,[{oranges,5},{newspaper,2}]). 
+[25,16]
+
+/ 13	. 
+
+116> my:map([1,2,3,4],fun F(X)->X*X end).
+[1,4,9,16]
+
+/ 1313	. 
+
+/ recursive fun	,
+
+
+122> my:map([[1,2,3,4],[4,3,2,1]],fun F([])->0;F([H|T])->H+F(T)end).
+"\n\n"
+124> [10].
+"\n"
+
+/ we doen eigenlijk,
+127> my:map([[1,2,3,4],[4,3,2,1]],fun (L)->my:sum2(L)end).
+"\n\n"
+
+/ maar dit mag niet,
+126> my:map([[1,2,3,4],[4,3,2,1]],my:sum2).
+* 1: illegal expression
+/ TODO
+
+/ dit mag wel	,
+140> Sum2=fun F([])->0;F([H|T])->H+F(T)end.
+#Fun<erl_eval.30.118419387>
+141> Sum2([1,2,3,4]).
+10
+143> my:map([[1,2,3,4],[4,3,2,1]],Sum2).  
+"\n\n"
+
+145> my:sum(my:map([[1,2,3,4],[4,3,2,1]],Sum2)).
+20
+
+/ 13	. 
+
+166> [X*X||X<-lists:seq(1,10)].
+[1,4,9,16,25,36,49,64,81,100]
+
+/ subscribed to erlang-questions, ericjvandervelden@gmail.com, vlWalnoot27	,
+
+/ 13	. 
+
+/ guards	,
+
+/ 1313	. 
+
+$ vi my.erl
+
+-module(my).
+-export([sum/1,sum2/1,for/3,map/2,total/1,even/1,max/2]).
+
+max(X,Y)when X>Y,X>0->X;
+max(_,Y)->Y.
+
+7> my:max(5,3).
+5
+8> my:max(-2,-3).
+-3
+
+/ 1313	. 
+
+max(X,Y)when X==0,Y<X->X;      
+max(_,_)->13.
+/ of	,
+max(X,Y)when(X==0)and(Y<X)->X;  
+max(_,_)->13.
+
+/ met and moeten de exprs tussen ()	, 
+/ als je de 2de niet tussen () geeft c(my). een ERR msg	, bij de 1ste niet	, maar hij functioneert dan niet goed	,
+
+/ 1313	. 
+
+max(A,X,Y)when is_atom(A)and(0<Y)and(Y<X)->X; 
+max(A,X,Y)when is_atom(A)and(0<X)and(X<Y)->Y. 
+/ of	,
+max(A,X,Y)when is_atom(A),0<Y,Y<X->X;   
+max(A,X,Y)when is_atom(A),0<X,X<Y->Y.      
+
+64> my:max(hello,3,5).
+5
+65> my:max(hello,5,3).
+5
+66> my:max(hello,-5,3).
+** exception error: no function clause matching my:max(hello,-5,3) (my.erl, line 21)
+
+/ 13	. 
+
+/ records	,
+
+/ je moet in de shell rr doen om in de shell te kunnen doen: X2=#todo{}
+/ we kunnen de record def in my.erl of in records.hrl	,  als we in records.hrl def	, dan moeten we in my.erl -include("records.hrl") doen	, anders kunnen we in my.erl geen fct def die #todo uses	,
+/ waar de record is def moeten we rr doen, dus rr("my.erl") bijv;als we rr("my.erl") doen, hoeven we NIET meer c(my)
+/ we kunnen ook rr("records.hrl") en c(my)	.
+
+[eric@almond Erlang]$ cat records.hrl 
+-record(todo,{status=reminder,who=joe,text}).
+
+72> rr("records.hrl").
+[todo]
+73> X=#todo{}.
+#todo{status = reminder,who = joe,text = undefined}
+76> X2=X1#todo{status=done}.
+#todo{status = done,who = joe,text = "Fix errata"}
+77> X3=X2#todo{who="Joe"}.
+#todo{status = done,who = "Joe",text = "Fix errata"}
+
+79> #todo{who=W,text=Txt}=X2.
+#todo{status = done,who = joe,text = "Fix errata"}
+80> W.  
+joe
+81> Txt.
+"Fix errata"
+
+/ ipv pattern matching	,
+83> X2#todo.text.
+"Fix errata"
+
+/ 1313	. 
+
+/ functions met record als arg	,
+
+/ lees	,
+http://erlang.org/doc/reference_manual/macros.html
+
+[eric@almond Erlang]$ cat records.hrl 
+-record(todo,{status=reminder,who=joe,text}).
+
+$ cat my.erl
+
+-module(my).
+-export([sum/1,sum2/1,for/3,map/2,total/1,even/1,max/3,clear/1]).
+-include("records.hrl").
+...
+clear(#todo{status=_,who=_}=R)->
+R#todo{status=finished}.
+
+111> rr("records.hrl"). 	% om X=#todo{} te kunnen use in shell	,
+111> c(my).            
+/ of	,
+rr("my.erl").
+
+112> my:clear(X2).
+#todo{status = finished,who = joe,text = "Fix errata"}
+
+/ 1313	 
+
+/ In een fct met meerdere lines	,
+
+/ zet er een , tussen	,
+
+clear(#todo{status=_,who=_}=R)->
+max(foo,3,5),
+R#todo{status=finished}.
+
+/ 1313	. 
+
+/ printing	,
+
+/ lees	,
+http://erlang.org/doc/man/io.html
+
+18> io:fwrite("~s~s~n",["Hello World","Foo Bar"]).
+Hello WorldFoo Bar
+ok
+19> io:fwrite("~s,~s.~n",["Hello World","Foo Bar"]).
+Hello World,Foo Bar.
+ok
+
+23> X2=X#todo{who="Joe"}.
+#todo{status = reminder,who = "Joe",text = undefined}
+26> io:fwrite("~p~n",[X2#todo.who]).
+"Joe"
+ok
+27> io:fwrite("~s~n",[X2#todo.who]).
+Joe
+ok
+
+/ 1313	. 
+
+/ fct met print record	,
+
+$ vi my.erl
+...
+clear(#todo{status=_,who=_}=R)when is_record(R,todo)->
+	io:fwrite("~s~n",[R#todo.who]),
+	R#todo{status=finished}.
+
+29> X2.                                             
+#todo{status = reminder,who = "Joe",text = undefined}
+34> my:clear(X2).
+Joe
+#todo{status = finished,who = "Joe",text = undefined}
+
+/ 13	. 
+
+/ google,	
+erlang when semi colon when comma
+/ lees	,
+https://stackoverflow.com/questions/1110601/in-erlang-when-do-i-use-or-or
+
+/ 13	. 
+
+/ case	,
+
+/ 1313	. 
+
+$ vi my.erl
+
+-module(my).
+-export([sum/1,sum2/1,for/3,map/2,total/1,even/1,max/3,clear/1,filter/2]).
+
+
+filter(P,[H|T])->
+  case P(H)of
+    true->[H|filter(P,T)];
+    false->filter(P,T)					% geen ; of . 	,
+  end;
+filter(_,[])->
+  [].
+
+c(my).
+40> Fruits=[apple,orange,kiwi].
+[apple,orange,kiwi]
+46> MakeTest=fun(L)->(fun(F)->lists:member(F,L)end)end.
+#Fun<erl_eval.6.118419387>
+49> IsFruit=MakeTest(Fruits).
+#Fun<erl_eval.6.118419387>
+52> my:filter(IsFruit,[apple,orange,banana]).
+[apple,orange]
+
+/ 1313	. 
+
+/ we kunnen ook de filter fct in my.erl def	,
+
+$ vi my.erl
+
+-module(my).
+-export([sum/1,sum2/1,for/3,map/2,total/1,even/1,max/3,clear/1,filter/2,fruit/1]).
+
+filter(P,[H|T])->
+  case P(H)of
+    true->[H|filter(P,T)];
+    false->filter(P,T)
+  end;
+filter(_,[])->
+  [].
+
+fruit(F)->
+  case F of
+    apple->true;
+    orange->true;
+    kiwi->true;
+    _->false
+  end.
+
+c(my).
+56> my:filter(fun my:fruit/1,[apple,orange,banana]). 
+[apple,orange]
+
+/ 13	. 
+
+/ if	,
+
+/ kunnen we case hierboven vervangen door if	?
+
+/ 1313	. 
+
+$ vi my.erl
+
+filter2(P,[H|T])->
+  if
+    P(H)==true->[H|filter2(P,T)];
+    P(H)==false->filter2(P,T)
+  end;
+filter2(_,[])->[].
+
+58> c(my).
+my.erl:51: illegal guard expression
+my.erl:52: illegal guard expression
+error
+
+/ WH mag je in een guard geen fct call doen	,
+
+/ 1313	. 
+
+$ vi my.erl
+
+-module(my).
+-export([sum/1,sum2/1,for/3,map/2,total/1,even/1,max/3,clear/1,filter/2,fruit/1,filter2/1]).
+
+filter2([H|T])->
+  if
+    is_atom(H)->[H|filter2(T)];
+    true->filter2(T)
+  end;
+filter2([])->[].
+
+61> c(my).
+{ok,my}
+62> my:filter2([foo,bar,"joe",1,baz]).
+[foo,bar,baz]
+
+
+/ 7	. 
+
+[eric@almond book]$ pwd
+/home/eric/Devel/Erlang/book
+[eric@almond book]$ tar -xvzf ~/Downloads/jaerlang-code.tgz 
+
+/ 7	. 
+
+7> io:fwrite("~w~n",[foo]).
+foo
+ok
+9> io:fwrite("~w~w~n",[foo,bar]).
+foobar
+ok
+
+[eric@almond Erlang]$ pwd
+/home/eric/Devel/Erlang
+[eric@almond Erlang]$ cat fac1.erl 
+
+% tussen commands binnen fct ,
+% tussen fct clauses ; 
+
+-module(fac1).
+-export([main/1]).
+main([A])->
+	L=atom_to_list(A),
+	I=list_to_integer(L),
+	F=fac(I),
+	io:format("factorial ~w=~w~n",[I,F]),
+	init:stop().
+fac(0)->1;
+fac(N)->N*fac(N-1).
+
+[eric@almond Erlang]$ erlc fac1.erl 
+[eric@almond Erlang]$ erl -noshell -s fac1 main 25
+
+/ als je iets wilt weten van atom_to_list	, die in de erlang module zit, dus gelijk is aan erlang:atom_to_list	,
+[eric@almond Erlang]$ erl -man erlang
+
+/ ook	,
+[eric@almond Erlang]$ erl +pc unicode
+...
+1> help().
+** shell internal commands **
+b()        -- display all variable bindings
+e(N)       -- repeat the expression in query <N>
+...
+
+/ 7	. 
+
+/ (135)
+
+$ vi area_server0.erl
+
+-module(area_server0).
+-export([foo/0]).
+
+foo()->
+  receive
+    {rect,W,H}->
+      io:format("Area of rectangle is ~p~n",[W*H]),
+      foo();
+    {circ,R}->
+      io:format("Area of circle is ~p~n",[3.14159*R*R]),
+      foo();
+    Other->
+      io:format("I don't know the area of a ~p~n",[Other]),
+      foo()
+end.
+/ we zien tussen de clauses ;	,
+/ we zien tussen de statements ,	,
+/ achter de laatste clause mag geen ;	,
+/ we zien end.
+ 
+
+[eric@almond Erlang]$ erlc area_server0.erl 
+
+[eric@almond Erlang]$ erl
+
+1> Pid=spawn(fun area_server0:foo/0).
+<0.59.0>
+
+2> code:get_path().
+[".","/usr/lib64/erlang/lib/kernel-5.2/ebin",
+...
+
+/ Intermezzo
+
+[eric@almond Erlang]$ erl -man erl
+	...
+         +pc Range:
+           Sets the range of characters that the system considers printable in
+           heuristic detection of strings. This typically affects  the  shell,
+           debugger,  and  io:format functions (when ~tp is used in the format
+           string).
+/ lees	,
+http://erlang.org/doc/man/io.html
+
+/ D3=211 is latin1
+/ 3c0=960 is unicode	,
+
+/ bij unicode moet je ~tp geven, bij latin ~p (of ook ~tp) 
+/ voor unicode moeten we $ erl +pc unicode	, voor latin is $ erl OK	, want $ erl +pc latin1 mag ook, maar is de default	,
+
+13> io:format("~p~n",[[16#d3]]). 
+"Ó"
+ok
+12> io:format("~tp~n",[[16#d3]]).
+"Ó"
+ok
+14> io:format("~p~n",[[16#3c0]]).
+[960]
+ok
+15> io:format("~tp~n",[[16#3c0]]).
+"π"
+
+/ Einde Intermezzo
+
+[eric@almond Erlang]$ erl +pc unicode
+Erlang/OTP 19 [erts-8.3.5.4] [source] [64-bit] [smp:4:4] [async-threads:10] [hipe] [kernel-poll:false]
+
+Eshell V8.3.5.4  (abort with ^G)
+1> Pid=spawn(fun area_server0:foo/0).
+<0.59.0>
+2> Pid!{rect,6,10}.
+Area of rectangle is 60
+{rect,6,10}
+3> Pid!{circ,23}.
+Area of circle is 1661.90111
+{circ,23}
+4> Pid!{triang,2,4,5}.
+I don't know the area of a {triang,2,4,5}
+{triang,2,4,5}
+
+/ 7	. 
+
+/ (138)
+
+/ we printen niet meer het antwoord, maar sturen het naar de client	,
+
+$ vi area_server1.erl
+
+[eric@almond Erlang]$ cat area_server1.erl 
+-module(area_server1).
+-export([loop/0,rpc/2]).
+
+% client	,
+% Pid is die van de server, waar loop in draait	,
+% Pid wordt op de command line bepaald, en gegeven aan rpc	,
+rpc(Pid,Req)->
+	Pid!{self(),Req},
+	receive
+		Response->
+			Response
+	end.	
+	
+% server	,
+% loop prints niet meer, maar stuurt antwoord naar client	,
+loop()->
+	receive
+		{From,{rect,W,H}}->
+			From!W*H,
+			%io:format("~p~n",[W*H]),
+			loop();
+		{From,{circ,R}}->
+			From!3.14159*R*R,	
+			%io:format("~p~n",[3.14159*R*R]),
+			loop();
+		{From,Other}->
+			From!{error,Other},
+			%io:format("don't know ~p~n",[Other]),
+			loop()
+end.
+
+[eric@almond Erlang]$ erl +pc unicode
+...
+1> Pid=spawn(fun area_server1:loop/0).
+<0.59.0>
+2> area_server1:rpc(Pid,{rect,8,10}).
+80
+3> area_server1:rpc(Pid,{circ,3}).   
+28.274309999999996
+4> area_server1:rpc(Pid,socks).   
+{error,socks}
+5> area_server1:rpc(Pid,{triang,3,4}).
+{error,{triang,3,4}}
+6> q().
+
+/ 7	. 
+
+/ ontvang alleen messages van de server	,
+/ als hij een msg ontvangt van een andere server, dan hangt de cli	, zo is het programma nu	,
+
+module(area_server2).
+-export([loop/0,rpc/2]).
+
+% client  ,
+% Pid is die van de server, waar loop in draait ,
+% Pid wordt op de command line bepaald, en gegeven aan rpc  ,
+% receives alleen responses van Pid ,
+rpc(Pid,Req)->
+  Pid!{self(),Req},
+  receive
+    {Pid,Response}->			% !
+      Response
+  end.
+
+% server  ,
+% loop prints niet meer, maar stuurt antwoord naar client ,
+loop()->
+  receive
+    {From,{rect,W,H}}->
+      From!{self(),W*H}, 					% !
+      %io:format("~p~n",[W*H]),
+      loop();
+    {From,{circ,R}}->
+      From!{self(),3.14159*R*R},	 % !
+      %io:format("~p~n",[3.14159*R*R]),
+      loop();
+    {From,Other}->
+      From!{self(),{error,Other}},	 % !
+      %io:format("don't know ~p~n",[Other]),
+      loop()
+end.
+ 
+4> Pid=spawn(fun area_server2:loop/0).
+<0.65.0>
+5> area_server2:rpc(Pid,{rect,8,10}).
+80
+6> area_server2:rpc(Pid,{circ,3}).
+28.274309999999996
+7> area_server2:rpc(Pid,{triang,3,4}).
+{error,{triang,3,4}}
+8> Pid1=spawn(fun area_server1:loop/0).
+<0.70.0>
+9> area_server2:rpc(Pid1,{triang,3,4}).
+% HANGS	,
+ctrl+C
+BREAK: (a)bort (c)ontinue (p)roc info (i)nfo (l)oaded
+       (v)ersion (k)ill (D)b-tables (d)istribution
+q
+
+/ 7	 . 
+
+/ 13	. 
+
+/ een fct ziet er zo uit	, je eindigt een fct met een .	,
+/ (end. eindigt een receive)	,	
+
+$ vi processes.erl
+
+-module(processes).
+-export([max/1]).
+
+max(N)->
+  Max=erlang:system_info(process_limit),
+  io:format("Maximum allowed processes:~p~n",[Max]).
+
+[eric@almond Erlang]$ erl +pc unicode
+1> processes:max(7).
+Maximum allowed processes:262144
+ok
+
+/ 13	. 
+
+[eric@almond Erlang]$ cat processes.erl 
+
+-module(processes).
+-export([max/1]).
+
+max(N)->
+	Max=erlang:system_info(process_limit),
+	io:format("Maximum allowed processes:~p~n",[Max]),
+	{R1,RD1}=statistics(runtime),
+	{W1,WD1}=statistics(wall_clock),
+	L=for(1,N,fun()->spawn(fun()->wait()end)end),
+	{R2,RD2}=statistics(runtime),
+	{W2,WD2}=statistics(wall_clock),
+	lists:foreach(fun(Pid)->Pid!die end,L),
+	U1=RD2*1000/N,
+	U2=WD2*1000/N,
+
+	io:format("R1,RD1={~p,~p}~n",[R1,RD1]),
+	io:format("W1,WD1={~p,~p}~n",[W1,WD1]),
+	io:format("R2,RD2={~p,~p}~n",[R2,RD2]),
+	io:format("W2,WD2={~p,~p}~n",[W2,WD2]),
+
+	io:format("Process spawn time=~p(~p) microseconds~n",[U1,U2]).
+
+wait()->
+	receive
+		die->void
+	end.
+
+for(N,N,F)->[F()];
+for(I,N,F)->[F()|for(I+1,N,F)].
+
+46> processes:max(20000).
+Maximum allowed processes:262144
+R1,RD1={350,0}
+W1,WD1={626239,20439}
+R2,RD2={430,80}
+W2,WD2={626321,82}
+Process spawn time=4.0(4.1) microseconds
+ok
+
+87> processes:max(200000).
+Maximum allowed processes:262144
+R1,RD1={5460,600}
+W1,WD1={4770053,5334}
+R2,RD2={6160,700}
+W2,WD2={4770784,731}
+Process spawn time=3.5(3.655) microseconds
+ok
+
+/ 13	. 
+
+$ vi lib_misc.erl
+
+-module(lib_misc).
+-export([some/1]).
+
+some(N)->
+  {R1,RD1}=statistics(runtime),
+  {W1,WD1}=statistics(wall_clock),
+  sleep(N),
+  {R2,RD2}=statistics(runtime),
+  {W2,WD2}=statistics(wall_clock),
+
+  io:format("R1,RD1={~p,~p}~n",[R1,RD1]),
+  io:format("W1,WD1={~p,~p}~n",[W1,WD1]),
+  io:format("R2,RD2={~p,~p}~n",[R2,RD2]),
+  io:format("W2,WD2={~p,~p}~n",[W2,WD2]).
+
+
+sleep(T)->
+  receive
+  after T->
+    true
+  end.
+
+
+102> lib_misc:some(5000).
+R1,RD1={6860,0}
+W1,WD1={5622174,70242}
+R2,RD2={6860,0}
+W2,WD2={5627178,5004}
+ok
+103> processes:max(20000).
+Maximum allowed processes:262144
+R1,RD1={6870,10}									% 6860+10=6870
+W1,WD1={5644741,17563}
+R2,RD2={6940,70}				% 6870+70=6940
+W2,WD2={5644815,74} % 5644741+74=5644815	,
+Process spawn time=3.5(3.7) microseconds
+ok
+104> lib_misc:some(5000). 
+R1,RD1={7000,60}				% er is 60 bijgekomen	,
+W1,WD1={5651681,6866}		% er is 6866 bijgekomen	,
+R2,RD2={7000,0}
+W2,WD2={5656682,5001}
+ok
+
+
+
+
+
+
+
+

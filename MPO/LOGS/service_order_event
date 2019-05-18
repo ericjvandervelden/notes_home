@@ -1,0 +1,2207 @@
+rollback ;
+ select*from club_sporters2;
+rollback ;
+ select*from club_sporters2;
+\d item
+\d category
+rollback ;
+\d item
+select*from item;
+rollback ;
+select*from item;
+\d item
+rollback ;
+select*from item;
+rollback ;
+\q
+select pg_database_size('geosco');
+\q
+SELECT * FROM shipment_order where shipment_order_id='SH004331289';
+\x
+SELECT * FROM shipment_order where shipment_order_id='SH004331289';
+SELECT count(*) FROM tms_product_item where shipment_order_systemid=4359346 ;
+SELECT * FROM tms_product_item where shipment_order_systemid=4359346 ;
+SELECT * FROM shipment_order where shipment_order_id='SH004605564';
+SELECT * FROM tms_product_item where shipment_order_systemid=4634731;
+SELECT product_item_id FROM tms_product_item where shipment_order_systemid=4634731;
+SELECT product_item_id FROM tms_product_item where shipment_order_systemid=4634731 and product_item_id='010';
+SELECT * FROM tms_product_item where shipment_order_systemid=4634731 and product_item_id='010';
+select*from tms_product_item where system_id=19724094;
+update tms_product_item set product_item_id='110' where system_id=19724094;
+commit;
+select*from tms_product_item where system_id=19724094;
+\q
+select system_id,product_item_id 
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004647051';
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004647051';
+rollback ;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004647051';
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004647051'
+and product_item_id='010';
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004647051'
+and product_item_id='010'
+limit 1;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004647051'
+and product_item_id='010'
+limit 1;
+select pi.system_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004647051'
+and product_item_id='010'
+limit 1;
+ select product_item
+from tms_product_item pi
+where system_id=19893858;
+rollback ;
+select tms_product_item
+from tms_product_item pi
+where system_id=19893858
+;
+rollback ;
+select tms_product_item
+from tms_product_item pi
+where system_id=19893858
+;
+rollback ;
+select product_item_id
+from tms_product_item pi
+where system_id=19893858;
+update tms_product_item
+set  product_item_id='160'
+where system_id=19893858;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004647051';
+commit;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004638452';
+select pi.system_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004638452'
+and product_item_id='010'
+limit 1;
+update tms_product_item
+set  product_item_id='090'
+where system_id=19860871;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004638452';
+commit;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004631439'
+;
+select pi.system_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004638452'
+and product_item_id='010'
+limit 1
+;
+select pi.system_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004631439'
+and product_item_id='040'
+limit 1
+;
+update tms_product_item
+set  product_item_id='050'
+where system_id=19836518
+;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004631439'
+;
+commit;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004653512'
+;
+select pi.system_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004653512'
+and product_item_id='010'
+limit 1
+;
+update tms_product_item
+set  product_item_id='020'
+where system_id=19920172
+;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004653512'
+;
+commit;
+\q
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004667820'
+;
+select pi.system_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004667820'
+and product_item_id='020'
+limit 1
+;
+update tms_product_item
+set  product_item_id='020'
+where system_id=19997875
+;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004667820'
+;
+update tms_product_item
+set  product_item_id='030'
+where system_id=19997875
+;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004667820'
+;
+commit;
+\q
+\dt
+select*from oms_user_party;
+select*from tms_user;
+select*from tms_user where user_name='eric';
+select*from tms_user where user_id='eric';
+select*from oms_user_party where user_systemid=27223886;
+select pg_database_size();
+select pg_database_size('geosco0906t');
+rollback ;
+select pg_database_size('geosco0906t');
+\?pg_database_size
+?pg_database_size
+;
+\h pg_database_size
+\?
+\df
+rollback ;
+\df
+\h
+\df+
+\? pg_catalog.pg_database_size
+\sf pg_database_size
+\sf+ pg_database_size
+\sf pg_database_size(oid)
+select pg_database_size_oid;
+select pg_database_size_oid();
+rollback 
+select pg_database_size_oid();
+rollback;
+select pg_database_size_oid();
+\?
+\dfS
+rollback ;
+\dfS
+\dfS+
+\?
+\dfS+ pg_database
+\dfS+ pg_database_size
+\dfS+ pg_database*
+\?
+\sf pg_database_size(name)
+\dfS+ pg_database*
+rollback ;
+\dfS+ pg_database*
+select*from tms_user where system_id=27223886;
+\d oms_user_party
+select*from oms_type where user_systemid=27223886;
+select*from oms_user_type where user_systemid=27223886;
+rollback ;
+select*from oms_user_type where user_systemid=27223886;
+rollback ;
+select*from oms_user_party where user_systemid=27223886;
+rollback ;
+select*from oms_user_party where user_systemid=27223886;
+select*from oms_user_party where user_systemid=27223886;
+select count(*)
+from OMS_FILTER this_ 
+where this_.IS_SYSTEM=0 
+and this_.USER_SYSTEMID=27223886
+and this_.SOURCE_ID='coshipmentportal-party'
+order by this_.SEQUENCE asc
+;
+select count(*),this_.sequence
+from OMS_FILTER this_ 
+where this_.IS_SYSTEM=0 
+and this_.USER_SYSTEMID=27223886
+and this_.SOURCE_ID='coshipmentportal-party'
+order by this_.SEQUENCE asc;
+rollback ;
+select count(*),this_.sequence
+from OMS_FILTER this_ 
+where this_.IS_SYSTEM=0 
+and this_.USER_SYSTEMID=27223886
+and this_.SOURCE_ID='coshipmentportal-party'
+order by this_.SEQUENCE asc;
+select this_.sequence
+from OMS_FILTER this_ 
+where this_.IS_SYSTEM=0 
+and this_.USER_SYSTEMID=27223886
+and this_.SOURCE_ID='coshipmentportal-party'
+order by this_.SEQUENCE asc;
+rollback ;
+select this_.sequence
+from OMS_FILTER this_ 
+where this_.IS_SYSTEM=0 
+and this_.USER_SYSTEMID=27223886
+and this_.SOURCE_ID='coshipmentportal-party'
+order by this_.SEQUENCE asc;
+select count(this_.sequence)
+from OMS_FILTER this_ 
+where this_.IS_SYSTEM=0 
+and this_.USER_SYSTEMID=27223886
+and this_.SOURCE_ID='coshipmentportal-party'
+order by this_.SEQUENCE asc;
+select count(*)
+from OMS_FILTER this_ 
+inner join OMS_FILTER_SHARE_ROLE sharedwith3_ on this_.SYSTEM_ID=sharedwith3_.FILTER_SYSTEMID 
+inner join TMS_ROLE rolevo1_ on sharedwith3_.ROLE_SYSTEMID=rolevo1_.SYSTEM_ID 
+where this_.IS_SYSTEM=false
+and this_.IS_MASTER=false
+and this_.SOURCE_ID='coshipmentportal-party' 
+and rolevo1_.SYSTEM_ID=10100
+;
+rollback ;
+select count(*)
+from OMS_FILTER this_ 
+inner join OMS_FILTER_SHARE_ROLE sharedwith3_ on this_.SYSTEM_ID=sharedwith3_.FILTER_SYSTEMID 
+inner join TMS_ROLE rolevo1_ on sharedwith3_.ROLE_SYSTEMID=rolevo1_.SYSTEM_ID 
+where this_.IS_SYSTEM=false
+and this_.IS_MASTER=false
+and this_.SOURCE_ID='coshipmentportal-party' 
+and rolevo1_.SYSTEM_ID=10100
+;
+select*From party where system_id=27244778;
+rollback ;
+\d organization
+select*from organization
+where system_id=13000;
+select*from tms_user 
+where system_id=27223886;
+select count(*)
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000                           -- SCO_WW_BP
+order by this_.SYSTEM_ENTRY_DATE desc
+;
+select count(this_.SYSTEM_ENTRY_DATE)
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000                           -- SCO_WW_BP
+order by this_.SYSTEM_ENTRY_DATE desc;
+rollback ;
+select count(this_.SYSTEM_ENTRY_DATE)
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000                           -- SCO_WW_BP
+order by this_.SYSTEM_ENTRY_DATE desc;
+select max(this_.SYSTEM_ENTRY_DATE)
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000                           -- SCO_WW_BP
+order by this_.SYSTEM_ENTRY_DATE desc
+;
+rollback ;
+select max(this_.SYSTEM_ENTRY_DATE)
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000                           -- SCO_WW_BP
+order by this_.SYSTEM_ENTRY_DATE desc
+;
+select max(this_.SYSTEM_ENTRY_DATE)
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000   ;
+rollback ;
+select max(this_.SYSTEM_ENTRY_DATE)
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000   ;
+select this.*
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000                           -- SCO_WW_BP
+;
+select this_.*
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000                           -- SCO_WW_BP
+;
+rollback ;
+select this_.*
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000                           -- SCO_WW_BP
+;
+\x
+select this_.*
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000                           -- SCO_WW_BP
+;
+select this_.*
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000                           -- SCO_WW_BP
+order by this_.SYSTEM_ENTRY_DATE desc;
+select this_.*
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000                           -- SCO_WW_BP
+order by this_.SYSTEM_ENTRY_DATE desc;
+select count(this_.*)
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000                           -- SCO_WW_BP
+order by this_.SYSTEM_ENTRY_DATE desc;
+select this_.*
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000                           -- SCO_WW_BP
+order by this_.SYSTEM_ENTRY_DATE desc;
+rollback ;
+select this_.*
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000                           -- SCO_WW_BP
+order by this_.SYSTEM_ENTRY_DATE desc;
+ select this_.*
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000                           -- SCO_WW_BP
+order by this_.SYSTEM_ENTRY_DATE desc;
+select organization_id from organization;
+select system_id,organization_id from organization;
+select this_.*
+from SHIPMENT_ORDER this_
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=12000                           --  LOG_EMEA_FR_CT_PSA
+order by this_.SYSTEM_ENTRY_DATE desc;
+select this_.*
+from SHIPMENT_ORDER this_
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+;
+\d shipment_order
+select count(this_.*)
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000                           -- SCO_WW_BP
+order by this_.SYSTEM_ENTRY_DATE desc;
+\d shipment_order template
+rollback ;
+\d shipment_order template
+\d shipment_order *template*
+\d shipment_order 
+\?
+\q
+select*from shipment_order where shipment_order_id='GEOSCO-inbound-portal-template';
+\x
+select*from shipment_order where shipment_order_id='GEOSCO-inbound-portal-template';
+\q
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004702852'
+;
+select pi.system_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004702852'
+and product_item_id='020'
+limit 1
+;
+update tms_product_item
+set  product_item_id='020'
+where system_id=20150525
+;
+select pi.system_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004702852'
+and product_item_id='020'
+limit 1
+;
+select pi.system_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004702852'
+and product_item_id='020'
+limit 1
+;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004702852'
+;
+update tms_product_item
+set  product_item_id='070'
+where system_id=20150525
+;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004702852'
+;
+commit;
+\q
+\d mpo_scs_path
+\d mpo_scs_patch
+select*from mpo_scs_patch 
+where entry_date>'2016-09-14 12:00:00';
+\x
+select*from mpo_scs_patch 
+where entry_date>'2016-09-14 12:00:00';
+select count(*)from mpo_scs_patch 
+where entry_date>'2016-09-14 12:00:00';
+select count(*)from mpo_scs_patch 
+where entry_date>'2016-09-14 12:00:00' 
+group by status;
+select count(*),status from mpo_scs_patch 
+where entry_date>'2016-09-14 12:00:00' 
+group by status;
+\q
+select count(*),status from mpo_scs_patch 
+where entry_date>'2016-09-14 12:00:00' 
+group by status;
+\q
+select count(*),status from mpo_scs_patch 
+where entry_date>'2016-09-14 12:00:00' 
+group by status;
+\q
+select count(*),status from mpo_scs_patch 
+where entry_date>'2016-09-14 12:00:00' 
+group by status;
+\q
+\q
+SELECT datname,usename,procpid,client_addr,waiting,query_start,current_query FROM pg_stat_activity ;
+\d pg_stat_activity
+rollback ;
+\d pg_stat_activity
+select* from pg_stat_activity;
+select* from pg_stat_activity;
+\d pg_stat_activity
+select query_start  from pg_stat_activity;
+select query_start  from pg_stat_activity;
+select procpid,datname,current_query,now() - pg_stat_activity.query_start as duration from pg_stat_activity where pg_stat_activity.current_query <> ''::text and now() - pg_stat_activity.query_start > interval '5 minutes'
+;
+select* from pg_stat_activity;
+rollback ;
+select* from pg_stat_activity;
+select procpid, datname, usename, application_name, text(client_addr), 
+backend_start, xact_start, query_start, waiting, current_query 
+from pg_stat_activity
+where datname = current_database();
+\q
+select procpid, datname, usename, application_name, text(client_addr), 
+backend_start, xact_start, query_start, waiting, current_query 
+from pg_stat_activity
+where datname = current_database();
+\q
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004740216'
+;
+select pi.system_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004740216'
+and product_item_id='010'
+limit 1
+;
+update tms_product_item
+set  product_item_id='040'
+where system_id=20314127
+;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004740216'
+;
+commit;
+\q
+\d shipment_order
+select column_name,data_type 
+from information_schema.columns 
+where table_name = 'shipment_order';
+ SELECT
+        a.attname as "Column",
+        pg_catalog.format_type(a.atttypid, a.atttypmod) as "Datatype"
+    FROM
+        pg_catalog.pg_attribute a
+    WHERE
+        a.attnum > 0
+        AND NOT a.attisdropped
+        AND a.attrelid = (
+            SELECT c.oid
+            FROM pg_catalog.pg_class c
+                LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+            WHERE c.relname ~ '^(shipment_order)$'
+                AND pg_catalog.pg_table_is_visible(c.oid)
+        ); 
+\d pg_catalog
+\d+ pg_catalog
+select*from pg_class;
+\d pg_class
+select *
+from pg_class
+where relname='shipment_order';
+\d pg_attribute
+select attname form pg_attribute;
+select attname from pg_attribute;
+rollback ;
+select attname from pg_attribute 
+\d pg_attribute
+select *
+from pg_class
+where relname='shipment_order';
+select oid
+from pg_class
+where relname='shipment_order';
+\d pg_class
+select oid
+from pg_class
+where relname='shipment_order';
+select*from pg_attribute a
+join pg_class c on c.relfilenode=a.attrelid
+where c.relname='shipment_order';
+select attname from pg_attribute a
+join pg_class c on c.relfilenode=a.attrelid
+where c.relname='shipment_order';
+select oid
+from pg_class
+where relname='shipment_order';
+select attname from pg_attribute a
+join pg_class c on c.relfilenode=a.attrelid
+where c.relname='shipment_order';
+select attname from pg_attribute a
+join pg_class c on c.relfilenode=a.attrelid
+where c.relname='shipment_order' and attname like '%oid%'
+;
+select attname from pg_attribute a
+join pg_class c on c.relfilenode=a.attrelid
+where c.relname='shipment_order' and attname like '%template%'
+;
+select count(*)
+from shipment_order
+where is_template=1;
+\x
+select * from shipment_order where is_template=1 limit 1;
+select shipment_order_id from shipment_order where is_template=1;
+\x
+select shipment_order_id from shipment_order where is_template=1;
+\x 
+select*from shipment_order where shipment_order_id='GEOSCO-inbound-portal-template';
+select sho.shipment_order_id,o.organization_id
+from shipment_order sho
+join organization o on sho.organization_systemid=o.system_id
+where sho.is_template=1;
+\
+\x
+select sho.shipment_order_id,o.organization_id
+from shipment_order sho
+join organization o on sho.organization_systemid=o.system_id
+where sho.is_template=1;
+select  this_.*
+from SHIPMENT_ORDER this_ 
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID 
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID 
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID 
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID 
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID 
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID 
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID 
+where this_.organization_Systemid in (
+    select uo.organization_systemid 
+    from user_organization uo 
+    where uo.user_systemid = 27223886) 
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template' 
+and this_.ORGANIZATION_SYSTEMID in (5000,10,4000,6000,7000,12000,8000,10000,11000,1,9000,13000,1000) 
+order by this_.SYSTEM_ENTRY_DATE desc;
+\x
+select  this_.*
+from SHIPMENT_ORDER this_ 
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID 
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID 
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID 
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID 
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID 
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID 
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID 
+where this_.organization_Systemid in (
+    select uo.organization_systemid 
+    from user_organization uo 
+    where uo.user_systemid = 27223886) 
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template' 
+and this_.ORGANIZATION_SYSTEMID in (5000,10,4000,6000,7000,12000,8000,10000,11000,1,9000,13000,1000) 
+order by this_.SYSTEM_ENTRY_DATE desc;
+select*from country where system_id=4064
+;
+select *
+from party
+where party_id='62918C';
+create database geosco0919t tablespace scs;
+rollback ;
+create database geosco0919t tablespace scs;
+rollback ;
+\q
+rollback ;
+select table_name from information_schema.columns where column_name ='coshipmentportal-party';
+select count(*)
+from OMS_FILTER this_ 
+where this_.IS_SYSTEM=0 
+and this_.USER_SYSTEMID=27223886
+and this_.SOURCE_ID='coshipmentportal-party'
+;
+select count(*)
+from OMS_FILTER this_ 
+where this_.IS_SYSTEM=0 
+and this_.USER_SYSTEMID=27223886
+and this_.SOURCE_ID='coshipmentportal-party'
+;
+rollback ;
+select count(*)
+from OMS_FILTER this_ 
+where this_.IS_SYSTEM=0 
+and this_.USER_SYSTEMID=27223886
+and this_.SOURCE_ID='coshipmentportal-party'
+;
+create table foo(i int,s varchar(32));
+rollback ;
+create table foo(i int,s varchar(32));
+insert into foo values(1,'foo'),values(2,'bar');
+insert into foo values(1,'foo'),(2,'bar');
+rollback ;
+insert into foo values(1,'foo'),(2,'bar');
+\d foo
+rollback ;
+create table foo(i int,s varchar(32));
+commit;
+insert into foo values(1,'foo'),(2,'bar');
+commit;
+select *
+from foo
+order by i;
+create table bar(i int);
+insert into bar values(1),(2),(3);
+commit;
+select *
+from foo
+join bar on foo.i=bar.i
+order by foo.i;
+select this_.*
+from SHIPMENT_ORDER this_
+left outer join TMS_USER resource2_ on this_.CREATED_BY_SYSTEMID=resource2_.SYSTEM_ID
+left outer join TMS_USER resource3_ on resource2_.CREATED_BY=resource3_.SYSTEM_ID
+left outer join TMS_USER resource4_ on this_.ASSIGNEE_SYSTEMID=resource4_.SYSTEM_ID
+left outer join TMS_USER resource5_ on this_.APPROVEDBY_SYSTEMID=resource5_.SYSTEM_ID
+left outer join TMS_USER resource6_ on this_.POSTCALC_APPROVEDBY_SYSTEMID=resource6_.SYSTEM_ID
+left outer join REASON_CODE reasoncode7_ on this_.REASON_CODE_SYSTEMID=reasoncode7_.SYSTEM_ID
+left outer join INSTRUCTION_GROUP instructio8_ on this_.INSTRUCTION_GROUP_SYSTEMID=instructio8_.SYSTEM_ID
+where this_.organization_Systemid in (
+    select uo.organization_systemid
+    from user_organization uo
+    where uo.user_systemid = 27223886)                          -- eric
+and this_.SHIPMENT_ORDER_ID='GEOSCO-inbound-portal-template'
+and this_.ORGANIZATION_SYSTEMID=13000                           -- SCO_WW_BP
+order by this_.SYSTEM_ENTRY_DATE desc
+;
+rollback ;
+select*from sporter;
+select*from club;
+rollback ;
+select*from sporter;
+rollback ;
+select*from sporter;
+rollback ;
+select*from sporter;
+rollback ;
+select*from sporter;
+select*from club;
+rollback ;
+select*from club;
+select*from sporter;
+rollback ;
+select*from sporter;
+select*from club;
+rollback ;
+select*from sporter;
+rollback ;
+select*from sporter;
+select*from club;
+rollback ;
+select*from club;
+select*from sporter;
+insert into club values(1,'club');
+insert into sporter values(1,'sporter');
+insert into club values(1,'club',1);
+rollback 
+;
+insert into club values(1,'club');
+insert into club values(1,'club',1);
+rollback 
+;
+insert into club values(1,'club');
+insert into sporter values(1,'sporter',1);
+commit;
+update sporter
+set name='sporter2'
+from sporter
+join club  on sporter.club_=club.id_;
+\d club
+rollback 
+;
+\d club
+\c sporter
+\d sporter
+update sporter
+set name=s.name_
+from sporter s
+join club c on s.club_=c.id_;
+update sporter
+set name_=s.name_
+from sporter s
+join club c on s.club_=c.id_;
+rollback ;
+update sporter
+set name_=s.name_
+from sporter s
+join club c on s.club_=c.id_;
+select*from sporter;
+update sporter
+set name_=c.name_
+from sporter s
+join club c on s.club_=c.id_;
+select*from sporter;
+update sporter
+set name_='sporter2'
+from sporter s
+join club c on s.club_=c.id_;
+select*from sporter;
+update sporter s2
+set s2.name_='sporter2'
+from sporter s
+join club c on s.club_=c.id_;
+update sporter s2
+set s.name_='sporter2'
+from sporter s
+join club c on s.club_=c.id_;
+rollback ;
+update sporter s2
+set s.name_='sporter2'
+from sporter s
+join club c on s.club_=c.id_;
+select*from sporter;
+rollback ;
+select*from sporter;
+update sporter s
+set s.name_='sporter3'
+;
+select name_ n 
+from sporter s
+where s.name_='sporter';
+rollback ;
+select name_ n 
+from sporter s
+where s.name_='sporter';
+select name_ n 
+from sporter s
+where n like '%foo%';
+select name_ n 
+from sporter s
+where name_ like '%foo%';
+rollback ;
+select name_ n 
+from sporter s
+where name_ like '%foo%';
+update sporter s
+set name_='sporter4'
+from club c
+where s.club_=c.id_
+;
+select*from sporter;
+update sporter s
+set s.name_='sporter4'
+from club c
+where s.club_=c.id_
+;
+rollback ;
+update sporter
+set name='sporter2'
+from sporter
+join club  on sporter.club_=club.id_
+;
+update sporter
+set name='sporter2'
+from sporter
+join club  on sporter.club_=club.id_
+;
+rollback ;
+update sporter
+set name='sporter2'
+from sporter
+join club  on sporter.club_=club.id_
+;
+select*from item;
+rollback ;
+select*from item;
+rollback ;
+select*from item;
+rollback ;
+select*from item;
+rollback ;
+rollback ;
+\q]
+\q
+\dt
+\q
+\x
+select*from oms_filter;
+\q
+\c geosco0919t
+\dt
+create database geosco0919t2;
+\c geosco0919t2
+\dt
+select*From oms_filter;
+\x 
+select*From oms_filter;
+select*from tms_user where user_id like '%mou%'
+;
+\c geosco0912t2
+\c geosco0919t
+\dt
+rollback ;
+\x
+select*from party where system_id=27244384;
+\l
+rollback ;
+drop database geosco0919t2;
+select*from oms_user_party;
+rollback ;p
+rollback ;
+rollback ;
+select this_.USER_SYSTEMID as USER1_191_0_, this_.PARTY_SYSTEMID as PARTY2_191_0_ from OMS_USER_PARTY this_ where this_.USER_SYSTEMID=27223886;
+rollback ;
+\d user_party
+\d oms_user_party
+\q
+\d oms_user_party
+\q
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004787437'
+;
+select pi.system_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004787437'
+and product_item_id='040'
+limit 1
+;
+\q
+select pi.system_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004787437'
+and product_item_id='040'
+limit 1
+;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004787437'
+;
+select product_item_id from tms_shipment_item;
+select product_item_id from tms_product_item;
+rollback ;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004787437'
+;
+rollback ;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004787437'
+;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004787437'
+;
+select pi.system_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004787437'
+and product_item_id='040'
+limit 1
+;
+ select max(pi.product_item_id)
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004787437'
+;
+ update tms_product_item
+set  product_item_id='7170'
+where system_id=20498206
+;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004787437'
+;
+commit;
+select pi.system_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004787437'
+and product_item_id='7080'
+limit 1
+;
+update tms_product_item
+set  product_item_id='7180'
+where system_id=20498207
+;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004787437'
+;
+commit;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004781600'
+;
+select max(pi.product_item_id)
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004781600'
+;
+select pi.system_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004781600'
+and product_item_id='010'
+limit 1
+;
+update tms_product_item
+set  product_item_id='1040'
+where system_id=20478090 
+;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004787437'
+;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004781600'
+;
+commit;
+\q
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004794139'
+;
+select pi.system_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004794139'
+and product_item_id='11111110'
+limit 1
+;
+select max(pi.product_item_id)
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004794139'
+;
+  update tms_product_item
+set  product_item_id='11111130'
+where system_id=20526691
+;
+select pi.system_id,pi.product_item_id
+from tms_product_item pi
+join shipment_order sho on pi.shipment_order_systemid=sho.system_id
+where sho.shipment_order_id='SH004794139'
+;
+commit;
+\q
+select
+customeror0_.SYSTEM_ID as col_0_0_,
+customeror0_.CUSTOMER_ORDER_NUMBER as col_1_0_, (
+    select (customeror2_.TO_CITY||', '||country3_.COUNTRY_NAME)
+    from CUSTOMER_ORDER_LINE customeror2_,
+    COUNTRY country3_,
+    CUSTOMER_ORDER customeror4_
+    where customeror2_.TO_COUNTRY_SYSTEMID=country3_.SYSTEM_ID
+    and customeror2_.CUSTOMER_ORDER_SYSTEMID=customeror4_.SYSTEM_ID
+    and customeror2_.CUSTOMER_ORDER_SYSTEMID=customeror0_.SYSTEM_ID
+    and customeror2_.SYSTEM_ID=(
+        select max(customeror5_.SYSTEM_ID)
+        from CUSTOMER_ORDER_LINE customeror5_
+        where customeror5_.CUSTOMER_ORDER_SYSTEMID=customeror0_.SYSTEM_ID
+    )
+) as col_2_0_, (
+    select customeror7_.REQUESTED_END_AFTER
+    from CUSTOMER_ORDER_LINE customeror7_,
+    CUSTOMER_ORDER customeror8_
+    where customeror7_.CUSTOMER_ORDER_SYSTEMID=customeror8_.SYSTEM_ID
+    and customeror7_.CUSTOMER_ORDER_SYSTEMID=customeror0_.SYSTEM_ID
+    and customeror7_.SYSTEM_ID=(
+        select max(customeror9_.SYSTEM_ID)
+        from CUSTOMER_ORDER_LINE customeror9_
+        where customeror9_.CUSTOMER_ORDER_SYSTEMID=customeror0_.SYSTEM_ID
+    )
+) as col_3_0_,
+customerst11_.CODE as col_4_0_
+from CUSTOMER_ORDER customeror0_,
+CUSTOMER_STATUS customerst11_
+cross join OMS_USER_PARTY userparty1_
+cross join PARTY partyvo12_
+where customeror0_.CUSTOMER_STATUS_SYSTEMID=customerst11_.SYSTEM_ID
+and userparty1_.PARTY_SYSTEMID=partyvo12_.SYSTEM_ID
+and customeror0_.SELLER_PARTY_ID=partyvo12_.PARTY_ID
+and userparty1_.USER_SYSTEMID=27223886
+and customerst11_.CODE='ControlCompleted' limit 1000;
+\q
+\d oms_user_party
+select
+customeror0_.SYSTEM_ID as col_0_0_,
+customeror0_.CUSTOMER_ORDER_NUMBER as col_1_0_, (
+    select (customeror2_.TO_CITY||', '||country3_.COUNTRY_NAME)
+    from CUSTOMER_ORDER_LINE customeror2_,
+    COUNTRY country3_,
+    CUSTOMER_ORDER customeror4_
+    where customeror2_.TO_COUNTRY_SYSTEMID=country3_.SYSTEM_ID
+    and customeror2_.CUSTOMER_ORDER_SYSTEMID=customeror4_.SYSTEM_ID
+    and customeror2_.CUSTOMER_ORDER_SYSTEMID=customeror0_.SYSTEM_ID
+    and customeror2_.SYSTEM_ID=(
+        select max(customeror5_.SYSTEM_ID)
+        from CUSTOMER_ORDER_LINE customeror5_
+        where customeror5_.CUSTOMER_ORDER_SYSTEMID=customeror0_.SYSTEM_ID
+    )
+) as col_2_0_, (
+    select customeror7_.REQUESTED_END_AFTER
+    from CUSTOMER_ORDER_LINE customeror7_,
+    CUSTOMER_ORDER customeror8_
+    where customeror7_.CUSTOMER_ORDER_SYSTEMID=customeror8_.SYSTEM_ID
+    and customeror7_.CUSTOMER_ORDER_SYSTEMID=customeror0_.SYSTEM_ID
+    and customeror7_.SYSTEM_ID=(
+        select max(customeror9_.SYSTEM_ID)
+        from CUSTOMER_ORDER_LINE customeror9_
+        where customeror9_.CUSTOMER_ORDER_SYSTEMID=customeror0_.SYSTEM_ID
+    )
+) as col_3_0_,
+customerst11_.CODE as col_4_0_
+from CUSTOMER_ORDER customeror0_,
+CUSTOMER_STATUS customerst11_
+cross join OMS_USER_PARTY userparty1_
+cross join PARTY partyvo12_
+where customeror0_.CUSTOMER_STATUS_SYSTEMID=customerst11_.SYSTEM_ID
+and userparty1_.PARTY_SYSTEMID=partyvo12_.SYSTEM_ID
+and customeror0_.SELLER_PARTY_ID=partyvo12_.PARTY_ID
+and userparty1_.USER_SYSTEMID=27223886
+and customerst11_.CODE='ControlCompleted' limit 1000;
+\c geosco09195
+\c geosco09195
+\c geosco0919t
+select
+customeror0_.SYSTEM_ID as col_0_0_,
+customeror0_.CUSTOMER_ORDER_NUMBER as col_1_0_, (
+    select (customeror2_.TO_CITY||', '||country3_.COUNTRY_NAME)
+    from CUSTOMER_ORDER_LINE customeror2_,
+    COUNTRY country3_,
+    CUSTOMER_ORDER customeror4_
+    where customeror2_.TO_COUNTRY_SYSTEMID=country3_.SYSTEM_ID
+    and customeror2_.CUSTOMER_ORDER_SYSTEMID=customeror4_.SYSTEM_ID
+    and customeror2_.CUSTOMER_ORDER_SYSTEMID=customeror0_.SYSTEM_ID
+    and customeror2_.SYSTEM_ID=(
+        select max(customeror5_.SYSTEM_ID)
+        from CUSTOMER_ORDER_LINE customeror5_
+        where customeror5_.CUSTOMER_ORDER_SYSTEMID=customeror0_.SYSTEM_ID
+    )
+) as col_2_0_, (
+    select customeror7_.REQUESTED_END_AFTER
+    from CUSTOMER_ORDER_LINE customeror7_,
+    CUSTOMER_ORDER customeror8_
+    where customeror7_.CUSTOMER_ORDER_SYSTEMID=customeror8_.SYSTEM_ID
+    and customeror7_.CUSTOMER_ORDER_SYSTEMID=customeror0_.SYSTEM_ID
+    and customeror7_.SYSTEM_ID=(
+        select max(customeror9_.SYSTEM_ID)
+        from CUSTOMER_ORDER_LINE customeror9_
+        where customeror9_.CUSTOMER_ORDER_SYSTEMID=customeror0_.SYSTEM_ID
+    )
+) as col_3_0_,
+customerst11_.CODE as col_4_0_
+from CUSTOMER_ORDER customeror0_,
+CUSTOMER_STATUS customerst11_
+cross join OMS_USER_PARTY userparty1_
+cross join PARTY partyvo12_
+where customeror0_.CUSTOMER_STATUS_SYSTEMID=customerst11_.SYSTEM_ID
+and userparty1_.PARTY_SYSTEMID=partyvo12_.SYSTEM_ID
+and customeror0_.SELLER_PARTY_ID=partyvo12_.PARTY_ID
+and userparty1_.USER_SYSTEMID=27223886
+and customerst11_.CODE='ControlCompleted' limit 1000
+;
+\d customer_order
+ select*from party where party_id=80387250;
+ select*from party where system_id=80387250;
+rollback ;
+ select*from party where system_id=80387250;
+\d party
+rollback ;
+ select*from party where party_id='80387250';
+select *from user_party where system_id=27223886;
+select *from oms_user_party where system_id=27223886;
+rollback ;
+select *from oms_user_party where system_id=27223886;
+\d user_party
+rollback ;
+\d user_party
+\d oms_user_party
+select*from tms_user where system_id=27223886;
+select
+customeror0_.SYSTEM_ID as col_0_0_,
+customeror0_.CUSTOMER_ORDER_NUMBER as col_1_0_,
+(
+    select customeror1_.REQUESTED_END_AFTER
+    from CUSTOMER_ORDER_LINE customeror1_,
+    CUSTOMER_ORDER customeror2_
+    where customeror1_.CUSTOMER_ORDER_SYSTEMID=customeror2_.SYSTEM_ID
+    and customeror1_.CUSTOMER_ORDER_SYSTEMID=customeror0_.SYSTEM_ID
+    and customeror1_.SYSTEM_ID=(
+        select max(customeror3_.SYSTEM_ID)
+        from CUSTOMER_ORDER_LINE customeror3_
+        where customeror3_.CUSTOMER_ORDER_SYSTEMID=customeror0_.SYSTEM_ID
+    )
+) as col_2_0_,
+customerst5_.CODE as col_3_0_
+from CUSTOMER_ORDER customeror0_,
+CUSTOMER_STATUS customerst5_
+where customeror0_.CUSTOMER_STATUS_SYSTEMID=customerst5_.SYSTEM_ID
+and customeror0_.SELLER_PARTY_ID=80387250                           -- party_id van de vendor
+and customerst5_.CODE='Acknowledged' limit 1024;
+rollback ;
+select
+customeror0_.SYSTEM_ID as col_0_0_,
+customeror0_.CUSTOMER_ORDER_NUMBER as col_1_0_,
+(
+    select customeror1_.REQUESTED_END_AFTER
+    from CUSTOMER_ORDER_LINE customeror1_,
+    CUSTOMER_ORDER customeror2_
+    where customeror1_.CUSTOMER_ORDER_SYSTEMID=customeror2_.SYSTEM_ID
+    and customeror1_.CUSTOMER_ORDER_SYSTEMID=customeror0_.SYSTEM_ID
+    and customeror1_.SYSTEM_ID=(
+        select max(customeror3_.SYSTEM_ID)
+        from CUSTOMER_ORDER_LINE customeror3_
+        where customeror3_.CUSTOMER_ORDER_SYSTEMID=customeror0_.SYSTEM_ID
+    )
+) as col_2_0_,
+customerst5_.CODE as col_3_0_
+from CUSTOMER_ORDER customeror0_,
+CUSTOMER_STATUS customerst5_
+where customeror0_.CUSTOMER_STATUS_SYSTEMID=customerst5_.SYSTEM_ID
+and customeror0_.SELLER_PARTY_ID='80387250'                         -- party_id van de vendor
+and customerst5_.CODE='Acknowledged' limit 1024;
+select*from party where system_id=2724484;
+select*from party where system_id=27244384;
+select*from party where systemId=27244778;
+select*from party where system_id=27244778;
+rollback ;
+rollback ;
+select*from party where system_id=27244778;
+\d+ x
+show server_encoding 
+;
+\l
+\dt
+select*from customer_order where system_id=27365766;
+select*from customer_order_line where system_id=27365766;
+ select*from service_order where service_order_id='N1877208';
+\l
+\d service_order
+select c.*
+from consignment c
+join service_order seo on c.service_order_systemid=seo.system_id
+where seo.service_order_id='N1877208'
+;
+\d consignment
+\d service_action
+\d service_order
+select seo.reference3
+from service_order seo 
+where seo.service_order_id in ('N1877208','N1885018','N1888839','N1890213')
+;
+select seo.system_id,seo.reference3
+from service_order seo 
+where seo.service_order_id in ('N1877208','N1885018','N1888839','N1890213')
+;
+ \d customer_order_line
+select*from customer_order_line where system_id=27365766;
+select*from customer_order_line where system_id=27365766;
+select*from party where system_id=27244384;
+select*from shipment_order limit 1;
+\c
+\x
+select*from shipment_order limit 1;
+select count(*)
+from SERVICE_ORDER_EVENT serviceord0_ 
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID 
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID 
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID 
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID 
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID 
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID 
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID 
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID 
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID 
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID 
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID 
+where (shipmentor4_.ORGANIZATION_SYSTEMID in (
+    select userorgani16_.ORGANIZATION_SYSTEMID 
+    from USER_ORGANIZATION userorgani16_, ORGANIZATION organizati17_ 
+    where userorgani16_.ORGANIZATION_SYSTEMID=organizati17_.SYSTEM_ID 
+    and userorgani16_.USER_SYSTEMID=?)) 
+and shipmentor4_.IS_DELETED=0
+order by eventvo10_.EXPECTED_END;
+select count(*)
+from SERVICE_ORDER_EVENT serviceord0_ 
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID 
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID 
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID 
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID 
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID 
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID 
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID 
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID 
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID 
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID 
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID 
+where (shipmentor4_.ORGANIZATION_SYSTEMID in (
+    select userorgani16_.ORGANIZATION_SYSTEMID 
+    from USER_ORGANIZATION userorgani16_, ORGANIZATION organizati17_ 
+    where userorgani16_.ORGANIZATION_SYSTEMID=organizati17_.SYSTEM_ID 
+    and userorgani16_.USER_SYSTEMID=27223886))
+and shipmentor4_.IS_DELETED=0
+order by eventvo10_.EXPECTED_END;
+rollback ;
+select count(*)
+from SERVICE_ORDER_EVENT serviceord0_ 
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID 
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID 
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID 
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID 
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID 
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID 
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID 
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID 
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID 
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID 
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID 
+where (shipmentor4_.ORGANIZATION_SYSTEMID in (
+    select userorgani16_.ORGANIZATION_SYSTEMID 
+    from USER_ORGANIZATION userorgani16_, ORGANIZATION organizati17_ 
+    where userorgani16_.ORGANIZATION_SYSTEMID=organizati17_.SYSTEM_ID 
+    and userorgani16_.USER_SYSTEMID=27223886))
+and shipmentor4_.IS_DELETED=0
+order by eventvo10_.EXPECTED_END;
+select count(*)
+from SERVICE_ORDER_EVENT serviceord0_ 
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID 
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID 
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID 
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID 
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID 
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID 
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID 
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID 
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID 
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID 
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID 
+where (shipmentor4_.ORGANIZATION_SYSTEMID in (
+    select userorgani16_.ORGANIZATION_SYSTEMID 
+    from USER_ORGANIZATION userorgani16_, ORGANIZATION organizati17_ 
+    where userorgani16_.ORGANIZATION_SYSTEMID=organizati17_.SYSTEM_ID 
+    and userorgani16_.USER_SYSTEMID=27223886))
+and shipmentor4_.IS_DELETED=0;
+rollback ;
+select count(*)
+from SERVICE_ORDER_EVENT serviceord0_ 
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID 
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID 
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID 
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID 
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID 
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID 
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID 
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID 
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID 
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID 
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID 
+where (shipmentor4_.ORGANIZATION_SYSTEMID in (
+    select userorgani16_.ORGANIZATION_SYSTEMID 
+    from USER_ORGANIZATION userorgani16_, ORGANIZATION organizati17_ 
+    where userorgani16_.ORGANIZATION_SYSTEMID=organizati17_.SYSTEM_ID 
+    and userorgani16_.USER_SYSTEMID=27223886))
+and shipmentor4_.IS_DELETED=0;
+select count(*),eventvo10_.EXPECTED_END
+from SERVICE_ORDER_EVENT serviceord0_ 
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID 
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID 
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID 
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID 
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID 
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID 
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID 
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID 
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID 
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID 
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID 
+where (shipmentor4_.ORGANIZATION_SYSTEMID in (
+    select userorgani16_.ORGANIZATION_SYSTEMID 
+    from USER_ORGANIZATION userorgani16_, ORGANIZATION organizati17_ 
+    where userorgani16_.ORGANIZATION_SYSTEMID=organizati17_.SYSTEM_ID 
+    and userorgani16_.USER_SYSTEMID=27223886))
+and shipmentor4_.IS_DELETED=0
+order by eventvo10_.EXPECTED_END;
+\d service_order_event
+rollback ;
+\d service_order_event
+select serviceord0_.LAST_CLOSED_SYSTEMID,serviceord0_.NEXT_TO_CLOSE_SYSTEMID
+from SERVICE_ORDER_EVENT serviceord0_
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID
+where (shipmentor4_.ORGANIZATION_SYSTEMID in (
+    select userorgani16_.ORGANIZATION_SYSTEMID
+    from USER_ORGANIZATION userorgani16_, ORGANIZATION organizati17_
+    where userorgani16_.ORGANIZATION_SYSTEMID=organizati17_.SYSTEM_ID
+    and userorgani16_.USER_SYSTEMID=27223886))
+and shipmentor4_.IS_DELETED=0
+order by eventvo10_.EXPECTED_END;
+select count(*)
+from SERVICE_ORDER_EVENT serviceord0_
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype11_ oneventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID
+where (shipmentor4_.ORGANIZATION_SYSTEMID in (
+    select userorgani16_.ORGANIZATION_SYSTEMID
+    from USER_ORGANIZATION userorgani16_
+    , ORGANIZATION organizati17_
+    where userorgani16_.ORGANIZATION_SYSTEMID=organizati17_.SYSTEM_ID
+    and userorgani16_.USER_SYSTEMID=27223886))
+and shipmentor4_.IS_DELETED=0
+and (lower(organizati5_.ORGANIZATION_ID) like lower('%N0008574%')
+or lower(shipmentor4_.SHIPMENT_ORDER_ID) like lower('%N0008574%')
+or lower(consignmen2_.CONSIGNMENT_NUMBER) like lower('%N0008574%')
+or lower(serviceact12_.SERVICE_ACTION_TYPE) like lower('%N0008574%')
+or lower((consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower((consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower(shipmentse13_.SERVICE_LEVEL) like lower('%N0008574%')
+or lower(eventtype9_.NAME) like lower('%N0008574%')
+or lower(eventtype11_.NAME) like lower('%N0008574%'))
+order by eventvo10_.EXPECTED_END;
+select count(*)
+from SERVICE_ORDER_EVENT serviceord0_
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID
+where (shipmentor4_.ORGANIZATION_SYSTEMID in (
+    select userorgani16_.ORGANIZATION_SYSTEMID
+    from USER_ORGANIZATION userorgani16_
+    , ORGANIZATION organizati17_
+    where userorgani16_.ORGANIZATION_SYSTEMID=organizati17_.SYSTEM_ID
+    and userorgani16_.USER_SYSTEMID=27223886))
+and shipmentor4_.IS_DELETED=0
+and (lower(organizati5_.ORGANIZATION_ID) like lower('%N0008574%')
+or lower(shipmentor4_.SHIPMENT_ORDER_ID) like lower('%N0008574%')
+or lower(consignmen2_.CONSIGNMENT_NUMBER) like lower('%N0008574%')
+or lower(serviceact12_.SERVICE_ACTION_TYPE) like lower('%N0008574%')
+or lower((consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower((consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower(shipmentse13_.SERVICE_LEVEL) like lower('%N0008574%')
+or lower(eventtype9_.NAME) like lower('%N0008574%')
+or lower(eventtype11_.NAME) like lower('%N0008574%'))
+order by eventvo10_.EXPECTED_END;
+rollback ;
+select count(*)
+from SERVICE_ORDER_EVENT serviceord0_
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID
+where (shipmentor4_.ORGANIZATION_SYSTEMID in (
+    select userorgani16_.ORGANIZATION_SYSTEMID
+    from USER_ORGANIZATION userorgani16_
+    , ORGANIZATION organizati17_
+    where userorgani16_.ORGANIZATION_SYSTEMID=organizati17_.SYSTEM_ID
+    and userorgani16_.USER_SYSTEMID=27223886))
+and shipmentor4_.IS_DELETED=0
+and (lower(organizati5_.ORGANIZATION_ID) like lower('%N0008574%')
+or lower(shipmentor4_.SHIPMENT_ORDER_ID) like lower('%N0008574%')
+or lower(consignmen2_.CONSIGNMENT_NUMBER) like lower('%N0008574%')
+or lower(serviceact12_.SERVICE_ACTION_TYPE) like lower('%N0008574%')
+or lower((consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower((consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower(shipmentse13_.SERVICE_LEVEL) like lower('%N0008574%')
+or lower(eventtype9_.NAME) like lower('%N0008574%')
+or lower(eventtype11_.NAME) like lower('%N0008574%'))
+order by eventvo10_.EXPECTED_END;
+select count(*)
+from SERVICE_ORDER_EVENT serviceord0_
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID
+where (shipmentor4_.ORGANIZATION_SYSTEMID in (
+    select userorgani16_.ORGANIZATION_SYSTEMID
+    from USER_ORGANIZATION userorgani16_
+    , ORGANIZATION organizati17_
+    where userorgani16_.ORGANIZATION_SYSTEMID=organizati17_.SYSTEM_ID
+    and userorgani16_.USER_SYSTEMID=27223886))
+and shipmentor4_.IS_DELETED=0
+and (lower(organizati5_.ORGANIZATION_ID) like lower('%N0008574%')
+or lower(shipmentor4_.SHIPMENT_ORDER_ID) like lower('%N0008574%')
+or lower(consignmen2_.CONSIGNMENT_NUMBER) like lower('%N0008574%')
+or lower(serviceact12_.SERVICE_ACTION_TYPE) like lower('%N0008574%')
+or lower((consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower((consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower(shipmentse13_.SERVICE_LEVEL) like lower('%N0008574%')
+or lower(eventtype9_.NAME) like lower('%N0008574%')
+or lower(eventtype11_.NAME) like lower('%N0008574%'));
+rollback ;
+select count(*)
+from SERVICE_ORDER_EVENT serviceord0_
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID
+where (shipmentor4_.ORGANIZATION_SYSTEMID in (
+    select userorgani16_.ORGANIZATION_SYSTEMID
+    from USER_ORGANIZATION userorgani16_
+    , ORGANIZATION organizati17_
+    where userorgani16_.ORGANIZATION_SYSTEMID=organizati17_.SYSTEM_ID
+    and userorgani16_.USER_SYSTEMID=27223886))
+and shipmentor4_.IS_DELETED=0
+and (lower(organizati5_.ORGANIZATION_ID) like lower('%N0008574%')
+or lower(shipmentor4_.SHIPMENT_ORDER_ID) like lower('%N0008574%')
+or lower(consignmen2_.CONSIGNMENT_NUMBER) like lower('%N0008574%')
+or lower(serviceact12_.SERVICE_ACTION_TYPE) like lower('%N0008574%')
+or lower((consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower((consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower(shipmentse13_.SERVICE_LEVEL) like lower('%N0008574%')
+or lower(eventtype9_.NAME) like lower('%N0008574%')
+or lower(eventtype11_.NAME) like lower('%N0008574%'));
+ \x
+select serviceord0_.NEXT_TO_CLOSE_SYSTEMID as col_0_0_, serviceord0_.LAST_CLOSED_SYSTEMID as col_1_0_, organizati5_.ORGANIZATION_ID as col_2_0_, shipmentor4_.SHIPMENT_ORDER_ID as col_3_0_, consignmen2_.CONSIGNMENT_NUMBER as col_4_0_, serviceact12_.SERVICE_ACTION_TYPE as col_5_0_, (consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, '')) as col_6_0_, (consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, '')) as col_7_0_, shipmentse13_.SERVICE_LEVEL as col_8_0_, eventtype9_.NAME as col_9_0_, eventvo8_.CLOSED_ON as col_10_0_, eventtype11_.NAME as col_11_0_, eventvo10_.EXPECTED_END as col_12_0_
+from SERVICE_ORDER_EVENT serviceord0_
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID
+where (shipmentor4_.ORGANIZATION_SYSTEMID in (
+    select userorgani16_.ORGANIZATION_SYSTEMID
+    from USER_ORGANIZATION userorgani16_
+    , ORGANIZATION organizati17_
+    where userorgani16_.ORGANIZATION_SYSTEMID=organizati17_.SYSTEM_ID
+    and userorgani16_.USER_SYSTEMID=27223886))
+and shipmentor4_.IS_DELETED=0
+and (lower(organizati5_.ORGANIZATION_ID) like lower('%N0008574%')
+or lower(shipmentor4_.SHIPMENT_ORDER_ID) like lower('%N0008574%')
+or lower(consignmen2_.CONSIGNMENT_NUMBER) like lower('%N0008574%')
+or lower(serviceact12_.SERVICE_ACTION_TYPE) like lower('%N0008574%')
+or lower((consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower((consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower(shipmentse13_.SERVICE_LEVEL) like lower('%N0008574%')
+or lower(eventtype9_.NAME) like lower('%N0008574%')
+or lower(eventtype11_.NAME) like lower('%N0008574%'))
+;
+\d service_order
+\dt *event*
+ select*from event_event where system_id=26885191;
+ \d event_type
+ select*from event_event t.name  join event_type t on e.event_type_systemid=t.system_id where system_id=26885191;
+ select t.name from event_event   join event_type t on e.event_type_systemid=t.system_id where system_id=26885191;
+rollback ;
+ select t.name from event_event   join event_type t on e.event_type_systemid=t.system_id where system_id=26885191;
+ select t.name from event_event e  join event_type t on e.event_type_systemid=t.system_id where system_id=26885191;
+rollback ;
+ select t.name from event_event e  join event_type t on e.event_type_systemid=t.system_id where system_id=26885191;
+ select t.name from event_event e  join event_type t on e.event_type_systemid=t.system_id where e.system_id=26885191;
+rollback ;
+ select t.name from event_event e  join event_type t on e.event_type_systemid=t.system_id where e.system_id=26885191;
+ select t.name from event_event e  join event_type t on e.event_type_systemid=t.system_id where e.system_id=26878378;
+select serviceord0_.NEXT_TO_CLOSE_SYSTEMID as col_0_0_, serviceord0_.LAST_CLOSED_SYSTEMID as col_1_0_, organizati5_.ORGANIZATION_ID as col_2_0_, shipmentor4_.SHIPMENT_ORDER_ID as col_3_0_, consignmen2_.CONSIGNMENT_NUMBER as col_4_0_, serviceact12_.SERVICE_ACTION_TYPE as col_5_0_, (consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, '')) as col_6_0_, (consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, '')) as col_7_0_, shipmentse13_.SERVICE_LEVEL as col_8_0_, eventtype9_.NAME as col_9_0_, eventvo8_.CLOSED_ON as col_10_0_, eventtype11_.NAME as col_11_0_, eventvo10_.EXPECTED_END as col_12_0_
+from SERVICE_ORDER_EVENT serviceord0_
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID
+where (shipmentor4_.ORGANIZATION_SYSTEMID in (
+    select userorgani16_.ORGANIZATION_SYSTEMID
+    from USER_ORGANIZATION userorgani16_
+    , ORGANIZATION organizati17_
+    where userorgani16_.ORGANIZATION_SYSTEMID=organizati17_.SYSTEM_ID
+    and userorgani16_.USER_SYSTEMID=27223886))
+and shipmentor4_.IS_DELETED=0
+and (lower(organizati5_.ORGANIZATION_ID) like lower('%N0008574%')
+or lower(shipmentor4_.SHIPMENT_ORDER_ID) like lower('%N0008574%')
+or lower(consignmen2_.CONSIGNMENT_NUMBER) like lower('%N0008574%')
+or lower(serviceact12_.SERVICE_ACTION_TYPE) like lower('%N0008574%')
+or lower((consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower((consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower(shipmentse13_.SERVICE_LEVEL) like lower('%N0008574%')
+or lower(eventtype9_.NAME) like lower('%N0008574%')
+or lower(eventtype11_.NAME) like lower('%N0008574%'));
+\d service_order
+\d service_order_event
+\d event_event
+\d shipment_item
+select *
+from event_event e
+join shipment_item i on e.shipment_item_system_id=i.system_id
+where i.shipment_item_id='HS97P3AQQ'
+;
+select *
+from shipment_item
+where shipment_item_id='HS97P3AQQ'
+;
+select *
+from shipment_item
+limit 1;
+\x
+select *
+from shipment_item
+limit 1;
+select *
+from shipment_item
+where label_info='HS97P3AQQ'
+;
+select *
+from event_event e
+join shipment_item i on e.shipment_item_system_id=i.system_id
+where i.label_info='HS97P3AQQ'
+;
+select count(*)
+from event_event e
+join shipment_item i on e.shipment_item_system_id=i.system_id
+where i.label_info='HS97P3AQQ'
+;
+select count(*)
+from event_event e
+join shipment_item i on e.shipment_item_system_id=i.system_id
+where i.label_info='HS97P3AQQ'
+;
+select e.system_id
+from event_event e
+join shipment_item i on e.shipment_item_system_id=i.system_id
+where i.label_info='HS97P3AQQ'
+;
+\x
+select e.system_id
+from event_event e
+join shipment_item i on e.shipment_item_system_id=i.system_id
+where i.label_info='CEEDSN869'
+;
+select e.system_id
+from event_event e
+join shipment_item i on e.shipment_item_system_id=i.system_id
+where i.label_info='0PP0M0HLR'
+;
+select serviceord0_.NEXT_TO_CLOSE_SYSTEMID as col_0_0_, serviceord0_.LAST_CLOSED_SYSTEMID as col_1_0_, organizati5_.ORGANIZATION_ID as col_2_0_, shipmentor4_.SHIPMENT_ORDER_ID as col_3_0_, consignmen2_.CONSIGNMENT_NUMBER as col_4_0_, serviceact12_.SERVICE_ACTION_TYPE as col_5_0_, (consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, '')) as col_6_0_, (consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, '')) as col_7_0_, shipmentse13_.SERVICE_LEVEL as col_8_0_, eventtype9_.NAME as col_9_0_, eventvo8_.CLOSED_ON as col_10_0_, eventtype11_.NAME as col_11_0_, eventvo10_.EXPECTED_END as col_12_0_
+from SERVICE_ORDER_EVENT serviceord0_
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID
+and shipmentor4_.IS_DELETED=0
+and lower(consignmen2_.CONSIGNMENT_NUMBER) like lower('%N0008574%');
+select serviceord0_.NEXT_TO_CLOSE_SYSTEMID as col_0_0_, 
+serviceord0_.LAST_CLOSED_SYSTEMID as col_1_0_, 
+organizati5_.ORGANIZATION_ID as col_2_0_, 
+shipmentor4_.SHIPMENT_ORDER_ID as col_3_0_, 
+consignmen2_.CONSIGNMENT_NUMBER as col_4_0_, 
+serviceact12_.SERVICE_ACTION_TYPE as col_5_0_, 
+(consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, '')) as col_6_0_, 
+(consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, '')) as col_7_0_, 
+shipmentse13_.SERVICE_LEVEL as col_8_0_, 
+eventtype9_.NAME as col_9_0_, 
+eventvo8_.CLOSED_ON as col_10_0_, 
+eventtype11_.NAME as col_11_0_, 
+eventvo10_.EXPECTED_END as col_12_0_
+from SERVICE_ORDER_EVENT serviceord0_
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID
+and shipmentor4_.IS_DELETED=0
+and lower(consignmen2_.CONSIGNMENT_NUMBER) like lower('%N0008574%')
+;
+rollback ;
+select serviceord0_.NEXT_TO_CLOSE_SYSTEMID as col_0_0_, 
+serviceord0_.LAST_CLOSED_SYSTEMID as col_1_0_, 
+organizati5_.ORGANIZATION_ID as col_2_0_, 
+shipmentor4_.SHIPMENT_ORDER_ID as col_3_0_, 
+consignmen2_.CONSIGNMENT_NUMBER as col_4_0_, 
+serviceact12_.SERVICE_ACTION_TYPE as col_5_0_, 
+(consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, '')) as col_6_0_, 
+(consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, '')) as col_7_0_, 
+shipmentse13_.SERVICE_LEVEL as col_8_0_, 
+eventtype9_.NAME as col_9_0_, 
+eventvo8_.CLOSED_ON as col_10_0_, 
+eventtype11_.NAME as col_11_0_, 
+eventvo10_.EXPECTED_END as col_12_0_
+from SERVICE_ORDER_EVENT serviceord0_
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID
+and shipmentor4_.IS_DELETED=0
+and lower(consignmen2_.CONSIGNMENT_NUMBER) like lower('%N0008574%')
+;
+rollback
+;
+select serviceord0_.NEXT_TO_CLOSE_SYSTEMID as col_0_0_, 
+serviceord0_.LAST_CLOSED_SYSTEMID as col_1_0_, 
+shipmentor4_.SHIPMENT_ORDER_ID as col_3_0_, 
+consignmen2_.CONSIGNMENT_NUMBER as col_4_0_, 
+serviceact12_.SERVICE_ACTION_TYPE as col_5_0_, 
+(consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, '')) as col_6_0_, 
+(consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, '')) as col_7_0_, 
+shipmentse13_.SERVICE_LEVEL as col_8_0_, 
+eventtype9_.NAME as col_9_0_, 
+eventvo8_.CLOSED_ON as col_10_0_, 
+eventtype11_.NAME as col_11_0_, 
+eventvo10_.EXPECTED_END as col_12_0_
+from SERVICE_ORDER_EVENT serviceord0_
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID
+and shipmentor4_.IS_DELETED=0
+and lower(consignmen2_.CONSIGNMENT_NUMBER) like lower('%N0008574%')
+;
+select serviceord0_.NEXT_TO_CLOSE_SYSTEMID as col_0_0_, serviceord0_.LAST_CLOSED_SYSTEMID as col_1_0_, organizati5_.ORGANIZATION_ID as col_2_0_, shipmentor4_.SHIPMENT_ORDER_ID as col_3_0_, consignmen2_.CONSIGNMENT_NUMBER as col_4_0_, serviceact12_.SERVICE_ACTION_TYPE as col_5_0_, (consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, '')) as col_6_0_, (consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, '')) as col_7_0_, shipmentse13_.SERVICE_LEVEL as col_8_0_, eventtype9_.NAME as col_9_0_, eventvo8_.CLOSED_ON as col_10_0_, eventtype11_.NAME as col_11_0_, eventvo10_.EXPECTED_END as col_12_0_
+from SERVICE_ORDER_EVENT serviceord0_
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID
+where (shipmentor4_.ORGANIZATION_SYSTEMID in (
+    select userorgani16_.ORGANIZATION_SYSTEMID
+    from USER_ORGANIZATION userorgani16_
+    , ORGANIZATION organizati17_
+    where userorgani16_.ORGANIZATION_SYSTEMID=organizati17_.SYSTEM_ID
+    and userorgani16_.USER_SYSTEMID=27223886))
+and shipmentor4_.IS_DELETED=0
+and (lower(organizati5_.ORGANIZATION_ID) like lower('%N0008574%')
+or lower(shipmentor4_.SHIPMENT_ORDER_ID) like lower('%N0008574%')
+or lower(consignmen2_.CONSIGNMENT_NUMBER) like lower('%N0008574%')
+or lower(serviceact12_.SERVICE_ACTION_TYPE) like lower('%N0008574%')
+or lower((consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower((consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower(shipmentse13_.SERVICE_LEVEL) like lower('%N0008574%')
+or lower(eventtype9_.NAME) like lower('%N0008574%')
+or lower(eventtype11_.NAME) like lower('%N0008574%'))
+;
+rollback ;
+select serviceord0_.NEXT_TO_CLOSE_SYSTEMID as col_0_0_, serviceord0_.LAST_CLOSED_SYSTEMID as col_1_0_, organizati5_.ORGANIZATION_ID as col_2_0_, shipmentor4_.SHIPMENT_ORDER_ID as col_3_0_, consignmen2_.CONSIGNMENT_NUMBER as col_4_0_, serviceact12_.SERVICE_ACTION_TYPE as col_5_0_, (consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, '')) as col_6_0_, (consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, '')) as col_7_0_, shipmentse13_.SERVICE_LEVEL as col_8_0_, eventtype9_.NAME as col_9_0_, eventvo8_.CLOSED_ON as col_10_0_, eventtype11_.NAME as col_11_0_, eventvo10_.EXPECTED_END as col_12_0_
+from SERVICE_ORDER_EVENT serviceord0_
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID
+where (shipmentor4_.ORGANIZATION_SYSTEMID in (
+    select userorgani16_.ORGANIZATION_SYSTEMID
+    from USER_ORGANIZATION userorgani16_
+    , ORGANIZATION organizati17_
+    where userorgani16_.ORGANIZATION_SYSTEMID=organizati17_.SYSTEM_ID
+    and userorgani16_.USER_SYSTEMID=27223886))
+and shipmentor4_.IS_DELETED=0
+and (lower(organizati5_.ORGANIZATION_ID) like lower('%N0008574%')
+or lower(shipmentor4_.SHIPMENT_ORDER_ID) like lower('%N0008574%')
+or lower(consignmen2_.CONSIGNMENT_NUMBER) like lower('%N0008574%')
+or lower(serviceact12_.SERVICE_ACTION_TYPE) like lower('%N0008574%')
+or lower((consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower((consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, ''))) like lower('%N0008574%')
+or lower(shipmentse13_.SERVICE_LEVEL) like lower('%N0008574%')
+or lower(eventtype9_.NAME) like lower('%N0008574%')
+or lower(eventtype11_.NAME) like lower('%N0008574%'))
+;
+ rollback
+;
+select serviceord0_.NEXT_TO_CLOSE_SYSTEMID as col_0_0_,
+serviceord0_.LAST_CLOSED_SYSTEMID as col_1_0_,
+shipmentor4_.SHIPMENT_ORDER_ID as col_3_0_,
+consignmen2_.CONSIGNMENT_NUMBER as col_4_0_,
+serviceact12_.SERVICE_ACTION_TYPE as col_5_0_,
+(consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, '')) as col_6_0_,
+(consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, '')) as col_7_0_,
+shipmentse13_.SERVICE_LEVEL as col_8_0_,
+eventtype9_.NAME as col_9_0_,
+eventvo8_.CLOSED_ON as col_10_0_,
+eventtype11_.NAME as col_11_0_,
+eventvo10_.EXPECTED_END as col_12_0_
+from SERVICE_ORDER_EVENT serviceord0_
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID 
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID 
+where shipmentor4_.IS_DELETED=0
+and lower(consignmen2_.CONSIGNMENT_NUMBER) like lower('%N0008574%')
+;
+select 
+serviceord0_.system_id as seo,
+serviceord0_.NEXT_TO_CLOSE_SYSTEMID as col_0_0_,
+serviceord0_.LAST_CLOSED_SYSTEMID as col_1_0_,
+shipmentor4_.SHIPMENT_ORDER_ID as col_3_0_,
+consignmen2_.CONSIGNMENT_NUMBER as col_4_0_,
+serviceact12_.SERVICE_ACTION_TYPE as col_5_0_,
+(consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, '')) as col_6_0_,
+(consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, '')) as col_7_0_,
+shipmentse13_.SERVICE_LEVEL as col_8_0_,
+eventtype9_.NAME as col_9_0_,
+eventvo8_.CLOSED_ON as col_10_0_,
+eventtype11_.NAME as col_11_0_,
+eventvo10_.EXPECTED_END as col_12_0_
+from SERVICE_ORDER_EVENT serviceord0_
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID 
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID 
+where shipmentor4_.IS_DELETED=0
+and lower(consignmen2_.CONSIGNMENT_NUMBER) like lower('%N0008574%')
+;
+rollback
+;
+select 
+serviceord1_.system_id as seo,
+serviceord0_.NEXT_TO_CLOSE_SYSTEMID as col_0_0_,
+serviceord0_.LAST_CLOSED_SYSTEMID as col_1_0_,
+shipmentor4_.SHIPMENT_ORDER_ID as col_3_0_,
+consignmen2_.CONSIGNMENT_NUMBER as col_4_0_,
+serviceact12_.SERVICE_ACTION_TYPE as col_5_0_,
+(consignmen2_.FROM_LOCATION_ID||' - '||consignmen2_.FROM_NAME||' - '||consignmen2_.FROM_CITY||' - '||coalesce(country6_.COUNTRY_CODE, '')) as col_6_0_,
+(consignmen2_.TO_LOCATION_ID||' - '||consignmen2_.TO_NAME||' - '||consignmen2_.TO_CITY||' - '||coalesce(country7_.COUNTRY_CODE, '')) as col_7_0_,
+shipmentse13_.SERVICE_LEVEL as col_8_0_,
+eventtype9_.NAME as col_9_0_,
+eventvo8_.CLOSED_ON as col_10_0_,
+eventtype11_.NAME as col_11_0_,
+eventvo10_.EXPECTED_END as col_12_0_
+from SERVICE_ORDER_EVENT serviceord0_
+inner join SERVICE_ORDER serviceord1_ on serviceord0_.SERVICE_ORDER_SYSTEMID=serviceord1_.SYSTEM_ID
+inner join CONSIGNMENT consignmen2_ on serviceord1_.SYSTEM_ID=consignmen2_.SERVICE_ORDER_SYSTEMID
+inner join SERVICE_ACTION serviceact3_ on consignmen2_.SYSTEM_ID=serviceact3_.CONSIGNMENT_SYSTEMID
+inner join SHIPMENT_ORDER shipmentor4_ on serviceact3_.SHIPMENT_ORDER_SYSTEMID=shipmentor4_.SYSTEM_ID
+inner join ORGANIZATION organizati5_ on shipmentor4_.ORGANIZATION_SYSTEMID=organizati5_.SYSTEM_ID
+left outer join SHIPMENT_SERVICE_LEVEL shipmentse13_ on shipmentor4_.ACT_SERVICE_LEVEL_SYSTEMID=shipmentse13_.SYSTEM_ID
+left outer join SERVICE_ACTION_TYPE serviceact12_ on serviceact3_.SERVICE_ACTION_TYPE_SYSTEMID=serviceact12_.SYSTEM_ID
+left outer join COUNTRY country6_ on serviceord1_.FROM_COUNTRY_SYSTEMID=country6_.SYSTEM_ID
+left outer join COUNTRY country7_ on serviceord1_.TO_COUNTRY_SYSTEMID=country7_.SYSTEM_ID
+left outer join EVENT_EVENT eventvo8_ on serviceord0_.LAST_CLOSED_SYSTEMID=eventvo8_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype9_ on eventvo8_.EVENT_TYPE_SYSTEMID=eventtype9_.SYSTEM_ID 
+left outer join EVENT_EVENT eventvo10_ on serviceord0_.NEXT_TO_CLOSE_SYSTEMID=eventvo10_.SYSTEM_ID 
+left outer join EVENT_TYPE eventtype11_ on eventvo10_.EVENT_TYPE_SYSTEMID=eventtype11_.SYSTEM_ID 
+where shipmentor4_.IS_DELETED=0
+and lower(consignmen2_.CONSIGNMENT_NUMBER) like lower('%N0008574%')
+;
+select service_order_id from service_order where system_id='N0008574';
+select service_order_id from service_order where system_id=26884517;
+rollback ;
+select service_order_id from service_order where system_id=26884517;
+\s service_order_event

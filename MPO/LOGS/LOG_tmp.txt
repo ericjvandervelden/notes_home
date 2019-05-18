@@ -1,0 +1,85 @@
+<div id="pageContent">
+...
+/ bovenste gebied	,
+	<div class="timeline">
+
+/ title linksboven	,
+		<div class="sku-info">
+			<span class="special-message" wicket:id="specialMessage" wicketpath="timeline_specialMessage">155 Days</span>
+
+/ rij met columns met datum-tijd	, bovenin , naast elkaar	, in iedere column bijv	, 
+03-04
+Mon
+00:00
+		<div class="period" wicket:id="period" wicketpath="timeline_period_0">
+			<wicket:container wicket:id="periodPanel" id="periodPanela9d" wicketpath="timeline_period_0_periodPanel"><wicket:panel>
+				<div class="main" wicket:id="main" wicketpath="timeline_period_0_periodPanel_main">20-03</div>
+				<div class="sub" wicket:id="sub" wicketpath="timeline_period_0_periodPanel_sub">Sun</div>
+				<div class="time" wicket:id="time" wicketpath="timeline_period_0_periodPanel_time">00:00</div>
+			</wicket:panel></wicket:container>
+		</div><div class="period" wicket:id="period" wicketpath="timeline_period_1">
+			<wicket:container wicket:id="periodPanel" id="periodPanela9e" wicketpath="timeline_period_1_periodPanel"><wicket:panel>
+				<div class="main" wicket:id="main" wicketpath="timeline_period_1_periodPanel_main">21-03</div>
+				<div class="sub" wicket:id="sub" wicketpath="timeline_period_1_periodPanel_sub">Mon</div>
+				<div class="time" wicket:id="time" wicketpath="timeline_period_1_periodPanel_time">00:00</div>
+			</wicket:panel></wicket:container>
+		</div>
+...
+
+/ rij met columns  
+FC In	0
+In		160
+FC Out
+Out
+Count
+		----------
+Balance	8750
+		<div wicket:id="sku" id="skuad9" wicketpath="sku"><wicket:panel>
+	<div class="sku-line">
+
+		<div class="sku-info" wicket:id="skuInfo" wicketpath="sku_skuInfo"><wicket:panel>
+	<span class="product" wicket:id="product" wicketpath="sku_skuInfo_product">MPO_Prod1</span><wicket:enclosure child="goodsstatus" wicketpath="sku_skuInfo_enclosure-19">(<span wicket:id="goodsstatus" wicketpath="sku_skuInfo_goodsstatus">GOOD</span>)</wicket:enclosure>-<span class="location" wicket:id="location" wicketpath="sku_skuInfo_location">GEODIS_WHS_FR_SOCHAUX</span><br>
+	<span wicket:id="min" wicketpath="sku_skuInfo_min">15</span>/<span wicket:id="target" wicketpath="sku_skuInfo_target">30</span>/<span wicket:id="max" wicketpath="sku_skuInfo_max">45</span>/<span wicket:id="leadTime" wicketpath="sku_skuInfo_leadTime">2d</span>/<span wicket:id="lotSize" wicketpath="sku_skuInfo_lotSize">20</span>
+</wicket:panel></div>
+
+FC In	
+In	
+FC Out
+Out
+Count
+Balance	
+		<div class="projection-title">
+
+/ rij met columns die er zo uitzien	,
+0
+3540
+0
+0
+7640
+		<div class="projection day-even" wicket:id="projection" id="id0ada" wicketpath="sku_projection_0" onclick="var wcall=wicketAjaxGet('?wicket:interface=:44:sku:projection:0::IBehaviorListener:1:',function() { }.bind(this),function() { }.bind(this), function() {return Wicket.$('id0ada') != null;}.bind(this));">
+			<wicket:container wicket:id="projectionInfo" wicketpath="sku_projection_0_projectionInfo"><wicket:panel>
+				<div class="stock-in invalid-sku" wicket:id="stock-in-fc" wicketpath="sku_projection_0_projectionInfo_stock-in-fc">0</div>
+				<div class="stock-in invalid-sku" wicket:id="stock-in" wicketpath="sku_projection_0_projectionInfo_stock-in">0</div>
+				<div class="stock-out invalid-sku" wicket:id="stock-out-fc" wicketpath="sku_projection_0_projectionInfo_stock-out-fc">0</div>
+				<div class="stock-out invalid-sku" wicket:id="stock-out" wicketpath="sku_projection_0_projectionInfo_stock-out">0</div>
+				<div class="stock-count" wicket:id="stock-count" wicketpath="sku_projection_0_projectionInfo_stock-count"></div>
+				<div class="stock-balance over" wicket:id="stock-balance" wicketpath="sku_projection_0_projectionInfo_stock-balance">4130</div>
+		</wicket:panel></wicket:container>
+...
+
+
+		<form wicket:id="form" id="formb16" wicketpath="form" method="post" action="?wicket:interface=:44:form::IFormSubmitListener::" _lpchecked="1"><div style="width:0px;height:0px;position:absolute;left:-100px;top:-100px;overflow:hidden"><input type="hidden" name="formb16_hf_0" id="formb16_hf_0"></div>
+					<div class="sku-info" wicket:id="source-description" wicketpath="form_source_0_source-description">MPO_Vend1</div>
+					<div style="display: inline-block;">
+						<div class="receipt-line">
+/ rij van columns, 	
+0		/ Advice
+100	 / Planned receipts
+							<div class="projection receipt" wicket:id="planned-receipts" wicketpath="form_source_0_planned-receipts_2">
+								<div wicket:id="planned-qty-editor" id="planned_qty_editorb17" wicketpath="form_source_0_planned-receipts_2_planned-qty-editor"><wicket:border>
+									<wicket:body wicketpath="form_source_0_planned-receipts_2_planned-qty-editor___body">
+										<div class="advice" wicket:id="advice-qty" wicketpath="form_source_0_planned-receipts_2_planned-qty-editor_advice-qty">0</div>
+										<input wicket:id="planned-qty" size="2" value="0" name="source:0:planned-receipts:2:planned-qty-editor:planned-qty" id="planned_qtyb18" wicketpath="form_source_0_planned-receipts_2_planned-qty-editor_planned-qty" class="adviced" onchange="var wcall=wicketAjaxPost('?wicket:interface=:44:form:source:0:planned-receipts:2:planned-qty-editor:planned-qty::IBehaviorListener:1:', wicketSerialize(Wicket.$('planned_qtyb18')),function() { }.bind(this),function() { }.bind(this), function() {return Wicket.$('planned_qtyb18') != null;}.bind(this));">
+								</wicket:body> </wicket:border></div>
+							</div>
+

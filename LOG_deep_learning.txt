@@ -1,0 +1,40 @@
+/ 7	. 
+
+/ video	,
+https://www.youtube.com/watch?v=P5QObw_kqbc
+
+Ian Goodfellow, Yoshua Bengio, Aaron Courville (2016). Deep Learning. MIT Press
+
+https://theclevermachine.wordpress.com/tag/backpropagation
+
+https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example
+
+jeff heaton (2012). Introduction to the math of neural networks. Heaton Research, Inc.
+
+https://www.youtube.com/watch?v=vi7lACKOUao 	/ ian goodfellow	,
+
+/ 13	. 
+
+/ kijk google i/o 2018	,	
+https://www.youtube.com/watch?v=tjsHSIG8I08&t=556s
+
+Deep Learning with Python
+François Chollet
+November 2017  ISBN 9781617294433  384 pages  printed in black & white
+
+/ colab.research.google.com
+
+/ 13	. 
+
+/ kijk tensorflow summit 2018	, 
+https://www.youtube.com/watch?v=kSa3UObNS6o&t=483s
+
+g.co/machinelearningcrashcourse
+/=
+https://developers.google.com/machine-learning/crash-course/
+
+/ 13	. 
+
+Kubernetes in Action
+Marko Lukša
+December 2017  ISBN 9781617293726  624 pages  printed in black & white

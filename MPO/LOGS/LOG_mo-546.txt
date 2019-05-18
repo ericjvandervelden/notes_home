@@ -1,0 +1,57 @@
+/ 7	.
+
+[eric@localhost LOGS]$ ssh VS-test-9
+eric@vs-test-9's password: eric987@MPO
+eric@vs-test-9:~$ less /local/apps/jboss-4.0.5.GA/server/mposcs/log/server.log
+org.postgresql.util.PSQLException: ERROR: permission denied for relation mpo_scs_patch
+
+eric@vs-test-9:~$ less /local/apps/jboss-4.0.5.GA/server/mposcs/deploy/postgresql-ds.xml 
+                <xa-datasource-class>org.postgresql.xa.PGXADataSource</xa-datasource-class>
+                <xa-datasource-property name="ServerName">mposerv8</xa-datasource-property>
+                <xa-datasource-property name="PortNumber">5433</xa-datasource-property>
+                <xa-datasource-property name="DatabaseName">mposcs-dev</xa-datasource-property>
+                <xa-datasource-property name="User">mposcs_dev</xa-datasource-property>
+                <xa-datasource-property name="Password">mqi8o0e6aeg56tpghje2bo0gehgthoi6</xa-datasource-property>
+ 
+eric@mposerv8:~$ PGPASSWORD=mqi8o0e6aeg56tpghje2bo0gehgthoi6 psql -U mposcs_dev -p 5433 -h localhost mposcs-dev
+mposcs-dev=> \dt mpo_scs_patch
+                 List of relations
+ Schema |     Name      | Type  |      Owner       
+--------+---------------+-------+------------------
+ public | mpo_scs_patch | table | mposcs_dev_admin
+(1 row)
+mposcs-dev=> select*from mpo_scs_patch;
+ERROR:  permission denied for relation mpo_scs_patch
+
+/ 7	 
+
+mposcs-dev=> \du
+ santenm          | Password valid until infinity                  | {writer}
+
+mposcs-dev=> revoke writer from santenm;
+ERROR:  must have admin option on role "writer"
+/ TODO with admin option
+
+/ Lees docs	,
+GRANT on Database Objects
+If WITH GRANT OPTION is specified, the recipient of the privilege can in turn grant it to others. Without a grant option, the recipient cannot do that. Grant options cannot be granted to PUBLIC.
+
+GRANT on Roles
+If WITH ADMIN OPTION is specified, the member can in turn grant membership in the role to others, and revoke membership in the role as well. Without the admin option, ordinary users cannot do that. A role is not considered to hold WITH ADMIN OPTION on itself, but it may grant or revoke membership in itself from a database session where the session user matches the role. Database superusers can grant or revoke membership in any role to anyone. Roles having CREATEROLE privilege can grant or revoke membership in any role that is not a superuser.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,793 @@
+/ 7	. 
+
+/ Lees	, 
+https://github.com/creationix/nvm
+
+[eric@almond primefaces]$ nvm install node
+Downloading https://nodejs.org/dist/v8.1.2/node-v8.1.2-linux-x64.tar.xz...
+######################################################################## 100.0%
+WARNING: checksums are currently disabled for node.js v4.0 and later
+Now using node v8.1.2 (npm v5.0.3)
+
+/ In iedere andere shell doe eerst	, 
+[eric@almond webapps]$ nvm use node
+Now using node v8.1.2 (npm v5.0.3)
+
+[eric@almond webapps]$  node -v
+v8.1.2
+
+/ 7	. 
+
+/ webpack
+
+/ 13	. 
+
+/ lees	, 
+LOG_2_apr_2016.txt
+/ bij	WEBPACK VIDEO
+https://www.youtube.com/watch?v=TaWKUpahFZM
+
+[eric@almond video]$ pwd
+/home/eric/Devel/JavaScript/Node/Webpack/video
+[eric@almond video]$ ls
+1.bundle.js  bundle.js   index.js      package.json
+bear2.js     index.html  node_modules  webpack.config.js
+
+/ we hadden	, 
+[eric@almond video]$ npm init
+[eric@almond video]$  npm i webpack --save-dev
+
+/ en node_modules/webpack is er	,
+
+/ 13	. 
+
+/ wat is de version van webpack	?
+https://stackoverflow.com/questions/10972176/find-the-version-of-an-installed-npm-package
+
+npm list for local packages or npm list -g for globally installed packages.
+You can find the version of a specific package by passing its name as an argument. For example, npm list grunt will result in:
+projectName@projectVersion /path/to/project/folder
+└── grunt@0.4.1
+
+/ we doen	, 
+[eric@almond video]$ npm list webpack
+video@1.0.0 /home/eric/Devel/JavaScript/Node/Webpack/video
+└── webpack@1.12.14 
+
+/ npm list lists ze allemaal	, met --depth=0 zonder dependencies	, 
+[eric@almond video]$ npm list --depth=0
+video@1.0.0 /home/eric/Devel/JavaScript/Node/Webpack/video
+├── css-loader@0.23.1
+├── jquery@2.2.3
+├── my-bear@1.0.0 extraneous
+├── my_css@1.0.0 extraneous
+├── style-loader@0.13.1
+├── webpack@1.12.14
+└── webpack-dev-server@1.14.1
+
+npm ERR! extraneous: my-bear@1.0.0 /home/eric/Devel/JavaScript/Node/Webpack/video/node_modules/my-bear
+npm ERR! extraneous: my_css@1.0.0 /home/eric/Devel/JavaScript/Node/Webpack/video/node_modules/my_css
+
+/ 13	. 
+
+/ hoe update webpack	, en deps	?
+
+/ Ga naar npm site, documentation	, 
+/ we zien link 'updating local packages'	, 
+/ er is een video	,
+https://docs.npmjs.com/getting-started/updating-local-packages
+
+[eric@almond video]$  npm outdated
+Package             Current  Wanted  Latest  Location
+css-loader           0.23.1  0.23.1  0.28.4  video
+jquery                2.2.3   2.2.4   3.2.1  video
+style-loader         0.13.1  0.13.2  0.18.2  video
+webpack             1.12.14  1.15.0   3.0.0  video
+webpack-dev-server   1.14.1  1.16.5   2.5.0  video
+
+$ vi package.json
+
+  "devDependencies": {
+    "css-loader": "^0.23.1",
+    "style-loader": "^0.13.2",
+    "webpack": "^1.15.0",
+    "webpack-dev-server": "^1.16.5"
+  },
+  "dependencies": {
+    "jquery": "^2.2.4"
+  }
+
+[eric@almond video]$  npm update 
+[eric@almond video]$  npm outdated
+Package             Current  Wanted  Latest  Location
+css-loader           0.23.1  0.23.1  0.28.4  video
+jquery                2.2.4   2.2.4   3.2.1  video
+style-loader         0.13.2  0.13.2  0.18.2  video
+webpack              1.15.0  1.15.0   3.0.0  video
+webpack-dev-server   1.16.5  1.16.5   2.5.0  video
+
+/ OK	, 
+/ Maar we willen hoger	, 
+
+
+/ Lees	, 
+https://stackoverflow.com/questions/22343224/whats-the-difference-between-tilde-and-caret-in-package-json
+
+In the simplest terms, the tilde matches the most recent minor version (the middle number). ~1.2.3 will match all 1.2.x versions but will miss 1.3.0.
+
+The caret, on the other hand, is more relaxed. It will update you to the most recent major version (the first number). ^1.2.3 will match any 1.x.x release including 1.3.0, but will hold off on 2.0.0.
+
+/ Maar hoe tot de most recent	?
+
+/ Lees	, 
+https://stackoverflow.com/questions/16073603/how-do-i-update-each-dependency-in-package-json-to-the-latest-version
+
+/ Intermezzo 
+
+/ als we npm install	, zien we ^ in package.json:
+
+[eric@almond try]$ npm init
+[eric@almond try]$ npm install webpack --save-dev
+[eric@almond try]$ less package.json 
+  "devDependencies": {
+    "webpack": "^3.0.0"
+  }
+
+/ Einde Intermezzo 
+
+/ we kunne de ^ vervangen door >=
+/ of install -g  npm-check-updates
+
+$ vi package.json
+
+  "devDependencies": {
+    "css-loader": ">=0.23.1",
+    "style-loader": ">=0.13.2",
+    "webpack": ">=1.15.0",
+    "webpack-dev-server": ">=1.16.5"
+  },
+  "dependencies": {
+    "jquery": ">=2.2.4"
+  }
+
+$ npm update
+$ vi package.json
+
+  "devDependencies": {
+    "css-loader": "^0.28.4",
+    "style-loader": "^0.18.2",
+    "webpack": "^3.0.0",
+    "webpack-dev-server": "^2.5.0"
+  },
+  "dependencies": {
+    "jquery": "^3.2.1"
+	}
+}
+/ en we zien de carets weer	,
+
+[eric@almond video]$ npm list webpack
+video@1.0.0 /home/eric/Devel/JavaScript/Node/Webpack/video
+└── (empty)
+/ TODO
+/ we moesten met de hand	, 
+[eric@almond video]$ npm install constants-browserify 
+[eric@almond video]$ npm install timers-browserify 
+[eric@almond video]$ npm install url
+
+/ In video2/ doet >= en $ npm update OK	,
+/ maar toch ook	,
+[eric@almond video]$ npm list webpack
+video@1.0.0 /home/eric/Devel/JavaScript/Node/Webpack/video
+└── (empty)
+/ TODO
+
+$ vi package.json
+
+  "scripts": {
+    "start": "webpack entry.js bundle.js",
+
+/ we kunnen 	
+$ npm start 				/ als key="start" of "test", 	kun je run weglaten	,
+/ of
+$ npm run start  
+
+/ bundle.js is created	, 
+
+[eric@almond video]$ cat index.html 
+<!doctype html>
+<html>
+<head>
+</head>
+<body>
+	<script src="bundle.js"></script>
+</body>
+</html>
+
+/ Geef 
+file:///home/eric/Devel/JavaScript/Node/Webpack/video/index.html
+/ OK	,
+
+/ Intermezzo
+
+/ bij mij werkt ncu -u niet OK	, de version blijft 1.15.0	, 
+/ als je met de hand ^ vervangt door >= en je doet $ npm update		, dan OK in try2	, 
+
+/ Lees	, 
+https://stackoverflow.com/questions/18875674/whats-the-difference-between-dependencies-devdependencies-and-peerdependencies
+
+/ we install expres een oude versie van webpack	,
+
+[eric@almond try2]$ npm init
+[eric@almond try2]$ npm help install
+...
+[eric@almond try2]$ npm install webpack@1.15.0 --save-dev
+
+[eric@almond try2]$ npm outdated
+Package  Current  Wanted  Latest  Location
+webpack   1.15.0  1.15.0   3.0.0  try2
+
+[eric@almond try2]$ cat package.json 
+{
+  "devDependencies": {
+    "webpack": "^1.15.0"
+  }
+}
+
+[eric@almond try2]$ vi package.json 
+  "devDependencies": {
+    "webpack": ">=1.15.0"							<-
+  }
+
+[eric@almond try2]$ npm update
+[eric@almond try2]$ npm list webpack
+try2@1.0.0 /home/eric/Devel/JavaScript/Node/Webpack/try2
+└── webpack@3.0.0 
+
+[eric@almond try2]$ cat >entry.js
+alert("foo bar");
+[eric@almond try2]$ vi package.json 
+ "scripts": {
+    "test": "webpack entry.js bundle.js"
+  },
+
+[eric@almond try2]$ npm test
+
+> try2@1.0.0 test /home/eric/Devel/JavaScript/Node/Webpack/try2
+> webpack entry.js bundle.js
+
+Hash: f630065d8d9d3da7176e
+Version: webpack 3.0.0
+Time: 77ms
+    Asset     Size  Chunks             Chunk Names
+bundle.js  2.49 kB       0  [emitted]  main
+   [0] ./entry.js 18 bytes {0} [built]
+
+
+/ we hebben ook	,
+
+[eric@almond try2]$ npm install -g npm-check-updates
+/home/eric/.nvm/versions/node/v8.1.2/bin/ncu -> /home/eric/.nvm/versions/node/v8.1.2/lib/node_modules/npm-check-updates/bin/ncu
+/home/eric/.nvm/versions/node/v8.1.2/bin/npm-check-updates -> /home/eric/.nvm/versions/node/v8.1.2/lib/node_modules/npm-check-updates/bin/npm-check-updates
++ npm-check-updates@2.12.0
+added 582 packages in 25.336s
+
+[eric@almond try2]$ cat package.json 
+{
+  "name": "try2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "webpack": "^1.15.0"
+  }
+}
+
+$ ncu -u
+  "devDependencies": {
+    "webpack": "^3.0.0"
+  }
+
+/ maar 
+$ npm list webpack
+	1.15.0
+/ TODO
+
+
+/ Einde Intermezzo
+
+/ 13	 .
+
+[eric@almond video2]$ pwd
+/home/eric/Devel/JavaScript/Node/Webpack/video2
+[eric@almond video2]$ cat index.js
+alert(require('./bear.js'));
+[eric@almond video2]$ cat bear.js 
+module.exports="growl";
+
+[eric@almond video2]$ cat package.json 
+{
+  "name": "video2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack index.js bundle.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^3.0.0",
+    "webpack-dev-server": "^2.5.0"
+  },
+  "dependencies": {
+    "jquery": "^3.2.1"
+  }
+}
+
+[eric@almond video2]$ npm start
+
+[eric@almond video2]$ cat index.html 
+<!doctype html>
+<html>
+<head>
+</head>
+<body>
+	<script src="bundle.js"></script>
+</body>
+</html>
+
+/ Geef	, 
+file:///home/eric/Devel/JavaScript/Node/Webpack/video2/index.html
+/ OK
+
+/ 13	. 
+
+$ vi package.json
+
+  "scripts": {
+    "start": "webpack-dev-server index.js"
+  },
+
+[eric@almond video2]$ npm start
+
+> video2@1.0.0 start /home/eric/Devel/JavaScript/Node/Webpack/video2
+> webpack-dev-server index.js
+
+Project is running at http://localhost:8081/
+webpack output is served from /
+Hash: 56c57ba568763699408b
+Version: webpack 3.0.0
+Time: 994ms
+    Asset    Size  Chunks                    Chunk Names
+bundle.js  309 kB       0  [emitted]  [big]  main
+  [35] multi (webpack)-dev-server/client?http://localhost:8081 ./index.js 40 bytes {0} [built]
+  [36] (webpack)-dev-server/client?http://localhost:8081 5.78 kB {0} [built]
+  [37] (webpack)/node_modules/url/url.js 23.3 kB {0} [built]
+  [38] ./node_modules/punycode/punycode.js 14.7 kB {0} [built]
+  [39] (webpack)/node_modules/url/util.js 314 bytes {0} [built]
+  [40] ./node_modules/querystring-es3/index.js 127 bytes {0} [built]
+  [43] ./node_modules/strip-ansi/index.js 161 bytes {0} [built]
+  [45] (webpack)-dev-server/client/socket.js 897 bytes {0} [built]
+  [78] (webpack)-dev-server/client/overlay.js 3.73 kB {0} [built]
+  [79] ./node_modules/ansi-html/index.js 4.26 kB {0} [built]
+  [80] ./node_modules/html-entities/index.js 231 bytes {0} [built]
+  [83] (webpack)/hot/emitter.js 77 bytes {0} [built]
+  [84] ./node_modules/events/events.js 8.19 kB {0} [built]
+  [85] ./index.js 29 bytes {0} [built]
+  [86] ./bear.js 24 bytes {0} [built]
+    + 72 hidden modules
+webpack: Compiled successfully.
+
+/ Geef
+localhost:8081
+/ OK
+
+/ we kunnen bear.js of index.js	, we zien meteen op localhost:8081 de nieuwe alert	, we hoeven de page niet op te vragen	, 
+
+/ 13	. 
+
+[eric@almond video2]$ cat index2.js 		/ bundle.js
+require(['./bear2'],function(bear){			/ bear is wat is exported in ./bear2	, 
+	document.body.appendChild(bear[0]);
+});
+[eric@almond video2]$ cat bear2.js 			/ 0.bundle.js
+var $=require('jquery')
+module.exports=$('<div>').html('grizzly growls')
+
+[eric@almond video2]$ npm start
+
+> video2@1.0.0 start /home/eric/Devel/JavaScript/Node/Webpack/video2
+> webpack-dev-server index2.js
+
+Project is running at http://localhost:8082/
+webpack output is served from /
+Hash: b483a4dc3e1213d7dd02
+Version: webpack 3.0.0
+Time: 1211ms
+      Asset    Size  Chunks                    Chunk Names
+0.bundle.js  269 kB       0  [emitted]  [big]  																										<-
+  bundle.js  313 kB       1  [emitted]  [big]  main																								<-
+  [35] multi (webpack)-dev-server/client?http://localhost:8082 ./index2.js 40 bytes {1} [built]
+  [36] (webpack)-dev-server/client?http://localhost:8082 5.78 kB {1} [built]
+  [37] (webpack)/node_modules/url/url.js 23.3 kB {1} [built]
+  [38] ./node_modules/punycode/punycode.js 14.7 kB {1} [built]
+  [39] (webpack)/node_modules/url/util.js 314 bytes {1} [built]
+  [40] ./node_modules/querystring-es3/index.js 127 bytes {1} [built]
+  [43] ./node_modules/strip-ansi/index.js 161 bytes {1} [built]
+  [44] ./node_modules/ansi-regex/index.js 135 bytes {1} [built]
+  [45] (webpack)-dev-server/client/socket.js 897 bytes {1} [built]
+  [78] (webpack)-dev-server/client/overlay.js 3.73 kB {1} [built]
+  [80] ./node_modules/html-entities/index.js 231 bytes {1} [built]
+  [83] (webpack)/hot/emitter.js 77 bytes {1} [built]
+  [85] ./index2.js 77 bytes {1} [built]
+  [86] ./bear2.js 73 bytes {0} [built]
+  [87] ./node_modules/jquery/dist/jquery.js 268 kB {0} [built]
+    + 73 hidden modules
+
+/ we zien ook in DevTools, Network
+bundle.js
+0.bundle.js
+/ asynchr TODO
+
+/ 13	. 
+
+/ we kunnen modules load	, ook css	 ,
+
+/ we moeten	, 
+[eric@almond video2]$ npm install css-loader --save-dev
+
+[eric@almond video2]$ cat index3.js 
+require(['./bear3'],function(bear){
+	document.body.appendChild(bear[0]);
+});
+
+[eric@almond video2]$ cat bear3.js 
+var $=require('jquery')
+var css=require('css-loader!style3.css')															<-	 NIET css!style3.css	,
+console.log(css)																		<-
+module.exports=$('<div>').html('grizzly growls')
+
+[eric@almond video2]$ cat style3.css 
+div{
+	color:red;
+}
+
+$ vi package.json
+  "scripts": {
+    "start": "webpack-dev-server index3.js"
+  },
+
+[eric@almond video2]$ npm start
+
+> video2@1.0.0 start /home/eric/Devel/JavaScript/Node/Webpack/video2
+> webpack-dev-server index3.js
+
+Project is running at http://localhost:8081/
+webpack output is served from /
+Hash: 35cc08ab8945409b4d94
+Version: webpack 3.0.0
+Time: 1210ms
+      Asset    Size  Chunks                    Chunk Names
+0.bundle.js  269 kB       0  [emitted]  [big]  
+  bundle.js  313 kB       1  [emitted]  [big]  main
+  [35] multi (webpack)-dev-server/client?http://localhost:8081 ./index3.js 40 bytes {1} [built]
+  [36] (webpack)-dev-server/client?http://localhost:8081 5.78 kB {1} [built]
+  [37] (webpack)/node_modules/url/url.js 23.3 kB {1} [built]
+  [38] ./node_modules/punycode/punycode.js 14.7 kB {1} [built]
+  [39] (webpack)/node_modules/url/util.js 314 bytes {1} [built]
+  [40] ./node_modules/querystring-es3/index.js 127 bytes {1} [built]
+  [43] ./node_modules/strip-ansi/index.js 161 bytes {1} [built]
+  [44] ./node_modules/ansi-regex/index.js 135 bytes {1} [built]
+  [45] (webpack)-dev-server/client/socket.js 897 bytes {1} [built]
+  [78] (webpack)-dev-server/client/overlay.js 3.73 kB {1} [built]
+  [80] ./node_modules/html-entities/index.js 231 bytes {1} [built]
+  [83] (webpack)/hot/emitter.js 77 bytes {1} [built]
+  [85] ./index3.js 77 bytes {1} [built]
+  [86] ./bear3.js 95 bytes {0} [built]
+  [87] ./node_modules/jquery/dist/jquery.js 268 kB {0} [built]
+    + 73 hidden modules
+
+  [86] ./bear3.js 108 bytes {0} [built]
+    + 89 hidden modules
+webpack: Compiled successfully.
+webpack: Compiling...
+Hash: cb771106d7fde51aae77
+Version: webpack 3.0.0
+Time: 49ms
+...
+
+/ Geef localhost:8081
+/ we zien nog in het zwart	,  
+grizzly growls
+
+/ in devtools, console
+
+[Array[3]]
+0 : Array[3]
+0 : 88
+1 : "div{↵	color:red;↵}↵" 								<-
+2 : ""
+length : 3
+__proto__ : Array[0]
+i : (modules, mediaQuery)
+arguments : null
+caller : null
+length : 2
+name : ""
+prototype : Object
+__proto__ : ()
+<function scope>
+Closure
+Closure
+Global : Window
+length : 1
+toString : toString()
+__proto__ : Array[0]
+
+/ 13	 .
+
+/ Hoe use css js module hierboven?
+
+$ npm i style-loader --save-dev
+
+/ we kunnen tijdens deze load de webpack-dev-server laten run	, 
+
+$ vi bear3.js
+
+var $=require('jquery')
+require('style-loader!css-loader!./style3.css')
+module.exports=$('<div>').html('grizzly growls')
+
+/ Ga naar localhost:8081
+/ we zien in het rood		,
+grizzly growls
+
+/ 13	. 
+
+module.exports=$('<div>').html('grizzly growls')
+/ of	,
+exports.growl=('<div>').html('grizzly growl');
+/ TODO
+
+/ 13	. 
+
+/ module.exports of export
+
+/ 1313	. 
+
+/ we deden	, 
+
+[eric@almond video2]$ cat index.js
+alert(require('./bear.js'));
+
+[eric@almond video2]$ cat bear.js
+module.exports="growl";
+
+$ cat package.json
+  "scripts": {
+    "start": "webpack-dev-server index.js"
+  },
+
+/ 1313	. 
+
+/ maar dit kan ook	,
+
+[eric@almond video2]$ cat index1.js 
+alert(require('./bear1.js').growl);
+
+[eric@almond video2]$ cat bear1.js 
+exports.growl="growl!";
+
+$ cat package.json
+  "scripts": {
+    "start": "webpack-dev-server index1.js"
+  },
+
+/ 13	. 
+
+/ we gaan module my-bear1 maken	, 
+
+/ 1313	.
+
+/ met export.growl	,
+
+/ we gaan module my-bear1 maken	, 
+
+[eric@almond video2]$ mkdir node_modules/my-bear1
+[eric@almond video2]$ cd node_modules/my-bear1/
+[eric@almond my-bear1]$ npm init
+[eric@almond my-bear1]$ cd ../../
+[eric@almond video2]$ cp -a bear1.js node_modules/my-bear1/index.js
+
+$ vi index1.js
+//alert(require('./bear1.js').growl);		/ was	,
+alert(require('my-bear1').growl);			// nu	,
+
+[eric@almond video2]$ ls node_modules/my-bear1/
+index.js  package.json
+
+[eric@almond video2]$ cat node_modules/my-bear1/package.json 
+{
+  "name": "my-bear1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
+[eric@almond video2]$ cat node_modules/my-bear1/index.js 
+exports.growl="growl!";
+
+/ Geef	, 
+localhost:8081
+/ OK
+
+/ 1313	. 
+
+/ met module.exports
+
+$ vi index0.js
+//alert(require('./bear1.js').growl);
+alert(require('my-bear0'));
+
+[eric@almond video2]$ ls node_modules/my-bear0/
+index.js  package.json
+
+[eric@almond video2]$ cat node_modules/my-bear0/package.json 
+{
+  "name": "my-bear0",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
+
+[eric@almond video2]$ cat node_modules/my-bear0/index.js 
+module.exports="growl!";
+
+/ geef	, 
+localhost:8081
+/ OK
+                                   
+/ 13	. 
+
+/ webpack.config.js
+
+/ we doen nu:
+
+[eric@almond video2]$ cat bear3.js 
+var $=require('jquery')
+require('style-loader!css-loader!./style4.css')
+module.exports=$('<div>').html('grizzly growls')
+
+/ we zien	, 
+$ npm start
+ [88] ./node_modules/style-loader!./node_modules/css-loader!./style4.css 999 bytes {0} 
+
+/ lees	,
+https://webpack.js.org/
+
+https://webpack.js.org/guides/migrating/
+module.loaders is now module.rules
+
+/ we maken eerst webpack.config.js op de oude manier	, al is het anders als op de video	,
+/ we maken index4.js, bear4.js, style4.js
+
+$ vi webpack.config.js
+
+[eric@almond video2]$ cat bear4.js 
+var $=require('jquery')
+require('./style4.css')															<-
+module.exports=$('<div>').html('grizzly growls')
+
+[eric@almond video2]$ cat webpack.config.js 
+module.exports={
+	entry:'./index4.js',
+	output:{
+		path:__dirname,
+		filename:'bundle.js'
+	},
+	module:{
+		loaders:[
+			{
+				test:/\.css$/,
+				loaders:[
+					'style-loader',
+					'css-loader'
+				]
+			}
+		]
+	}
+}
+
+[eric@almond video2]$ cat package.json 
+{
+  "scripts": {
+    "start": "webpack-dev-server index4.js"
+  },
+/ OK
+/ Geef 
+localhost:8081
+
+/ we maken webpack.config.js op de nieuwe manier 	,
+
+$ vi webpack.config.js
+
+module.exports={
+  entry:'./index4.js',
+  output:{
+    path:__dirname,
+    filename:'bundle.js'
+  },
+  module:{
+    rules:[
+      {
+        test:/\.css$/,
+        use:[
+          {
+            loader:'style-loader'
+          },
+          {
+            loader:'css-loader'
+          }
+        ]
+      }
+    ]
+  }
+}
+
+[eric@almond video2]$ npm start
+
+> video2@1.0.0 start /home/eric/Devel/JavaScript/Node/Webpack/video2
+> webpack-dev-server index4.js
+
+Project is running at http://localhost:8081/
+webpack output is served from /
+Hash: ee9db3d1c9df1c89ffd2
+Version: webpack 3.0.0
+Time: 1484ms
+      Asset    Size  Chunks                    Chunk Names
+0.bundle.js  284 kB       0  [emitted]  [big]  
+  bundle.js  313 kB       1  [emitted]  [big]  main
+  [35] ./index4.js 77 bytes {1} [built]
+  [36] multi (webpack)-dev-server/client?http://localhost:8081 ./index4.js ./index4.js 52 bytes {1} [built]
+  [37] (webpack)-dev-server/client?http://localhost:8081 5.78 kB {1} [built]
+  [38] (webpack)/node_modules/url/url.js 23.3 kB {1} [built]
+  [39] ./node_modules/punycode/punycode.js 14.7 kB {1} [built]
+  [44] ./node_modules/strip-ansi/index.js 161 bytes {1} [built]
+  [46] (webpack)-dev-server/client/socket.js 897 bytes {1} [built]
+  [79] (webpack)-dev-server/client/overlay.js 3.73 kB {1} [built]
+  [80] ./node_modules/ansi-html/index.js 4.26 kB {1} [built]
+  [81] ./node_modules/html-entities/index.js 231 bytes {1} [built]
+  [84] (webpack)/hot/emitter.js 77 bytes {1} [built]
+  [85] ./node_modules/events/events.js 8.19 kB {1} [built]
+  [86] ./bear4.js 97 bytes {0} [built]
+  [87] ./node_modules/jquery/dist/jquery.js 268 kB {0} [built]
+  [88] ./style4.css 999 bytes {0} [built]
+    + 78 hidden modules
+webpack: Compiled successfully.
+
+/ we zien nu niet meer die hele rij van compiles	, 
+
+
+
+
+
+
+
+
+
+

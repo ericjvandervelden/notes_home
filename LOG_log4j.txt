@@ -1,0 +1,158 @@
+/ 	7. 
+
+/ Lees	, 
+https://www.slf4j.org/manual.html
+
+/ 13	. 
+
+/ eclipse scala,
+/ project log-study
+
+/ Lees	, 
+https://logging.apache.org/log4j
+/= 
+https://logging.apache.org/log4j/2.x/
+/ We zien in menu links Maven	, click
+/ Lees	, 
+https://logging.apache.org/log4j/2.x/maven-artifacts.html 
+
+<dependencies>
+  <dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-api</artifactId>
+    <version>2.8.2</version>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-core</artifactId>
+    <version>2.8.2</version>
+  </dependency>
+</dependencies>
+
+/ 13	. 
+
+/ Lees	, 
+https://logging.apache.org/log4j/2.x/manual/api.html
+
+/ we maken 	,
+public class Hello {
+
+	private static final Logger LOGGER=LogManager.getLogger(Hello.class);  
+	public static void main(String[] args) {
+		LOGGER.info("Hello");
+		LOGGER.error("Bye");
+	}
+
+}
+/ als je deze run	, 
+ERROR StatusLogger No log4j2 configuration file found. Using default configuration: logging only errors to the console. Set system property 'org.apache.logging.log4j.simplelog.StatusLogger.level' to TRACE to show Log4j2 internal initialization logging.
+16:30:09.040 [main] ERROR first.Hello - Bye
+
+/ Dus .error's doet hij sowieso	,
+
+/ 13	. 
+
+/ Lees	, 
+https://logging.apache.org/log4j/2.x/manual/configuration.html
+
+$ vi MyApp.java
+
+public class MyApp {
+
+	private static final Logger LOGGER=LogManager.getLogger(MyApp.class);
+	public static void main(String[] args) {
+		LOGGER.trace("Entering appl");
+		Bar bar=new Bar();
+		if(bar.doIt()==false){
+			LOGGER.error("Did not do it");
+		}
+		LOGGER.trace("Exiting appl");
+	}
+
+}
+
+$ vi Bar.java
+
+public class Bar {
+	private static final Logger LOGGER=LogManager.getLogger(Bar.class);
+	public boolean doIt(){
+		LOGGER.traceEntry();
+		LOGGER.error("Did it again");
+		return LOGGER.traceExit(false);
+		
+	}
+}
+
+/ run	, 
+ERROR StatusLogger No log4j2 configuration file found. Using default configuration: logging only errors to the console. Set system property 'org.apache.logging.log4j.simplelog.StatusLogger.level' to TRACE to show Log4j2 internal initialization logging.
+16:22:08.752 [main] ERROR first.Bar - Did it again
+16:22:08.754 [main] ERROR first.MyApp - Did not do it
+
+/ we lezen	, 
+• ConsoleAppender attached to the root logger.
+• PatternLayout set to the pattern "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" attached to the ConsoleAppender
+Note that by default Log4j assigns the root logger to Level.ERROR.
+
+• = \u2022
+
+/ 13	. 
+
+/ we maken een config, die hetzelfde is als de default (we set er π bij)	, 
+
+π = \u3c0	, om de 1ste regel te test	,
+
+$ vi src/main/resources/log4j2.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="π %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </Console>
+  </Appenders>
+  <Loggers>
+    <Root level="error">
+      <AppenderRef ref="Console"/>
+    </Root>
+  </Loggers>
+</Configuration>
+
+/ we zien  de error line niet meer	, run MyApp,	 
+π 16:51:51.757 [main] ERROR first.Bar - Did it again
+π 16:51:51.760 [main] ERROR first.MyApp - Did not do it
+
+/ verander de root level to trace	, 
+
+  <Loggers>
+    <Root level="trace">
+      <AppenderRef ref="Console"/>
+    </Root>
+  </Loggers>
+
+/ we zien als we MyApp run	, 
+π 16:55:20.502 [main] TRACE first.MyApp - Entering appl
+π 16:55:20.506 [main] TRACE first.Bar - Enter
+π 16:55:20.506 [main] ERROR first.Bar - Did it again
+π 16:55:20.507 [main] TRACE first.Bar - Exit with(false)
+π 16:55:20.507 [main] ERROR first.MyApp - Did not do it
+π 16:55:20.507 [main] TRACE first.MyApp - Exiting appl
+
+/ See .trace	, .traceEntry	, .traceExit	, 
+
+/ 13	. 
+
+/ levels
+
+/ Lees	, 
+https://logging.apache.org/log4j/2.0/manual/architecture.html
+
+/ trace logs alles	 
+/ debug logs alles, behalve trace msgs	,
+/ info logs alles, behalve trace msgs	,
+/ warn
+/ error
+/ fatal
+/ off
+
+
+

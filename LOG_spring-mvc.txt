@@ -1,0 +1,16 @@
+/ 7	. 
+
+[eric@almond apache-tomcat-8.5.8]$ bin/catalina.sh jpda run
+...
+/ lees	,
+https://github.com/mkyong/spring3-mvc-maven-xml-hello-world
+
+
+[eric@almond Spring]$ git clone https://github.com/mkyong/spring3-mvc-maven-xml-hello-world.git
+
+/ lees	,
+http://www.mkyong.com/spring-mvc/gradle-spring-4-mvc-hello-world-example-annotation/
+http://www.mkyong.com/tutorials/spring-mvc-tutorials/
+
+/ Lees	, 
+http://www.mkyong.com/spring3/spring-3-mvc-hello-world-example-annotation/

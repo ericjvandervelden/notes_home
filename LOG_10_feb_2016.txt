@@ -1,0 +1,51 @@
+/ WILDFLY-SWARM
+
+/ Lees	, 
+https://wildfly-swarm.gitbooks.io/wildfly-swarm-users-guide/content/
+
+
+/ 7	. 
+
+/ install eclipse
+
+[eric@almond Mars]$ pwd
+/home/eric/Devel/Eclipse/Mars
+[eric@almond Mars]$ tar xvzf ~/Downloads/eclipse-jee-mars-1-linux-gtk-x86_64.tar.gz 
+[eric@almond Mars]$ eclipse/eclipse 
+OpenJDK 64-Bit Server VM warning: ignoring option MaxPermSize=256m; support was removed in 8.0
+org.eclipse.m2e.logback.configuration: The org.eclipse.m2e.logback.configuration bundle was activated before the state location was initialized.  Will retry after the state location is initialized.
+
+/ we moeten een ws folder maken	,
+/home/eric/Devel/Eclipse/Mars/workspace-wildfly-swarm
+
+org.eclipse.m2e.logback.configuration: Logback config file: /home/eric/Devel/Eclipse/Mars/workspace-wildfly-swarm/.metadata/.plugins/org.eclipse.m2e.logback.configuration/logback.1.6.2.20150902-0002.xml
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [bundleresource://909.fwk1268650975:1/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [bundleresource://909.fwk1268650975:2/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [ch.qos.logback.classic.util.ContextSelectorStaticBinder]
+org.eclipse.m2e.logback.configuration: Initializing logback
+
+/ 7	. 
+
+/ install jboss-tools	,
+
+Workd with: jbosstools - http://download.jboss.org/jbosstools/mars/stable/updates/
+
+/ 7	. 
+
+/ File	, New Maven project, 
+/ Kies default workspace
+/ next, 
+/ we hoeven geen http://repo1.maven.org/maven2/ meer te geven	, we kunnen direct filter op wildfly	,
+org.wildfly.swarm:archetype:1.0.0.Alpha8 
+
+/ we maken
+my.own:wildfly-swarm_archetype
+
+/ we moeten wel de plugin veranderen in pom.xml
+
+
+
+
+/ Einde WILDFLY-SWARM

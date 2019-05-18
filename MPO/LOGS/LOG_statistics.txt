@@ -1,0 +1,16 @@
+/ Lees	, 
+https://www.moresteam.com/whitepapers/download/dummy-variables.pdf
+
+
+SalePrice = 258 + 33.9*Y1990 - 10.7*E + 21*SE
+
+ location of a house in the East, Southeast or Northwest side
+/ we kunnen in de regressie expressie NIET 1,2,3 als values  nemen	, want Southeast is niet 2 keer zo groot als East, en Northwest side is niet 3 keer zo groot als East	, 1,2,3 zijn hier strings, geen getallen	, 
+/ we maken 0,1 variables	, 
+East = 1 0
+SouthEast = 0 1  
+Northwest side= 0 0
+
+/ Northwest side is baseline,	 East is 10.7 goedkoper dan Northwest side	, en Southeast si 21 duurder dan Northwest side	,
+/ Northwest side kost WH 258	,
+

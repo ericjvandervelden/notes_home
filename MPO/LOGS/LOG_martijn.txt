@@ -1,0 +1,17 @@
+/ 7	. 
+
+/ Config, admin users
+/ edit een user, 
+/ hangs on trunk , mposcs (VS-test-9?)
+
+2017-03-27 14:59:14,046 WARN  [org.apache.wicket.Localizer] (http-0.0.0.0-8580-4:) Tried to retrieve a localized string for a component that has not yet been added to the page. This can sometimes lead to an invalid or no localized resource returned. Make sure you are not calling Component#getString() inside your Component's constructor. Offending component: [MarkupContainer [Component id = dynamicPanel]]
+2017-03-27 14:59:14,084 WARN  [org.apache.wicket.markup.resolver.WicketMessageResolver] (http-0.0.0.0-8580-4:) No value found for wicket:message tag with key: properties.title
+2017-03-27 14:59:14,099 WARN  [org.apache.wicket.markup.resolver.WicketMessageResolver] (http-0.0.0.0-8580-4:) No value found for wicket:message tag with key: changePassword
+2017-03-27 14:59:14,099 INFO  [org.apache.wicket.protocol.http.RequestLogger] (http-0.0.0.0-8580-4:) time=68,event=Interface[target:AjaxListCustomActionsPanel$1(listPanel:dynamicPanel:form:dataTable:body:rows:3:cells:1:cell:edit), page: com.mpobjects.oms.view.wicket.user.ResourcePage(8), interface: IBehaviorListener.onRequest],response=PageRequest[com.mpobjects.oms.view.wicket.user.ResourcePage(8)],sessionid=95F5A0A3A793CF0486D67942868B6457,sessionsize=87168,sessionstart=Mon Mar 27 14:54:08 CEST 2017,requests=37,totaltime=924,activerequests=0,maxmem=1908M,total=956M,used=340M
+2017-03-27 14:59:14,099 ERROR [com.mpobjects.view.wicket.MpoWebRequestCycle] (http-0.0.0.0-8580-4:) Detected issue in page: [Page class = com.mpobjects.oms.view.wicket.user.ResourcePage, id = 8, version = 0, ajax = 1], error com.mpobjects.view.wicket.util.io.WicketContainsEntityException: Persisted entity. Unable to serialize class: com.mpobjects.oms.model.user.Resource_$$_javassist_154
+Field hierarchy is:
+ 8 [class=com.mpobjects.oms.view.wicket.user.ResourcePage, path=8]
+   private java.lang.Object org.apache.wicket.MarkupContainer.children [class=[Ljava.lang.Object;]
+de tweede is wat beter qua logging (geen jms messages)
+Martijn • Mon, 15:09
+

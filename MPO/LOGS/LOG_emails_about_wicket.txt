@@ -1,0 +1,30 @@
+/ 7	. 
+
+Michel pointed out an important Wicket best practice, which we do not always follow. It has to do with chaining pages. When a page A is calling page B, we often implement this by instantiating page B with page A as an argument in the constructor of page B. Like setResponsePage(new PageB(PageA.this). If in Page B the back-button is pressed, the 'setResponsePage(returnPage)' is executed. This is a bad practice. See below the suggestions from the wicket team.
+
+https://ci.apache.org/projects/wicket/guide/6.x/guide/single.html#bestpractices_10
+
+FYI, this is not a best practice for wizards/work-flow mechanisms or for deep chaining, as this would create large/huge sessions.
+
+Wizards/work-flow usually have a "working model" and defined page flows. So no need in keeping instances of previous/next pages around as you should be able to recreate this base on the "working model" you pass around.
+
+For deep chaining, you are probably creating a significant breadcrumb of navigation actions. In this case it would be best to make use of bookmarkable pages which can be instantiated based on page parameters. 
+
+So this chaining of pages is mean to request-response, which do not get too deep. Also note, that this practice of creating an anonymous subclass of a page is the same thing you do with pretty much every other standard wicket component.
+
+/ 7	. 
+
+
+I see an increased use of hibernate initialize() in the code, mostly to fix lazy loading exceptions. Generally, I don't think that is required nor a good idea. 
+
+You get the lazy loading exception when you try to use 'lazy' properties from a hibernate managed object, outside the hibernate session (it is at that moment 'detached'). Because we use 'open-session-in-view' strategy, a hibernate session is opened when the http request is done and closed after the http request is finished. This means, that you will get a lazy loading exception when you do e.g. the following. In  wicket page, you load the shipment order and you store the shipment order object in the wicket page in a field of the page. Wicket stores the page in the session, so the shipment order 'survives' the request. If you try to access a lazy property after the initial request, you get a lazy loading exception.
+
+The proper way to fix this is to work with detachable models (see EntityDetachableModel). This will ensure that at the start of a http request, the object is loaded automatically, and you will always have a valid object.
+
+It's not preferred to work with an initialized version of the object (e.g. the shipment order), Initializing is more like fighting the symptoms instead of fixing the root cause. It only initializes the direct lazy objects. So, if you have shipment order with lazy party and a party has a lazy country, you still  get problems if you try to read the country on the party. 
+
+If you get a lazy loading in the service layer, you probably are passing a detached hibernate object to a method. You can either make sure that you pass a non-detached object, or you can in the beginning of the method, use the object by re-loading it by systemId (not initialize).
+
+/ 7	. 
+
+In wicket there is a Palette component. This can be used to select multiple items from a list, usually backed up by a many-to-many relation, like user-organization. See example below:

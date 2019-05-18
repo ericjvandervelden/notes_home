@@ -1,0 +1,809 @@
+
+/ See LAPACK DOCS
+
+https://github.com/Reference-LAPACK/lapack
+
+/ google: lapack example c program
+http://www.netlib.org/lapack/explore-html/d3/d77/example___d_g_e_l_s__colmajor_8c.html
+http://physics.oregonstate.edu/~landaur/nacphy/lapack/cprogp.html
+https://dynamithead.wordpress.com/2012/06/30/introduction-to-how-to-call-lapack-from-a-cc-program-example-solving-a-system-of-linear-equations/
+
+/ google: c program with lapack
+https://askubuntu.com/questions/408077/how-to-to-use-gcc-with-lapack-and-external-header-file
+
+/ google: lapack blas fedora install
+http://www.linuxquestions.org/questions/linux-software-2/instruction-for-installing-lapack-and-lapack-devel-on-centos-6-5-a-4175509481/
+https://stackoverflow.com/questions/7496547/does-python-scipy-need-blas
+https://software.intel.com/en-us/mkl-linux-developer-guide-calling-lapack-blas-and-cblas-routines-from-c/c-language-environments
+https://www.mitchr.me/SS/exampleCode/blas.html						<-
+https://kb.iu.edu/d/aqpn
+
+/ google: dnf lapack
+http://mednis.info/wp/?p=373			<-
+
+/ google: r lapack
+https://software.intel.com/en-us/articles/quick-linking-intel-mkl-blas-lapack-to-r
+http://r.789695.n4.nabble.com/How-to-integrate-OpenBLAS-LAPACK-to-my-RStudio-in-WINDOWS-7-td4732587.html
+http://lostingeospace.blogspot.nl/2012/06/r-and-hpc-blas-mpi-in-linux-environment.html
+http://blog.nguyenvq.com/blog/2014/11/10/optimized-r-and-python-standard-blas-vs-atlas-vs-openblas-vs-mkl/
+
+/ google: atlas lapack
+http://math-atlas.sourceforge.net/
+
+/ google: c example lapack
+http://www.netlib.org/lapack/lapacke.html		<- gaan we oefenen in container	,
+
+/ 7	. 
+
+/ Lees	, 
+http://www.netlib.org/lapack/lapacke.html
+
+[eric@almond hibernate]$ dnf list available *lapack*
+lapack64.x86_64                                                         3.5.0-12.fc23                                         fedora 
+lapack64-devel.x86_64                                                   3.5.0-12.fc23                                         fedora 
+lapack64-static.x86_64         
+
+[eric@almond hibernate]$ sudo dnf install lapack64 lapack64-devel
+Installing:
+ blas64                             x86_64                     3.5.0-12.fc23                        fedora                     142 k
+ blas64-devel                       x86_64                     3.5.0-12.fc23                        fedora                      17 k
+ lapack64                           x86_64                     3.5.0-12.fc23                        fedora                     1.9 M
+ lapack64-devel                     x86_64                     3.5.0-12.fc23                        fedora                      17 k
+
+  Installing  : blas64-3.5.0-12.fc23.x86_64                                                                                      1/4 
+  Installing  : lapack64-3.5.0-12.fc23.x86_64                                                                                    2/4 
+  Installing  : blas64-devel-3.5.0-12.fc23.x86_64                                                                                3/4 
+  Installing  : lapack64-devel-3.5.0-12.fc23.x86_64                                                                              4/4 
+
+[eric@almond my]$ pwd
+/home/eric/Devel/C/lapack/my
+
+/ dgels.c komt van http://www.netlib.org/lapack/lapacke.html	, bij Examples	,
+
+$ vi dgels.c
+
+#include <stdio.h>
+#include <lapacke/lapacke.h>
+
+int main (int argc, const char * argv[])
+{
+   double a[5][3] = {{1,1,1},{2,3,4},{3,5,2},{4,2,5},{5,4,3}};
+   double b[5][2] = {{-10,-3},{12,14},{14,12},{16,16},{18,16}};
+   lapack_int info,m,n,lda,ldb,nrhs;
+   int i,j;
+
+   m = 5;
+   n = 3;
+   nrhs = 2;
+   lda = 3;
+   ldb = 2;
+
+   info = LAPACKE_dgels(LAPACK_ROW_MAJOR,'N',m,n,nrhs,*a,lda,*b,ldb);
+
+   for(i=0;i<n;i++)
+   {
+      for(j=0;j<nrhs;j++)
+      {
+         printf("%lf ",b[i][j]);
+      }
+      printf("\n");
+   }
+   return(info);
+}
+
+/ we moesten veranderen	, 
+#include <lapacke/lapacke.h>
+   double a[5][3] = {{1,1,1},{2,3,4},{3,5,2},{4,2,5},{5,4,3}};
+   double b[5][2] = {{-10,-3},{12,14},{14,12},{16,16},{18,16}};
+/ was:
+  double a[5][3] = {1,1,1,2,3,4,3,5,2,4,2,5,5,4,3};
+   double b[5][2] = {-10,-3,12,14,14,12,16,16,18,16};
+
+
+[eric@almond my]$ gcc -Wall  dgels.c -llapacke -llapack
+[eric@almond my]$ ./a.out
+2.000000 1.000000 
+1.000000 1.000000 
+1.000000 2.000000 
+
+/ 7	. 
+
+/ Geef in google	, 
+lu cholesky qr
+/ lees	 ,
+http://bebop.cs.berkeley.edu/pubs/volkov2008-gpu-factorizations.pdf
+
+/ wat is svd	?
+
+/ Lees	user guide, 
+http://www.netlib.org/lapack/lug/
+
+/ 7	. 
+
+/ lees 
+http://www.netlib.org/lapack/lug/
+/ click in menu wat naar beneden: Guide	,
+http://www.netlib.org/lapack/lug/node5.html
+
+/ we zien 
+Essentials
+Contents of LAPACK	, click 
+http://www.netlib.org/lapack/lug/node19.html
+
+/ we zien 
+Driver routines
+http://www.netlib.org/lapack/lug/node26.html
+http://www.netlib.org/lapack/lug/node27.html
+
+/ WH moeten we hier kijken	,
+/ computational routines	,
+http://www.netlib.org/lapack/lug/node37.html#seccomp
+http://www.netlib.org/lapack/lug/node38.html
+
+/ 13	. 
+
+/ google: lapack linear equations example
+/ Lees	, 
+https://stackoverflow.com/questions/12797502/solving-a-system-of-linear-equations-using-lapacks-dgesv
+https://dynamithead.wordpress.com/2012/06/30/introduction-to-how-to-call-lapack-from-a-cc-program-example-solving-a-system-of-linear-equations/
+/ ->
+http://physics.oregonstate.edu/~landaur/nacphy/lapack/linear.html
+
+/ 13	 .
+
+/ LAPACK DOCS
+
+/ Lees	, 
+http://www.netlib.org/lapack/
+/ we zien: Browse, Download LAPACK routines with on-line documentation browser	, 
+http://www.netlib.org/lapack/explore-html/index.html
+
+/ en 
+/ Lees	, 
+http://www.netlib.org/lapack/
+/ we zien: User guide	,
+Driver routines
+	linear equations
+/ we zien een list SGESV	CGESV	DGESV	ZGESV ...		, maar deze zijn WH internals	,
+/ we zien	, 
+Computational routines
+	linear equations
+/ we zien: SGETRF, ... , deze zijn voor ons	,
+
+/ 13	. 
+
+/ Lees	, 
+http://www.netlib.org/lapack/lug/node38.html
+http://www.netlib.org/lapack/explore-html/d8/ddc/group__real_g_ecomputational_ga8d99c11b94db3d5eac75cac46a0f2e17.html#ga8d99c11b94db3d5eac75cac46a0f2e17
+http://www.netlib.org/lapack/lapacke.html
+
+
+
+/ Einde LAPACK DOCS
+
+
+/ 13	. 
+
+/ vroeger	,
+http://www.netlib.org/lapack/lapack-3.1.1/html/dgels.f.html
+
+/ 13	. 
+
+/ Lees	 ,
+http://www.netlib.org/lapack/lapacke.html
+/ See 
+Function list
+Examples
+
+/ 13	 .
+
+/ wel lezen 	,
+https://dynamithead.wordpress.com/2012/06/30/introduction-to-how-to-call-lapack-from-a-cc-program-example-solving-a-system-of-linear-equations/
+
+/ daar worden dgetrf en dgetrs used	,
+/ kijken we naar real function op	, 
+http://www.netlib.org/lapack/lapacke.html
+/ dan zien we 	,
+... getrf getri getrs ...
+/ voor real: s of d ervoor	, en voor complex c of z ervoor: single en double precision	,
+
+/ 13	. 
+/ Lees	QR factorization, 
+http://www.netlib.org/lapack/lug/node40.html
+/ we zien genoemd de fcts	,
+xGEQRF
+xORGQR (or xUNGQR
+xORMQR (or xUNMQR) 
+xTRTRS.
+/ Deze fcts zien we ook terug in function list op 	,
+http://www.netlib.org/lapack/lapacke.html
+
+/ 13	. 
+
+/ Lees	 ,
+http://www.netlib.org/lapack/lug/node38.html
+xyyTRF: factorize (obviously not needed for triangular matrices);
+xyyTRS: use the factorization (or the matrix A itself if it is triangular) to solve (2.5) by forward or backward substitution;
+/ x precision
+/ yy type
+
+SGETRF: single precision	, General	, Triangular	, factorize	,
+SGETRS: single precision	, General	, Triangular	, solve,
+SGBTRF: single precision	, General Band	, triangular	, factorize	,
+SGTTRF: single precision	, General	Tridiagonal, triangular	, factorize	,
+SPOTRF: single precision	, symmetric POsitive definite, triangular	, factorize	,
+SPOTRF: single precision	, symmetric POsitive definite, triangular	, factorize	,
+SPPTRF: single precision	, symmetric POsitive definite Packed storage, triangular	, factorize	,
+...
+
+/ Lees	,
+LAPACK
+	Files
+		File List
+			LAPACKE
+				src
+					lapacke.sgetrf
+http://www.netlib.org/lapack/explore-html/da/d53/lapacke__sgetrf_8c_source.html
+
+lapack_int LAPACKE_sgetrf( int matrix_layout, lapack_int m, lapack_int n,
+                               float* a, lapack_int lda, lapack_int* ipiv )
+
+/ See sgetrf.c 
+/ TODO
+
+/ 13	. 
+
+/ Lees	, 
+https://dynamithead.wordpress.com/2012/06/30/introduction-to-how-to-call-lapack-from-a-cc-program-example-solving-a-system-of-linear-equations/
+
+$ vi sgetrf.cpp
+
+#include <iostream>
+#include <lapacke/lapacke.h>
+
+using namespace std;
+
+int main()
+{
+    char    TRANS = 'N';
+    int     INFO=3;
+    int     LDA = 3;
+    int     LDB = 3;
+    int     N = 3;
+    int     NRHS = 1;
+    int     IPIV[3] ;
+
+    double  A[9] =
+    {
+    1, 2, 3,
+    2, 3, 4,
+    3, 4, 1
+    };
+
+    double B[3] =
+    {
+    -4,
+    -1,
+    -2
+    };
+   cout << "compute the LU factorization..." << endl << endl;
+     LAPACK_dgetrf(&N,&N,A,&LDA,IPIV,&INFO);
+
+// [ERICJ]
+for (int i=0;i<3;i++){
+  for (int j=0;j<3;j++){
+    cout<<A[i+j]<<" ";
+  }
+  cout<<endl;
+}
+
+for (int i=0;i<3;i++){
+  cout<<IPIV[i]<<" ";
+}
+
+   if(INFO)
+    {
+        cout << "an error occured : "<< INFO << endl << endl;
+    }else{
+        cout << "solving the system..."<< endl << endl;
+        dgetrs_(&TRANS,&N,&NRHS,A,&LDA,IPIV,B,&LDB,&INFO);
+        if(INFO)
+        {
+           cout << "an error occured : "<< INFO << endl << endl;
+        }else{
+            cout << "print the result : {";
+            int i;
+            for (i=0;i<N;i++)
+            {
+                cout << B[i] << " ";
+            }
+            cout << "}" << endl << endl;
+        }
+    }
+
+    cout << "program terminated." << endl << endl;
+    return 0;
+}
+
+[eric@almond my]$ g++ -Wall  sgetrf.cpp  -llapack
+
+/ we zien	, 
+compute the LU factorization...
+
+3 0.333333 0.666667 
+0.333333 0.666667 4 
+0.666667 4 0.666667 
+
+3 3 3 solving the system...
+
+print the result : {11 -9 1 } 			
+
+program terminated.
+
+/ Het antwoord is goed	, ( 11 -9 1)	,
+/ Maar die matrix TODO
+
+/ MORGEN	, 
+/ Lees	, 
+http://www.netlib.org/lapack/explore-html/d8/ddc/group__real_g_ecomputational_gaa00bcf4d83a118cb6f0b6619d6ffaa24.html#gaa00bcf4d83a118cb6f0b6619d6ffaa24
+/ probeer sgetrs in c program	, 
+/ in c++ LAPACK_sgetrf	, daarom geen -llapacke WH
+/ TODO
+
+/ 13	 .
+
+[eric@almond lapack]$ pwd
+/home/eric/Devel/C/lapack
+[eric@almond lapack]$ git clone https://github.com/Reference-LAPACK/lapack-release.git
+[eric@almond lapack]$ ls
+lapack-release  my
+
+[eric@almond lapack]$ find lapack-release/ -name "*sgetrf*"
+lapack-release/LAPACKE/src/lapacke_sgetrf_work.c
+lapack-release/LAPACKE/src/lapacke_sgetrf2.c
+lapack-release/LAPACKE/src/lapacke_sgetrf2_work.c
+lapack-release/LAPACKE/src/lapacke_sgetrf.c
+			lapack_int LAPACKE_sgetrf( int matrix_layout, lapack_int m, lapack_int n,
+                           float* a, lapack_int lda, lapack_int* ipiv )
+lapack-release/SRC/sgetrf.f
+      SUBROUTINE SGETRF( M, N, A, LDA, IPIV, INFO )
+lapack-release/SRC/sgetrf2.f
+lapack-release/SRC/VARIANTS/lu/LL/sgetrf.f
+lapack-release/SRC/VARIANTS/lu/REC/sgetrf.f
+lapack-release/SRC/VARIANTS/lu/CR/sgetrf.f
+
+[eric@almond lapack]$ find lapack-release/ -name "*sgetrs*"
+lapack-release/LAPACKE/src/lapacke_sgetrs.c
+			lapack_int LAPACKE_sgetrs( int matrix_layout, char trans, lapack_int n,
+                           lapack_int nrhs, const float* a, lapack_int lda,
+                           const lapack_int* ipiv, float* b, lapack_int ldb )
+lapack-release/LAPACKE/src/lapacke_sgetrs_work.c
+lapack-release/SRC/sgetrs.f
+      SUBROUTINE SGETRS( TRANS, N, NRHS, A, LDA, IPIV, B, LDB, INFO )
+
+/ 13	. 
+
+/ sgetrf3.c is OK, 
+
+matrix A=
+0 2 3
+1 1 -1
+0 -1 1
+= b=
+13
+0
+1
+/ antwoord
+x=
+1
+2
+3
+
+$ vi sgetrf3.c
+
+#include <stdio.h>
+#include <lapacke/lapacke.h>
+
+int main (int argc, const char * argv[]) {
+  float a[9]={
+0,1,0,
+2,1,-1,
+3,-1,1
+};
+  float b[3]={
+13,
+0,
+1
+};
+
+  lapack_int n=3,lda=3,ldb=3,nrhs=1,info;
+  int i,j;
+  lapack_int ipiv[3];
+
+   info= LAPACKE_sgetrf(LAPACK_COL_MAJOR,n,n,a,lda,ipiv);
+
+   for(i=0;i<n;i++)
+   {
+      for(j=0;j<n;j++)
+      {
+         printf("%lf ",a[i*n+j]);
+      }
+      printf("\n");
+   }
+   printf("\n");
+
+   for(i=0;i<n;i++)
+   {
+         printf("%d ",ipiv[i]);
+    }
+   printf("\n");
+
+   info= LAPACKE_sgetrs(LAPACK_COL_MAJOR,'N',n,nrhs,a,lda,ipiv,b,ldb);
+
+   for(i=0;i<n;i++)
+   {
+         printf("%lf ",b[i]);
+    }
+   printf("\n");
+
+
+
+   return(info);
+}
+
+
+[eric@almond my]$ gcc -Wall  sgetrf3.c -llapacke -llapack
+[eric@almond my]$ ./a.out
+1.000000 0.000000 0.000000 
+1.000000 2.000000 -0.500000 
+-1.000000 3.000000 2.500000 
+2 2 3 
+1.000000 2.000000 3.000000
+
+/ 2 2 3: verwissel 1 en 2, 2 en 2 , 3 en 3	, 
+
+/ herinner	,
+matrix A=
+0 2 3
+1 1 -1
+0 -1 1
+
+/ we zien  L,U=
+1 1 	-1
+0 2  	 3
+0 -0.5 2.5
+/ L*U=
+1					* 1 1 -1
+0 1					0 2  3
+0 -0.5 1		0 0 2.5
+
+P=
+0 1 0
+1 0 0
+0 0 1
+
+/ TODO IPIV is dat P of Pinv?
+
+/ 13	. 
+
+/ ander voorbeeld	,
+
+A=
+1 2 3
+2 3 4
+3 4 1
+*x=
+11
+-9
+1
+=b=
+-4
+-1
+-2
+
+$ vi sgetrf3a.c
+
+#include <stdio.h>
+#include <lapacke/lapacke.h>
+
+int main (int argc, const char * argv[]) {
+  float a[9]={
+1,2,3,
+2,3,4,
+3,4,1
+};
+  float b[3]={
+-4,
+-1,
+-2
+};
+
+  lapack_int n=3,lda=3,ldb=3,nrhs=1,info;
+  int i,j;
+  lapack_int ipiv[3];
+
+   info= LAPACKE_sgetrf(LAPACK_COL_MAJOR,n,n,a,lda,ipiv);
+
+   for(i=0;i<n;i++)
+   {
+      for(j=0;j<n;j++)
+      {
+         printf("%lf ",a[i*n+j]);
+      }
+      printf("\n");
+   }
+   printf("\n");
+
+   for(i=0;i<n;i++)
+   {
+         printf("%d ",ipiv[i]);
+    }
+   printf("\n");
+
+   info= LAPACKE_sgetrs(LAPACK_COL_MAJOR,'N',n,nrhs,a,lda,ipiv,b,ldb);
+
+
+   for(i=0;i<n;i++)
+   {
+         printf("%lf ",b[i]);
+    }
+   printf("\n");
+
+
+   return(info);
+}
+
+[eric@almond my]$ ./a.out
+3.000000 0.333333 0.666667 
+4.000000 0.666667 0.500000 
+1.000000 2.666667 2.000000 
+
+3 3 3 
+11.000001 -9.000001 1.000000 
+
+/ Het antwoord is dus , omdat lapack in columns write	,
+
+L,U=
+3		4		1
+1/3	2/3	8/3
+2/3	1/2	2
+=
+L*U=
+1						* 	3		4		1
+1/3	1						0 	2/3	8/3
+2/3	1/2 1				0		0		2
+
+/ 3 3 3 : wissel 2 en 3 , en 1 en 3:
+
+0 0 1	 * 1 0 0	 = 0 1 0 = P 
+0 1 0		 0 0 1		 0 0 1
+1 0 0 	 0 1 0		 1 0 0 
+
+/ en P*L*U = A
+
+/ 13	. 
+
+/ we maken een row versie van sgetrf3.c: 
+
+$ vi sgetrf3_row.c
+
+  float a[9]={
+    0,2,3,      /* row */
+    1,1,-1,
+    0,-1,1
+};
+
+  lapack_int n=3,lda=3,ldb=1,nrhs=1,info;												<- ldb=1
+   info= LAPACKE_sgetrf(LAPACK_ROW_MAJOR,n,n,a,lda,piv);				<- ROW
+   info= LAPACKE_sgetrs(LAPACK_ROW_MAJOR,'N',n,nrhs,a,lda,piv,b,ldb);	<- ROW
+
+/ we zien 	, 
+1. 	 het array a is in rows	 ,
+2. 	ldb=1														/ TODO
+3. 	LAPACK_ROW_MAJOR
+
+/ we doen voorlopig in COL	, vanwege ldb	, 
+/ TODO
+
+/ 7	. 
+
+/ In de user guide	, 
+
+/ cholesky	,  
+http://www.netlib.org/lapack/lug/node66.html#7683
+LAPACK routine SPOTRF
+http://www.netlib.org/lapack/explore-html/d8/db2/group__real_p_ocomputational_gaaf31db7ab15b4f4ba527a3d31a15a58e.html#gaaf31db7ab15b4f4ba527a3d31a15a58e
+
+/ QR decomoosition	, 
+http://www.netlib.org/lapack/explore-html/d8/ddc/group__real_g_ecomputational_ga7cb54fa1727bf0166523036f4948bc56.html#ga7cb54fa1727bf0166523036f4948bc56
+/ en 	, 
+http://www.netlib.org/lapack/lug/node40.html
+
+/ er is ook lapacke	, 
+http://www.netlib.org/lapack/lapacke.html
+
+/ 7	. 
+
+/ Lees	, 
+https://nl.wikipedia.org/wiki/LU-decompositie
+/ A inverteerbaar -> PA=LU, P is permutatie matrix	, 
+
+/ Lees	, 
+https://nl.wikipedia.org/wiki/Cholesky-decompositie
+/ A pos def symm -> A=L*Lt
+
+/ Lees 
+https://en.wikipedia.org/wiki/QR_decomposition
+/ A symm (TODO)->  A=QR via Householder of Gram-Schmidt   (Q orth, R right upper triangular)
+/ en 	, 
+https://en.wikipedia.org/wiki/QR_algorithm
+/ Met QR decomposition kunnen we het QR algorithm doen: Doe eerst A=QR. Vorm A2=RQ, deze is similar to A	, want R=Qt*A, en dus A2=Qt*A*Q, en dus hebben ze dezelfde eigenvalues.  
+
+/ Lees	, 
+http://www.netlib.org/lapack/lug/									/ user guide
+Computational routines
+	Linear equations
+http://www.netlib.org/lapack/lug/node38.html
+
+/ Lees in api docs
+LAPACK
+	Modules
+		LAPACK
+			General matrices
+				Computational routines
+					real
+						sgetrf	, sgetrs			/ general
+			General band matrices
+				Computational routines
+					real
+						sgbtrf, 	sgbtrs			/ general band
+			General tridiagonal matrices
+				Computational routines
+					real
+						sgttrf	, sgttrs			/  general tridiag
+			Positive definite matrices
+				Computational routines
+					real
+						spotrf	, spotrs						/ symm pos def	,	 cholesky a=L*Lt of a=Ut*U
+			Positive definite tridiagonal matrices
+				Computational routines
+					real
+						spttrs						/ symm pos def band 			/ spttrf NIET doc TODO
+			Other computational routines  
+				real
+					spptrf, spptrs			/ symm pos def tridiag
+					sptbrf, spbtrs
+	
+
+
+/ general matrices (LU factorization with partial pivoting): 
+sgetrf: a=plu
+/ in antwoord a=l,u (see boven)	, en p 
+
+/ general band matrices including tridiagonal matrices (LU factorization with partial pivoting): 
+sgbtrf: a=plu
+/ see beneden hoe a te fill, en hoe in antwoord l,u en p te lezen	, 
+
+
+
+
+/ 7	. 
+
+/ SPOTRF
+
+/ cholesky
+
+/ a= L*Lt  of Ut*U
+
+/ symm pos def matrix 
+
+[eric@almond my]$ less ../lapack-release/LAPACKE/src/lapacke_spotrf.c
+lapack_int LAPACKE_spotrf( int matrix_layout, char uplo, lapack_int n, float* a, lapack_int lda )
+
+/ matrix
+
+1		-1 	-2
+-1	5		0
+-2 	0   21
+
+/ Als we 'L' geven , hoeven we alleen de lower triangular part te geven	, met de upper part doet  het algor niets
+/ Als we 'R' geven , hoeven we alleen de upper triangular part te geven	, met de lower part doet  het algor niets
+
+/ Het beste is om bij 'L' de upper part 0 te geven	, maar 100 mag ook , beide zien we in het antwoord terug	, maar in het antwoord moet de upper part 0 zijn, dus als je de upper part van 0 maakt, is het antwoord meteen goed	, in principe moet je kijken naar de upper part in het antwoord,	,
+
+$ vi spotrf3.c
+
+  float a[3*3]={
+1,-1,-2,
+0,5,0,
+0,0,21
+};
+
+// or	, 
+
+  float a[3*3]={
+1,-1,-2,
+100,5,0,
+100,100,21
+};
+
+  lapack_int n=3,lda=3,info;
+  int i;
+
+  info= LAPACKE_spotrf(LAPACK_COL_MAJOR,'L',n,a,lda);
+
+  for(i=0;i<n*n;i++) {
+         printf("%lf ",a[i]);
+  }
+  printf("\n");
+
+  return(info);
+
+[eric@almond my]$ gcc -Wall spotrf3.c -llapack -llapacke
+[eric@almond my]$ ./a.out
+1.000000 -1.000000 -2.000000 0.000000 2.000000 -1.000000 0.000000 0.000000 4.000000 
+// or	,
+1.000000 -1.000000 -2.000000 100.000000 2.000000 -1.000000 100.000000 100.000000 4.000000 
+
+/ In principe moeten we alleen naar de lower triangular kijken in het antwoord kijken	(ook a)	, maar als we in de upper triangular van a 0 set	, is het hele antwoord a goed	,  dat is L.
+
+/ dus 
+
+1		-1 	-2
+-1	5		0
+-2 	0   21
+
+=
+
+1		0		0		 * t
+-1 	2		0
+-2	-1	4
+
+
+
+/ we nemen de matrix	,
+4 	-1 	1
+-1 4.25 2.75
+1  2.75	3.5
+
+$ vi spotrf.c
+
+  float a[3*3]={
+4,-1,1,
+-1,4.25,2.75,
+1,2.75,3.5
+};
+
+  lapack_int n=3,lda=3,info;
+  int i;
+
+  info= LAPACKE_spotrf(LAPACK_COL_MAJOR,'L',n,a,lda);
+
+[eric@almond my]$ ./a.out
+2.000000 -0.500000 0.500000 -1.000000 2.000000 1.500000 1.000000 2.750000 1.000000 
+
+/ we zien 
+L=
+2			-1		1	
+-1/2a	 2		2 3/4
+-1/2	 1.5	1
+
+/ Maar WH moeten we alleen de diagonaal en eronde nemen	, 
+
+L=
+2		 	 0		0	
+-1/2a	 2	  0	
+-1/2	 1.5	1
+
+/ en 
+A=L * Lt
+
+/ Einde SPOTRF
+
+/ 7	. 
+
+/ Lees	, 
+http://www.netlib.org/lapack/lug/node48.html
+In the real case, the decomposition A = Q T QT is computed by one of the routines xSYTRD, xSPTRD, or xSBTRD, depending on how the matrix is stored (see Table 2.10). 
+
+

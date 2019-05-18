@@ -1,0 +1,468 @@
+/ GRADLE 
+
+/ 7	. 
+
+/ Ga naar 	, click Getting Started	,
+https://gradle.org/getting-started-gradle-java/
+
+/ In het midden zien we Free self paced beginner program	,
+/ click register here	,
+/ de 1ste keer moesten we login met Google	,
+https://www.udacity.com/course/gradle-for-android-and-java--ud867
+
+/ click Start free course	,
+
+/ 7	. 
+
+/ Ga naar	,
+https://gradle.org/getting-started-gradle-java/
+
+/ we click nu links	, 
+/ Dat is de free ebook	,
+
+/ 7	. 
+
+
+/ Einde GRADLE 
+
+/ GRADLE DOCS
+
+/ click boven Docs op gradle.org	,
+ /en click vervolgens op User Guide	,
+https://docs.gradle.org/current/userguide/userguide.html
+
+/ 7	. 
+
+/ ch 3	,
+
+[eric@almond Java]$ unzip  ~/Downloads/gradle-2.13-bin.zip 
+[eric@almond Java]$ cat ~/.bash_profile 
+...
+GRADLE_HOME=/home/eric/Devel/Gradle/Java/gradle-2.13
+export GRADLE_HOME
+PATH=$PATH:$GRADLE_HOME/bin
+
+/ De huidige versie is toch 2.4	, we moeten eerst opnieuw inlog	,
+
+[eric@almond ch5]$ pwd
+/home/eric/Devel/Gradle/Java/my/ch5
+[eric@almond ch5]$ gradle wrapper
+[eric@almond ch5]$ ls
+gradle  gradlew  gradlew.bat
+/ gradle is een dir	, 
+
+[eric@almond ch5]$ find
+.
+./build.properties
+./gradlew
+./.gradle
+./.gradle/2.4
+./.gradle/2.4/taskArtifacts
+./.gradle/2.4/taskArtifacts/cache.properties
+./.gradle/2.4/taskArtifacts/cache.properties.lock
+./.gradle/2.4/taskArtifacts/taskArtifacts.bin
+./.gradle/2.4/taskArtifacts/fileSnapshots.bin
+./.gradle/2.4/taskArtifacts/outputFileStates.bin
+./.gradle/2.4/taskArtifacts/fileHashes.bin
+./gradlew.bat
+./gradle
+./gradle/wrapper
+./gradle/wrapper/gradle-wrapper.properties
+./gradle/wrapper/gradle-wrapper.jar
+
+[eric@almond ch5]$ cat build.gradle 
+task wrapper(type:Wrapper){
+}
+/ TODO
+[eric@almond ch5]$ ./gradlew
+Downloading https://services.gradle.org/distributions/gradle-2.4-bin.zip
+................................................................................
+nzipping /home/eric/.gradle/wrapper/dists/gradle-2.4-bin/1lebsnfoptv8qpa10w6kyy5mp/gradle-2.4-bin.zip to /home/eric/.gradle/wrapper/dists/gradle-2.4-bin/1lebsnfoptv8qpa10w6kyy5mp
+Set executable permissions for: /home/eric/.gradle/wrapper/dists/gradle-2.4-bin/1lebsnfoptv8qpa10w6kyy5mp/gradle-2.4/bin/gradle
+:help
+
+Welcome to Gradle 2.4.
+
+To run a build, run gradlew <task> ...
+
+To see a list of available tasks, run gradlew tasks
+
+To see a list of command-line options, run gradlew --help
+
+To see more detail about a task, run gradlew help --task <task>
+
+BUILD SUCCESSFUL
+
+Total time: 57.529 secs
+
+This build could be faster, please consider using the Gradle Daemon: http://gradle.org/docs/2.4/userguide/gradle_daemon.html
+
+/ WH calls gradlew deze gradle	, niet die we met de hand hebben installed	,
+
+/ we kunnen in elke dir doen	, dit gaat heel snel	, het duurt maar 1 keer lang	, 
+$ gradle wrapper	, 
+
+
+
+/ ch 14	.
+
+[eric@almond ch14]$ cat build.gradle 
+task hello{
+	doLast{
+		println 'Hello world!'
+	}
+}
+[eric@almond ch14]$ gradle -q hello
+Hello world!
+[eric@almond ch14]$ ../ch5/gradlew -q hello
+Hello world!
+
+/ ch44	,
+
+$ pwd
+/home/eric/Devel/Gradle/Java/my/ch44
+[eric@almond ]$  cp -a gradle-2.13/samples/java/quickstart .
+[eric@almond ch44]$ gradle wrapper
+
+[eric@almond ch44]$ find src
+src
+src/main
+src/main/resources
+src/main/resources/org
+src/main/resources/org/gradle
+src/main/resources/org/gradle/resource.xml
+src/main/java
+src/main/java/org
+src/main/java/org/gradle
+src/main/java/org/gradle/Person.java
+src/test
+src/test/resources
+src/test/resources/org
+src/test/resources/org/gradle
+src/test/resources/org/gradle/test-resource.xml
+src/test/java
+src/test/java/org
+src/test/java/org/gradle
+src/test/java/org/gradle/PersonTest.java
+
+[eric@almond ch44]$ cat src/main/java/org/gradle/Person.java 
+package org.gradle;
+
+import org.apache.commons.collections.list.GrowthList;
+
+public class Person {
+    private final String name;
+
+    public Person(String name) {
+        this.name = name;
+        new GrowthList();
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+[eric@almond ch44]$ cat ./src/main/resources/org/gradle/resource.xml
+<some-element/>
+
+
+[eric@almond ch44]$ cat ./src/test/java/org/gradle/PersonTest.java
+package org.gradle;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class PersonTest {
+    @Test
+    public void canConstructAPersonWithAName() {
+        Person person = new Person("Larry");
+        assertEquals("Larry", person.getName());
+    }
+}
+[eric@almond ch44]$ cat ./src/test/resources/org/gradle/test-resource.xml
+<some-resource/>
+
+$ vi build.gradle
+sourceCompatibility = 1.8
+
+
+[eric@almond ch44]$ gradle build
+:compileJava
+Download https://repo1.maven.org/maven2/commons-collections/commons-collections/3.2.2/commons-collections-3.2.2.pom
+Download https://repo1.maven.org/maven2/org/apache/commons/commons-parent/39/commons-parent-39.pom
+Download https://repo1.maven.org/maven2/commons-collections/commons-collections/3.2.2/commons-collections-3.2.2.jar
+:processResources
+:classes
+:jar
+:assemble
+:compileTestJava
+:processTestResources
+:testClasses
+:test
+:check
+:build
+
+BUILD SUCCESSFUL
+
+Total time: 8.734 secs
+
+This build could be faster, please consider using the Gradle Daemon: http://gradle.org/docs/2.4/userguide/gradle_daemon.html
+
+[eric@almond ch44]$ find
+./build
+./build/test-results
+./build/test-results/TEST-org.gradle.PersonTest.xml
+./build/test-results/binary
+./build/test-results/binary/test
+./build/test-results/binary/test/output.bin
+./build/test-results/binary/test/results.bin
+./build/test-results/binary/test/output.bin.idx
+./build/libs
+./build/libs/ch44-1.0.jar
+./build/classes
+./build/classes/main
+./build/classes/main/org
+./build/classes/main/org/gradle
+./build/classes/main/org/gradle/Person.class
+./build/classes/test
+./build/classes/test/org
+./build/classes/test/org/gradle
+./build/classes/test/org/gradle/PersonTest.class
+./build/resources
+./build/resources/main
+./build/resources/main/org
+./build/resources/main/org/gradle
+./build/resources/main/org/gradle/resource.xml
+./build/resources/test
+./build/resources/test/org
+./build/resources/test/org/gradle
+./build/resources/test/org/gradle/test-resource.xml
+./build/dependency-cache
+./build/reports
+./build/reports/tests
+./build/reports/tests/classes
+./build/reports/tests/classes/org.gradle.PersonTest.html
+./build/reports/tests/packages
+./build/reports/tests/packages/org.gradle.html
+./build/reports/tests/js
+./build/reports/tests/js/report.js
+./build/reports/tests/index.html
+./build/reports/tests/css
+./build/reports/tests/css/style.css
+./build/reports/tests/css/base-style.css
+./build/tmp
+./build/tmp/compileTestJava
+./build/tmp/compileTestJava/emptySourcePathRef
+./build/tmp/jar
+./build/tmp/jar/MANIFEST.MF
+./build/tmp/compileJava
+./build/tmp/compileJava/emptySourcePathRef
+
+/ de test classes komen in het classpath , en NIET in de jar	,
+
+[eric@almond ch44]$ jar tvf build/libs/ch44-1.0.jar
+     0 Thu May 26 22:04:56 CEST 2016 META-INF/
+    95 Thu May 26 22:04:56 CEST 2016 META-INF/MANIFEST.MF
+     0 Thu May 26 22:04:56 CEST 2016 org/
+     0 Thu May 26 22:04:56 CEST 2016 org/gradle/
+   521 Thu May 26 22:04:56 CEST 2016 org/gradle/Person.class
+    16 Thu May 26 22:04:56 CEST 2016 org/gradle/resource.xml
+
+[eric@almond ch44]$ gradle properties
+:properties
+
+------------------------------------------------------------
+Root project
+------------------------------------------------------------
+
+allprojects: [root project 'ch44']
+ant: org.gradle.api.internal.project.DefaultAntBuilder@7a3e5cd3
+antBuilderFactory: org.gradle.api.internal.project.DefaultAntBuilderFactory@3c79088e
+archivesBaseName: ch44
+artifacts: org.gradle.api.internal.artifacts.dsl.DefaultArtifactHandler_Decorated@4a37191a
+asDynamicObject: org.gradle.api.internal.ExtensibleDynamicObject@5854a18
+baseClassLoaderScope: org.gradle.api.internal.initialization.DefaultClassLoaderScope@d5556bf
+binaries: [classes 'main', classes 'test']
+buildDependents: task ':buildDependents'
+buildDir: /home/eric/Devel/Gradle/Java/my/ch44/build
+buildFile: /home/eric/Devel/Gradle/Java/my/ch44/build.gradle
+buildNeeded: task ':buildNeeded'
+buildScriptSource: org.gradle.groovy.scripts.UriScriptSource@b112b13
+buildscript: org.gradle.api.internal.initialization.DefaultScriptHandler@24eb65e3
+check: task ':check'
+childProjects: {}
+class: class org.gradle.api.internal.project.DefaultProject_Decorated
+classLoaderScope: org.gradle.api.internal.initialization.DefaultClassLoaderScope@3ac3f6f
+classes: task ':classes'
+cleanEclipse: task ':cleanEclipse'
+cleanEclipseClasspath: task ':cleanEclipseClasspath'
+cleanEclipseJdt: task ':cleanEclipseJdt'
+cleanEclipseProject: task ':cleanEclipseProject'
+compileJava: task ':compileJava'
+compileTestJava: task ':compileTestJava'
+components: [org.gradle.api.internal.java.JavaLibrary@1abebef3]
+configurationActions: org.gradle.configuration.project.DefaultProjectConfigurationActionContainer@18f55704
+configurations: [configuration ':archives', configuration ':compile', configuration ':default', configuration ':runtime', configuration ':testCompile', configuration ':testRuntime']
+convention: org.gradle.api.internal.plugins.DefaultConvention@67cefd84
+defaultArtifacts: org.gradle.api.internal.plugins.DefaultArtifactPublicationSet_Decorated@5fbe155
+defaultTasks: []
+deferredProjectConfiguration: org.gradle.api.internal.project.DeferredProjectConfiguration@6add8e3f
+dependencies: org.gradle.api.internal.artifacts.dsl.dependencies.DefaultDependencyHandler_Decorated@58a2b917
+dependencyCacheDir: /home/eric/Devel/Gradle/Java/my/ch44/build/dependency-cache
+dependencyCacheDirName: dependency-cache
+depth: 0
+description: null
+distsDir: /home/eric/Devel/Gradle/Java/my/ch44/build/distributions
+distsDirName: distributions
+docsDir: /home/eric/Devel/Gradle/Java/my/ch44/build/docs
+docsDirName: docs
+eclipse: org.gradle.plugins.ide.eclipse.model.EclipseModel_Decorated@48904d5a
+eclipseClasspath: task ':eclipseClasspath'
+eclipseJdt: task ':eclipseJdt'
+eclipseProject: task ':eclipseProject'
+ext: org.gradle.api.internal.plugins.DefaultExtraPropertiesExtension@12bbfc54
+extensions: org.gradle.api.internal.plugins.DefaultConvention@67cefd84
+fileOperations: org.gradle.api.internal.file.DefaultFileOperations@1491344a
+fileResolver: org.gradle.api.internal.file.BaseDirFileResolver@59b65dce
+gradle: build 'ch44'
+group: 
+inheritedScope: org.gradle.api.internal.ExtensibleDynamicObject$InheritedDynamicObject@1386313f
+jar: task ':jar'
+javadoc: task ':javadoc'
+libsDir: /home/eric/Devel/Gradle/Java/my/ch44/build/libs
+libsDirName: libs
+logger: org.gradle.logging.internal.slf4j.OutputEventListenerBackedLogger@5e922647
+logging: org.gradle.logging.internal.DefaultLoggingManager@433c6abb
+modelCreatorFactory: org.gradle.model.internal.inspect.DefaultModelCreatorFactory@288f173f
+modelRegistry: org.gradle.model.internal.registry.DefaultModelRegistry@a22c4d8
+modelSchemaStore: org.gradle.model.internal.manage.schema.extract.DefaultModelSchemaStore@45cd7bc5
+module: org.gradle.api.internal.artifacts.ProjectBackedModule@3068b369
+name: ch44
+parent: null
+parentIdentifier: null
+path: :
+pluginManager: org.gradle.api.internal.plugins.DefaultPluginManager_Decorated@6504a875
+plugins: [org.gradle.api.plugins.HelpTasksPlugin@48ea2003, org.gradle.language.base.plugins.LifecycleBasePlugin@71870da7, org.gradle.api.plugins.BasePlugin@77d18d0b, org.gradle.api.plugins.ReportingBasePlugin@49a71302, org.gradle.language.base.plugins.LanguageBasePlugin@3d43fe, org.gradle.api.plugins.LegacyJavaComponentPlugin@73044cdf, org.gradle.api.plugins.JavaBasePlugin@1abc9f14, org.gradle.api.plugins.JavaPlugin@36fc05ff, org.gradle.plugins.ide.eclipse.EclipsePlugin@6981f8f3]
+processOperations: org.gradle.api.internal.file.DefaultFileOperations@1491344a
+processResources: task ':processResources'
+processTestResources: task ':processTestResources'
+project: root project 'ch44'
+projectDir: /home/eric/Devel/Gradle/Java/my/ch44
+projectEvaluationBroadcaster: ProjectEvaluationListener broadcast
+projectEvaluator: org.gradle.configuration.project.LifecycleProjectEvaluator@35e26d05
+projectRegistry: org.gradle.api.internal.project.DefaultProjectRegistry@29fa6b65
+properties: {...}
+reporting: org.gradle.api.reporting.ReportingExtension_Decorated@7c72ecc
+reportsDir: /home/eric/Devel/Gradle/Java/my/ch44/build/reports
+repositories: [org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository_Decorated@47406941]
+resources: org.gradle.api.internal.resources.DefaultResourceHandler@61ecbee9
+rootDir: /home/eric/Devel/Gradle/Java/my/ch44
+rootProject: root project 'ch44'
+scriptHandlerFactory: org.gradle.api.internal.initialization.DefaultScriptHandlerFactory@1bb740f2
+scriptPluginFactory: org.gradle.configuration.DefaultScriptPluginFactory@2538bc06
+serviceRegistryFactory: org.gradle.internal.service.scopes.ProjectScopeServices$5@61f6d381
+services: ProjectScopeServices
+sourceCompatibility: 1.8
+sourceSets: [source set 'main', source set 'test']
+sources: [Java source 'main:java', JVM resources 'main:resources', Java source 'test:java', JVM resources 'test:resources']
+standardOutputCapture: org.gradle.logging.internal.DefaultLoggingManager@433c6abb
+state: project state 'EXECUTED'
+status: integration
+subprojects: []
+targetCompatibility: 1.8
+tasks: [task ':buildDependents', task ':buildNeeded', task ':check', task ':classes', task ':cleanEclipse', task ':cleanEclipseClasspath', task ':cleanEclipseJdt', task ':cleanEclipseProject', task ':compileJava', task ':compileTestJava', task ':eclipse', task ':eclipseClasspath', task ':eclipseJdt', task ':eclipseProject', task ':jar', task ':javadoc', task ':processResources', task ':processTestResources', task ':properties', task ':test', task ':testClasses', task ':uploadArchives']
+test: task ':test'
+testClasses: task ':testClasses'
+testReportDir: /home/eric/Devel/Gradle/Java/my/ch44/build/reports/tests
+testReportDirName: tests
+testResultsDir: /home/eric/Devel/Gradle/Java/my/ch44/build/test-results
+testResultsDirName: test-results
+uploadArchives: task ':uploadArchives'
+version: 1.0
+
+/ 13	. 
+
+[eric@almond ch44]$ gradle uploadArchives
+:compileJava UP-TO-DATE
+:processResources UP-TO-DATE
+:classes UP-TO-DATE
+:jar UP-TO-DATE
+:uploadArchives
+
+[eric@almond ch44]$ ls
+build  build.gradle  gradle  gradlew  gradlew.bat  repos  src
+[eric@almond ch44]$ ls repos/
+ch44-1.0.jar  ch44-1.0.jar.sha1  ivy-1.0.xml  ivy-1.0.xml.sha1
+
+/ 13	. 
+
+[eric@almond ch44]$ gradle eclipse
+:eclipseClasspath
+Download https://repo1.maven.org/maven2/commons-collections/commons-collections/3.2.2/commons-collections-3.2.2-sources.jar
+:eclipseJdt
+:eclipseProject
+:eclipse
+
+[eric@almond ch44]$ find
+./.settings
+./.settings/org.eclipse.jdt.core.prefs
+./.classpath
+./.project
+
+/ 13	. 
+
+/ Lees	,
+http://www.vogella.com/tutorials/EclipseGradle/article.html
+
+/ we hebben in Mars eclipse een workspace-gradle	,
+/ we hebben installed via Marketplace Buildship	,
+/ we maken een Gradle project	, first	, 
+/ hij download gradle-2.13.zip	, en maakt een project , met gradlew	, net zoals wij dat hadden gedaan	,
+/ Kies show view Gradle Tasks,  we krijgen dan ook Gradle Exexcutions	, 
+/ we zien het project	, first	, klap open	, we zien build, ...
+/ dubbel click build	, we zien in Gradle Exexcutions wat je ook ziet op de command line,	
+
+/ het is net als bij Maven	, als je een Gradle project create	, maaktt hij zelf de .project, ... files	, we hoeven niet 	, 
+$ gradle eclipse	, 
+/ we hadden dat wel, en als je dan zo'n project import	, vraagt hij of hij deze files mag overwrite	,
+
+/ als we build.gradle update	, moeten we right click project	, 
+Gradle	, Refresh Gradle project
+
+/ Wndow, View , Gradle	, Gradle Tasks
+/ Gradle Tasks en Gradle Executions verschijnen onderin	, maar  we set ze Gradle Tasks naast Projects	, links	,
+/ In Gradle Tasks	, select first project	, double click Build	, het is alsof je op de command line	, 
+$ gradle build	
+
+/ De command line oefenen we in 	,
+[eric@almond ch44]$ pwd
+/home/eric/Devel/Gradle/Java/my/ch44
+
+/ eclipse oefenen we in workspace-gradle	,
+/ we hebben daarom gedaan	,
+
+$ pwd
+/home/eric/Devel/Gradle/Java/gradle-2.13/samples/java
+[eric@almond java]$ cp -a quickstart/ /home/eric/Devel/Eclipse/Mars/workspace-gradle/
+[eric@almond java]$ cp -a multiproject/ /home/eric/Devel/Eclipse/Mars/workspace-gradle/
+
+
+
+
+
+
+
+
+
+
+
+/ Einde GRADLE DOCS
+
+/ SPRING FRAMEWORK BUILD
+
+/ Lees	, 
+https://github.com/spring-projects/spring-framework/wiki/Gradle-build-and-release-FAQ
+
+/ Hoe te build spring 
+
+/ Einde SPRING FRAMEWORK BUILD

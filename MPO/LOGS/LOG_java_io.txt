@@ -1,0 +1,104 @@
+/ 7	. 
+
+/ ws workspace-wicket7_7
+/ proj io
+
+$ vi Main.java
+
+public class Main {
+
+	public static void main(String[] args) {
+		File file=new File("/tmp/server.log");
+		TailerListener listener=new MyListener();
+		Tailer tailer=Tailer.create(file, listener);
+		try{System.in.read();}catch(Exception e){}
+	}
+}
+
+$ vi MyListener.java
+
+public class MyListener extends TailerListenerAdapter {
+	private Tailer tailer;
+	private Pattern pattern=Pattern.compile("Foo Bar");
+	private Matcher matcher=pattern.matcher("");
+	
+	@Override
+	public void init(Tailer tailer) {
+		this.setTailer(tailer);
+	}
+
+	@Override
+	public void handle(String line) {
+		matcher.reset(line);
+		if(matcher.find()){
+			print(matcher);
+//			getTailer().stop();
+//			System.exit(7)	;
+		}
+	}
+	 private void print(Matcher matcher){
+		 int start=matcher.start();
+		 int end=matcher.end();
+		 String group=matcher.group();
+		 System.out.println(this);
+		 System.out.println("["+start+","+end+"):"+group);
+		 
+	 }
+
+	public Tailer getTailer() {
+		return tailer;
+	}
+
+	public void setTailer(Tailer tailer) {
+		this.tailer = tailer;
+	}
+
+}
+
+/ we doen	, 
+[eric@localhost scs-6323]$ cat >>/tmp/server.log 
+...
+
+/ Tijdens debug zien we	, 
+Main [Java Application]	
+	first.Main at localhost:57757	
+		Thread [main] (Running)	
+		Daemon Thread [Thread-0] (Running)	
+
+/ Dus we zien een andere thread	, 
+
+///////////////////////////////////////////////////////////////////////////
+/ In deze thread is een while loop	, zolang de thread runs	, 	(tailer.stop() sets this.run=false	, en de while loops bij (*) zijn er zolang getRun()==true	, 
+/ als er input wordt gegeven, valt hij weer in TailerListener.handle	,  
+
+/s
+Main [Java Application]	
+	first.Main at localhost:57757	
+		Thread [main] (Running)	
+		Daemon Thread [Thread-0] (Suspended (breakpoint at line 517 in org.apache.commons.io.input.Tailer))	
+			org.apache.commons.io.input.Tailer.readLines(java.io.RandomAccessFile) line: 517	
+			org.apache.commons.io.input.Tailer.run() line: 459	
+			java.lang.Thread.run() line: 745	
+/c
+/s
+Main [Java Application]	
+	first.Main at localhost:57757	
+		Thread [main] (Running)	
+		Daemon Thread [Thread-0] (Suspended (breakpoint at line 22 in first.MyListener))	
+			first.MyListener.handle(java.lang.String) line: 22	
+			org.apache.commons.io.input.Tailer.readLines(java.io.RandomAccessFile) line: 528	
+        while (getRun() && ((num = reader.read(inbuf)) != EOF)) {										<-
+            for (int i = 0; i < num; i++) {
+                final byte ch = inbuf[i];
+                switch (ch) {
+                case '\n':
+                    seenCR = false; // swallow CR before LF
+                    listener.handle(new String(lineBuf.toByteArray(), cset));							<-
+ 
+			org.apache.commons.io.input.Tailer.run() line: 459	
+			java.lang.Thread.run() line: 745	
+
+
+
+
+

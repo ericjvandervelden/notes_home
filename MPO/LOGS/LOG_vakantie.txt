@@ -1,0 +1,16 @@
+/ 7	. 
+[eric@localhost wicket]$ PGPASSWORD=mpopostgres@mpo psql  -U mpopostgres pnllogistics4
+[eric@localhost wicket]$ local-db.sh /home/eric/DB_TAP/Firebird/Dsvfms/dsvfms.fdb_20151019-000019.fdb
+[eric@localhost wicket]$ local-db.sh /home/eric/DB_TAP/Firebird/Local/first.fdb
+[eric@localhost wicket]$ PGPASSWORD=foo psql  -U foo
+
+/home/eric/Devel/Java/Eclipse/eclipse-jee
+/home/eric/Devel/Java/Eclipse/eclipse-jee-test
+/home/eric/Devel/Java/Tomcat/apache-tomcat-8.0.28
+/home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/pnllogistics
+/home/eric/Devel/Java/ActiveMQ/apache-activemq-5.10.1
+/home/eric/Devel/Java/Testing/Selenium
+/home/eric/testing
+
+

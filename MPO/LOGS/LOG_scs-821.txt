@@ -1,0 +1,3888 @@
+/ See EVO PAGES DONE
+/ See TYPES 
+/ See MISSCHIEN	, 
+/ See TODO DONE TYPES
+/ See 2ND TYPE 
+/ See HERSTEL 1ST TYPES 
+/ See AGAIN ALL PAGES AND TYPES 
+/ See DESERIALIZE PAGE	
+
+/ 7	
+
+
+$ less 	./base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableDAOInterface.java
+
+public interface SoftDeletableDAOInterface<T extends EnumeratedValueObjectInterface> extends EnumeratedValueObjectDAOInterface<T> {
+	List<T> runQuery(SoftDeletableFilter filter, SortParam sortParam, int first, int count);
+}
+
+$ less ./base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableDAOImpl.java
+
+public class SoftDeletableDAOImpl<T extends EnumeratedValueObjectInterface> extends EnumeratedValueObjectHibernateDAO<T> implements
+		SoftDeletableDAOInterface<T> {
+
+	public SoftDeletableDAOImpl(Class<? extends T> aType) {
+		super(aType);
+	}
+
+	@Override
+	public List<T> runQuery(SoftDeletableFilter filter, SortParam sortParam, int first, int count) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(type);
+		criteria.add(Restrictions.eq("deleted", true));
+		if (StringUtils.isNotEmpty(filter.getCode())) {
+			criteria.add(Restrictions.eq("code", filter.getCode()));
+		}
+		if (StringUtils.isNotEmpty(filter.getDescription())) {
+			criteria.add(Restrictions.eq("code", filter.getDescription()));
+		}
+		if (sortParam != null) {
+			String property = sortParam.getProperty();
+			boolean asc = sortParam.isAscending();
+			if (sortParam.isAscending()) {
+				criteria.addOrder(Order.asc(property));
+			} else {
+				criteria.addOrder(Order.desc(property));
+			}
+		}
+		return getHibernateTemplate().findByCriteria(criteria, first, count);
+	}
+
+	public void unDelete(SoftDeletable softDeletable) {
+		softDeletable.setDeleted(false);
+		getHibernateTemplate().merge(softDeletable);
+	}
+}
+
+$ less ./base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableDataProvider.java
+
+public class SoftDeletableDataProvider<T extends EnumeratedValueObjectInterface> extends SortableDataProvider<T> implements IFilterStateLocator<SoftDeletableFilter>, SoftDeletableLocator<T> {
+
+	private SoftDeletableFilter filter;
+
+	// private BeanWrapper<? extends EnumeratedValueObjectDAOInterface<T>> daoWrapper;
+	private BeanWrapper<? extends SoftDeletableDAOInterface<T>> daoWrapper;
+
+	public SoftDeletableDataProvider() { // TODO
+	}
+
+	// public SoftDeletableDataProvider(BeanWrapper<? extends BaseDAOInterface<T>>aDaoWrapper) {
+	// public SoftDeletableDataProvider(BeanWrapper<? extends EnumeratedValueObjectDAOInterface<T>>aDaoWrapper) {
+	public SoftDeletableDataProvider(BeanWrapper<? extends SoftDeletableDAOInterface<T>> daoWrapper) {
+		this.daoWrapper = daoWrapper;
+		filter = new SoftDeletableFilter();
+		setSort("code", true);
+	}
+
+	@Override
+	public Iterator<T> iterator(int first, int count) {
+		List<T> list = daoWrapper.getBean().runQuery(filter, getSort(), first, count);
+		return list.iterator();
+	}
+
+	@Override
+	public int size() {
+		List<T> list = daoWrapper.getBean().runQuery(filter, getSort(), -1, 0);
+		return list.size();
+	}
+
+/ we hebben ,
+	BeanWrapper<? extends SoftDeletableDAOInterface<T>> daoWrapper	, 
+/ omdat we dan 	,
+	daoWrapper.getBean().runQuery
+
+$ less ./base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableEvoEditPage.java
+
+	public SoftDeletableEvoEditPage() {
+		softDeletableLink = new AjaxLink<Void>("softDeletableLink") {
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				ISortableDataProvider<T> sortableDataProvider = new SoftDeletableDataProvider<T>(
+						(BeanWrapper<? extends SoftDeletableDAOInterface<T>>) daoWrapper);
+
+/ Hier moeten we dus een cast 
+	(BeanWrapper<? extends SoftDeletableDAOInterface<T>>) daoWrapper
+/ omdat de daoWrapper created	,
+$ less ./module/oms/src/java/com/mpobjects/oms/view/wicket/enumeratedvo/EvoListPage.java
+	protected BeanWrapper<? extends EnumeratedValueObjectDAOInterface<T>> daoWrapper;
+
+/ 7	. 
+
+/ we hebben changed	,
+
+/ we laten de SoftDeletableDAOInterface/SoftDeletableDAOImpl even nog bestaan	, en cast tot deze in .iterator/.size	,
+/ in SoftDeletableEvoEditPage.<init> kunnen we de cast rm	, 
+
+public class SoftDeletableDataProvider<T extends EnumeratedValueObjectInterface> extends SortableDataProvider<T> implements IFilterStateLocator<SoftDeletableFilter>, SoftDeletableLocator<T> {
+
+	private SoftDeletableFilter filter;
+
+	// private BeanWrapper<? extends BaseDAOInterface<T>> daoWrapper;
+	// private BeanWrapper<? extends SoftDeletableDAOInterface<T>> daoWrapper;
+	private BeanWrapper<? extends EnumeratedValueObjectDAOInterface<T>> daoWrapper;
+
+	public SoftDeletableDataProvider() { // TODO
+	}
+
+	// public SoftDeletableDataProvider(BeanWrapper<? extends BaseDAOInterface<T>>aDaoWrapper) {
+	// public SoftDeletableDataProvider(BeanWrapper<? extends SoftDeletableDAOInterface<T>> daoWrapper) {
+	public SoftDeletableDataProvider(BeanWrapper<? extends EnumeratedValueObjectDAOInterface<T>> daoWrapper) {
+		this.daoWrapper = daoWrapper;
+		filter = new SoftDeletableFilter();
+		setSort("code", true);
+	}
+
+	@Override
+	public Iterator<T> iterator(int first, int count) {
+		List<T> list = ((BeanWrapper<? extends SoftDeletableDAOInterface<T>>) daoWrapper).getBean().runQuery(filter, getSort(), first, count);
+		return list.iterator();
+	}
+/ Note the cast	,
+
+	@Override
+	public int size() {
+		List<T> list = ((BeanWrapper<? extends SoftDeletableDAOInterface<T>>) daoWrapper).getBean().runQuery(filter, getSort(), -1, 0);
+		return list.size();
+	}
+/ Note the cast	,
+
+$ less SoftDeletableEvoEditPage.java
+
+	public SoftDeletableEvoEditPage() {
+		softDeletableLink = new AjaxLink<Void>("softDeletableLink") {
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				// ISortableDataProvider<T> sortableDataProvider = new SoftDeletableDataProvider<T>((BeanWrapper<? extends SoftDeletableDAOInterface<T>>) daoWrapper);
+				ISortableDataProvider<T> sortableDataProvider = new SoftDeletableDataProvider<T>(daoWrapper);
+
+$ vi SoftDeletableLoadableDetachableModel.java
+
+//public class SoftDeletableLoadableDetachableModel<T extends EntityInterface> extends LoadableDetachableModel<T> {
+public class SoftDeletableLoadableDetachableModel<T extends EnumeratedValueObjectInterface> extends LoadableDetachableModel<T> {
+
+	// private BeanWrapper<? extends BaseDAOInterface<T>> daoWrapper;
+	private BeanWrapper<? extends EnumeratedValueObjectDAOInterface<T>> daoWrapper;
+	private Integer id;
+
+	public SoftDeletableLoadableDetachableModel(
+	// SoftDeletable softDeletable,
+			EntityInterface entityInterface,
+
+			// BeanWrapper<? extends BaseDAOInterface<T>> daoWrapper) {
+			BeanWrapper<? extends EnumeratedValueObjectDAOInterface<T>> daoWrapper) {
+...
+
+/ 7	 
+
+/ we check in	,
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/LoadableDetachableSoftDeletableModel.java 
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableActionPanel.html 
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableActionPanel.java 
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableDAOImpl.java  
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableDAOInterface.java 
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableDataProvider.java 
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableEvoEditPage.html 
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableEvoEditPage.java 
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableFilter.java 
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableIncoTermDAOImpl.java 
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableLoadableDetachableModel.java 
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableLocator.java 
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableSearchPage.html 
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableSearchPage.java 
+
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/util/dao/BaseDAOInterface.java 
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/util/dao/EnumeratedValueObjectDAOInterface.java 
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/util/dao/EnumeratedValueObjectHibernateDAO.java 
+
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/view/wicket/util/BeanWrapper.java 
+
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/test/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableSearchPageTest.java 
+
+[eric@localhost trunk]$ find -name "*SoftDeletable*java" -o -name "*SoftDeletable*html"  -o -name "BaseDAOInterface.java" -o -name "EnumeratedValueObjectDAOInterface.java" -o -name "EnumeratedValueObjectHibernateDAO.java" -o -name "BeanWrapper.java" -o -name "SoftDeletableSearchPageTest.java" | xargs echo | xargs -I % echo tar cvzf /tmp/scs-821.tgz %
+/ ERR
+/ TODO
+
+/ 7	. 
+
+/ we gaan er tussenuit halen	,
+SoftDeletableDAOImpl
+
+/ deze hebben we nodig	,
+SoftDeletableDAOInterface
+
+$ less EnumeratedValueObjectHibernateDAO.java
+
+public class EnumeratedValueObjectHibernateDAO<T extends EnumeratedValueObjectInterface> extends GenericHibernateDAO<T> implements EnumeratedValueObjectDAOInterface<T>, 
+	SoftDeletableDAOInterface<T> {											<-
+
+	@Override
+	public List<T> queryDeleted(SoftDeletableFilter filter, SortParam sortParam, int first, int count) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(type);
+		criteria.add(Restrictions.eq("deleted", true));
+		if (StringUtils.isNotEmpty(filter.getCode())) {
+			criteria.add(Restrictions.eq("code", filter.getCode()));
+		}
+		if (StringUtils.isNotEmpty(filter.getDescription())) {
+			criteria.add(Restrictions.eq("code", filter.getDescription()));
+		}
+		if (sortParam != null) {
+			String property = sortParam.getProperty();
+			boolean asc = sortParam.isAscending();
+			if (sortParam.isAscending()) {
+				criteria.addOrder(Order.asc(property));
+			} else {
+				criteria.addOrder(Order.desc(property));
+			}
+		}
+		return getHibernateTemplate().findByCriteria(criteria, first, count);
+	}
+
+	@Override
+	public void unDelete(SoftDeletable softDeletable) {
+		softDeletable.setDeleted(false);
+		getHibernateTemplate().merge(softDeletable);
+	}
+
+/ We herstellen	,
+$ vi IncoTermDAOHibernate .java
+
+//public class IncoTermDAOHibernate extends SoftDeletableDAOImpl<IncoTermVO> implements IncoTermDAO {
+public class IncoTermDAOHibernate extends EnumeratedValueObjectHibernateDAO<IncoTermVO> implements IncoTermDAO {
+
+/ 7	. 
+
+/ we herstellen	, hebben niets met de change te maken	, 
+
+$ vi BeanWrapper.java
+//public class BeanWrapper<T> implements Serializable {
+public final class BeanWrapper<T> implements Serializable {
+
+$ vi EnumeratedValueObjectDAOInterface.java
+//public interface EnumeratedValueObjectDAOInterface<T extends UniqueFieldValueObject> extends BaseDAOInterface<T> {
+public interface EnumeratedValueObjectDAOInterface<T extends DescribedUniqueFieldValueObject> extends BaseDAOInterface<T> {
+
+/ 7	. 
+
+/ we hebben alle soft deletables met alle comments, eerdere pogingen hebben we saved in 	,
+[eric@localhost sia2]$ find ~/tmp/SCS-821/
+/home/eric/tmp/SCS-821/
+/home/eric/tmp/SCS-821/softdeletable
+/home/eric/tmp/SCS-821/softdeletable/SoftDeletableActionPanel.java
+/home/eric/tmp/SCS-821/softdeletable/SoftDeletableSearchPage.html
+/home/eric/tmp/SCS-821/softdeletable/SoftDeletableLocator.java
+/home/eric/tmp/SCS-821/softdeletable/SoftDeletableDataProvider.java
+/home/eric/tmp/SCS-821/softdeletable/SoftDeletableActionPanel.html
+/home/eric/tmp/SCS-821/softdeletable/SoftDeletableIncoTermDAOImpl.java
+/home/eric/tmp/SCS-821/softdeletable/SoftDeletableDAOInterface.java
+/home/eric/tmp/SCS-821/softdeletable/SoftDeletableDAOImpl.java
+/home/eric/tmp/SCS-821/softdeletable/SoftDeletableEvoEditPage.java
+/home/eric/tmp/SCS-821/softdeletable/SoftDeletableEvoEditPage.html
+/home/eric/tmp/SCS-821/softdeletable/SoftDeletableFilter.java
+/home/eric/tmp/SCS-821/softdeletable/SoftDeletableLoadableDetachableModel.java
+/home/eric/tmp/SCS-821/softdeletable/SoftDeletableSearchPage.java
+/home/eric/tmp/SCS-821/incoterm
+/home/eric/tmp/SCS-821/incoterm/IncoTermDAOHibernate.java
+
+
+/ 7	. 
+
+/ we rm	, 
+
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableDAOImpl.java 
+
+/*
+ * Copyright 2000-2016, MP Objects, http://www.mp-objects.com
+ */
+package com.mpobjects.core.view.wicket.softdeletable;
+
+import java.util.List;
+
+import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+
+import com.mpobjects.common.util.StringUtils;
+import com.mpobjects.util.dao.EnumeratedValueObjectHibernateDAO;
+import com.mpobjects.util.dao.EnumeratedValueObjectInterface;
+import com.mpobjects.util.dao.SoftDeletable;
+
+public class SoftDeletableDAOImpl<T extends EnumeratedValueObjectInterface> extends EnumeratedValueObjectHibernateDAO<T> implements
+		SoftDeletableDAOInterface<T> {
+
+	public SoftDeletableDAOImpl(Class<? extends T> aType) {
+		super(aType);
+	}
+
+	@Override
+	public List<T> queryDeleted(SoftDeletableFilter filter, SortParam sortParam, int first, int count) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(type);
+		criteria.add(Restrictions.eq("deleted", true));
+		if (StringUtils.isNotEmpty(filter.getCode())) {
+			criteria.add(Restrictions.eq("code", filter.getCode()));
+		}
+		if (StringUtils.isNotEmpty(filter.getDescription())) {
+			criteria.add(Restrictions.eq("code", filter.getDescription()));
+		}
+		if (sortParam != null) {
+			String property = sortParam.getProperty();
+			boolean asc = sortParam.isAscending();
+			if (sortParam.isAscending()) {
+				criteria.addOrder(Order.asc(property));
+			} else {
+				criteria.addOrder(Order.desc(property));
+			}
+		}
+		return getHibernateTemplate().findByCriteria(criteria, first, count);
+	}
+
+	@Override
+	public void unDelete(SoftDeletable softDeletable) {
+		softDeletable.setDeleted(false);
+		getHibernateTemplate().merge(softDeletable);
+	}
+}
+
+/ 7	. 
+
+$ vi SoftDeletableDataProvider.java
+
+	// private BeanWrapper<? extends EnumeratedValueObjectDAOInterface<T>> daoWrapper;
+	private BeanWrapper<? extends SoftDeletableDAOInterface<T>> daoWrapper;
+
+	public SoftDeletableDataProvider(BeanWrapper<? extends SoftDeletableDAOInterface<T>> daoWrapper) {
+
+/ je moet ervoor zorgen dat de caller van de ctor de cast doet naar BeanWrapper<SoftDeletableDAOInterface<T>> 	, bijv	,
+
+public abstract class SoftDeletableEvoEditPage<T extends EnumeratedValueObjectInterface> extends EvoEditPage<T> {
+	public SoftDeletableEvoEditPage() {
+		softDeletableLink = new AjaxLink<Void>("softDeletableLink") {
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				ISortableDataProvider<T> sortableDataProvider = new SoftDeletableDataProvider<T>((BeanWrapper<SoftDeletableDAOInterface<T>>) daoWrapper);
+				WebPage softDeletableSearchPage = new SoftDeletableSearchPage<T>(sortableDataProvider, SoftDeletableEvoEditPage.this);
+
+/ 7	. 
+
+/ @SpringBean	, 
+
+package com.mpobjects.inventory.view.wicket.replenishment;
+public class EditingReplenishmentAdvicePage extends AbstractMainPage {
+	@SpringBean(name = "com.mpobjects.inventory.dao.stocklocation.StockLocationDAO")
+	private StockLocationDAO stockLocationDao;
+
+package com.mpobjects.inventory.dao.stocklocation;
+
+import com.mpobjects.inventory.model.entity.stocklocation.StockLocation;
+
+public interface StockLocationDAO extends EnumeratedValueObjectDAOInterface<StockLocation> {
+
+	StockLocation getByParty(Party aParty);
+
+}
+
+package com.mpobjects.inventory.dao.stocklocation;
+
+import java.util.Collections;
+
+public class StockLocationDAOImpl extends EnumeratedValueObjectHibernateDAO<StockLocation> implements StockLocationDAO {
+
+
+/ 7	. 
+
+/ COMMIT SVN 
+
+/ commit text	,
+
+SoftDeletableEvoEditPage has a link to SoftDeletableSearchPage. Pages such as IncoTermPage must now extend SoftDeletableEvoEditPage instead of EvoEditPage.
+EnumeratedValueObjectHibernateDAO now implements SoftDeletableDAOInterface. IncoTermDAOHibernate for example extends EnumeratedValueObjectHibernateDAO, and does not have to be changed.
+SoftDeletableDataProvider is created by SoftDeletableEvoEditPage, and gives it to SoftDeletableSearchPage.
+There are also SoftDeletableFilter and SoftDeletableLoadableDetachableModel.
+SoftDeletableActionPanel contains the undelete button, where the SoftDeletableLocator role is used. This role says which where the SoftDeletables are	,
+There is a SoftDeletableSearchPageTest, which tests the content of the cells in the table, and the action of the undelete button. 
+
+/ commit files,	
+
+/ 13	. 
+
+public class SoftDeletableActionPanel<T extends EnumeratedValueObjectInterface> extends Panel {
+/ undelete action	,
+SoftDeletableActionPanel.html
+
+public interface SoftDeletableDAOInterface<T extends EnumeratedValueObjectInterface> extends EnumeratedValueObjectDAOInterface<T> {
+
+public class SoftDeletableDataProvider<T extends EnumeratedValueObjectInterface> extends SortableDataProvider<T> implements
+
+public abstract class SoftDeletableEvoEditPage<T extends EnumeratedValueObjectInterface> extends EvoEditPage<T> {
+/ creates provider	
+SoftDeletableEvoEditPage.html
+
+public class SoftDeletableFilter {
+
+public class SoftDeletableLoadableDetachableModel<T extends EnumeratedValueObjectInterface> extends LoadableDetachableModel<T> {
+
+public interface SoftDeletableLocator<T extends SoftDeletable> {
+
+public class SoftDeletableSearchPage<T extends EnumeratedValueObjectInterface> extends WebPage {
+SoftDeletableSearchPage.html
+
+public class SoftDeletableSearchPageTest {
+
+
+/ 13	. 
+
+public class EnumeratedValueObjectHibernateDAO<T extends EnumeratedValueObjectInterface> extends GenericHibernateDAO<T> implements EnumeratedValueObjectDAOInterface<T>, SoftDeletableDAOInterface<T> {
+
+
+public class IncoTermPage extends SoftDeletableEvoEditPage<IncoTermVO> {
+/ veranderd	,
+/ Dit is het enigste dat hoeft te gebeuren, 
+
+
+public class IncoTermDAOHibernate extends EnumeratedValueObjectHibernateDAO<IncoTermVO> implements IncoTermDAO {
+/ onveranderd	,
+
+/ Einde COMMIT SVN
+
+/ 7	. 
+
+/ Lees	, 
+https://groups.google.com/forum/#!topic/mockito/kBOlU38IwtQ
+
+/ 7	. 
+
+/ we hebben create	,
+[eric@localhost workspace]$ find /home/eric/Devel/Java/BackupSCS/
+/home/eric/Devel/Java/BackupSCS/
+/home/eric/Devel/Java/BackupSCS/SCS-821
+/home/eric/Devel/Java/BackupSCS/SCS-821/softdeletable
+/home/eric/Devel/Java/BackupSCS/SCS-821/softdeletable/SoftDeletableActionPanel.java
+/home/eric/Devel/Java/BackupSCS/SCS-821/softdeletable/SoftDeletableSearchPage.html
+/home/eric/Devel/Java/BackupSCS/SCS-821/softdeletable/SoftDeletableLocator.java
+/home/eric/Devel/Java/BackupSCS/SCS-821/softdeletable/SoftDeletableDataProvider.java
+/home/eric/Devel/Java/BackupSCS/SCS-821/softdeletable/SoftDeletableActionPanel.html
+/home/eric/Devel/Java/BackupSCS/SCS-821/softdeletable/SoftDeletableIncoTermDAOImpl.java
+/home/eric/Devel/Java/BackupSCS/SCS-821/softdeletable/SoftDeletableDAOInterface.java
+/home/eric/Devel/Java/BackupSCS/SCS-821/softdeletable/SoftDeletableDAOImpl.java
+/home/eric/Devel/Java/BackupSCS/SCS-821/softdeletable/SoftDeletableSearchPageTest.java
+/home/eric/Devel/Java/BackupSCS/SCS-821/softdeletable/SoftDeletableEvoEditPage.java
+/home/eric/Devel/Java/BackupSCS/SCS-821/softdeletable/SoftDeletableEvoEditPage.html
+/home/eric/Devel/Java/BackupSCS/SCS-821/softdeletable/SoftDeletableFilter.java
+/home/eric/Devel/Java/BackupSCS/SCS-821/softdeletable/SoftDeletableLoadableDetachableModel.java
+/home/eric/Devel/Java/BackupSCS/SCS-821/softdeletable/SoftDeletableSearchPage.java
+/home/eric/Devel/Java/BackupSCS/SCS-821/incoterm
+/home/eric/Devel/Java/BackupSCS/SCS-821/incoterm/IncoTermDAOHibernate.java
+/home/eric/Devel/Java/BackupSCS/SCS-821/test
+/home/eric/Devel/Java/BackupSCS/SCS-821/test/SoftDeletableSearchPageTest2.java
+/home/eric/Devel/Java/BackupSCS/SCS-821/test/SoftDeletableSearchPageTest.java
+
+/ 7	. 
+
+/ EVO PAGES DONE
+
+/ Deze types waren: extends EvoEditPage
+
+/ 3 com.mpobjects.capabletopromise.model.entity.capacitytype.CapacityType
+public class CapacityTypePage extends SoftDeletableEvoEditPage<CapacityType> {
+
+/ 7	 com.mpobjects.contract.model.entity.contracttype.ContractType
+public class ContractTypePage extends SoftDeletableEvoEditPage<ContractType> {
+
+/ 10 com.mpobjects.customerinvoice.model.entity.CustomerInvoiceHeaderStatus
+public class CustomerInvoiceHeaderStatusEditPage extends SoftDeletableEvoEditPage<CustomerInvoiceHeaderStatus> {
+
+/ 14 com.mpobjects.event.model.entity.eventcustomquery.EventCustomQuery
+public class EventCustomQueryPage extends SoftDeletableEvoEditPage<EventCustomQuery> {
+
+/ 15 com.mpobjects.event.model.entity.eventtemplate.EventTemplate
+public class EventTemplatePage extends SoftDeletableEvoEditPage<EventTemplate> {
+
+/ 16 com.mpobjects.event.model.entity.eventtype.EventType
+public class EventTypePage extends SoftDeletableEvoEditPage<EventType> {
+
+/ 17 com.mpobjects.inventory.model.entity.stocklocation.StockLocation
+public class StockLocationPage extends SoftDeletableEvoEditPage<StockLocation> {
+
+/ 18 com.mpobjects.inventory.model.entity.stocklocationtype.StockLocationType
+public class StockLocationTypePage extends SoftDeletableEvoEditPage<StockLocationType> {
+
+/ 19 com.mpobjects.invoice.model.entity.vatpolicy.VatPolicy
+
+/ 22 com.mpobjects.oms.entity.shippingunit.ShippingUnit
+public class ShippingUnitPage extends SoftDeletableEvoEditPage<ShippingUnit> {
+
+
+/ 24 com.mpobjects.oms.model.container.ContainerType
+public class ContainerTypePage extends SoftDeletableEvoEditPage<ContainerType> {
+
+/ 25 com.mpobjects.oms.model.currency.vo.CurrencyVO
+public class CurrencyPage extends SoftDeletableEvoEditPage<CurrencyVO> {
+
+/ 26 com.mpobjects.oms.model.entity.AdrCode
+public class AdrCodePage extends SoftDeletableEvoEditPage<AdrCode> {
+
+/ 27 com.mpobjects.oms.model.entity.Airport
+public class AirportPage extends SoftDeletableEvoEditPage<Airport> {
+
+/ 29 com.mpobjects.oms.model.entity.businessobject.BusinessObject
+public class BusinessObjectPage extends SoftDeletableEvoEditPage<BusinessObject> {
+
+/ 30 com.mpobjects.oms.model.entity.country.Country
+public class CountryPage extends SoftDeletableEvoEditPage<Country> {
+
+/ 31 com.mpobjects.oms.model.entity.countrygroup.CountryGroup
+public class CountryGroupPage extends SoftDeletableEvoEditPage<CountryGroup> {
+
+/ 32 com.mpobjects.oms.model.entity.criteriumtype.CriteriumType
+public class CriteriumTypePage extends SoftDeletableEvoEditPage<CriteriumType> {
+
+/ 33 com.mpobjects.oms.model.entity.CustomerOrderType
+public class CustomerOrderTypePage extends SoftDeletableEvoEditPage<CustomerOrderType> {
+
+/ 34 com.mpobjects.oms.model.entity.documenttype.DocumentType
+public class DocumentTypePage extends SoftDeletableEvoEditPage<DocumentType> {
+
+/ 35 com.mpobjects.oms.model.entity.entitydetailtype.EntityDetailTypeGroup
+public class EntityDetailTypeGroupPage extends SoftDeletableEvoEditPage<EntityDetailTypeGroup> {
+
+/ 37 com.mpobjects.oms.model.entity.goodsstatus.GoodsStatus
+public class GoodsStatusPage extends SoftDeletableEvoEditPage<GoodsStatus> {
+
+/ 38 com.mpobjects.oms.model.entity.holdstatus.HoldStatus
+public class HoldStatusPage extends SoftDeletableEvoEditPage<HoldStatus> {
+
+/ 39 com.mpobjects.oms.model.entity.inducercode.InducerCode
+public class InducerCodePage extends SoftDeletableEvoEditPage<InducerCode> {
+
+/ 40 com.mpobjects.oms.model.entity.inducertype.InducerType
+public class InducerTypePage extends SoftDeletableEvoEditPage<InducerType> {
+
+/ 41 com.mpobjects.oms.model.entity.instructioncode.InstructionCode
+public class InstructionCodePage extends SoftDeletableEvoEditPage<InstructionCode> {
+
+/ 42 com.mpobjects.oms.model.entity.instructiongroup.InstructionGroup
+public class InstructionGroupPage extends SoftDeletableEvoEditPage<InstructionGroup> {
+
+/ 43 com.mpobjects.oms.model.entity.orderprocess.OrderProcess
+public class OrderProcessPage extends SoftDeletableEvoEditPage<OrderProcess> {
+
+/ 44 com.mpobjects.oms.model.entity.organization.Organization
+public class OrganizationPage extends SoftDeletableEvoEditPage<Organization> {
+
+/ 46 com.mpobjects.oms.model.entity.planningreasoncode.PlanningReasonCode
+public class PlanningReasonCodePage extends SoftDeletableEvoEditPage<PlanningReasonCode> {
+
+/ 47 com.mpobjects.oms.model.entity.privilegetype.PrivilegeType
+public class PrivilegeTypePage extends SoftDeletableEvoEditPage<PrivilegeType> {
+
+/ 49 com.mpobjects.oms.model.entity.property.Property
+public class PropertyPage extends SoftDeletableEvoEditPage<Property> {
+
+/ 50 com.mpobjects.oms.model.entity.reasoncode.ReasonCode
+public class ReasonCodePage extends SoftDeletableEvoEditPage<ReasonCode> {
+
+/ 51 com.mpobjects.oms.model.entity.role.RoleVO
+public class RolePage extends SoftDeletableEvoEditPage<RoleVO> {
+
+/ 52 com.mpobjects.oms.model.entity.ScheduleVo
+public class SchedulePage extends SoftDeletableEvoEditPage<ScheduleVo> {
+
+/ 53 com.mpobjects.oms.model.entity.servicetype.ServiceType
+public class ServiceTypePage extends SoftDeletableEvoEditPage<ServiceType> {
+
+/ 54 com.mpobjects.oms.model.entity.ShipmentServiceLevelVO
+public class ShipmentServiceLevelPage extends SoftDeletableEvoEditPage<ShipmentServiceLevelVO> {
+
+/ 55 com.mpobjects.oms.model.entity.shipmenttype.ShipmentType
+public class ShipmentTypePage extends SoftDeletableEvoEditPage<ShipmentType> {
+
+/ 56 com.mpobjects.oms.model.entity.UnNumber
+public class UnNumberPage extends SoftDeletableEvoEditPage<UnNumber> {
+
+
+/ 58 com.mpobjects.oms.model.incoterm.vo.IncoTermVO
+public class IncoTermPage extends SoftDeletableEvoEditPage<IncoTermVO> {
+
+/ 60 com.mpobjects.oms.model.order.validation.entity.OrderValidationRule
+public class OrderValidationRulePage extends SoftDeletableEvoEditPage<OrderValidationRule> {
+
+/ 64 com.mpobjects.oms.model.ratecomponenttype.RateComponentType
+public class RateComponentTypePage extends SoftDeletableEvoEditPage<RateComponentType> {
+
+
+
+/ NIET	, 
+public class EntityDetailTypePage extends EvoEditPage<EntityDetailType> {
+public class EventActionPage extends EvoEditPage<EventAction> {
+public class InvoiceMatchStatusPage extends EvoEditPage<InvoiceMatchStatus> {
+public class PartyTypeGroupPage extends EvoEditPage<PartyTypeGroupVO> {
+public class PartyTypePage extends EvoEditPage<PartyType> {
+public class PermissionGroupPage extends EvoEditPage<PermissionGroup> {
+public class PermissionRulePage extends EvoEditPage<PermissionRule> {
+public class ServiceActionTypePage extends EvoEditPage<ServiceActionType> {
+public class ServiceOrderTypePage extends EvoEditPage<ServiceOrderType> {
+public class UnitPage extends EvoEditPage<Unit> {
+public class VatNumberPage extends EvoEditPage<VatNumber> {
+
+/ EVO PAGES
+
+
+/ 7	. 
+
+public class SoftDeletableSearchPage<T extends EnumeratedValueObjectInterface> extends WebPage {
+
+	public SoftDeletableSearchPage(ISortableDataProvider<T> sortableDataProvider, final WebPage source) {
+		DataTable<T> table = new DataTable<T>("table", columns.toArray(new IColumn[columns.size()]), sortableDataProvider, 8);
+		table.addTopToolbar(new NavigationToolbar(table));
+		table.addTopToolbar(new HeadersToolbar(table, sortableDataProvider));
+		table.addTopToolbar(filterToolbar);
+
+/ we zien dat de volgorde van add de volgorde bepaalt hoe we ze zien op het scherm	, 
+/ TODO
+
+/ 7	. 
+
+/ we click op de link undelete	, 
+/ dit is een link in het form	, 
+Request URL:http://localhost:8080/tms/wicket/?wicket:interface=:2:filterForm:table:body:rows:6:cells:1:cell:undelete::ILinkListener::
+Request Method:GET
+/ maar een link in een form submit het form NIET	, 
+
+/ 7	. 
+
+/ BREAKPOINTS
+/ we disable	,
+GenericTableDataProvider$FilterStateFilterExpression [line: 68] - getModelProxy()	
+GenericTableDataProvider$FilterStateFilterExpression [line: 95] - createProxy()	
+GenericTableDataProvider$FilterStateFilterExpression$1 [line: 100] - invoke(MethodInvocation)	
+GenericTableDataProvider$FilterStateFilterExpression [line: 121] - intercept(Method, Object[])	
+PrefilteredTableDataProvider [line: 91] - resetFilterState()	
+PrefilteredTableDataProvider [line: 107] - setFilter()	
+PrefilteredTableDataProvider$Builder [line: 61] - build(BeanWrapper<? extends BaseDAOInterface<U>>, String)	
+
+/ 7	. 
+
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/test/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableSearchPageTest.java 
+/ de oude test	, met <SoftDeletable>
+
+file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk/base-framework/core/test/src/java/com/mpobjects/core/view/wicket/softdeletable/SoftDeletableSearchPageTesta.java 
+/ de nieuwe test, met <EnumeratedValueObjectInterface>
+
+/ testFilterForm	, 
+/ TODO	
+
+/ 7	. 
+
+/ click edit button in evosearchlistpanel	,
+
+/ stack
+/s
+	EvoEditPage$4.onSubmit(Button, AjaxRequestTarget, IModel<T>) line: 189	
+/=
+		EntityActionButton<T> button = new EntityActionAjaxButton<T>("edit", new ResourceModel("edit")) {
+			@Override
+			protected void onSubmit(Button aButton, AjaxRequestTarget aTarget, IModel<T> aSelection) { 	/ aSelection is model met de inco term	,
+				EvoEditFormPage<T> page = getEditPage();
+/cb
+	EntityActionAjaxButton$1.onSubmit(AjaxRequestTarget, Form<?>) line: 56	
+/=
+	protected Button createButtonInstance(final IModel<T> aModel, String aId) {
+
+this	EntityActionAjaxButton$1  (id=19132)									/ eerder set	, is dus model met de inco term 	, see beneden	, 	
+	val$aModel	GenericListElementModel  (id=19133)	
+		transientModelObject	IncoTermVO_$$_javassist_4  (id=20494)	
+
+		return new AjaxFallbackButton(aId, null) {
+			@Override
+			protected void onSubmit(AjaxRequestTarget aTarget, Form<?> aForm) {
+				EntityActionAjaxButton.this.onSubmit(this, aTarget, aModel);
+/cb
+	AjaxFallbackButton$1.onSubmit(AjaxRequestTarget) line: 74	
+/=
+		add(new AjaxFormSubmitBehavior(form, "onclick")
+		{
+			@Override
+			protected void onSubmit(AjaxRequestTarget target)
+			{
+				AjaxFallbackButton.this.onSubmit(target, AjaxFallbackButton.this.getForm());
+/cb
+	AjaxFallbackButton$1(AjaxFormSubmitBehavior).onEvent(AjaxRequestTarget) line: 156	
+			onSubmit(target);
+/cb
+	AjaxFallbackButton$1(AjaxEventBehavior).respond(AjaxRequestTarget) line: 177	
+		onEvent(target);
+/cb
+	AjaxFallbackButton$1(AbstractDefaultAjaxBehavior).onRequest() line: 312	
+		respond(target);
+/cb
+	BehaviorRequestTarget.processEvents(RequestCycle) line: 157	
+		behaviorListener.onRequest();
+/cb
+	WebRequestCycleProcessor(AbstractRequestCycleProcessor).processEvents(RequestCycle) line: 92	
+	MpoWebRequestCycle(RequestCycle).processEventsAndRespond() line: 1279	
+	MpoWebRequestCycle(RequestCycle).step() line: 1358	
+	MpoWebRequestCycle(RequestCycle).steps() line: 1465	
+	MpoWebRequestCycle(RequestCycle).request() line: 545	
+	WicketFilter.doGet(HttpServletRequest, HttpServletResponse) line: 486	
+	WicketServlet.doPost(HttpServletRequest, HttpServletResponse) line: 160	
+	WicketServlet(HttpServlet).service(HttpServletRequest, HttpServletResponse) line: 717	
+	WicketServlet(HttpServlet).service(ServletRequest, ServletResponse) line: 810	
+
+/ 7	. 
+
+public abstract class AbstractEntityActionButton<T> implements Serializable {
+	protected Button createButton(final IModel<T> aModel, String aId) {
+/ is called when	?
+
+/ we zien dat in 
+
+/ MORGENOCHTEND	,
+
+/ stack
+/s
+	EvoEditPage$4(AbstractEntityActionButton).createButton(IModel<T>, String) line: 220	
+		button = createButtonInstance(aModel, aId);
+/cb
+	EvoEditPage$4(EntityActionButton).createComponent(String, IModel<T>) line: 49	
+		return new EntityABPanel(aComponentId, createButton(aModel, "button"));
+/cb
+	EntityListActionBuilder(BaseActionBuilder).createActions(RepeatingView, IModel<T>) line: 75	
+	BaseActionBuilder$EntityActionPanel.<init>(String, BaseWebComponent, WebComponentEventSwitchBoard, IModel<T>) line: 34	
+	EntityListActionBuilder.build(String, WebComponentEventSwitchBoard, GenericListPanel<T>, IModel<T>) line: 44	
+	EvoListPage$1(GenericListPanel).createNewListPanel(String, IModel<T>) line: 403	
+
+	GenericListPanel$2.populateItem(Item, String, IModel) line: 290	
+/=
+			@Override
+			public void populateItem(final Item cellItem, final String componentId, final IModel model) {	/ populate cell item, use model=inco term	,
+				myList.add(GenericListPanel.this.createNewListPanel(componentId + "-actions", model));
+/cb
+	DataTable$1(AbstractDataGridView).populateItem(Item<T>) line: 187	
+/=
+		for (int i = 0; populators.hasNext(); i++)	 /columns	,
+		{
+			IModel<ICellPopulator<T>> populatorModel = populators.next();
+			Item<ICellPopulator<T>> cellItem = newCellItem(cells.newChildId(), i, populatorModel);
+			cells.add(cellItem);
+
+			ICellPopulator<T> populator = cellItem.getModelObject();
+			populator.populateItem(cellItem, CELL_ITEM_ID, item.getModel());	 item.getModel()= row model	,
+/cb
+	RefreshingView$1.newItem(int, IModel<T>) line: 114	
+	DefaultItemReuseStrategy$1.next() line: 71	
+	DefaultItemReuseStrategy$1.next() line: 68	
+	DataTable$1(RefreshingView).addItems(Iterator<Item<T>>) line: 189	
+	DataTable$1(RefreshingView).onPopulate() line: 98	
+	DataTable$1(AbstractRepeater).onBeforeRender() line: 131	
+	DataTable$1(AbstractPageableView).onBeforeRender() line: 121	
+	DataTable$1(Component).internalBeforeRender() line: 1069	
+	DataTable$1(Component).beforeRender() line: 1103	
+	WebMarkupContainer(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	WebMarkupContainer(Component).onBeforeRender() line: 4001	
+	WebMarkupContainer(Component).internalBeforeRender() line: 1069	
+	WebMarkupContainer(Component).beforeRender() line: 1103	
+	MpoDataTable(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	MpoDataTable(Component).onBeforeRender() line: 4001	
+	MpoDataTable(Component).internalBeforeRender() line: 1069	
+	MpoDataTable(Component).beforeRender() line: 1103	
+	CheckGroup(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	CheckGroup(Component).onBeforeRender() line: 4001	
+	CheckGroup(Component).internalBeforeRender() line: 1069	
+	CheckGroup(Component).beforeRender() line: 1103	
+	FilterForm(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	FilterForm(Component).onBeforeRender() line: 4001	
+	FilterForm(Form).onBeforeRender() line: 2104	
+	FilterForm(Component).internalBeforeRender() line: 1069	
+	FilterForm(Component).beforeRender() line: 1103	
+	EvoListPage$1(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	EvoListPage$1(Component).onBeforeRender() line: 4001	
+	EvoListPage$1(Component).internalBeforeRender() line: 1069	
+	EvoListPage$1(Component).beforeRender() line: 1103	
+	IncoTermPage(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	IncoTermPage(Component).onBeforeRender() line: 4001	
+	IncoTermPage(Page).onBeforeRender() line: 1555	
+	IncoTermPage(EvoEditPage).onBeforeRender() line: 256	
+	IncoTermPage(Component).internalBeforeRender() line: 1069	
+	IncoTermPage(Component).beforeRender() line: 1103	
+	IncoTermPage(Component).prepareForRender(boolean) line: 2297	
+	IncoTermPage(Page).prepareForRender(boolean) line: 1545	
+	IncoTermPage(Component).prepareForRender() line: 2329	
+	IncoTermPage(Page).renderPage() line: 912	
+	MpoWebRequestCycle(WebRequestCycle).redirectTo(Page) line: 201	
+	ListenerInterfaceRequestTarget(PageRequestTarget).respond(RequestCycle) line: 58	
+	WebRequestCycleProcessor(AbstractRequestCycleProcessor).respond(RequestCycle) line: 105	
+	MpoWebRequestCycle(RequestCycle).processEventsAndRespond() line: 1287	
+	MpoWebRequestCycle(RequestCycle).step() line: 1358	
+	MpoWebRequestCycle(RequestCycle).steps() line: 1465	
+	MpoWebRequestCycle(RequestCycle).request() line: 545	
+	WicketFilter.doGet(HttpServletRequest, HttpServletResponse) line: 486	
+	WicketServlet.doPost(HttpServletRequest, HttpServletResponse) line: 160	
+	WicketServlet(HttpServlet).service(HttpServletRequest, HttpServletResponse) line: 717	
+	WicketServlet(HttpServlet).service(ServletRequest, ServletResponse) line: 810	
+
+/ Q
+/ Waarom doet RefreshingView.class
+	@Override
+	protected void onBeforeRender()
+	{
+		onPopulate();
+	
+/ Q
+/ See LOG_wicket.txt
+
+/ waarom de behavior add in onInitialize en niet in <init>	?
+public abstract class AjaxButton extends Button
+    @Override
+    protected void onInitialize()
+    {
+        super.onInitialize();
+        
+        add(newAjaxFormSubmitBehavior("click"));
+
+
+/ 7	. 
+
+/ filter field en edit row button in hetzelfde form	,
+
+/ we zien de filter buttons, met 2 filter textfield	, en op 1 row de edit en delete button	,
+
+<form class="genericListPanelForm" wicket:id="filterForm" name="genericListPanelForm" id="filterForm4" wicketpath="evoSearchList_filterForm" method="post" action="?wicket:interface=:1:evoSearchList:filterForm:1:IFormSubmitListener::"><div style="width:0px;height:0px;position:absolute;left:-100px;top:-100px;overflow:hidden"><input type="hidden" name="filterForm4_hf_0" id="filterForm4_hf_0"></div>
+	<div class="gridContainer">
+		<table wicket:id="objectTable" class="grid wicketPagination" wicketpath="evoSearchList_filterForm_group_objectTable"><thead>
+		  <tr class="filters-tr">
+			<td wicket:id="filter" class="filter-td" wicketpath="evoSearchList_filterForm_group_objectTable_topToolbars_3_toolbar_filters_1_filter"><wicket:panel>
+				<button type="submit" wicket:id="go" class="fa small fa-filter" title="filter" name="group:objectTable:topToolbars:3:toolbar:filters:1:filter:go" id="go5" wicketpath="evoSearchList_filterForm_group_objectTable_topToolbars_3_toolbar_filters_1_filter_go" value="filter" accesskey="R"><span class="fallback">filter</span></button>
+				<button type="submit" wicket:id="clear" class="fa small fa-undo" title="clear" name="group:objectTable:topToolbars:3:toolbar:filters:1:filter:clear" id="clear6" wicketpath="evoSearchList_filterForm_group_objectTable_topToolbars_3_toolbar_filters_1_filter_clear" value="clear" accesskey="C"><span class="fallback">clear</span></button>
+				<button type="submit" wicket:id="excel" class="fa small fa-file-excel-o" title="excel export" name="group:objectTable:topToolbars:3:toolbar:filters:1:filter:excel" id="excel7" wicketpath="evoSearchList_filterForm_group_objectTable_topToolbars_3_toolbar_filters_1_filter_excel"><span class="fallback">excel export</span></button>
+		
+			<td wicket:id="filter" class="filter-td" wicketpath="evoSearchList_filterForm_group_objectTable_topToolbars_3_toolbar_filters_2_filter"><wicket:panel><input type="text" wicket:id="filter" value="" name="group:objectTable:topToolbars:3:toolbar:filters:2:filter:filter" wicketpath="evoSearchList_filterForm_group_objectTable_topToolbars_3_toolbar_filters_2_filter_filter" id="filter8" onfocus="_filter_focus(this, 'evoSearchList:filterForm:focus-tracker');" size="10" class=""></wicket:panel></td>
+		
+			<td wicket:id="filter" class="filter-td" wicketpath="evoSearchList_filterForm_group_objectTable_topToolbars_3_toolbar_filters_3_filter"><wicket:panel><input type="text" wicket:id="filter" value="" name="group:objectTable:topToolbars:3:toolbar:filters:3:filter:filter" wicketpath="evoSearchList_filterForm_group_objectTable_topToolbars_3_toolbar_filters_3_filter_filter" id="filter9" onfocus="_filter_focus(this, 'evoSearchList:filterForm:focus-tracker');" size="50" class=""></wicket:panel></td>
+
+</thead>
+		
+<tbody wicket:id="body" wicketpath="evoSearchList_filterForm_group_objectTable_body">
+	<tr wicket:id="rows" wicketpath="evoSearchList_filterForm_group_objectTable_body_rows_1" class="even">
+		<td wicket:id="cells" wicketpath="evoSearchList_filterForm_group_objectTable_body_rows_1_cells_1">
+			<wicket:panel>
+				<div id="entity-actions">
+					<wicket:panel>
+						<wicket:panel>
+							<button class="small fa icon_edit" wicket:id="button" name="group:objectTable:body:rows:1:cells:1:cell:entity-actions:cell-actions:actions:1:button" id="buttonf" wicketpath="evoSearchList_filterForm_group_objectTable_body_rows_1_cells_1_cell_entity-actions_cell-actions_actions_1_button" onclick="var wcall=wicketSubmitFormById('filterForm4', '?wicket:interface=:1:evoSearchList:filterForm:group:objectTable:body:rows:1:cells:1:cell:entity-actions:cell-actions:actions:1:button:1:IActivePageBehaviorListener:0:&amp;wicket:ignoreIfNotActive=true', 'group:objectTable:body:rows:1:cells:1:cell:entity-actions:cell-actions:actions:1:button' ,function() { }.bind(this),function() { }.bind(this), function() {return Wicket.$$(this)&amp;&amp;Wicket.$$('filterForm4')}.bind(this));;; return false;" title="Edit" type="submit"><span wicket:id="label" wicketpath="evoSearchList_filterForm_group_objectTable_body_rows_1_cells_1_cell_entity-actions_cell-actions_actions_1_button_label" class="fallback">Edit</span></button>
+						<wicket:panel>
+							<button class="small fa icon_delete" wicket:id="button" name="group:objectTable:body:rows:1:cells:1:cell:entity-actions:cell-actions:actions:2:button" id="button10" wicketpath="evoSearchList_filterForm_group_objectTable_body_rows_1_cells_1_cell_entity-actions_cell-actions_actions_2_button" onclick="if (!confirm('Are you sure you want to delete abc?')) return false;;var wcall=wicketSubmitFormById('filterForm4', '?wicket:interface=:1:evoSearchList:filterForm:group:objectTable:body:rows:1:cells:1:cell:entity-actions:cell-actions:actions:2:button:1:IActivePageBehaviorListener:0:&amp;wicket:ignoreIfNotActive=true', 'group:objectTable:body:rows:1:cells:1:cell:entity-actions:cell-actions:actions:2:button' ,function() { }.bind(this),function() { }.bind(this), function() {return Wicket.$$(this)&amp;&amp;Wicket.$$('filterForm4')}.bind(this));;; return false;" title="Delete" type="submit"><span wicket:id="label" wicketpath="evoSearchList_filterForm_group_objectTable_body_rows_1_cells_1_cell_entity-actions_cell-actions_actions_2_button_label" class="fallback">Delete</span></button>
+
+/ 13	. 
+
+/ Fill in Code filter form "CIF", en click filter button, 
+
+/ we zien	,
+Request URL:http://localhost:8080/tms/wicket/?wicket:interface=:1:evoSearchList:filterForm:1:IFormSubmitListener::
+
+Query String Parameters
+	wicket:interface::1:evoSearchList:filterForm:1:IFormSubmitListener::
+Form Data
+filterForm4_hf_0:
+focus-tracker:filter8
+group:objectTable:topToolbars:3:toolbar:filters:1:filter:go:filter
+group:objectTable:topToolbars:3:toolbar:filters:2:filter:filter:CIF
+group:objectTable:topToolbars:3:toolbar:filters:3:filter:filter:
+
+
+/ 13	. 
+
+/ we click in een row de edit button	, 
+/ we zien 	,
+Request URL:http://localhost:8080/tms/wicket/?wicket:interface=:1:evoSearchList:filterForm:group:objectTable:body:rows:17:cells:1:cell:entity-actions:cell-actions:actions:1:button:2:IActivePageBehaviorListener:0:&wicket:ignoreIfNotActive=true&random=0.26962779299356043
+
+Query String Parameters
+wicket:interface::1:evoSearchList:filterForm:group:objectTable:body:rows:17:cells:1:cell:entity-actions:cell-actions:actions:1:button:2:IActivePageBehaviorListener:0:
+wicket:ignoreIfNotActive:true
+random:0.26962779299356043
+
+Form Dataview
+filterForm4_hf_0:
+focus-tracker:filter8
+group:objectTable:topToolbars:3:toolbar:filters:2:filter:filter:CIF
+group:objectTable:topToolbars:3:toolbar:filters:3:filter:filter:
+group:objectTable:body:rows:17:cells:1:cell:entity-actions:cell-actions:actions:1:button:1
+
+/ In het 1ste geval genereert de browser de form data	, in het 2de geval wicket's JS	,
+/ Maar ze submit beide het form	, en de server writes this post data in the components	, 
+
+/ Als je edit, heb je dat misschien toch wel nodig	, want je wilt CIF edit	, 
+
+/ 7	.
+
+/ Hoe zijn de edit/delete buttons create op iedere row	?
+
+/ 13	. 
+
+public abstract class EvoListPage<T extends DescribedUniqueFieldValueObject> extends BaseContextPage {
+	protected void createListPanel() {
+		searchListPanel = new EvoSearchListPanel<T>("evoSearchList", null, webComponentEventSwitchBoard, daoWrapper, getListActions()) {
+
+	protected abstract Collection<EntityAction<T>> getListActions();
+
+/ 13	. 
+
+public abstract class EvoEditPage<T extends DescribedUniqueFieldValueObject> extends EvoListPage<T> implements EvoEditFormCallback {
+	protected Collection<EntityAction<T>> getListActions() {
+		EntityActionButton<T> button = new EntityActionAjaxButton<T>("edit", new ResourceModel("edit")) {
+		button = new EntityActionAjaxButton<T>("delete", new ResourceModel("delete")) {
+
+/ 13	. 
+
+public class EvoSearchListPanel<T extends DescribedUniqueFieldValueObject> extends GenericListPanel<T> {
+
+	public EvoSearchListPanel(String aId, BaseWebComponent aParent, WebComponentEventSwitchBoard aWebComponentEventSwitchBoard, BeanWrapper<? extends BaseDAOInterface<T>> aDaoWrapper, Collection<EntityAction<T>> actions) {
+		this(aId, aParent, aWebComponentEventSwitchBoard, new EntityListActionBuilder<T>(actions), aDaoWrapper);
+
+/ De EvoSearchListPanel.<init> creates de EntityListActionBuilder<T>	, 
+/ de actions zijn arg van .<init>	,
+
+/ ok ok ok
+
+
+/ 13	. 
+
+public class EntityListActionBuilder<T extends EntityInterface> extends BaseActionBuilder<T> implements ListActionsPanelBuilder<T> {
+
+	public EntityListActionBuilder(EntityAction<T>... aActions) {		
+		super(aActions);											/ builder heeft de actions	
+	}
+	public AbstractActionsPanel<T> build(String aId, WebComponentEventSwitchBoard aWebComponentEventSwitchBoard, GenericListPanel<T> aParent, IModel<T> aModel) {
+		return new EntityActionPanel(aId, aParent, aWebComponentEventSwitchBoard, aModel);
+	}
+
+/ EntityActionPanel is het panel met de 2 entity actions: edit & delete	,
+
+public class BaseActionBuilder<T extends EntityInterface> implements Serializable {
+
+	protected class EntityActionPanel extends AbstractActionsPanel<T> {
+		public EntityActionPanel(String aId, BaseWebComponent aParent, WebComponentEventSwitchBoard aWebComponentEventSwitchBoard, IModel<T> aModel) {
+			...
+			createActions(view, aModel);
+
+	protected void createActions(RepeatingView view, IModel<T> aModel) {
+		for (EntityAction<T> action : actions) {										/ builder heeft de actions
+			Component component = action.createComponent(view.newChildId(), aModel);
+			if (component != null) {
+				view.add(component);
+
+public abstract class EntityActionButton<T extends EntityInterface> extends AbstractEntityActionButton<T> implements EntityAction<T> {
+	public Component createComponent(String aComponentId, IModel<T> aModel) {
+		return new EntityABPanel(aComponentId, createButton(aModel, "button"));
+
+
+/ See LOG_29_sep_2015.txt	, ENTITYACTIONPANEL
+
+/ 7	. 
+
+/ debug	, 
+
+/ 13	. 
+
+/ stack
+/s
+	GenericListPanel$2.getFilter(String, FilterForm) line: 281	
+				ResetableGoAndClearFilter resetableGoAndClearFilter = new ResetableGoAndClearFilter(componentId, form, dataProvider, GenericListPanel.this);
+				return resetableGoAndClearFilter;
+/cb
+	FilterToolbar.<init>(DataTable<?>, FilterForm<T>, IFilterStateLocator<T>) line: 83	
+		for (int i = 0; i < cols.length; i++)
+		{
+			WebMarkupContainer item = new WebMarkupContainer(filters.newChildId());
+			item.setRenderBodyOnly(true);
+
+			IColumn<?> col = cols[i];
+			Component filter = null;
+
+			if (col instanceof IFilteredColumn)
+			{
+				IFilteredColumn<?> filteredCol = (IFilteredColumn<?>)col;
+				filter = filteredCol.getFilter(FILTER_COMPONENT_ID, form);
+/cb
+	EvoListPage$1(GenericListPanel).makeTable(List<IColumn>) line: 462	
+			objectDataTable.addTopToolbar(new FilterToolbar(objectDataTable, filterForm, dataProvider));
+/cb
+	EvoListPage$1(GenericListPanel).initialize() line: 308	
+	EvoListPage$1(GenericListPanel).<init>(String, BaseWebComponent, WebComponentEventSwitchBoard, BeanWrapper<BaseDAOInterface<T>>, int, TableDataProviderBuilder<T>, List<EntityGroupAction<T>>) line: 141	
+	EvoListPage$1(GenericListPanel).<init>(String, BaseWebComponent, WebComponentEventSwitchBoard, ListActionsPanelBuilder<T>, BeanWrapper<BaseDAOInterface<T>>, int, TableDataProviderBuilder<T>, List<EntityGroupAction<T>>) line: 186	
+	EvoListPage$1(GenericListPanel).<init>(String, BaseWebComponent, WebComponentEventSwitchBoard, ListActionsPanelBuilder<T>, BeanWrapper<BaseDAOInterface<T>>) line: 146	
+	EvoListPage$1(EvoSearchListPanel).<init>(String, BaseWebComponent, WebComponentEventSwitchBoard, ListActionsPanelBuilder<T>, BeanWrapper<BaseDAOInterface<T>>) line: 62	
+	EvoListPage$1(EvoSearchListPanel).<init>(String, BaseWebComponent, WebComponentEventSwitchBoard, BeanWrapper<BaseDAOInterface<T>>, Collection<EntityAction<T>>) line: 52	
+	EvoListPage$1.<init>(EvoListPage, String, BaseWebComponent, WebComponentEventSwitchBoard, BeanWrapper, Collection) line: 74	
+	IncoTermPage(EvoListPage).createListPanel() line: 74	
+	IncoTermPage(EvoEditPage).createListPanel() line: 155	
+	IncoTermPage.createListPanel() line: 45	
+	IncoTermPage(EvoListPage).createPage() line: 94	
+	IncoTermPage(EvoEditPage).createPage() line: 162	
+	IncoTermPage(EvoListPage).<init>() line: 51	
+	IncoTermPage(EvoEditPage).<init>() line: 80	
+	IncoTermPage(SoftDeletableEvoEditPage).<init>() line: 19	
+	IncoTermPage.<init>() line: 30	
+	NativeConstructorAccessorImpl.newInstance0(Constructor, Object[]) line: not available [native method]	
+	NativeConstructorAccessorImpl.newInstance(Object[]) line: 57	
+	DelegatingConstructorAccessorImpl.newInstance(Object[]) line: 45	
+	Constructor.newInstance(Object...) line: 526	
+	DefaultPageFactory.createPage(Constructor<Page>, PageParameters) line: 192	
+	DefaultPageFactory.newPage(Class<C>, PageParameters) line: 97	
+	BaseHomePage.doRedirect() line: 63	
+	BaseHomePage.<init>() line: 27	
+	NativeConstructorAccessorImpl.newInstance0(Constructor, Object[]) line: not available [native method]	
+	NativeConstructorAccessorImpl.newInstance(Object[]) line: 57	
+	DelegatingConstructorAccessorImpl.newInstance(Object[]) line: 45	
+	Constructor.newInstance(Object...) line: 526	
+	DefaultPageFactory.createPage(Constructor<Page>, PageParameters) line: 192	
+	DefaultPageFactory.newPage(Class<C>, PageParameters) line: 97	
+	BookmarkablePageRequestTarget.newPage(Class<C>, RequestCycle) line: 305	
+	BookmarkablePageRequestTarget.getPage(RequestCycle) line: 320	
+	BookmarkablePageRequestTarget.processEvents(RequestCycle) line: 234	
+	WebRequestCycleProcessor(AbstractRequestCycleProcessor).processEvents(RequestCycle) line: 92	
+	MpoWebRequestCycle(RequestCycle).processEventsAndRespond() line: 1279	
+	MpoWebRequestCycle(RequestCycle).step() line: 1358	
+	MpoWebRequestCycle(RequestCycle).steps() line: 1465	
+	MpoWebRequestCycle(RequestCycle).request() line: 545	
+	WicketFilter.doGet(HttpServletRequest, HttpServletResponse) line: 486	
+	WicketServlet.doGet(HttpServletRequest, HttpServletResponse) line: 138	
+	WicketServlet(HttpServlet).service(HttpServletRequest, HttpServletResponse) line: 697	
+	WicketServlet(HttpServlet).service(ServletRequest, ServletResponse) line: 810	
+
+/c
+/ stack
+/s
+	ConfigurableTextFilteredPropertyColumn.getFilter(String, FilterForm) line: 182	
+		return filterComponentBuilder.buildFilterComponent(componentId, getFilterModel(form), form);
+/cb
+	FilterToolbar.<init>(DataTable<?>, FilterForm<T>, IFilterStateLocator<T>) line: 83	
+		for (int i = 0; i < cols.length; i++)
+		{
+			WebMarkupContainer item = new WebMarkupContainer(filters.newChildId());
+			item.setRenderBodyOnly(true);
+
+			IColumn<?> col = cols[i];
+			Component filter = null;
+
+			if (col instanceof IFilteredColumn)
+			{
+				IFilteredColumn<?> filteredCol = (IFilteredColumn<?>)col;
+				filter = filteredCol.getFilter(FILTER_COMPONENT_ID, form);
+/cb
+	EvoListPage$1(GenericListPanel).makeTable(List<IColumn>) line: 462	
+			objectDataTable.addTopToolbar(new FilterToolbar(objectDataTable, filterForm, dataProvider));
+/cb
+	EvoListPage$1(GenericListPanel).initialize() line: 308	
+	EvoListPage$1(GenericListPanel).<init>(String, BaseWebComponent, WebComponentEventSwitchBoard, BeanWrapper<BaseDAOInterface<T>>, int, TableDataProviderBuilder<T>, List<EntityGroupAction<T>>) line: 141	
+	EvoListPage$1(GenericListPanel).<init>(String, BaseWebComponent, WebComponentEventSwitchBoard, ListActionsPanelBuilder<T>, BeanWrapper<BaseDAOInterface<T>>, int, TableDataProviderBuilder<T>, List<EntityGroupAction<T>>) line: 186	
+	EvoListPage$1(GenericListPanel).<init>(String, BaseWebComponent, WebComponentEventSwitchBoard, ListActionsPanelBuilder<T>, BeanWrapper<BaseDAOInterface<T>>) line: 146	
+	EvoListPage$1(EvoSearchListPanel).<init>(String, BaseWebComponent, WebComponentEventSwitchBoard, ListActionsPanelBuilder<T>, BeanWrapper<BaseDAOInterface<T>>) line: 62	
+	EvoListPage$1(EvoSearchListPanel).<init>(String, BaseWebComponent, WebComponentEventSwitchBoard, BeanWrapper<BaseDAOInterface<T>>, Collection<EntityAction<T>>) line: 52	
+	EvoListPage$1.<init>(EvoListPage, String, BaseWebComponent, WebComponentEventSwitchBoard, BeanWrapper, Collection) line: 74	
+	IncoTermPage(EvoListPage).createListPanel() line: 74	
+	IncoTermPage(EvoEditPage).createListPanel() line: 155	
+	IncoTermPage.createListPanel() line: 45	
+	IncoTermPage(EvoListPage).createPage() line: 94	
+	IncoTermPage(EvoEditPage).createPage() line: 162	
+	IncoTermPage(EvoListPage).<init>() line: 51	
+	IncoTermPage(EvoEditPage).<init>() line: 80	
+	IncoTermPage(SoftDeletableEvoEditPage).<init>() line: 19	
+	IncoTermPage.<init>() line: 30	
+	NativeConstructorAccessorImpl.newInstance0(Constructor, Object[]) line: not available [native method]	
+	NativeConstructorAccessorImpl.newInstance(Object[]) line: 57	
+	DelegatingConstructorAccessorImpl.newInstance(Object[]) line: 45	
+	Constructor.newInstance(Object...) line: 526	
+	DefaultPageFactory.createPage(Constructor<Page>, PageParameters) line: 192	
+	DefaultPageFactory.newPage(Class<C>, PageParameters) line: 97	
+	BaseHomePage.doRedirect() line: 63	
+	BaseHomePage.<init>() line: 27	
+	NativeConstructorAccessorImpl.newInstance0(Constructor, Object[]) line: not available [native method]	
+	NativeConstructorAccessorImpl.newInstance(Object[]) line: 57	
+	DelegatingConstructorAccessorImpl.newInstance(Object[]) line: 45	
+	Constructor.newInstance(Object...) line: 526	
+	DefaultPageFactory.createPage(Constructor<Page>, PageParameters) line: 192	
+	DefaultPageFactory.newPage(Class<C>, PageParameters) line: 97	
+	BookmarkablePageRequestTarget.newPage(Class<C>, RequestCycle) line: 305	
+	BookmarkablePageRequestTarget.getPage(RequestCycle) line: 320	
+	BookmarkablePageRequestTarget.processEvents(RequestCycle) line: 234	
+	WebRequestCycleProcessor(AbstractRequestCycleProcessor).processEvents(RequestCycle) line: 92	
+	MpoWebRequestCycle(RequestCycle).processEventsAndRespond() line: 1279	
+	MpoWebRequestCycle(RequestCycle).step() line: 1358	
+	MpoWebRequestCycle(RequestCycle).steps() line: 1465	
+	MpoWebRequestCycle(RequestCycle).request() line: 545	
+	WicketFilter.doGet(HttpServletRequest, HttpServletResponse) line: 486	
+	WicketServlet.doGet(HttpServletRequest, HttpServletResponse) line: 138	
+	WicketServlet(HttpServlet).service(HttpServletRequest, HttpServletResponse) line: 697	
+	WicketServlet(HttpServlet).service(ServletRequest, ServletResponse) line: 810	
+/s 
+/ debug	, 
+ConfigurableTextFilteredPropertyColumn.getFilterModel(FilterForm) line: 222	
+		return new PropertyModel<T>(form.getModel(), getPropertyExpression());
+
+
+/ 13	. 
+
+/c
+/ stack
+/s
+	DataTable$1(AbstractPageableView).getItemModels() line: 104	
+	DataTable$1(RefreshingView).onPopulate() line: 94	
+		Iterator<IModel<T>> models = getItemModels();
+		Iterator<Item<T>> items = getItemReuseStrategy().getItems(newItemFactory(), models,
+			getItems());
+		removeAll();
+		addItems(items);
+/cb
+	DataTable$1(AbstractRepeater).onBeforeRender() line: 131	
+		onPopulate();
+/cb
+	DataTable$1(AbstractPageableView).onBeforeRender() line: 121	
+	DataTable$1(Component).internalBeforeRender() line: 1069	
+	DataTable$1(Component).beforeRender() line: 1103	
+	WebMarkupContainer(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	WebMarkupContainer(Component).onBeforeRender() line: 4001	
+	WebMarkupContainer(Component).internalBeforeRender() line: 1069	
+	WebMarkupContainer(Component).beforeRender() line: 1103	
+	MpoDataTable(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	MpoDataTable(Component).onBeforeRender() line: 4001	
+	MpoDataTable(Component).internalBeforeRender() line: 1069	
+	MpoDataTable(Component).beforeRender() line: 1103	
+	CheckGroup(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	CheckGroup(Component).onBeforeRender() line: 4001	
+	CheckGroup(Component).internalBeforeRender() line: 1069	
+	CheckGroup(Component).beforeRender() line: 1103	
+	FilterForm(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	FilterForm(Component).onBeforeRender() line: 4001	
+	FilterForm(Form).onBeforeRender() line: 2104	
+	FilterForm(Component).internalBeforeRender() line: 1069	
+	FilterForm(Component).beforeRender() line: 1103	
+	EvoListPage$1(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	EvoListPage$1(Component).onBeforeRender() line: 4001	
+	EvoListPage$1(Component).internalBeforeRender() line: 1069	
+	EvoListPage$1(Component).beforeRender() line: 1103	
+	IncoTermPage(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	IncoTermPage(Component).onBeforeRender() line: 4001	
+	IncoTermPage(Page).onBeforeRender() line: 1555	
+	IncoTermPage(EvoEditPage).onBeforeRender() line: 256	
+	IncoTermPage(Component).internalBeforeRender() line: 1069	
+	IncoTermPage(Component).beforeRender() line: 1103	
+	IncoTermPage(Component).prepareForRender(boolean) line: 2297	
+	IncoTermPage(Page).prepareForRender(boolean) line: 1545	
+	IncoTermPage(Component).prepareForRender() line: 2329	
+	IncoTermPage(Page).renderPage() line: 912	
+	MpoWebRequestCycle(WebRequestCycle).redirectTo(Page) line: 201	
+	PageRequestTarget.respond(RequestCycle) line: 58	
+	WebRequestCycleProcessor(AbstractRequestCycleProcessor).respond(RequestCycle) line: 105	
+	MpoWebRequestCycle(RequestCycle).processEventsAndRespond() line: 1287	
+	MpoWebRequestCycle(RequestCycle).step() line: 1358	
+	MpoWebRequestCycle(RequestCycle).steps() line: 1465	
+	MpoWebRequestCycle(RequestCycle).request() line: 545	
+	WicketFilter.doGet(HttpServletRequest, HttpServletResponse) line: 486	
+	WicketServlet.doGet(HttpServletRequest, HttpServletResponse) line: 138	
+	WicketServlet(HttpServlet).service(HttpServletRequest, HttpServletResponse) line: 697	
+	WicketServlet(HttpServlet).service(ServletRequest, ServletResponse) line: 810	
+/debug
+/s
+DataTable$1(RefreshingView).onPopulate() line: 95	 			/ in RefreshingView	,
+		Iterator<IModel<T>> models = getItemModels();
+/s
+DataTable$1(AbstractPageableView).getItemModels() line: 104	
+		int offset = getViewOffset();
+		int size = getViewSize();
+...
+/s
+PrefilteredTableDataProvider(GenericTableDataProvider).size() line: 248	
+		int size = daoWrapper.getBean().runQueryCount(filter);
+/t
+		int size = getViewSize();
+/d
+16
+		Iterator<IModel<T>> models = getItemModels(offset, size);
+/s
+DataTable$1(DataViewBase).getItemModels(int, int) line: 76	
+		return new ModelIterator<T>(internalGetDataProvider(), offset, count);
+
+/ intermezzo
+
+/ er is een iterator over de objects,	 = dataProvider.iterator	, 
+/ -> er is een iterator over de models	, 
+/ -> er is een iterator over de items in de refreshingview	, 
+
+public abstract class DataViewBase<T> extends AbstractPageableView<T>
+
+	private static final class ModelIterator<T> implements Iterator<IModel<T>>
+	{
+		private final Iterator<? extends T> items;
+		private final IDataProvider<T> dataProvider;
+
+		public ModelIterator(IDataProvider<T> dataProvider, int offset, int count)
+		{
+			this.dataProvider = dataProvider;
+			max = count;
+
+			items = count > 0 ? dataProvider.iterator(offset, count) : null;	 / iterator over de objects, 	
+		}
+
+		public boolean hasNext()
+		{
+			return items != null && items.hasNext() && (index < max);
+		}
+
+		/**
+		 * @see java.util.Iterator#next()
+		 */
+		public IModel<T> next()
+		{
+			index++;
+			return dataProvider.model(items.next());	 / zo wordt de 2de iterator create	, over de models	,
+		}
+	}
+
+
+
+public class GenericTableDataProvider<T extends EntityInterface> extends SortableDataProvider<T> implements TableDataProviderInterface<T> {
+	@Override
+	public Iterator<T> iterator(final int first, final int count) {
+			return daoWrapper.getBean().runQuery(queryParam, filter).iterator();
+	}
+	@Override
+	public IModel<T> model(final T object) {
+		return new GenericListElementModel(object, daoWrapper);
+	}
+
+/ Einde intermezzo
+
+/t
+DataTable$1(RefreshingView).onPopulate() line: 95	
+		Iterator<IModel<T>> models = getItemModels(); 												/= ModelIterator	, 
+		Iterator<Item<T>> items = getItemReuseStrategy().getItems(newItemFactory(), models, ...) 			
+		removeAll();
+		addItems(items);
+
+/ intermezzo
+
+public abstract class RefreshingView<T> extends RepeatingView
+
+	@Override
+	protected final void onPopulate()
+	{
+		Iterator<IModel<T>> models = getItemModels();										/= ModelIterator	,
+		Iterator<Item<T>> items = getItemReuseStrategy().getItems(newItemFactory(), models,	/= new Iterator	,
+			getItems());
+		removeAll();
+		addItems(items);
+	}
+
+	protected void addItems(Iterator<Item<T>> items)
+	{
+		int index = 0;
+		while (items.hasNext())				/= models.hasNext
+		{
+			Item<T> item = items.next();	/= laat factory het item create,
+			item.setIndex(index);
+			add(item);
+			++index;
+		}
+	}
+
+	protected IItemFactory<T> newItemFactory()
+	{
+		return new IItemFactory<T>()
+		{
+			public Item<T> newItem(int index, IModel<T> model)
+			{
+				String id = RefreshingView.this.newChildId();
+				Item<T> item = RefreshingView.this.newItem(id, index, model);
+				RefreshingView.this.populateItem(item);
+				return item;
+			}
+
+
+public class DefaultItemReuseStrategy implements IItemReuseStrategy
+	public <T> Iterator<Item<T>> getItems(final IItemFactory<T> factory, final Iterator<IModel<T>> newModels, ...)
+			public boolean hasNext()
+			{
+				return newModels.hasNext();
+			}
+
+			public Item<T> next()
+			{
+				IModel<T> model = newModels.next();
+				Item<T> item = factory.newItem(index, model);
+				index++;
+				return item;
+			}
+
+
+/ Einde intermezzo
+
+/c
+/ stack
+/s
+	GenericListPanel$2.populateItem(Item, String, IModel) line: 286	
+/=
+			public void populateItem(final Item cellItem, final String componentId, final IModel model) {
+model	GenericListElementModel  (id=20220)			/ row model	,
+	attached	true	
+	id	Integer  (id=20249)	
+	transientModelObject	IncoTermVO  (id=20250)	
+	wrapper	BeanWrapper  (id=20251)	
+/cb
+	DataTable$1(AbstractDataGridView).populateItem(Item<T>) line: 187	
+	RefreshingView$1.newItem(int, IModel<T>) line: 114	
+/=
+		return new IItemFactory<T>()
+		{
+			public Item<T> newItem(int index, IModel<T> model)
+			{
+				String id = RefreshingView.this.newChildId();
+				Item<T> item = RefreshingView.this.newItem(id, index, model);
+				RefreshingView.this.populateItem(item);											<-
+/cb
+	DefaultItemReuseStrategy$1.next() line: 71	
+/=
+	public <T> Iterator<Item<T>> getItems(final IItemFactory<T> factory,
+		final Iterator<IModel<T>> newModels, Iterator<Item<T>> existingItems)
+	{
+		return new Iterator<Item<T>>()
+		{
+			private int index = 0;
+
+			public void remove()
+			{
+				throw new UnsupportedOperationException();
+			}
+
+			public boolean hasNext()
+			{
+				return newModels.hasNext();
+			}
+
+			public Item<T> next()
+			{
+				IModel<T> model = newModels.next();
+				Item<T> item = factory.newItem(index, model);		<-
+/cb
+	DefaultItemReuseStrategy$1.next() line: 68	
+	DataTable$1(RefreshingView).addItems(Iterator<Item<T>>) line: 189	
+		while (items.hasNext())
+		{
+			Item<T> item = items.next();
+/cb
+	DataTable$1(RefreshingView).onPopulate() line: 98	
+		Iterator<IModel<T>> models = getItemModels();
+		Iterator<Item<T>> items = getItemReuseStrategy().getItems(newItemFactory(), models,
+			getItems());
+		removeAll();
+		addItems(items);
+/cb
+	DataTable$1(AbstractRepeater).onBeforeRender() line: 131	
+	DataTable$1(AbstractPageableView).onBeforeRender() line: 121	
+	DataTable$1(Component).internalBeforeRender() line: 1069	
+	DataTable$1(Component).beforeRender() line: 1103	
+	WebMarkupContainer(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	WebMarkupContainer(Component).onBeforeRender() line: 4001	
+	WebMarkupContainer(Component).internalBeforeRender() line: 1069	
+	WebMarkupContainer(Component).beforeRender() line: 1103	
+	MpoDataTable(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	MpoDataTable(Component).onBeforeRender() line: 4001	
+	MpoDataTable(Component).internalBeforeRender() line: 1069	
+	MpoDataTable(Component).beforeRender() line: 1103	
+	CheckGroup(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	CheckGroup(Component).onBeforeRender() line: 4001	
+	CheckGroup(Component).internalBeforeRender() line: 1069	
+	CheckGroup(Component).beforeRender() line: 1103	
+	FilterForm(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	FilterForm(Component).onBeforeRender() line: 4001	
+	FilterForm(Form).onBeforeRender() line: 2104	
+	FilterForm(Component).internalBeforeRender() line: 1069	
+	FilterForm(Component).beforeRender() line: 1103	
+	EvoListPage$1(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	EvoListPage$1(Component).onBeforeRender() line: 4001	
+	EvoListPage$1(Component).internalBeforeRender() line: 1069	
+	EvoListPage$1(Component).beforeRender() line: 1103	
+	IncoTermPage(MarkupContainer).onBeforeRenderChildren() line: 1777	
+	IncoTermPage(Component).onBeforeRender() line: 4001	
+	IncoTermPage(Page).onBeforeRender() line: 1555	
+	IncoTermPage(EvoEditPage).onBeforeRender() line: 256	
+	IncoTermPage(Component).internalBeforeRender() line: 1069	
+	IncoTermPage(Component).beforeRender() line: 1103	
+	IncoTermPage(Component).prepareForRender(boolean) line: 2297	
+	IncoTermPage(Page).prepareForRender(boolean) line: 1545	
+	IncoTermPage(Component).prepareForRender() line: 2329	
+	IncoTermPage(Page).renderPage() line: 912	
+/debug
+/s
+GenericListPanel$2.populateItem(Item, String, IModel) line: 290	
+				myList.add(GenericListPanel.this.createNewListPanel(componentId + "-actions", model));
+/s
+EvoListPage$1(GenericListPanel).createNewListPanel(String, IModel<T>) line: 403	
+		AbstractActionsPanel<T> myPanel = panelBuilder.build(componentId, webComponentEventSwitchBoard, this, model);
+/s
+EntityListActionBuilder.build(String, WebComponentEventSwitchBoard, GenericListPanel<T>, IModel<T>) line: 44	
+		return new EntityActionPanel(aId, aParent, aWebComponentEventSwitchBoard, aModel);
+/s
+BaseActionBuilder$EntityActionPanel.<init>(String, BaseWebComponent, WebComponentEventSwitchBoard, IModel<T>) line: 30	
+			super(aId, aParent, aWebComponentEventSwitchBoard);
+			RepeatingView view = new RepeatingView("actions");
+			add(view);
+			createActions(view, aModel);
+/s
+EntityListActionBuilder(BaseActionBuilder).createActions(RepeatingView, IModel<T>) line: 74	
+		for (EntityAction<T> action : actions) {
+			Component component = action.createComponent(view.newChildId(), aModel);
+aModel	GenericListElementModel  (id=20220)	
+	attached	true	
+	id	Integer  (id=20249)	
+	transientModelObject	IncoTermVO  (id=20250)	
+/s
+EvoEditPage$4(EntityActionButton).createComponent(String, IModel<T>) line: 49	
+		return new EntityABPanel(aComponentId, createButton(aModel, "button"));
+/s
+AbstractEntityActionButton$EntityABPanel.<clinit>() line: 50002	
+/=
+	protected Button createButton(final IModel<T> aModel, String aId) {
+		button = createButtonInstance(aModel, aId);
+aId="button"
+/s
+EvoEditPage$4(EntityActionAjaxButton).createButtonInstance(IModel<T>, String) line: 43	
+/=
+	protected Button createButtonInstance(final IModel<T> aModel, String aId) {
+		return new AjaxFallbackButton(aId, null) {
+			@Override
+			public boolean isEnabled() {
+				return EntityActionAjaxButton.this.isEnabled(aModel);
+			}
+
+			@Override
+			protected void onError(AjaxRequestTarget aTarget, Form<?> aForm) {
+				EntityActionAjaxButton.this.onError(this, aTarget, aModel);
+			}
+
+			@Override
+			protected void onSubmit(AjaxRequestTarget aTarget, Form<?> aForm) {
+				EntityActionAjaxButton.this.onSubmit(this, aTarget, aModel);
+			}
+		};
+////////////////////////////////////////////////////////////////////////////////////////////////
+/ we zien dat het model = row model wordt used als closed in door de onSubmit	, 
+/ Als we op het edit/delete button click , weet hij om welk object het gaat	, 
+
+			if (component != null) {
+				view.add(component);
+
+
+/ 7	. 
+
+/ $ vi SoftDeletableSearchPage.html
+
+	<form wicket:id="filterForm">
+		
+		<table wicket:id="table"></table>
+
+<!-- 		<div style="position:absolute;left:-9999px;width:1px;height:1px;">
+			<input type="submit">
+		</div> -->
+
+/ Omdat we de go button hebben add, is deze submit overbodig geworden	,
+
+/ 7	. 
+
+/ See FinancialPartyFormField	, button buiten form	,
+/ WH NIET	, 
+
+/ 7	. 
+
+/ we extend from BasePage	, ipv WebPage	,
+public abstract class SoftDeletableSearchPage<T extends EnumeratedValueObjectInterface> extends BasePage {
+
+/ we moeten dan ook 	,
+
+$ vi SoftDeletableSearchPage.html
+<wicket:extend>
+	...
+</wicket:extend>
+
+/ Anders 	,
+/we zien ERRs	,
+
+1. [MarkupContainer [Component id = pageId]]
+2. [MarkupContainer [Component id = html]]
+3. [MarkupContainer [Component id = __privilege_log__]]
+4. [MarkupContainer [Component id = list]]
+5. [MarkupContainer [Component id = 0]]
+6. [Component id = priv]
+
+at org.apache.wicket.Page.checkRendering(Page.java:1201)
+     at org.apache.wicket.Page.renderPage(Page.java:941)
+
+/ maar bij IncoTermPage is het OK	,
+
+/ stack
+/s
+	IncoTermPage(BasePage).onInitialize() line: 75	 	/ hier worden alle missing components create	,
+	IncoTermPage(Component).fireInitialize() line: 4105	
+			onInitialize();
+/cb
+	IncoTermPage(MarkupContainer).initialize() line: 433	
+		super.fireInitialize();
+/cb
+	IncoTermPage(Page).componentAdded(Component) line: 1613	
+			// initialize the page if not yet initialized
+			initialize();
+/cb
+	IncoTermPage(MarkupContainer).addedComponent(Component) line: 995	
+			page.componentAdded(component);
+/cb
+	IncoTermPage(MarkupContainer).add(Component...) line: 142	
+		for (Component child : childs)												/ child = ModalWindow	,
+		{
+			// Add to map
+			addedComponent(child);
+/cb
+	IncoTermPage(EvoEditPage).createAjaxWindow() line: 109	
+		editWindow = new ModalWindow("editWindow");
+		editWindow.setWindowClosedCallback(new WindowClosedCallback() {
+			@Override
+			public void onClose(AjaxRequestTarget aTarget) {
+				// TODO: don't refresh on a cancel
+				aTarget.addComponent(searchListPanel);
+				aTarget.addComponent(feedbackPanel);
+			}
+		});
+		add(editWindow);
+/cb
+	IncoTermPage(EvoEditPage).createEditInterface() line: 149	
+		createAjaxWindow();
+		createCreateButton();
+/cb
+	IncoTermPage(EvoEditPage).createPage() line: 161	
+	IncoTermPage(EvoListPage).<init>() line: 51	
+	IncoTermPage(EvoEditPage).<init>() line: 80	
+	IncoTermPage(SoftDeletableEvoEditPage).<init>() line: 19	
+	IncoTermPage.<init>() line: 30	
+	BookmarkablePageRequestTarget.newPage(Class<C>, RequestCycle) line: 305	
+	BookmarkablePageRequestTarget.getPage(RequestCycle) line: 320	
+	BookmarkablePageRequestTarget.processEvents(RequestCycle) line: 234	
+	WebRequestCycleProcessor(AbstractRequestCycleProcessor).processEvents(RequestCycle) line: 92	
+	MpoWebRequestCycle(RequestCycle).processEventsAndRespond() line: 1279	
+	MpoWebRequestCycle(RequestCycle).step() line: 1358	
+	MpoWebRequestCycle(RequestCycle).steps() line: 1465	
+	MpoWebRequestCycle(RequestCycle).request() line: 545	
+	WicketFilter.doGet(HttpServletRequest, HttpServletResponse) line: 486	
+	WicketServlet.doGet(HttpServletRequest, HttpServletResponse) line: 138	
+	WicketServlet(HttpServlet).service(HttpServletRequest, HttpServletResponse) line: 697	
+	WicketServlet(HttpServlet).service(ServletRequest, ServletResponse) line: 810	
+
+/ 7	. 
+
+/ Lees	, 
+http://fontawesome.io/3.2.1/examples/
+
+$ vi SoftDeletableEvoEditPage.html
+	<a wicket:id="softDeletableLink" class="btn btn-primary">softDeletable</a>
+/ TODO
+
+/ lees EvoEditPage.java
+/ daar def de action in EvoEditPage	, 
+/ moet ik ook doen	, 
+/ MAANDAGOCHTEND
+
+public abstract class EvoEditPage<T extends DescribedUniqueFieldValueObject> extends EvoListPage<T> implements EvoEditFormCallback {
+	protected Collection<EntityAction<T>> getListActions() {
+		EntityActionButton<T> button = new EntityActionAjaxButton<T>("edit", new ResourceModel("edit")) {
+			protected void onSubmit(Button aButton, AjaxRequestTarget aTarget, IModel<T> aSelection) {
+		actions.add(button);
+		button = new EntityActionAjaxButton<T>("delete", new ResourceModel("delete")) {
+			protected void onSubmit(Button aButton, AjaxRequestTarget aTarget, IModel<T> aSelection) {
+		actions.add(button);
+/e
+public abstract class EvoListPage<T extends DescribedUniqueFieldValueObject> extends BaseContextPage {
+	protected abstract Collection<EntityAction<T>> getListActions();
+	protected void createListPanel() {
+		searchListPanel = new EvoSearchListPanel<T>("evoSearchList", null, webComponentEventSwitchBoard, daoWrapper, getListActions()) {
+/s
+public class EvoSearchListPanel<T extends DescribedUniqueFieldValueObject> extends GenericListPanel<T> {
+	public EvoSearchListPanel(String aId, BaseWebComponent aParent, WebComponentEventSwitchBoard aWebComponentEventSwitchBoard, BeanWrapper<? extends BaseDAOInterface<T>> aDaoWrapper, Collection<EntityAction<T>> actions) {
+		this(aId, aParent, aWebComponentEventSwitchBoard, new EntityListActionBuilder<T>(actions), aDaoWrapper);
+	}
+/s
+	public EvoSearchListPanel(String aId, BaseWebComponent aParent, WebComponentEventSwitchBoard aWebComponentEventSwitchBoard,
+			ListActionsPanelBuilder<T> aBuilder, BeanWrapper<? extends BaseDAOInterface<T>> aDaoWrapper) {
+		super(aId, aParent, aWebComponentEventSwitchBoard, aBuilder, aDaoWrapper);
+	}
+/s
+public class EntityListActionBuilder<T extends EntityInterface> extends BaseActionBuilder<T> implements ListActionsPanelBuilder<T> {
+	@Override
+	public AbstractActionsPanel<T> build(String aId, WebComponentEventSwitchBoard aWebComponentEventSwitchBoard, GenericListPanel<T> aParent, IModel<T> aModel) {
+		return new EntityActionPanel(aId, aParent, aWebComponentEventSwitchBoard, aModel);
+/s
+public class BaseActionBuilder<T extends EntityInterface> implements Serializable {
+	protected List<EntityAction<T>> actions;
+	protected class EntityActionPanel extends AbstractActionsPanel<T> {
+		public EntityActionPanel(String aId, BaseWebComponent aParent, WebComponentEventSwitchBoard aWebComponentEventSwitchBoard, IModel<T> aModel) {
+			super(aId, aParent, aWebComponentEventSwitchBoard);
+			RepeatingView view = new RepeatingView("actions");
+			add(view);
+			createActions(view, aModel);
+/s
+	protected void createActions(RepeatingView view, IModel<T> aModel) {
+		for (EntityAction<T> action : actions) {
+			Component component = action.createComponent(view.newChildId(), aModel);
+			if (component != null) {
+				view.add(component);
+
+/ 7	. 
+
+/ RM	,
+
+/ 13	.
+
+/ we hadden	, 
+
+public abstract class SoftDeletableActionPanel<T extends EnumeratedValueObjectInterface> extends Panel {
+	public SoftDeletableActionPanel(String id, final Page source, IModel<T> rowModel) {
+		super(id, rowModel);
+		Component link = new Link<Void>("undelete") {
+			@Override
+			public void onClick() {
+				// ((SoftDeletableSearchPage) source).setUndeleted((SoftDeletable) getParent().getDefaultModelObject());
+				undelete();
+			}
+		};
+		add(link);
+	}
+
+	abstract protected void undelete();
+}
+
+public abstract class SoftDeletableSearchPage<T extends EnumeratedValueObjectInterface> extends BasePage {
+		IColumn<T> action = new FilteredAbstractColumn<T>(Model.<String> of("Actions")) {
+			@Override
+			public void populateItem(Item<ICellPopulator<T>> cellItem, String componentId, IModel<T> rowModel) {
+				Component action = new SoftDeletableActionPanel<T>(componentId, getPage(), rowModel);
+				cellItem.add(action);
+			}
+		};
+
+/ 13	. 
+
+public abstract class SoftDeletableActionPanel<T extends EnumeratedValueObjectInterface> extends Panel {
+	public SoftDeletableActionPanel(String id, IModel<T> rowModel) {
+		super(id, rowModel);
+		Component link = new Link<Void>("undelete") {
+			@Override
+			public void onClick() {
+				undelete();
+			}
+		};
+		add(link);
+	}
+
+	abstract protected void undelete();
+}
+
+public abstract class SoftDeletableSearchPage<T extends EnumeratedValueObjectInterface> extends BasePage {
+			@Override
+			public void populateItem(final Item<ICellPopulator<T>> cellItem, final String componentId, final IModel<T> rowModel) {
+				Component action = new SoftDeletableActionPanel<T>(componentId, rowModel) {
+					@Override
+					protected void undelete() {
+						SoftDeletableSearchPage.this.setUndeleted(rowModel.getObject());
+
+					}
+				};
+				cellItem.add(action);
+			}
+		};
+
+/ 13	. 
+
+/ rm  model from panel	,
+
+public abstract class SoftDeletableActionPanel<T extends EnumeratedValueObjectInterface> extends Panel {
+	public SoftDeletableActionPanel(String id) {
+		super(id);
+		Component link = new Link<Void>("undelete") {
+			@Override
+			public void onClick() {
+				undelete();
+			}
+		};
+		add(link);
+	}
+
+	abstract protected void undelete();
+}
+
+public abstract class SoftDeletableSearchPage<T extends EnumeratedValueObjectInterface> extends BasePage {
+			@Override
+			public void populateItem(final Item<ICellPopulator<T>> cellItem, final String componentId, final IModel<T> rowModel) {
+				Component action = new SoftDeletableActionPanel<T>(componentId) {
+					@Override
+					protected void undelete() {
+						SoftDeletableSearchPage.this.setUndeleted(rowModel.getObject());
+
+					}
+				};
+				cellItem.add(action);
+			}
+		};
+
+/ 13	. 
+
+/ WAS	, 
+public abstract class SoftDeletableActionPanel<T extends EnumeratedValueObjectInterface> extends Panel {
+	public SoftDeletableActionPanel(String id) {
+		super(id);
+		Component link = new Link<Void>("undelete") {
+			@Override
+			public void onClick() {
+				undelete();
+			}
+		};
+		add(link);
+
+/ NOW	, 
+
+/13	. 
+
+
+/s
+Daemon Thread [http-0.0.0.0-8080-4] (Suspended (breakpoint at line 29 in SoftDeletableActionPanel$2))	
+	SoftDeletableActionPanel$2.onSubmit(AjaxRequestTarget, Form<?>) line: 29	
+				undelete();
+
+	AjaxButton$1.onSubmit(AjaxRequestTarget) line: 101	
+		add(new AjaxFormSubmitBehavior(form, "onclick")
+		{
+				AjaxButton.this.onSubmit(target, AjaxButton.this.getForm());
+/cb
+	AjaxButton$1(AjaxFormSubmitBehavior).onEvent(AjaxRequestTarget) line: 156	
+		getForm().getRootForm().onFormSubmitted();
+		if (!getForm().isSubmitted())
+		{ // only process the form submission if the form was actually submitted -> needs to be
+			// enabled and visible
+			return;
+		}
+		if (!getForm().hasError())
+		{
+			onSubmit(target);
+/cb
+	AjaxButton$1(AjaxEventBehavior).respond(AjaxRequestTarget) line: 177	
+	AjaxButton$1(AbstractDefaultAjaxBehavior).onRequest() line: 312	
+	BehaviorRequestTarget.processEvents(RequestCycle) line: 157	
+	WebRequestCycleProcessor(AbstractRequestCycleProcessor).processEvents(RequestCycle) line: 92	
+	MpoWebRequestCycle(RequestCycle).processEventsAndRespond() line: 1279	
+	MpoWebRequestCycle(RequestCycle).step() line: 1358	
+	MpoWebRequestCycle(RequestCycle).steps() line: 1465	
+	MpoWebRequestCycle(RequestCycle).request() line: 545	
+	WicketFilter.doGet(HttpServletRequest, HttpServletResponse) line: 486	
+	WicketServlet.doPost(HttpServletRequest, HttpServletResponse) line: 160	
+	WicketServlet(HttpServlet).service(HttpServletRequest, HttpServletResponse) line: 717	
+	WicketServlet(HttpServlet).service(ServletRequest, ServletResponse) line: 810	
+
+/ 13	. 
+
+/ title	, 
+
+$ less GenericFormPanel.java
+
+		Label myTitleLable = new Label("formTitle", new PropertyModel<String>(this, "title")) {
+		};
+	public abstract String getTitle();
+
+$ less EvoEditPage.java
+
+	protected void createCreateButton() {
+		Form<T> createForm = new Form<T>("createForm");
+		add(createForm);
+
+		final IModel<String> createPageTitle = new StringResourceModel("createEntity", EvoEditPage.this, new Model<EvoEditPage<T>>(EvoEditPage.this),
+				"Create ${entityName}");
+		createButton = new AjaxFallbackButton("createButton", createForm) {
+			@Override
+			protected void onSubmit(AjaxRequestTarget aTarget, Form<?> aForm) {
+				EvoEditFormPage<T> page = getEditPage();
+				page.setPageTitle(createPageTitle.getObject());
+
+	protected EvoEditFormPage<T> getEditPage() {
+			editPage = new EvoEditFormPage<T>(this, daoWrapper, dataProperties);
+
+$ less EvoEditPage.properties
+createEntity=Create ${entityName}
+
+$ less EvoEditFormPage.java
+
+	public void setPageTitle(String aPageTitle) {
+		pageTitle = aPageTitle;
+		editPanel.setTitle(pageTitle);
+	}
+
+	protected void createEditPanel() {
+		EntityFormActionBuilder<T> panelBuilder = new EntityFormActionBuilder<T>(getFormActions());
+		editPanel = new EvoEditPanel<T>("editPanel", new WebComponentEventSwitchBoard(), panelBuilder, daoWrapper, dataProperties);
+
+$ less EvoEditPanel.java
+public class EvoEditPanel<T extends DescribedUniqueFieldValueObject> extends GenericFormPanel<T> {
+	public void setTitle(String aTitle) {
+		title = aTitle;
+	}
+
+abstract public class GenericFormPanel<T extends EntityInterface> extends BaseWebComponent {
+	public abstract String getTitle();
+		Label myTitleLable = new Label("formTitle", new PropertyModel<String>(this, "title")) {
+			@Override
+			public boolean isVisible() {
+				Object obj = getDefaultModelObject();
+				return obj instanceof String && !((String) obj).isEmpty();
+			};
+		};
+		form.add(myTitleLable);
+}
+
+$ less GenericFormPanel.html
+<div wicket:id="formTitle"/></h2>
+
+/ Ook	, 
+public abstract class EvoListPage<T extends DescribedUniqueFieldValueObject> extends BaseContextPage {
+		final IModel<String> editPageTitle = new StringResourceModel("listTitle", EvoListPage.this, new Model<EvoListPage<T>>(EvoListPage.this),
+				"Search ${entityName}");
+
+/ 7	. 
+
+public abstract class EvoEditPage<T extends DescribedUniqueFieldValueObject> extends EvoListPage<T> implements EvoEditFormCallback {
+	protected void createCreateButton() {
+		...
+		final IModel<String> createPageTitle = new StringResourceModel("createEntity", EvoEditPage.this, new Model<EvoEditPage<T>>(EvoEditPage.this), "Create ${entityName}");																<- load page, 
+		createButton = new AjaxFallbackButton("createButton", createForm) {
+			@Override
+			protected void onSubmit(AjaxRequestTarget aTarget, Form<?> aForm) {
+				EvoEditFormPage<T> page = getEditPage();
+				page.setPageTitle(createPageTitle.getObject());						<- click button	,
+
+
+/ we click  de create button	, 
+/ stack
+/s
+	StringResourceModel.getString() line: 503	
+			value = localizer.getString(getResourceKey(), component, model, defaultValue);
+/cb
+	StringResourceModel.load() line: 647	
+		return getString();
+/cb
+	StringResourceModel.load() line: 181	
+	StringResourceModel(LoadableDetachableModel).getObject() line: 120	
+			transientModelObject = load();
+/cb
+	EvoEditPage$3.onSubmit(AjaxRequestTarget, Form<?>) line: 133	
+				page.setPageTitle(createPageTitle.getObject());
+/cb
+	AjaxFallbackButton$1.onSubmit(AjaxRequestTarget) line: 74	
+				AjaxFallbackButton.this.onSubmit(target, AjaxFallbackButton.this.getForm());
+/cb
+	AjaxFallbackButton$1(AjaxFormSubmitBehavior).onEvent(AjaxRequestTarget) line: 156	
+			onSubmit(target);
+/cb
+	AjaxFallbackButton$1(AjaxEventBehavior).respond(AjaxRequestTarget) line: 177	
+	AjaxFallbackButton$1(AbstractDefaultAjaxBehavior).onRequest() line: 312	
+	BehaviorRequestTarget.processEvents(RequestCycle) line: 157	
+	WebRequestCycleProcessor(AbstractRequestCycleProcessor).processEvents(RequestCycle) line: 92	
+	MpoWebRequestCycle(RequestCycle).processEventsAndRespond() line: 1279	
+	MpoWebRequestCycle(RequestCycle).step() line: 1358	
+	MpoWebRequestCycle(RequestCycle).steps() line: 1465	
+	MpoWebRequestCycle(RequestCycle).request() line: 545	
+	WicketFilter.doGet(HttpServletRequest, HttpServletResponse) line: 486	
+	WicketServlet.doPost(HttpServletRequest, HttpServletResponse) line: 160	
+	WicketServlet(HttpServlet).service(HttpServletRequest, HttpServletResponse) line: 717	
+	WicketServlet(HttpServlet).service(ServletRequest, ServletResponse) line: 810	
+/debug
+/s
+StringResourceModel.getString() line: 503	
+			value = localizer.getString(getResourceKey(), component, model, defaultValue);
+this	StringResourceModel  (id=18230)	
+	component	IncoTermPage  (id=18207)	
+	model	Model  (id=18303)	
+		object	IncoTermPage  (id=18207)	
+	resourceKey	"createEntity" (id=18305)	
+/s
+StringResourceModel.getResourceKey() line: 620	
+			return PropertyVariableInterpolator.interpolate(resourceKey, model.getObject());
+/s
+PropertyVariableInterpolator.interpolate(String, Object) line: 69	
+		if (string.indexOf("${") != -1)
+/n
+		// Return simple string
+		return string;
+/t
+StringResourceModel.getString() line: 503	
+			value = localizer.getString(getResourceKey(), component, model, defaultValue);
+/pd
+/s
+Localizer.getString(String, Component, IModel<?>, String) line: 311	
+/=
+	public String getString(final String key, final Component component, final IModel<?> model, final String defaultValue) throws MissingResourceException 
+component	IncoTermPage  (id=18207)	
+model	Model  (id=18303)	
+	object	IncoTermPage  (id=18207)	
+defaultValue	"Create ${entityName}" (id=18302)	
+
+		String value = getStringIgnoreSettings(key, component, model, null);
+/s
+Localizer.getStringIgnoreSettings(String, Component, IModel<?>, String) line: 217	
+			cacheKey = getCacheKey(key, component);
+createEntity-1-en_GB-null
+			value = getFromCache(cacheKey);
+
+/ 7	. 
+
+/ we hebben de language file kunnen omzeilen door de property in de Application's properties file neer te set	, 
+
+$ vi SoftDeletableSearchPageTest.java
+public class SoftDeletableSearchPageTest {
+	@Before
+	public void setUp() {
+
+		WebApplication webApplication = new SoftDeletableSearchTestApplication();
+		tester = new WicketTester(webApplication);
+
+$ vi SoftDeletableSearchTestApplication.java
+public class SoftDeletableSearchTestApplication extends WebApplication {
+
+	@Override
+	public Class<? extends Page> getHomePage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}
+
+$ vi SoftDeletableSearchTestApplication.properties
+message_processing_form_message = Form is being processed...
+
+/ 7	. 
+
+/ Set b in test method	,
+/ page	, een test property, is er altijd	, via deze kun je in de table komen	, 
+
+		tester.assertEnabled("filterForm:table:body:rows:1:cells:1:cell:undelete");
+		tester.assertEnabled("filterForm:table:body:rows:1:cells:2:cell");
+		tester.assertEnabled("filterForm:table:body:rows:1:cells:3:cell");
+
+		tester.assertEnabled("filterForm:table:body:rows:2:cells:1:cell:undelete");
+		tester.assertEnabled("filterForm:table:body:rows:2:cells:2:cell");
+		tester.assertEnabled("filterForm:table:body:rows:2:cells:3:cell");
+
+/ "table" is DataTable	,
+/ "body" is WebmarkupContainer, voor <tbody>	,
+/ "rows" is de DataGridView, is de RefreshingView	, 
+/ "1", "2" is Item
+/ "cells" is RepeatingView	, horizontale cells	,
+/ '1","2","3" is een Item	,
+/ "1:cell" is een SoftDeletableActionPanel
+/ "1:cell:undelete" is een AjaxButton	, 
+/ "2:cell","3:cell" is een Label	, 
+
+/ 7	. 
+
+/ HADDEN IN SOFTDELETABLESEARCHPAGETEST	,
+
+$ vi SoftDeletableSearchPageTest.java
+
+@RunWith(MockitoJUnitRunner.class)
+public class SoftDeletableSearchPageTest {
+
+	@Test
+	@Ignore
+	public void testFilterForm() {
+		// FilterForm<SoftDeletableFilter> filterForm = (FilterForm<SoftDeletableFilter>)
+		// tester.getComponentFromLastRenderedPage("filterForm");
+
+		// filterForm.getPath() 0:filterForm
+		// filterForm.getPage() [Page class =
+		// com.mpobjects.core.view.wicket.softdeletable.SoftDeletableSearchPageTesta$1, id = 0, version = 0]
+		// filterForm.get("table") [MarkupContainer [Component id = table]]
+		// filterForm.get(0) [MarkupContainer [Component id = focus-tracker]]
+		// filterForm.get(1) [MarkupContainer [Component id = focus-restore]]
+		// filterForm.get(2) [MarkupContainer [Component id = table]]
+		// filterForm.get("table").getPath() 0:filterForm:table
+
+	}
+
+	@Test
+	@Ignore
+	public void testClickUndelete() {
+
+		// tester.clickLink("filterForm:table:body:rows:2:cells:1:cell:undelete");
+		// SoftDeletable softDeletable = ((SoftDeletableSearchPage) tester.getLastRenderedPage()).getUndeleted();
+		// if (softDeletable instanceof EnumeratedValueObject) {
+		// Assert.assertEquals("FAS", ((EnumeratedValueObject) softDeletable).getCode());
+		// Assert.assertEquals("Free Carrier, not in scope", ((EnumeratedValueObject) softDeletable).getDescription());
+		// }
+	}
+
+	@Test
+	@Ignore
+	public void testFilterForm() {
+		// Label label = (Label) tester.getComponentFromLastRenderedPage("filterForm:table:body:rows:3:cells:3:cell");
+		// String desc = label.getDefaultModelObjectAsString();
+		// Assert.assertEquals("Free Carrier, not in scope", desc);
+		// // tester.assertLabel("filterForm:table:body:rows:4:cells:3:cell", "Delivered Duty Unpaid");
+		// label = (Label) tester.getComponentFromLastRenderedPage("filterForm:table:body:rows:4:cells:3:cell");
+		// desc = label.getDefaultModelObjectAsString();
+		// Assert.assertEquals("Free Carrier, not in scope", desc);
+
+
+	}
+
+/ Einde HADDEN IN SOFTDELETABLESEARCHPAGETEST	,
+
+/ NU IN SOFTDELETABLESEARCHPAGETEST	,
+
+	@Test
+	@Ignore
+	public void testFilterForm() {
+		...
+		tester.assertLabel("filterForm:table:body:rows:3:cells:3:cell", "Free Carrier, not in scope");
+		tester.assertLabel("filterForm:table:body:rows:4:cells:3:cell", "Free Carrier, not in scope");
+
+
+/ MORGENOCHTEND
+
+/ Als je filter	op CPT, is size=2, klopt, 
+/ moeten we in de test in orde maken	,
+
+	@Override
+	protected Iterator<IModel<T>> getItemModels()
+	{
+		int offset = getViewOffset();
+		int size = getViewSize();
+2
+		Iterator<IModel<T>> models = getItemModels(offset, size);
+
+/ WH 	, 
+		Mockito.when((Iterator<SoftDeletable>) provider.iterator(Matchers.anyInt(), Matchers.anyInt())).thenReturn((Iterator<SoftDeletable>) iterator);
+
+		Mockito.when(provider.size()).thenReturn(2);
+		Mockito.when(iterator.hasNext()).thenReturn(true);
+		Mockito.when(((Iterator<SoftDeletable>) iterator).next()).thenReturn(incoterm, incoterm2);
+
+
+/ 7	. 
+
+/ RM
+java.lang.IllegalArgumentException: Argument pageClass must be not null
+
+/ stack
+/s
+	at org.apache.wicket.request.target.component.BookmarkablePageRequestTarget.<init>(BookmarkablePageRequestTarget.java:122)
+		Session session = requestCycle.getSession();
+		Application application = session.getApplication();
+		try
+		{
+			// Get the home page class
+			Class<? extends Page> homePageClass = application.getHomePage();						/ null	,
+
+			PageParameters parameters = new PageParameters(requestParameters.getParameters());
+			// and create a dummy target for looking up whether the home page is
+			// mounted
+			BookmarkablePageRequestTarget homepageTarget = new BookmarkablePageRequestTarget(
+				homePageClass, parameters);														/ homePageClass==null	,
+/cb
+	at org.apache.wicket.request.target.component.BookmarkablePageRequestTarget.<init>(BookmarkablePageRequestTarget.java:85)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.resolveHomePageTarget(AbstractRequestCycleProcessor.java:336)
+	at org.apache.wicket.protocol.http.WebRequestCycleProcessor.resolve(WebRequestCycleProcessor.java:175)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1339)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1465)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:545)
+	at org.apache.wicket.protocol.http.MockWebApplication.processRequestCycle(MockWebApplication.java:528)
+	at org.apache.wicket.util.tester.BaseWicketTester.executeAjaxEvent(BaseWicketTester.java:1340)
+	at org.apache.wicket.util.tester.BaseWicketTester.executeAjaxEvent(BaseWicketTester.java:1202)
+	at com.mpobjects.core.view.wicket.softdeletable.SoftDeletableSearchPageTest.testClickUndelete(SoftDeletableSearchPageTest.java:146)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:44)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:15)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:41)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:20)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:28)
+	at org.junit.runners.BlockJUnit4ClassRunner.runNotIgnored(BlockJUnit4ClassRunner.java:79)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:71)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:49)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:193)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:52)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:191)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:42)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:184)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:236)
+	at org.mockito.internal.runners.JUnit45AndHigherRunnerImpl.run(JUnit45AndHigherRunnerImpl.java:37)
+	at org.mockito.runners.MockitoJUnitRunner.run(MockitoJUnitRunner.java:62)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:50)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:467)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:683)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:390)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:197)
+
+/ 7	. 
+
+/ In wicket 7 is heeft WicketTester default een MockApplication	, wiens getHomePage() een MockHomePage geeft	,
+/ In wicket 1.4 is heeft WicketTester default een WicketTester.DummyWebApplication	, wiens getHomePage() een DummyHomePage geeft	,
+
+/ we maakten in trunk	
+
+package com.mpobjects.core.view.wicket.softdeletable;
+
+import org.apache.wicket.util.tester.WicketTester;
+import org.junit.Before;
+
+public class CustomHomePageTest {
+
+	private WicketTester tester;
+
+	@Before
+	public void init() {
+		tester = new WicketTester(new CustomApplication());
+	}
+
+}
+
+class CustomApplication extends WicketTester.DummyWebApplication {
+}
+
+/ 7	. 
+
+/ we HADDEN	,
+
+public abstract class SoftDeletableSearchTestApplication extends WebApplication {
+
+	@Override
+	public Class<? extends Page> getHomePage() {
+		return homePage();
+	}
+	abstract Class<? extends Page>homePage();
+}
+
+public class SoftDeletableSearchPageTest {
+	public void setUp() {
+		
+		WebApplication webApplication = new SoftDeletableSearchTestApplication() {
+			@Override
+			Class<? extends Page> homePage() {
+				//return page.getClass();				/ Kan NIET: elke Component, ook WebPage	, heeft een Application nodig	, see (*) beneden	, 
+		public Component(final String id, final IModel<?> model)
+	{
+		setId(id);
+		getApplication().notifyComponentInstantiationListeners(this);
+
+				return null;
+			}
+		};
+
+		page = new SoftDeletableSearchPage<EnumeratedValueObjectInterface>(provider) {
+			@Override
+			protected void back() {
+			}
+
+			@Override
+			protected IModel<String> title_() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		};
+
+		tester.startPage(page);
+
+/ (*)
+	public Component(final String id, final IModel<?> model)
+	{
+		setId(id);
+		getApplication().notifyComponentInstantiationListeners(this);			<-
+
+/ 7	. 
+
+/ In wicket 7 is LoadableDetachableModel.getObject final, dus kunnen we DetachableContactModel.load mock	,
+/ In wicket 1.4 is LoadableDetachableModel.getObject niet final, dus kunnen we deze mock	, maar WH kunnen we ook SoftDeletableLoadableDetachableModel.load mock TODO	, of niet	, want als we dat doen is .getObject ...
+
+/ wicket 7	. 
+
+public abstract class LoadableDetachableModel<T> implements IModel<T>
+	public final T getObject()
+	{
+			transientModelObject = load();
+
+public class DetachableContactModel extends LoadableDetachableModel<Contact>
+	@Override
+	protected Contact load()
+	{
+		// loads contact from the database
+		return getContactsDB().get(id);
+
+/ wicket 1.4
+
+public abstract class LoadableDetachableModel<T> implements IModel<T>
+	public T getObject()
+	{
+		if (!attached)
+		{
+			attached = true;
+			transientModelObject = load();
+
+public class SoftDeletableLoadableDetachableModel<T extends EnumeratedValueObjectInterface> extends LoadableDetachableModel<T> {
+	@Override
+	public T load() {
+		return daoWrapper.getBean().getBySystemId(id);
+
+
+/
+
+
+/ Einde NU IN SOFTDELETABLESEARCHPAGETEST	, 
+
+/ SOFTDELETABLE
+
+/ 7	. 
+
+public class CapacityTypePage extends SoftDeletableEvoEditPage<CapacityType> {
+public abstract class SoftDeletableEvoEditPage<T extends EnumeratedValueObjectInterface> extends EvoEditPage<T> {
+
+public class CapacityType extends EnumeratedValueObject {
+public abstract class EnumeratedValueObject extends SoftDeletableValueObject implements EnumeratedValueObjectInterface {/ implements description, code
+public class SoftDeletableValueObject extends ValueObject implements SoftDeletable {	/ implements deleted
+public abstract class ValueObject implements java.io.Serializable, SelectionListHelper.SelectionListItem, EntityInterface { / implements systemId
+
+public interface EnumeratedValueObjectInterface extends DescribedUniqueFieldValueObject, SoftDeletable { 
+public interface SoftDeletable {	 / deleted
+public interface DescribedUniqueFieldValueObject extends UniqueFieldValueObject { / description
+public interface UniqueFieldValueObject extends Comparable<UniqueFieldValueObject>, EntityInterface {	/ code
+public interface EntityInterface extends Serializable {	/ systemId
+
+/ 7	. 
+
+public class CapacityTypePage extends SoftDeletableEvoEditPage<CapacityType> {
+public abstract class SoftDeletableEvoEditPage<T extends EnumeratedValueObjectInterface> extends EvoEditPage<T> {
+public class CapacityType extends EnumeratedValueObject {
+public abstract class EnumeratedValueObject extends SoftDeletableValueObject implements EnumeratedValueObjectInterface {
+
+/ 7	. 
+
+public abstract class SoftDeletableEvoEditPage<T extends EnumeratedValueObjectInterface> extends EvoEditPage<T> {
+		softDeletableLink = new AjaxLink<Void>("softDeletableLink") {
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				ISortableDataProvider<T> sortableDataProvider = new SoftDeletableDataProvider<T>((BeanWrapper<SoftDeletableDAOInterface<T>>) daoWrapper);
+
+public class SoftDeletableDataProvider<T extends EnumeratedValueObjectInterface> extends SortableDataProvider<T> implements IFilterStateLocator<SoftDeletableFilter>, SoftDeletableLocator<T> {
+	public Iterator<T> iterator(int first, int count) {
+	public int size() {
+	...
+	public void merge(T entity) {
+
+public interface SoftDeletableDAOInterface<T extends EnumeratedValueObjectInterface> extends EnumeratedValueObjectDAOInterface<T> {
+	List<T> queryDeleted(SoftDeletableFilter filter, SortParam sortParam, int first, int count);
+	void unDelete(SoftDeletable softDeletable);
+/i
+public interface EnumeratedValueObjectDAOInterface<T extends DescribedUniqueFieldValueObject> extends BaseDAOInterface<T> {
+	Collection<T> findByCode(String aCode);
+	...
+/ bijv	,
+public class IncoTermDAOHibernate extends EnumeratedValueObjectHibernateDAO<IncoTermVO> implements IncoTermDAO {
+public class CapacityTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<CapacityType> implements CapacityTypeDAO {
+public class BusinessObjectDAOImpl extends EnumeratedValueObjectHibernateDAO<BusinessObject> implements BusinessObjectDAO {
+...
+
+public interface BaseDAOInterface<Type extends EntityInterface> {
+	void delete(Type aVO) throws DAOException;
+...
+
+public interface SoftDeletableLocator<T extends SoftDeletable> {
+	void merge(T softDeletable);
+
+/ eclipse: 
+ctrl+o (2x)
+ctrl+shift+t
+
+/ 13	. 
+
+public class IncoTermPage extends SoftDeletableEvoEditPage<IncoTermVO> {
+	@Override
+	protected BeanWrapper<? extends EnumeratedValueObjectDAOInterface<IncoTermVO>> getBeanWrapper() {
+		return new BeanWrapper(IncoTermDAO.class);
+	}
+/ Zoek key "IncoTermDAO" op in *-sb.xml	, en dan zien we de dao 	,
+
+public class BusinessObjectPage extends SoftDeletableEvoEditPage<BusinessObject> {
+	@Override
+	protected BeanWrapper<? extends EnumeratedValueObjectDAOInterface<BusinessObject>> getBeanWrapper() {
+		return new BeanWrapper<BusinessObjectDAO>(BusinessObjectDAO.class);
+	}
+/ Zoek key "BusinessObjectDAO" op in *-sb.xml	, en dan zien we de dao 	,
+
+
+/ 7	. 
+
+public class SoftDeletableDataProvider<T extends EnumeratedValueObjectInterface> extends SortableDataProvider<T> implements
+		IFilterStateLocator<SoftDeletableFilter>, SoftDeletableLocator<T> {
+	@Override
+	public Iterator<T> iterator(int first, int count) {
+		List<T> list = daoWrapper.getBean().queryDeleted(filter, getSort(), first, count);
+		return list.iterator();
+	}
+	@Override
+	public int size() {
+		List<T> list = daoWrapper.getBean().queryDeleted(filter, getSort(), -1, 0);
+		return list.size();
+	}
+}
+
+public class IncoTermPage extends SoftDeletableEvoEditPage<IncoTermVO> {
+	@Override
+	protected BeanWrapper<? extends EnumeratedValueObjectDAOInterface<IncoTermVO>> getBeanWrapper() {
+		return new BeanWrapper(IncoTermDAO.class);
+	}
+}
+
+public class IncoTermDAOHibernate extends EnumeratedValueObjectHibernateDAO<IncoTermVO> implements IncoTermDAO {
+/e
+public class EnumeratedValueObjectHibernateDAO<T extends EnumeratedValueObjectInterface> extends GenericHibernateDAO<T> implements EnumeratedValueObjectDAOInterface<T>, SoftDeletableDAOInterface<T> {
+	@Override
+	public List<T> queryDeleted(SoftDeletableFilter filter, SortParam sortParam, int first, int count) {
+		...
+	@Override
+	public void unDelete(SoftDeletable softDeletable) {
+		...
+/i
+public interface SoftDeletableDAOInterface<T extends EnumeratedValueObjectInterface> extends EnumeratedValueObjectDAOInterface<T> {
+	List<T> queryDeleted(SoftDeletableFilter filter, SortParam sortParam, int first, int count);
+
+	void unDelete(SoftDeletable softDeletable);
+
+}
+
+
+/ 7	. 
+
+/ inversion of control design pattern	,
+https://martinfowler.com/articles/injection.html
+
+/ 7	. 
+
+/ we copy de 1ste column  uit spreadsheet	 in ~/tmp/scs-stuff/allpages.txt
+
+/ mijn notes in	,
+~/tmp/scs-stuff/evopages.txt
+
+/ we deden	,
+:.,+20s/\/tmp/\~\/tmp\/scs-stuff/g
+
+
+[eric@localhost bin]$ awk '!/public/{print}' ~/tmp/scs-stuff/evopages.txt 
+[eric@localhost bin]$ awk '{!/public/;print}' ~/tmp/scs-stuff/evopages.txt | awk '{sub(/\/ [0-9][0-9] /,"");print}'
+
+[eric@localhost bin]$ awk '!/public/ && !/NIET/{print}' ~/tmp/scs-stuff/evopages.txt | awk '{sub(/\/ [0-9]*\s*/,"");print}'
+/ or	,
+[eric@localhost bin]$ awk '!/public/ && !/NIET/{print}' ~/tmp/scs-stuff/evopages.txt | awk '{sub(/\/ [[:digit:]]*\s*/,"");print}'
+/ or
+[eric@localhost bin]$ awk '!/public/ && !/NIET/{print}' ~/tmp/scs-stuff/evopages.txt | awk '{print gensub(/(.*)(com.*)/,"\\2","g")}' 
+
+/ rm empty lines	,
+[eric@localhost bin]$ awk '!/public/ && !/NIET/{print}' ~/tmp/scs-stuff/evopages.txt | awk '{sub(/\/ [0-9]*\s*/,"");print}' | awk '!/^$/{print}'
+
+[eric@localhost bin]$ awk '!/public/ && !/NIET/{print}' ~/tmp/scs-stuff/evopages.txt | awk '{sub(/\/ [0-9]*\s*/,"");print}' | awk '!/^$/{print}' >~/tmp/scs-stuff/donepages.txt
+
+[eric@localhost bin]$ comm ~/tmp/scs-stuff/allpages.txt ~/tmp/scs-stuff/donepages.txt 
+com.mpobjects.capabletopromise.model.entity.CapacityProfile
+		com.mpobjects.capabletopromise.model.entity.capacitytype.CapacityType
+com.mpobjects.capabletopromise.model.entity.planboard.PlanboardStatusDefinition
+com.mpobjects.capabletopromise.model.entity.resource.Resource
+com.mpobjects.capabletopromise.model.entity.resourcetype.ResourceType
+		com.mpobjects.contract.model.entity.contracttype.ContractType
+com.mpobjects.contract.model.entity.CustomerContract
+com.mpobjects.contract.model.entity.SupplierContract
+...
+
+[eric@localhost scs-stuff]$ comm <(sort allpages.txt ) <(sort donepages.txt ) | awk '!/^\s/{print}'
+
+com.mpobjects.capabletopromise.model.entity.CapacityProfile
+com.mpobjects.capabletopromise.model.entity.planboard.PlanboardStatusDefinition
+com.mpobjects.capabletopromise.model.entity.resource.Resource
+com.mpobjects.capabletopromise.model.entity.resourcetype.ResourceType
+com.mpobjects.contract.model.entity.CustomerContract
+...
+[eric@localhost scs-stuff]$ comm <(sort allpages.txt ) <(sort donepages.txt ) | awk '!/^\s/{print}' >todopages.txt
+
+/ Geef	,
+[eric@localhost tmp]$ soffice --calc ~/Documents/SCS-821\ Soft\ Deletable\ entities.xlsx 
+
+/ 13	.
+
+[eric@localhost scs-stuff]$ cat allpages.txt  | wc
+     78      78    4343
+
+[eric@localhost scs-stuff]$ cat allpages.txt 
+com.mpobjects.capabletopromise.model.entity.CapacityProfile
+com.mpobjects.capabletopromise.model.entity.capacitytype.CapacityType
+
+/ allpages is uit de spreadsheet	,
+[eric@localhost trunk]$ cat ~/tmp/scs-stuff/allpages.txt  | awk '{print gensub(/(.+)\.(.+)/,"\\2","g")}' | xargs -I % find -name "%.java"
+./module/capabletopromise/src/java/com/mpobjects/capabletopromise/model/entity/CapacityProfile.java
+./module/capabletopromise/src/java/com/mpobjects/capabletopromise/model/entity/capacitytype/CapacityType.java
+...
+/ awk is OK: pakt filename	, en zoekt, 	maar er zijn dubbelen	,
+...
+./module/oms/src/java/com/mpobjects/oms/model/user/Resource.java
+./module/carconserver/src/java/com/mpobjects/carconserver/model/entity/Resource.java
+
+/ Dus we moeten met het path erbij zoeken	,
+/ Lees	,
+http://superuser.com/questions/400078/how-can-i-search-a-file-by-its-name-and-partial-path
+
+[eric@localhost scs-stuff]$ cat allpages.txt  | awk '{print gensub(/\./,"/","g")}' | awk '{print $0".java"}' 
+com/mpobjects/capabletopromise/model/entity/CapacityProfile.java
+com/mpobjects/capabletopromise/model/entity/capacitytype/CapacityType.java
+...
+[eric@localhost trunk]$    cat ~/tmp/scs-stuff/allpages.txt  | awk '{print gensub(/\./,"/","g")}' | awk '{print $0".java"}' | xargs -I % find -path "*%"
+./module/capabletopromise/src/java/com/mpobjects/capabletopromise/model/entity/CapacityProfile.java
+./module/capabletopromise/src/java/com/mpobjects/capabletopromise/model/entity/capacitytype/CapacityType.java
+...
+/ OK
+[eric@localhost trunk]$    cat ~/tmp/scs-stuff/allpages.txt  | awk '{print gensub(/\./,"/","g")}' | awk '{print $0".java"}' | xargs -I % find -path "*%" | wc
+     77      77    6622
+/ 1 te weinig	,
+/ TODO
+
+[eric@localhost trunk]$    cat ~/tmp/scs-stuff/allpages.txt  | awk '{print gensub(/\./,"/","g")}' | awk '{print $0".java"}' | xargs -I % find -path "*%"  | xargs -I % grep 'extends SoftDeletableEvoEditPage' %
+/ De types in de spreadsheet zijn geen pages	, bijv IncoTermVO ipv IncoTermPage
+/ TODO
+
+/ Daarom doen we 	,
+
+for file in $(cat ~/tmp/scs-stuff/allpages.txt  | awk '{print gensub(/\./,"/","g")}' | awk '{print $0".java"}' | xargs -I % find -path "*%" ); do grep 'extends SoftDeletableEvoEditPage' $file;done
+[eric@localhost trunk]$ for file in $(cat ~/tmp/scs-stuff/allpages.txt  | awk '{print gensub(/\./,"/","g")}' | awk '{print $0".java"}' | xargs -I % find -path "*%" ); do grep "extends SoftDeletableEvoEditPage" $file;done
+/ De types in de spreadsheet zijn geen pages	, bijv IncoTermVO ipv IncoTermPage
+
+/ 13	. 
+
+/ Daarom doen we: rm VO, add Page.java en ListPage.java	, en zoek deze	,
+
+[eric@localhost trunk]$ cat ~/tmp/scs-stuff/allpages.txt  | awk '{print gensub(/(.+)\.(.+)/,"\\2","g")}' | awk '{print gensub(/VO/,"","g")}' | awk '{print $0"Page.java"}'
+CapacityProfilePage.java
+CapacityTypePage.java
+...
+
+[eric@localhost trunk]$ cat ~/tmp/scs-stuff/allpages.txt  | awk '{print gensub(/(.+)\.(.+)/,"\\2","g")}' | awk '{print gensub(/VO/,"","g")}' | awk '{print $0"Page.java"}' | xargs -I % find -name %
+./module/capabletopromise/src/java/com/mpobjects/capabletopromise/view/wicket/capacityprofile/CapacityProfilePage.java
+./module/capabletopromise/src/java/com/mpobjects/capabletopromise/view/wicket/capacitytype/CapacityTypePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/user/ResourcePage.java
+./module/capabletopromise/src/java/com/mpobjects/capabletopromise/view/wicket/resource/ResourcePage.java
+./module/contract/src/java/com/mpobjects/contract/view/wicket/contracttype/ContractTypePage.java
+./module/contract/src/java/com/mpobjects/contract/view/wicket/customercontract/CustomerContractPage.java
+./module/contract/src/java/com/mpobjects/contract/view/wicket/suppliercontract/SupplierContractPage.java
+./module/event/src/java/com/mpobjects/event/view/wicket/eventaction/EventActionPage.java
+./module/event/src/java/com/mpobjects/event/view/wicket/eventcustomquery/EventCustomQueryPage.java
+./module/event/src/java/com/mpobjects/event/view/wicket/eventtemplate/EventTemplatePage.java
+./module/event/src/java/com/mpobjects/event/view/wicket/eventtype/EventTypePage.java
+./module/inventory/src/java/com/mpobjects/inventory/view/wicket/stocklocation/StockLocationPage.java
+./module/inventory/src/java/com/mpobjects/inventory/view/wicket/stocklocationtype/StockLocationTypePage.java
+./module/invoice/src/java/com/mpobjects/invoice/view/wicket/vatpolicy/VatPolicyPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/shippingunit/ShippingUnitPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/schedule/SchedulePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/containertype/ContainerTypePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/currency/CurrencyPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/adrcode/AdrCodePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/airport/AirportPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/messagereport/MessagePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/alertmessaging/MessagePage.java
+./module/carconserver/src/java/com/mpobjects/carconserver/view/wicket/message/MessagePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/businessobject/BusinessObjectPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/country/CountryPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/countrygroup/CountryGroupPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/criteriumtype/CriteriumTypePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/customerordertype/CustomerOrderTypePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/documenttype/DocumentTypePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/entitydetailtypegroup/EntityDetailTypeGroupPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/goodsstatus/GoodsStatusPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/holdstatus/HoldStatusPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/inducercode/InducerCodePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/inducertype/InducerTypePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/instructioncode/InstructionCodePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/instructiongroup/InstructionGroupPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/orderprocess/OrderProcessPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/organisationmasterdata/OrganizationPage.java
+./module/carconserver/src/java/com/mpobjects/carconserver/view/wicket/organization/OrganizationPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/planningreasoncode/PlanningReasonCodePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/privilegetype/PrivilegeTypePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/product/ProductPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/property/PropertyPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/reasoncode/ReasonCodePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/role/RolePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/servicetype/ServiceTypePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/shipmentservicelevel/ShipmentServiceLevelPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/shipmenttype/ShipmentTypePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/unnumber/UnNumberPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/incoterm/IncoTermPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/ordervalidationrule/OrderValidationRulePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/ordervalidationrulemessage/OrderValidationRuleMessagePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/ratecomponenttype/RateComponentTypePage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/user/ResourcePage.java
+./module/capabletopromise/src/java/com/mpobjects/capabletopromise/view/wicket/resource/ResourcePage.java
+./module/ratecalc/src/java/com/mpobjects/ratecalc/view/wicket/unit/UnitPage.java
+./module/wmstracking/src/java/com/mpobjects/wmstracking/view/wicket/activitytype/ActivityTypePage.java
+./module/wmstracking/src/java/com/mpobjects/wmstracking/view/wicket/workerplanning/WorkerPlanningPage.java
+
+[eric@localhost trunk]$ cat ~/tmp/scs-stuff/allpages.txt  | awk '{print gensub(/(.+)\.(.+)/,"\\2","g")}' | awk '{print gensub(/VO/,"","g")}' | awk '{print $0"Page.java"}' | xargs -I % find -name % | wc
+     58      58    5297
+
+[eric@localhost trunk]$ cat ~/tmp/scs-stuff/allpages.txt  | awk '{print gensub(/(.+)\.(.+)/,"\\2","g")}' | awk '{print gensub(/VO/,"","g")}' | awk '{print $0"ListPage.java"}' | xargs -I % find -name %
+./module/capabletopromise/src/java/com/mpobjects/capabletopromise/view/wicket/operations/ResourceListPage.java
+./module/capabletopromise/src/java/com/mpobjects/capabletopromise/view/wicket/resourcetype/ResourceTypeListPage.java
+./module/massupdate/src/java/com/mpobjects/massupdate/view/wicket/actiontype/EntityActionTypeListPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/calendar/ScheduleListPage.java
+./module/oms/src/java/com/mpobjects/oms/view/wicket/entitydetail/EntityDetailValueSetTypeListPage.java
+./module/capabletopromise/src/java/com/mpobjects/capabletopromise/view/wicket/operations/ResourceListPage.java
+./module/ratecalc/src/java/com/mpobjects/ratecalc/view/wicket/rateagreement/RateAgreementListPage.java
+./module/tax/src/java/com/mpobjects/tax/view/wicket/entityfieldexpression/EntityFieldExpressionListPage.java
+
+[eric@localhost trunk]$ cat ~/tmp/scs-stuff/allpages.txt  | awk '{print gensub(/(.+)\.(.+)/,"\\2","g")}' | awk '{print gensub(/VO/,"","g")}' | awk '{print $0"ListPage.java"}' | xargs -I % find -name % | wc
+      8       8     844
+
+/ 58+8=66
+
+ we kunnen ook met type*Page zoeken	,
+[eric@localhost trunk]$ cat ~/tmp/scs-stuff/allpages.txt  | awk '{print gensub(/(.+)\.(.+)/,"\\2","g")}' | awk '{print gensub(/VO/,"","g")}' | awk '{print $0"*Page.java"}' | xargs -I % find -name %  | wc
+    196     196   19626
+/ Veel dubbelen	, 
+./module/capabletopromise/src/java/com/mpobjects/capabletopromise/view/wicket/resource/event/ResourceEventEditPage.java
+./module/capabletopromise/src/java/com/mpobjects/capabletopromise/view/wicket/resourcegroup/ResourceGroupListPage.java
+./module/capabletopromise/src/java/com/mpobjects/capabletopromise/view/wicket/resourcegroup/ResourceGroupEditPage.java
+
+/ Maar OK,	 
+
+[eric@localhost trunk]$ cat ~/tmp/scs-stuff/allpages.txt  | awk '{print gensub(/(.+)\.(.+)/,"\\2","g")}' | awk '{print gensub(/VO/,"","g")}' | awk '{print $0"*Page.java"}' | xargs -I % find -name %  | xargs -I % grep  SoftDeletableEvoEditPage % | grep "public class" 
+public class CapacityTypePage extends SoftDeletableEvoEditPage<CapacityType> {
+public class ContractTypePage extends SoftDeletableEvoEditPage<ContractType> {
+public class CustomerInvoiceHeaderStatusEditPage extends SoftDeletableEvoEditPage<CustomerInvoiceHeaderStatus> {
+public class EventCustomQueryPage extends SoftDeletableEvoEditPage<EventCustomQuery> {
+public class EventTemplatePage extends SoftDeletableEvoEditPage<EventTemplate> {
+public class EventTypePage extends SoftDeletableEvoEditPage<EventType> {
+public class StockLocationPage extends SoftDeletableEvoEditPage<StockLocation> {
+public class StockLocationTypePage extends SoftDeletableEvoEditPage<StockLocationType> {
+public class StockLocationTypePage extends SoftDeletableEvoEditPage<StockLocationType> {
+public class VatPolicyPage extends SoftDeletableEvoEditPage<VatPolicy> {
+public class ShippingUnitPage extends SoftDeletableEvoEditPage<ShippingUnit> {
+public class SchedulePage extends SoftDeletableEvoEditPage<ScheduleVo> {
+public class ContainerTypePage extends SoftDeletableEvoEditPage<ContainerType> {
+public class CurrencyPage extends SoftDeletableEvoEditPage<CurrencyVO> {
+public class AdrCodePage extends SoftDeletableEvoEditPage<AdrCode> {
+public class AirportPage extends SoftDeletableEvoEditPage<Airport> {
+public class BusinessObjectPage extends SoftDeletableEvoEditPage<BusinessObject> {
+public class CountryGroupPage extends SoftDeletableEvoEditPage<CountryGroup> {
+public class CountryPage extends SoftDeletableEvoEditPage<Country> {
+public class CountryGroupPage extends SoftDeletableEvoEditPage<CountryGroup> {
+public class CriteriumTypePage extends SoftDeletableEvoEditPage<CriteriumType> {
+public class CustomerOrderTypePage extends SoftDeletableEvoEditPage<CustomerOrderType> {
+public class DocumentTypePage extends SoftDeletableEvoEditPage<DocumentType> {
+public class EntityDetailTypeGroupPage extends SoftDeletableEvoEditPage<EntityDetailTypeGroup> {
+public class GoodsStatusPage extends SoftDeletableEvoEditPage<GoodsStatus> {
+public class HoldStatusPage extends SoftDeletableEvoEditPage<HoldStatus> {
+public class InducerCodePage extends SoftDeletableEvoEditPage<InducerCode> {
+public class InducerTypePage extends SoftDeletableEvoEditPage<InducerType> {
+public class InstructionCodePage extends SoftDeletableEvoEditPage<InstructionCode> {
+public class InstructionGroupPage extends SoftDeletableEvoEditPage<InstructionGroup> {
+public class OrderProcessPage extends SoftDeletableEvoEditPage<OrderProcess> {
+public class OrganizationPage extends SoftDeletableEvoEditPage<Organization> {
+public class PlanningReasonCodePage extends SoftDeletableEvoEditPage<PlanningReasonCode> {
+public class PrivilegeTypePage extends SoftDeletableEvoEditPage<PrivilegeType> {
+public class PropertyPage extends SoftDeletableEvoEditPage<Property> {
+public class ReasonCodePage extends SoftDeletableEvoEditPage<ReasonCode> {
+public class RolePage extends SoftDeletableEvoEditPage<RoleVO> {
+public class ServiceTypePage extends SoftDeletableEvoEditPage<ServiceType> {
+public class ShipmentServiceLevelPage extends SoftDeletableEvoEditPage<ShipmentServiceLevelVO> {
+public class ShipmentTypePage extends SoftDeletableEvoEditPage<ShipmentType> {
+public class UnNumberPage extends SoftDeletableEvoEditPage<UnNumber> {
+public class IncoTermPage extends SoftDeletableEvoEditPage<IncoTermVO> {
+public class OrderValidationRulePage extends SoftDeletableEvoEditPage<OrderValidationRule> {
+public class PrivilegeTypePage extends SoftDeletableEvoEditPage<PrivilegeType> {
+public class RateComponentTypePage extends SoftDeletableEvoEditPage<RateComponentType> {
+/ OK
+
+[eric@localhost trunk]$ cat ~/tmp/scs-stuff/allpages.txt  | awk '{print gensub(/(.+)\.(.+)/,"\\2","g")}' | awk '{print gensub(/VO/,"","g")}' | awk '{print $0"*Page.java"}' | xargs -I % find -name %  | xargs -I % grep  SoftDeletableEvoEditPage % | grep extends | wc
+     45     270    3656
+
+/ 1313	. 
+
+/ grof	,
+
+[eric@localhost trunk]$ cat ~/tmp/scs-stuff/allpages.txt  | awk '{print gensub(/(.+)\.(.+)/,"\\2","g")}' | awk '{print gensub(/VO/,"","g")}' | awk '{print $0"*Page.java"}' | xargs -I % find -name %  | xargs -I % grep -v  SoftDeletableEvoEditPage % | grep "public class" | grep -v Edit
+public class CapacityProfilePage extends BaseContextPage {
+public class ResourceAuthorizationListPage extends BaseContextPage {
+public class ResourceSelectPage extends EvoJSSelectPage<Resource> {
+public class ResourcePage extends BaseContextPage {
+public class ResourceResetPage extends BaseContextPage {
+public class ResourceTypeListPage extends BaseContextPage {
+public class ResourceTypeScheduleListPage extends BaseContextPage {
+public class ResourceTypeSchedulePage extends AbstractMainPage {
+public class ResourceListPage extends BaseContextPage {
+public class ResourceTaskPage extends AbstractSimplePage {
+public class ResourceSelectPage extends AbstractMainPage {
+public class ResourcePage extends BaseContextPage {
+public class ResourceGroupListPage extends BaseContextPage {
+public class ResourceTypeListPage extends BaseContextPage {
+public class ResourceTypeScheduleListPage extends BaseContextPage {
+public class ResourceTypeSchedulePage extends AbstractMainPage {
+public class ContractTypeSelectPage extends EvoJSSelectPage<ContractType> {
+public class CustomerContractSearchPage extends ContractSearchPage<CustomerContract> {
+public class CustomerContractPage extends BaseContextPage {
+public class CustomerContractJSSelectPage extends ContractJSSelectPage<CustomerContract> {
+public class SupplierContractPage extends BaseContextPage {
+public class SupplierContractSearchPage extends ContractSearchPage<SupplierContract> {
+public class SupplierContractJSSelectPage extends ContractJSSelectPage<SupplierContract> {
+	public class EventTypeLookupFragment extends Fragment {
+public class EntityActionTypeListPage extends BaseContextPage {
+public class ShippingUnitSelectPage extends EvoJSSelectPage<ShippingUnit> {
+public class ScheduleListPage extends BaseContextPage {
+public class ScheduleSelectPage extends BaseContextPage {
+public class ScheduleSearchPage extends BasePage {
+public class CurrencySelectPage extends EvoJSSelectPage<CurrencyVO> {
+public class AdrCodeSelectPage extends EvoJSSelectPage<AdrCode> {
+public class AirportSelectPage extends EvoJSSelectPage<Airport> {
+public class MessagePage extends BaseContextPage {
+public class MessageValidatorPage extends BasePage {
+public class MessagePage extends BaseContextPage {
+public class CountrySelectPage extends EvoJSSelectPage<Country> {
+public class CountryIso2SearchPage extends BasePage {
+public class CustomerOrderTypeSearchPage extends BasePage {
+public class HoldStatusSelectPage extends EvoJSSelectPage<HoldStatus> {
+public class InducerCodeSelectPage extends EvoJSSelectPage<InducerCode> {
+public class InstructionGroupSelectPage extends EvoJSSelectPage<InstructionGroup> {
+public class OrderProcessSelectPage extends EvoJSSelectPage<OrderProcess> {
+public class OrganizationSearchPage extends BasePage {
+public class OrganizationSelectPage extends EvoJSSelectPage<Organization> {
+public class OrganizationSearchPage extends BasePage {
+public class PlanningReasonCodeSelectPage extends EvoJSSelectPage<PlanningReasonCode> {
+public class ProductPage extends BaseContextPage {
+public class ProductSelectPage extends VOSelectPage<Product> {
+public class ProductSearchPage extends BasePage {
+public class ProductItemListPage extends AbstractWorkflowPage {
+public class ReasonCodeSelectPage extends EvoJSSelectPage<ReasonCode> {
+public class RoleImportPage extends BaseContextPage {
+public class ShipmentServiceLevelSelectPage extends EvoJSSelectPage<ShipmentServiceLevelVO> {
+public class ShipmentTypeSelectPage extends EvoJSSelectPage<ShipmentType> {
+public class UnNumberSelectPage extends EvoJSSelectPage<UnNumber> {
+public class EntityDetailValueSetTypeListPage extends EvoParentListPage<EntityDetailValueSetType> {
+public class IncoTermRefTransPage extends BaseContextPage {
+public class IncoTermSelectPage extends EvoJSSelectPage<IncoTermVO> {
+public class PathTemplateImportPage extends BaseContextPage {
+public class OrderValidationRuleMessagePage extends BaseContextPage {
+public class OrderValidationRuleMessagePage extends BaseContextPage {
+public class RateComponentTypeSearchPage extends BasePage {
+public class ResourceAuthorizationListPage extends BaseContextPage {
+public class ResourceSelectPage extends EvoJSSelectPage<Resource> {
+public class ResourcePage extends BaseContextPage {
+public class ResourceResetPage extends BaseContextPage {
+public class ResourceTypeListPage extends BaseContextPage {
+public class ResourceTypeScheduleListPage extends BaseContextPage {
+public class ResourceTypeSchedulePage extends AbstractMainPage {
+public class ResourceListPage extends BaseContextPage {
+public class ResourceTaskPage extends AbstractSimplePage {
+public class ResourceSelectPage extends AbstractMainPage {
+public class ResourcePage extends BaseContextPage {
+public class ResourceGroupListPage extends BaseContextPage {
+public class RateAgreementImportPage extends BaseContextPage {
+public class RateAgreementListPage extends BaseContextPage {
+public class RateAgreementVisPage extends AbstractSimplePage {
+public class RateAgreementCopyPage extends BaseContextPage {
+public class UnitConversionListPage extends BaseContextPage {
+public class UnitSelectPage extends EvoJSSelectPage<Unit> {
+public class EntityFieldExpressionListPage extends AbstractMainPage {
+public class ActivityTypePage extends BaseContextPage {
+public class WorkerPlanningPage extends AbstractMainPage {
+/ TODO
+
+/ 1313	. 
+
+/ done types,	
+[eric@localhost trunk]$ cat ~/tmp/scs-stuff/allpages.txt  | awk '{print gensub(/(.+)\.(.+)/,"\\2","g")}' | awk '{print gensub(/VO/,"","g")}' | awk '{print $0"*Page.java"}' | xargs -I % find -name %  | xargs -I % grep SoftDeletableEvoEditPage % | grep "public class"  | awk '{print gensub(/public class (.+) extends (.+)/,"\\1","g")}' | awk '{print gensub(/Page/,"","g")}'
+CapacityType
+ContractType
+CustomerInvoiceHeaderStatusEdit
+EventCustomQuery
+EventTemplate
+EventType
+StockLocation
+StockLocationType
+StockLocationType
+VatPolicy
+ShippingUnit
+Schedule
+ContainerType
+Currency
+AdrCode
+Airport
+BusinessObject
+CountryGroup
+Country
+CountryGroup
+CriteriumType
+CustomerOrderType
+DocumentType
+EntityDetailTypeGroup
+GoodsStatus
+HoldStatus
+InducerCode
+InducerType
+InstructionCode
+InstructionGroup
+OrderProcess
+Organization
+PlanningReasonCode
+PrivilegeType
+Property
+ReasonCode
+Role
+ServiceType
+ShipmentServiceLevel
+ShipmentType
+UnNumber
+IncoTerm
+OrderValidationRule
+PrivilegeType
+RateComponentType
+
+/ Dezelfde query, maar naar file write	,
+[eric@localhost trunk]$ cat ~/tmp/scs-stuff/allpages.txt  | awk '{print gensub(/(.+)\.(.+)/,"\\2","g")}' | awk '{print gensub(/VO/,"","g")}' | awk '{print $0"*Page.java"}' | xargs -I % find -name %  | xargs -I % grep SoftDeletableEvoEditPage % | grep "public class"  | awk '{print gensub(/public class (.+) extends (.+)/,"\\1","g")}' | awk '{print gensub(/Page/,"","g")}'	>~/tmp/scs-stuff/donetypes.txt
+
+/ onthoud: eerst sort, dan uniq	,
+
+/ 1ste kolom: alleen in alltypes.txt
+/ 2de  kolom: alleen in doneypes.txt		, zou er niet mogen zijn	,	 maar er is CustomerInvoiceHeaderStatusEdit TODO
+/ 3de  kolom: in beide	, 
+[eric@localhost scs-stuff]$ comm <(cat alltypes.txt | awk '{print gensub(/(.+)\.(.+)/,"\\2","g")}'| awk '{print gensub(/VO/,"","g")}' |  sort | uniq) <(cat donetypes.txt | sort | uniq) 
+ActivityType
+ActivityTypeCategory
+ActivityView
+		AdrCode
+		Airport
+		BusinessObject
+CapacityProfile
+		CapacityType
+		ContainerType
+		ContractType
+		Country
+		CountryGroup
+		CriteriumType
+		Currency
+...
+	CustomerInvoiceHeaderStatusEdit TODO
+
+/ TODO DONE TYPES
+
+[eric@localhost scs-stuff]$ comm <(cat alltypes.txt | awk '{print gensub(/(.+)\.(.+)/,"\\2","g")}'| awk '{print gensub(/VO/,"","g")}' |  sort | uniq) <(cat donetypes.txt | sort | uniq) >/tmp/difftypes.txt
+[eric@localhost scs-stuff]$ awk 'BEGIN{FS="[ \t]+"}{print $1}' /tmp/difftypes.txt  | awk '!/^$/'
+ActivityType
+ActivityTypeCategory
+ActivityView
+CapacityProfile
+CustomerContract
+...
+[eric@localhost scs-stuff]$ awk 'BEGIN{FS="[ \t]+"}{print $1}' /tmp/difftypes.txt  | awk '!/^$/' >~/tmp/scs-stuff/todotypes.txt
+
+[eric@localhost scs-stuff]$ cat donetypes.txt |wc
+     45      45     616
+[eric@localhost scs-stuff]$ cat todotypes.txt | wc
+     36      36     603
+
+/ 35+36=81	, 3 teveel	, 
+/ TODO
+
+/13	. 
+
+/ we kijken in todotypes.txt	,
+
+public class ActivityTypePage extends BaseContextPage {
+public class CustomerContractPage extends BaseContextPage {
+public class PathTemplateImportPage extends BaseContextPage {
+public class RateAgreementListPage extends BaseContextPage {
+...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+/ 13	. 
+
+[eric@localhost scs-stuff]$ pwd
+/home/eric/tmp/scs-stuff
+$ less todopages.txt
+
+com.mpobjects.capabletopromise.model.entity.CapacityProfile
+public class CapacityProfileDAOImpl extends EnumeratedValueObjectHibernateDAO<CapacityProfile> implements CapacityProfileDAO {
+
+com.mpobjects.capabletopromise.model.entity.planboard.PlanboardStatusDefinition
+/ TODO
+
+com.mpobjects.capabletopromise.model.entity.resource.Resource
+public class ResourceDAOImpl extends GenericHibernateDAO<Resource> implements ResourceDAO {
+
+com.mpobjects.contract.model.entity.CustomerContract
+public class CustomerContractDAOImpl extends ContractDAOImpl<CustomerContract> implements CustomerContractDAO {
+
+com.mpobjects.contract.model.entity.SupplierContract
+public class SupplierContractDAOImpl extends ContractDAOImpl<SupplierContract> implements SupplierContractDAO {
+
+public class ActivityTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<ActivityType> implements ActivityTypeDAO {
+
+/ 13	. 
+
+/ Ga op zoek naar de types waarvan de dao extends EnumeratedValueObjectHibernateDAO	,
+
+[eric@localhost trunk]$ awk '{sub(/.*\./,"");print}' ~/tmp/scs-stuff/todopages.txt  | awk '!/^$/'{print} | awk '{print $0".java"}'
+CapacityProfile.java
+PlanboardStatusDefinition.java
+Resource.java
+ResourceType.java
+CustomerContract.java
+...
+
+[eric@localhost trunk]$ awk '{sub(/.*\./,"");print}' ~/tmp/scs-stuff/todopages.txt  | awk '!/^$/'{print} | awk '{print $0"DAOImpl.java";print $0"DAOHibernate.java"}' | xargs -I %  bash -c "find -name % | xargs grep  EnumeratedValueObjectHibernateDAO " | awk '!/^import/{print}'
+public class CapacityProfileDAOImpl extends EnumeratedValueObjectHibernateDAO<CapacityProfile> implements CapacityProfileDAO {
+public class ResourceDAOHibernate extends EnumeratedValueObjectHibernateDAO<Resource> implements ResourceDAOInterface {
+public class ResourceTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<ResourceType> implements ResourceTypeDAO {
+public class GenericXmlDataRequestDAOImpl extends EnumeratedValueObjectHibernateDAO<GenericXmlDataRequest> implements GenericXmlDataRequestDAO {
+public class EventActionDAOImpl extends EnumeratedValueObjectHibernateDAO<EventAction> implements EventActionDAO {
+public class EntityDetailValueSetTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<EntityDetailValueSetType> implements EntityDetailValueSetTypeDAO {
+public class PackingDefinitionDAOImpl extends EnumeratedValueObjectHibernateDAO<PackingDefinition>implements PackingDefinitionDAO {
+public class ResourceDAOHibernate extends EnumeratedValueObjectHibernateDAO<Resource> implements ResourceDAOInterface {
+public class ParameterTypeDAOHibernate extends EnumeratedValueObjectHibernateDAO<ParameterType> implements ParameterTypeDAO {
+public class UnitDAOHibernate extends EnumeratedValueObjectHibernateDAO<Unit> implements UnitDAO {
+public class EntityFieldExpressionDAOImpl extends EnumeratedValueObjectHibernateDAO<EntityFieldExpression> implements EntityFieldExpressionDAO {
+public class ActivityTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<ActivityType> implements ActivityTypeDAO {
+public class ActivityTypeCategoryDAOImpl extends EnumeratedValueObjectHibernateDAO<ActivityTypeCategory> implements ActivityTypeCategoryDAO {
+public class ActivityViewDAOImpl extends EnumeratedValueObjectHibernateDAO<ActivityView> implements ActivityViewDAO {
+public class TimeUnitSpecificationDAOImpl extends EnumeratedValueObjectHibernateDAO<TimeUnitSpecification> implements TimeUnitSpecificationDAO {
+public class WeekTimeScheduleTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<WeekTimeScheduleType> implements WeekTimeScheduleTypeDAO {
+public class ProcessStepDAOImpl extends EnumeratedValueObjectHibernateDAO<ProcessStep> implements ProcessStepDAO {
+public class ProcessStepElementDAOImpl extends EnumeratedValueObjectHibernateDAO<ProcessStepElement> implements ProcessStepElementDAO {
+public class WorkerPlanningDAOImpl extends EnumeratedValueObjectHibernateDAO<WorkerPlanning> implements WorkerPlanningDAO {
+
+public class CapacityProfilePage extends BaseContextPage {
+public class ResourcePage extends BaseContextPage {
+
+
+/ 13	. 
+
+public abstract class EvoListPage<T extends DescribedUniqueFieldValueObject> extends BaseContextPage {
+	protected void createFeedbackPanel() {
+		feedbackPanel = new FeedbackPanel("feedback");
+		feedbackPanel.setOutputMarkupId(true);
+		add(feedbackPanel);
+	}
+
+/ 13	. 
+
+Recipe #1 as_is_restore
+com.mpobjects.contract.model.entity.contracttype.ContractType
+
+Recipe #2 rename_restore 
+com.mpobjects.capabletopromise.model.entity.resourcetype.ResourceType
+
+/ 7	. 
+
+/ we gaan ModalWindow maken	,
+
+public abstract class SoftDeletableSearchPage<T extends EnumeratedValueObjectInterface> extends BasePage {
+		IColumn<T> action = new FilteredAbstractColumn<T>(Model.<String> of("Actions")) {
+			...
+			@Override
+			public void populateItem(final Item<ICellPopulator<T>> cellItem, final String componentId, final IModel<T> rowModel) {
+				Component action = new SoftDeletableActionPanel<T>(componentId) {
+					@Override
+					protected void undelete() {
+						SoftDeletableSearchPage.this.setUndeleted(rowModel.getObject());
+
+/ we proberen	, 
+
+			@Override
+			public void populateItem(final Item<ICellPopulator<T>> cellItem, final String componentId, final IModel<T> rowModel) {
+				Component button = new AjaxButton(componentId) {
+					@Override
+					protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+						try {
+							SoftDeletableSearchPage.this.setUndeleted(rowModel.getObject());
+						} catch (DataAccessException e) {
+							error(e);
+							target.addComponent(feedbackPanel);
+							return;
+						}
+						target.addComponent(form);
+
+					}
+				};
+
+				cellItem.add(button);
+
+
+JRebel: Class 'com.mpobjects.core.view.wicket.softdeletable.SoftDeletableSearchPage$1$1' superclass was changed from 'com.mpobjects.core.view.wicket.softdeletable.SoftDeletableActionPanel' to 'org.apache.wicket.ajax.markup.html.form.AjaxButton' and could not be reloaded!	
+
+/ we moeten opnieuw build & start	, 
+/ Het werkt	, maar we zien <span>s	, dus we zien [cell]	, maar er is wel een behavior op	,
+/ TODO
+/ Probeer ook met een WebMarkupContainer	,
+/ TODO
+
+/ 7	. 
+
+/ Herhaling forms	, 
+
+/ 13	. 
+
+/ click delete button	, 
+Request URL:http://localhost:8080/tms/wicket/?wicket:interface=:1:evoSearchList:filterForm:group:objectTable:body:rows:49:cells:1:cell:entity-actions:cell-actions:actions:2:button:3:IActivePageBehaviorListener:0:&wicket:ignoreIfNotActive=true&random=0.7843855079263449
+Request Method:POST
+/ Form Data TODO
+
+/ click on Filter	,
+/ 7	. 
+
+/ Herhaling forms	, 
+
+/ 13	. 
+
+/ click delete button	, 
+Request URL:http://localhost:8080/tms/wicket/?wicket:interface=:1:evoSearchList:filterForm:group:objectTable:body:rows:49:cells:1:cell:entity-actions:cell-actions:actions:2:button:3:IActivePageBehaviorListener:0:&wicket:ignoreIfNotActive=true&random=0.7843855079263449
+Request Method:POST
+/ Form Data TODO
+
+/ click on Filter	,
+/ 7	. 
+
+/ Herhaling forms	, 
+
+/ 13	. 
+
+/ click delete button	, 
+Request URL:http://localhost:8080/tms/wicket/?wicket:interface=:1:evoSearchList:filterForm:group:objectTable:body:rows:49:cells:1:cell:entity-actions:cell-actions:actions:2:button:3:IActivePageBehaviorListener:0:&wicket:ignoreIfNotActive=true&random=0.7843855079263449
+Request Method:POST
+/ Form Data TODO
+
+/ click on Filter	,
+/ 7	. 
+
+/ Herhaling forms	, 
+
+/ 13	. 
+
+/ click delete button	, 
+Request URL:http://localhost:8080/tms/wicket/?wicket:interface=:1:evoSearchList:filterForm:group:objectTable:body:rows:49:cells:1:cell:entity-actions:cell-actions:actions:2:button:3:IActivePageBehaviorListener:0:&wicket:ignoreIfNotActive=true&random=0.7843855079263449
+Request Method:POST
+/ Form Data TODO
+
+/ click on Filter	,
+/ 7	. 
+
+/ Herhaling forms	, 
+
+/ 13	. 
+
+/ click delete button	, 
+Request URL:http://localhost:8080/tms/wicket/?wicket:interface=:1:evoSearchList:filterForm:group:objectTable:body:rows:49:cells:1:cell:entity-actions:cell-actions:actions:2:button:3:IActivePageBehaviorListener:0:&wicket:ignoreIfNotActive=true&random=0.7843855079263449
+Request Method:POST
+/ Form Data TODO
+
+/ click on Filter	,
+/ 7	. 
+
+/ Herhaling forms	, 
+
+/ 13	. 
+
+/ click delete button	, 
+Request URL:http://localhost:8080/tms/wicket/?wicket:interface=:1:evoSearchList:filterForm:group:objectTable:body:rows:49:cells:1:cell:entity-actions:cell-actions:actions:2:button:3:IActivePageBehaviorListener:0:&wicket:ignoreIfNotActive=true&random=0.7843855079263449
+Request Method:POST
+/ Form Data TODO
+
+/ click on Filter	,
+/ 7	. 
+
+/ Herhaling forms	, 
+
+/ 13	. 
+
+/ click delete button	, 
+Request URL:http://localhost:8080/tms/wicket/?wicket:interface=:1:evoSearchList:filterForm:group:objectTable:body:rows:49:cells:1:cell:entity-actions:cell-actions:actions:2:button:3:IActivePageBehaviorListener:0:&wicket:ignoreIfNotActive=true&random=0.7843855079263449
+Request Method:POST
+/ Form Data TODO
+
+
+/ 7	. 
+
+/ Herhaling forms	, 
+
+/ 13	. 
+
+/ op SoftDeletableEvoEditPage	, 
+
+/ 1313	. 
+
+/ click delete button	, 
+
+Request URL:http://localhost:8080/tms/wicket/?wicket:interface=:1:evoSearchList:filterForm:group:objectTable:body:rows:49:cells:1:cell:entity-actions:cell-actions:actions:2:button:3:IActivePageBehaviorListener:0:&wicket:ignoreIfNotActive=true&random=0.7843855079263449
+Request Method:POST
+/ Form Data TODO
+
+Request URL:http://localhost:8080/tms/wicket/?wicket:interface=:1:evoSearchList:filterForm:group:objectTable:body:rows:88:cells:1:cell:entity-actions:cell-actions:actions:2:button:4:IActivePageBehaviorListener:0:&wicket:ignoreIfNotActive=true&random=0.41453033057041466
+Request Method:POST
+
+/ WH 49, 88 in de url bepalen de entry	, 
+
+/ 1313	. 
+
+/ click filter button	,
+
+Request URL:http://localhost:8080/tms/wicket/?wicket:interface=:1:evoSearchList:filterForm:3:IFormSubmitListener::
+Request Method:POST 
+
+/ 1313	. 
+
+/ click undelete link	, zit niet in een form		,
+
+Request URL:http://localhost:8080/tms/wicket/?wicket:interface=:1:softDeletableLink:4:IBehaviorListener:0:&random=0.4522791572380811
+Request Method:GET
+
+/ 13
+
+/ op 	SoftDeletableSearchPage	, 
+
+/ 1313	. 
+
+/ click filter button	,
+Request URL:http://localhost:8080/tms/wicket/?wicket:interface=:4:filterForm::IFormSubmitListener::
+Request Method:POST
+
+/ click undelete ajax button	, on SoftDeletableActionPanel	,
+Request URL:http://localhost:8080/tms/wicket/?wicket:interface=:4:filterForm:table:body:rows:9:cells:1:cell:undelete:1:IActivePageBehaviorListener:0:&wicket:ignoreIfNotActive=true&random=0.10779278166592121
+Request Method:POST
+
+/ click undelete link	, on SoftDeletableActionPanel   ,
+
+
+com.zeroturnaround.javarebel.SuperClassChangedError: JRebel: Class 'com.mpobjects.core.view.wicket.softdeletable.SoftDeletableActionPanel$1' superclass was changed from 'org.apache.wicket.ajax.markup.html.form.AjaxButton' to 'org.apache.wicket.ajax.markup.html.AjaxLink' and could not be reloaded!
+/ TODO
+/ we hebben JRebel 7.0.3	 
+Automatic publishing disabled
+/ TODO
+
+/ 13	. 
+
+/ image on link	,
+
+/ lees	,
+http://stackoverflow.com/questions/3070485/how-to-make-a-wicket-link-appear-as-an-image
+
+
+
+
+
+
+
+
+
+
+/ Einde SOFTDELETABLE
+
+/ TYPES
+
+EnumeratedValueObjectInterface is code, description, softdeletable
+EnumeratedValueObjectDAOInterface is op code, description	, daarom	, SoftDeletableDAOInterface	, is op code, description, softdeletables
+EnumeratedValueObjectHibernateDAO<T extends EnumeratedValueObjectInterface> extends GenericHibernateDAO<T> implements EnumeratedValueObjectDAOInterface<T>, SoftDeletableDAOInterface<T> {
+
+public interface DescribedUniqueFieldValueObject extends UniqueFieldValueObject {	/ code, compareTo, systemId, description   ,
+public interface EnumeratedValueObjectInterface extends DescribedUniqueFieldValueObject, SoftDeletable { / code, compareTo, systemId, description   , deleted   ,  / in lookup screens  ,
+
+
+public interface SoftDeletableDAOInterface<T extends EnumeratedValueObjectInterface> extends EnumeratedValueObjectDAOInterface<T> {
+	List<T> queryDeleted(SoftDeletableFilter filter, SortParam sortParam, int first, int count);
+	void unDelete(SoftDeletable softDeletable);
+}
+
+public interface EnumeratedValueObjectDAOInterface<T extends DescribedUniqueFieldValueObject> extends BaseDAOInterface<T> {
+	Collection<T> findByCode(String aCode);
+	...
+
+public abstract class EvoListPage<T extends DescribedUniqueFieldValueObject> extends BaseContextPage {
+	protected BeanWrapper<? extends EnumeratedValueObjectDAOInterface<T>> daoWrapper; / Klopt	, EnumeratedValueObjectDAOInterface<T> , T extends DescribedUniqueFieldValueObject klopt precies: code & description object	,
+	protected abstract BeanWrapper<? extends EnumeratedValueObjectDAOInterface<T>> getBeanWrapper();
+
+IncoTermPage.class
+	@Override
+	protected BeanWrapper<? extends EnumeratedValueObjectDAOInterface<IncoTermVO>> getBeanWrapper() {
+		return new BeanWrapper(IncoTermDAO.class);
+	}
+
+public interface IncoTermDAO extends EnumeratedValueObjectDAOInterface<IncoTermVO> {
+	@Override
+	IncoTermVO getByCode(String aCode);
+	IncoTermVO getByCodeAndVersion(String aCode, String aVersion);
+}
+
+public class IncoTermDAOHibernate extends EnumeratedValueObjectHibernateDAO<IncoTermVO> implements IncoTermDAO {
+/e
+public class EnumeratedValueObjectHibernateDAO<T extends EnumeratedValueObjectInterface> extends GenericHibernateDAO<T> implements
+		EnumeratedValueObjectDAOInterface<T>, SoftDeletableDAOInterface<T> {
+/ WH rm EnumeratedValueObjectDAOInterface<T>
+/e
+public class GenericHibernateDAO<Type extends EntityInterface> extends BaseHibernateDAO<Type> implements HibernateDAOInterface<Type> {
+/e
+public abstract class BaseHibernateDAO<T> extends HibernateDaoSupport {
+
+	public SoftDeletableEvoEditPage() {
+		softDeletableLink = new AjaxLink<Void>("softDeletableLink") {
+			public void onClick(AjaxRequestTarget target) {
+				ISortableDataProvider<T> sortableDataProvider = new SoftDeletableDataProvider<T>((BeanWrapper<SoftDeletableDAOInterface<T>>) daoWrapper);
+
+$ vi oms-dao.sb.xml
+
+	<bean id="com.mpobjects.oms.dao.incoterm.IncoTermDAO" class="com.mpobjects.oms.dao.incoterm.IncoTermDAOHibernate"
+		parent="HibernateDAOTemplate" />
+
+/ MISSCHIEN
+
+/ toch een nieuwe dao ertussen	,
+
+public class IncoTermPage extends SoftDeletableEvoEditPage<IncoTermVO> {
+
+public class CapacityTypePage extends SoftDeletableEvoEditPage<CapacityType> {
+
+public abstract class SoftDeletableEvoEditPage<T extends EnumeratedValueObjectInterface> extends EvoEditPage<T> {
+	public SoftDeletableEvoEditPage() {
+		softDeletableLink = new AjaxLink<Void>("softDeletableLink") {
+			public void onClick(AjaxRequestTarget target) {
+				ISortableDataProvider<T> sortableDataProvider = new SoftDeletableDataProvider<T>((BeanWrapper<SoftDeletableDAOInterface<T>>) daoWrapper);
+
+
+
+public class IncoTermDAOHibernate extends EnumeratedValueObjectHibernateDAO<IncoTermVO> implements IncoTermDAO {
+
+public class CapacityTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<CapacityType> implements CapacityTypeDAO {
+
+/we kunnen ook	, 
+IncoTermDAOHibernate   CapacityTypeDAOImpl
+	|							/
+
+SoftDeletableHibernateDAO
+	public List<T> queryDeleted(SoftDeletableFilter filter, SortParam sortParam, int first, int count) {
+	public void unDelete(SoftDeletable softDeletable) {
+	|
+EnumeratedValueObjectHibernateDAO
+
+/ Einde MISSCHIEN
+
+/ MISSCHIEN	, 
+
+/ Moeten we de 2 methods uit SoftDeletableDAOInterface in EnumeratedValueObjectDAOInterface doen	?
+ 
+public interface EnumeratedValueObjectDAOInterface<T extends DescribedUniqueFieldValueObject> extends BaseDAOInterface<T> {
+/e
+/ 3 classes
+public class EnumeratedValueObjectHibernateDAO<T extends EnumeratedValueObjectInterface> extends GenericHibernateDAO<T> implements
+		EnumeratedValueObjectDAOInterface<T>, SoftDeletableDAOInterface<T> {
+public class MockEnumeratedValueObjectDAO<T extends DescribedUniqueFieldValueObject> extends DefaultMockDAO<T>implements EnumeratedValueObjectDAOInterface<T> {
+public class UniqueFieldHibernateDAO<T extends DescribedUniqueFieldValueObject> extends GenericHibernateDAO<T> implements EnumeratedValueObjectDAOInterface<T> {
+/ multiple interfaces	,
+public interface AirportDAO extends EnumeratedValueObjectDAOInterface<Airport> {
+public class AirportDAOImpl extends EnumeratedValueObjectHibernateDAO<Airport> implements AirportDAO {
+
+/ Vraag: DAOs die extends EnumeratedValueObjectDAOInterface, de DAOImpls daarvan implements de 3 classes?
+
+[eric@localhost trunk]$ find -iname "*dao*java" | xargs grep 'extends EnumeratedValueObjectDAOInterface' | awk '{print gensub(/(.+):(.+)/,"\\1","g")}'
+./module/dataexport/src/java/com/mpobjects/dataexport/dao/GenericXmlDataRequestDAO.java
+./module/dashboard/src/java/com/mpobjects/dashboard/dao/DashboardDataSourceDAO.java
+./module/dashboard/src/java/com/mpobjects/dashboard/dao/DashboardPanelDAO.java
+...
+[eric@localhost trunk]$ find -iname "*dao*java" | xargs grep 'extends EnumeratedValueObjectDAOInterface' | awk '{print gensub(/(.+):(.+)/,"\\1","g")}' | awk '{print gensub(/(.+)\/(.+).java/,"\\2","g")}'
+GenericXmlDataRequestDAO
+DashboardDataSourceDAO
+DashboardPanelDAO
+TimeUnitSpecificationDAO
+ProcessStepDAO
+...
+
+/ Is het zo dat DAOImpls die implements een van deze DAOs,  1 van de 3 classes EnumeratedValueObjectHibernateDAO, MockEnumeratedValueObjectDAO, UniqueFieldHibernateDAO extends?
+
+[eric@localhost trunk]$ for dao in $(find -iname "*dao*java" | xargs grep 'extends EnumeratedValueObjectDAOInterface' | awk '{print gensub(/(.+):(.+)/,"\\1","g")}' | awk '{print gensub(/(.+)\/(.+).java/,"\\2","g")}');do find -iname "*impl*java" | xargs grep "$dao" | grep implements;done
+./module/dataexport/src/java/com/mpobjects/dataexport/dao/GenericXmlDataRequestDAOImpl.java:public class GenericXmlDataRequestDAOImpl extends EnumeratedValueObjectHibernateDAO<GenericXmlDataRequest> implements GenericXmlDataRequestDAO {
+./module/dashboard/src/java/com/mpobjects/dashboard/dao/DashboardDataSourceDAOImpl.java:// public class DashboardDataSourceDAOImpl extends GenericHibernateDAO<DashboardDataSource> implements
+...
+
+
+[eric@localhost trunk]$ for dao in $(find -iname "*dao*java" | xargs grep 'extends EnumeratedValueObjectDAOInterface' | awk '{print gensub(/(.+):(.+)/,"\\1","g")}' | awk '{print gensub(/(.+)\/(.+).java/,"\\2","g")}');do find -iname "*impl*java" | xargs grep "$dao" | grep implements ;done  | awk '{print gensub(/(.+) extends (.+) implements(.+)/,"\\2","g")}' | sort
+
+[eric@localhost trunk]$ for dao in $(find -iname "*dao*java" | xargs grep 'extends EnumeratedValueObjectDAOInterface' | awk '{print gensub(/(.+):(.+)/,"\\1","g")}' | awk '{print gensub(/(.+)\/(.+).java/,"\\2","g")}');do find -iname "*impl*java" | xargs grep "$dao" | grep implements ;done  |  awk '{print gensub(/(.+):(.+)/,"\\2","g")}'
+public class GenericXmlDataRequestDAOImpl extends EnumeratedValueObjectHibernateDAO<GenericXmlDataRequest> implements GenericXmlDataRequestDAO {
+// public class DashboardDataSourceDAOImpl extends GenericHibernateDAO<DashboardDataSource> implements
+public class DashboardDataSourceDAOImpl extends UniqueFieldHibernateDAO<DashboardDataSource> implements DashboardDataSourceDAO {
+public class DashboardPanelDAOImpl extends UniqueFieldHibernateDAO<DashboardPanel> implements DashboardPanelDAO {
+public class TimeUnitSpecificationDAOImpl extends EnumeratedValueObjectHibernateDAO<TimeUnitSpecification> implements TimeUnitSpecificationDAO {
+public class ProcessStepDAOImpl extends EnumeratedValueObjectHibernateDAO<ProcessStep> implements ProcessStepDAO {
+public class ProcessStepElementDAOImpl extends EnumeratedValueObjectHibernateDAO<ProcessStepElement> implements ProcessStepElementDAO {
+public class WorkerPlanningDAOImpl extends EnumeratedValueObjectHibernateDAO<WorkerPlanning> implements WorkerPlanningDAO {
+public class WeekTimeScheduleTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<WeekTimeScheduleType> implements WeekTimeScheduleTypeDAO {
+public class ActivityTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<ActivityType> implements ActivityTypeDAO {
+public class ActivityTypeCategoryDAOImpl extends EnumeratedValueObjectHibernateDAO<ActivityTypeCategory> implements ActivityTypeCategoryDAO {
+public class ActivityViewDAOImpl extends EnumeratedValueObjectHibernateDAO<ActivityView> implements ActivityViewDAO {
+public class EventActionDAOImpl extends EnumeratedValueObjectHibernateDAO<EventAction> implements EventActionDAO {
+public class EventTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<EventType> implements EventTypeDAO {
+public class ServiceActionTypeEventTypeDAOImpl extends GenericHibernateDAO<ServiceActionTypeEventType> implements ServiceActionTypeEventTypeDAO {
+public class EventTemplateDAOImpl extends EnumeratedValueObjectHibernateDAO<EventTemplate> implements EventTemplateDAO {
+public class EventCustomQueryDAOImpl extends EnumeratedValueObjectHibernateDAO<EventCustomQuery> implements EventCustomQueryDAO {
+public class ResourceAuthorizationCodeDAOImpl extends GenericHibernateDAO<ResourceAuthorizationCode> implements ResourceAuthorizationCodeDAO {
+public class AuthorizationCodeDAOImpl extends UniqueFieldHibernateDAO<AuthorizationCode> implements AuthorizationCodeDAO {
+// public class AuthorizationLevelDAOImpl extends GenericHibernateDAO<AuthorizationLevel> implements
+public class AuthorizationLevelDAOImpl extends UniqueFieldHibernateDAO<AuthorizationLevel> implements AuthorizationLevelDAO {
+public class QuotationRequestTemplateDAOImpl extends UniqueFieldHibernateDAO<QuotationRequestTemplate> implements QuotationRequestTemplateDAO {
+public class PathTemplateDAOImpl extends EnumeratedValueObjectHibernateDAO<PathTemplateVO> implements PathTemplateDAO {
+public class MessageReportDAOImpl extends GenericHibernateDAO<MessageReport> implements MessageReportDAO {
+public class RoleDAOImpl extends EnumeratedValueObjectHibernateDAO<RoleVO> implements RoleDAO {
+public class OrderStatusDAOImpl extends EnumeratedValueObjectHibernateDAO<OrderStatusVO> implements OrderStatusDAO {
+	private static class MockOrderStatusDAO extends MockEnumeratedValueObjectDAO<OrderStatusVO> implements OrderStatusDAO {
+public class OrderValidationRuleDAOImpl extends EnumeratedValueObjectHibernateDAO<OrderValidationRule> implements OrderValidationRuleDAO {
+public class PartyGroupServiceImpl extends AbstractService<PartyGroupVO, PartyGroupDAO> implements PartyGroupService {
+public class PartyGroupDAOImpl extends EnumeratedValueObjectHibernateDAO<PartyGroupVO> implements PartyGroupDAO {
+public class PrivilegeDAOImpl extends EnumeratedValueObjectHibernateDAO<PrivilegeVO> implements PrivilegeDAO {
+public class ShipmentTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<ShipmentType> implements ShipmentTypeDAO {
+public class AirportDAOImpl extends EnumeratedValueObjectHibernateDAO<Airport> implements AirportDAO {
+public class DhlIataAirportDAOImpl extends GenericHibernateDAO<DhlIataAirportCode> implements DhlIataAirportDAO {
+public class ServiceOrderTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<ServiceOrderType> implements ServiceOrderTypeDAO {
+public class ServiceActionTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<ServiceActionType> implements ServiceActionTypeDAO {
+public class CriteriumTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<CriteriumType> implements CriteriumTypeDAO {
+public class PermissionRuleDAOImpl extends UniqueFieldHibernateDAO<PermissionRule> implements PermissionRuleDAO {
+public class PermissionGroupDAOImpl extends UniqueFieldHibernateDAO<PermissionGroup> implements PermissionGroupDAO {
+public class AdrCodeDAOImpl extends EnumeratedValueObjectHibernateDAO<AdrCode> implements AdrCodeDAO {
+public class PackingDefinitionDAOImpl extends EnumeratedValueObjectHibernateDAO<PackingDefinition>implements PackingDefinitionDAO {
+public class InstructionCodeDAOImpl extends EnumeratedValueObjectHibernateDAO<InstructionCode> implements InstructionCodeDAO {
+public class HoldStatusDAOImpl extends EnumeratedValueObjectHibernateDAO<HoldStatus> implements HoldStatusDAO {
+public class GoodsStatusDAOImpl extends EnumeratedValueObjectHibernateDAO<GoodsStatus> implements GoodsStatusDAO {
+public class EntityDetailTypeGroupDAOImpl extends EnumeratedValueObjectHibernateDAO<EntityDetailTypeGroup> implements EntityDetailTypeGroupDAO {
+public class ServiceTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<ServiceType> implements ServiceTypeDAO {
+public class PartyTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<PartyType> implements PartyTypeDAO {
+public class PropertyDAOImpl extends EnumeratedValueObjectHibernateDAO<Property> implements PropertyDAO {
+public class CarrierPropertyDAOImpl extends GenericHibernateDAO<CarrierProperty> implements CarrierPropertyDAO {
+public class ShippingUnitDAOImpl extends EnumeratedValueObjectHibernateDAO<ShippingUnit> implements ShippingUnitDAO {
+public class BundleDAOImpl extends UniqueFieldHibernateDAO<Bundle> implements BundleDAO {
+public class ReasonCodeDAOImpl extends EnumeratedValueObjectHibernateDAO<ReasonCode> implements ReasonCodeDAO {
+public class PlanningReasonCodeDAOImpl extends EnumeratedValueObjectHibernateDAO<PlanningReasonCode> implements PlanningReasonCodeDAO {
+public class ContainerTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<ContainerType> implements ContainerTypeDAO {
+public class EntityDetailValueSetTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<EntityDetailValueSetType> implements EntityDetailValueSetTypeDAO {
+public class ShipmentOrderTriggerDAOImpl extends GenericHibernateDAO<ShipmentOrderTrigger> implements ShipmentOrderTriggerDAO {
+public class InterfaceMessageTriggerDAOImpl extends GenericHibernateDAO<InterfaceMessageTrigger> implements InterfaceMessageTriggerDAO {
+public class DocumentTriggerDAOImpl extends GenericHibernateDAO<DocumentTrigger> implements DocumentTriggerDAO {
+public class EventTriggerDAOImpl extends GenericHibernateDAO<EventTrigger> implements EventTriggerDAO {
+public class ServiceOrderStopTriggerDAOImpl extends GenericHibernateDAO<ServiceOrderStopTrigger> implements ServiceOrderStopTriggerDAO {
+public class CustomerOrderTriggerDAOImpl extends GenericHibernateDAO<CustomerOrderTrigger> implements CustomerOrderTriggerDAO {
+public class TriggerDAOImpl extends UniqueFieldHibernateDAO<TriggerAction> implements TriggerDAO {
+public class ServiceOrderTypeTriggerDAOImpl extends GenericHibernateDAO<ServiceOrderTypeTrigger> implements ServiceOrderTypeTriggerDAO {
+public class StockKeepingUnitTriggerDAOImpl extends GenericHibernateDAO<StockKeepingUnitTrigger> implements StockKeepingUnitTriggerDAO {
+public class ShipmentOrderGroupDAOImpl extends UniqueFieldHibernateDAO<ShipmentOrderGroup> implements ShipmentOrderGroupDAO {
+public class UnNumberDAOImpl extends EnumeratedValueObjectHibernateDAO<UnNumber> implements UnNumberDAO {
+public class FilterDAOImpl extends UniqueFieldHibernateDAO<Filter> implements FilterDAO {
+public class OrderProcessDAOImpl extends EnumeratedValueObjectHibernateDAO<OrderProcess> implements OrderProcessDAO {
+public class CustomerOrderTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<CustomerOrderType> implements CustomerOrderTypeDAO {
+public class EntityDetailTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<EntityDetailType> implements EntityDetailTypeDAO {
+public class CountryGroupDAOImpl extends EnumeratedValueObjectHibernateDAO<CountryGroup> implements CountryGroupDAO {
+public class DocumentTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<DocumentType> implements DocumentTypeDAO {
+public class BusinessObjectDAOImpl extends EnumeratedValueObjectHibernateDAO<BusinessObject> implements BusinessObjectDAO {
+public class CountryDAOImpl extends EnumeratedValueObjectHibernateDAO<Country> implements CountryDAO {
+public class PlanningReasonCodeDAOImpl extends EnumeratedValueObjectHibernateDAO<PlanningReasonCode> implements PlanningReasonCodeDAO {
+public class RateComponentTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<RateComponentType> implements RateComponentTypeDAO {
+public class OrganizationDAOImpl extends EnumeratedValueObjectHibernateDAO<Organization> implements OrganizationDAO {
+public class OrganizationDAOImpl extends GenericHibernateDAO<Organization> implements OrganizationDAO {
+public class ScheduleDaoImpl extends EnumeratedValueObjectHibernateDAO<ScheduleVo> implements ScheduleDao {
+public class PrivilegeTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<PrivilegeType> implements PrivilegeTypeDAO {
+public class ShippingUnitDAOImpl extends EnumeratedValueObjectHibernateDAO<ShippingUnit> implements ShippingUnitDAO {
+public class UnitDAOImpl extends EnumeratedValueObjectHibernateDAO<Unit> implements UnitDAO {
+public class StockKeepingUnitDAOImpl extends GenericHibernateDAO<StockKeepingUnit> implements StockKeepingUnitDAO {
+public class OrderValidationRuleMessageDAOImpl extends GenericHibernateDAO<OrderValidationRuleMessage> implements OrderValidationRuleMessageDAO {
+public class MessageDAOImpl extends UniqueFieldHibernateDAO<Message> implements MessageDAO {
+public class MessageDAOImpl extends GenericHibernateDAO<Message> implements MessageDAO {
+public class InstructionGroupDAOImpl extends EnumeratedValueObjectHibernateDAO<InstructionGroup> implements InstructionGroupDAO {
+public class StockLocationDAOImpl extends EnumeratedValueObjectHibernateDAO<StockLocation> implements StockLocationDAO {
+class StockLocationTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<StockLocationType> implements StockLocationTypeDAO {
+public class ConsolidationRuleDAOImpl extends UniqueFieldHibernateDAO<ConsolidationRule> implements ConsolidationRuleDAO {
+public class EntityFieldExpressionDAOImpl extends EnumeratedValueObjectHibernateDAO<EntityFieldExpression> implements EntityFieldExpressionDAO {
+public class BookedCapacityDAOImpl extends EnumeratedValueObjectHibernateDAO<BookedCapacity> implements BookedCapacityDAO {
+public class CapacityTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<CapacityType> implements CapacityTypeDAO {
+public class ResourceTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<ResourceType> implements ResourceTypeDAO {
+public class CapacityBucketDAOImpl extends EnumeratedValueObjectHibernateDAO<CapacityBucket> implements CapacityBucketDAO {
+public class CapacityProfileDAOImpl extends EnumeratedValueObjectHibernateDAO<CapacityProfile> implements CapacityProfileDAO {
+public class ContractDAOImpl extends GenericHibernateDAO<Contract> implements ContractDAO {
+public class CustomerContractServiceImpl extends AbstractService<CustomerContract, CustomerContractDAO> implements CustomerContractService {
+public class SupplierContractServiceImpl extends AbstractService<SupplierContract, SupplierContractDAO> implements SupplierContractService {
+public class CustomerContractDAOImpl extends ContractDAOImpl<CustomerContract> implements CustomerContractDAO {
+public class SupplierContractDAOImpl extends ContractDAOImpl<SupplierContract> implements SupplierContractDAO {
+public class ContractDAOImpl<Type extends Contract> extends GenericHibernateDAO<Type> implements ContractDAO<Type> {
+public class ContractTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<ContractType> implements ContractTypeDAO {
+public class PaymentBatchDAOImpl extends EnumeratedValueObjectHibernateDAO<PaymentBatchVO> implements PaymentBatchDAO {
+public class FinancialPartyBankAccountDAOImpl extends EnumeratedValueObjectHibernateDAO<FinancialPartyBankAccountVO> implements FinancialPartyBankAccountDAO {
+public class VatPolicyDAOImpl extends EnumeratedValueObjectHibernateDAO<VatPolicy> implements VatPolicyDAO {
+public class InvoiceMatchStatusDAOImpl extends EnumeratedValueObjectHibernateDAO<InvoiceMatchStatus> implements InvoiceMatchStatusDAO {
+public class VatNumberDAOImpl extends EnumeratedValueObjectHibernateDAO<VatNumber> implements VatNumberDAO {
+public class InvoiceTemplateDAOImpl extends UniqueFieldHibernateDAO<InvoiceTemplate> implements InvoiceTemplateDAO {
+public class InvoiceCategoryDAOImpl extends EnumeratedValueObjectHibernateDAO<InvoiceCategory> implements InvoiceCategoryDAO {
+public class CustomerInvoiceHeaderStatusDAOImpl extends EnumeratedValueObjectHibernateDAO<CustomerInvoiceHeaderStatus> implements
+public class AccountingInfoRuleDAOImpl extends UniqueFieldHibernateDAO<AccountingInfoRule> implements AccountingInfoRuleDAO {
+public class EntityExpressionDAOImpl extends EnumeratedResourceProtectedValueObjectDAOImpl<EntityExpression> implements EntityExpressionDAO {
+		EnumeratedValueObjectHibernateDAO<T> implements EnumeratedResourceProtectedValueObjectDAO<T> {
+
+[eric@localhost trunk]$ for dao in $(find -iname "*dao*java" | xargs grep 'extends EnumeratedValueObjectDAOInterface' | awk '{print gensub(/(.+):(.+)/,"\\1","g")}' | awk '{print gensub(/(.+)\/(.+).java/,"\\2","g")}');do find -iname "*impl*java" | xargs grep "$dao" | grep implements ;done  |  awk '{print gensub(/(.+):(.+)/,"\\2","g")}' | grep ResourceType
+public class ResourceTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<ResourceType> implements ResourceTypeDAO {
+
+[eric@localhost trunk]$ for dao in $(find -iname "*dao*java" | xargs grep 'extends EnumeratedValueObjectDAOInterface' | awk '{print gensub(/(.+):(.+)/,"\\1","g")}' | awk '{print gensub(/(.+)\/(.+).java/,"\\2","g")}');do find -iname "*impl*java" | xargs grep "$dao" | grep implements ;done  |  awk '{print gensub(/(.+):(.+)/,"\\2","g")}' | awk '{print gensub(/(.+) extends (.+)<(.+)/,"\\2","g")}'  | sort | uniq
+AbstractService
+ContractDAOImpl
+EnumeratedResourceProtectedValueObjectDAOImpl
+EnumeratedValueObjectHibernateDAO
+		EnumeratedValueObjectHibernateDAO<T> implements EnumeratedResourceProtectedValueObjectDAO<T> {
+GenericHibernateDAO
+GenericHibernateDAO<Type> implements ContractDAO
+MockEnumeratedValueObjectDAO
+UniqueFieldHibernateDAO
+
+
+/ Einde MISSCHIEN	, 
+ 
+/ 7	. 
+
+/ IncoTerm	, 1ste soort	,
+
+public abstract class SoftDeletableEvoEditPage<T extends EnumeratedValueObjectInterface> extends EvoEditPage<T> {
+	public SoftDeletableEvoEditPage() {
+		softDeletableLink = new AjaxLink<Void>("softDeletableLink") {
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				ISortableDataProvider<T> sortableDataProvider = new SoftDeletableDataProvider<T>((BeanWrapper<SoftDeletableDAOInterface<T>>) daoWrapper);
+/e
+public abstract class EvoListPage<T extends DescribedUniqueFieldValueObject> extends BaseContextPage {
+	protected BeanWrapper<? extends EnumeratedValueObjectDAOInterface<T>> daoWrapper;
+
+
+public class IncoTermDAOHibernate extends EnumeratedValueObjectHibernateDAO<IncoTermVO> implements IncoTermDAO {
+/e
+public class EnumeratedValueObjectHibernateDAO<T extends EnumeratedValueObjectInterface> extends GenericHibernateDAO<T> implements
+		EnumeratedValueObjectDAOInterface<T>, SoftDeletableDAOInterface<T> {
+
+$ vi oms-dao.sb.xml
+	<bean id="com.mpobjects.oms.dao.incoterm.IncoTermDAO" class="com.mpobjects.oms.dao.incoterm.IncoTermDAOHibernate"
+		parent="HibernateDAOTemplate" />
+/e
+$ vi core-base.sb.xml:	
+<bean id="HibernateDAOTemplate" abstract="true">
+	<!-- The parent bean for all Hibernate based DAOs -->
+	<bean id="HibernateDAOTemplate" abstract="true">
+		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="performanceMonitorService" ref="com.mpobjects.core.performance.PerformanceMonitorService" />
+		<property name="oldEntityStateCache" ref="com.mpobjects.util.dao.OldEntityStateCache" />
+	</bean>
+
+public class SoftDeletableDataProvider<T extends EnumeratedValueObjectInterface> extends SortableDataProvider<T> implements IFilterStateLocator<SoftDeletableFilter>, SoftDeletableLocator<T> {
+	public SoftDeletableDataProvider(BeanWrapper<? extends SoftDeletableDAOInterface<T>> daoWrapper) {
+
+/ 7	. 
+
+[eric@localhost trunk]$ find -name "*menu*xml" | xargs grep ResourceType
+./module/capabletopromise/capabletopromise-menu.xml:	<m:add path="configuration.resources.resourceType" actionUrl="wicket/?module=capabletopromise&amp;wicketpage=resourcetype.ResourceTypeListPage" privilege="resourcetype.edit" index="1001" />
+
+/ Ga naar configuration	, resources
+	capacity type	
+	resource type	
+
+public class ResourceTypeListPage extends BaseContextPage {
+
+	protected BeanWrapper<BaseDAOInterface<ResourceType>> daoWrapper;
+	public ResourceTypeListPage() {
+		super();
+		daoWrapper = new BeanWrapper(ResourceTypeDAO.class);		<-
+		createPage();
+
+
+	<bean id="com.mpobjects.capabletopromise.dao.resourcetype.ResourceTypeDAO" class="com.mpobjects.capabletopromise.dao.resourcetype.ResourceTypeDAOImpl" parent="HibernateDAOTemplate">
+	</bean>
+
+public class ResourceTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<ResourceType> implements ResourceTypeDAO {
+
+EvoListPage.classj
+	public EvoListPage() {
+		super();
+		daoWrapper = getBeanWrapper(); <-
+		setDataProperties();
+		createPage();			<-
+	}
+	protected void createPage() {
+
+		add(new Label("pageTitle", "Search " + getSearchPageTitle().getObject()));
+		createFeedbackPanel();
+		createListPanel();
+	}
+	protected void createListPanel() {
+		searchListPanel = new EvoSearchListPanel<T>("evoSearchList", null, webComponentEventSwitchBoard, daoWrapper, getListActions()) {
+
+
+/ 7	. 
+/13	. 
+
+public class IncoTermPage extends EvoEditPage<IncoTermVO> {
+
+/ 13	. 
+
+public abstract class EvoListPage<T extends DescribedUniqueFieldValueObject> extends BaseContextPage {
+
+	protected <U extends EnumeratedValueObjectInterface> void createSoftDeletableLinkPanel() {
+		Panel softDeletableLinkPanel = new SoftDeletableLinkPanel<U>("softDeletableLinkPanel") {
+
+			@Override
+			protected BeanWrapper<? extends SoftDeletableDAOInterface<U>> getBeanWrapper() {
+				return (BeanWrapper<? extends SoftDeletableDAOInterface<U>>) daoWrapper;
+			}
+
+			@Override
+			protected WebPage getResponsePage() {
+				return getWebPage();
+			}
+
+		};
+		add(softDeletableLinkPanel);
+	}
+
+	protected void createPage() {
+
+		add(new Label("pageTitle", "Search " + getSearchPageTitle().getObject()));
+		createFeedbackPanel();
+		createListPanel();
+		createSoftDeletableLinkPanel();
+	}
+
+public abstract class SoftDeletableLinkPanel<T extends EnumeratedValueObjectInterface> extends Panel {
+...
+
+public abstract class SoftDeletableEvoEditPage<T extends EnumeratedValueObjectInterface> extends EvoEditPage<T> {
+/ overbodig	,
+
+$ vi EvoListPage.html
+<body>
+	<wicket:panel>
+		<wicket:extend>
+			<div wicket:id="feedback"></div>
+			<div wicket:id="evoSearchList"></div>
+			<div wicket:id="softDeletableLinkPanel"></div>
+			<wicket:child />
+		</wicket:extend>
+	</wicket:panel>
+</body> 
+
+
+
+/ Einde TYPES
+
+/ 2ND TYPE 
+
+/ 7	. 
+
+/ we hadden eerst	,
+
+$ vi ResourceTypeListPage.java
+
+	protected BeanWrapper<BaseDAOInterface<ResourceType>> daoWrapper;								/ <- 
+
+	protected <U extends EnumeratedValueObjectInterface> void createSoftDeletableLinkPanel() {
+		Panel softDeletableLinkPanel = new SoftDeletableLinkPanel<U>("softDeletableLinkPanel") {
+
+			@Override
+			protected BeanWrapper<? extends SoftDeletableDAOInterface<U>> getBeanWrapper() {
+				return (BeanWrapper<? extends SoftDeletableDAOInterface<U>>) daoWrapper;
+			}
+
+			@Override
+			protected WebPage getResponsePage() {
+				return getWebPage();
+			}
+		};
+		add(softDeletableLinkPanel);
+	}
+
+/ Dit geeft build error:
+
+
+inconvertible types
+found   : com.mpobjects.view.wicket.util.BeanWrapper<com.mpobjects.util.dao.BaseDAOInterface<com.mpobjects.capabletopromise.model.entity.resourcetype.ResourceType>>
+    [javac] required: com.mpobjects.view.wicket.util.BeanWrapper<? extends com.mpobjects.core.view.wicket.softdeletable.SoftDeletableDAOInterface<U>>
+    [javac] 				return (BeanWrapper<? extends SoftDeletableDAOInterface<U>>) daoWrapper;
+
+/ we moeten	, 
+
+$ vi ResourceTypeListPage.java
+	protected BeanWrapper<? extends BaseDAOInterface<ResourceType>> daoWrapper;								/ <- 
+
+/ 7	. 
+
+/ Dus in het totaal moeten we	,  
+
+public class ResourceTypeListPage extends BaseContextPage {
+
+	protected BeanWrapper<? extends BaseDAOInterface<ResourceType>> daoWrapper;							<-
+
+	protected <U extends EnumeratedValueObjectInterface> void createSoftDeletableLinkPanel() {			<- gewoon er in set	, zoals in EvoListPage	,
+		Panel softDeletableLinkPanel = new SoftDeletableLinkPanel<U>("softDeletableLinkPanel") {
+
+			@Override
+			protected BeanWrapper<? extends SoftDeletableDAOInterface<U>> getBeanWrapper() {
+				return (BeanWrapper<? extends SoftDeletableDAOInterface<U>>) daoWrapper;
+			}
+
+			@Override
+			protected WebPage getResponsePage() {
+				return getWebPage();
+			}
+
+		};
+		add(softDeletableLinkPanel);
+	}
+
+public class ResourceTypeEditPage extends BaseContextPage {
+	protected BeanWrapper<? extends BaseDAOInterface<ResourceType>> daoWrapper;
+	public ResourceTypeEditPage(BeanWrapper<? extends BaseDAOInterface<ResourceType>> aDaoWrapper, BaseContextPage aBasePage) {
+
+public class ResourceTypeSearchListPanel extends GenericListPanel<ResourceType> {
+	public ResourceTypeSearchListPanel(String aId, BaseWebComponent aParent, WebComponentEventSwitchBoard aWebComponentEventSwitchBoard,
+			BeanWrapper<? extends BaseDAOInterface<ResourceType>> aDaoWrapper) {
+
+public class ResourceTypeEditPanel extends GenericFormPanel<ResourceType> {
+	public ResourceTypeEditPanel(String aId, WebComponentEventSwitchBoard aWebComponentEventSwitchBoard, EntityFormActionBuilder<ResourceType> aPanelBuilder, BeanWrapper<? extends BaseDAOInterface<ResourceType>> aDaoWrapper) {
+
+
+
+/ Einde 2ND TYPE 
+
+/ HERSTEL 1ST TYPES 
+
+/ omdat we een panel add aan EvoListPage	, moeten we alle pages zoals 
+	CapacityTypePage extends SoftDeletableEvoEditPage<CapacityType>
+/ weer	,
+public class CapacityTypePage extends EvoEditPage<CapacityType> {
+
+/ Einde HERSTEL 1ST TYPES 
+
+
+
+
+/ TRUNK & MAVEN
+
+/ Verwijderd: /trunk/tntwillebroek/tntwillebroek-printer-applet/	, 
+Access restriction: The constructor XMLSerializer() is not accessible due to restriction on required library /home/eric/Devel/Java/jdk1.6.0_45/jre/lib/rt.jar	EnterBarcodeApplet.java	/trunk/tntwillebroek/tntwillebroek-printer-applet/src/java/com/mpobjects/tntwillebroek/web/userinfo/file	line 149	Java Problem
+
+
+
+/ Einde TRUNK & MAVEN
+
+/ CLOSED PAGES
+
+http://stackoverflow.com/questions/16223325/purpose-of-the-java-home-m2-and-m2-home-variables
+http://math-linux.com/linux/tip-of-the-day/article/svn-how-to-ignore-file-or-directory-in-subversion
+https://system.mp-objects.com/artifactory/webapp/login.html?0
+https://system.mp-objects.com/xwiki/bin/view/Technology/Artifactory
+https://maven.apache.org/run-maven/index.html
+http://stackoverflow.com/questions/30081357/use-mockito-2-0-7-to-mock-lambda-expressions
+http://stackoverflow.com/questions/16961935/how-to-customized-properties-folder-in-wicket
+http://stackoverflow.com/questions/13699153/how-to-read-string-from-properties-file-in-junit-tests
+https://en.wikipedia.org/wiki/Singular_value_decomposition
+
+
+
+/ Einde CLOSED PAGES
+
+2017-01-20 10:06:40,245 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)    MUST_BE_REMOVED : commons-beanutils-1.9.1.jar
+2017-01-20 10:06:40,246 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : commons-beanutils-1.9.2.jar
+
+2017-01-20 13:36:04,764 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)  CHECKSUM_MISMATCH : commons-beanutils-1.9.2.jar
+2017-01-20 13:36:04,764 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)    MUST_BE_REMOVED : commons-collections-3.2.1.jar
+2017-01-20 13:36:04,764 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : commons-collections-3.2.2.jar
+
+2017-01-20 13:36:04,765 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)    MUST_BE_REMOVED : commons-logging-1.1.2.jar
+2017-01-20 13:36:04,765 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : commons-logging-1.2.jar
+2017-01-20 13:36:04,765 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : commons-validator-1.5.1.jar
+2017-01-20 13:36:04,765 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)    MUST_BE_REMOVED : commons-validator.jar
+2
+2017-01-20 13:36:04,776 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : vt-password-3.1.2.jar
+
+/ op test	,
+$ ls -ltr commons-beanutils-1.9.2.jar commons-collections-3.2.2.jar  commons-logging-1.2.jar commons-validator-1.5.1.jar vt-password-3.1.2.jar
+-rw-rw-r-- 1 jboss jboss 588337 Dec 16 15:46 commons-collections-3.2.2.jar
+-rw-rw-r-- 1 jboss jboss 233857 Dec 16 15:46 commons-beanutils-1.9.2.jar
+-rw-rw-r-- 1 jboss jboss  48276 Dec 16 15:46 vt-password-3.1.2.jar
+-rw-rw-r-- 1 jboss jboss 178967 Dec 16 15:46 commons-validator-1.5.1.jar
+-rw-rw-r-- 1 jboss jboss  61829 Dec 16 15:46 commons-logging-1.2.jar
+
+/ local
+$ find -name commons-beanutils-1.9.2.jar -o -name commons-collections-3.2.2.jar -o -name  commons-logging-1.2.jar -o -name commons-validator-1.5.1.jar -o -name vt-password-3.1.2.jar | xargs -I % ls -ltr %
+-rw-rw-r--. 1 eric eric 588337 Jan 19 12:00 ./base-framework/core/lib/jar/commons-collections-3.2.2.jar
+-rw-rw-r--. 1 eric eric 233859 Jan 19 12:00 ./base-framework/core/lib/jar/commons-beanutils-1.9.2.jar
+-rw-rw-r--. 1 eric eric 48276 Jan 19 12:00 ./base-framework/core/lib/jar/vt-password-3.1.2.jar
+-rw-rw-r--. 1 eric eric 178967 Jan 19 12:00 ./base-framework/core/lib/jar/commons-validator-1.5.1.jar
+-rw-rw-r--. 1 eric eric 61829 Jan 19 12:00 ./base-framework/core/lib/jar/commons-logging-1.2.jar
+
+-rw-rw-r-- 1 jboss jboss 588337 Dec 16 15:46 commons-collections-3.2.2.jar
+
+/local/apps/jboss-4.0.5.GA/server/pnltms/lib
+
+
+/ EARLIER WICKET TEST
+
+[eric@localhost wicket_tests_in_scs]$ pwd
+/home/eric/tmp/wicket_tests_in_scs
+[eric@localhost wicket_tests_in_scs]$ find
+.
+./without_spy
+./without_spy/SoftDeletableSearchPageTest.java
+./with_spy
+./with_spy/SoftDeletableSearchPageTest.java
+
+
+/ Einde EARLIER WICKET TEST
+
+
+
+
+
+
+/ 7	. 
+
+/ BREAKPOINTS MPOSCS
+
+AbstractEntityActionButton [line: 220] - createButton(IModel<T>, String)	
+AbstractPageableView [line: 104] - getItemModels()	
+AbstractPropertyModel [line: 127] - AbstractPropertyModel	
+BaseActionBuilder [line: 74] - createActions(RepeatingView, IModel<T>)	
+BaseActionBuilder$EntityActionPanel [line: 31] - EntityActionPanel(String, BaseWebComponent, WebComponentEventSwitchBoard, IModel<T>)	
+BasePage [line: 75] - onInitialize()	
+BasePage [line: 99] - onInitialize()	
+Component [line: 1725] - getDefaultModelObject()	
+Component [line: 1748] - getDefaultModelObjectAsString()	
+Component [line: 2467] - render()	
+Component [line: 2488] - render(MarkupStream)	
+Component [line: 2646] - renderComponent()	
+ConfigurableTextFilteredPropertyColumn [line: 182] - getFilter(String, FilterForm)	
+ConfigurableTextFilteredPropertyColumn [line: 197] - populateItem(Item<ICellPopulator<T>>, String, IModel<T>)	
+ConfigurableTextFilteredPropertyColumn [line: 214] - createLabelModel(IModel<T>)	
+ConfigurableTextFilteredPropertyColumn [line: 222] - getFilterModel(FilterForm)	
+ConfigurableTextFilteredPropertyColumn$ConfigurableTextFilter [line: 40] - ConfigurableTextFilter(String, IModel<T>, FilterForm, int)	
+EntityActionAjaxButton [line: 43] - createButtonInstance(IModel<T>, String)	
+EntityActionAjaxButton [line: 84] - onSubmit(Button, IModel<T>)	
+EntityActionButton [line: 49] - createComponent(String, IModel<T>)	
+EntityActionPanel [line: 127] - addActionComponent(EntityAction<T>)	
+EntityListActionBuilder [line: 44] - build(String, WebComponentEventSwitchBoard, GenericListPanel<T>, IModel<T>)	
+EvoEditFormPage [line: 106] - setEditRecord(T)	
+EvoEditFormPage$1 [line: 166] - onSubmit(Button, AjaxRequestTarget, IModel<T>)	
+EvoEditFormPage$2 [line: 192] - createButton(IModel<T>, String)	
+EvoEditFormPage$2 [line: 204] - onSubmit(Button, AjaxRequestTarget, IModel<T>)	
+EvoEditPage [line: 125] - createCreateButton()	
+EvoEditPage$3 [line: 133] - onSubmit(AjaxRequestTarget, Form<?>)	
+EvoEditPage [line: 171] - getEditPage()	
+EvoEditPage$4 [line: 189] - onSubmit(Button, AjaxRequestTarget, IModel<T>)	
+EvoEditPage$5 [line: 207] - createButton(IModel<T>, String)	
+EvoListPage [line: 49] - EvoListPage()	
+EvoListPage [line: 126] - setDataProperties()	
+EvoSearchListPanel [line: 99] - addFilterColumns(List<IColumn>)	
+Form [line: 957] - Form	
+Form [line: 1061] - Form	
+Form$16 [line: 1605] - new Anonymous	
+FormComponent [line: 1183] - FormComponent	
+GenericFormPanel [line: 55] - GenericFormPanel(String, BaseWebComponent, WebComponentEventSwitchBoard, T, FormActionsPanelBuilder<T>, BeanWrapper<? extends BaseDAOInterface<T>>)	
+GenericHibernateDAO [line: 450] - runQuery(QueryParam, DAOFilterExpression<Type>)	
+GenericListPanel [line: 241] - initialize()	
+GenericListPanel$2 [line: 281] - getFilter(String, FilterForm)	
+GenericListPanel$2 [line: 286] - populateItem(Item, String, IModel)	
+GenericListPanel$2 [line: 291] - populateItem(Item, String, IModel)	
+GenericTableDataProvider [line: 208] - iterator(int, int)	
+GenericTableDataProvider [line: 223] - model(T)	
+GenericTableDataProvider [line: 248] - size()	
+GenericTableDataProvider$FilterStateFilterExpression [line: 68] - getModelProxy()	
+GenericTableDataProvider$FilterStateFilterExpression [line: 95] - createProxy()	
+GenericTableDataProvider$FilterStateFilterExpression$1 [line: 100] - invoke(MethodInvocation)	
+GenericTableDataProvider$FilterStateFilterExpression [line: 121] - intercept(Method, Object[])	
+GoFilter$1 [line: 71] - GoFilter(String, IModel<String>)	
+IncoTermPage [line: 30] - IncoTermPage()	
+OrderByLink$CssProvider [line: 276] - getClassAttributeValue(ISortState, String)	
+Page [line: 941] - renderPage()	
+Page [line: 941] - Page	
+Page$5 [line: 1087] - new Anonymous	
+Page$5 [line: 1093] - new Anonymous	
+Page [line: 1122] - Page	
+PrefilteredTableDataProvider [line: 91] - resetFilterState()	
+PrefilteredTableDataProvider [line: 107] - setFilter()	
+PrefilteredTableDataProvider$Builder [line: 61] - build(BeanWrapper<? extends BaseDAOInterface<U>>, String)	
+RefreshingView$1 [line: 112] - new Anonymous	
+RequestCycle [line: 1358] - step()	
+ResetableGoAndClearFilter$1 [line: 36] - onSubmit()	
+SoftDeletableActionPanel [line: 23] - new Anonymous	
+SoftDeletableDataProvider [line: 28] - SoftDeletableDataProvider(BeanWrapper<? extends SoftDeletableDAOInterface<T>>)	
+SoftDeletableEvoEditPage$1 [line: 23] - onClick(AjaxRequestTarget)	
+SoftDeletableSearchPage [line: 52] - SoftDeletableSearchPage(ISortableDataProvider<T>)	
+SoftDeletableSearchPageTesta [line: 106] - testRenderPage()	
+SoftDeletableSearchPageTesta [line: 129] - testFilterForm()	
+
+/ AGAIN ALL PAGES AND TYPES 
+
+/ 7	. 
+
+/ configuration, master data, incoterms
+/= IncoTermPage	,
+
+public class IncoTermPage extends EvoEditPage<IncoTermVO> {
+	public IncoTermPage() {
+		super()
+/s
+public abstract class EvoEditPage<T extends DescribedUniqueFieldValueObject> extends EvoListPage<T> implements EvoEditFormCallback {
+	public EvoEditPage() {
+		super()
+/s
+public abstract class EvoListPage<T extends DescribedUniqueFieldValueObject> extends BaseContextPage {
+	public EvoListPage() {
+		createPage();
+/s
+public abstract class EvoEditPage<T extends DescribedUniqueFieldValueObject> extends EvoListPage<T> implements EvoEditFormCallback {
+		super.createPage();
+/s
+public abstract class EvoListPage<T extends DescribedUniqueFieldValueObject> extends BaseContextPage {
+	protected void createPage() {
+		createListPanel();				/ filter, tabel met filter results	,
+		createSoftDeletableLinkPanel();
+/ 1ste	,
+/s
+public class IncoTermPage extends EvoEditPage<IncoTermVO> {
+	protected void createListPanel() {
+			super.createListPanel();
+/s
+public abstract class EvoEditPage<T extends DescribedUniqueFieldValueObject> extends EvoListPage<T> implements EvoEditFormCallback {
+	protected void createListPanel() {
+		super.createListPanel();
+/s
+public abstract class EvoListPage<T extends DescribedUniqueFieldValueObject> extends BaseContextPage {
+		searchListPanel = new EvoSearchListPanel<T>("evoSearchList", null, webComponentEventSwitchBoard, daoWrapper, getListActions()) {
+			@Override
+			protected boolean isUsingFirst() {
+				return EvoListPage.this.isUsingFirst();
+			}
+		};
+		add(searchListPanel);
+/ 2de	, 
+public abstract class EvoListPage<T extends DescribedUniqueFieldValueObject> extends BaseContextPage {
+		Panel softDeletableLinkPanel = new SoftDeletableLinkPanel<U>("softDeletableLinkPanel") {
+			...
+		add(softDeletableLinkPanel);
+	}
+
+/ 13	. 
+
+/ IncoTermPage heeft geen html	,
+
+$ vi EvoEditPage.html
+	<wicket:extend>
+		<form wicket:id="createForm">
+				<button wicket:id="createButton" class="button-primary" wicket:message="title:create">
+					<i class="fa fa-file-o" aria-hidden="true"></i>
+					<span><wicket:message key="create">Create new</wicket:message></span>
+				</button>
+		</form>
+		<div wicket:id="editWindow"></div>
+		<wicket:child />
+	</wicket:extend>
+
+$ vi EvoListPage.html
+ 		<wicket:extend>
+			<div wicket:id="feedback"></div>
+			<div wicket:id="evoSearchList"></div>
+			<div wicket:id="softDeletableLinkPanel"></div>
+			<wicket:child />
+		</wicket:extend>
+
+$ vi BaseContextPage.html	/ rm	,
+<wicket:extend>
+	<wicket:child/>
+</wicket:extend>
+
+$ vi BasePage.html
+
+<body wicket:id="pageId">
+	<div class="wicketPage">
+		<wicket:child />
+	</div>
+</div>
+
+/ 7	. 
+
+public class EvoSearchListPanel<T extends DescribedUniqueFieldValueObject> extends GenericListPanel<T> {
+
+abstract public class GenericListPanel<T extends EntityInterface> extends BaseWebComponent {
+
+/ 13	. 
+
+	public DataTable(String id, IColumn<T>[] columns, IDataProvider<T> dataProvider, int rowsPerPage)
+
+/ heeft IColumn<T>[] columns als arg	, want	,  AbstractDataGridView.populateItem loops over de IColumns die de property hebben	, en creates de PropertyModel voor de cell item	,:w
+
+/s
+public abstract class AbstractDataGridView<T> extends DataViewBase<T>
+	public AbstractDataGridView(String id, ICellPopulator<T>[] populators, IDataProvider<T> dataProvider)
+		this.populators = populators;
+	@Override
+	protected final void populateItem(Item<T> item)
+	{
+		RepeatingView cells = new RepeatingView(CELL_REPEATER_ID);
+		item.add(cells);
+
+		ArrayIteratorAdapter<ICellPopulator<T>> populators = getPopulatorsIterator();
+
+		for (int i = 0; populators.hasNext(); i++)
+		{
+			IModel<ICellPopulator<T>> populatorModel = populators.next();
+			Item<ICellPopulator<T>> cellItem = newCellItem(cells.newChildId(), i, populatorModel);
+			cells.add(cellItem);
+
+			ICellPopulator<T> populator = cellItem.getModelObject();
+			populator.populateItem(cellItem, CELL_ITEM_ID, item.getModel());
+
+
+/ 13	. 
+
+/ Geen EvoSearchListPanel.html
+
+$ vi GenericListPanel.html
+
+<wicket:extend>
+	<form class="genericListPanelForm" wicket:id="filterForm" name="genericListPanelForm" id="genericListPanelForm">
+	<div wicket:id="group">
+		<div class="gridContainer">
+			<table wicket:id="objectTable" class="grid wicketPagination"></table>
+		</div>
+	</div>
+	<wicket:child />
+	</form>
+</wicket:extend> 
+
+$ vi BaseWebComponent.html
+<wicket:panel>
+	<wicket:child/>
+</wicket:panel>
+
+

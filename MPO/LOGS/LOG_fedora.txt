@@ -1,0 +1,81 @@
+/ SCRIPTING 
+
+$ man find
+      -exec command ;
+              Execute command; true if 0 status is returned.  All following arguments to find are taken to be arguments  to the  command  until an argument consisting of ‘;’ is encountered.  The string ‘{}’ is replaced by the current file name being processed
+
+/ 13	. 
+
+/ lees	, 
+http://www.binarytides.com/linux-find-command-examples/
+$ find . -maxdepth 1 -type f -exec ls -s {} \; | sort  -k1 -rn | head -5
+/ of	, 
+[eric@localhost tmp]$ find . -maxdepth 1 -type f -exec ls -l {} \; | sort -k5 -n
+
+
+/ 13	. 
+/ lees	, 
+http://unix.stackexchange.com/questions/53737/how-to-list-all-files-ordered-by-size
+
+/ find, order by size	, 
+$ ls -lS 
+$ ls -lSr		/ reverse	,
+
+
+/ of	, 
+
+To add recursion I would leave the sorting of the lines to the sort command and tell it to use the 5th column to sort on.
+/ R is recursive	, de sorting is done by sort	,
+ls -lR | grep '^-' | sort -k 5 -rn
+
+/ 13	. 
+/ lees	, 
+http://superuser.com/questions/608887/how-can-i-make-find-find-files-in-reverse-chronological-order
+
+/ find, order by date	,
+
+$ pnl-ssh-t.sh "find /local/apps/releases -printf '%T+\t%p\n' | grep pnllogistics | sort -k1 "
+/ of	,
+$ pnl-ssh-t.sh "find /local/apps/releases -type f | grep pnllogistics | xargs ls -1tr"
+/ TODO -r
+
+find /path/to/dir -type f -print0 | xargs -0 ls -lrt
+/ TODO
+find bin/ -type f -printf '%Ts\t%p\n' | sort -nr | cut -f2
+/ TODO
+
+/ 13	. 
+
+/ find, print file size in bytes, name	,
+$ find -printf "%s\t%p\n"
+
+
+/ 13	. 
+
+/ tail -1 ipv awk	,
+
+$ ls -1tr ~vanderveldene/Downloads/ | tail -1 | xargs -I % cp -a ~vanderveldene/Downloads/% /local/apps/releases/
+
+[jboss@pnl-app-a releases]$ find -printf "%s\t%p\n"  | sort -k1 -rn
+/ TODO  
+
+[jboss@pnl-app-a releases]$ find -printf "%T+\t%p\n"  | grep pnllogistics | sort -k1 -n
+[jboss@pnl-app-a releases]$ find -printf "%Ts\t%p\n"  | grep pnllogistics | sort -k1 -n
+[jboss@pnl-app-a releases]$ find -printf "%s\t%p\n"  | grep pnllogistics | sort -k1 -n
+/ OK
+/ Waarom werkt sort? op de 1ste column	, of zoekt hij alleen numbers in de string	?
+/ TODO
+
+/ Lees	, 
+http://unix.stackexchange.com/questions/41655/how-to-sort-the-string-which-combined-with-string-numeric-using-bash-script
+
+
+
+
+
+
+
+
+
+
+/ Einde SCRIPTING 

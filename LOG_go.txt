@@ -1,0 +1,6 @@
+/ 7	 
+
+https://www.youtube.com/watch?v=rDRa23k70CU / go concurrency UK conf 2017	,
+
+/ lees	,
+https://medium.com/full-stack-tips/best-golang-books-12a56fc256ab

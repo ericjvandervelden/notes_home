@@ -1,0 +1,232 @@
+/ DEBUG WICKET 
+
+/ 7	. 
+
+/ proj. wicket-examples-steo-by-step	, 
+
+/ we clicked SimplePage	,
+
+///////////////////////////////////
+/ we vallen steeds in I en II 	,
+
+/ I
+/s
+	public DetachableContactModel(long id)
+/s
+	public LoadableDetachableModel()
+->	{
+	}
+/t
+	{
+		if (id == 0)
+		{
+			throw new IllegalArgumentException();
+		}
+		this.id = id;
+	}
+
+/c
+
+/ II
+	public SimplePage()
+	{
+		add(new DataView<Contact>("simple", new ContactDataProvider())
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void populateItem(final Item<Contact> item)
+			{
+->				Contact contact = item.getModelObject();
+...
+/s
+DetachableContactModel(LoadableDetachableModel<T>).getObject() line: 121	
+/=
+	public final T getObject()
+	{
+->		if (!attached)
+		{
+			attached = true;
+			transientModelObject = load();
+
+/ Dus hier wordt transientModelObject set	, en NIET in 	,
+	public LoadableDetachableModel(T object)
+	{
+		this.transientModelObject = object;
+		attached = true;
+	}
+/ want we kwamen WEL in	,
+	public LoadableDetachableModel()
+	{
+	}
+/////////////////////
+
+/ c
+
+	DetachableContactModel(LoadableDetachableModel<T>).detach() line: 99	
+		if (attached)
+		{
+			try
+			{
+				onDetach();
+
+->	Item<T>(Component).detachModel() line: 3628	
+
+	Item<T>(Component).detachModels() line: 1255	
+
+	Item<T>(Component).detach() line: 1172	
+		detachModels();
+
+	SimplePage$1(MarkupContainer).detachChildren() line: 1653	
+this.getClass().getSuperclass()=class org.apache.wicket.markup.repeater.data.DataView
+
+	SimplePage$1(Component).detach() line: 1179	
+		detachChildren();
+
+	SimplePage(MarkupContainer).detachChildren() line: 1653	
+	SimplePage(Component).detach() line: 1179	
+	PageProvider.detach() line: 327	
+	RenderPageRequestHandler.detach(IRequestCycle) line: 156	
+	RequestCycle$HandlerExecutor.detach(IRequestHandler) line: 848	
+	RequestCycle$HandlerExecutor(RequestHandlerStack).detach() line: 180	
+	RequestCycle.onDetach() line: 641	
+	RequestCycle.detach() line: 594	
+	RequestCycle.processRequestAndDetach() line: 297	
+	WicketFilter.processRequestCycle(RequestCycle, WebResponse, HttpServletRequest, HttpServletResponse, FilterChain) line: 261	
+	WicketFilter.processRequest(ServletRequest, ServletResponse, FilterChain) line: 203	
+	WicketFilter.doFilter(ServletRequest, ServletResponse, FilterChain) line: 284	
+	...
+
+/ Bij ->	,
+this	Item<T>  (id=7780)	
+	children	MarkupContainer$ChildList  (id=7989)	
+	data	Object[2]  (id=7990)	
+		[0]	DetachableContactModel  (id=7779)	
+			attached	true	
+			id	9	
+			transientModelObject	Contact  (id=7996)	
+				bornDate	Date  (id=7998)	
+				cellPhone	"243-555-1643" (id=7999)	
+				firstName	"Willie" (id=8002)	
+				homePhone	"768-555-7615" (id=8003)	
+				id	9	
+				lastName	"Wilson" (id=8004)	
+		[1]	AttributeModifier  (id=7994)	
+	flags	1074999450	
+	generatedMarkupId	-1	
+	id	"50" (id=7991)	
+	index	49	
+	markup	MarkupFragment  (id=7992)	
+	markupSourcingStrategy	DefaultMarkupSourcingStrategy  (id=7787)	
+	parent	SimplePage$1  (id=7674)	
+	queue	null	
+	requestFlags	51	
+model	DetachableContactModel  (id=7779)	
+
+
+
+$ vi SimplePage.java
+
+	{
+		add(new DataView<Contact>("simple", new ContactDataProvider())
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void populateItem(final Item<Contact> item)
+
+/ we zijn nu zo'n Item aan het detach 	, na de render WH	,
+
+/ we waren in 	,
+DetachableContactModel(LoadableDetachableModel<T>).detach() line: 99	
+		if (attached)
+		{
+			try
+			{
+				onDetach();
+/s
+DetachableContactModel(LoadableDetachableModel<T>).onDetach() line: 177	
+/=
+	protected void onDetach()
+	{
+	}
+
+/ onze DetachableContactModel heeft geen onDetach method	, dus vallen we in die van de parent class	,
+
+/c
+RequestCycle.onDetach() line: 645	
+		try
+		{
+			requestHandlerExecutor.detach();
+/d
+		}
+		finally
+		{
+			listeners.onDetach(this);
+/s
+RequestCycleListenerCollection.onDetach(RequestCycle) line: 100	
+		reversedNotifyIgnoringExceptions(new INotifier<IRequestCycleListener>()
+		{
+			@Override
+			public void notify(IRequestCycleListener listener)
+			{
+				listener.onDetach(cycle);
+/s
+Application$3.onDetach(RequestCycle) line: 1751	
+					Session.get().getPageManager().commitRequest();
+/s
+PageAccessSynchronizer$2.commitRequest() line: 270	
+					super.commitRequest();
+/s
+PageAccessSynchronizer$2(PageManagerDecorator).commitRequest() line: 68	
+		delegate.commitRequest();
+/s
+PageStoreManager(AbstractPageManager).commitRequest() line: 76	
+		getRequestAdapter().commitRequest();
+/s
+PageStoreManager$PersistentRequestAdapter(RequestAdapter).commitRequest() line: 172	
+				storeTouchedPages(statefulPages);
+/s
+PageStoreManager$PersistentRequestAdapter.storeTouchedPages(List<IManageablePage>) line: 403	
+				for (IManageablePage page : touchedPages)
+				{
+					pageStore.storePage(entry.sessionId, page);
+/s
+DefaultPageStore.storePage(String, IManageablePage) line: 61	
+
+this	DefaultPageStore  (id=8100)	
+sessionId	"AE8A33023DD211C359C2DD62EEBDC604" (id=8101)	
+page	SimplePage  (id=7655)	
+	autoIndex	7	
+	children	MarkupContainer$ChildList  (id=8040)	
+		childs	Object[12]  (id=8112)	
+			[0]	WicketExampleHeader  (id=7796)	
+			[1]	Label  (id=8114)	
+			[2]	FeedbackPanel  (id=8115)	
+			[3]	SimplePage$1  (id=7674)	
+			[4]	HtmlHeaderContainer  (id=8116)	
+			[5]	TransparentWebMarkupContainer  (id=8117)	
+			[6]	TransparentWebMarkupContainer  (id=8139)	
+			[7]	null	
+			[8]	null	
+			[9]	null	
+			[10]	null	
+			[11]	null	
+		modCount	0	
+		size	7	
+
+		SerializedPage serialized = createSerializedPage(sessionId, page);
+		if (serialized != null)
+		{
+			int pageId = page.getPageId();
+			pagesCache.storePage(sessionId, pageId, serialized);
+			storePageData(sessionId, pageId, serialized.getData());
+		}
+
+
+
+
+
+
+
+/ Einde DEBUG WICKET

@@ -1,0 +1,19 @@
+/ 7	.
+
+@Component
+public class MovieRecommender {
+    @Autowired
+    private ApplicationContext context;
+
+    @Autowired
+    public void setMovieCatalogs(Set<MovieCatalog> movieCatalogs) {
+
+@Configuration
+public class MovieConfiguration {
+
+    @Bean
+    @Primary
+    public MovieCatalog firstMovieCatalog() { ... }
+
+
+

@@ -1,0 +1,129 @@
+/ 7. 	
+
+/ oude	, 
+/ src code van	,
+https://www.manning.com/books/java-persistence-with-hibernate
+
+/ Download src code	van 2nd ed, 
+http://jpwh.org/examples/ 	/ hier staan van de oude de src codes afzonderlijk van de caveatemptor, in de oude zip jpwh_sourcecode.zip zit alles bij eklaar	,
+
+[eric@almond hibernate]$ pwd
+/home/eric/Devel/Java/hibernate
+[eric@almond hibernate]$ unzip  ~/Downloads/jpwh_sourcecode.zip 	/ oude	,
+[eric@almond hibernate]$  ls
+caveatemptor-jpa-061211  caveatemptor-native-061211  jpwh-gettingstarted-070401
+[eric@almond hibernate]$ unzip  ~/Downloads/jpwh-2e-examples-20151103.zip 
+[eric@almond hibernate]$ ls
+caveatemptor-jpa-061211     jpwh-2e-examples-20151103
+caveatemptor-native-061211  jpwh-gettingstarted-070401
+
+/ 7	. 
+
+/ Lees	,
+http://in.relation.to/2017/03/20/hibernate-community-newsletter-2017-6/?utm_source=Vlad+Mihalcea%27s+Newsletter&utm_campaign=aaa3801af0-EMAIL_CAMPAIGN_2017_03_24&utm_medium=email&utm_term=0_7a1c643a85-aaa3801af0-193996189
+
+https://vladmihalcea.com/2017/03/21/how-to-find-which-statement-failed-in-a-jdbc-batch-update/?utm_source=Vlad+Mihalcea%27s+Newsletter&utm_campaign=aaa3801af0-EMAIL_CAMPAIGN_2017_03_24&utm_medium=email&utm_term=0_7a1c643a85-aaa3801af0-193996189
+
+/ 7	. 
+
+
+/  Scala eclipse	, 
+/ ws workspace-hibernate
+/ ws workspace-jdbc
+/ ws workspace-spring-boot
+/ ws workspace-maven
+
+
+/ 7	. 
+
+/ Lees	,
+http://www.baeldung.com/entity-to-and-from-dto-for-a-java-spring-application
+
+/ 7	. 
+
+/ Lees	, 
+https://www.thoughts-on-java.org/5-tips-write-efficient-queries-jpa-hibernate/
+https://www.youtube.com/watch?v=BTdTEe9QL5k 	/ vlas mihalcea
+
+/ google: vladmihalcea dto projection
+https://vladmihalcea.com/2016/09/13/the-best-way-to-handle-the-lazyinitializationexception/
+https://stackoverflow.com/questions/20981862/pattern-for-jpa-generating-data-transfer-object-dto-from-entiy-and-merging-dto
+
+https://vladmihalcea.com/2016/05/30/the-open-session-in-view-anti-pattern/
+
+/ Lees	, 
+http://docs.spring.io/spring/docs/4.3.9.BUILD-SNAPSHOT/spring-framework-reference/htmlsingle/#classic-spring-orm
+39.1.1 Hibernate
+For the currently recommended usage patterns for Hibernate see Section 20.3, “Hibernate”.
+
+http://docs.spring.io/spring/docs/3.2.18.RELEASE/spring-framework-reference/htmlsingle/#orm-hibernate
+15.3 Hibernate
+
+/ Section 20.3, “Hibernate” in 4.3.9 is hetzelfde als  15.3 in 3.2.18	,
+
+/ Lees	, 
+https://docs.jboss.org/hibernate/orm/3.3/reference/en-US/html/transactions.html
+
+
+
+
+/ 7	. 
+
+/ Lees J2EE patterns boek (415) TO
+
+/ 7	. 
+
+/ HIBERNATE
+
+/ scala eclipse
+/ ws workspace-hibernate
+/ proj hibernate-with-spring
+
+/ 13	.
+
+[eric@almond hibernate]$ git clone https://github.com/hibernate/hibernate-orm.git
+
+
+/ Einde HIBERNATE
+
+/ HIBERNATE MANUAL
+
+/ Lees	 
+NativeApiIllustrationTest
+
+[eric@almond hibernate]$ pwd
+/home/eric/Devel/Java/hibernate
+[eric@almond hibernate]$ find -name NativeApiIllustrationTest.java
+./hibernate-orm/documentation/src/main/asciidoc/quickstart/tutorials/basic/src/test/java/org/hibernate/tutorial/hbm/NativeApiIllustrationTest.java
+
+[eric@almond hibernate]$ find -name NativeApiIllustrationTest.java | xargs less
+
+/ 13	. 
+
+/ we kijken in 	, 
+
+[eric@almond hibernate]$ pwd
+/home/eric/Devel/Java/hibernate
+[eric@almond hibernate]$ find -name NativeApiIllustrationTest.java
+./hibernate-orm/documentation/src/main/asciidoc/quickstart/tutorials/basic/src/test/java/org/hibernate/tutorial/hbm/NativeApiIllustrationTest.java
+[eric@almond hibernate]$ less ./hibernate-orm/documentation/src/main/asciidoc/quickstart/tutorials/basic/src/test/resources/hibernate.cfg.xml 
+[eric@almond hibernate]$ less hibernate-orm/documentation/src/main/asciidoc/quickstart/tutorials/basic/src/test/java/org/hibernate/tutorial/hbm/Event.hbm.xml
+
+
+[eric@almond hibernate_xml_N_1_bidir_a]$ pwd
+/home/eric/Devel/Eclipse/scala/workspace-hibernate/hibernate_xml_N_1_bidir_a
+[eric@almond hibernate_xml_N_1_bidir_a]$ less src/main/resources/hibernate.cfg.xml 
+
+[eric@almond ch-multi-spring]$ pwd
+/home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi-spring
+[eric@almond ch-multi-spring]$ less ./simple-parent/simple-persist/src/main/resources/
+
+
+/ Einde HIBERNATE MANUAL
+
+https://www.thoughts-on-java.org/jpa-native-queries/
+->
+/ kijk,
+https://www.youtube.com/watch?v=W0-3H4_luOA&t=302s	 / native SQL in JPA
+
+

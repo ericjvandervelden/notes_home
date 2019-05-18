@@ -1,0 +1,16 @@
+/ lees,
+https://www.eriksmistad.no/getting-started-with-opencl-and-gpu-computing/
+For Intel CPUs/GPUs download the Intel OpenCL SDK
+->
+https://software.intel.com/en-us/intel-opencl
+/ we zien rechts in het geel een menu	, 
+Intel System Studio
+Linux
+/ kies: Free Download	,
+/ Fill in form 
+/ TODO
+
+/ google,
+fedora opencl install
+/ lees	,
+https://github.com/nginnever/zogminer/wiki/Fedora-24-Setup

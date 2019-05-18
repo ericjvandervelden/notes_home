@@ -1,0 +1,1684 @@
+select ev.shipment_item_system_id as shipment_item_system_id
+from event_event ev
+where not ev.closed_on is null
+;
+
+select ev.system_id,ev.closed_on,ev.shipment_item_system_id
+from event_event ev
+where not ev.closed_on is null
+and ev.shipment_item_system_id is not null
+;
+
+select count(ev.shipment_item_system_id) 
+from event_event ev
+where ev.closed_on is not null
+;
+
+select et.*
+from event_event ev
+join event_type et on ev.event_type_systemid = et.system_id
+where ev.system_id=26885043;
+
+select 
+	ev.shipment_item_system_id as ev_shipment_item_system_id, 
+	ev.system_id as ev_event_systemid, 
+	ev2.shipment_item_system_id as ev2_shipment_item_system_id, 
+	ev2.system_id as ev2_event_systemid
+from event_event ev
+join event_event ev2 on ev.system_id=ev2.system_id 
+where ev.closed_on is not null
+and ev2.closed_on is not null
+--and ev.system_id=26885043
+;
+
+drop table if exists x;
+create table x(c char,i int);
+insert into x values('a',1),('a',2),('a',3);
+select i from x
+where i=(
+	select max(i)
+	from x 
+);
+select *
+from x 
+join x y on x.i=y.i
+;
+
+select sho.*
+from shipment_item shi
+join shipment_order sho on sho.system_id=shi.shipment_order_systemid
+where shi.system_id=26897066;
+-- SH000002317
+select sho.*
+from shipment_item shi
+join shipment_order sho on sho.system_id=shi.shipment_order_systemid
+where shi.system_id=26897065;
+-- SH000002317
+
+select sho.shipment_order_id,
+	shi.shipment_item_id,
+	et.name,
+	shi.system_id
+from shipment_order sho
+join shipment_item shi on sho.system_id=shi.shipment_order_systemid
+join event_event ev on shi.system_id=ev.shipment_item_system_id
+join event_type et on ev.event_type_systemid=et.system_id
+where shi.system_id in (26897066,26897065);
+
+ shipment_order_id | shipment_item_id |  name   
+-------------------+------------------+---------
+ SH000002317       | 0010             | POD
+ SH000002317       | 0010             | CUSTEXP
+ SH000002317       | 0020             | POD
+(3 rows)
+
+select sho.shipment_order_id,
+    shi.shipment_item_id,
+    et.name,
+    shi.system_id,
+	ev.closed_on
+from shipment_order sho
+join shipment_item shi on sho.system_id=shi.shipment_order_systemid
+join event_event ev on shi.system_id=ev.shipment_item_system_id
+join event_type et on ev.event_type_systemid=et.system_id
+;
+ shipment_order_id | shipment_item_id |  name   | system_id |      closed_on      
+-------------------+------------------+---------+-----------+---------------------
+ SH000002316       | 0010             | POD     |  26897063 | NULL
+ SH000002317       | 0010             | POD     |  26897065 | 2016-09-06 00:00:00
+ SH000002317       | 0010             | CUSTEXP |  26897065 | NULL
+ SH000002317       | 0020             | POD     |  26897066 | 2016-08-18 12:48:00
+ SH000002339       | 0010             | POD     |  26897121 | NULL
+ SH000002328       | 0010             | POD     |  26897162 | NULL
+ SH000002390       | 0010             | POD     |  26897261 | NULL
+ SH000002389       | 0010             | POD     |  26897262 | NULL
+ SH000002388       | 0010             | POD     |  26897263 | NULL
+ SH000002441       | 0010             | POD     |  26897301 | NULL
+ SH000002443       | 0010             | POD     |  26897302 | NULL
+ SH000002444       | 0010             | POD     |  26897303 | NULL
+(12 rows)
+
+/ we zien Li's pods niet in de view last_closed_shipment_item_event, want deze pods zijn niet closed	, 
+
+
+select count(*)
+from shipment_order
+;
+ count 
+-------
+  2326
+
+select count(*)
+from shipment_item
+;
+-------
+ 17508
+
+geosco0919t=# select count(*)from event_event;
+ count 
+-------
+  5968
+
+select  count(*)
+from shipment_order sho
+join shipment_item shi on sho.system_id=shi.shipment_order_systemid
+join event_event ev on shi.system_id=ev.shipment_item_system_id 		<-
+join event_type et on ev.event_type_systemid=et.system_id
+;
+
+
+select  count(*)
+from shipment_item shi 
+join event_event ev on shi.system_id=ev.shipment_item_system_id 		
+;
+geosco0919t-# ;
+ count 
+-------
+    12
+(1 row)
+
+select ev.system_id,
+	ev.service_action_systemid,
+	ev.service_order_systemid,
+	ev.consignment_systemid,
+	ev.is_shipment_item_event, ev.shipment_item_system_id,
+	et.name
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+;
+ system_id | service_action_systemid | service_order_systemid | consignment_systemid | is_shipment_item_eve
+nt | shipment_item_system_id |     name      
+-----------+-------------------------+------------------------+----------------------+---------------------
+---+-------------------------+---------------
+  26878249 |                26878675 |               26878712 |                 NULL |                     
+ 0 |                    NULL | DESADV
+  26878242 |                26878681 |               26878718 |                 NULL |                     
+ 0 |                    NULL | DESADV
+  26878243 |                26878229 |               26878251 |                 NULL |                     
+ 0 |                    NULL | DESADV
+  26878357 |                26878281 |               26878303 |             26878296 |                     
+ 0 |                    NULL | POD
+
+/ this last one is not a shipment_item event	, although is a pod	, it is a pod on a consignment	,
+
+select ev.system_id,
+	ev.service_action_systemid,
+	ev.service_order_systemid,
+	ev.consignment_systemid,
+	ev.is_shipment_item_event, ev.shipment_item_system_id,
+	et.name,
+	ev.closed_on
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where ev.shipment_item_system_id is not null
+;
+ system_id | service_action_systemid | service_order_systemid | consignment_systemid | is_shipment_item_eve
+nt | shipment_item_system_id |  name   |      closed_on      
+-----------+-------------------------+------------------------+----------------------+---------------------
+---+-------------------------+---------+---------------------
+  26885102 |                26884686 |               26884348 |             26884311 |                     
+ 1 |                26897121 | POD     | NULL
+  26885122 |                26884650 |               26884299 |             26884275 |                     
+ 1 |                26897162 | POD     | NULL
+  26885043 |                26884634 |               26884295 |             26884259 |                     
+ 1 |                26897066 | POD     | 2016-08-18 12:48:00
+  26885041 |                26884634 |               26884295 |             26884259 |                     
+ 1 |                26897065 | POD     | 2016-09-06 00:00:00
+  26885042 |                26884634 |               26884295 |             26884259 |                     
+ 1 |                26897065 | CUSTEXP | NULL
+  26885142 |                26884778 |               26884439 |             26884403 |                     
+ 1 |                26897263 | POD     | NULL
+  26885143 |                26884779 |               26884439 |             26884404 |                     
+ 1 |                26897262 | POD     | NULL
+  26885145 |                26884635 |               26884295 |             26884260 |                     
+ 1 |                26897063 | POD     | NULL
+  26885144 |                26884780 |               26884439 |             26884405 |                     
+ 1 |                26897261 | POD     | NULL
+  26885189 |                26884847 |               26884517 |             26884476 |                     
+ 1 |                26897302 | POD     | NULL
+  26885191 |                26884849 |               26884517 |             26884477 |                     
+ 1 |                26897301 | POD     | NULL
+  26885190 |                26884848 |               26884517 |             26884477 |                     
+ 1 |                26897303 | POD     | NULL
+(12 rows)
+
+select ev.system_id,
+	ev.service_action_systemid,
+	ev.service_order_systemid,
+	ev.consignment_systemid,
+	ev.is_shipment_item_event, ev.shipment_item_system_id,
+	et.name,
+	ev.closed_on
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where ev.shipment_item_system_id is null
+and ev.consignment_systemid is not null
+;
+ system_id | service_action_systemid | service_order_systemid | consignment_systemid | is_shipment_item_eve
+nt | shipment_item_system_id |     name      |        closed_on        
+-----------+-------------------------+------------------------+----------------------+---------------------
+---+-------------------------+---------------+-------------------------
+  26878403 |                26878327 |               26878349 |             26878342 |                     
+ 0 |                    NULL | RECADV        | NULL
+  26878445 |                26878366 |               26878388 |             26878381 |                     
+ 0 |                    NULL | RECADV        | NULL
+  26878321 |                26878242 |               26878264 |             26878257 |                     
+ 0 |                    NULL | POD           | NULL
+  26878320 |                26878242 |               26878264 |             26878257 |                     
+ 0 |                    NULL | CONF          | NULL
+  26878327 |                26878248 |               26878270 |             26878263 |                     
+ 0 |                    NULL | POD           | NULL
+  26878326 |                26878248 |               26878270 |             26878263 |                     
+ 0 |                    NULL | CONF          | NULL
+  26878318 |                26878239 |               26878261 |             26878254 |                     
+ 0 |                    NULL | POD           | NULL
+  26878317 |                26878239 |               26878261 |             26878254 |                     
+ 0 |                    NULL | CONF          | NULL
+  26878346 |                26878267 |               26878289 |             26878282 |                     
+ 0 |                    NULL | RECADV        | NULL
+  26879299 |                26878993 |               26879034 |             26879017 |                     
+ 0 |                    NULL | DELIVERED     | NULL
+  26879338 |                26879022 |               26879062 |             26879046 |                     
+ 0 |                    NULL | POD           | NULL
+  26879106 |                26878886 |               26878921 |             26878915 |                     
+ 0 |                    NULL | POD           | 2016-02-02 11:18:08
+  26879105 |                26878886 |               26878921 |             26878915 |                     
+ 0 |                    NULL | CONF          | 2016-02-02 11:18:08
+...
+
+
+select  count(*)
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where ev.shipment_item_system_id is not null
+;
+ count 
+-------
+    12
+(1 row)
+
+select  count(*)
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where ev.shipment_item_system_id is not null
+and ev.closed_on is not null
+;
+ count 
+-------
+     2
+(1 row)
+
+
+select  count(*)
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where ev.shipment_item_system_id is null
+and ev.consignment_systemid is not null
+;
+ count 
+-------
+   630
+(1 row)
+
+select  count(*)
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where ev.shipment_item_system_id is null
+and ev.consignment_systemid is not null
+and ev.closed_on is not null
+;
+ count 
+-------
+   152
+(1 row)
+
+select  count(*)
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where ev.consignment_systemid is null
+;
+ count 
+-------
+  5326
+(1 row)
+
+select  count(*)
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where ev.consignment_systemid is null
+and ev.closed_on is not null
+;
+ count 
+-------
+   180
+(1 row)
+
+select  count(*)
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where ev.service_action_systemid is null
+;
+ count 
+-------
+   104
+(1 row)
+
+select  count(*)
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where ev.service_action_systemid is null
+and ev.closed_on is not null
+;
+ count 
+-------
+   103
+(1 row)
+
+/ 7	.
+
+select 
+--	ev.system_id,
+	et.name,
+	ev.service_order_systemid,
+	ev.consignment_systemid,
+	ev.service_action_systemid,
+	ev.is_shipment_item_event, ev.shipment_item_system_id,
+	ev.closed_on
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where 
+--	ev.shipment_item_system_id is null
+	ev.consignment_systemid is null
+--and ev.service_action_systemid
+and ev.service_order_systemid is not null
+--and ev.shipment_item_system_id
+--and ev.closed_on is not null
+;
+...
+select 
+	count(*)
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where 
+--	ev.shipment_item_system_id is null
+	ev.consignment_systemid is null
+--and ev.service_action_systemid
+and ev.service_order_systemid is not null
+--and ev.shipment_item_system_id
+--and ev.closed_on is not null
+;
+ count 
+-------
+  5323
+(1 row)
+select 
+ 	distinct(et.name)	
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where 
+--	ev.shipment_item_system_id is null
+	ev.consignment_systemid is null
+--and ev.service_action_systemid
+and ev.service_order_systemid is not null
+--and ev.shipment_item_system_id
+--and ev.closed_on is not null
+;
+     name      
+---------------
+ DELIVERED
+ DESADV
+ DLP
+ CONF
+ DHB
+ PICK
+ PACK
+ READY_TO_SHIP
+ PICKUP
+ RECADV
+ SHIPPED
+ POD
+(12 rows)
+
+
+
+
+select 
+--	ev.system_id,
+	et.name,
+	ev.service_order_systemid,
+	ev.consignment_systemid,
+	ev.service_action_systemid,
+	ev.is_shipment_item_event, ev.shipment_item_system_id,
+	ev.closed_on
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where 
+--	ev.shipment_item_system_id is null
+--	ev.consignment_systemid is null
+	ev.service_order_systemid is not null
+and ev.service_action_systemid is null
+--and ev.shipment_item_system_id
+--and ev.closed_on is not null
+;
+...
+ POD  |               26884215 |                 NULL |                    NULL |                      0 | 
+                   NULL | 2016-08-17 13:52:00
+(103 rows)
+
+
+select 
+--	ev.system_id,
+	et.name,
+	ev.service_order_systemid,
+	ev.consignment_systemid,
+	ev.service_action_systemid,
+	ev.is_shipment_item_event, ev.shipment_item_system_id,
+	ev.closed_on
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where 
+--	ev.shipment_item_system_id is null
+--	ev.consignment_systemid is null
+	ev.service_order_systemid is null
+and ev.service_action_systemid is not null
+--and ev.shipment_item_system_id
+--and ev.closed_on is not null
+;
+ name | service_order_systemid | consignment_systemid | service_action_systemid | is_shipment_item_event | 
+shipment_item_system_id | closed_on 
+------+------------------------+----------------------+-------------------------+------------------------+-
+------------------------+-----------
+ DLP  |                   NULL |                 NULL |                26878903 |                      0 | 
+                   NULL | NULL
+ POD  |                   NULL |                 NULL |                26878903 |                      0 | 
+                   NULL | NULL
+(2 rows)
+
+
+select 
+	count(*)
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where 
+	ev.service_order_systemid is not null
+	and ev.shipment_item_system_id is null
+--	and ev.service_action_systemid is null
+--	and ev.consignment_systemid is null
+--and ev.closed_on is not null
+;
+
+/ co => seo, sa
+co 			seo			sa			shi	
+not null									642		 
+not null	null	 						0	
+not null				null				0 		
+not null							null	630 	/ klopt, shi => co en dat zijn er 12	,	
+
+/ shi => seo, sa, co
+shi			seo			sa			co
+not null									12	
+not null	null							0
+not null				null				0
+not null							null	0
+
+/ sa
+sa			seo			co			shi
+not null								 	5864	
+not null	null							2		/ is dit een ERR	?
+not null				null				5222	
+not null							null	5852	/ klopt	, niet de 12 shi events die altijd sa hebben 	,
+
+/ seo
+seo			sa			co			shi
+null										3
+not null									5965		
+not null	null							103		/ klopt, niet de 5862 sa events, die altijd seo hebben	
+not null				null				5323	/ klopt, niet de 642 co events	, die altijd seo hebben	,
+not null							null	5953	/ klopt, niet de 12 shi events	, die altijd seo hebben	,			
+
+
+
+
+
+/ intermezzo
+
+/ config, planning, path templates
+name:  consignment path
+description: test gsj-15
+/ click tab sa templates, 
+/ we zien 1 entry	, consignment delivery
+/we komen op Service Action Template
+/ click tab event templates
+/ onder in zien we pod, organization id: geodis	,
+
+config, execution, event, event templates
+/ click event type: pod
+/we zien 4 entries	,
+pod						log_emea_fr_ct_psa
+pod_spo_jp				sco_apac_jp_spo_ibm
+pod_bp					sco_ww_bp
+pod_consignent			geodis
+
+/ Dus onze pod events zijn gemaakt door Li met de pod_consignment template	,
+
+
+
+
+/ einde intermezzo
+
+select ev.system_id,
+	ev.service_action_systemid,
+	ev.service_order_systemid,
+	ev.consignment_systemid,
+	ev.is_shipment_item_event, ev.shipment_item_system_id,
+	et.name
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where ev.shipment_item_system_id is not null
+;
+
+ system_id | service_action_systemid | service_order_systemid | consignment_systemid | is_shipment_item_eve
+nt | shipment_item_system_id |  name   
+-----------+-------------------------+------------------------+----------------------+---------------------
+---+-------------------------+---------
+  26885102 |                26884686 |               26884348 |             26884311 |                     
+ 1 |                26897121 | POD
+  26885122 |                26884650 |               26884299 |             26884275 |                     
+ 1 |                26897162 | POD
+  26885043 |                26884634 |               26884295 |             26884259 |                     
+ 1 |                26897066 | POD
+  26885041 |                26884634 |               26884295 |             26884259 |                     
+ 1 |                26897065 | POD
+  26885042 |                26884634 |               26884295 |             26884259 |                     
+ 1 |                26897065 | CUSTEXP
+  26885142 |                26884778 |               26884439 |             26884403 |                     
+ 1 |                26897263 | POD
+  26885143 |                26884779 |               26884439 |             26884404 |                     
+ 1 |                26897262 | POD
+  26885145 |                26884635 |               26884295 |             26884260 |                     
+ 1 |                26897063 | POD
+  26885144 |                26884780 |               26884439 |             26884405 |                     
+ 1 |                26897261 | POD
+  26885189 |                26884847 |               26884517 |             26884476 |                     
+ 1 |                26897302 | POD
+  26885191 |                26884849 |               26884517 |             26884477 |                     
+ 1 |                26897301 | POD
+  26885190 |                26884848 |               26884517 |             26884477 |                     
+ 1 |                26897303 | POD
+(12 rows)
+
+select ev.system_id,
+	ev.service_action_systemid,
+	ev.service_order_systemid,
+	ev.consignment_systemid,
+	ev.is_shipment_item_event, ev.shipment_item_system_id,
+	et.name
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where ev.shipment_item_system_id is null
+and ev.consignment_systemid is not null
+;
+ system_id | service_action_systemid | service_order_systemid | consignment_systemid | is_shipment_item_eve
+nt | shipment_item_system_id |     name      
+-----------+-------------------------+------------------------+----------------------+---------------------
+---+-------------------------+---------------
+  26878403 |                26878327 |               26878349 |             26878342 |                     
+ 0 |                    NULL | RECADV
+  26878445 |                26878366 |               26878388 |             26878381 |                     
+ 0 |                    NULL | RECADV
+  26878321 |                26878242 |               26878264 |             26878257 |                     
+ 0 |                    NULL | POD
+  26878320 |                26878242 |               26878264 |             26878257 |                     
+ 0 |                    NULL | CONF
+  26878327 |                26878248 |               26878270 |             26878263 |                     
+ 0 |                    NULL | POD
+  26878326 |                26878248 |               26878270 |             26878263 |                     
+ 0 |                    NULL | CONF
+  26878318 |                26878239 |               26878261 |             26878254 |                     
+ 0 |                    NULL | POD
+  26878317 |                26878239 |               26878261 |             26878254 |                     
+ 0 |                    NULL | CONF
+  26878346 |                26878267 |               26878289 |             26878282 |                     
+ 0 |                    NULL | RECADV
+  26878349 |                26878270 |               26878292 |             26878285 |                     
+ 0 |                    NULL | RECADV
+  26878370 |                26878294 |               26878316 |             26878309 |                     
+ 0 |                    NULL | RECADV
+...
+
+select ev.system_id,
+	ev.service_action_systemid,
+	ev.service_order_systemid,
+	ev.consignment_systemid,
+	ev.is_shipment_item_event, ev.shipment_item_system_id,
+	et.name
+from event_event ev
+join event_type et on ev.event_type_systemid=et.system_id
+where ev.shipment_item_system_id is null
+and ev.consignment_systemid is not null
+;
+
+
+
+
+select co.system_id,co.consignment_number,seo.system_id, seo.service_order_id
+from service_action sa
+join consignment co on sa.consignment_systemid=co.system_id
+join service_order seo on seo.system_id=co.service_order_systemid
+and sa.system_id=26878675
+;
+ system_id | consignment_number | system_id | service_order_id 
+-----------+--------------------+-----------+------------------
+  26878705 | N0003339.1         |  26878712 | N0003339
+(1 row)
+
+select co.system_id,co.consignment_number,seo.system_id, seo.service_order_id
+from service_action sa
+join consignment co on sa.consignment_systemid=co.system_id
+join service_order seo on seo.system_id=co.service_order_systemid
+and sa.system_id=26878281
+;
+ system_id | consignment_number | system_id | service_order_id 
+-----------+--------------------+-----------+------------------
+  26878296 | N0002934.1         |  26878303 | N0002934
+
+/ 7	. 
+
+/ waarom staat er max in de select	? 
+/ als er meerdere events zijn op dezelfde closed_on tijd	,
+
+/ we doen zonder max	,
+
+select ev.consignment_systemid as consignment_systemid,
+    ev.system_id as event_systemid,
+	ev.closed_on	
+from event_event ev
+join event_type et on ev.event_type_systemid = et.system_id
+where not ev.closed_on is null
+and ev.closed_on = (
+    select max(ev2.closed_on)
+    from event_event ev2
+    where not ev2.closed_on is null
+    and ev2.consignment_systemid = ev.consignment_systemid)
+--group by ev.consignment_systemid
+and consignment_systemid=26878915
+order by ev.consignment_systemid
+;
+...
+ consignment_systemid | event_systemid | name |      closed_on      
+----------------------+----------------+------+---------------------
+             26878915 |       26879109 | CONF | 2016-02-02 11:18:08
+             26878915 |       26879113 | CONF | 2016-02-02 11:18:08
+             26878915 |       26879105 | CONF | 2016-02-02 11:18:08
+             26878915 |       26879110 | POD  | 2016-02-02 11:18:08
+             26878915 |       26879114 | POD  | 2016-02-02 11:18:08
+             26878915 |       26879106 | POD  | 2016-02-02 11:18:08
+             26878915 |       26879160 | PST  | 2016-02-02 11:18:08
+             26878915 |       26879159 | PST  | 2016-02-02 11:18:08
+             26878915 |       26879158 | PST  | 2016-02-02 11:18:08
+(9 rows)
+
+/ 13	. 
+
+
+select 
+	ev.consignment_systemid,
+	count(ev.system_id)
+from event_event ev
+where ev.closed_on is not null
+and ev.consignment_systemid is not null 
+group by ev.consignment_systemid
+having count(ev.system_id)>1
+;
+ consignment_systemid | count 
+----------------------+-------
+             26878940 |     2
+             26880673 |     8
+             26878931 |     2
+             26882719 |     2
+             26879001 |     2
+             26879437 |     2
+             26880674 |     2
+             26882717 |     2
+             26881269 |     2
+             26880751 |     2
+             26882720 |     2
+             26880363 |     8
+             26884259 |     2
+             26879117 |     3
+...
+
+select 
+	ev.consignment_systemid,
+	ev.closed_on,
+	et.name
+from event_event ev
+join event_type et on ev.event_type_systemid = et.system_id
+where ev.consignment_systemid=26880673
+;
+ consignment_systemid |      closed_on      |    name    
+----------------------+---------------------+------------
+             26880673 | 2016-03-14 15:36:00 | ARRIVED
+             26880673 | 2016-03-09 10:01:00 | CONF
+             26880673 | 2016-03-10 11:13:00 | CUSTEXP
+             26880673 | 2016-03-13 09:45:00 | CUSTIMP
+             26880673 | 2016-03-09 07:53:00 | PICKUP
+             26880673 | 2016-03-10 15:22:00 | WHEEL-UP
+             26880673 | 2016-03-11 07:28:00 | WHEEL-DOWN
+             26880673 | 2016-03-11 17:02:00 | PCCONF
+(8 rows)
+
+select
+    ev.consignment_systemid,
+    ev.closed_on,
+    et.name
+from event_event ev
+join event_type et on ev.event_type_systemid = et.system_id
+where ev.consignment_systemid= 26878915
+;
+ consignment_systemid |      closed_on      | name 
+----------------------+---------------------+------
+             26878915 | 2016-02-02 11:18:08 | CONF
+             26878915 | 2016-02-02 11:18:08 | CONF
+             26878915 | 2016-02-02 11:18:08 | CONF
+             26878915 | 2016-02-02 11:18:08 | POD
+             26878915 | 2016-02-02 11:18:08 | POD
+             26878915 | 2016-02-02 11:18:08 | POD
+             26878915 | 2016-02-02 11:18:08 | PST
+             26878915 | 2016-02-02 11:18:08 | PST
+             26878915 | 2016-02-02 11:18:08 | PST
+(9 rows)
+
+/ 13	. 
+
+/ we hoeven niet	,
+and consignment_systemid is null
+/ want die gevallen geven toch een lege lijst	, 
+/ want in de subquery doen we 
+	ev2.consignment_systemid = ev.consignment_systemid
+/ en = null geeft altijd een lege lijst	,
+
+select ev.consignment_systemid as consignment_systemid,
+    ev.system_id as event_systemid,
+	ev.closed_on	
+from event_event ev
+join event_type et on ev.event_type_systemid = et.system_id
+where not ev.closed_on is null
+and ev.closed_on = (
+    select max(ev2.closed_on)
+    from event_event ev2
+    where not ev2.closed_on is null
+    and ev2.consignment_systemid = ev.consignment_systemid)
+--group by ev.consignment_systemid
+and consignment_systemid is null
+order by ev.consignment_systemid
+;
+ consignment_systemid | event_systemid | closed_on 
+----------------------+----------------+-----------
+(0 rows)
+
+select ev.consignment_systemid,
+    ev.system_id,
+	ev.closed_on	
+from event_event ev
+where ev.closed_on is not null
+and ev.consignment_systemid is null
+--order by ev.consignment_systemid
+;
+ consignment_systemid | system_id |        closed_on        
+----------------------+-----------+-------------------------
+                 NULL |  26879372 | 2016-02-05 15:45:17.191
+                 NULL |  26879356 | 2016-02-04 16:10:24.881
+                 NULL |  26879142 | 2016-02-08 11:45:30.854
+                 NULL |  26879645 | 2016-02-29 10:31:53.963
+...
+
+select ev.consignment_systemid,
+    ev.system_id,
+	ev.closed_on	
+from event_event ev
+where ev.closed_on is not null
+and ev.closed_on = (
+    select max(ev2.closed_on)
+    from event_event ev2
+    where ev2.closed_on is not null
+    and ev2.consignment_systemid = ev.consignment_systemid)
+and ev.consignment_systemid is null
+--order by ev.consignment_systemid
+;
+ consignment_systemid | system_id | closed_on 
+----------------------+-----------+-----------
+(0 rows)
+
+/ Dat is omdat we in de sub query null = null doen	, en dat geeft geen results	, want je moet doen in sql	, 
+	is null
+/ en niet = null
+
+/ 13	. 
+
+/ waarom zijn er 99 consignment events	?
+
+select ev.consignment_systemid as consignment_systemid, max(ev.system_id) as event_systemid
+from event_event ev
+where ev.closed_on is not null
+and ev.closed_on = (
+    select max(ev2.closed_on)
+    from event_event ev2
+    where ev2.closed_on is not null
+    and ev2.consignment_systemid = ev.consignment_systemid)
+group by ev.consignment_systemid
+;
+...
+             26883092 |       26883842
+(99 rows)
+
+/ als je 
+	group by ev.consignment_systemid
+/ vind je er 100	, inclusief 
+                 NULL |   180
+             26878950 |     1
+...
+/ in de inner query staat
+    and ev2.consignment_systemid = ev.consignment_systemid)
+/ dus daardoor valt consignment_id=NULL af	, en tel nu het aantal rijen: 99	,
+
+
+select ev.consignment_systemid,count(*)
+from event_event ev
+where ev.closed_on is not null
+group by ev.consignment_systemid
+;
+ consignment_systemid | count 
+----------------------+-------
+                 NULL |   180
+             26878950 |     1
+             26882687 |     1
+             26878940 |     2
+             26880673 |     8
+             26882773 |     1
+             26878931 |     2
+...
+/ dit zijn 100 rijen, zoals we later zullen zien,	
+
+/ we gaan nu het aantal rijen tellen	,
+select count(*) as count
+from(
+select count(*)
+from event_event ev
+where ev.closed_on is not null
+--and ev.consignment_systemid is not null
+group by ev.consignment_systemid
+)as _
+;
+ count 
+-------
+   100
+(1 row)
+
+select count(*) as count
+from(
+select count(*)
+from event_event ev
+where ev.closed_on is not null
+and ev.consignment_systemid is not null
+group by ev.consignment_systemid
+)as _
+;
+ count 
+-------
+  	99 
+(1 row)
+
+select count(*) as count
+from(
+select count(*)
+from event_event ev
+where ev.closed_on is not null
+and ev.consignment_systemid is not null
+and ev.shipment_item_system_id is null
+group by ev.consignment_systemid
+)as _
+;
+ count 
+-------
+  	98 
+(1 row)
+
+
+/ we gaan nu iets doen wat er niet toe doet: we gaan de getalletjes 1,1,2,8,1,2,... optellen	, 
+select count(ev.consignment_systemid)
+from event_event ev
+where ev.closed_on is not null
+;
+ count 
+-------
+   154
+(1 row)
+/=
+select sum(count) as count 
+from (
+select count(*)
+from event_event ev
+where ev.closed_on is not null
+and ev.consignment_systemid is not null
+group by ev.consignment_systemid) as count
+;
+ count 
+----------
+      154
+(1 row)
+
+/ 13	. 
+
+/ consignment level	,
+
+select count(*)
+from(
+select ev.consignment_systemid as consignment_systemid, max(ev.system_id) as event_systemid
+from event_event ev
+where ev.closed_on is null				-- <- null
+and ev.expected_end = (
+    select min(ev2.expected_end)
+    from event_event ev2
+    where ev2.closed_on is null			-- <- null
+    and ev2.consignment_systemid = ev.consignment_systemid)
+group by 1 
+) as _
+;
+geosco0919t-# ;
+ count 
+-------
+   317
+(1 row)
+
+select count(*)
+from(
+select ev.consignment_systemid as consignment_systemid, max(ev.system_id) as event_systemid
+from event_event ev
+where ev.closed_on is not null				-- <- not null
+and ev.closed_on = (
+    select max(ev2.closed_on)
+    from event_event ev2
+    where ev2.closed_on is not null			-- <- not null	,
+    and ev2.consignment_systemid = ev.consignment_systemid)
+group by 1 
+) as _
+;
+geosco0919t-# ;
+ count 
+-------
+  	99 
+(1 row)
+
+select count(*)
+from(
+select*
+from last_closed_cons_event
+) as _ 
+;
+ count 
+-------
+    99
+(1 row)
+
+select count(*)
+from(
+select*
+from next_to_close_cons_event
+) as _ 
+;
+ count 
+-------
+   317
+(1 row)
+
+
+create or replace view consignment_event as
+select
+n.consignment_systemid as consignment_systemid,
+l.event_systemid as last_closed_systemid,
+n.event_systemid as next_to_close_systemid
+from next_to_close_cons_event n
+left join last_closed_cons_event l on n.consignment_systemid = l.consignment_systemid
+
+/ we doen een left join , daarom 317	,
+select count(*)
+from(
+select*
+from consignment_event 
+) as _ 
+;
+ count 
+-------
+   317
+(1 row)
+
+/ als we een join doen,	
+select count(*)
+from (
+select
+n.consignment_systemid as consignment_systemid,
+l.event_systemid as last_closed_systemid,
+n.event_systemid as next_to_close_systemid
+from next_to_close_cons_event n
+join last_closed_cons_event l on n.consignment_systemid = l.consignment_systemid
+) as _
+;
+ count 
+-------
+    24
+(1 row)
+
+select
+n.consignment_systemid as consignment_systemid,
+l.event_systemid as last_closed_systemid,
+n.event_systemid as next_to_close_systemid
+from next_to_close_cons_event n
+join last_closed_cons_event l on n.consignment_systemid = l.consignment_systemid	; <- join, niet: left join
+;
+ consignment_systemid | last_closed_systemid | next_to_close_systemid 
+----------------------+----------------------+------------------------
+             26882687 |             26883526 |               26883527
+             26882695 |             26883532 |               26883533
+             26882701 |             26883538 |               26883539
+             26882707 |             26883544 |               26883545
+             26882671 |             26883510 |               26883511
+             26882711 |             26883548 |               26883549
+             26882709 |             26883546 |               26883547
+             26882658 |             26883495 |               26883496
+             26882758 |             26883579 |               26883580
+             26880364 |             26881385 |               26881379
+             26882752 |             26883573 |               26883574
+             26882673 |             26883512 |               26883513
+             26882656 |             26883493 |               26883494
+             26882683 |             26883522 |               26883523
+             26882485 |             26883358 |               26883359
+             26882703 |             26883540 |               26883541
+             26880724 |             26881815 |               26881811
+             26882679 |             26883518 |               26883519
+             26882512 |             26883376 |               26883377
+             26882677 |             26883516 |               26883517
+             26882675 |             26883514 |               26883515
+             26882756 |             26883577 |               26883578
+             26882705 |             26883542 |               26883543
+             26879427 |             26879935 |               26879936
+(24 rows)
+
+select
+n.consignment_systemid as consignment_systemid,
+l.event_systemid as last_closed_systemid,
+n.event_systemid as next_to_close_systemid
+from next_to_close_cons_event n
+left join last_closed_cons_event l on n.consignment_systemid = l.consignment_systemid
+;
+ consignment_systemid | last_closed_systemid | next_to_close_systemid 
+----------------------+----------------------+------------------------
+...
+             26879424 |                 NULL |               26879931
+             26879426 |                 NULL |               26879933
+             26879427 |             26879935 |               26879936
+             26879527 |                 NULL |               26880061
+             26879598 |                 NULL |               26880168
+...
+
+/ 1313	.
+
+select 
+	ev.consignment_systemid , 
+	co.consignment_number,
+--	sho.shipment_order_id,
+	ev.system_id 
+from event_event ev
+join consignment co on co.system_id=ev.consignment_systemid
+--join service_action sa on sa.consignment_systemid=co.system_id
+--join service_action sa on sa.system_id=ev.service_action_systemid	
+									-- join sa.system_id on ev.service_action_systemid
+									-- and NOT sa.consignment_systemid on co.service_action_systemid
+--join shipment_order sho on sho.system_id=sa.shipment_order_systemid
+--join shipment_item shi on shi.shipment_order_systemid=sho.system_id
+where ev.closed_on is null				-- <- null
+and co.consignment_number like 'N0008574%'
+and ev.expected_end = (
+    select min(ev2.expected_end)
+    from event_event ev2
+    where ev2.closed_on is null			-- <- null
+    and ev2.consignment_systemid = ev.consignment_systemid)
+;
+ consignment_systemid | consignment_number | system_id 
+----------------------+--------------------+-----------
+             26884476 | N0008574.2         |  26885189
+             26884477 | N0008574.3         |  26885190
+             26884477 | N0008574.3         |  26885191
+(3 rows)
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+/ FOUTE QUERY
+
+/ Deze query is fout	, ev 26885190 is een event op  sa 26884847 	, en op co  26884476 
+/ maar omdat we sa join met co, en in de co 2 sa zitten, vinden we een foute sa op de ev	, 
+/ we moeten de sa join op ev	,
+
+select 
+	system_id,
+	service_action_systemid,
+	consignment_systemid,
+	service_order_systemid,
+	shipment_item_system_id
+from event_event
+where system_id in (26885190,26885191)
+;
+ system_id | service_action_systemid | consignment_systemid | service_order_systemid | shipment_item_system_id 
+-----------+-------------------------+----------------------+------------------------+-------------------------
+  26885190 |                26884848 |             26884477 |               26884517 |                26897303
+  26885191 |                26884849 |             26884477 |               26884517 |                26897301
+(2 rows)
+
+/ FOUT	, 
+select 
+	ev.system_id ,
+	ev.consignment_systemid , 
+	co.consignment_number,
+	sa.system_id as sa$system_id,
+	sho.shipment_order_id
+from event_event ev
+join consignment co on co.system_id=ev.consignment_systemid
+join service_action sa on sa.consignment_systemid=co.system_id
+join shipment_order sho on sho.system_id=sa.shipment_order_systemid
+--left join shipment_item shi on shi.shipment_order_systemid=sho.system_id
+where ev.closed_on is null				-- <- null
+and co.consignment_number like 'N0008574%'
+and ev.expected_end = (
+    select min(ev2.expected_end)
+    from event_event ev2
+    where ev2.closed_on is null			-- <- null
+    and ev2.consignment_systemid = ev.consignment_systemid)
+;
+ system_id | consignment_systemid | consignment_number | sa$system_id | shipment_order_id 
+-----------+----------------------+--------------------+-----------+-------------------
+  26885189 |             26884476 | N0008574.2         |  26884847 | SH000002443
+  26885190 |             26884477 | N0008574.3         |  26884849 | SH000002441
+  26885191 |             26884477 | N0008574.3         |  26884849 | SH000002441
+  26885190 |             26884477 | N0008574.3         |  26884848 | SH000002444
+  26885191 |             26884477 | N0008574.3         |  26884848 | SH000002444
+(5 rows)
+/ FOUT
+
+/ OK
+select 
+	ev.system_id ,
+	ev.consignment_systemid , 
+	co.consignment_number,
+	sa.system_id as sa$system_id,
+	sho.shipment_order_id
+from event_event ev
+join consignment co on co.system_id=ev.consignment_systemid
+join service_action sa on sa.system_id=ev.service_action_systemid	
+									-- join sa.system_id on ev.service_action_systemid
+									-- and NOT sa.consignment_systemid on co.service_action_systemid
+join shipment_order sho on sho.system_id=sa.shipment_order_systemid	-- this is OK	,	
+--left join shipment_item shi on shi.shipment_order_systemid=sho.system_id
+where ev.closed_on is null				-- <- null
+and co.consignment_number like 'N0008574%'
+and ev.expected_end = (
+    select min(ev2.expected_end)
+    from event_event ev2
+    where ev2.closed_on is null			-- <- null
+    and ev2.consignment_systemid = ev.consignment_systemid)
+;
+ system_id | consignment_systemid | consignment_number | sa$system_id | shipment_order_id 
+-----------+----------------------+--------------------+--------------+-------------------
+  26885189 |             26884476 | N0008574.2         |     26884847 | SH000002443
+  26885190 |             26884477 | N0008574.3         |     26884848 | SH000002444
+  26885191 |             26884477 | N0008574.3         |     26884849 | SH000002441
+(3 rows)
+/ OK
+
+//////////////////////////////////////////////////////////////////////////////
+/ we zien dat de shi events ook in de consignment_event view staan	, 
+/ we hadden al gezien eerder, dat shi => seo, co, sa	,
+
+/ 131313	.
+
+////////////////////////////////////////////////////////////////////////////
+
+/ in view next_to_close_cons_event staat inderdaad 1 event bij een co	, de next_to_close event	,
+/ als deze wordt close, dan zal de volgende verschijnen in deze view	, 
+
+select ev.system_id,ev.consignment_systemid,ev.service_action_systemid
+from event_event ev
+join consignment co on co.system_id=ev.consignment_systemid
+where co.consignment_number='N0008574.3'
+;
+ system_id | consignment_systemid | service_action_systemid 
+-----------+----------------------+-------------------------
+  26885190 |             26884477 |                26884848
+  26885191 |             26884477 |                26884849
+(2 rows)
+
+/ view next_to_close_cons_event
+/ zonder max(ev.system_id)
+
+select ev.expected_end,ev.consignment_systemid as consignment_systemid, ev.system_id as event_systemid ,co.consignment_number
+from event_event ev 
+join consignment co on co.system_id=ev.consignment_systemid
+where ev.closed_on is null
+and ev.expected_end = (
+	select min(ev2.expected_end) 
+	from event_event ev2 
+	where ev2.closed_on is null 
+	and ev2.consignment_systemid = ev.consignment_systemid) 
+and co.consignment_number='N0008574.3'
+;
+ consignment_systemid | event_systemid | consignment_number 
+----------------------+----------------+--------------------
+             26884477 |       26885190 | N0008574.3
+             26884477 |       26885191 | N0008574.3
+(2 rows)
+
+/ Als je max(ev.system_id) neemt, en als die neemt gesloten wordt, zal hij de volgende keer ook 1 result geven	,  de 2de	,
+
+select coev.next_to_close_systemid 
+from consignment_event coev
+join consignment co on coev.consignment_systemid=co.system_id
+where co.consignment_number ='N0008574.3'
+;
+ next_to_close_systemid 
+------------------------
+               26885191
+(1 row)
+/ OK
+/ de volgende keer zal hier 26885190 staan	,
+
+/ 131313
+
+////////////////////////////////////////////////////////////
+/ join niet sa op co	, we krijgen 2 
+
+/ GSJ-116 CORE SOLUTION 
+
+select 
+	co.consignment_number,
+	coev.next_to_close_systemid ,
+	sa.system_id as sa$system_id,
+	ev.service_action_systemid,
+	sho.shipment_order_id
+from consignment_event coev 
+join event_event ev on ev.system_id=coev.next_to_close_systemid
+join consignment co on co.system_id=coev.consignment_systemid
+join service_action sa on sa.consignment_systemid=co.system_id
+--join service_action sa on sa.system_id=ev.service_action_systemid	
+									-- join sa.system_id on ev.service_action_systemid
+									-- and NOT sa.consignment_systemid on co.service_action_systemid
+join shipment_order sho on sho.system_id=sa.shipment_order_systemid	-- this is OK	,	
+--left join shipment_item shi on shi.shipment_order_systemid=sho.system_id
+where ev.closed_on is null				-- <- null
+and co.consignment_number ='N0008574.3'
+and ev.expected_end = (
+    select min(ev2.expected_end)
+    from event_event ev2
+    where ev2.closed_on is null			-- <- null
+    and ev2.consignment_systemid = ev.consignment_systemid)
+;
+ consignment_number | next_to_close_systemid | sa$system_id | service_action_systemid | shipment_order_id 
+--------------------+------------------------+--------------+-------------------------+-------------------
+ N0008574.3         |               26885191 |     26884849 |                26884849 | SH000002441
+ N0008574.3         |               26885191 |     26884848 |                26884849 | SH000002444
+(2 rows)
+/ FOUT
+
+select 
+	co.consignment_number,
+	coev.next_to_close_systemid ,
+	sa.system_id as sa$system_id,
+	sho.shipment_order_id
+from consignment_event coev 
+join event_event ev on ev.system_id=coev.next_to_close_systemid
+join consignment co on co.system_id=coev.consignment_systemid
+--join service_action sa on sa.consignment_systemid=co.system_id
+join service_action sa on sa.system_id=ev.service_action_systemid	
+									-- join sa.system_id on ev.service_action_systemid
+									-- and NOT sa.consignment_systemid on co.service_action_systemid
+join shipment_order sho on sho.system_id=sa.shipment_order_systemid	-- this is OK	,	
+--left join shipment_item shi on shi.shipment_order_systemid=sho.system_id
+where ev.closed_on is null				-- <- null
+and co.consignment_number ='N0008574.3'
+and ev.expected_end = (
+    select min(ev2.expected_end)
+    from event_event ev2
+    where ev2.closed_on is null			-- <- null
+    and ev2.consignment_systemid = ev.consignment_systemid)
+;
+ consignment_number | next_to_close_systemid | sa$system_id | shipment_order_id 
+--------------------+------------------------+--------------+-------------------
+ N0008574.3         |               26885191 |     26884849 | SH000002441
+(1 row)
+/ OK
+
+/ Einde GSJ-116 CORE SOLUTION 
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+/ 1313	. 
+
+/ event_event
+ ev_system_id | consignment_systemid | sa_system_id 
+-----------+----------------------+-------------
+  26885190 |             26884477 | 26884848 
+  26885191 |             26884477 | 26884849 
+
+/ als je ev.co join met sa	, dan krijg je	,
+ ev_system_id | consignment_systemid | sa_system_id 
+-----------+----------------------+-------------
+  26885190 |             26884477 | 26884849 
+  26885191 |             26884477 | 26884849 
+  26885190 |             26884477 | 26884848 
+  26885191 |             26884477 | 26884848 
+
+/ we moeten dus ev.co join met ev.sa	,
+ ev_system_id | consignment_systemid | sa_system_id 
+-----------+----------------------+-------------
+  26885190 |             26884477 | 26884848 
+  26885191 |             26884477 | 26884849 
+
+/ 1313	. 
+
+select 
+	ev.consignment_systemid , 
+	co.consignment_number,
+	sa.system_id,
+--	sho.shipment_order_id,
+	ev.system_id 
+from event_event ev
+join consignment co on co.system_id=ev.consignment_systemid
+join service_action sa on sa.system_id=ev.service_action_systemid	
+									-- join sa.system_id on ev.service_action_systemid
+									-- and NOT sa.consignment_systemid on co.service_action_systemid
+--left join shipment_order sho on sho.system_id=sa.shipment_order_systemid
+--left join shipment_item shi on shi.shipment_order_systemid=sho.system_id
+where ev.closed_on is null				-- <- null
+and co.consignment_number like 'N0008574%'
+and ev.expected_end = (
+    select min(ev2.expected_end)
+    from event_event ev2
+    where ev2.closed_on is null			-- <- null
+    and ev2.consignment_systemid = ev.consignment_systemid)
+;
+ consignment_systemid | consignment_number | system_id | system_id 
+----------------------+--------------------+-----------+-----------
+             26884476 | N0008574.2         |  26884847 |  26885189
+             26884477 | N0008574.3         |  26884848 |  26885190
+             26884477 | N0008574.3         |  26884849 |  26885191
+(3 rows)
+
+
+select 
+	ev.consignment_systemid , 
+	co.consignment_number,
+	sa.sequence_number,
+	sho.shipment_order_id,
+	ev.system_id 
+from event_event ev
+left join consignment co on co.system_id=ev.consignment_systemid
+left join service_action sa on sa.system_id=ev.service_action_systemid
+                                    -- join sa.system_id on ev.service_action_systemid
+                                    -- and NOT sa.consignment_systemid on co.service_action_systemid
+left join shipment_order sho on sho.system_id=sa.shipment_order_systemid
+left join shipment_item shi on shi.shipment_order_systemid=sho.system_id
+where ev.closed_on is null				-- <- null
+and co.consignment_number like 'N0008574%'
+and ev.expected_end = (
+    select min(ev2.expected_end)
+    from event_event ev2
+    where ev2.closed_on is null			-- <- null
+    and ev2.consignment_systemid = ev.consignment_systemid)
+;
+ consignment_systemid | consignment_number | sequence_number | shipment_order_id | system_id 
+----------------------+--------------------+-----------------+-------------------+-----------
+             26884476 | N0008574.2         |               0 | SH000002443       |  26885189
+             26884477 | N0008574.3         |               0 | SH000002444       |  26885190
+             26884477 | N0008574.3         |               0 | SH000002441       |  26885191
+(3 rows)
+
+
+/ 13	. 
+
+geosco0919t=# select*
+from shipment_item_event;
+ shipment_item_system_id | last_closed_systemid | next_to_close_systemid 
+-------------------------+----------------------+------------------------
+                26897063 |                 NULL |               26885145
+                26897121 |                 NULL |               26885102
+                26897162 |                 NULL |               26885122
+                26897261 |                 NULL |               26885144
+                26897262 |                 NULL |               26885143
+                26897263 |                 NULL |               26885142
+                26897301 |                 NULL |               26885191
+                26897302 |                 NULL |               26885189
+                26897303 |                 NULL |               26885190
+(9 rows)
+
+/ 13	. 
+
+/ shipment item level	,
+
+select ev.shipment_item_system_id as shipment_item_system_id, max(ev.system_id) as event_systemid
+from event_event ev
+where ev.closed_on is not null
+and ev.closed_on = (
+    select max(ev2.closed_on)
+    from event_event ev2
+    where ev2.closed_on is not null
+    and ev2.shipment_item_system_id = ev.shipment_item_system_id)
+group by 1
+;
+ shipment_item_system_id | event_systemid 
+-------------------------+----------------
+                26897066 |       26885043
+                26897065 |       26885041
+(2 rows)
+
+select ev.shipment_item_system_id as shipment_item_system_id, max(ev.system_id) as event_systemid
+from event_event ev
+where ev.closed_on is null
+and ev.expected_end = (
+    select min(ev2.expected_end)
+    from event_event ev2
+    where ev2.closed_on is null
+    and ev2.shipment_item_system_id = ev.shipment_item_system_id)
+group by 1
+;
+ shipment_item_system_id | event_systemid 
+-------------------------+----------------
+                26897303 |       26885190
+                26897262 |       26885143
+                26897261 |       26885144
+                26897162 |       26885122
+                26897263 |       26885142
+                26897063 |       26885145
+                26897302 |       26885189
+                26897301 |       26885191
+                26897121 |       26885102
+(9 rows)
+
+/ we doen truc: max(sho.shipment_order_id) ipv sho.shipment_order_id	,
+select ev.shipment_item_system_id ,max(sho.shipment_order_id),max(ev.system_id) as event_systemid
+from event_event ev
+join shipment_item shi on shi.system_id=ev.shipment_item_system_id
+join shipment_order sho on sho.system_id=shi.shipment_order_systemid
+where ev.closed_on is null
+and ev.expected_end = (
+    select min(ev2.expected_end)
+    from event_event ev2
+    where ev2.closed_on is null
+    and ev2.shipment_item_system_id = ev.shipment_item_system_id)
+group by 1
+;
+ shipment_item_system_id |     max     | event_systemid 
+-------------------------+-------------+----------------
+                26897063 | SH000002316 |       26885145
+                26897121 | SH000002339 |       26885102
+                26897162 | SH000002328 |       26885122
+                26897261 | SH000002390 |       26885144
+                26897262 | SH000002389 |       26885143
+                26897263 | SH000002388 |       26885142
+                26897301 | SH000002441 |       26885191
+                26897302 | SH000002443 |       26885189
+                26897303 | SH000002444 |       26885190
+(9 rows)
+
+select ev.shipment_item_system_id ,max(sho.shipment_order_id),max(co.consignment_number),max(ev.system_id) as event_systemid
+from event_event ev
+join shipment_item shi on shi.system_id=ev.shipment_item_system_id
+join shipment_order sho on sho.system_id=shi.shipment_order_systemid
+join service_action sa on sa.shipment_order_systemid=sho.system_id
+-- or	,
+join service_action sa on sa.system_id=ev.service_action_systemid
+                                    -- join sa.system_id on ev.service_action_systemid
+                                    -- and NOT sa.consignment_systemid on co.service_action_systemid
+join consignment co on co.system_id=sa.consignment_systemid
+where ev.closed_on is null
+and ev.expected_end = (
+    select min(ev2.expected_end)
+    from event_event ev2
+    where ev2.closed_on is null
+    and ev2.shipment_item_system_id = ev.shipment_item_system_id)
+group by 1
+;
+ shipment_item_system_id |     max     |    max     | event_systemid 
+-------------------------+-------------+------------+----------------
+                26897063 | SH000002316 | N0008495.2 |       26885145
+                26897121 | SH000002339 | N0008506.1 |       26885102
+                26897162 | SH000002328 | N0008497.1 |       26885122
+                26897261 | SH000002390 | N0008538.3 |       26885144
+                26897262 | SH000002389 | N0008538.2 |       26885143
+                26897263 | SH000002388 | N0008538.1 |       26885142
+                26897301 | SH000002441 | N0008574.3 |       26885191
+                26897302 | SH000002443 | N0008574.2 |       26885189
+                26897303 | SH000002444 | N0008574.3 |       26885190
+(9 rows)
+
+/ 131313	.
+
+/ 13131313
+
+/ join service_action sa on sa.shipment_order_systemid=sho.system_id is OK	,
+/ want de sa komt uit de sho, en niet uit de co	 waar er meerdere in kunnen zitten	, en dan nemen we de co waar de sa in zit	,  
+
+select ev.system_id,ev.shipment_item_system_id ,sho.shipment_order_id,sa.system_id as sa$system_id,co.consignment_number
+from event_event ev
+join shipment_item shi on shi.system_id=ev.shipment_item_system_id
+join shipment_order sho on sho.system_id=shi.shipment_order_systemid
+join service_action sa on sa.shipment_order_systemid=sho.system_id
+-- or	,
+--join service_action sa on sa.system_id=ev.service_action_systemid
+                                    -- join sa.system_id on ev.service_action_systemid
+                                    -- and NOT sa.consignment_systemid on co.service_action_systemid
+join consignment co on co.system_id=sa.consignment_systemid
+where ev.closed_on is null
+and ev.expected_end = (
+    select min(ev2.expected_end)
+    from event_event ev2
+    where ev2.closed_on is null
+    and ev2.shipment_item_system_id = ev.shipment_item_system_id)
+and co.consignment_number like 'N0008574.%' 
+;
+ system_id | shipment_item_system_id | shipment_order_id | sa$system_id | consignment_number 
+-----------+-------------------------+-------------------+--------------+--------------------
+  26885189 |                26897302 | SH000002443       |     26884847 | N0008574.2
+  26885191 |                26897301 | SH000002441       |     26884849 | N0008574.3
+  26885190 |                26897303 | SH000002444       |     26884848 | N0008574.3
+(3 rows)
+
+/ 13131313
+
+/ join service_action sa on sa.consignment_systemid=co.system_id is ERR	,
+/ hier komt de sa uit de co	, dus meerdere als we meerdere sas in de co zitten	,
+
+select ev.system_id,co.consignment_number,sa.system_id as sa$system_id,sho.shipment_order_id,shi.shipment_item_id
+from event_event ev
+join consignment co on co.system_id=ev.consignment_systemid
+join service_action sa on sa.consignment_systemid=co.system_id
+-- or	,
+--join service_action sa on sa.system_id=ev.service_action_systemid
+                                    -- join sa.system_id on ev.service_action_systemid
+                                    -- and NOT sa.consignment_systemid on co.service_action_systemid
+join shipment_order sho on sho.system_id=sa.shipment_order_systemid
+join shipment_item shi on shi.shipment_order_systemid=sho.system_id
+where ev.closed_on is null
+and ev.expected_end = (
+    select min(ev2.expected_end)
+    from event_event ev2
+    where ev2.closed_on is null
+    and ev2.shipment_item_system_id = ev.shipment_item_system_id)
+and co.consignment_number like 'N0008574.%' 
+;
+ system_id | consignment_number | sa$system_id | shipment_order_id | shipment_item_id 
+-----------+--------------------+--------------+-------------------+------------------
+  26885189 | N0008574.2         |     26884847 | SH000002443       | 0010
+  26885190 | N0008574.3         |     26884849 | SH000002441       | 0010
+  26885191 | N0008574.3         |     26884849 | SH000002441       | 0010
+  26885190 | N0008574.3         |     26884848 | SH000002444       | 0010
+  26885191 | N0008574.3         |     26884848 | SH000002444       | 0010
+(5 rows)
+-- or	,
+ system_id | consignment_number | sa$system_id | shipment_order_id | shipment_item_id 
+-----------+--------------------+--------------+-------------------+------------------
+  26885189 | N0008574.2         |     26884847 | SH000002443       | 0010
+  26885190 | N0008574.3         |     26884848 | SH000002444       | 0010
+  26885191 | N0008574.3         |     26884849 | SH000002441       | 0010
+(3 rows)
+
+
+
+
+
+
+/ 13	. 
+
+/ shi level	,
+
+
+select ev.shipment_item_system_id , max(sho.shipment_order_id),max(ev.system_id) as event_systemid
+from event_event ev
+join shipment_item shi on shi.system_id=ev.shipment_item_system_id
+join shipment_order sho on sho.system_id=shi.shipment_order_systemid
+where ev.closed_on is not null
+and ev.closed_on = (
+    select max(ev2.closed_on)
+    from event_event ev2
+    where ev2.closed_on is not null
+    and ev2.shipment_item_system_id = ev.shipment_item_system_id)
+group by 1
+;
+ shipment_item_system_id |     max     | event_systemid 
+-------------------------+-------------+----------------
+                26897065 | SH000002317 |       26885041
+                26897066 | SH000002317 |       26885043
+(2 rows)
+
+select
+n.shipment_item_system_id as shipment_item_system_id,
+l.event_systemid as last_closed_systemid,
+n.event_systemid as next_to_close_systemid
+from next_to_close_shipment_item_event n
+left join last_closed_shipment_item_event l on n.shipment_item_system_id = l.shipment_item_system_id
+;
+ shipment_item_system_id | last_closed_systemid | next_to_close_systemid 
+-------------------------+----------------------+------------------------
+                26897063 |                 NULL |               26885145
+                26897121 |                 NULL |               26885102
+                26897162 |                 NULL |               26885122
+                26897261 |                 NULL |               26885144
+                26897262 |                 NULL |               26885143
+                26897263 |                 NULL |               26885142
+                26897301 |                 NULL |               26885191
+                26897302 |                 NULL |               26885189
+                26897303 |                 NULL |               26885190
+(9 rows)
+
+
+select
+n.shipment_item_system_id as shipment_item_system_id,
+l.event_systemid as last_closed_systemid,
+n.event_systemid as next_to_close_systemid
+from next_to_close_shipment_item_event n
+join last_closed_shipment_item_event l on n.shipment_item_system_id = l.shipment_item_system_id
+;
+ shipment_item_system_id | last_closed_systemid | next_to_close_systemid 
+-------------------------+----------------------+------------------------
+(0 rows)
+
+
+
+
+
+/ 7	.
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+/ een sa betreft 1 sho	, 
+/ een sho komt in 1 co	, 
+
+/ hieronder sa: pu=purchase , del=delivery	,
+/ person1 doet 2 bestellingen: sho1, sho1a	, en person2 die op een ander adres woont, doet sho2	, maar ze wonen zo dat de sas in dezelfde seos terecht komen, bij del is de seo=vrachtwagen	,
+
+sho1	<-- pu1			co_pu1=pu1,pu1a			seo_pu=co_pu1,co_pu2
+	shi11		shi11
+	shi12		shi12
+		<-- del1
+				shi11
+				shi12
+
+sho1a	<-- pu1a		co_del1=del1,del1a		seo_del=co_del1,co_del2
+		<-- del1a
+
+sho2	<-- pu2			co_pu2=pu2
+		<-- del2		co_del2=del2
+
+/ Dus we zien dat de sho:seo een m:n relatie is	,
+
+

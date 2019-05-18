@@ -1,0 +1,3661 @@
+/ See MOCKITO SPRING HIBERNATE DAO
+/ See SAMENVATTING INJECTMOCKS
+/ See JUNIT
+/ See FINAL 
+/ See INJECTMOCKS
+
+/ MOCKITO 
+
+/ google	,
+mockito generics
+/ Lees	,
+http://stackoverflow.com/questions/1652692/using-mockito-to-mock-classes-with-generic-parameters
+
+/ wicket7_3
+/ proj wicket-testing
+
+/ 7	. 
+
+$ vi Mockito_aTest.java
+
+public class Mockito_aTest {
+	
+	@Test(expected=RuntimeException.class)
+	public void test2(){
+		LinkedList<String>linkedList=(LinkedList<String>)Mockito.mock(LinkedList.class);
+		Mockito.when(linkedList.get(0)).thenReturn("Foo");
+		Mockito.when(linkedList.get(1)).thenThrow(new RuntimeException());
+		Assert.assertEquals("Foo", linkedList.get(0));
+		linkedList.get(1);
+	}
+
+/ Zo doe je dat met exceptions	, 
+
+/ We kunnen RuntimeException vervangen door Exception	, 
+/ Maar als we RuntimeException vervangen door IOException	, 
+java.lang.Exception: Unexpected exception, expected<java.io.IOException> but was<org.mockito.exceptions.base.MockitoException>
+	at org.junit.internal.runners.statements.ExpectException.evaluate(ExpectException.java:28)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:271)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:70)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:50)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:238)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:63)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:236)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:53)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:229)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:309)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:50)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:467)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:683)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:390)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:197)
+Caused by: org.mockito.exceptions.base.MockitoException: 
+Checked exception is invalid for this method!
+Invalid: java.io.IOException
+	at my.test.own.Mockito_aTest.test2(Mockito_aTest.java:26)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:47)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:44)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.internal.runners.statements.ExpectException.evaluate(ExpectException.java:19)
+	... 15 more
+/ TODO
+
+/ 7	. 
+
+	@Test(expected=RuntimeException.class)
+	public void test2(){
+		LinkedList<String>mock=(LinkedList<String>)Mockito.mock(LinkedList.class);
+		Mockito.when(mock.get(0)).thenReturn("Foo");
+		Mockito.when(mock.get(1)).thenThrow(new RuntimeException());
+		Assert.assertEquals("Foo", mock.get(0));
+		Assert.assertEquals(null, mock.get(1));
+		Mockito.verify(mock).get(7);
+	}
+/ OK
+
+	@Test(expected=RuntimeException.class)
+	public void test2(){
+		LinkedList<String>mock=(LinkedList<String>)Mockito.mock(LinkedList.class);
+		Mockito.when(mock.get(0)).thenReturn("Foo");
+		Mockito.when(mock.get(1)).thenThrow(new RuntimeException());
+		Assert.assertEquals("Foo", mock.get(0));
+		Assert.assertEquals(null, mock.get(7));
+		Mockito.verify(mock).get(7);
+	}
+/ ERR, JUnit, want er wordt een RuntimeException verwacht	, en die komt er niet	, 
+
+	@Test(expected=RuntimeException.class)
+//	@Test
+	public void test2(){
+		LinkedList<String>mock=(LinkedList<String>)Mockito.mock(LinkedList.class);
+		Mockito.when(mock.get(0)).thenReturn("Foo");
+		Mockito.when(mock.get(1)).thenThrow(new RuntimeException());
+		Assert.assertEquals("Foo", mock.get(0));
+		Assert.assertEquals(null, mock.get(1));
+		Mockito.verify(mock).get(13);
+	}
+/ OK
+/ TODO 	WH stopt de test na throw exc	, want we hebben geen .get(13)	, 
+
+/ 7	. 
+
+/ Mockito.verify heeft niets met Mockito.when van doen	,
+
+	private class IsNotListOf2Elements extends ArgumentMatcher<List<String>>{
+		@Override
+		public boolean matches(Object argument) {
+			return ((List<String>)argument).size()!=2;
+		}
+	}
+
+	@Test
+	public void test4(){
+		List<String>mock=(List<String>)Mockito.mock(List.class);
+		Mockito.when(mock.addAll(Mockito.argThat(new IsNotListOf2Elements()))).thenReturn(false);
+		Mockito.when(mock.size()).thenReturn(7);
+
+		Assert.assertEquals(false, mock.addAll(Arrays.asList("Foo","Bar","Baz")));
+		Assert.assertEquals(7, mock.size());
+
+		Mockito.verify(mock).addAll(Mockito.argThat(new IsNotListOf2Elements()));
+	}
+/ passes
+
+	@Test
+	public void test4b(){
+		List<String>mock=(List<String>)Mockito.mock(List.class);
+		mock.addAll(Arrays.asList("Foo","Bar","Baz"));
+		Mockito.verify(mock).addAll(Mockito.argThat(new IsNotListOf2Elements()));
+	}
+
+/ 7	. 
+
+	@Test
+	public void test4e(){
+		List<String>mock=(List<String>)Mockito.mock(List.class);
+		Mockito.when(mock.addAll(Arrays.asList("Foo","Bar"))).thenReturn(true);
+		Mockito.when(mock.addAll(Arrays.asList("Foo","Bar","Baz"))).thenReturn(false);
+		Mockito.when(mock.size()).thenReturn(7);
+		Assert.assertEquals(true, mock.addAll(Arrays.asList("Foo","Bar")));
+		Assert.assertEquals(false, mock.addAll(Arrays.asList("Foo","Bar","Baz")));
+// 125:	Assert.assertEquals(false, mock.addAll(Arrays.asList("Foo","Bar","Baz","Gee")));
+
+		Assert.assertEquals(7, mock.size());
+		
+		Mockito.verify(mock).addAll(Mockito.argThat(new IsListOf2Elements()));
+/ mag je zo vaak als je wilt	,
+130:	Mockito.verify(mock,Mockito.atLeastOnce()).addAll(Mockito.argThat(CoreMatchers.not(new IsListOf2Elements())));
+	}
+
+/ we zien dat er 2 invocations zijn WH op het geval dat er niet 2 arg worden addAll	, 
+
+/ Als we NIET Mockito.atLeastOnce()	, dan 
+org.mockito.exceptions.verification.TooManyActualInvocations: 
+list.addAll(not <Is list of 2 elements>);
+Wanted 1 time:
+-> at my.test.own.Mockito_aTest.test4e(Mockito_aTest.java:130)
+But was 2 times. Undesired invocation:
+-> at my.test.own.Mockito_aTest.test4e(Mockito_aTest.java:125)
+
+	at my.test.own.Mockito_aTest.test4e(Mockito_aTest.java:130)
+
+/ lees	, 
+http://stackoverflow.com/questions/12609976/mockito-verify-fails-with-too-many-actual-invocations
+
+UserService userService = mock(UserService.class);
+User user = mock(User.class);
+when(userService.getUserById(anyLong())).thenReturn(user);
+// invoke the method being tested
+verify(user).setPasswordChangeRequired(true);
+
+/ lees	,
+http://stackoverflow.com/questions/14889951/how-to-verify-a-method-is-called-two-times-with-mockito-verify
+
+verify(mockObject, atLeast(2)).someMethod("was called at least twice");
+verify(mockObject, times(3)).someMethod("was called exactly three times");
+
+/ 7	. 
+
+/ google	,
+mockito nullpointerexception multiple argumentmatcher
+
+/ Lees	, 
+http://stackoverflow.com/questions/8061668/nullpointerexception-when-working-with-argumentmatcher
+http://stackoverflow.com/questions/13846837/using-multiple-argumentmatchers-on-the-same-mock
+http://stackoverflow.com/questions/22822512/how-do-mockito-matchers-work
+
+/ 7	 
+
+/ mockito version 2.0.14-beta -> 2.2.6	, 
+
+/ Einde MOCKITO
+
+
+/ MOCKITO DOCS
+
+/ 7	. 
+
+/ ws wicket7_3
+/ proj wicket-testing
+
+$ vi Mockito_aTest.java
+
+/ Als we 2 keer op een mock's method een argumentmatcher set, dan NullPointerException	, 
+
+	@Test
+//	@Ignore 	// See test4f how to do it	,
+	public void test4(){
+		List<String>mock=(List<String>)Mockito.mock(List.class);
+		Mockito.when(mock.addAll(Mockito.argThat(new IsNotListOf2Elements()))).thenReturn(true); / (+1)
+// (*1)	Mockito.when(mock.addAll(Mockito.argThat(new IsNotListOf2Elements()))).thenReturn(true);
+// (+2)	Mockito.when(mock.contains(Mockito.argThat(new IsListOf2Elements()))).thenReturn(true);
+		Mockito.when(mock.size()).thenReturn(7);
+		Assert.assertEquals(true, mock.addAll(Arrays.asList("Foo","Bar","Baz"))); / (*2)
+		Assert.assertEquals(7, mock.size());
+		
+		Mockito.verify(mock).addAll(Mockito.argThat(new IsNotListOf2Elements()));
+	}
+
+/ Als we (*), dan  NullPointerException
+/ Als we (+) , OK
+/ we zien bij debug dat in (*) hij valt in	,
+	private class IsNotListOf2Elements implements ArgumentMatcher<List<String>>{
+		@Override
+		public boolean matches(List<String> argument) {
+->			return ((List<String>)argument).size()!=2;
+		}
+	}
+/ (*) is een call	, (+) niet	, 
+/ Hij valt er dus te vroeg in , zonder dat er args zijn, omdat (*1) net als (*2) een call is	, alleen de 1ste keer (bij (+1)) niet, en bij (+2) ook niet	, 
+/ bij (*2) is het OK	, argument = ["Foo","Bar","Baz"]	, 
+
+
+/ Maar we kunnen dit oplossen met	, 
+	@Test
+	public void test4f(){
+		List<String>mock=(List<String>)Mockito.mock(List.class);
+		Mockito.doReturn(true).when(mock).addAll(Mockito.argThat(new IsListOf2Elements()));	/ (+1)
+		Mockito.doReturn(false).when(mock).addAll(Mockito.argThat(new IsNotListOf2Elements())); / (+2)	
+		Mockito.when(mock.size()).thenReturn(7);
+		Assert.assertEquals(false, mock.addAll(Arrays.asList("Foo","Bar","Baz")));	/ (*1)
+		Assert.assertEquals(7, mock.size());
+		
+		Mockito.verify(mock).addAll(Mockito.argThat(new IsNotListOf2Elements()));
+	}
+/ (+2) is nu geen call	, die is pas bij (*1)
+/ 7	. 
+
+/ ws wicket7_3
+/ proj wicket-testing
+
+public class Mockito_bTest {
+
+	@Test
+	public void test(){
+		List<String>mock=(List<String>)Mockito.mock(List.class);
+		Mockito.when(mock.get(Mockito.anyInt())).thenReturn("ok");
+		Assert.assertEquals("ok", mock.get(Mockito.anyInt()));
+		Assert.assertEquals("ok", mock.get(7));
+		Mockito.verify(mock,Mockito.atLeastOnce()).get(Mockito.anyInt());
+		Mockito.verify(mock).get(Mockito.eq(7));
+	}
+/ de .verify verifies de call in de .assertEquals	, 
+/ we moeten Mockito.atLeastOnce()	, want deze .verify wordt inderdaad 2 keer called TODO
+
+	@Test
+	public void test2(){
+		Map<String, String>mock=(Map<String,String>)Mockito.mock(Map.class);
+		Mockito.when(mock.get(Mockito.anyString())).thenReturn("ok");
+		Assert.assertEquals("ok", mock.get(Mockito.anyString()));
+		Assert.assertEquals("ok", mock.get("foo"));
+		Mockito.verify(mock,Mockito.atLeastOnce()).get(Mockito.anyString());
+		Mockito.verify(mock).get(Mockito.eq("foo"));
+	}
+/ we moeten Mockito.atLeastOnce()	, want deze .verify wordt inderdaad 2 keer called TODO
+
+		Mockito.verify(mock).get(Mockito.anyInt());
+	}
+}
+
+/ 7	. 
+
+/ ws wicket7_3
+/ proj wicket-testing
+
+/ we doen het expres fout	, 
+
+public class Mockito_bTest {
+
+	@Test(expected=VerificationInOrderFailure.class)
+	public void test4(){
+		List<String>mock=(List<String>)Mockito.mock(List.class);
+		mock.add("foo");
+		mock.add("bar");
+		InOrder order=Mockito.inOrder(mock);
+		order.verify(mock).add("bar");
+		order.verify(mock).add("foo");
+	}
+/ OK
+/ Maar we kunnen ook	, 
+	@Test(expected=MockitoAssertionError.class)
+	@Test(expected=AssertionError.class)
+	@Test(expected=Error.class)
+	@Test(expected=Throwable.class)
+
+/ 7	. 
+
+/ ws wicket7_3
+/ proj wicket-testing
+
+	@Test(expected=IOException.class)
+	public void test5()throws IOException{
+		InputStream mock=Mockito.mock(InputStream.class);
+		Mockito.doThrow(new IOException()).when(mock).read();	 / (*)
+		Mockito.doThrow(new IOException()).when(mock).read();	
+		mock.read();											/ (**)
+
+	}
+	
+	@Test(expected=IOException.class)
+	public void test5a()throws IOException{
+		InputStream mock=Mockito.mock(InputStream.class);
+		Mockito.when(mock.read()).thenThrow(new IOException());	/ (*)
+		Mockito.when(mock.read()).thenThrow(new IOException());	/ (**)
+	}
+
+/ we moeten "throws IOException"	, omdat we in (*) .read() schrijven	, 
+/ In (**) staat de 1ste call op .read()	, dus in test5a ook	, 			/ !!!
+/ we zien nu het verschil tussen de 2 manieren 	, in test5 wordt in de 2de  
+
+/ 7		.
+
+/ ws wicket7_3
+/ proj wicket-testing
+
+public class Mockito_bTest {
+	@Test
+	public void test6(){
+		List<String>mock=(List<String>)Mockito.mock(List.class);
+		mock.add("foo");
+		Mockito.verify(mock).add(Mockito.anyString());
+		Mockito.verify(mock,Mockito.never()).add("bar");
+		List<String>mock2=(List<String>)Mockito.mock(List.class);
+		Mockito.verifyZeroInteractions(mock2);
+	}
+
+/ 7	. 
+
+/ ws wicket7_3
+/ proj wicket-testing
+
+/ Error is net als RuntimeException	, 
+
+	class X{
+		void f(){
+			throw new RuntimeException();
+		}
+		void g(){
+			throw new Error();
+		}
+		void h()throws Exception{
+			throw new Exception();
+		}
+	}
+//	@Test(expected=RuntimeException.class)
+	@Test(expected=Error.class)
+	public void test7a()throws Exception{
+//		new X().f();
+		new X().g();
+		new X().h();
+	}
+
+/ we moeten new X().f() comment out	, als we new X().g() willen laten exec	, want new X().f() gooit exc	, dus returns test7a	 	, 
+
+/ 7	.
+
+/ ws wicket7_3
+/ proj wicket-testing
+
+/ mockito annotations	,
+
+/ Lees	, 
+http://www.baeldung.com/mockito-annotations
+
+@RunWith(MockitoJUnitRunner.class)
+public class Mockito_cTest {
+
+	@Test
+	public void test(){
+		List<String>mock=(List<String>)Mockito.mock(List.class);
+		mock.add("foo");
+		Mockito.verify(mock).add("foo");
+		Assert.assertEquals(0, mock.size());
+		Mockito.when(mock.size()).thenReturn(7);
+		Assert.assertEquals(7, mock.size());
+
+	}
+
+	@Before
+	public void init(){
+		MockitoAnnotations.initMocks(this);
+	}
+	
+	@Mock
+	List<String>mock;
+	
+	@Test
+	public void test2(){
+		mock.add("foo");
+		Mockito.verify(mock).add("foo");
+		Assert.assertEquals(0, mock.size());
+		Mockito.when(mock.size()).thenReturn(7);
+		Assert.assertEquals(7, mock.size());
+
+	}
+	
+}
+
+/ 	7	. 
+
+/ answer
+
+$ vi Mockito_cTest.java
+
+	@Test
+	public void test3(){
+		Mockito.when(mock.get(Mockito.anyInt())).thenAnswer(new Answer<String>() {
+			@Override
+			public String answer(InvocationOnMock invocation) throws Throwable {
+				Object[]args=invocation.getArguments();
+				Object mock=invocation.getMock();
+				return mock+" called with arguments"+args;
+			}
+		});
+		String s=mock.get(Mockito.anyInt());
+		System.out.println(s);
+	}
+
+$ vi Mockito_fTest.java
+
+	@Mock
+	C c;
+	@Test
+	public void test2(){
+		List<? extends Number>l=new ArrayList<Integer>();
+//		Mockito.when(c.f()).thenReturn(l);
+		
+		Mockito.doReturn(l).when(c).f();
+// or,
+		Mockito.when(c.g()).thenAnswer(new Answer<List<Integer>>() {
+			@Override
+			public List<Integer> answer(InvocationOnMock invocation)throws Throwable {
+				return new ArrayList<Integer>();
+			}
+		});
+		c.g();
+		Assert.assertEquals(0, c.g().size());
+	}
+
+class C{
+	List<? extends Number>f(){
+		return new ArrayList<Integer>();
+	}	
+	List<? extends Number>g(){
+		return new ArrayList<Integer>();
+	}	
+}
+
+
+/ 7	.
+
+/ ws wicket7_3
+/ proj wicket-testing
+
+/ we hebben van thuis Mockito_dTest	, 
+/ we doen error handling niet via @Test, want dan is de test meteen afgelopen,	
+
+	public void test2(){
+		Assert.assertEquals(0, mock.size());
+		Mockito.when(mock.size())
+			.thenThrow(new RuntimeException())
+			.thenReturn(7)
+			.thenReturn(13);
+		try{
+			mock.size();
+		}catch(RuntimeException e){
+			Assert.assertEquals(true,e instanceof RuntimeException	);
+		}	
+		Assert.assertEquals(7,mock.size());
+		Assert.assertEquals(13, mock.size());
+		Assert.assertEquals(13, mock.size());
+
+	} 
+
+/ we kunnen ook	,
+			.thenThrow(new RuntimeException())
+		}catch(RuntimeException e){
+			Assert.assertEquals("foo",e.getMessage()	);
+		}	
+
+/ 7	. 
+
+/ ws wicket7_3
+/ proj wicket-testing
+
+/ docs, 12
+
+/ we kunnen NIET 
+	@Mock List<String>mock;
+	.when(mock.clear())
+
+/ want List.clear returns void	,
+
+/ we doen 	,
+
+@RunWith(MockitoJUnitRunner.class)
+public class Mockito_eTest {
+	
+	@Mock
+	private List<String>mock;
+	
+	@Test
+	public void test(){
+		Mockito.doThrow(new RuntimeException("foo")).when(mock).clear();
+		try{
+			mock.clear();
+		}catch(RuntimeException e){
+			Assert.assertEquals("foo", e.getMessage());
+		}
+		Mockito.verify(mock).clear();
+	}
+}
+
+/ Maar dit ook niet , en is wel logisch	, want List.clear returns void	,
+		Mockito.doReturn("ok").when(mock).clear();
+
+/ een @Test method moet public,	 
+
+/ 7	. 
+
+/ ws wicket7_3
+/ proj wicket-testing
+
+/ Use doThrow, ... als	, 
+stub void methods
+stub methods on spy objects (see below)
+stub the same method more than once, to change the behaviour of a mock in the middle of a test.
+
+/ Deze laatste hebben we hierboven inderdaad gezien	, 
+
+/ 7	. 
+
+/ ws wicket7_3
+/ proj wicket-testing
+
+/ spy
+
+/ partial mock	,
+
+	@Test
+	public void test2(){
+		List<String>list=new ArrayList<String>();
+		List<String>spy=Mockito.spy(list);
+		Mockito.doThrow(new RuntimeException("foo")).when(spy).clear();
+		Mockito.when(spy.add("foo")).thenReturn(false);						
+		
+		try{
+			spy.clear();
+		}catch(RuntimeException e){
+			Assert.assertEquals("foo", e.getMessage());
+		}
+		Assert.assertEquals(false, spy.add("foo"));
+		Assert.assertEquals(true, spy.add("bar"));				
+		Mockito.when(spy.size()).thenReturn(13);			
+		Assert.assertEquals(13, spy.size());
+
+
+		Mockito.verify(spy).clear();
+		Mockito.verify(spy).add("foo");
+		Mockito.verify(spy).add("bar");
+		Mockito.verify(spy).size();
+	}
+
+/ we zien dat spy.add("bar") geen stubbed method call is	, dus "echte" call	, List.add returns true
+
+/ we kunnen ook	, 
+
+	@Spy
+	List<String>spy=new MyArrayList<String>();
+	@Test
+	public void test2(){
+		Mockito.doThrow(new RuntimeException("foo")).when(spy).clear();
+		...
+
+	private static class MyArrayList<E> extends ArrayList<E>{			/ makkelijk voor debug	, want ArrayList.add wordt zeer vaak called	, 
+		@Override
+		public boolean add(E e) {
+			return super.add(e);
+		}
+		@Override
+		public int size() {
+			return super.size();
+		}
+		
+	}
+
+/13	. 
+
+/ stack 
+/s
+	Mockito_e2Test$MyArrayList$MockitoMock$1919372527(Mockito_e2Test$MyArrayList<E>).add(E) line: 53	
+			return super.add(e);														/ returns true, maar hij wordt hierna toch stubbed tot return false	,
+/d
+this	Mockito_e2Test$MyArrayList$MockitoMock$1919372527  (id=99)	
+	elementData	Object[10]  (id=182)	
+		[0]	"foo" (id=101)	
+	size	1	
+/cb
+	Mockito_e2Test$MyArrayList$MockitoMock$1919372527.add$accessor$i6gzwifM(Object) line: not available	
+	Mockito_e2Test$MyArrayList$MockitoMock$1919372527$auxiliary$FEnfRUre.call() line: not available	
+	InterceptedInvocation$SuperMethod$FromCallable.invoke() line: 191	
+	InterceptedInvocation.callRealMethod() line: 127	
+	CallsRealMethods.answer(InvocationOnMock) line: 40	
+	Answers.answer(InvocationOnMock) line: 100	
+	MockHandlerImpl<T>.handle(Invocation) line: 94	
+	NullResultGuardian<T>.handle(Invocation) line: 32	
+	InvocationNotifierHandler<T>.handle(Invocation) line: 36	
+	MockMethodInterceptor.doIntercept(Object, Method, Object[], InterceptedInvocation$SuperMethod) line: 37	
+	MockMethodInterceptor$DispatcherDefaultingToRealMethod.interceptSuperCallable(Object, MockMethodInterceptor, Method, Object[], Callable<?>) line: 98	
+	Mockito_e2Test$MyArrayList$MockitoMock$1919372527.add(Object) line: not available	
+	Mockito_e2Test.testSpy() line: 37	
+mock	List$MockitoMock$341052250  (id=174)	
+spy	Mockito_e2Test$MyArrayList$MockitoMock$1919372527  (id=99)	
+
+		Mockito.when(spy.add("foo")).thenReturn(false);
+/cb
+	NativeMethodAccessorImpl.invoke0(Method, Object, Object[]) line: not available [native method]	
+	NativeMethodAccessorImpl.invoke(Object, Object[]) line: 57	
+	DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: 43	
+	Method.invoke(Object, Object...) line: 606	
+	FrameworkMethod$1.runReflectiveCall() line: 47	
+	FrameworkMethod$1(ReflectiveCallable).run() line: 12	
+	FrameworkMethod.invokeExplosively(Object, Object...) line: 44	
+	InvokeMethod.evaluate() line: 17	
+	SilentJUnitRunner$1(ParentRunner<T>).runLeaf(Statement, Description, RunNotifier) line: 271	
+	SilentJUnitRunner$1(BlockJUnit4ClassRunner).runChild(FrameworkMethod, RunNotifier) line: 70	
+	SilentJUnitRunner$1(BlockJUnit4ClassRunner).runChild(Object, RunNotifier) line: 50	
+	ParentRunner$3.run() line: 238	
+	ParentRunner$1.schedule(Runnable) line: 63	
+	SilentJUnitRunner$1(ParentRunner<T>).runChildren(RunNotifier) line: 236	
+	ParentRunner<T>.access$000(ParentRunner, RunNotifier) line: 53	
+	ParentRunner$2.evaluate() line: 229	
+	SilentJUnitRunner$1(ParentRunner<T>).run(RunNotifier) line: 309	
+	SilentJUnitRunner.run(RunNotifier) line: 39	
+	StrictRunner.run(RunNotifier) line: 35	
+	MockitoJUnitRunner.run(RunNotifier) line: 104	
+	JUnit4TestClassReference(JUnit4TestReference).run(TestExecution) line: 50	
+	TestExecution.run(ITestReference[]) line: 38	
+	RemoteTestRunner.runTests(String[], String, TestExecution) line: 467	
+	RemoteTestRunner.runTests(TestExecution) line: 683	
+	RemoteTestRunner.run() line: 390	
+	RemoteTestRunner.main(String[]) line: 197	
+
+/c
+Mockito_e2Test$MyArrayList$MockitoMock$1919372527(Mockito_e2Test$MyArrayList<E>).add(E) line: 53	
+			return super.add(e);
+/d
+this	Mockito_e2Test$MyArrayList$MockitoMock$1919372527  (id=99)	
+	elementData	Object[10]  (id=182)	
+		[0]	"foo" (id=101)	
+		[1]	"bar" (id=197)	
+	size	2	
+...
+Mockito_e2Test.testSpy() line: 39	
+		Assert.assertEquals(true, spy.add("bar"));			// calls ArrayList.add (real), so here Mockito is not visible
+
+/c
+Mockito_e2Test$MyArrayList$MockitoMock$1919372527(Mockito_e2Test$MyArrayList<E>).size() line: 57	
+			return super.size();
+/d
+this	Mockito_e2Test$MyArrayList$MockitoMock$1919372527  (id=99)	
+	elementData	Object[10]  (id=182)	
+		[0]	"foo" (id=101)	
+		[1]	"bar" (id=197)	
+	size	2	
+
+/ Toch wordt deze method stubbed	, zodat hij 13 levert	, 
+
+/ 7	. 
+
+/ spy
+
+$ vi Mockito_e2Test.java
+
+@RunWith(MockitoJUnitRunner.class)
+public class Mockito_e2Test {
+	
+	@Mock private List<String>mock;
+/ of	,	
+	private List<String>mock2=Mockito.mock(List.class);
+	
+	@Test
+	public void testMock(){
+		Mockito.when(mock.add("foo")).thenReturn(true);
+		Assert.assertEquals(true, mock.add("foo"));
+		Assert.assertEquals(0, mock.size());
+		Assert.assertEquals(false, mock.add("bar"));
+
+	}
+	
+	@Spy private List<String>spy=new MyArrayList<String>();	/ het rechterlid is hieronder real	, @Spy maakt een copy	, 
+/ of	,	
+	private List<String>real=new MyArrayList<String>();	/ in spy2 zit een cpy van real	, met real zelf gebeurt helemaal niets,
+	private List<String>spy2=Mockito.spy(real);
+	
+	@Test@Ignore
+	public void testSpy(){
+		Mockito.when(spy.add("foo")).thenReturn(false);		
+		Assert.assertEquals(false, spy.add("foo"));			
+		Assert.assertEquals(true, spy.add("bar"));	
+		Mockito.when(spy.size()).thenReturn(13);
+		Assert.assertEquals(13, spy.size());
+		
+	}
+	
+	@Test
+	public void testSpy2(){
+		Mockito.when(spy2.add("foo")).thenReturn(false);		
+		Assert.assertEquals(false, spy2.add("foo"));			
+		Assert.assertEquals(true, spy2.add("bar"));	
+		Mockito.when(spy2.size()).thenReturn(13);
+		Assert.assertEquals(13, spy2.size());
+	}
+	
+	
+	
+	private static class MyArrayList<E> extends ArrayList<E>{
+		@Override
+		public boolean add(E e) {
+			return super.add(e);
+		}
+		@Override
+		public int size() {
+			return super.size();
+		}
+		
+	}
+}
+
+/ debug tot in MyArrayList.size	, 
+/s
+Thread [main] (Suspended (breakpoint at line 78 in Mockito_e2Test$MyArrayList))	
+	Mockito_e2Test$MyArrayList$MockitoMock$1130345262(Mockito_e2Test$MyArrayList<E>).size() line: 78	
+	...
+	Mockito_e2Test.testSpy2() line: 65	
+this	Mockito_e2Test  (id=143)	
+	real	Mockito_e2Test$MyArrayList<E>  (id=164)	
+		elementData	Object[0]  (id=166)	
+		size	0	
+	spy2	Mockito_e2Test$MyArrayList$MockitoMock$1130345262  (id=113)	
+		elementData	Object[10]  (id=228)	
+			[0]	"foo" (id=114)	
+			[1]	"bar" (id=133)	
+		size	2	
+
+/ final methods kan niet stub
+
+/ 13	. 
+
+/ voor Mock.mock geldt hetzelfde	,
+
+	@Mock private MyArrayList<String>mock3;
+
+	@Test public void testMock3(){
+		Mockito.when(mock3.add("foo")).thenReturn(true);
+		Assert.assertEquals(true, mock3.add("foo"));
+		Assert.assertEquals(0, mock3.size());
+		Assert.assertEquals(false, mock3.add("bar"));
+
+	}
+
+
+/ 	7	. 
+
+/ mock iterator	, 
+
+/ Lees	, 
+https://shekhargulati.com/2012/03/11/quick-tip-on-mockito-mocking-iterator/
+http://christopher-batey.blogspot.nl/2013/06/mocking-iterable-objects-generically.html
+
+
+@RunWith(MockitoJUnitRunner.class)
+public class Mockito_eTest {
+	
+	@Mock
+	Iterator<String >itmock;
+	
+	@Test
+	public void test3(){
+		Mockito.when(itmock.hasNext()).thenReturn(true,true,false);
+		Mockito.when(itmock.next()).thenReturn("foo","foo");
+		while (itmock.hasNext()) {
+			String string = (String) itmock.next();
+			Assert.assertEquals("foo", string);
+		}
+	}
+
+/ Dit hoeft NIET	, 
+	@Mock
+	List<String>lsmock;
+		Mockito.when(lsmock.iterator()).thenReturn(itmock);
+
+/ we kunnen @Mock NIET	, en 
+	@Test
+	public void test3(){
+		Iterator<String>itmock=Mockito.mock(Iterator.class);
+
+/ 7	. 
+
+/ ws wicket7_3
+/ proj wicket-testing
+
+
+/ Lees	,
+http://stackoverflow.com/questions/1652692/using-mockito-to-mock-classes-with-generic-parameters
+
+Foo<Bar> mockFoo = (Foo<Bar>) mock(Foo.class);
+when(mockFoo.getValue).thenReturn(new Bar());
+
+/ Einde MOCKITO DOCS
+
+/ MOCKITO SELF
+
+$ vi Mockit_aTest.java
+
+	@Test
+	public void test4g(){
+		List<String>mock=Mockito.mock(List.class);
+		Mockito.when(mock.add(Mockito.eq("foo"))).thenReturn(true);
+		Mockito.doReturn(true).when(mock).add(Mockito.eq("foo"));
+		Mockito.doReturn(false).when(mock).add(AdditionalMatchers.not(Mockito.eq("foo")));
+/s
+ArgumentMatchers.eq(T) line: 890	
+/ we write Mockito.eq	, maar we komen in AdditionalMatchers.eq	, 
+/t
+/s
+AdditionalMatchers.not(T) line: 905	
+/=
+    public static <T> T not(T first) {
+first==null
+/ TODO
+/s
+ArgumentMatcherStorageImpl.reportNot() line: 64	
+        Not not = new Not(popLastArgumentMatchers(ONE_SUB_MATCHER).get(0));
+not	Not  (id=73)	
+	first	Equals  (id=76)	
+		wanted	"foo" (id=47)	
+
+/ 	7	. 
+
+/ NEGATE ARGUMENTMATCHER
+
+$ vi Mockito_aTest.java
+
+	@Test
+	public void test4e(){
+		List<String>mock=Mockito.mock(List.class);
+		Mockito.doReturn(true).when(mock).addAll(Mockito.argThat(new IsListOf2Elements()));
+		Mockito.doReturn(false).when(mock).addAll(AdditionalMatchers.not(Mockito.argThat(new IsListOf2Elements())));
+		Mockito.when(mock.size()).thenReturn(7);
+		Assert.assertEquals(true, mock.addAll(Arrays.asList("Foo","Bar")));
+		Assert.assertEquals(false, mock.addAll(Arrays.asList("Foo","Bar","Baz")));
+		Assert.assertEquals(7, mock.size());
+		
+		Mockito.verify(mock).addAll(Mockito.argThat(new IsListOf2Elements()));
+	}
+
+/ OK	. 
+
+/ Eerst hadden we	, omgedraaid	, ERR	,
+		Mockito.doReturn(false).when(mock).addAll(Mockito.argThat(AdditionalMatchers.not(new IsListOf2Elements())));
+
+/ De reden is dat AdditionalMatchers.not een matcher registered moet hebben, en Mockito.argThat does do that, die moet dus eerst	,
+
+/ 13	. 
+
+
+//		Mockito.when(mock.addAll(Mockito.argThat(new IsNotListOf2Elements()))).thenReturn(true);
+// or, 
+		Mockito.when(mock.addAll(AdditionalMatchers.not(Mockito.argThat(new IsListOf2Elements())))).thenReturn(true);
+
+/ we moeten 1 van de 2, niet beide, want bij de 2de is argument==null in	,
+	private class IsListOf2Elements implements ArgumentMatcher<List<String>>{
+		@Override
+		public boolean matches(List<String> argument) {
+			return ((List<String>)argument).size()==2;
+		}
+	}
+
+/ 13	. 
+
+	@Test
+	public void test4g(){
+		List<String>mock=Mockito.mock(List.class);
+		Mockito.when(mock.add("foo")).thenReturn(true);	/ mock.add(Mockito.eq("foo")) is ook OK	,
+
+		Mockito.doReturn(true).when(mock).add("foo"); / mock.add(Mockito.eq("foo")) is ook OK ,
+
+		Mockito.doReturn(false).when(mock).add(AdditionalMatchers.not(Mockito.eq("foo")));	/ AdditionalMatchers.not("foo") is ERR	,
+
+		Assert.assertEquals(true, mock.add("foo"));
+		Assert.assertEquals(false, mock.add("bar"));
+	}
+
+/ 7	. 
+
+/ ws wicket7_3
+/ proj wicket-testing
+
+/ See Mockito_eTest in wicket-testing
+
+/ 13	. 
+
+	@Mock
+	Iterator<String >itmock;
+	
+	@Test
+	public void test3(){
+		Mockito.when(lsmock.iterator()).thenReturn(itmock);
+
+/ OK
+
+/ Maar	, 
+	@Mock
+	Iterator<? extends String >itmock;							<-
+	
+	@Test
+	public void test3(){
+		Mockito.when(lsmock.iterator()).thenReturn(itmock);
+
+/ ERR	, 
+
+/ Lees	, 
+http://stackoverflow.com/questions/7366237/mockito-stubbing-methods-that-return-type-with-bounded-wild-cards
+
+/ ook onderin over Answer	,
+http://stackoverflow.com/questions/2276271/how-to-make-mock-to-void-methods-with-mockito
+
+$ vi Mockito_fTest.java
+
+@RunWith(MockitoJUnitRunner.class)
+public class Mockito_fTest {
+	
+	@Mock
+	List<Number>list;
+	@Mock
+	Iterator<? extends A>iterator;
+	
+	@Test
+	public void test(){
+//		Mockito.when(list.iterator()).thenReturn(iterator);		<- err	, 
+	}
+
+	@Mock
+	C c;
+	@Test
+	public void test2(){
+		List<? extends Number>l=new ArrayList<Integer>();
+//		Mockito.when(c.f()).thenReturn(l);						<- err
+
+		Mockito.doReturn(l).when(c).f();
+// or,
+		Answer<List<Integer>>answer=createAnswer(13,7);
+		Mockito.when(c.f()).thenAnswer(answer);
+// or	,
+		Mockito.when(c.g()).thenAnswer(new Answer<List<Integer>>() {
+			@Override
+			public List<Integer> answer(InvocationOnMock invocation)throws Throwable {
+				return Arrays.asList(7,13);
+			}
+		});
+	}
+	private <N extends Number> Answer<List<N>>createAnswer(N...ns){
+		final List<N>l=new ArrayList<N>();
+		l.addAll(Arrays.asList(ns));
+		Answer<List<N>>answer=new Answer<List<N>>() {
+			@Override
+			public List<N> answer(InvocationOnMock invocation) throws Throwable {
+				return l;
+			}
+		};
+		return answer;
+	}
+}
+
+class A{
+	String f(){
+		return "A";
+	}
+}
+class B extends A{
+	String f(){
+		return "B";
+	}
+}
+
+class C{
+	List<? extends Number>f(){
+		return new ArrayList<Integer>();
+	}	
+	List<? extends Number>g(){
+		return new ArrayList<Integer>();
+	}	
+}
+
+/ TODO
+
+/ 7	. 
+
+/ ws wicket7_3
+/ proj wicket-testing
+
+$ vi DataGridPage_my1Test.java
+
+/ MORGENOCHTEND
+wicket7_3
+DataGridPage_my1Test
+
+used by: java.lang.NullPointerException
+	at org.apache.wicket.DequeueContext.nextTag(DequeueContext.java:143) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.DequeueContext.<init>(DequeueContext.java:71) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.markup.html.list.ListItem.newDequeueContext(ListItem.java:106) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.MarkupContainer.dequeue(MarkupContainer.java:2029) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.MarkupContainer.addedComponent(MarkupContainer.java:1049) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.MarkupContainer.add(MarkupContainer.java:239) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.markup.repeater.RefreshingView.addItems(RefreshingView.java:191) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.markup.repeater.RefreshingView.onPopulate(RefreshingView.java:97) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.markup.repeater.AbstractRepeater.onBeforeRender(AbstractRepeater.java:124) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.markup.repeater.AbstractPageableView.onBeforeRender(AbstractPageableView.java:115) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.Component.internalBeforeRender(Component.java:949) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.Component.beforeRender(Component.java:1017) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.MarkupContainer.onBeforeRenderChildren(MarkupContainer.java:1866) ~[wicket-core-7.2.0.jar:7.2.0]
+	... 50 more
+
+/ we gaan debug	,
+/s
+/ stack	,
+	DataGridView<T>(AbstractRepeater).onBeforeRender() line: 124	
+		onPopulate();
+/cb
+	DataGridView<T>(AbstractPageableView<T>).onBeforeRender() line: 115	
+	DataGridView<T>(Component).internalBeforeRender() line: 949	
+	DataGridView<T>(Component).beforeRender() line: 1017	
+	DataGridPage_my1(MarkupContainer).onBeforeRenderChildren() line: 1866	
+			for (final Component child : this)
+			{
+				// Get next child
+				// Call begin request on the child
+				// We need to check whether the child's wasn't removed from the
+				// component in the meanwhile (e.g. from another's child
+				// onBeforeRender)
+				if (child.getParent() == this)
+				{
+					child.beforeRender();
+child	DataGridView<T>  (id=3489)	
+/cb
+	DataGridPage_my1(Component).onBeforeRender() line: 3877	
+	DataGridPage_my1(Page).onBeforeRender() line: 801	
+	DataGridPage_my1(Component).internalBeforeRender() line: 949	
+	DataGridPage_my1(Component).beforeRender() line: 1017	
+	DataGridPage_my1(Component).internalPrepareForRender(boolean) line: 2215	
+		beforeRender();
+/cb
+	DataGridPage_my1(Page).internalPrepareForRender(boolean) line: 242	
+	DataGridPage_my1(Component).render() line: 2304	
+				internalPrepareForRender(true);
+/cb
+	DataGridPage_my1(Page).renderPage() line: 1018	
+	WebPageRenderer.renderPage(Url, RequestCycle) line: 124	
+			requestablePage.renderPage();
+/cb
+	WebPageRenderer.respond(RequestCycle) line: 236	
+			BufferedWebResponse response = renderPage(beforeRenderUrl, requestCycle);
+/cb
+	BaseWicketTester$LastPageRecordingPageRendererProvider$1.respond(RequestCycle) line: 2747	
+/=
+			return new PageRenderer(handler)
+			{
+				@Override
+				public void respond(RequestCycle requestCycle)
+				{
+					delegate.get(handler).respond(requestCycle);
+/cb
+	RenderPageRequestHandler.respond(IRequestCycle) line: 175	
+	RequestCycle$HandlerExecutor.respond(IRequestHandler) line: 895	
+	RequestCycle$HandlerExecutor(RequestHandlerStack).execute(IRequestHandler) line: 64	
+	RequestCycle.execute(IRequestHandler) line: 265	
+	RequestCycle.processRequest() line: 222	
+			IRequestHandler handler = resolveRequestHandler();
+				execute(handler);
+/cb
+	RequestCycle.processRequestAndDetach() line: 293	
+	WicketTester(BaseWicketTester).processRequest(MockHttpServletRequest, IRequestHandler, boolean) line: 718	
+	WicketTester(BaseWicketTester).processRequest(MockHttpServletRequest, IRequestHandler, boolean) line: 781	
+	WicketTester(BaseWicketTester).processRequest(MockHttpServletRequest, IRequestHandler) line: 657	
+	WicketTester(BaseWicketTester).startPage(IPageProvider) line: 887	
+	WicketTester(BaseWicketTester).startPage(T) line: 904	
+	DataGridPage_my1Test.test() line: 70	
+		tester.startPage(new DataGridPage_my1("view", populators, provider));
+/cb
+	NativeMethodAccessorImpl.invoke0(Method, Object, Object[]) line: not available [native method]	
+	NativeMethodAccessorImpl.invoke(Object, Object[]) line: 57	
+	DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: 43	
+	Method.invoke(Object, Object...) line: 606	
+	FrameworkMethod$1.runReflectiveCall() line: 47	
+	FrameworkMethod$1(ReflectiveCallable).run() line: 12	
+	FrameworkMethod.invokeExplosively(Object, Object...) line: 44	
+	InvokeMethod.evaluate() line: 17	
+	RunBefores.evaluate() line: 26	
+	SilentJUnitRunner$1(ParentRunner<T>).runLeaf(Statement, Description, RunNotifier) line: 271	
+	SilentJUnitRunner$1(BlockJUnit4ClassRunner).runChild(FrameworkMethod, RunNotifier) line: 70	
+	SilentJUnitRunner$1(BlockJUnit4ClassRunner).runChild(Object, RunNotifier) line: 50	
+	ParentRunner$3.run() line: 238	
+	ParentRunner$1.schedule(Runnable) line: 63	
+	SilentJUnitRunner$1(ParentRunner<T>).runChildren(RunNotifier) line: 236	
+	ParentRunner<T>.access$000(ParentRunner, RunNotifier) line: 53	
+	ParentRunner$2.evaluate() line: 229	
+	SilentJUnitRunner$1(ParentRunner<T>).run(RunNotifier) line: 309	
+	SilentJUnitRunner.run(RunNotifier) line: 39	
+	StrictRunner.run(RunNotifier) line: 35	
+	MockitoJUnitRunner.run(RunNotifier) line: 104	
+	JUnit4TestClassReference(JUnit4TestReference).run(TestExecution) line: 50	
+	TestExecution.run(ITestReference[]) line: 38	
+	RemoteTestRunner.runTests(String[], String, TestExecution) line: 467	
+	RemoteTestRunner.runTests(TestExecution) line: 683	
+	RemoteTestRunner.run() line: 390	
+	RemoteTestRunner.main(String[]) line: 197	
+/ debug
+/s
+DataGridView<T>(AbstractRepeater).onBeforeRender() line: 124	
+		onPopulate();
+/s
+DataGridView<T>(RefreshingView<T>).onPopulate() line: 93	
+		Iterator<IModel<T>> models = getItemModels();
+		Iterator<Item<T>> items = getItemReuseStrategy().getItems(newItemFactory(), models,
+			getItems());
+		removeAll();
+		addItems(items);
+/s
+DataGridView<T>(RefreshingView<T>).addItems(Iterator<Item<T>>) line: 190	
+		while (items.hasNext())
+		{
+			Item<T> item = items.next();
+item	Item<T>  (id=3693)	
+	children	RepeatingView  (id=3737)	
+	data	DetachableContactModel  (id=3739)	
+		id	7	
+		transientModelObject	null	
+	id	"1" (id=3742)	
+			item.setIndex(index);
+0
+			add(item);
+/s
+DataGridView<T>(MarkupContainer).add(Component...) line: 192	
+			Component previousChild = children_put(child);
+this	DataGridView<T>  (id=3489)	
+child	Item<T>  (id=3693)	
+			addedComponent(child);
+/s
+DataGridView<T>(MarkupContainer).addedComponent(Component) line: 1027	
+this	DataGridView<T>  (id=3489)	
+child	Item<T>  (id=3693)	
+
+		child.setParent(this);
+		Page page = findPage();
+page	DataGridPage_my1  (id=3257)	
+
+		if (page != null && child instanceof MarkupContainer)
+		{
+		    MarkupContainer childContainer = (MarkupContainer)child;
+childContainer	Item<T>  (id=3693)	
+
+		    // if we are already dequeueing there is no need to dequeue again
+		    if (!childContainer.getRequestFlag(RFLAG_CONTAINER_DEQUEING))
+			{
+				/*
+				 * dequeue both normal and auto components
+				 *
+				 */
+				childContainer.dequeue();
+/s
+Item<T>(MarkupContainer).dequeue() line: 2027	
+		if (this instanceof IQueueRegion)
+		{
+			DequeueContext dequeue = newDequeueContext();
+/s
+Item<T>(ListItem<T>).newDequeueContext() line: 106	
+		return new DequeueContext(getMarkup(), this, true);
+/s
+DequeueContext.<init>(IMarkupFragment, MarkupContainer, boolean) line: 67	
+		this.markup = markup;
+		this.skipFirst = skipFirst;
+		this.containers.push(root);
+		this.next = nextTag();
+/s
+DequeueContext.nextTag() line: 141	
+		if (skipFirst && first == null)
+		{
+			for (; index < markup.size(); index++)
+this	DequeueContext  (id=3809)	
+	markup	null	
+/ ERR
+
+/ 7	.
+
+/ ws wicket7_3
+/ proj wicket-testing
+
+/ we debug de page vanuit tomcat	, 
+/ stack	,
+	DataGridView<T>(RefreshingView<T>).onPopulate() line: 93	
+	DataGridView<T>(AbstractRepeater).onBeforeRender() line: 124	
+	DataGridView<T>(AbstractPageableView<T>).onBeforeRender() line: 115	
+	DataGridView<T>(Component).internalBeforeRender() line: 949	
+	DataGridView<T>(Component).beforeRender() line: 1017	
+	DataGridPage_my1(MarkupContainer).onBeforeRenderChildren() line: 1866	
+	DataGridPage_my1(Component).onBeforeRender() line: 3877	
+	DataGridPage_my1(Page).onBeforeRender() line: 801	
+	DataGridPage_my1(Component).internalBeforeRender() line: 949	
+	DataGridPage_my1(Component).beforeRender() line: 1017	
+	DataGridPage_my1(Component).internalPrepareForRender(boolean) line: 2215	
+	DataGridPage_my1(Page).internalPrepareForRender(boolean) line: 242	
+	DataGridPage_my1(Component).render() line: 2304	
+	DataGridPage_my1(Page).renderPage() line: 1018	
+	WebPageRenderer.renderPage(Url, RequestCycle) line: 124	
+	WebPageRenderer.respond(RequestCycle) line: 236	
+		Url currentUrl = requestCycle.getUrlRenderer().getBaseUrl();
+/d		<- geef enter	,
+		...
+			// redirect to buffer
+			BufferedWebResponse response = renderPage(beforeRenderUrl, requestCycle);
+/cb
+	RenderPageRequestHandler.respond(IRequestCycle) line: 175	
+	RequestCycle$HandlerExecutor.respond(IRequestHandler) line: 895	
+	RequestCycle$HandlerExecutor(RequestHandlerStack).execute(IRequestHandler) line: 64	
+	RequestCycle.execute(IRequestHandler) line: 265	
+	RequestCycle.processRequest() line: 222	
+			IRequestHandler handler = resolveRequestHandler();
+/d		<- geef enter	,
+				execute(handler);
+
+	RequestCycle.processRequestAndDetach() line: 293	
+	WicketFilter.processRequestCycle(RequestCycle, WebResponse, HttpServletRequest, HttpServletResponse, FilterChain) line: 261	
+	WicketFilter.processRequest(ServletRequest, ServletResponse, FilterChain) line: 203	
+				RequestCycle requestCycle = application.createRequestCycle(webRequest, webResponse);
+/d		<- geef enter	,
+				res = processRequestCycle(requestCycle, webResponse, httpServletRequest,
+					httpServletResponse, chain);
+/cb
+	WicketFilter.doFilter(ServletRequest, ServletResponse, FilterChain) line: 284	
+/ debug	,
+/s
+DataGridView<T>(RefreshingView<T>).onPopulate() line: 97	
+		Iterator<IModel<T>> models = getItemModels();
+		Iterator<Item<T>> items = getItemReuseStrategy().getItems(newItemFactory(), models,
+			getItems());
+		removeAll();
+		addItems(items);
+/s
+DataGridView<T>(RefreshingView<T>).addItems(Iterator<Item<T>>) line: 191	
+		while (items.hasNext())
+		{
+			Item<T> item = items.next();
+			item.setIndex(index);
+			add(item);
+/s
+DataGridView<T>(MarkupContainer).add(Component...) line: 239	
+			Component previousChild = children_put(child);
+			addedComponent(child);
+/s
+DataGridView<T>(MarkupContainer).addedComponent(Component) line: 1049	
+		Page page = findPage();
+		if (page != null && child instanceof MarkupContainer)
+		{
+		    MarkupContainer childContainer = (MarkupContainer)child;
+childContainer	Item<T>  (id=6827)	
+
+		    // if we are already dequeueing there is no need to dequeue again
+		    if (!childContainer.getRequestFlag(RFLAG_CONTAINER_DEQUEING))
+			{
+				/*
+				 * dequeue both normal and auto components
+				 *
+				 */
+				childContainer.dequeue();
+/s
+Item<T>(MarkupContainer).dequeue() line: 2029	
+			DequeueContext dequeue = newDequeueContext();
+/s
+Item<T>(ListItem<T>).newDequeueContext() line: 106	
+		return new DequeueContext(getMarkup(), this, true);
+/s
+Item<T>(Component).getMarkup() line: 755	
+		if (markup != null)
+/n
+		// Ask the parent for find the markup for me
+		markup = parent.getMarkup(this);
+/s
+DataGridView<T>(AbstractRepeater).getMarkup(Component) line: 153	
+		// each direct child gets the markup of this repeater
+		return getMarkup();
+/s
+DataGridView<T>(Component).getMarkup() line: 730	
+		if (markup != null)
+		{
+			return markup;
+this	DataGridView<T>  (id=6815)	
+	markup	MarkupFragment  (id=6849)	
+[DataGridView [Component id = rows]]
+file:/home/eric/Devel/Java/Tomcat/apache-tomcat-8.0.28/webapps/wicket-examples-step-by-step/WEB-INF/classes/org/apache/wicket/examples/repeater/DataGridPage_my1.html
+<tr wicket:id="rows">
+		<td wicket:id="cells">
+			<span wicket:id="cell">cell content goes here</span>
+		</td>
+	</tr>
+
+/ 	7
+
+/ wicket tester	,
+
+/s
+Thread [main] (Suspended)	
+	BaseWicketTester$LastPageRecordingPageRendererProvider$1.respond(RequestCycle) line: 2747	
+/=
+		@Override
+		public PageRenderer get(final RenderPageRequestHandler handler)
+			return new PageRenderer(handler)
+			{
+				@Override
+				public void respond(RequestCycle requestCycle)
+				{
+					delegate.get(handler).respond(requestCycle);
+this	BaseWicketTester$LastPageRecordingPageRendererProvider$1  (id=3497)	
+	val$handler	RenderPageRequestHandler  (id=3494)	
+/cb
+	RenderPageRequestHandler.respond(IRequestCycle) line: 175	
+	RequestCycle$HandlerExecutor.respond(IRequestHandler) line: 895	
+	RequestCycle$HandlerExecutor(RequestHandlerStack).execute(IRequestHandler) line: 64	
+	RequestCycle.execute(IRequestHandler) line: 265	
+	RequestCycle.processRequest() line: 222	
+	RequestCycle.processRequestAndDetach() line: 293	
+	WicketTester(BaseWicketTester).processRequest(MockHttpServletRequest, IRequestHandler, boolean) line: 718	
+			if (!requestCycle.processRequestAndDetach())
+/cb
+	WicketTester(BaseWicketTester).processRequest(MockHttpServletRequest, IRequestHandler) line: 657	
+	WicketTester(BaseWicketTester).startPage(IPageProvider) line: 887	
+		// process request
+		processRequest(request, handler);
+/cb
+	WicketTester(BaseWicketTester).startPage(T) line: 904	
+	DataGridPage_my1Test.test() line: 70	
+		tester.startPage(new DataGridPage_my1("view", populators, provider));
+/pd		<- cancel b's, step over ,
+	public DataGridPage_my1(String id,List<ICellPopulator<Contact>>populators,IDataProvider<Contact> provider){
+		add(new DataGridView<Contact>(id, populators, provider));
+/cb
+	NativeMethodAccessorImpl.invoke0(Method, Object, Object[]) line: not available [native method]	
+	NativeMethodAccessorImpl.invoke(Object, Object[]) line: 57	
+	DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: 43	
+	Method.invoke(Object, Object...) line: 606	
+	FrameworkMethod$1.runReflectiveCall() line: 47	
+	FrameworkMethod$1(ReflectiveCallable).run() line: 12	
+	FrameworkMethod.invokeExplosively(Object, Object...) line: 44	
+	InvokeMethod.evaluate() line: 17	
+	RunBefores.evaluate() line: 26	
+	SilentJUnitRunner$1(ParentRunner<T>).runLeaf(Statement, Description, RunNotifier) line: 271	
+	SilentJUnitRunner$1(BlockJUnit4ClassRunner).runChild(FrameworkMethod, RunNotifier) line: 70	
+	SilentJUnitRunner$1(BlockJUnit4ClassRunner).runChild(Object, RunNotifier) line: 50	
+	ParentRunner$3.run() line: 238	
+	ParentRunner$1.schedule(Runnable) line: 63	
+	SilentJUnitRunner$1(ParentRunner<T>).runChildren(RunNotifier) line: 236	
+	ParentRunner<T>.access$000(ParentRunner, RunNotifier) line: 53	
+	ParentRunner$2.evaluate() line: 229	
+	SilentJUnitRunner$1(ParentRunner<T>).run(RunNotifier) line: 309	
+	SilentJUnitRunner.run(RunNotifier) line: 39	
+	StrictRunner.run(RunNotifier) line: 35	
+	MockitoJUnitRunner.run(RunNotifier) line: 104	
+	JUnit4TestClassReference(JUnit4TestReference).run(TestExecution) line: 50	
+	TestExecution.run(ITestReference[]) line: 38	
+	RemoteTestRunner.runTests(String[], String, TestExecution) line: 467	
+	RemoteTestRunner.runTests(TestExecution) line: 683	
+	RemoteTestRunner.run() line: 390	
+	RemoteTestRunner.main(String[]) line: 197	
+/ debug	,
+/s
+BaseWicketTester$LastPageRecordingPageRendererProvider$1.respond(RequestCycle) line: 2747	
+/=
+		@Override
+		public PageRenderer get(final RenderPageRequestHandler handler)
+		{
+			return new PageRenderer(handler)
+			{
+				@Override
+				public void respond(RequestCycle requestCycle)
+				{
+					delegate.get(handler).respond(requestCycle);
+/s
+WebPageRenderer.respond(RequestCycle) line: 185	
+		Url currentUrl = requestCycle.getUrlRenderer().getBaseUrl();
+/d		<- geef enter
+		...
+		else if (shouldRedirectToTargetUrl(requestCycle, currentUrl, targetUrl))
+/j
+		{
+			redirectTo(targetUrl, requestCycle);
+targetUrl=
+wicket/page?0
+
+
+/c
+Thread [main] (Suspended (breakpoint at line 713 in BaseWicketTester))	
+	WicketTester(BaseWicketTester).processRequest(MockHttpServletRequest, IRequestHandler, boolean) line: 713	
+		applyRequest();
+/cb
+	WicketTester(BaseWicketTester).processRequest(MockHttpServletRequest, IRequestHandler, boolean) line: 781	
+			if (!requestCycle.processRequestAndDetach())
+/d		<- hier waren we net, voor de redirect	, 
+			...
+				processRequest(null, null, true);
+/cb
+	WicketTester(BaseWicketTester).processRequest(MockHttpServletRequest, IRequestHandler) line: 657	
+	WicketTester(BaseWicketTester).startPage(IPageProvider) line: 887	
+		// process request
+		processRequest(request, handler);
+/cb	,
+	WicketTester(BaseWicketTester).startPage(T) line: 904	
+		return (T)startPage(new PageProvider(page));
+/cb
+	DataGridPage_my1Test.test() line: 70	
+		tester.startPage(new DataGridPage_my1("view", populators, provider));
+/cb
+	NativeMethodAccessorImpl.invoke0(Method, Object, Object[]) line: not available [native method]	
+	NativeMethodAccessorImpl.invoke(Object, Object[]) line: 57	
+	DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: 43	
+	Method.invoke(Object, Object...) line: 606	
+	FrameworkMethod$1.runReflectiveCall() line: 47	
+	FrameworkMethod$1(ReflectiveCallable).run() line: 12	
+	FrameworkMethod.invokeExplosively(Object, Object...) line: 44	
+	InvokeMethod.evaluate() line: 17	
+	RunBefores.evaluate() line: 26	
+	SilentJUnitRunner$1(ParentRunner<T>).runLeaf(Statement, Description, RunNotifier) line: 271	
+	SilentJUnitRunner$1(BlockJUnit4ClassRunner).runChild(FrameworkMethod, RunNotifier) line: 70	
+	SilentJUnitRunner$1(BlockJUnit4ClassRunner).runChild(Object, RunNotifier) line: 50	
+	ParentRunner$3.run() line: 238	
+	ParentRunner$1.schedule(Runnable) line: 63	
+	SilentJUnitRunner$1(ParentRunner<T>).runChildren(RunNotifier) line: 236	
+	ParentRunner<T>.access$000(ParentRunner, RunNotifier) line: 53	
+	ParentRunner$2.evaluate() line: 229	
+	SilentJUnitRunner$1(ParentRunner<T>).run(RunNotifier) line: 309	
+	SilentJUnitRunner.run(RunNotifier) line: 39	
+	StrictRunner.run(RunNotifier) line: 35	
+	MockitoJUnitRunner.run(RunNotifier) line: 104	
+	JUnit4TestClassReference(JUnit4TestReference).run(TestExecution) line: 50	
+	TestExecution.run(ITestReference[]) line: 38	
+	RemoteTestRunner.runTests(String[], String, TestExecution) line: 467	
+	RemoteTestRunner.runTests(TestExecution) line: 683	
+	RemoteTestRunner.run() line: 390	
+	RemoteTestRunner.main(String[]) line: 197	
+
+/ 7	.
+
+/ ws wicket7_3
+/ proj wicket-testing
+
+/ via tomcat 
+
+/ we gaven, 
+http://localhost:9090/wicket-examples-step-by-step/repeater/wicket/bookmarkable/org.apache.wicket.examples.repeater.DataGridPage_my1
+/ dat gaf geen redirect	, 
+
+/ maar nu mount we de page	,
+$ vi RepeaterApplication.java
+	@Override
+	protected void init()
+	{
+		mountPage("my1", DataGridPage_my1.class);
+	}
+
+/ geef	, 
+http://localhost:9090/wicket-examples-step-by-step/repeater/my1
+
+/ dan zien we dezelfde fout als we zien in de test	, 
+
+Root cause:
+
+java.lang.NullPointerException
+     at org.apache.wicket.DequeueContext.nextTag(DequeueContext.java:143)
+     at org.apache.wicket.DequeueContext.<init>(DequeueContext.java:71)
+     at org.apache.wicket.markup.html.list.ListItem.newDequeueContext(ListItem.java:106)
+     at org.apache.wicket.MarkupContainer.dequeue(MarkupContainer.java:2029)
+     at org.apache.wicket.MarkupContainer.addedComponent(MarkupContainer.java:1049)
+     at org.apache.wicket.MarkupContainer.add(MarkupContainer.java:239)
+     at org.apache.wicket.markup.repeater.RefreshingView.addItems(RefreshingView.java:191)
+     at org.apache.wicket.markup.repeater.RefreshingView.onPopulate(RefreshingView.java:97)
+     at org.apache.wicket.markup.repeater.AbstractRepeater.onBeforeRender(AbstractRepeater.java:124)
+     at org.apache.wicket.markup.repeater.AbstractPageableView.onBeforeRender(AbstractPageableView.java:115)
+     at org.apache.wicket.Component.internalBeforeRender(Component.java:949)
+     at org.apache.wicket.Component.beforeRender(Component.java:1017)
+     at org.apache.wicket.MarkupContainer.onBeforeRenderChildren(MarkupContainer.java:1866)
+     at org.apache.wicket.Component.onBeforeRender(Component.java:3877)
+     at org.apache.wicket.Page.onBeforeRender(Page.java:801)
+     at org.apache.wicket.Component.internalBeforeRender(Component.java:949)
+     at org.apache.wicket.Component.beforeRender(Component.java:1017)
+     at org.apache.wicket.Component.internalPrepareForRender(Component.java:2215)
+     at org.apache.wicket.Page.internalPrepareForRender(Page.java:242)
+     at org.apache.wicket.Component.render(Component.java:2304)
+     at org.apache.wicket.Page.renderPage(Page.java:1018)
+     at org.apache.wicket.request.handler.render.WebPageRenderer.renderPage(WebPageRenderer.java:124)
+     at org.apache.wicket.request.handler.render.WebPageRenderer.respond(WebPageRenderer.java:236)
+     at org.apache.wicket.core.request.handler.RenderPageRequestHandler.respond(RenderPageRequestHandler.java:175)
+     at org.apache.wicket.request.cycle.RequestCycle$HandlerExecutor.respond(RequestCycle.java:895)
+     at org.apache.wicket.request.RequestHandlerStack.execute(RequestHandlerStack.java:64)
+     at org.apache.wicket.request.cycle.RequestCycle.execute(RequestCycle.java:265)
+     at org.apache.wicket.request.cycle.RequestCycle.processRequest(RequestCycle.java:222)
+     at org.apache.wicket.request.cycle.RequestCycle.processRequestAndDetach(RequestCycle.java:293)
+     at org.apache.wicket.protocol.http.WicketFilter.processRequestCycle(WicketFilter.java:261)
+     at org.apache.wicket.protocol.http.WicketFilter.processRequest(WicketFilter.java:203)
+     at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:284)
+
+/ 7	. 
+
+/ ws wicket7_3
+/ proj wicket-testing
+
+/ we hebben het template aangepast	, 
+
+$ vi DataGridPage_my1.html
+<table cellspacing="0" cellpadding="2" border="1">
+	<tr wicket:id="view">								<- 
+		<td wicket:id="cells">
+			<span wicket:id="cell">cell content goes here</span>
+		</td>
+	</tr>
+</table>
+</wicket:extend> 
+
+/ nu OK via tomcat, 
+/ maar de test geeft error	,
+
+Caused by: java.lang.ClassCastException: org.apache.wicket.mock.MockApplication cannot be cast to org.apache.wicket.examples.repeater.RepeaterApplication
+	at org.apache.wicket.examples.repeater.DatabaseLocator.getDatabase(DatabaseLocator.java:34) ~[classes/:?]
+	at org.apache.wicket.examples.repeater.DetachableContactModel.getContactsDB(DetachableContactModel.java:33) ~[classes/:?]
+	at org.apache.wicket.examples.repeater.DetachableContactModel.load(DetachableContactModel.java:97) ~[classes/:?]
+	at org.apache.wicket.examples.repeater.DetachableContactModel.load(DetachableContactModel.java:1) ~[classes/:?]
+	at org.apache.wicket.model.LoadableDetachableModel.getObject(LoadableDetachableModel.java:134) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.model.AbstractPropertyModel.getInnermostModelOrObject(AbstractPropertyModel.java:264) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.model.AbstractPropertyModel.getObject(AbstractPropertyModel.java:83) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.Component.getDefaultModelObject(Component.java:1626) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.Component.getDefaultModelObjectAsString(Component.java:1654) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.markup.html.basic.Label.onComponentTagBody(Label.java:115) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.markup.html.panel.DefaultMarkupSourcingStrategy.onComponentTagBody(DefaultMarkupSourcingStrategy.java:70) ~[wicket-core-7.2.0.jar:7.2.0]
+	at org.apache.wicket.Component.internalRenderComponent(Component.java:2565) ~[wicket-core-7.2.0.jar:7.2.0]
+	... 78 more
+
+/ 7	.
+
+$ vi ContactDataProvider.java
+	@Override
+	public Iterator<Contact> iterator(long first, long count)
+	{
+		return getContactsDB().find(first, count, new SortParam<String>("firstName", true))
+			.iterator();
+	}
+	@Override
+	public IModel<Contact> model(Contact object)
+	{
+		return new DetachableContactModel(object);
+	}
+$ vi DetachableContactModel.java
+
+public class DetachableContactModel extends LoadableDetachableModel<Contact>
+
+	@Override
+	protected Contact load()
+	{
+		// loads contact from the database
+		return getContactsDB().get(id);
+	}
+
+/ 7	. 
+
+/ spy of niet	, 
+
+/ we zien dat als we een method niet mock, hij null geeft	, 
+
+/ mock van ctor heeft geen zin	, we mocken toch alle methods	,
+
+
+@RunWith(MockitoJUnitRunner.class)
+public class Mockito_gTest {
+	@Test
+	public void test(){
+		D d=Mockito.mock(D.class);
+		Mockito.when(d.getS()).thenReturn("bar");
+		Assert.assertEquals("bar", d.getS());
+		Assert.assertEquals(null, d.getT());
+	}
+}
+
+class D{
+	private String s;
+	public D(){
+		setS("foo");
+	}
+	public D(String s){
+		this.setS(s);
+	}
+	public String getS() {
+		return s;
+	}
+	public void setS(String s) {
+		this.s = s;
+	}
+	public String getT() {
+		return "baz";
+	}
+}
+
+/ de oplossing is .thenCallRealMethod	,
+
+/ Lees	,
+http://stackoverflow.com/questions/14970516/use-mockito-to-mock-some-methods-but-not-others
+
+
+/ 13	. 
+
+@RunWith(MockitoJUnitRunner.class)
+public class Mockito_gTest {
+	
+
+	@Test
+	public void test(){
+		D d=Mockito.mock(D.class);
+		Mockito.when(d.getS()).thenReturn("bar");
+		Mockito.when(d.getT()).thenCallRealMethod();
+		Mockito.when(d.echo(Mockito.anyInt(), Mockito.anyString())).thenCallRealMethod();
+		Assert.assertEquals("bar", d.getS());
+		Assert.assertEquals("baz", d.getT());
+		Assert.assertEquals("Hello, 7 foo",d.echo(7, "foo"));
+
+	}
+}
+
+class D{
+	private String s;
+	public D(){
+		setS("foo");
+	}
+	public D(String s){
+		this.setS(s);
+	}
+	public String getS() {
+		return s;
+	}
+	public void setS(String s) {
+		this.s = s;
+	}
+	public String getT() {
+		return "baz";
+	}
+	public String echo(int i,String s){
+		return "Hello, "+i+" "+s;
+	}
+}
+
+/ 13	. 
+
+/ in 
+http://stackoverflow.com/questions/14970516/use-mockito-to-mock-some-methods-but-not-others
+
+/ staat ook dat als we	spy en	,
+		Mockito.when(d.getT()).thenReturn("gee");
+/ dan wordt d.getT() called, with maybe side effects	, 
+/ use daarom Mockito.doReturn	,
+
+@RunWith(MockitoJUnitRunner.class)
+public class Mockito_gTest {
+	
+
+	@Test
+	@Ignore
+	public void test(){
+		D d=Mockito.mock(D.class);
+		Mockito.when(d.getS()).thenReturn("bar");
+		Mockito.when(d.getT()).thenCallRealMethod();
+		Mockito.when(d.echo(Mockito.anyInt(), Mockito.anyString())).thenCallRealMethod();
+		Assert.assertEquals("bar", d.getS());
+		Assert.assertEquals("baz", d.getT());
+		Assert.assertEquals("Hello, 7 foo",d.echo(7, "foo"));
+
+	}
+	
+	@Test
+	@Ignore
+	public void test2(){
+		D d=Mockito.spy(new D());
+		Mockito.when(d.getT()).thenReturn("gee");
+		Assert.assertEquals("gee", d.getT());
+		Assert.assertEquals("foo set in getT()", d.getS());
+	}
+	
+	@Test
+	public void test3(){
+		D d=Mockito.spy(new D());
+		Mockito.doReturn("gee").when(d).getT();
+		Assert.assertEquals("gee", d.getT());
+		Assert.assertEquals("foo", d.getS());
+		
+	}
+	
+	
+}
+
+class D{
+	private String s;
+	public D(){
+		setS("foo");
+	}
+	public D(String s){
+		this.setS(s);
+	}
+	public String getS() {
+		return s;
+	}
+	public void setS(String s) {
+		this.s = s;
+	}
+	public String getT() {
+		s="foo set in getT()";
+		return "baz";
+	}
+	public String echo(int i,String s){
+		return "Hello, "+i+" "+s;
+	}
+
+	
+}
+
+
+/ 7	.
+
+/ WICKETTESTER MOCK DATAPROVIDER DETACHABLECONTACTMODEL  
+
+/ DataGridView	,
+
+/ we hebben aan de page een ctor add, voor de test	,
+
+$ vi DataGridPage_my1.java
+
+public class DataGridPage_my1 extends BasePage {
+
+	public DataGridPage_my1() {
+		
+		List<ICellPopulator<Contact>>populators = new ArrayList<>();
+		populators.add(new PropertyPopulator<Contact>("id"));
+		populators.add(new PropertyPopulator<Contact>("firstName"));
+		populators.add(new PropertyPopulator<Contact>("lastName"));
+		populators.add(new PropertyPopulator<Contact>("homePhone"));
+		populators.add(new PropertyPopulator<Contact>("cellPhone"));
+		
+		IDataProvider<Contact>provider=new ContactDataProvider();
+		
+		add(new DataGridView<Contact>("view", populators, provider));
+		
+	}
+	
+	public DataGridPage_my1(String id,List<ICellPopulator<Contact>>populators,IDataProvider<Contact> provider){
+		add(new DataGridView<Contact>(id, populators, provider));
+		
+	}
+	
+}
+
+/ test ok	,
+
+
+
+$ vi public class DataGridPage_my1Test {
+
+
+@RunWith(MockitoJUnitRunner.class)
+public class DataGridPage_my1Test {
+	
+	private WicketTester tester;
+	
+//	@Mock
+//	private IDataProvider<Contact>provider;
+//	
+//	@Mock
+//	private Iterator<Contact>iterator;
+//	
+//	@Mock
+//	private DetachableContactModel model,model2;
+	
+	private Contact contact,contact2;
+	private List<ICellPopulator<Contact>>populators;
+	
+	@Before
+	public void init(){
+		tester=new WicketTester();
+		
+		contact=new Contact();
+		contact.setId(7);contact.setFirstName("Abby");contact.setLastName("Moore");contact.setHomePhone("201-555-6524");contact.setCellPhone("303-555-8015");
+		contact2=new Contact();
+		contact2.setId(13);contact2.setFirstName("Debra");contact2.setLastName("Clark");contact2.setHomePhone("276-555-4117");contact2.setCellPhone("447-555-6164");
+
+		populators = new ArrayList<>();
+		populators.add(new PropertyPopulator<Contact>("id"));
+		populators.add(new PropertyPopulator<Contact>("firstName"));
+		populators.add(new PropertyPopulator<Contact>("lastName"));
+		populators.add(new PropertyPopulator<Contact>("homePhone"));
+		populators.add(new PropertyPopulator<Contact>("cellPhone"));
+		
+	}
+	
+	@Test
+	public void test(){
+		IDataProvider<Contact>provider=Mockito.mock(IDataProvider.class);
+		Iterator<? extends Contact>iterator=Mockito.mock(Iterator.class);
+		DetachableContactModel model=Mockito.mock(DetachableContactModel.class);
+		DetachableContactModel model2=Mockito.mock(DetachableContactModel.class);
+		
+//		Mockito.when(provider.iterator(Mockito.anyLong(), Mockito.anyLong())).thenReturn(iterator);// TODO	
+		Mockito.doReturn(iterator).when(provider).iterator(Mockito.anyLong(), Mockito.anyLong());
+		Mockito.when(iterator.hasNext()).thenReturn(true,true,false);
+		
+//		Mockito.when(iterator.next()).thenReturn(contact,contact2); // TODO
+		Mockito.doReturn(contact,contact2).when(iterator).next();
+		Mockito.when(provider.size()).thenReturn(2l);
+		
+//		Mockito.when(model.hashCode()).thenReturn(Long.valueOf(1l).hashCode());
+//		Mockito.when(model.equals(Mockito.any())).thenCallRealMethod();
+		Mockito.when(model.load()).thenReturn(contact);
+
+//		Mockito.when(model.hashCode()).thenReturn(Long.valueOf(2l).hashCode());
+//		Mockito.when(model.equals(Mockito.any())).thenCallRealMethod();
+		Mockito.when(model2.load()).thenReturn(contact2);
+			
+		Mockito.when(provider.model(contact)).thenReturn(model);
+		Mockito.when(provider.model(contact2)).thenReturn(model2);
+		Mockito.doNothing().when(provider).detach();
+		
+		tester.startPage(new DataGridPage_my1("view", populators, provider));
+		tester.assertRenderedPage(DataGridPage_my1.class);
+		String s=tester.getLastResponseAsString();
+		System.out.println(s);
+		
+	}
+	
+}
+
+/ mock hashCode en equals niet	,
+
+//		Mockito.when(provider.iterator(Mockito.anyLong(), Mockito.anyLong())).thenReturn(iterator);// TODO	
+		Mockito.doReturn(iterator).when(provider).iterator(Mockito.anyLong(), Mockito.anyLong());
+/ we kunnen ook een answer maken	,
+
+/ we kunnen niet,
+		LoadableDetachableModel<Contact>model=Mockito.mock(DetachableContactModel.class);
+/ want de .load fct is niet zichtbaar	, is protected	, 
+
+/ we hebben	, 
+		IDataProvider<Contact>provider=Mockito.mock(SortableContactDataProvider.class);
+/ we kunnen ook	, 
+		ContactDataProvider provider=Mockito.mock(ContactDataProvider.class);
+/ of
+		SortableContactDataProvider provider=Mockito.mock(SortableContactDataProvider.class);
+/ TODO
+
+
+/ we hebben de page ook print, 
+
+<html xmlns:wicket="http://wicket.apache.org">
+<head>
+    <title>Wicket Examples - repeater views</title>
+    <link rel="stylesheet" type="text/css" href="../style.css"/>
+</head>
+<body>
+
+    <span wicket:id="mainNavigation"><wicket:panel>
+    <a href="../index.html" style="color: #E9601A" target="_top"><img src="../logo.png"/></a><!--<div wicket:id="debug"></div>-->      
+      <div id="titleblock" style="font-size:larger;height:1.5em;vertical-align:center;">
+        <div style="float:left;"><span wicket:id="exampleTitle">repeater</span></div>
+	      <div style="float:right;padding-right:10px"><a href="./bookmarkable/org.apache.wicket.examples.source.SourcesPage?SourcesPage_class=org.apache.wicket.examples.repeater.DataGridPage_my1" wicket:id="sources" onclick="var w = window.open(href, &#039;sources&#039;, &#039;scrollbars=no,location=no,menuBar=no,resizable=yes,status=no,toolbar=no,width=800,height=600&#039;); try {if (w.blur) w.focus();}catch(ignore){}; return false;">Source code</a></div>
+    </div>
+    <br/>
+  </wicket:panel></span>
+    
+    <h2>Welcome to Repeater View Examples</h2>
+
+    <p><wicket:link><a href="./bookmarkable/org.apache.wicket.examples.repeater.Index">[go back]</a></wicket:link></p>
+
+	<wicket:child><wicket:extend xmlns:wicket="http://wicket.apache.org">
+<span style="display: block; border: 1px solid black;">
+Selected Contact: <span wicket:id="selectedLabel">No Contact Selected</span>
+</span><br/>
+<span wicket:id="feedback"><wicket:panel>
+  
+</wicket:panel></span>
+<wicket:child><wicket:extend xmlns:wicket="http://wicket.apache.org">
+
+
+This is a demo of the DataGridView (builds on top of DataView). Provided features:<br/>
+<ul>
+<li>Easy ordering and selection of columns from code</li>
+</ul>
+<br/>
+
+<table cellspacing="0" cellpadding="2" border="1">
+	<tr wicket:id="view">
+		<td wicket:id="cells">
+			<span wicket:id="cell">7</span>
+		</td><td wicket:id="cells">
+			<span wicket:id="cell">Abby</span>
+		</td><td wicket:id="cells">
+			<span wicket:id="cell">Moore</span>
+		</td><td wicket:id="cells">
+			<span wicket:id="cell">201-555-6524</span>
+		</td><td wicket:id="cells">
+			<span wicket:id="cell">303-555-8015</span>
+		</td>
+	</tr><tr wicket:id="view">
+		<td wicket:id="cells">
+			<span wicket:id="cell">13</span>
+		</td><td wicket:id="cells">
+			<span wicket:id="cell">Debra</span>
+		</td><td wicket:id="cells">
+			<span wicket:id="cell">Clark</span>
+		</td><td wicket:id="cells">
+			<span wicket:id="cell">276-555-4117</span>
+		</td><td wicket:id="cells">
+			<span wicket:id="cell">447-555-6164</span>
+		</td>
+	</tr>
+</table>
+</wicket:extend></wicket:child>
+</wicket:extend></wicket:child>
+</body>
+</html>
+
+/ 7	. 
+
+/ DataTable
+
+$ vi DataTablePage_my.java
+
+public class DataTablePage_my extends BasePage
+	public DataTablePage_my(String id,List<IColumn<Contact, String>>columns,ISortableDataProvider<Contact,String>provider){
+		DataTable<Contact, String>dataTable=new DefaultDataTable<Contact, String>(id, columns, provider,8);
+		add(dataTable);
+	}
+
+$ vi DataTablePage_myTest.java
+
+@RunWith(MockitoJUnitRunner.class)
+public class DataTablePage_myTest {
+	
+	private WicketTester tester;
+	
+//	@Mock
+//	private IDataProvider<Contact>provider;
+//	
+//	@Mock
+//	private Iterator<Contact>iterator;
+//	
+//	@Mock
+//	private LoadableDetachableModel<Contact>model;
+	
+	private Contact contact,contact2;
+	private List<IColumn<Contact, String>>columns;
+	
+	@Before
+	public void init(){
+		tester=new WicketTester();
+		
+		contact=new Contact();
+		contact.setId(7);contact.setFirstName("Abby");contact.setLastName("Moore");contact.setHomePhone("201-555-6524");contact.setCellPhone("303-555-8015");
+		contact2=new Contact();
+		contact2.setId(13);contact2.setFirstName("Debra");contact2.setLastName("Clark");contact2.setHomePhone("276-555-4117");contact2.setCellPhone("447-555-6164");
+
+		columns=new ArrayList<IColumn<Contact,String>>();
+		columns.add(new PropertyColumn<Contact, String>(Model.of("First Name"), "firstName"));
+		columns.add(new PropertyColumn<Contact, String>(Model.of("Last Name"), "lastName"));
+		columns.add(new PropertyColumn<Contact, String>(Model.of("Home Phone"), "homePhone"));
+		columns.add(new PropertyColumn<Contact, String>(Model.of("Cell Phone"), "cellPhone"));
+
+	}
+	
+
+	@Test
+	public void test(){
+		ISortableDataProvider<Contact,String>provider=Mockito.mock(ISortableDataProvider.class);
+		Iterator<? extends Contact>iterator=Mockito.mock(Iterator.class);
+		DetachableContactModel model=Mockito.mock(DetachableContactModel.class);
+		DetachableContactModel model2=Mockito.mock(DetachableContactModel.class);
+		
+//		Mockito.when(provider.iterator(Mockito.anyLong(), Mockito.anyLong())).thenReturn(iterator);// TODO	
+		Mockito.doReturn(iterator).when(provider).iterator(Mockito.anyLong(), Mockito.anyLong());
+		Mockito.when(iterator.hasNext()).thenReturn(true,true,false);
+		
+//		Mockito.when(iterator.next()).thenReturn(contact,contact2); // TODO
+		Mockito.doReturn(contact,contact2).when(iterator).next();
+		Mockito.when(provider.size()).thenReturn(2l);
+		
+//		Mockito.when(model.hashCode()).thenReturn(Long.valueOf(1l).hashCode());
+//		Mockito.when(model.equals(Mockito.any())).thenCallRealMethod();
+		Mockito.when(model.load()).thenReturn(contact);
+
+//		Mockito.when(model.hashCode()).thenReturn(Long.valueOf(2l).hashCode());
+//		Mockito.when(model.equals(Mockito.any())).thenCallRealMethod();
+		Mockito.when(model2.load()).thenReturn(contact2);
+			
+		Mockito.when(provider.model(contact)).thenReturn(model);
+		Mockito.when(provider.model(contact2)).thenReturn(model2);
+		Mockito.doNothing().when(provider).detach();
+
+		tester.startPage(new DataTablePage_my("table", columns, provider));
+		tester.assertRenderedPage(DataTablePage_my.class);
+		String s=tester.getLastResponseAsString();
+		System.out.println(s);
+	}
+}
+
+/ 7	. 
+
+/ we willen de AbstractColumn met de ActionPanel mock	,
+
+/ MORGENOCHTEND
+public class DataTablePage_my extends BasePage
+public class DataTablePage_myTest {
+
+
+
+/ WICKETTESTER MOCK DATAPROVIDER DETACHABLECONTACTMODEL  
+
+/ LABEL'S PROPERTY MODEL RESOLVED
+
+/ 7	. 
+
+/ in wicket7_5 is 
+public abstract class LoadableDetachableModel<T> implements IModel<T>
+	public final T getObject()
+
+/en final methods kun je niet mock
+
+/ we moeten DetachableContactModel.load() mock,
+/ TODO ( hoe werkt dit?)
+
+/ in scs ,
+public abstract class LoadableDetachableModel<T> implements IModel<T>
+	public T getObject()
+
+/ moeten we juist LoadableDetachableModel.<T>getObject mock, LoadableDetachableModelSoftDeletableModel.load mock werkt NIET
+/ MORGENOCHTEND
+/ TODO ERICJ
+
+
+/ 7	. 
+	
+ / wicket-1.4.23	, 
+/ scs	, 
+
+/ we moeten b set in 
+Component [line: 2488] [conditional] - render(MarkupStream)	
+Component [line: 1725] - getDefaultModelObject()				<-
+
+
+
+/s
+org.eclipse.jdt.internal.junit.runner.RemoteTestRunner at localhost:51596	
+	Thread [main] (Suspended)	
+		Label.onComponentTagBody(MarkupStream, ComponentTag) line: 114	
+		Label(Component).renderComponent(MarkupStream) line: 2725	
+				renderComponentTag(tag);
+<span ...>
+				// Render the body
+				onComponentTagBody(markupStream, tag);
+/cb
+		Label(WebComponent).onRender(MarkupStream) line: 62	
+		Label(Component).render(MarkupStream) line: 2525	
+		Item(MarkupContainer).renderNext(MarkupStream) line: 1461	
+		Item(MarkupContainer).renderComponentTagBody(MarkupStream, ComponentTag) line: 1624	
+		Item(MarkupContainer).onComponentTagBody(MarkupStream, ComponentTag) line: 1548	
+		Item(Component).renderComponent(MarkupStream) line: 2725	
+		Item(MarkupContainer).onRender(MarkupStream) line: 1559	
+		Item(Component).render(MarkupStream) line: 2525	
+		RepeatingView(AbstractRepeater).renderChild(Component) line: 122	
+		RepeatingView(AbstractRepeater).onRender(MarkupStream) line: 103	
+		RepeatingView(Component).render(MarkupStream) line: 2525	
+		OddEvenItem(MarkupContainer).renderNext(MarkupStream) line: 1461	
+		OddEvenItem(MarkupContainer).renderComponentTagBody(MarkupStream, ComponentTag) line: 1624	
+		OddEvenItem(MarkupContainer).onComponentTagBody(MarkupStream, ComponentTag) line: 1548	
+		OddEvenItem(Component).renderComponent(MarkupStream) line: 2725	
+		OddEvenItem(MarkupContainer).onRender(MarkupStream) line: 1559	
+		OddEvenItem(Component).render(MarkupStream) line: 2525	
+		DataTable$1(AbstractRepeater).renderChild(Component) line: 122	
+		DataTable$1(AbstractRepeater).onRender(MarkupStream) line: 103	
+		DataTable$1(Component).render(MarkupStream) line: 2525	
+		WebMarkupContainer(MarkupContainer).renderNext(MarkupStream) line: 1461	
+		WebMarkupContainer(MarkupContainer).renderComponentTagBody(MarkupStream, ComponentTag) line: 1624	
+		WebMarkupContainer(MarkupContainer).onComponentTagBody(MarkupStream, ComponentTag) line: 1548	
+		WebMarkupContainer(Component).renderComponent(MarkupStream) line: 2725	
+		WebMarkupContainer(MarkupContainer).onRender(MarkupStream) line: 1559	
+		WebMarkupContainer(Component).render(MarkupStream) line: 2525	
+		DefaultDataTable(MarkupContainer).renderNext(MarkupStream) line: 1461	
+		DefaultDataTable(MarkupContainer).renderComponentTagBody(MarkupStream, ComponentTag) line: 1624	
+		DefaultDataTable(MarkupContainer).renderAssociatedMarkup(String, String) line: 717	
+		DefaultDataTable(Panel).onComponentTagBody(MarkupStream, ComponentTag) line: 114	
+		DefaultDataTable(Component).renderComponent(MarkupStream) line: 2725	
+		DefaultDataTable(MarkupContainer).onRender(MarkupStream) line: 1559	
+		DefaultDataTable(Component).render(MarkupStream) line: 2525	
+		SoftDeletableSearchPage(MarkupContainer).renderNext(MarkupStream) line: 1461	
+		SoftDeletableSearchPage(MarkupContainer).renderAll(MarkupStream) line: 1575	
+		SoftDeletableSearchPage(Page).onRender(MarkupStream) line: 1599	
+		SoftDeletableSearchPage(Component).render(MarkupStream) line: 2525	
+		SoftDeletableSearchPage(Page).renderPage() line: 933	
+		PageRequestTarget.respond(RequestCycle) line: 63	
+		WebRequestCycleProcessor(AbstractRequestCycleProcessor).respond(RequestCycle) line: 105	
+		WebRequestCycle(RequestCycle).processEventsAndRespond() line: 1287	
+		WebRequestCycle(RequestCycle).step() line: 1358	
+		WebRequestCycle(RequestCycle).steps() line: 1465	
+		WebRequestCycle(RequestCycle).request() line: 545	
+		WicketTester(MockWebApplication).processRequestCycle(WebRequestCycle) line: 528	
+		WicketTester(BaseWicketTester).executeListener(Component) line: 263	
+		WicketTester(BaseWicketTester).startPage(ITestPageSource) line: 248	
+		WicketTester(BaseWicketTester).startPage(Page) line: 289	
+		SoftDeletableSearchPageTest.page() line: 66	
+		NativeMethodAccessorImpl.invoke0(Method, Object, Object[]) line: not available [native method]	
+		NativeMethodAccessorImpl.invoke(Object, Object[]) line: 57	
+		DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: 43	
+		Method.invoke(Object, Object...) line: 606	
+		FrameworkMethod$1.runReflectiveCall() line: 44	
+		FrameworkMethod$1(ReflectiveCallable).run() line: 15	
+		FrameworkMethod.invokeExplosively(Object, Object...) line: 41	
+		InvokeMethod.evaluate() line: 20	
+		RunBefores.evaluate() line: 28	
+		BlockJUnit4ClassRunner.runNotIgnored(FrameworkMethod, EachTestNotifier) line: 79	
+		BlockJUnit4ClassRunner.runChild(FrameworkMethod, RunNotifier) line: 71	
+		BlockJUnit4ClassRunner.runChild(Object, RunNotifier) line: 49	
+		ParentRunner$3.run() line: 193	
+		ParentRunner$1.schedule(Runnable) line: 52	
+		BlockJUnit4ClassRunner(ParentRunner).runChildren(RunNotifier) line: 191	
+		ParentRunner.access$000(ParentRunner, RunNotifier) line: 42	
+		ParentRunner$2.evaluate() line: 184	
+		BlockJUnit4ClassRunner(ParentRunner).run(RunNotifier) line: 236	
+		JUnit4TestClassReference(JUnit4TestReference).run(TestExecution) line: 50	
+		TestExecution.run(ITestReference[]) line: 38	
+		RemoteTestRunner.runTests(String[], String, TestExecution) line: 467	
+		RemoteTestRunner.runTests(TestExecution) line: 683	
+		RemoteTestRunner.run() line: 390	
+		RemoteTestRunner.main(String[]) line: 197	
+/debug	,
+/s 
+Label.onComponentTagBody(MarkupStream, ComponentTag) line: 114	
+		replaceComponentTagBody(markupStream, openTag, getDefaultModelObjectAsString());
+/s
+Label(Component).getDefaultModelObjectAsString() line: 1748	
+		return getDefaultModelObjectAsString(getDefaultModelObject());
+/s
+Label(Component).getDefaultModelObject() line: 1725	
+		final IModel<?> model = getDefaultModel();
+model	PropertyModel  (id=2051)	
+	expression	"code" (id=2053)	
+	target	LoadableDetachableSoftDeletableModel$$EnhancerByMockitoWithCGLIB$$59846edd  (id=2054)	
+
+			// Get model value for this component.
+			return model.getObject();
+/s
+PropertyModel(AbstractPropertyModel).getObject() line: 120	
+		final String expression = propertyExpression();
+code
+		final Object target = getTarget();
+/s
+PropertyModel(AbstractPropertyModel).getTarget() line: 206	
+		Object object = target;
+		while (object instanceof IModel)
+		{
+			Object tmp = ((IModel<?>)object).getObject();
+/ TODO (afmaken)
+
+/ Einde LABEL'S PROPERTY MODEL RESOLVED
+
+
+
+/ Einde MOCKITO SELF
+
+/ MOCKITO SITES
+
+http://www.baeldung.com/mockito-annotations
+http://christopher-batey.blogspot.nl/2013/06/mocking-iterable-objects-generically.html
+
+/ Einde MOCKITO SITES
+
+
+
+/ MOCKITO DEBUG 
+
+/ ws wicket7_3
+/ proj wicket-testing, in src/test/java
+
+$ less Mockito_hTest.java
+
+public class Mockito_hTest {
+
+	@Test
+	public void test(){
+		Q q=Mockito.mock(Q.class);
+		Mockito.when(q.f()).thenReturn("bar");
+		Assert.assertEquals("bar", q.f());
+	}
+}
+class Q{
+	public String f(){
+		return "foo";
+	}
+}
+
+/ debug	,
+/s
+/ stack	,
+	MockitoCore.mock(Class<T>, MockSettings) line: 58	
+	Mockito.mock(Class<T>, MockSettings) line: 1632	
+	Mockito.mock(Class<T>) line: 1545	
+	Mockito_hTest.test() line: 14	
+	NativeMethodAccessorImpl.invoke0(Method, Object, Object[]) line: not available [native method]	
+	NativeMethodAccessorImpl.invoke(Object, Object[]) line: 57	
+	DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: 43	
+	Method.invoke(Object, Object...) line: 606	
+	FrameworkMethod$1.runReflectiveCall() line: 47	
+	FrameworkMethod$1(ReflectiveCallable).run() line: 12	
+	FrameworkMethod.invokeExplosively(Object, Object...) line: 44	
+	InvokeMethod.evaluate() line: 17	
+	BlockJUnit4ClassRunner(ParentRunner<T>).runLeaf(Statement, Description, RunNotifier) line: 271	
+	BlockJUnit4ClassRunner.runChild(FrameworkMethod, RunNotifier) line: 70	
+	BlockJUnit4ClassRunner.runChild(Object, RunNotifier) line: 50	
+	ParentRunner$3.run() line: 238	
+	ParentRunner$1.schedule(Runnable) line: 63	
+	BlockJUnit4ClassRunner(ParentRunner<T>).runChildren(RunNotifier) line: 236	
+	ParentRunner<T>.access$000(ParentRunner, RunNotifier) line: 53	
+	ParentRunner$2.evaluate() line: 229	
+	BlockJUnit4ClassRunner(ParentRunner<T>).run(RunNotifier) line: 309	
+	JUnit4TestClassReference(JUnit4TestReference).run(TestExecution) line: 50	
+	TestExecution.run(ITestReference[]) line: 38	
+	RemoteTestRunner.runTests(String[], String, TestExecution) line: 467	
+	RemoteTestRunner.runTests(TestExecution) line: 683	
+	RemoteTestRunner.run() line: 390	
+	RemoteTestRunner.main(String[]) line: 197	
+/ debug
+/s
+Mockito.mock(Class<T>) line: 1545	
+        return mock(classToMock, withSettings().defaultAnswer(RETURNS_DEFAULTS));
+/s
+Mockito.mock(Class<T>, MockSettings) line: 1632	
+        return MOCKITO_CORE.mock(classToMock, mockSettings);
+/s
+MockitoCore.mock(Class<T>, MockSettings) line: 58	
+        MockCreationSettings<T> creationSettings = impl.confirm(typeToMock);
+typeToMock	Class<T> (my.test.own.Mockito_hTest$Q) (id=55)	
+/ TODO
+        T mock = createMock(creationSettings);
+/s
+MockUtil.createMock(MockCreationSettings<T>) line: 33	
+        MockHandler mockHandler =  createMockHandler(settings);
+/s
+MockHandlerFactory.createMockHandler(MockCreationSettings<T>) line: 16	
+        InternalMockHandler<T> handler = new MockHandlerImpl<T>(settings);
+/ TODO
+        T mock = mockMaker.createMock(settings, mockHandler);
+/s
+ByteBuddyMockMaker.createMock(MockCreationSettings<T>, MockHandler) line: 22	
+        return defaultByteBuddyMockMaker.createMock(settings, handler);
+
+/ Intermezzo
+
+/**
+ * ByteBuddy MockMaker.
+ *
+ * This class will serve as the programmatic entry point to all mockito internal MockMakers.
+ * Currently the default and only mock maker is the subclassing engine, but with enough feedback we can later
+ * promote the inlining engine for features like final class/methods mocks.
+ *
+ * The programmatic API could look like {@code mock(Final.class, withSettings().finalClasses())}.
+ */
+public class ByteBuddyMockMaker implements ClassCreatingMockMaker {
+    private ClassCreatingMockMaker defaultByteBuddyMockMaker = new SubclassByteBuddyMockMaker();
+
+/**
+ * Subclass based mock maker.
+ *
+ * This mock maker tries to create a subclass to represent a mock. It uses the given mock settings, that contains
+ * the type to mock, extra interfaces, and serialization support.
+ *
+ * <p>
+ * The type to mock has to be not final and not part of the JDK. THe created mock will implement extra interfaces
+ * if any. And will implement <code>Serializable</code> if this settings is explicitly set.
+ */
+public class SubclassByteBuddyMockMaker implements ClassCreatingMockMaker {
+
+
+/ Einde Intermezzo
+
+/s
+SubclassByteBuddyMockMaker.createMock(MockCreationSettings<T>, MockHandler) line: 35	
+        Class<? extends T> mockedProxyType = createMockType(settings);
+/s
+SubclassByteBuddyMockMaker.createMockType(MockCreationSettings<T>) line: 64	
+           return cachingMockBytecodeGenerator.mockClass(
+				MockFeatures.withMockFeatures(
+                    settings.getTypeToMock(),	/ class my.test.own.Mockito_hTest$Q
+                    settings.getExtraInterfaces(),	/ []
+                    settings.getSerializableMode()	/ NONE	
+            ));
+/s
+TypeCachingBytecodeGenerator.mockClass(MockFeatures<T>) line: 34	
+        return (Class<T>) mockCachePerClassLoaderOf(params.mockedType.getClassLoader()).getOrGenerateMockClass(params);
+/s
+TypeCachingBytecodeGenerator.mockCachePerClassLoaderOf(ClassLoader) line: 46	
+        classLoader = classLoader == null ? BOOT_LOADER : classLoader;
+classLoader	Launcher$AppClassLoader  (id=40)	
+
+        CachedBytecodeGenerator generator = avoidingClassLeakageCache.get(new LookupKey(classLoader));
+null
+        if (generator == null) {
+            CachedBytecodeGenerator newGenerator = new CachedBytecodeGenerator(bytecodeGenerator, weak);
+newGenerator	TypeCachingBytecodeGenerator$CachedBytecodeGenerator  (id=231)	
+	bytecodeGenerator	SubclassBytecodeGenerator  (id=152)	
+		byteBuddy	ByteBuddy  (id=167)	
+		matcher	BooleanMatcher<T>  (id=169)	
+		random	Random  (id=172)	
+		readReplace	null	
+	generatedClassCache	ConcurrentHashMap<K,V>  (id=232)	
+	weak	false	
+            generator = avoidingClassLeakageCache.putIfAbsent(new WeakKey(classLoader, this), newGenerator);
+/=newGenerator
+        return generator;
+/t
+TypeCachingBytecodeGenerator.mockClass(MockFeatures<T>) line: 34	
+        return (Class<T>) mockCachePerClassLoaderOf(params.mockedType.getClassLoader()).getOrGenerateMockClass(params);
+/ pd
+/s
+TypeCachingBytecodeGenerator$CachedBytecodeGenerator.getOrGenerateMockClass(MockFeatures<?>) line: 81	
+            MockKey<?> mockKey = MockKey.of(features.mockedType, features.interfaces);
+mockKey	TypeCachingBytecodeGenerator$CachedBytecodeGenerator$MockKey<T>  (id=309)	
+	mockedType	"my.test.own.Mockito_hTest$Q" (id=311)	
+	types	Collections$EmptySet<E>  (id=312)	[]
+
+            Class<?> generatedMockClass = getMockClass(mockKey);
+null
+            if (generatedMockClass == null) {
+                synchronized (features.mockedType) {
+
+features	MockFeatures<T>  (id=144)	
+	interfaces	Collections$UnmodifiableSet<E>  (id=148)	
+	mockedType	Class<T> (my.test.own.Mockito_hTest$Q) (id=66)	
+	serializableMode	SerializableMode  (id=123)	
+
+                    generatedMockClass = getMockClass(mockKey);
+null
+                    if (generatedMockClass == null) {
+                        generatedMockClass = bytecodeGenerator.mockClass(features);
+/s
+SubclassBytecodeGenerator.mockClass(MockFeatures<T>) line: 52	
+        DynamicType.Builder<T> builder =
+                byteBuddy.subclass(features.mockedType)
+                         .name(nameFor(features.mockedType))
+                         .ignoreAlso(isGroovyMethod())
+                         .annotateType(features.mockedType.getAnnotations())
+                         .implement(new ArrayList<Type>(features.interfaces))
+                         .method(matcher)
+                           .intercept(to(DispatcherDefaultingToRealMethod.class))
+                           .transform(withModifiers(SynchronizationState.PLAIN, Visibility.PUBLIC))
+                           .attribute(INCLUDING_RECEIVER)
+                         .method(isHashCode())
+                           .intercept(to(MockMethodInterceptor.ForHashCode.class))
+                         .method(isEquals())
+                           .intercept(to(MockMethodInterceptor.ForEquals.class))
+                         .serialVersionUid(42L)
+                         .defineField("mockitoInterceptor", MockMethodInterceptor.class, PRIVATE)
+                         .implement(MockAccess.class)
+                           .intercept(FieldAccessor.ofBeanProperty());
+
+/ Intermezzo
+
+/ we krijgen tijdens debug: Attach Source...
+/ is dit attach source die we zien in build path, of in debug?
+/ TODO
+
+/ misschien met maven krijgen we alleen Attach Source...
+/ TODO
+
+[eric@localhost bin]$ ls ~/.m2/repository/net/bytebuddy/byte-buddy/1.4.33/
+byte-buddy-1.4.33.jar       byte-buddy-1.4.33.pom       byte-buddy-1.4.33-sources.jar       m2e-lastUpdated.properties
+byte-buddy-1.4.33.jar.sha1  byte-buddy-1.4.33.pom.sha1  byte-buddy-1.4.33-sources.jar.sha1  _maven.repositories
+/ nu staan de -sources.jar erbij	,
+
+/ Lees  over asm, javassist, bytebuddy, 
+http://www.coolcoder.in/2015/02/3-best-libraries-to-manipulate-java.html
+
+/ Einde Intermezzo
+
+/ MORGENOCHTEND
+Thread [main] (Suspended)	
+	owns: Class<T> (my.test.own.Mockito_hTest$Q) (id=66)	
+	ByteBuddy.subclass(Class<T>) line: 221	
+	SubclassBytecodeGenerator.mockClass(MockFeatures<T>) line: 52	
+	TypeCachingBytecodeGenerator$CachedBytecodeGenerator.getOrGenerateMockClass(MockFeatures<?>) line: 87	
+	TypeCachingBytecodeGenerator.mockClass(MockFeatures<T>) line: 34	
+	SubclassByteBuddyMockMaker.createMockType(MockCreationSettings<T>) line: 64	
+	SubclassByteBuddyMockMaker.createMock(MockCreationSettings<T>, MockHandler) line: 35	
+	ByteBuddyMockMaker.createMock(MockCreationSettings<T>, MockHandler) line: 22	
+	MockUtil.createMock(MockCreationSettings<T>) line: 35	
+	MockitoCore.mock(Class<T>, MockSettings) line: 63	
+	Mockito.mock(Class<T>, MockSettings) line: 1632	
+	Mockito.mock(Class<T>) line: 1545	
+	Mockito_hTest.test() line: 14	
+	NativeMethodAccessorImpl.invoke0(Method, Object, Object[]) line: not available [native method]	
+	NativeMethodAccessorImpl.invoke(Object, Object[]) line: 57	
+	DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: 43	
+	Method.invoke(Object, Object...) line: 606	
+	FrameworkMethod$1.runReflectiveCall() line: 47	
+	FrameworkMethod$1(ReflectiveCallable).run() line: 12	
+	FrameworkMethod.invokeExplosively(Object, Object...) line: 44	
+	InvokeMethod.evaluate() line: 17	
+	BlockJUnit4ClassRunner(ParentRunner<T>).runLeaf(Statement, Description, RunNotifier) line: 271	
+	BlockJUnit4ClassRunner.runChild(FrameworkMethod, RunNotifier) line: 70	
+	BlockJUnit4ClassRunner.runChild(Object, RunNotifier) line: 50	
+	ParentRunner$3.run() line: 238	
+	ParentRunner$1.schedule(Runnable) line: 63	
+	BlockJUnit4ClassRunner(ParentRunner<T>).runChildren(RunNotifier) line: 236	
+	ParentRunner<T>.access$000(ParentRunner, RunNotifier) line: 53	
+	ParentRunner$2.evaluate() line: 229	
+	BlockJUnit4ClassRunner(ParentRunner<T>).run(RunNotifier) line: 309	
+	JUnit4TestClassReference(JUnit4TestReference).run(TestExecution) line: 50	
+	TestExecution.run(ITestReference[]) line: 38	
+	RemoteTestRunner.runTests(String[], String, TestExecution) line: 467	
+	RemoteTestRunner.runTests(TestExecution) line: 683	
+	RemoteTestRunner.run() line: 390	
+	RemoteTestRunner.main(String[]) line: 197	
+
+
+/ Einde MOCKITO DEBUG 
+
+/ MOCKITO
+
+/ ws wicket7_5
+/ proj spring-framework
+
+$ less My.java
+
+package misc;
+
+public class My {
+	public String fctx(X x){
+		return x.get();
+	}
+	public String fcts(String s){
+		return "My "+s;
+	}
+	public String fcti(Integer i){
+		return "My "+i;
+	}
+}
+class  X{
+	private String s;
+	X(String _){
+		s=_;
+	}
+	String get(){
+		return s;
+	}
+	
+}
+
+
+$ less MyTest.java
+
+package misc;
+
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
+
+public class MyTest {
+
+	@Test
+	public void test(){
+		X x=new X("foo");
+		String s=new My().fctx(x);
+		Assert.assertEquals("foo", s);
+	}
+	@Test
+	public void test2(){
+		My mock=Mockito.mock(My.class);
+		Mockito.when(mock.fctx(Mockito.any(X.class))).thenReturn("bar");
+		Assert.assertEquals("bar", mock.fctx(new X(null)));					/ *
+//		Assert.assertEquals("bar", mock.fctx(Mockito.any(X.class))); 		/ **
+		X x=Mockito.any(X.class);
+
+	}
+	@Test
+	public void test3(){
+		My mock=Mockito.mock(My.class);
+		Mockito.when(mock.fcts(Mockito.anyString())).thenReturn("foo");
+		Assert.assertEquals("foo", mock.fcts(""));
+		Assert.assertEquals("foo", mock.fcts(Mockito.anyString()));			/ ***
+	}
+	@Test
+	public void test4(){
+		 List<String>mock=(List<String>)Mockito.mock(List.class);
+         Mockito.when(mock.get(Mockito.anyInt())).thenReturn("ok");
+         Assert.assertEquals("ok", mock.get(Mockito.anyInt()));
+
+	}
+	@Test
+	public void test5(){
+		My mock=Mockito.mock(My.class);
+		Mockito.when(mock.fcti(Mockito.anyInt())).thenReturn("0");
+		Assert.assertEquals("0", mock.fcti(0));
+		Assert.assertEquals("0", mock.fcti(Mockito.anyInt()));
+
+	}
+}
+
+/ doe bij * niet	,  want dan geef je geen inst van type X mee	,
+		Assert.assertEquals("bar", mock.fctx(null));				
+
+/ bij *** kunnen we in de call use 
+	Mockito.anyString()
+/ maar bij ** kunnen we niet	,
+	Mockito.any(X.class)
+/ TODO
+/ op http://static.javadoc.io/org.mockito/mockito-core/2.2.9/org/mockito/Mockito.html lezen we	 onder 3	,
+Matcher methods like anyObject(), eq() do not return matchers. Internally, they record a matcher on a stack and return a dummy value (usually null). This implementation is due to static type safety imposed by the java compiler. The consequence is that you cannot use anyObject(), eq() methods outside of verified/stubbed method.
+
+
+/ Einde MOCKITO
+
+/ INJECTMOCKS
+
+/ lees	,
+http://www.baeldung.com/mockito-annotations
+/-> 
+http://stackoverflow.com/questions/20270391/mockito-inject-real-objects-into-private-autowired-fields
+
+/ lees	,
+http://stackoverflow.com/questions/15494926/initialising-mock-objects-mockito
+https://examples.javacodegeeks.com/core-java/mockito/mockito-initmocks-example/
+https://carlosbecker.com/posts/injectmocks/
+http://mhaligowski.github.io/blog/2014/05/30/mockito-with-both-constructor-and-field-injection.html
+https://static.javadoc.io/org.mockito/mockito-core/2.2.19/org/mockito/InjectMocks.html
+
+/ geef in google,
+springjunit4classrunner injectmocks
+/ lees	,
+http://stackoverflow.com/questions/10906945/mockito-junit-and-spring
+http://stackoverflow.com/questions/34067956/how-to-use-injectmocks-along-with-autowired-annotation-in-junit
+https://solutiondesign.com/blog/-/blogs/spring-and-mockito-happy-together
+
+/ Einde INJECTMOCKS
+
+/ MOCKITO IN WICKET 
+
+/ PropertyColumn= PropertyPopulator  + header van de column	, 
+
+/ Geef	, 
+
+http://localhost:9090/wicket-examples-step-by-step/repeater/wicket/bookmarkable/org.apache.wicket.examples.repeater.DataGridPage_my
+/ PropertyColumn (onnodig, want we use alleen DataGridView, geen HeaderToolbar), zonder action panel	, 
+
+http://localhost:9090/wicket-examples-step-by-step/repeater/wicket/bookmarkable/org.apache.wicket.examples.repeater.DataGridPage_my2
+/ PropertyPopulator, met action panel	,
+
+http://localhost:9090/wicket-examples-step-by-step/repeater/wicket/bookmarkable/org.apache.wicket.examples.repeater.DataTablePage_my
+
+/ we maken 
+file:///home/eric/Devel/Java/Wicket/wicket-examples-step-by-step/src/main/java/org/apache/wicket/examples/repeater/DataGridPage_my1.java 
+/ PropertyPopulator, geen action, ContactDataProvider	(geen SortableContactDataProvider)	,
+
+
+
+
+
+
+/ Einde MOCKITO IN WICKET
+
+/ JAVA LANGUAGE
+
+/ proj wicket-testing
+/ wicket7_3
+
+/ we maken hieronder 2 threads, maar er is ook de main thread, die er altijd is	,
+/ als in een thread op een threadlocal .get wordt gedaan, wordt WH eerst .initialValue called, in iedere thread 1 keer	,
+
+/ we zien hieronder	, 
+0
+1
+2
+
+$ less  JavaLangTest.java
+
+	@Test
+	public void test2(){
+		Runnable runnable=new Runnable() {		
+			@Override
+			public void run() {
+				f();
+			}	
+		};
+		f();
+		new Thread(runnable).start();
+		new Thread(runnable).start();
+	}
+	private void f(){
+		int id=ThreadId.get();
+		int id2=ThreadId.get();
+		Assert.assertEquals(id, id2);
+		System.out.println(id);
+	}
+
+	@Test
+	public void test3(){
+		Runnable runnable=new Runnable() {
+			@Override
+			public void run() {
+				fAlt();
+			}
+		};
+		fAlt();
+		new Thread(runnable).start();
+		new Thread(runnable).start();
+		
+	}
+	private void fAlt(){
+		ThreadIdAlt threadIdAlt= new ThreadIdAlt();
+		int id=threadIdAlt.get();
+		ThreadIdAlt threadIdAlt2= new ThreadIdAlt();
+		int id2=threadIdAlt2.get();
+		Assert.assertEquals(id, id2);
+		System.out.println(id);
+	}
+
+
+
+// Java tutorial
+class ThreadId {
+
+    // Atomic integer containing the next thread ID to be assigned
+    private static final AtomicInteger nextId = new AtomicInteger(0);
+
+    // Thread local variable containing each thread's ID
+    private static final ThreadLocal<Integer> threadId =new ThreadLocal<Integer>() {
+            @Override protected Integer initialValue() {
+                return nextId.getAndIncrement();
+        }
+            public Integer get() {
+            	return super.get();
+            };
+    };
+
+    // Returns the current thread's unique ID, assigning it if necessary
+    public static int get() {
+        return threadId.get();
+    }
+}
+
+// Mockito's GlobalConfiguration
+class ThreadIdAlt {
+    // Atomic integer containing the next thread ID to be assigned
+    private static final AtomicInteger nextId = new AtomicInteger(0);
+
+    // Thread local variable containing each thread's ID
+    private static final ThreadLocal<Integer> threadId =new ThreadLocal<Integer>();
+    
+    public ThreadIdAlt() {
+		if (threadId.get()==null){
+			threadId.set(nextId.getAndIncrement());
+		}
+	}
+
+    // Returns the current thread's unique ID, assigning it if necessary
+    public int get() {
+        return threadId.get();
+    }
+}
+
+
+/ Einde JAVA LANGUAGE
+
+/ MOCKITO
+
+/ 13	. 
+
+/ lees	,
+http://stackoverflow.com/questions/11620103/mockito-trying-to-spy-on-method-is-calling-the-original-method
+Mockito: Trying to spy on method is calling the original method
+
+
+/ 13	. 
+
+/ lees	,
+http://stackoverflow.com/questions/17714291/mockito-return-sequence-of-objects-on-spy-method
+
+private static class Meh
+{
+    public String meh() { return "meh"; }
+}
+
+@Test
+public void testMeh()
+{
+    final Meh meh = spy(new Meh());
+
+    doReturn("foo").doReturn("bar").doCallRealMethod().when(meh).meh();
+
+    assertEquals("foo", meh.meh());
+    assertEquals("bar", meh.meh());
+    assertEquals("meh", meh.meh());
+}
+
+
+
+/ 13	. 
+
+/ lees	,
+http://stackoverflow.com/questions/1778744/using-mockitos-generic-any-method
+
+public interface IBar {
+  void doStuff(Foo[] arr);
+}
+verify(bar).DoStuff(any(Foo[].class));
+
+/ 7	. 
+
+/ Finals, Abstracts	,
+
+/ final methods kunnen we niet mock	, abstract methods wel	,
+
+/ proj wicket-examples-step-by-step
+/ prog MockitoOnFinalsTest
+
+$ vi MockitoOnFinalsTest.java
+
+@RunWith(MockitoJUnitRunner.class)
+public class MockitoOnFinalsTest {
+	
+	@Mock
+	private K k;
+
+	@Spy
+	private K k2;
+	
+	@Mock
+	private L l;
+	
+	@Mock
+	private M m;
+	
+	
+	@Test
+	public void testFinal(){
+		Mockito.doReturn("Bar").when(k).getFoo();
+		Assert.assertEquals("Bar", k.getFoo());
+
+//		Mockito.doReturn("Bar").when(k).getFooFinal(); 	
+//		Mockito.when(k.getFooFinal()).thenReturn("Bar");
+/ Deze 2 compile OK	, maar run test: ERR	, UnfinishedStubbingException	, hints: you cannot stub a final method, 
+	}
+
+	@Test
+	public void testFinal2(){
+		Mockito.doReturn("Bar").when(k2).getFoo();
+		Assert.assertEquals("Bar", k2.getFoo()); 		/ (*)
+//		Mockito.doReturn("Bar").when(k2).getFooFinal();
+//		Mockito.when(k2.getFooFinal()).thenReturn("Bar");
+/ Deze compile OK, maar als run, dan ERR op (*)	TODO 
+	}
+	
+	@Test
+	public void testAbstract(){
+		Mockito.doReturn("Bar").when(l).getFoo();
+		Assert.assertEquals("Bar", l.getFoo());
+		Mockito.doReturn("Bar").when(l).getFooAbstract();
+		Assert.assertEquals("Bar", l.getFooAbstract());
+		Mockito.doReturn("Bar").when(m).getFooAbstract();
+		Assert.assertEquals("Bar", m.getFooAbstract());
+
+}
+static class K{
+	private String foo="Foo";
+	public String getFoo(){
+		return foo;
+	}
+	public final String getFooFinal(){
+		return foo;
+	}
+	
+}
+
+static abstract class L{
+	private String foo="Foo";
+	public String getFoo(){
+		return foo;
+	}
+	protected abstract String getFooAbstract();
+}
+}
+class M extends L{
+	@Override
+	public String getFooAbstract() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}
+
+/ 7	. 
+
+/ geef in google	,
+mockito return if
+/ lees	,
+http://stackoverflow.com/questions/2684630/how-can-i-make-a-method-return-an-argument-that-was-passed-to-it
+
+/ 7	. 
+
+/ @InjectMocks
+
+/ 13	. 
+
+/ we gaan het eerst fout doen	,
+
+/ WH  Een @InjectMocks injects mocks	, zelf is het geen mock	, 
+
+/ Dus 
+	@Test
+	public void testMyDictionaryI(){
+//		Mockito.when(dictionaryI.get("key")).thenReturn("alt"); 	// als we NIET uit comment, dan ERR: 'when' expects a method call on a mock	, 
+		Assert.assertEquals("value", dictionaryI.get("key"));
+	}
+
+$ vi Mockito_i1Test.java
+
+@RunWith(MockitoJUnitRunner.class)
+public class Mockito_i1Test {
+	
+	@Mock
+	Map<String, String>map;
+	
+	@InjectMocks
+	MyDictionary dictionaryI;
+	
+	@Mock
+	MyDictionary dictionaryM;
+	
+	@Spy
+	MyDictionary dictionaryS;		/ hoeven NIET =new MyDictionary()
+
+	@Before
+	public void init(){
+		Mockito.when(map.get("key")).thenReturn("value");
+	}
+	
+	@Test
+	public void testMap(){
+		Assert.assertEquals("value", map.get("key"));
+	}	
+	
+	@Test
+	public void testMyDictionaryI(){
+//		Mockito.when(dictionaryI.get("key")).thenReturn("alt");	 	/ als we NIET comment out, dan ERR: 'when' requires a method call on a mock	, 
+		Assert.assertEquals("value", dictionaryI.get("key"));		/ OK , passes	, does not use injected mock	, 
+	}
+	
+	@Test
+	public void testMyDictionaryM(){
+		Mockito.when(dictionaryM.get("key")).thenReturn("alternative");
+		Assert.assertEquals("alternative", dictionaryM.get("key"));
+	}
+	
+	@Test
+	public void testMyDictionaryS(){
+		Mockito.when(dictionaryS.get("key")).thenReturn("alternative");
+		Assert.assertEquals("alternative", dictionaryS.get("key"));
+	}
+	
+	private static class MyDictionary{
+		
+		private Map<String, String> map;	/ we hoeven voor de @Spy geen map=new HashMap() 	, want hij wordt niet used in get	,
+		
+		public String get(String key){
+			return "value";
+		}
+	}
+}
+
+
+/ 13	. 
+
+/ Hoe zien mocks eruit	?
+
+/ debug	, 
+/s
+Mockito_i1Test.testFoo() line: 66	
+this	Mockito_i1Test  (id=91)	
+	dictionary	Mockito_i1Test$MyDictionary  (id=98)	
+	dictionaryA	Mockito_i1Test$MyDictionary$MockitoMock$734193178  (id=99)	
+	dictionaryS	Mockito_i1Test$MyDictionary$MockitoMock$734193178  (id=101)	
+	foo	Mockito_i1Test$Foo$MockitoMock$1975727964  (id=102)	
+	map	Map$MockitoMock$14802203  (id=103)	
+
+/ Dus een mock is met $MockitoMock$2099844191 erachter	, dus een mock is een dubbele nested class	,
+/ Een spy is ook een mock	,
+/ Een @InjectMocks is geen mock of spy	,   
+
+/ 13	. 
+
+/ We laten nu  get call map.get ,
+
+	private static class MyDictionary{
+		
+		private Map<String, String> map;
+		
+		public MyDictionary() {
+			map=new HashMap<String, String>();			/ dit moet alleen voor @Spy	,  en @InjectMocks @Spy	,
+														/	NIET voor @Mock	, @InjectMocks	,
+		}
+		
+		public String get(String key){
+			return map.get(key);						<-
+		}
+	}
+
+/ Een @Spy is ook een mock	, maar heeft eerst een nieuw obj met alle methods create	, en je kunt override (stub) elke method	, behalve finals natuurlijk	, 
+/ TODO
+
+/ Als we de MyDictionary  @Mock	, dan hoeven we NIET map=new HashMap<String, String>(); in de <init>	, maar als we een @Spy maken WEL	,
+
+/ SAMENVATTING INJECTMOCKS
+
+$ vi Mockito_i1aTest.java
+
+@RunWith(MockitoJUnitRunner.class)
+public class Mockito_i1aTest {
+	
+	@Mock
+	Map<String, String>map;
+	
+	@InjectMocks
+	MyDictionary dictionaryI;
+	
+	@Mock
+	MyDictionary dictionaryM;
+	
+	@Spy
+	MyDictionary dictionaryS;
+
+	@InjectMocks 
+	@Spy
+	MyDictionary dictionaryIS;
+
+	
+	@Before
+	public void init(){
+		Mockito.when(map.get("key")).thenReturn("value");
+	}
+	
+	@Test
+	public void testMap(){
+		Assert.assertEquals("value", map.get("key"));
+	}
+	
+	
+	@Test
+	public void testMyDictionaryI(){
+		Mockito.when(dictionaryI.get("key")).thenReturn("alternative");
+		Assert.assertEquals("alternative", dictionaryI.get("key"));	/ het lijkt alsof de MyDictionary.get stub toch WEL werkt	, 
+																		/ omdat 'when' a call on a mock expects	, zoals we boven zagen, 
+																		/ dus de map (de injected mock) wordt alsnog stubbed	,  
+	}
+	@Test
+	public void testMyDictionaryM(){
+		Mockito.when(dictionaryM.get("key")).thenReturn("alternative");
+		Assert.assertEquals("alternative", dictionaryM.get("key"));
+	}
+	
+	@Test
+	public void testMyDictionaryS(){
+		Mockito.when(dictionaryS.get("key")).thenReturn("alternative");
+		Assert.assertEquals("alternative", dictionaryS.get("key"));
+	}
+
+	@Test
+	public void testMyDictionaryIS(){
+		Mockito.when(dictionaryS.get("key")).thenReturn("alternative");
+		Assert.assertEquals("alternative", dictionaryS.get("key"));
+	}
+
+		
+	private static class MyDictionary{
+		
+		private Map<String, String> map;
+		
+		public MyDictionary() {
+			map=new HashMap<String, String>();
+		}
+		
+		public String get(String key){
+			return map.get(key);
+/ or	, 
+			return "";
+		}
+	}
+
+}
+
+/ we zien	, 
+this	Mockito_i1aTest  (id=106)	
+	dictionaryI	Mockito_i1aTest$MyDictionary  (id=119)	
+	dictionaryIS	Mockito_i1aTest$MyDictionary$MockitoMock$374672788  (id=120)	
+	dictionaryM	Mockito_i1aTest$MyDictionary$MockitoMock$374672788  (id=122)	
+	dictionaryS	Mockito_i1aTest$MyDictionary$MockitoMock$374672788  (id=123)	
+	map	Map$MockitoMock$1678354678  (id=105)	
+	map2	Map$MockitoMock$1678354678  (id=111)	
+
+/ Als we 
+	private static class MyDictionary{
+		public String get(String key){
+			return "";
+		}
+	}
+/ dan geeft aleen dictionaryI de volgende ERR	,
+
+org.mockito.exceptions.misusing.MissingMethodInvocationException: 
+when() requires an argument which has to be 'a method call on a mock'.
+For example:
+    when(mock.getArticles()).thenReturn(articles);
+
+Also, this error might show up because:
+1. you stub either of: final/private/equals()/hashCode() methods.
+   Those methods *cannot* be stubbed/verified.
+   Mocking methods declared on non-public parent classes is not supported.
+2. inside when() you don't call method on mock but on some other object.
+
+	at my.test.own.Mockito_i1aTest.testMyDictionaryI(Mockito_i1aTest.java:60)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:47)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:44)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:271)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:70)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:50)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:238)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:63)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:236)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:53)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:229)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:309)
+	at org.mockito.internal.runners.SilentJUnitRunner.run(SilentJUnitRunner.java:39)
+	at org.mockito.internal.runners.StrictRunner.run(StrictRunner.java:35)
+	at org.mockito.runners.MockitoJUnitRunner.run(MockitoJUnitRunner.java:104)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:50)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:467)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:683)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:390)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:197)
+
+/ So it looks like that when
+	private static class MyDictionary{
+		public String get(String key){
+			return map.get(key); 
+		}
+	}
+/ the
+	@Test 
+	public void testMyDictionaryI(){
+		Mockito.when(dictionaryI.get("key")).thenReturn("alternative");
+
+/ line is translated to the map inside the dictonary, this is a mock (because of InjectMocks), so can be stubbed	.
+
+When MyDictionary.get(key) returns "", then I see a MissingMethodInvocationException because there is no mock object. When ``MyDictionary.get(key) returns map.get(key), the exception is not there. So the conclusion must be that although in the test I try to stub the MyDictionary.get` method, in fact the Map.get method is stubbed (map is a mock).
+
+/ Einde SAMENVATTING INJECTMOCKS
+
+/ SPRING 
+
+/ google: mock dao spring
+/ Lees	, 
+https://springframework.guru/mocking-unit-tests-mockito/
+
+/ Einde SPRING 
+
+/ FINAL METHODS CLASS 
+
+/ Lees	, 
+https://github.com/mockito/mockito/wiki/What's-new-in-Mockito-2
+https://static.javadoc.io/org.mockito/mockito-core/2.7.19/org/mockito/BDDMockito.html
+http://joel-costigliola.github.io/assertj/
+https://objectpartners.com/2013/09/18/the-benefits-of-using-assertthat-over-other-assert-methods-in-unit-tests/  	// TODO
+
+/ ws workspace-wicket7_3
+/ proj wicket-testing
+
+$ vi FinalsTest(){
+package my.test.own;
+
+import net.bytebuddy.implementation.bytecode.assign.Assigner.EqualTypesOnly;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.mockito.AdditionalMatchers;
+
+import static org.mockito.BDDMockito.*;
+import static org.junit.Assert.*;
+//import static org.assertj.core.api.Assertions.*;
+public class FinalsTest {
+	
+	@Test
+	public void test(){
+		FinalClass concrete=new FinalClass();
+		FinalClass mock=mock(FinalClass.class);
+		given(mock.finalMethod()).willReturn("not anymore");
+//		assertThat(mock.finalMethod(), is(not(eq(concrete.finalMethod()))));			// TODO
+		
+		assertNotEquals(mock.finalMethod(), concrete.finalMethod());
+		
+// 		Assert.assertThat(mock.finalMethod(),AdditionalMatchers.not(concrete.finalMethod()));	// TODO
+	}
+	
+	private static final class FinalClass{
+		final String finalMethod(){
+			return "somenthing";
+		}
+	}
+
+}
+
+/ OK
+
+
+/ Einde FINAL METHODS CLASS 
+
+/ HAMCREST
+
+/ ws workspace-wicket7_3
+/ proj wicket-testing
+
+/ lees	, 
+http://www.vogella.com/tutorials/Hamcrest/article.html
+
+$ vi pom.xml
+
+		<dependency>
+		    <groupId>org.hamcrest</groupId>
+		    <artifactId>hamcrest-library</artifactId>
+		    <version>${hamcrest.version}</version>			/ 1.3
+		</dependency>
+
+/ 13	. 
+
+$ vi FinalsTest.java
+
+import org.hamcrest.Matchers;
+import org.junit.Test;
+public class FinalsTest {
+	
+	@Test
+	public void test(){
+		FinalClass concrete=new FinalClass();
+		FinalClass mock=mock(FinalClass.class);
+		given(mock.finalMethod()).willReturn("not anymore");
+		
+		Matchers.is(Matchers.not(Matchers.equalTo(concrete.finalMethod())));
+	}
+	
+	private static final class FinalClass{
+		final String finalMethod(){
+			return "somenthing";
+		}
+	}
+}
+/ we moeten Matchers.is	 bijv	,
+
+/ 13	. 
+
+/ maar we kunnen ook	, 
+
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.equalTo;
+
+import org.junit.Test;
+
+import org.mockito.BDDMockito;
+import org.mockito.Mockito;
+
+public class FinalsTest {
+	
+	@Test
+	public void test(){
+		FinalClass concrete=new FinalClass();
+		FinalClass mock=Mockito.mock(FinalClass.class);
+		BDDMockito.given(mock.finalMethod()).willReturn("not anymore");
+
+		is(not(equalTo(concrete.finalMethod())));
+
+/ 13	. 
+
+/ we kunnen ctrl+shift+m geven: een Mockito.mock wordt dan mock, en hij voegt een static import toe	, 
+
+import static org.mockito.BDDMockito.given;		/ nieuwe	,
+import org.mockito.BDDMockito;						/ was er al	,
+
+public class FinalsTest {
+	@Test
+	public void test(){
+		FinalClass concrete=new FinalClass();
+		FinalClass mock=Mockito.mock(FinalClass.class);
+		given(mock.finalMethod()).willReturn("not anymore");		<-
+
+/ 13	. 
+
+/ Met assertj	, 
+
+/ Lees	, 
+http://joel-costigliola.github.io/assertj/assertj-core-quick-start.html
+/ Voor java 7 moeten we version 2.6.0 use	, NIET 3.6.2
+
+$ vi pom.xml
+
+		<assertj.version>2.6.0</assertj.version>
+		<dependency>
+		    <groupId>org.assertj</groupId>
+		    <artifactId>assertj-core</artifactId>
+		    <version>${assertj.version}</version>
+		    <scope>test</scope>
+		</dependency>
+
+$ vi FinalsTest.java
+
+import org.junit.Test;
+import org.mockito.BDDMockito;
+import org.mockito.Mockito;
+import org.assertj.core.api.Assertions;
+public class FinalsTest {
+	
+	@Test
+	public void test(){
+		FinalClass concrete=new FinalClass();
+		FinalClass mock=Mockito.mock(FinalClass.class);
+		BDDMockito.given(mock.finalMethod()).willReturn("not anymore");
+		
+		Matchers.is(Matchers.not(Matchers.equalTo(concrete.finalMethod())));
+		is(not(equalTo(concrete.finalMethod())));
+		
+		Assertions.assertThat(mock.finalMethod()).isNotEqualTo(concrete.finalMethod());							<-
+		
+	}
+	
+	private static final class FinalClass{
+		final String finalMethod(){
+			return "somenthing";
+		}
+	}
+
+}
+/ Einde HAMCREST
+
+/ 13	. 
+
+
+/ de @InjectMocks class uses de injected mock, map	, Daarom moet deze ook in de MyDictionary.get used worden	, want die stub je	, 
+		Mockito.when(map.get("key")).thenReturn("value");
+/ TODO
+
+$ vi Mockito_iTest.java
+
+public class Mockito_iTest {
+	
+	@Mock
+	Map<String, String>map;
+	
+	@InjectMocks
+	MyDictionary dictionary;
+
+	@Test
+	public void test(){
+		Mockito.when(map.get("key")).thenReturn("value");		<- stub de injected mock	, 
+		Assert.assertEquals("value", dictionary.get("key"));
+	}
+	
+	private static class MyDictionary{
+		
+		private Map<String, String> map;
+		
+	//	public MyDictionary() {
+	//		map=new HashMap<String, String>();
+	//	}
+		
+		public String get(String key){
+			return map.get(key);
+		}
+	}
+}
+
+/ 13	. 
+
+
+
+
+
+/ Einde MOCKITO
+
+/ JUNIT
+
+/ ws workspace-wicket7_3
+/ proj wicket-testing
+
+$ vi  ExceptionTest.java
+
+public class ExceptionTest {
+	
+	private X x;
+	
+	@Before
+	public void init(){
+		x=new X();
+	}
+
+	@Test
+	public void test() throws Exception{
+		String res=x.fct("foo");
+		Assert.assertEquals("X foo", res);
+		
+	}
+	@Test(expected=Exception.class)
+	public void test2()throws Exception{
+		String res=x.fct(null);
+		Assert.assertEquals("X foo", res);
+	}
+
+	private static class X{
+		public String fct(String name) throws Exception{
+			if(name==null){
+				throw new Exception();
+			}
+			return "X "+name;
+		}
+	}
+}
+
+/ De test method moet throws Exception als er een method is called in de test die mogelijk een Exception throws	, 
+/ De @Test moet expected=Exception.class alleen als er daadwerkelijk een Exception wordt throws	, 
+
+
+
+/ Einde JUNIT
+
+/ FINAL 
+
+/ @Mock werkt niet met final class	, 
+
+/ Dus NIET
+	@Mock
+	FinalClass mock;
+
+/ maar WEL	, 
+	FinalClass mock=Mockito.mock(FinalClass.class);
+
+/ wrapper types, String en Class kunnen we niet mock	,
+/ TODO
+
+/ Einde FINAL
+
+/ FINAL 
+
+$ vi FinalsTest.java
+
+@RunWith(MockitoJUnitRunner.class)
+public class FinalsTest {
+	
+	@Mock
+	FinalClass mock;
+	
+	@Mock
+	Int int1;
+	
+	@Test
+	public void test(){
+		FinalClass concrete=new FinalClass();
+		BDDMockito.given(mock.finalMethod()).willReturn("not anymore");
+		Matchers.is(Matchers.not(Matchers.equalTo(concrete.finalMethod())));
+		is(not(equalTo(concrete.finalMethod())));
+		Assertions.assertThat(mock.finalMethod()).isNotEqualTo(concrete.finalMethod());
+	}
+	
+	private static final class FinalClass{
+		private String name="foo";
+		final String finalMethod(){
+			return "something";
+		}
+	}
+	private static interface Int{
+		String fct();
+	}
+
+}
+
+this	FinalsTest  (id=53)	
+	int1	FinalsTest$Int$MockitoMock$775599304  (id=61)	
+	mock	FinalsTest$FinalClass  (id=65)	
+		name	null	
+concrete	FinalsTest$FinalClass  (id=54)	
+	name	"foo" (id=75)	
+
+/ We herkennen een mock type niet meer	, 
+/ we zien wel dat het een mock is aan een property	, "name" hier	,
+/ Alleen als we een interface type mock	 (zoals @Mock Map<String,String>  map;)
+
+/ Einde FINAL 
+
+/ INJECTMOCKS
+
+/ Lees	,
+https://tedvinke.wordpress.com/2014/02/13/mockito-why-you-should-not-use-injectmocks-annotation-to-autowire-fields/
+https://static.javadoc.io/org.mockito/mockito-core/2.7.19/org/mockito/InjectMocks.html
+https://blog.jayway.com/2012/02/25/mockito-and-dependency-injection/
+
+/ ws workspace-wicket7_3
+/ proj wicket-testing
+
+$ vi InjectMocksTest.java
+
+@RunWith(MockitoJUnitRunner.class)
+public class InjectMocksTest {
+	
+//	@Mock
+	private X x;
+	
+	@Mock
+	private Y y;
+	
+	@InjectMocks
+	private M m;
+	
+	@Test
+	public void test(){
+		boolean b=false;
+	}
+	
+	private static class M{
+		private X x;
+		private Y y;
+		public M(){
+			this(new X(),new Y());
+		}
+		public M(X x){
+			this(x,new Y());
+		}
+		public M(Y y){
+			this(new X(),y);
+		}
+		public M(X x,Y y){
+			this.x=x;
+			this.y=y;
+		}
+		public X getX() {
+			return x;
+		}
+		public void setX(X x) {
+			this.x = x;
+		}
+		public Y getY() {
+			return y;
+		}
+		public void setY(Y y) {
+			this.y = y;
+		}
+	}
+	private static class X{
+		private String s="foo";
+	}
+	private static class Y{
+		private String t="bar";
+		
+	}
+
+}
+
+
+/ hij kijkt alleen naar het type	, 
+/ als we zouden	, 
+	@Mock Y y;
+	@Mock Y y2;
+/ dan zijn y==y2.
+
+/ Als we in M property Y z hebben , dan is dat OK
+
+/ we mock X dus niet	, 
+/ In M zien we 	
+	x null
+	y de mock	,
+
+/ Als een geschikte ctor er is	, pakt hij die	, 
+/ anders pakt setter	, 	hier calls hij dan setY	, omdat er geen X mock is	, wordt setX niet called	, 
+
+/ 7	. 
+
+/ we maken	, 
+
+public class InjectMocksTest {
+	
+//	@Mock
+	private X xs;
+	
+	@Mock
+	private Y ys;
+	
+	@InjectMocks
+	private M m;
+
+	private static class M{
+		private X x;
+		private Y y;
+//		public M(){
+//			this(new X(),new Y());
+//		}
+		public M(X x){
+			this.x=x;
+		}
+		public M(Y y){
+			this.y=y;
+		}
+//		public M(X x,Y y){
+//			this.x=x;
+//			this.y=y;
+//		}
+		public X getX() {
+			return x;
+		}
+		public void setX(X x) {
+			this.x = x;
+		}
+		public Y getY() {
+			return y;
+		}
+		public void setY(Y y) {
+			this.y = y;
+		}
+	}
+
+/ we mock X dus niet	, 
+/ er is geen geschikte ctor	, 		/ TODO
+/ een setter wordt niet called	, 	/ TODO
+m	
+	x 	null
+	y	null
+/ TODO
+
+/ 7	. 
+
+/ ws workspace-wicket7_3
+/ proj wicket-testing
+
+/ vanwege de X(String s) ctor	, wordt NIET X.setT(T t) , na X(),  called	, 
+/ daarom werkt @InjectMocks NIET	, 
+
+$ vi Mockito_i1bTest.java
+
+@RunWith(MockitoJUnitRunner.class)
+public class Mockito_i1bTest {
+	
+	@Spy
+//	@InjectMocks
+	private X x;
+	
+	@Mock
+	private T t;
+	
+	private T t2=new T();
+
+	@Test
+	public void test(){
+		Mockito.when(t.fct()).thenReturn("Foo Bar");
+
+//		Mockito.when(x.getT()).thenReturn(t);		/ als x een mock is, kan alleen dit	, 
+/ or	, 
+		x.setT(t);		/ dit kan als x een object is of ook een spy	,
+
+		Assert.assertEquals("Foo Bar", x.fct());
+	}
+	
+	private static class X{
+		private T t;
+		public X(){
+			
+		}
+		public X(String s){
+		}
+		public String fct(){
+			return getT().fct();
+		}
+		public T getT() {
+			return t;
+		}
+		public void setT(T t) {
+			this.t = t;
+		}
+	}
+	private static class T{
+		private String s;
+		public T(){
+		}
+		public String fct(){
+			return "Baz";
+		}
+		public String getS() {
+			return s;
+		}
+		public void setS(String s) {
+			this.s = s;
+		}
+	}
+}
+
+
+
+
+
+/ Einde INJECTMOCKS
+
+/ MOCKITO SPRING HIBERNATE DAO
+
+https://cagataycivici.wordpress.com/2006/08/23/mocking_hibernate_daos_to_test/
+http://stackoverflow.com/questions/34043390/testing-spring-hibernate-jpa-service-layer-with-mockito-issue
+http://stackoverflow.com/questions/32612052/mock-a-dao-class-and-a-method-within-it
+
+
+/ Einde MOCKITO SPRING HIBERNATE DAO

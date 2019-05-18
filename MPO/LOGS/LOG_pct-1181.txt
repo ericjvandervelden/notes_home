@@ -1,0 +1,82 @@
+/ 7	. 
+
+/ services	,
+
+/ how sho from shi	,
+
+/s
+Daemon Thread [http-0.0.0.0-8080-2] (Suspended (breakpoint at line 2032 in ShipmentOrderServiceImpl))	
+	PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).updateShipmentOrder(ShipmentOrderVO, TMSEventContext, boolean) line: 2032	
+	PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).updateShipmentOrder(ShipmentOrderVO, boolean) line: 1985	
+	ShipmentOrderCalculationServiceImpl.update(ShipmentOrderVO, AlternativeResultSet, List<String>, boolean) line: 424	
+	RateCalculationVO.applyCorrections(AlternativeResultSet, List<String>, boolean) line: 1026	
+	RateCalculationVO.applyCorrections(AlternativeResultSet, List<String>) line: 988	
+	RateCalculationVO.runFor(List<RateAgreementVO>) line: 827	
+	CalculationServiceImpl.recalculate(LogisticsOrderVO, AgreementType, TMSEventContext) line: 584	
+	RateCalcEventListener.recalculate(ShipmentOrderVO, AgreementType, TMSEventContext) line: 396	
+	RateCalcEventListener.recalcShipOrderPrice(Event) line: 98	
+	RateCalcEventListener.handleEvent(Event) line: 79	
+	ListenerList.fireEvent(Event<?>) line: 82	
+	EventHandlerServiceImpl.handleEvent(Event) line: 109	
+	PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).triggerEventHandler(ShipmentOrderVO, ShipmentOrderVO, TMSEventContext) line: 2637	
+	PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).updateShipmentOrder(ShipmentOrderVO, TMSEventContext, boolean) line: 2084	
+	PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).updateShipmentOrder(ShipmentOrderVO, boolean) line: 1985	
+	PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).recalculateShipmentOrder(ShipmentOrderVO, boolean) line: 1307	
+	PnlLogisticsShipmentOrderServiceImpl(ShipmentOrderServiceImpl).recalculateShipmentOrder(ShipmentOrderVO) line: 1296	
+	ShipmentItemServiceImpl(ShipmentOrderChildService).recalculateShipmentOrder(ShipmentOrderVO) line: 20	
+		getShipmentOrderService().recalculateShipmentOrder(aShipmentOrder);
+
+	ShipmentItemServiceImpl.delete(ShipmentItemVO, boolean) line: 150	
+		ShipmentOrderVO myShipmentOrderVO = resolveShipmentOrder(aShipmentItemVO);
+...
+			recalculateShipmentOrder(myShipmentOrderVO);
+
+	ShipmentItemServiceImpl.delete(ShipmentItemVO) line: 142	
+		delete(aShipmentItemVO, true);
+
+	ShipmentItemServiceImpl.delete(int) line: 137	
+		ShipmentItemVO myVO = getBySystemId(aSystemId);
+		delete(myVO);
+	ShipmentItemDeleteAction.act() line: 26	
+			getShipmentItemService().delete(getSystemIdFromRequest()); 	
+/ *
+	ShipmentItemDeleteAction(AbstractAction).act(Redirector, SourceResolver, Map, String, Parameters) line: 171	
+
+
+/ Ad *
+public abstract class AbstractShipmentOrderChildAction extends AbstractAction {
+	protected ShipmentItemService getShipmentItemService() {
+		return MpoBeanFactory.getBean(ShipmentItemService.class);
+	}
+
+26988735
+26988734
+
+/ 7	. 
+
+
+/ CREATE RETURN
+
+/ we zien in HTML	,
+<input type="button" value="Create return" onclick="document.location.href='../oms/shipment-order_create-return?shipmentorder_systemid=26988739&amp;base_sessionLevelOffset=1';">
+
+/ Dit staat letterlijk in shipment-order_edit.jsp
+				<input type="button" value="<mpo:label name="Create return"/>"
+					onclick="document.location.href='../oms/shipment-order_create-return?shipmentorder_systemid=${formVO.systemId}&amp;base_sessionLevelOffset=1';" />
+
+/ Hier is die shipmentorder_systemid created	,
+/s
+ShipmentOrderCreateReturnAction.act() line: 56	
+		// get original shipment order
+		String SystemOrderSystemId = getRequest().getParameter("shipmentorder_systemid");
+
+$ vi oms-sitemap.xmap
+			<map:match pattern="shipment-order_create-return">
+				<map:act type="shipmentOrderCreateReturn"/>
+				<!--<map:read mime-type="text/html" type="jsp" src="jsp/shipment-order_edit.jsp"/>-->
+				<map:redirect-to uri="shipment-order_edit?systemid={request-attr:systemid}"/>
+			</map:match>
+
+/ Einde CREATE RETURN
+
+

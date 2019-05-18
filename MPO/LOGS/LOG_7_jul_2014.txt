@@ -1,0 +1,652 @@
+/ GRADLE
+
+/ 7	. 
+
+/ install
+
+[eric@localhost opt]$ pwd
+/opt
+[eric@localhost opt]$ sudo unzip ~/Downloads/gradle-2.0-bin.zip 
+
+[eric@localhost opt]$ cat ~/.bash_profile 
+...
+PATH=$PATH:/opt/gradle-2.0/bin
+
+[eric@localhost Gradle]$ pwd
+/home/eric/Devel/Java/Gradle
+[eric@localhost Gradle]$ unzip  ~/Downloads/gradle-2.0-src.zip 
+[eric@localhost Gradle]$ ls gradle-2.0/subprojects/docs/src/samples/userguide
+ant             distribution  initScripts              multiproject        tasks
+artifacts       files         java                     organizeBuildLogic  tutorial
+buildlifecycle  groovy        javaLibraryDistribution  scala               wrapper
+
+/ 7	. 
+
+/ web app	,
+
+[eric@localhost Gradle]$ cp -a gradle-2.0/subprojects/docs/src/samples/ Self/
+
+[eric@localhost quickstart]$ pwd
+/home/eric/Devel/Java/Gradle/Self/samples/webApplication/quickstart
+[eric@localhost quickstart]$ find
+.
+./build.gradle
+./src
+./src/main
+./src/main/java
+./src/main/java/org
+./src/main/java/org/gradle
+./src/main/java/org/gradle/sample
+./src/main/java/org/gradle/sample/Greeter.java
+./src/main/webapp
+./src/main/webapp/index.jsp
+./src/main/resources
+./src/main/resources/greeting.txt
+./readme.xml
+
+$ vi build.gradle
+
+apply plugin: 'war'
+apply plugin: 'jetty'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'commons-io', name: 'commons-io', version: '1.4'
+    compile group: 'log4j', name: 'log4j', version: '1.2.15', ext: 'jar'
+}
+
+//httpPort = 8080
+httpPort = 9090
+stopPort = 9451
+stopKey = 'foo'
+
+task showMeCache << {
+  configurations.compile.each { println it }
+}
+
+
+[eric@localhost quickstart]$  gradle clean build
+:clean UP-TO-DATE
+:compileJava
+Download http://repo1.maven.org/maven2/log4j/log4j/1.2.15/log4j-1.2.15.pom
+Download http://repo1.maven.org/maven2/log4j/log4j/1.2.15/log4j-1.2.15.jar
+:processResources
+:classes
+:war
+:assemble
+:compileTestJava UP-TO-DATE
+:processTestResources UP-TO-DATE
+:testClasses UP-TO-DATE
+:test UP-TO-DATE
+:check UP-TO-DATE
+:build
+
+BUILD SUCCESSFUL
+
+/ waar is de repository van gradle?
+
+[eric@localhost quickstart]$ gradle showMeCache
+:showMeCache
+/home/eric/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/1.4/a8762d07e76cfde2395257a5da47ba7c1dbd3dce/commons-io-1.4.jar
+/home/eric/.gradle/caches/modules-2/files-2.1/log4j/log4j/1.2.15/f0a0d2e29ed910808c33135a3a5a51bba6358f7b/log4j-1.2.15.jar
+
+BUILD SUCCESSFUL
+
+[eric@localhost quickstart]$ find
+.
+./build.gradle
+./src
+./src/main
+./src/main/java
+./src/main/java/org
+./src/main/java/org/gradle
+./src/main/java/org/gradle/sample
+./src/main/java/org/gradle/sample/Greeter.java
+./src/main/webapp
+./src/main/webapp/index.jsp
+./src/main/resources
+./src/main/resources/greeting.txt
+./readme.xml
+./build
+./build/dependency-cache
+./build/classes
+./build/classes/main
+./build/classes/main/org
+./build/classes/main/org/gradle
+./build/classes/main/org/gradle/sample
+./build/classes/main/org/gradle/sample/Greeter.class
+./build/tmp
+./build/tmp/war
+./build/tmp/war/MANIFEST.MF
+./build/libs
+./build/libs/quickstart.war
+./build/resources
+./build/resources/main
+./build/resources/main/greeting.txt
+./.build.gradle.swp
+./.gradle
+./.gradle/2.0
+./.gradle/2.0/taskArtifacts
+./.gradle/2.0/taskArtifacts/cache.properties
+./.gradle/2.0/taskArtifacts/taskArtifacts.bin
+./.gradle/2.0/taskArtifacts/fileHashes.bin
+./.gradle/2.0/taskArtifacts/outputFileStates.bin
+./.gradle/2.0/taskArtifacts/cache.properties.lock
+./.gradle/2.0/taskArtifacts/fileSnapshots.bin
+
+[eric@localhost quickstart]$   jar tfv build/libs/quickstart.war 
+     0 Mon Jul 07 08:39:56 CEST 2014 META-INF/
+    25 Mon Jul 07 08:39:56 CEST 2014 META-INF/MANIFEST.MF
+     0 Mon Jul 07 08:39:56 CEST 2014 WEB-INF/
+     0 Mon Jul 07 08:39:56 CEST 2014 WEB-INF/classes/
+     0 Mon Jul 07 08:39:56 CEST 2014 WEB-INF/classes/org/
+     0 Mon Jul 07 08:39:56 CEST 2014 WEB-INF/classes/org/gradle/
+     0 Mon Jul 07 08:39:56 CEST 2014 WEB-INF/classes/org/gradle/sample/
+  1135 Mon Jul 07 08:39:56 CEST 2014 WEB-INF/classes/org/gradle/sample/Greeter.class
+    12 Mon Jul 07 08:39:56 CEST 2014 WEB-INF/classes/greeting.txt
+     0 Mon Jul 07 08:39:56 CEST 2014 WEB-INF/lib/
+109043 Mon Jul 07 08:39:56 CEST 2014 WEB-INF/lib/commons-io-1.4.jar
+391834 Mon Jul 07 08:39:56 CEST 2014 WEB-INF/lib/log4j-1.2.15.jar
+   103 Mon Jun 23 10:02:50 CEST 2014 index.jsp
+
+[eric@localhost quickstart]$ gradle jettyRunWar
+:compileJava UP-TO-DATE
+:processResources UP-TO-DATE
+:classes UP-TO-DATE
+:war UP-TO-DATE
+:jettyRunWar
+log4j:WARN No appenders could be found for logger (root).
+log4j:WARN Please initialize the log4j system properly.
+> Building 80% > :jettyRunWar > Running at http://localhost:9090/quickstart
+
+/ Geef in location van chrome	,
+http://localhost:9090/quickstart/
+/ OK
+
+/ 7	.
+
+[eric@localhost ch11]$ pwd
+/home/eric/Devel/Java/Gradle/Self/ch11
+
+/ we zagen in ch8	, 
+
+dependencies {
+    compile group: 'org.hibernate', name: 'hibernate-core', version: '3.6.7.Final'
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+testCompile
+The dependencies required to compile the test source of the project. By default, also includes the compiled production classes and the compile time dependencies.
+
+/ maar dit is iets anders als task dependencies	, deze moeten we zelf geven	,
+
+$ vi build.gradle
+
+ask compile << {
+    println 'compiling source'
+}
+
+task compileTest(dependsOn: compile) << {
+    println 'compiling unit tests'
+}
+
+task test(dependsOn: [compile,compileTest]) << {
+    println 'running unit tests'
+}
+
+task dist(dependsOn: [compile,test]) << {
+    println 'building the distribution'
+}
+
+Total time: 1.843 secs
+[eric@localhost ch11]$ gradle dist
+:compile
+compiling source
+:compileTest
+compiling unit tests
+:test
+running unit tests
+:dist
+building the distribution
+
+
+/ we kunnen ook 	,
+task dist(dependsOn: [test]) << {
+    println 'building the distribution'
+}
+/ maar als we geen test willen doen, dan moeten we 	,
+task dist(dependsOn: [compile,test]) << {
+    println 'building the distribution'
+}
+/ we doen compile,test	,
+
+[eric@localhost ch11]$ gradle dist -x test
+:dist
+building the distribution
+
+BUILD SUCCESSFUL
+
+Total time: 2.005 secs
+[eric@localhost ch11]$ gradle dist -x test
+:compile
+compiling source
+:dist
+building the distribution
+
+[eric@localhost Self]$ mv ch11/build.gradle ch11/ex.gradle
+[eric@localhost Self]$ gradle -p ch11 -b ex.gradle
+/ NIET OK
+[eric@localhost Self]$ gradle -b ch11/ex.gradle dist
+/ OK
+
+[eric@localhost Self]$ mv ch11/ex.gradle ch11/build.gradle
+[eric@localhost Self]$ gradle -p ch11 dist
+/ OK
+
+/ 7	. 
+
+/ ch11	,
+
+/ see ch7	, 
+/ in de settings.gradle list we de projects	,
+
+/ in build.gradle list we de tasks
+
+[eric@localhost projectReports]$ pwd
+/home/eric/Devel/Java/Gradle/Self/samples/userguide/tutorial/projectReports
+
+$ vi settings.gradle
+include 'api', 'webapp'
+...
+
+/ Daarom	,
+
+./webapp/build.gradle
+[eric@localhost projectReports]$ gradle projects
+:projects
+
+------------------------------------------------------------
+Root project
+------------------------------------------------------------
+
+Root project 'projectReports'
++--- Project ':api' - The shared API for the application
+\--- Project ':webapp' - The Web application implementation
+
+To see a list of the tasks of a project, run gradle <project-path>:tasks
+For example, try running gradle :api:tasks
+
+/ 7	.
+
+[eric@localhost projectReports]$  gradle tasks
+Build tasks
+-----------
+clean - Deletes the build directory (build)
+libs - Builds the JAR
+
+/ we add dists to group build	,
+
+$ vi build.gradle
+
+task dists {
+    dependsOn { subprojects*.libs }
+    dependsOn docs
+}
+
+dists {
+    description = 'Builds the distribution'
+    group = 'build'
+}
+
+$ gradle tasks
+
+Build tasks
+-----------
+clean - Deletes the build directory (build)
+dists - Builds the distribution
+libs - Builds the JAR
+
+[eric@localhost projectReports]$  gradle tasks  --all
+
+Default tasks: dists
+
+Build tasks
+-----------
+clean - Deletes the build directory (build)
+api:clean - Deletes the build directory (build)
+webapp:clean - Deletes the build directory (build)
+dists - Builds the distribution [api:libs, webapp:libs]
+    docs - Builds the documentation
+api:libs - Builds the JAR
+    api:compile - Compiles the source files
+webapp:libs - Builds the JAR [api:libs]
+    webapp:compile - Compiles the source files
+
+/ Zie de dependsOn 	, 
+/ Wat is verschil tussen 	,
+   dependsOn { subprojects*.libs }
+    dependsOn docs
+
+/ 7	.
+
+[eric@localhost projectReports]$ cp build.gradle my.gradle
+[eric@localhost projectReports]$ gradle -b my.gradle 
+
+FAILURE: Build failed with an exception.
+
+* Where:
+Build file '/home/eric/Devel/Java/Gradle/Self/samples/userguide/tutorial/projectReports/my.gradle' line: 62
+
+* What went wrong:
+A problem occurred evaluating root project 'projectReports'.
+> Project with path ':api' could not be found in root project 'projectReports'.
+
+/ TODO
+
+/ 7	.
+
+/ Voorlopig	,
+
+$ vi build.gradle
+
+defaultTasks 'dists'
+
+allprojects {
+    version = '1.0-SNAPSHOT'
+    task clean {
+        description = "Deletes the build directory ($buildDir.name)"
+        group = 'build'
+    }
+}
+
+task docs {
+    description = 'Builds the documentation'
+}
+
+task dists {
+    dependsOn { subprojects*.libs }
+    dependsOn docs
+}
+
+dists {
+    description = 'Builds the distribution'
+    group = 'build'
+}
+
+subprojects {
+    configurations {
+        compile
+        testCompile
+    }
+    repositories {
+        mavenCentral()
+    }
+    task compile {
+        description = 'Compiles the source files'
+    }
+    task libs {
+        group = 'build'
+        description = 'Builds the JAR'
+        dependsOn compile
+    }
+}
+
+[eric@localhost projectReports]$  gradle -q help --task compile
+Detailed task information for compile
+
+Paths
+     :api:compile
+     :webapp:compile
+
+Type
+     Task (org.gradle.api.Task)
+
+Description
+     Compiles the source files
+
+/ TODO ( subprojects	,  all-projects)	,
+
+/ 7	.
+
+/ we kunnen blijkbaar in build.gradle van sub projects  de dependencies geven	, ipv in een build.gradle in de dir van het sub project	,
+
+$ vi build.gradle
+
+project(':api') {
+// START SNIPPET project-description
+description = 'The shared API for the application'
+// END SNIPPET project-description
+    dependencies {
+        compile "org.codehaus.groovy:groovy-all:2.3.3"
+        testCompile "junit:junit:4.11"
+    }
+}
+
+
+$ api/build.gradle
+/ LEEG
+
+[eric@localhost projectReports]$  gradle api:dependencies
+:api:dependencies
+
+------------------------------------------------------------
+Project :api - The shared API for the application
+------------------------------------------------------------
+
+compile
+Download http://repo1.maven.org/maven2/org/codehaus/groovy/groovy-all/2.3.3/groovy-all-2.3.3.pom
+\--- org.codehaus.groovy:groovy-all:2.3.3
+
+testCompile
+\--- junit:junit:4.11
+     \--- org.hamcrest:hamcrest-core:1.3
+
+
+/ we maken een my dir	, en 
+$ vi my/build.gradle
+
+dependencies {
+    compile group: 'commons-io', name: 'commons-io', version: '1.4'
+    compile group: 'log4j', name: 'log4j', version: '1.2.15', ext: 'jar'
+}
+
+/ we comment even out	,
+[eric@localhost projectReports]$ vi settings.gradle 
+include 'api', 'webapp', 'my'
+
+/*
+rootProject.children.each {
+    it.buildFile.parentFile.mkdirs()
+    it.buildFile.text = ''
+}
+*/
+
+[eric@localhost projectReports]$ vi settings.gradle 
+[eric@localhost projectReports]$  gradle my:dependencies
+:my:dependencies
+
+------------------------------------------------------------
+Project :my
+------------------------------------------------------------
+
+compile
++--- commons-io:commons-io:1.4
+\--- log4j:log4j:1.2.15
+
+/ 7. 	
+
+/ ch23
+
+/ java
+
+[eric@localhost ch23]$ pwd
+/home/eric/Devel/Java/Gradle/Self/ch23
+[eric@localhost ch23]$ cp -a /home/eric/Devel/Java/Gradle/Self/samples/java .
+
+[eric@localhost quickstart]$ vi src/main/java/org/gradle/Person.java 
+
+package org.gradle;
+
+import org.apache.commons.collections.list.GrowthList;
+
+public class Person {
+    private final String name;
+
+    public Person(String name) {
+        this.name = name;
+        new GrowthList();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+        public static void main(String...args){
+                System.out.println(new Person("Foo Bar").getName());
+        }
+}
+
+/we moeten ook de dependencies in de jar	,
+
+/ see misschien ook ch50	,
+
+[eric@localhost quickstart]$ pwd
+/home/eric/Devel/Java/Gradle/Self/ch23/java/quickstart
+
+$ vi build.gradle
+
+/ [ERICJ]
+compileJava{
+        options.verbose=true
+}
+
+// [ERICJ]
+task fatJar(type: Jar) {
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+/ de debug option is al true (default)
+
+[eric@localhost quickstart]$ gradle tasks
+:tasks
+
+------------------------------------------------------------
+All tasks runnable from root project
+------------------------------------------------------------
+
+Build tasks
+-----------
+assemble - Assembles the outputs of this project.
+build - Assembles and tests this project.
+buildDependents - Assembles and tests this project and all projects that depend on it.
+buildNeeded - Assembles and tests this project and all projects it depends on.
+classes - Assembles classes 'main'.
+clean - Deletes the build directory.
+jar - Assembles a jar archive containing the main classes.
+testClasses - Assembles classes 'test'.
+
+Build Setup tasks
+-----------------
+init - Initializes a new Gradle build. [incubating]
+wrapper - Generates Gradle wrapper files. [incubating]
+
+Documentation tasks
+-------------------
+javadoc - Generates Javadoc API documentation for the main source code.
+
+Help tasks
+----------
+dependencies - Displays all dependencies declared in root project 'quickstart'.
+dependencyInsight - Displays the insight into a specific dependency in root project 'quickstart'.
+help - Displays a help message
+projects - Displays the sub-projects of root project 'quickstart'.
+properties - Displays the properties of root project 'quickstart'.
+tasks - Displays the tasks runnable from root project 'quickstart'.
+
+Upload tasks
+------------
+uploadArchives - Uploads all artifacts belonging to configuration ':archives'
+
+Verification tasks
+------------------
+check - Runs all checks.
+test - Runs the unit tests.
+
+Other tasks
+-----------
+fatJar
+
+Rules
+-----
+Pattern: clean<TaskName>: Cleans the output files of a task.
+Pattern: build<ConfigurationName>: Assembles the artifacts of a configuration.
+Pattern: upload<ConfigurationName>: Assembles and uploads the artifacts belonging to a configuration.
+
+To see all tasks and more detail, run with --all.
+
+
+
+[eric@localhost quickstart]$ gradle clean build fatJar uploadArchives
+:clean
+:compileJava
+:processResources
+:classes
+:jar
+:assemble
+:compileTestJava
+:processTestResources
+:testClasses
+:test
+:check
+:build
+:uploadArchives
+:fatJar
+
+
+[eric@localhost quickstart]$ java -cp build/libs/quickstart-all-1.0.jar org.gradle.Person
+Foo Bar
+
+/ Hoe quickstart-all-1.0.jar in repos?
+/ TODO
+
+
+
+
+
+
+
+
+/ 7	. 
+
+/ ch61
+
+/ gradlew	,
+
+
+
+
+
+
+/ 7	.
+/ Einde GRADLE
+
+/ HIBERNATE
+
+[eric@localhost Hibernate]$ pwd
+/home/eric/Devel/Java/Hibernate
+[eric@localhost Hibernate]$ git clone https://github.com/hibernate/hibernate-orm.git
+[eric@localhost Hibernate]$ cd hibernate-orm/
+[eric@localhost hibernate-orm]$ ls
+build.gradle     gradlew                  hibernate-envers      hibernate-testing  shared
+changelog.txt    gradlew.bat              hibernate-hikaricp    lgpl.txt           source-generation.gradle
+CONTRIBUTING.md  hibernate-c3p0           hibernate-infinispan  libraries.gradle   tooling
+documentation    hibernate-core           hibernate_logo.gif    README.md          utilities.gradle
+etc              hibernate-ehcache        hibernate-osgi        release
+gradle           hibernate-entitymanager  hibernate-proxool     settings.gradle
+
+
+/ Einde HIBERNATE

@@ -1,0 +1,837 @@
+/ 7	.  
+
+[eric@almond wildfly]$ ipython
+/ of	,
+[eric@almond wildfly]$ ipython3
+
+In [1]: import numpy as np
+In [3]: import pandas as pd
+
+
+In [17]: np.version.version
+Out[17]: '1.14.5'
+
+/ gewoon python	, 
+$ python3
+
+
+
+/ 7	. 
+
+/ NUMPY
+
+/ 13	. 
+
+>>> np.power(2,1000)
+0
+
+/ de python manier	,
+>>> 2**1000
+10715086071862673209484250490600018105614048117055336074437503883703510511249361224931983788156958581275946729175531468251871452856923140435984577574698574803934567774824230985421074605062371141877954182153046474983581941267398767559165543946077062914571196477686542167660429831652624386837205668069376
+
+/ of	,
+
+>>> pow(2,100)
+1267650600228229401496703205376
+
+/ 13	. 
+
+/ google
+numpy power large integer
+/ lees	,
+https://stackoverflow.com/questions/37271654/stocking-large-numbers-into-numpy-array
+
+>>> x=np.array([15,30])
+>>> 150**x
+array([-2705209260063490048,  3389013086366072832])
+/ ERR	,
+>>> x=np.array([15,30],dtype=object)
+>>> 150**x
+array([437893890380859375000000000000000,
+       191751059232884086668491363525390625000000000000000000000000000000],
+      dtype=object)
+
+/ 13	. 
+
+>>> np.zeros(10)
+array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.])
+>>> np.zeros(10,dtype=int)
+array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+
+/ 13	. 
+
+/  
+
+>>> x=np.arange(5)
+>>> x
+array([0, 1, 2, 3, 4])
+>>> x.dtype
+dtype('int64')
+
+>>> y=np.zeros(5)
+/ of	,
+>>> y=np.zeros(5,dtype=float)
+/ of	,
+>>> y=np.zeros(5,dtype='float')
+/ of	,
+>>> y=np.zeros(5,dtype='float64')
+>>> y.dtype
+dtype('float64')
+
+>>> y=np.zeros(5,dtype=int)
+/ of	,
+>>> y=np.zeros(5,dtype='int')
+/ of	,
+>>> y=np.zeros(5,dtype='int64')
+>>> y.dtype
+dtype('int64')
+>>> y
+array([0, 0, 0, 0, 0])
+
+>>> y=np.zeros(5,dtype=int64)
+NameError: name 'int64' is not defined
+>>> y=np.zeros(5,dtype=float64)
+NameError: name 'float64' is not defined
+
+/ 13	. 
+
+/ casten in python doe je zo,
+
+>>> int(5.0)
+5
+>>> float(5)
+5.0
+
+>>> int64(5.0)
+NameError: name 'int64' is not defined
+
+
+
+
+/ 13	. 
+
+/ vdp(57)
+
+/ hoe schrijf je een vectorberekening in een array?
+
+/ np.empty is alleen ruimte declareren, dus er kan van alles in staan	, 
+/ np.zeros declareert een array	, bevat altijd 0's	, 
+/ dus np.zeros is meer	,
+
+>>> np.empty(5).dtype
+dtype('float64')
+
+/ we hoeven out= niet perse te schrijven	,
+
+>>> x=np.arange(5)
+>>> np.power(2,x,y)
+array([ 1.,  2.,  4.,  8., 16.])
+>>> y
+array([ 1.,  2.,  4.,  8., 16.])
+
+>>> y=np.empty(5,dtype=int)
+>>> np.power(2,x,y)
+array([ 1,  2,  4,  8, 16])
+>>> y
+array([ 1,  2,  4,  8, 16])
+
+
+>>> z=np.zeros(10)
+>>> np.power(2,x,z[::2])
+array([ 1.,  2.,  4.,  8., 16.])
+>>> z
+array([ 1.,  0.,  2.,  0.,  4.,  0.,  8.,  0., 16.,  0.])
+>>> z=np.zeros(10,dtype=int)
+>>> np.power(2,x,z[::2])
+array([ 1,  2,  4,  8, 16])
+>>> z
+array([ 1,  0,  2,  0,  4,  0,  8,  0, 16,  0])
+
+/ 13	. 
+
+/ lees	,
+https://stackoverflow.com/questions/47231852/np-random-rand-vs-np-random-random
+
+sample = np.random.rand(3, 5)
+/ of	,
+sample = np.random.random_sample((3, 5))
+
+/ np.random.random = np.random.random_sample	,
+
+/////////////
+/ dus np.random.rand is het makkelijkst	,
+
+>>> l=np.random.rand(1000000)
+>>> l.dtype
+dtype('float64')
+>>> type(l)
+<class 'numpy.ndarray'>
+>>> len(l)
+1000000
+
+In [3]: %timeit sum(l)
+83.3 ms ± 361 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)
+
+In [4]: %timeit np.sum(l)
+/=
+In [6]: %timeit l.sum()
+563 µs ± 10.4 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)
+
+/ 13	. 
+
+In [11]: l
+Out[11]: array([nan, 3. , 1.3])
+
+In [19]: np.sum(l)
+Out[19]: nan
+In [18]: np.nansum(l)
+Out[18]: 4.3
+
+In [19]: np.sum(l)
+/=
+In [20]: l.sum()
+/ maar er is geen l.nansum()
+
+/ 13	. 
+
+[eric@almond PythonDataScienceHandbook]$ pwd
+/home/eric/Devel/python/vanderplas/PythonDataScienceHandbook
+
+[eric@almond PythonDataScienceHandbook]$ find -name president_heights.csv
+./notebooks/data/president_heights.csv
+
+[eric@almond PythonDataScienceHandbook]$ ipython
+
+In [2]: !head -4 notebooks/data/president_heights.csv
+order,name,height(cm)
+1,George Washington,189
+2,John Adams,170
+3,Thomas Jefferson,189
+
+In [4]: l=pd.read_csv('notebooks/data/president_heights.csv')
+/ in de string kunnen we ook tab	,
+
+In [10]:  h=l['height(cm)']
+In [15]: type(h)
+Out[15]: pandas.core.series.Series
+
+In [16]: k=np.array(h)
+In [17]: type(k)
+Out[17]: numpy.ndarray
+
+In [21]: import matplotlib.pyplot as plt
+In [22]: import seaborn
+In [23]: seaborn.set()
+In [24]: plt.hist(k)
+/ we zien hem al	,
+
+/ 13	. 
+
+/ (3,) wordt in broadcasting behandeld als een liggende matrix, dus (1,3)	,
+
+/ dus als a een np.array, dan is a als a[np.newaxis,:]
+
+/ dus (3,) is als (1,3)	,
+
+/ python array from, to:
+In [36]: a=np.arange(3)
+In [48]: a
+Out[48]: array([0, 1, 2])
+In [49]: type(a)
+Out[49]: numpy.ndarray
+In [50]: a.shape
+Out[50]: (3,)				/ 1-dim array	,
+
+In [44]: m=np.ones((3,3),dtype=int)
+In [52]: m.shape
+Out[52]: (3, 3)
+
+In [59]: a[np.newaxis,:]
+Out[59]: array([[0, 1, 2]])		/ 2-dim array	, 
+In [60]: a[np.newaxis,:].shape
+Out[60]: (1, 3)
+
+In [55]: a[:,np.newaxis]
+Out[55]: 
+array([[0],
+       [1],
+       [2]])
+In [56]: a[:,np.newaxis].shape
+Out[56]: (3, 1)
+
+In [61]: a[np.newaxis,:]+m
+Out[61]: 
+array([[1, 2, 3],
+       [1, 2, 3],
+       [1, 2, 3]])
+
+In [62]: a[:,np.newaxis]+m
+Out[62]: 
+array([[1, 1, 1],
+       [2, 2, 2],
+       [3, 3, 3]])
+
+/ a+m = a[np.newaxis,:]+m
+
+
+
+/ 13	. 
+
+
+In [65]: m=np.random.rand(10,3)
+
+In [67]: m.mean(0)
+Out[67]: array([0.60482631, 0.34751069, 0.5011345 ])
+In [73]: m.mean(0).shape
+Out[73]: (3,)
+
+In [68]: c=m-m.mean(0)
+
+In [70]: c.mean(0)
+Out[70]: array([ 0.00000000e+00,  1.11022302e-17, -4.44089210e-17])
+/ inderdaad	,
+
+/ 13	. 
+
+/ vdp(69)
+
+In [80]: x=np.linspace(0,5,51)
+
+In [81]: x
+Out[81]: 
+array([0. , 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1. , 1.1, 1.2,
+       1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2. , 2.1, 2.2, 2.3, 2.4, 2.5,
+       2.6, 2.7, 2.8, 2.9, 3. , 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8,
+       3.9, 4. , 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 5. ])
+In [82]: y=x[:,np.newaxis]
+
+In [86]: x.shape
+Out[86]: (51,)		/ OK, wordt toch gezien als (1,51)	, liggend	,
+
+In [87]: y.shape
+Out[87]: (51, 1)
+
+/ 13	. 
+
+In [92]: x=np.random.randint(10,size=(3,4))
+
+In [93]: x
+Out[93]: 
+array([[5, 8, 9, 8],
+       [7, 6, 7, 1],
+       [8, 6, 1, 3]])
+
+In [96]: b=x<6
+
+In [104]:  type(x)
+Out[104]: numpy.ndarray
+In [105]: type(b)
+Out[105]: numpy.ndarray
+
+
+In [97]: b
+Out[97]: 
+array([[ True, False, False, False],
+       [False, False, False,  True],
+       [False, False,  True,  True]])
+
+In [98]: b.dtype
+Out[98]: dtype('bool')
+
+/ hoe maken np.array met dtype=int	?
+/ we maken een copy	,
+
+In [103]: np.array(b,dtype=int)
+Out[103]: 
+array([[1, 0, 0, 0],
+       [0, 0, 0, 1],
+       [0, 0, 1, 1]])
+
+/ 13	.
+
+In [108]: np.sum(x<6)
+Out[108]: 4
+
+In [109]: np.sum(x<6,axis=1)
+Out[109]: array([1, 1, 2])
+
+In [110]: np.sum(x<6,axis=0)
+Out[110]: array([1, 0, 1, 2])
+
+/ axis=0: actie, som in dit geval, over de 0-de as = rijen	,
+/ axis=1: actie, som in dit geval, over de 1-de as= kolommen	, 
+
+/ 13	. 
+
+In [113]: type(np.any(x>8))
+Out[113]: numpy.bool_
+
+In [114]: type(True)
+Out[114]: bool
+In [115]: b.dtype
+Out[115]: dtype('bool')
+
+/ 13	. 
+
+/ vdp (81)
+
+/ google	,
+matplotlib scatter fixed axis
+/ lees	,
+https://stackoverflow.com/questions/24976239/axis-limits-for-scatter-plot-matplotlib
+
+/ zet plt.xlim en plt.ylim na de 1ste plt.scatter	, 
+/ dan blijven ze, dus ook bij volgende plt.scatter in dezelfde plt (dus laat het window staan, je ziet verschillende scatters in dezelfde plt) 
+m=[0,0]
+
+In [171]: c=[[1,0],[0,1]]                         
+In [171]: x=np.random.multivariate_normal(m,c,100)
+
+In [165]: plt.scatter(x[:,0],x[:,1])
+Out[165]: <matplotlib.collections.PathCollection at 0x7fbf0d7cadd8>
+
+In [166]: plt.xlim(-3,3)
+Out[166]: (-3, 3)
+
+In [167]: plt.ylim(-3,3)
+Out[167]: (-3, 3)
+
+In [168]: c=[[1,0],[0,1]]
+
+In [169]: x=np.random.multivariate_normal(m,c,100)
+
+In [170]: plt.scatter(x[:,0],x[:,1])
+Out[170]: <matplotlib.collections.PathCollection at 0x7fbf0d5bf7f0>
+
+/ je ziet nu goed de variatie als de assen hetzelfde blijven	,
+
+/ 13	 .
+
+/ vdp(81) 
+
+/ fig 2-7 ziet er linear uit	,
+
+/ lees	,
+http://users.stat.umn.edu/~helwig/notes/mvlr-Notes.pdf
+/ TODO
+
+/ 1313	. 
+
+In [206]: c=[[1,0],[0,1]]
+
+In [207]: x=np.random.multivariate_normal(m,c,100)
+
+In [208]: plt.scatter(x[:,0],x[:,1])
+Out[208]: <matplotlib.collections.PathCollection at 0x7fbf0d0139b0>
+
+In [209]: plt.scatter(x[:,0],x[:,1])
+Out[209]: <matplotlib.collections.PathCollection at 0x7fbf0ce732e8>
+
+In [210]: plt.xlim(-3,3)
+Out[210]: (-3, 3)
+
+In [211]: plt.ylim(-3,3)
+Out[211]: (-3, 3)
+
+/ dan	,
+
+In [212]: c=[[1,0.9],[0.9,1]]
+
+In [213]: x=np.random.multivariate_normal(m,c,100)
+
+In [214]: plt.scatter(x[:,0],x[:,1])
+Out[214]: <matplotlib.collections.PathCollection at 0x7fbf0ce9a2e8>
+
+/ we zien dat de laatste naar een linear verband gaat	,
+
+/ ook	,
+
+In [215]: c=[[1,1],[1,1]]
+
+In [216]: x=np.random.multivariate_normal(m,c,100)
+
+In [217]: plt.scatter(x[:,0],x[:,1])
+Out[217]: <matplotlib.collections.PathCollection at 0x7fbf0ce9a0b8>
+
+/ is zelfs totaal linear	,
+
+/ 13	. 
+
+/ deze zijn beide pos def	(en dus sym)	,
+[[2,-1],[-1,2]]
+[[2,1],[1,2]]
+/ je moet niet de eigenwaarden gaan oplossen	, maar bijv bij	, 
+[[2,-1],[-1,2]]	, 
+2x^2-2xy+2y^2	=2*(x^2-xy+y^2)=2*( (x-.5y)^2+.75y^2) >0
+
+/ deze ook, maar is sing,
+[[2,1],[1,.5]]
+
+/ 13	. 
+
+/ we zagen dat verband linear	,  als de covar matrix singulier	,
+
+/ google,	
+multivariate normal distribution with singular covariance matrix
+/ lees,	
+https://stats.stackexchange.com/questions/91045/can-a-multivariate-distribution-with-a-singular-covariance-matrix-have-a-density
+
+A singular covariance matrix means that there exists a linear combination Y=∑ aiXi (som van i=1..n)of the n random variables such that E[Y]=a0 and var(Y)=0. Thus, all the probability mass lies in a hyperplane of Rn defined by ∑aixi=1 (som van i=1..n) and so the n random variables cannot have a n-variate density function.
+
+In [240]: c=[[2,1],[1,.5]]
+In [241]: x=np.random.multivariate_normal(m,c,100)
+In [242]: plt.scatter(x[:,0],x[:,1])
+/ we zien een linear lijn	,
+
+/ 13	. 
+
+[[1,a],[a,1]]
+
+
+In [244]: a=0
+In [245]: c=[[1,a],[a,1]]
+In [246]: x=np.random.multivariate_normal(m,c,100)
+In [247]: plt.scatter(x[:,0],x[:,1])
+/ willekeurig normaal verdeeld rond 0,0
+
+In [249]: a=.9
+In [250]: c=[[1,a],[a,1]]
+In [251]: x=np.random.multivariate_normal(m,c,100)
+In [252]: plt.scatter(x[:,0],x[:,1])
+/ we zien ongeveer een linear verband	,
+
+/ lees	,
+http://www.statsathome.com/2018/10/27/sampling-from-the-singular-normal/
+
+/ 7	. 
+
+/ pandas	,
+
+/ dataframes	,
+/ hebben labels attached aan rows en columns,
+/ kunnen werken met missing data	,
+/ grouping, pivots	,
+
+/ een pd.Series is een dictionary, met een typed keyset, dat is een flexible index	, en een typed valueset	,
+/ een pd.Series kan ook array achtige dingen, zoals slicing	,
+
+/ een pd.DataFrame is een 2-dim array met een flexible index op de rows	, en een flexible index op de columns	,
+/ maar beter is om een df te zien als een generalized dict dan als een generalized array	, want je kunt geen df[0] of df['c'] doen  waar 'c' het label van een columns is	,
+/ je kunt wel df['a'] , waar a een column label is	, 
+/ df['a'] is een pd.Series, dus df['a'][0] of df['a']['c'] kan wel	, terwijl d en d['a'] dezelfde index hebben	,
+
+/ 7	. 
+
+In [298]: pd.__version__
+Out[298]: '0.23.1'
+
+In [299]: np.__version__
+Out[299]: '1.14.5'
+
+/ 13	. 
+
+/ vdp(99)
+
+In [300]: d=pd.Series([.25,.5,.75,1])
+In [322]: d
+Out[322]: 
+0    0.25
+1    0.50
+2    0.75
+3    1.00
+dtype: float64
+
+
+n [306]: d.index
+Out[306]: RangeIndex(start=0, stop=4, step=1)
+
+In [316]: d.index.dtype
+Out[316]: dtype('int64')
+
+In [307]: d.index.values
+Out[307]: array([0, 1, 2, 3])
+
+In [308]: d.values
+Out[308]: array([0.25, 0.5 , 0.75, 1.  ])
+
+/ verschil np.ndarray en pd.Series is de index: een np.ndarray heeft een implicit index, een pd.Series een explicit index	,
+/ de row index heet index	, de column index heet columns	,
+
+/ 13	. 
+
+/ we kunnen de index zelf ook set	,
+
+In [311]: d=pd.Series([.25,.5,.75,1],index=['a','b','c','d'])
+
+In [312]: d.index
+Out[312]: Index(['a', 'b', 'c', 'd'], dtype='object')
+
+In [320]: d.index.dtype
+Out[320]: dtype('O')
+
+/ 7	. 
+
+/ pd.DataFrame	,
+
+/ 13	. 
+
+In [324]: a={'c':13,'d':7}
+In [325]: p={'c':.5,'d':1.3}
+
+In [326]: sa=pd.Series(a)
+In [327]: sa
+Out[327]: 
+c    13
+d     7
+dtype: int64
+
+In [328]: sp=pd.Series(p)
+In [329]: sp
+Out[329]: 
+c    0.5
+d    1.3
+dtype: float64
+
+In [330]: sa.index
+Out[330]: Index(['c', 'd'], dtype='object')
+
+In [331]: sp.index
+Out[331]: Index(['c', 'd'], dtype='object')
+
+In [333]: d=pd.DataFrame({'a':sa,'p':sp})		# let op {}	, een dict	,
+In [338]: d
+Out[338]: 
+    a    p
+c  13  0.5
+d   7  1.3
+
+In [336]: d.index
+Out[336]: Index(['c', 'd'], dtype='object')
+In [337]: d.columns
+Out[337]: Index(['a', 'p'], dtype='object')
+
+/ Intermezzo
+
+In [345]: a=np.arange(9).reshape(3,3)
+In [346]: a
+Out[346]: 
+array([[0, 1, 2],
+       [3, 4, 5],
+       [6, 7, 8]])
+
+In [347]: a[0]
+/=
+In [350]: a[0,:]
+Out[347]: array([0, 1, 2])
+
+In [348]: type(a[0])
+Out[348]: numpy.ndarray
+
+In [349]: a[0].shape
+Out[349]: (3,)
+
+In [352]: a[:,0]
+Out[352]: array([0, 3, 6])
+
+In [353]: a[:,0].shape
+Out[353]: (3,)
+
+/ Einde Intermezzo
+
+In [344]: d[0]
+/ ERR	,
+In [354]: d['c']
+/ ERR	,
+
+In [356]: d['a']
+Out[356]: 
+c    13
+d     7
+Name: a, dtype: int64
+
+In [359]: type(d['a'])
+Out[359]: pandas.core.series.Series
+
+In [357]: d[:,'a']
+/ ERR	,
+
+In [363]: d.index
+Out[363]: Index(['c', 'd'], dtype='object')
+In [365]: d['a'].index
+Out[365]: Index(['c', 'd'], dtype='object')
+In [373]: d['a'].index.equals(d.index)
+Out[373]: True
+
+In [364]: d['a'][0]
+Out[364]: 13
+In [367]: d['a']['c']
+Out[367]: 13
+/ maar	,
+In [369]: d['c']
+/ ERR	,
+
+/ 13	. 
+
+In [382]: a2=pd.Series({'c':13,'t':6,'n':7,'i':4})
+
+In [383]: p2=pd.Series({'c':113,'t':16,'n':17,'i':14})
+
+In [384]: d2=pd.DataFrame({'a':a2,'p':p2})
+
+In [388]: d2['q']=d2['a']/d2['p']
+
+In [389]: d2
+Out[389]: 
+    a    p         q
+c  13  113  0.115044
+t   6   16  0.375000
+n   7   17  0.411765
+i   4   14  0.285714
+
+In [395]: d2[0:2]
+Out[395]: 
+    a    p         q
+c  13  113  0.115044
+t   6   16  0.375000
+
+In [396]: d2['c':'n']
+Out[396]: 
+    a    p         q
+c  13  113  0.115044
+t   6   16  0.375000
+n   7   17  0.411765
+
+In [413]: d2['a':'q']
+/ ERR	,
+ValueError: index must be monotonic increasing or decreasing
+
+
+/ 1313	. 
+
+In [399]:  a={'c':13,'d':7}
+
+In [400]: p={'c':.5,'d':1.3}
+
+In [401]: sa=pd.Series(a)
+
+In [402]: sp=pd.Series(p)
+
+In [403]: d=pd.DataFrame({'a':sa,'p':sp})
+
+In [404]: d['a':'p']
+Out[404]: 
+    a    p
+c  13  0.5
+d   7  1.3
+/ OK	,
+
+/ 1313	. 
+
+In [382]: a3=pd.Series({'c':13,'i':6,'n':7,'t':4})
+
+In [383]: p3=pd.Series({'c':113,'i':16,'n':17,'t':14})
+
+In [384]: d3=pd.DataFrame({'a':a3,'p':p3})
+
+In [388]: d3['q']=d3['a']/d3['p']
+
+In [418]: d3['a':'q']
+Out[418]: 
+    a    p         q
+c  13  113  0.115044
+i   6   16  0.375000
+n   7   17  0.411765
+
+/ CH5
+
+/ (384)
+
+/ 13	. 
+
+In [421]: from sklearn.datasets import make_blobs
+
+In [422]: X,y=make_blobs(100,2,centers=2,random_state=2,cluster_std=1.5)
+
+In [424]: plt.scatter(X[:,0],X[:,1],c=y,s=50,cmap='RdBu')
+Out[424]: <matplotlib.collections.PathCollection at 0x7fbf063daeb8>
+
+In [425]: X
+Out[425]: 
+array([[  0.92141506,  -9.98499137],
+       [ -5.26927614,  -9.6186543 ],
+       [ -0.45292089,  -6.04316334],
+...
+       [  1.89552328,  -1.28806291]])
+
+In [426]: y
+Out[426]: 
+array([0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1,
+       1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1,
+       1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0,
+       0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0,
+       1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1])
+
+/ vandaar: c=y
+/ we zien linksonder bruine stippen, en boven blauwe	,
+
+/ 13	. 
+
+In [419]: from sklearn.naive_bayes import GaussianNB
+
+In [420]: model=GaussianNB()
+
+In [440]: rng=np.random.RandomState(0)
+
+/ we zien in de grafiek linksonder (-6,-14) en rechtsboven (8,4)	,
+In [441]: Xnew=[-6,-14]+[14,18]*rng.rand(2000,2)
+
+In [442]: ynew=model.predict(Xnew)
+
+In [443]: plt.scatter(X[:,0],X[:,1],c=y,s=50,cmap='RdBu')
+Out[443]: <matplotlib.collections.PathCollection at 0x7fbf0622c4a8>
+
+In [444]: plt.scatter(Xnew[:,0],Xnew[:,1],c=ynew,s=20,cmap='RdBu',alpha=.1)
+Out[444]: <matplotlib.collections.PathCollection at 0x7fbf061d9978>
+
+In [447]: yprob=model.predict_proba(Xnew)
+
+In [448]: yprob[-8:].round(2)
+Out[448]: 
+array([[0.89, 0.11],
+       [1.  , 0.  ],
+       [1.  , 0.  ],
+       [1.  , 0.  ],
+       [1.  , 0.  ],
+       [1.  , 0.  ],
+       [0.  , 1.  ],
+       [0.15, 0.85]])
+
+
+/ 13	. 
+
+In [469]: X,y=make_blobs(1000,2,centers=2,random_state=42,cluster_std=.1)
+
+In [470]: plt.scatter(X[:,0],X[:,1],c=y,s=50,cmap='RdBu')
+Out[470]: <matplotlib.collections.PathCollection at 0x7fbf050e40f0>
+
+/ we zien linksboven bruin, allemaal dicht op elkaar, en rechtsonder blauw, dicht op mekaar	,
+
+In [471]: Xnew=[-3.25,1.25]+[8.25,8]*rng.rand(2000,2)
+
+In [472]: model=GaussianNB()
+
+In [473]: model.fit(X,y)
+Out[473]: GaussianNB(priors=None)
+
+In [474]: ynew=model.predict(Xnew)
+
+In [475]: plt.scatter(Xnew[:,0],Xnew[:,1],c=ynew,s=20,cmap='RdBu',alpha=.1)
+Out[475]: <matplotlib.collections.PathCollection at 0x7fbf04f01550>
+
+/ grens is rechte lijn, van linksonder naar rechtsboven
+
+/ 13	. 
+
+
+/ Einde NUMPY
+

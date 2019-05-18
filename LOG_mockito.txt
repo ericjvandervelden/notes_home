@@ -1,0 +1,20 @@
+/ 7	. 
+
+/ Mars eclipse
+/ ws workspace-spring 
+
+/ new maven proj, my.own:mockito-study:0.0.1-SNAPSHOT	, 
+
+/ lees,
+http://stackoverflow.com/questions/3498072/how-to-only-throw-exception-when-the-mocked-method-is-called-for-the-first-time
+
+/ 7	.
+
+/ Geef
+sprng mockito
+/ Lees	, 
+https://springframework.guru/mocking-unit-tests-mockito/
+https://solutiondesign.com/blog/-/blogs/spring-and-mockito-happy-together
+https://dzone.com/articles/use-mockito-mock-autowired
+http://rdafbn.blogspot.nl/2014/01/testing-spring-components-with-mockito.html
+

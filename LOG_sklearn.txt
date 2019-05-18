@@ -1,0 +1,35 @@
+[eric@almond python]$ pwd
+/home/eric/Devel/Eclipse/python
+[eric@almond python]$ tar -xvzf ~/Downloads/liclipse_5.2.4_linux.gtk.x86_64.tar.gz 
+[eric@almond python]$ mkdir workspace 
+[eric@almond python]$ ls
+liclipse  workspace
+/ bij start eclipse hebben we deze workspace gekozen	,
+
+/ lees	,
+https://stackoverflow.com/questions/13298630/how-do-i-import-a-pre-existing-python-project-into-eclipse
+
+/ lees	,
+https://scikit-learn.org/stable/developers/advanced_installation.html
+
+/ Window, Preferences, PyDev, Interpreters, Python interpreter	,
+/ click: Choose from list
+/home/eric/miniconda3/bin/python
+/ onderin zien we ook allemaal packages	,
+
+File, Import
+Git
+	projects from git 
+/ kies uit 
+Local
+Clone URI
+/ we hadden sklearn al checkout, maar we kiezen toch Clone URI en we moeten de clone uri opgeven: https://github.com/scikit-learn/scikit-learn.git 
+/ hij gaat checkout, we gaven op /home/eric/git_codebase/scikit-learn
+
+/ we komen in window: Import projects from Git	,
+/ bovenin zien we in het grijs: Wizard for project import, hier komen we later , maar kies: Import as general project	,
+Next	,
+/home/eric/Devel/python/scikit-learn
+
+
+ 

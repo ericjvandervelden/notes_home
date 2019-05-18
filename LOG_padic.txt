@@ -1,0 +1,10 @@
+/ 7	 
+
+/ Lees	,
+https://en.wikipedia.org/wiki/Repeating_decimal
+
+/ lees
+https://math.stackexchange.com/questions/61937/how-can-i-prove-that-all-rational-numbers-are-either-terminating-decimal-or-repe
+
+http://www.math.uconn.edu/~kconrad/blurbs/gradnumthy/rationalsinQp.pdf
+

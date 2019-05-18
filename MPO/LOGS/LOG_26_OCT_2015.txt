@@ -1,0 +1,760 @@
+/ MPO-199
+
+/ NB	.
+
+/ cargo op trunk	, 
+Execution, Customer Shipment Order Search
+/ Dit is een wicket scherm	, CustomerOrderSearchPage	,
+
+/ maar op mpo, 2015.01 en 2015.03 zijn het XSP, JSP schermen	,
+
+/ 7	.
+
+$ vi mpo-sitemap.xmap
+
+		<map:match pattern="customer-order_list">
+				<map:call resource="dynatablePage">
+					<map:parameter name="xsp" value="xsp/customer-order_list.xml"/>
+				</map:call> 
+			</map:match>			
+
+
+/ WH is dit	,
+$ vi 2015.01/mpo/mpo/war/mpo/xsp/customer-order_list.xml 
+...
+            myTable.addAction("view");         
+/ TODO
+
+/ 7	. 
+
+/ we click op een edit link in een row 	,
+https://acceptance.scs.mp-objects.com/mpo/mpo/customer-order_view?base_sessionLevelOffset=1&systemid=26937382&systemId=26937382
+
+$ vi mpo-sitemap.xmap
+
+		<map:actions>
+			<map:action name="customerOrderView" src="com.mpobjects.oms.shipmentorder.control.ShipmentOrderViewAction"/>
+            <map:action name="eventsOnCustomerOrderView" src="com.mpobjects.event.event.control.CustomerOrderEventAction"/>
+
+			<map:match pattern="customer-order_view">
+				<map:act type="customerOrderView"/>
+				<map:act type="eventsOnCustomerOrderView"/>
+				<map:read type="jsp" src="../oms/jsp/customer-order_view-wicket.jsp"/>	
+			</map:match>
+
+$ vi customer-order_view-wicket.jsp
+	<ctf:pageBody>	
+		<script type="text/javascript">
+			document.location.href="../wicket?module=oms&wicketpage=shipmentorder.coview.CustomerOrderViewPageWrapper&systemId=${param.systemid}";
+		</script>
+	</ctf:pageBody>
+
+<%@taglib prefix="ctf" tagdir="/WEB-INF/tags/core/" %>
+
+/ Vind dir tags/core	,
+[eric@localhost 2015.01]$ find $(find -name tags) -name core
+./base-framework/core/war/WEB-INF/tags/core
+
+[eric@localhost 2015.01]$ less ./base-framework/core/war/WEB-INF/tags/core/pageBody.tag 
+<body>
+        <h1><mpo:label name="${pageTitle}"/></h1>
+        <jsp:doBody/>
+</body>
+/ TODO
+
+/ 7	. 
+
+$ vi CustomerOrderViewPageWrapper.java
+		myPage = new CustomerOrderViewPanel("customerorder");
+		try {
+			int myId = Integer.valueOf(getRequest().getParameter("systemId"));
+			myPage.setEditRecord(MpoBeanFactory.getBean(ShipmentOrderDao.class).getBySystemId(myId));
+
+
+
+
+$ vi CustomerOrderViewPanel.html
+
+		<div wicket:id="shipmentordertab"></div>
+	<div wicket:id="partytab"></div>
+		<div wicket:id="shoplanningtab"></div>
+	<div wicket:id="unitproducttab"></div>
+		<div wicket:id="eventtab"></div>
+
+$ vi CustomerOrderViewPanel.java
+
+package com.mpobjects.oms.view.wicket.shipmentorder.coview;
+
+		add(new ShipmentOrderTabPanel("shipmentordertab", model));
+
+		myPartyTab = new PartyMainPanel("partytab");
+		add(myPartyTab);
+
+		ShoPlanningTabPanel shoPlanningTabPanel = new ShoPlanningTabPanel("shoplanningtab", model) {
+			@Override
+			public boolean isVisible() {
+				return isPlanningTabVisible();
+			}
+		};
+		add(shoPlanningTabPanel);
+
+		UnitProductTabPanel unitProductTabPanel = new UnitProductTabPanel("unitproducttab", model);
+		// unitProductTabPanel.setSelectedTab(1);
+		add(unitProductTabPanel);
+		add(new EventTabPanel("eventtab", model));
+
+		Form<ShipmentOrderVO> form = new Form<ShipmentOrderVO>("form");
+		final String myBaseProduct = ApplicationPropertyManager.getInstance().getApplicationProperty("base.product", "mposcs");
+		form.add(new Button("back") {
+			@Override
+			public void onSubmit() {
+				getRequestCycle().setRequestTarget(new RedirectRequestTarget("../" + myBaseProduct + "/customer-order_list?refresh=false&emptySession=true"));
+			}
+ 		}.setDefaultFormProcessing(false));
+/ ONTHOUD
+
+		add(form);
+
+$ vi ShipmentOrderTabPanel.html
+	<div wicket:id="tabs" class="tabpanel">[tabbed panel will be here]</div>
+
+$ vi coview/ShipmentOrderTabPanel.java
+
+	List<ITab> tabs = new ArrayList<ITab>();
+...
+		tabbedPanel = new TabbedPanel("tabs", tabs);
+		add(tabbedPanel);
+
+		tabs.add(new AbstractTab(new StringResourceModel("shipmentorder", aModel)) {
+			@Override
+			public Panel getPanel(String panelId) {
+				return new ShoDetailViewPanel(panelId, aModel);
+			}
+		});
+
+		boolean myHideReference = ApplicationPropertyManager.getInstance().getProperty("module.oms.shipmentorderview.references.hidden", true);
+		if (!myHideReference) {
+			tabs.add(new AbstractTab(new StringResourceModel("references", aModel)) {
+				@Override
+				public Panel getPanel(String panelId) {
+					return new ShoReferenceFieldViewPanel(panelId, aModel);
+				}
+			});
+
+/ 7	. 
+
+/ er worden op 2 manieren strings uit de language file gelezen	, met een StringResourceModel	, of met <message:wicket/>	, 
+
+$ vi ShoDetailViewPanel.html
+
+						<td class="label"><span wicket:id="reference1.label" /></td>
+						<td class="panel-field" colspan="2"><span wicket:id="reference1" /></td>
+...
+					<td class="label"><wicket:message key="shipmentorder.shipmentOrderId">Shipment Order ID</wicket:message></td>
+					<td class="panel-field" colspan="2"><span wicket:id="shipmentOrderId" /></td>
+
+
+
+
+$ vi ShoDetailViewPanel.java
+
+	protected void init() {
+		addReferenceField(new Label("reference1", new PropertyModel<String>(model, "reference1")));
+////////////////////
+/ Adds ook bijvoorbeeld wicket component met wicket:id="reference1.label"
+...
+		add(new Label("shipmentOrderId", new PropertyModel<String>(model, "shipmentOrderId")));
+///////////////////////////
+/ De label wordt add in HTML door <wicket:message/>	,
+
+$ vi AbstractShipmentOrderViewPanel.java
+	protected void addReferenceField(final Label aLabel) {
+		add(aLabel);
+		add(new Label(aLabel.getId() + ".label", new AbstractReadOnlyModel<String>() {
+			@Override
+			public String getObject() {
+->				return new StringResourceModel("shipmentorder." + aLabel.getId() + "." + baseProduct + "." + model.getObject().getShipmentOrderProcess(), model).getObject();
+
+/ See FIX MPO-199
+
+
+/ 7	. 
+
+/ DEBUG STRINGRESOURCE LOOKUP IN LANGUAGE FILE
+
+/ we debug  hierboven	,	,
+
+$ vi AbstractShipmentOrderViewPanel.java
+	protected void addReferenceField(final Label aLabel) {
+		add(aLabel);
+		add(new Label(aLabel.getId() + ".label", new AbstractReadOnlyModel<String>() {
+			@Override
+			public String getObject() {
+->				return new StringResourceModel("shipmentorder." + aLabel.getId() + "." + baseProduct + "." + model.getObject().getShipmentOrderProcess(), model).getObject();
+
+
+/ we vallen in -> in 	, in de render phase	,
+Daemon Thread [http-0.0.0.0-8080-7] (Suspended (breakpoint at line 40 in AbstractShipmentOrderViewPanel$1))	
+	AbstractShipmentOrderViewPanel$1.getObject() line: 40	
+	AbstractShipmentOrderViewPanel$1.getObject() line: 1	
+	Label(Component).getDefaultModelObject() line: 1729	
+	Label(Component).getDefaultModelObjectAsString() line: 1748	
+	Label.onComponentTagBody(MarkupStream, ComponentTag) line: 114	
+	Label(Component).renderComponent(MarkupStream) line: 2725	
+	Label(WebComponent).onRender(MarkupStream) line: 62	
+	Label(Component).render(MarkupStream) line: 2525	
+	Enclosure(MarkupContainer).renderNext(MarkupStream) line: 1461	
+	Enclosure(MarkupContainer).renderComponentTagBody(MarkupStream, ComponentTag) line: 1624	
+	Enclosure(MarkupContainer).onComponentTagBody(MarkupStream, ComponentTag) line: 1548	
+	Enclosure.onComponentTagBody(MarkupStream, ComponentTag) line: 186	
+	Enclosure(Component).renderComponent(MarkupStream) line: 2725	
+	Enclosure(MarkupContainer).onRender(MarkupStream) line: 1559	
+	Enclosure(Component).render(MarkupStream) line: 2525	
+	ShoDetailViewPanel(MarkupContainer).autoAdd(Component, MarkupStream) line: 229	
+...
+/s
+StringResourceModel.<init>(String, IModel<?>) line: 378	
+/=
+	public StringResourceModel(final String resourceKey, final IModel<?> model)
+resourceKey	"shipmentorder.reference1.pnllogistics.OUTBOUND" (id=25626)	
+model	EntityDetachableModel  (id=20866)	
+	attached	true	
+	attachedVolatile	true	
+	dao	BeanWrapper  (id=25694)	
+com.mpobjects.view.wicket.util.BeanWrapper@66b22b63[type=interface com.mpobjects.oms.dao.shipmentorder.ShipmentOrderDao,beanName=<null>]
+	entity	ShipmentOrderVO_$$_javassist_141  (id=21198)	
+	systemId	26845944	
+
+		this.resourceKey = resourceKey;
+		this.component = component;
+		this.model = model;
+		this.parameters = parameters;
+		this.defaultValue = defaultValue;
+/t
+AbstractShipmentOrderViewPanel$1.getObject() line: 41	
+			public String getObject() {
+				return new StringResourceModel("shipmentorder." + aLabel.getId() + "." + baseProduct + "."
+						+ model.getObject().getShipmentOrderProcess(), model).getObject();
+
+/ Intermezzo
+
+/ baseProduct='mpo'	,
+
+pnllogistics3=# select column_name from information_schema.columns where table_name='shipment_order' and column_name like '%process%';
+      column_name       
+------------------------
+ order_process_systemid
+...
+
+pnllogistics3=# \d shipment_order
+    "sho_proc_fk" FOREIGN KEY (order_process_systemid) REFERENCES order_process(system_id)
+
+/ of	,
+
+select tc.constraint_name, tc.table_name, kcu.column_name, ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name
+from information_schema.table_constraints tc
+join information_schema.key_column_usage kcu on tc.constraint_name=kcu.constraint_name
+join information_schema.constraint_column_usage ccu on tc.constraint_name=ccu.constraint_name
+where tc.constraint_type='FOREIGN KEY'
+and tc.table_name='shipment_order' 
+/ See POSTGRES hieronder	,
+
+/ we zien op mpp ac	,
+
+mpo=# select*from order_process;
+ system_id |         code          |      description      | organization_systemid | is_deleted 
+-----------+-----------------------+-----------------------+-----------------------+------------
+  26594670 | OUTBOUND              | Outbound              |                       |          0
+  26744786 | AIR                   | Airfreight            |                       |          0
+  26747486 | OCEAN                 | Oceanfreight          |                       |          0
+  26747487 | FORWARDING            | Miscellaneous         |                       |          0
+  26673735 | TRANSPORT             | Transport             |                       |          0
+  26673734 | OUTBOUND_TO_TERMINAL  | Outbound to terminal  |                       |          0
+  26673733 | INBOUND_FROM_TERMINAL | Inbound from terminal |                       |          0
+  26673726 | COLLECTION            | Collection            |                       |          0
+  26680498 | CONSOLIDATE           | consolidate           |                       |          0
+  26673732 | DISTRIBUTION          | Distribution          |                       |          0
+  26927691 | WAREHOUSE             | LOGISTICS             |                       |          0
+(11 rows)
+
+/ Maar welke worden er inderdaad gebruikt?
+
+select distinct op.code 
+from shipment_order so 
+join order_process op on so.order_process_systemid=op.system_id
+
+         code          
+-----------------------
+ OCEAN
+ WAREHOUSE
+ FORWARDING
+ OUTBOUND
+ CONSOLIDATE
+ DISTRIBUTION
+ AIR
+ INBOUND_FROM_TERMINAL
+ COLLECTION
+ TRANSPORT
+ OUTBOUND_TO_TERMINAL
+(11 rows)
+
+
+
+/ Einde Intermezzo
+
+
+/s
+StringResourceModel(LoadableDetachableModel).getObject() line: 120	
+		if (!attached)
+		{
+			attached = true;
+			transientModelObject = load();
+/s
+StringResourceModel.load() line: 637	
+/ Dit is een wicket class	,
+
+		final Session session = Session.get();
+		if (session != null)
+		{
+			locale = session.getLocale();
+java.util.Locale 	, en_GB_pnllogistics
+		return getString();
+/s
+StringResourceModel.getString() line: 475	
+		final Localizer localizer = getLocalizer();
+localizer	org.apache.wicket.Localizer  (id=20155)	
+
+		Object[] parameters = getParameters();
+null
+		if (parameters == null)
+		{
+			// Get the string resource, doing any property substitutions as part
+			// of the get operation
+			value = localizer.getString(getResourceKey(), component, model, defaultValue);
+/s
+StringResourceModel.getResourceKey() line: 620	
+		if (model != null)
+		{
+			return PropertyVariableInterpolator.interpolate(resourceKey, model.getObject());
+/s
+PropertyVariableInterpolator.interpolate(String, Object) line: 69	
+		return string;
+
+/t
+StringResourceModel.getString() line: 503	
+            value = localizer.getString(getResourceKey(), component, model, defaultValue);
+/d
+/s
+Localizer.getString(String, Component, IModel<?>, String) line: 311	
+/=
+	public String getString(final String key, final Component component, final IModel<?> model, final String defaultValue) throws MissingResourceException
+/ key=shipmentorder.reference1.pnllogistics.OUTBOUND
+/ component=null
+/ model=EntityDetachableModel[systemId=26845944,dao=com.mpobjects.view.wicket.util.BeanWrapper@66b22b63[type=interface com.mpobjects.oms.dao.shipmentorder.ShipmentOrderDao,beanName=<null>]]
+/ defaultValue=null
+
+		final IResourceSettings resourceSettings = Application.get().getResourceSettings();
+
+		String value = getStringIgnoreSettings(key, component, model, null);
+/s
+Localizer.getStringIgnoreSettings(String, Component, IModel<?>, String) line: 213	
+
+/ Intermezzo
+
+[eric@localhost server]$ awk '/2015/' mpo/conf/application.properties 
+#Tue Jun 23 17:23:49 CEST 2015
+base.release=2015.01
+copyright.year=2015
+
+[eric@localhost server]$ awk '/2015/' mpo/conf/application.properties 
+/ of	,
+[eric@localhost server]$ awk '/2015/{print}' mpo/conf/application.properties 
+
+/ Doe NIET
+[eric@localhost server]$ awk '/2015/1' mpo/conf/application.properties 
+
+/ want 1 is de condition	, true	, hij print alles	,
+
+/ Probeer ook eens	,
+[eric@localhost server]$ awk '/2015/' mpo/conf/application.properties 
+
+/ Einde Intermezzo
+
+/ TODO (Afmaken)
+
+/ Einde DEBUG STRINGRESOURCE LOOKUP IN LANGUAGE FILE
+
+/ FIX MPO-199
+
+$ vi language_en.properties
+
+shipmentorder.reference1.mpo.outbound=Requested Productcode
+shipmentorder.reference1.mpo.air=Requested Productcode
+shipmentorder.reference1.mpo.ocean=Requested Productcode
+shipmentorder.reference1.mpo.forwarding=Requested Productcode
+shipmentorder.reference1.mpo.transport=Requested Productcode
+shipmentorder.reference1.mpo.outbound_to_terminal=Requested Productcode
+shipmentorder.reference1.mpo.inbound_from_terminal=Requested Productcode
+shipmentorder.reference1.mpo.collection=Requested Productcode
+shipmentorder.reference1.mpo.collection=Requested Productcode
+shipmentorder.reference1.mpo.consolidate=Requested Productcode
+shipmentorder.reference1.mpo.distribution=Requested Productcode
+shipmentorder.reference1.mpo.warehouse=Requested Productcode
+
+shipmentorder.reference2.mpo.outbound=Customer Reference
+shipmentorder.reference2.mpo.air=Customer Reference
+shipmentorder.reference2.mpo.ocean=Customer Reference
+shipmentorder.reference2.mpo.forwarding=Customer Reference
+shipmentorder.reference2.mpo.transport=Customer Reference
+shipmentorder.reference2.mpo.outbound_to_terminal=Customer Reference
+shipmentorder.reference2.mpo.inbound_from_terminal=Customer Reference
+shipmentorder.reference2.mpo.collection=Customer Reference
+shipmentorder.reference2.mpo.collection=Customer Reference
+shipmentorder.reference2.mpo.consolidate=Customer Reference
+shipmentorder.reference2.mpo.distribution=Customer Reference
+shipmentorder.reference2.mpo.warehouse=Customer Reference
+
+shipmentorder.reference5.mpo.outbound=Reference5
+shipmentorder.reference5.mpo.air=Reference5
+shipmentorder.reference5.mpo.ocean=Reference5
+shipmentorder.reference5.mpo.forwarding=Reference5
+shipmentorder.reference5.mpo.transport=Reference5
+shipmentorder.reference5.mpo.outbound_to_terminal=Reference5
+shipmentorder.reference5.mpo.inbound_from_terminal=Reference5
+shipmentorder.reference5.mpo.collection=Reference5
+shipmentorder.reference5.mpo.collection=Reference5
+shipmentorder.reference5.mpo.consolidate=Reference5
+shipmentorder.reference5.mpo.distribution=Reference5
+shipmentorder.reference5.mpo.warehouse=Reference5
+
+shipmentorder.requestedstartafter.mpo.outbound=Requested Start After
+shipmentorder.requestedstartafter.mpo.air=Requested Start After
+shipmentorder.requestedstartafter.mpo.ocean=Requested Start After
+shipmentorder.requestedstartafter.mpo.forwarding=Requested Start After
+shipmentorder.requestedstartafter.mpo.transport=Requested Start After
+shipmentorder.requestedstartafter.mpo.outbound_to_terminal=Requested Start After
+shipmentorder.requestedstartafter.mpo.inbound_from_terminal=Requested Start After
+shipmentorder.requestedstartafter.mpo.collection=Requested Start After
+shipmentorder.requestedstartafter.mpo.collection=Requested Start After
+shipmentorder.requestedstartafter.mpo.consolidate=Requested Start After
+shipmentorder.requestedstartafter.mpo.distribution=Requested Start After
+shipmentorder.requestedstartafter.mpo.warehouse=Requested Start After
+
+shipmentorder.requestedstartbefore.mpo.outbound=Requested Start Before
+shipmentorder.requestedstartbefore.mpo.air=Requested Start Before
+shipmentorder.requestedstartbefore.mpo.ocean=Requested Start Before
+shipmentorder.requestedstartbefore.mpo.forwarding=Requested Start Before
+shipmentorder.requestedstartbefore.mpo.transport=Requested Start Before
+shipmentorder.requestedstartbefore.mpo.outbound_to_terminal=Requested Start Before
+shipmentorder.requestedstartbefore.mpo.inbound_from_terminal=Requested Start Before
+shipmentorder.requestedstartbefore.mpo.collection=Requested Start Before
+shipmentorder.requestedstartbefore.mpo.collection=Requested Start Before
+shipmentorder.requestedstartbefore.mpo.consolidate=Requested Start Before
+shipmentorder.requestedstartbefore.mpo.distribution=Requested Start Before
+shipmentorder.requestedstartbefore.mpo.warehouse=Requested Start Before
+
+shipmentorder.requestedendafter.mpo.outbound=Requested End After
+shipmentorder.requestedendafter.mpo.air=Requested End After
+shipmentorder.requestedendafter.mpo.ocean=Requested End After
+shipmentorder.requestedendafter.mpo.forwarding=Requested End After
+shipmentorder.requestedendafter.mpo.transport=Requested End After
+shipmentorder.requestedendafter.mpo.outbound_to_terminal=Requested End After
+shipmentorder.requestedendafter.mpo.inbound_from_terminal=Requested End After
+shipmentorder.requestedendafter.mpo.collection=Requested End After
+shipmentorder.requestedendafter.mpo.collection=Requested End After
+shipmentorder.requestedendafter.mpo.consolidate=Requested End After
+shipmentorder.requestedendafter.mpo.distribution=Requested End After
+shipmentorder.requestedendafter.mpo.warehouse=Requested End After
+
+shipmentorder.requestedendbefore.mpo.outbound=Requested End Before
+shipmentorder.requestedendbefore.mpo.air=Requested End Before
+shipmentorder.requestedendbefore.mpo.ocean=Requested End Before
+shipmentorder.requestedendbefore.mpo.forwarding=Requested End Before
+shipmentorder.requestedendbefore.mpo.transport=Requested End Before
+shipmentorder.requestedendbefore.mpo.outbound_to_terminal=Requested End Before
+shipmentorder.requestedendbefore.mpo.inbound_from_terminal=Requested End Before
+shipmentorder.requestedendbefore.mpo.collection=Requested End Before
+shipmentorder.requestedendbefore.mpo.collection=Requested End Before
+shipmentorder.requestedendbefore.mpo.consolidate=Requested End Before
+shipmentorder.requestedendbefore.mpo.distribution=Requested End Before
+shipmentorder.requestedendbefore.mpo.warehouse=Requested End Before
+
+shipmentorder.price.label.mpo.outbound=Price
+shipmentorder.price.label.mpo.air=Price
+shipmentorder.price.label.mpo.ocean=Price
+shipmentorder.price.label.mpo.forwarding=Price
+shipmentorder.price.label.mpo.transport=Price
+shipmentorder.price.label.mpo.outbound_to_terminal=Price
+shipmentorder.price.label.mpo.inbound_from_terminal=Price
+shipmentorder.price.label.mpo.collection=Price
+shipmentorder.price.label.mpo.collection=Price
+shipmentorder.price.label.mpo.consolidate=Price
+shipmentorder.price.label.mpo.distribution=Price
+shipmentorder.price.label.mpo.warehouse=Price
+
+
+/ Einde FIX MPO-199
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/ Einde MPO-199
+
+/ POSTGRES
+
+/ 7	 . -E
+
+[eric@localhost ~]$ PGPASSWORD=mpopostgres@mpo psql -E -U mpopostgres pnllogistics3
+
+/ Lees	,
+http://stackoverflow.com/questions/1152260/postgres-sql-to-list-table-foreign-keys
+
+
+pnllogistics3=# \d shipment_order
+********* QUERY **********
+SELECT c.oid,
+  n.nspname,
+  c.relname
+FROM pg_catalog.pg_class c
+     LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+WHERE c.relname ~ '^(shipment_order)$'
+  AND pg_catalog.pg_table_is_visible(c.oid)
+ORDER BY 2, 3;
+**************************
+
+********* QUERY **********
+SELECT c.relchecks, c.relkind, c.relhasindex, c.relhasrules, c.relhastriggers, c.relhasoids, '', c.reltablespace, CASE WHEN c.reloftype = 0 THEN '' ELSE c.reloftype::pg_catalog.regtype::pg_catalog.text END, c.relpersistence
+FROM pg_catalog.pg_class c
+ LEFT JOIN pg_catalog.pg_class tc ON (c.reltoastrelid = tc.oid)
+WHERE c.oid = '629231';
+**************************
+
+********* QUERY **********
+SELECT a.attname,
+  pg_catalog.format_type(a.atttypid, a.atttypmod),
+  (SELECT substring(pg_catalog.pg_get_expr(d.adbin, d.adrelid) for 128)
+   FROM pg_catalog.pg_attrdef d
+   WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum AND a.atthasdef),
+  a.attnotnull, a.attnum,
+  (SELECT c.collname FROM pg_catalog.pg_collation c, pg_catalog.pg_type t
+   WHERE c.oid = a.attcollation AND t.oid = a.atttypid AND a.attcollation <> t.typcollation) AS attcollation,
+  NULL AS indexdef,
+  NULL AS attfdwoptions
+FROM pg_catalog.pg_attribute a
+WHERE a.attrelid = '629231' AND a.attnum > 0 AND NOT a.attisdropped
+ORDER BY a.attnum;
+**************************
+
+********* QUERY **********
+SELECT c2.relname, i.indisprimary, i.indisunique, i.indisclustered, i.indisvalid, pg_catalog.pg_get_indexdef(i.indexrelid, 0, true),
+  pg_catalog.pg_get_constraintdef(con.oid, true), contype, condeferrable, condeferred, c2.reltablespace
+FROM pg_catalog.pg_class c, pg_catalog.pg_class c2, pg_catalog.pg_index i
+  LEFT JOIN pg_catalog.pg_constraint con ON (conrelid = i.indrelid AND conindid = i.indexrelid AND contype IN ('p','u','x'))
+WHERE c.oid = '629231' AND c.oid = i.indrelid AND i.indexrelid = c2.oid
+ORDER BY i.indisprimary DESC, i.indisunique DESC, c2.relname;
+**************************
+
+********* QUERY **********
+SELECT conname,
+  pg_catalog.pg_get_constraintdef(r.oid, true) as condef
+FROM pg_catalog.pg_constraint r
+WHERE r.conrelid = '629231' AND r.contype = 'f' ORDER BY 1;
+**************************
+
+********* QUERY **********
+SELECT conname, conrelid::pg_catalog.regclass,
+  pg_catalog.pg_get_constraintdef(c.oid, true) as condef
+FROM pg_catalog.pg_constraint c
+WHERE c.confrelid = '629231' AND c.contype = 'f' ORDER BY 1;
+**************************
+
+********* QUERY **********
+SELECT t.tgname, pg_catalog.pg_get_triggerdef(t.oid, true), t.tgenabled
+FROM pg_catalog.pg_trigger t
+WHERE t.tgrelid = '629231' AND NOT t.tgisinternal
+ORDER BY 1;
+**************************
+
+********* QUERY **********
+SELECT c.oid::pg_catalog.regclass FROM pg_catalog.pg_class c, pg_catalog.pg_inherits i WHERE c.oid=i.inhparent AND i.inhrelid = '629231' ORDER BY inhseqno;
+**************************
+
+********* QUERY **********
+SELECT c.oid::pg_catalog.regclass FROM pg_catalog.pg_class c, pg_catalog.pg_inherits i WHERE c.oid=i.inhrelid AND i.inhparent = '629231' ORDER BY c.oid::pg_catalog.regclass::pg_catalog.text;
+**************************
+
+                           Table "public.shipment_order"
+             Column             |            Type             |     Modifiers      
+--------------------------------+-----------------------------+--------------------
+ system_id                      | integer                     | not null
+ is_template                    | smallint                    | 
+ shipment_order_id              | character varying(80)       | 
+ order_process_systemid         | integer                     | not null
+ act_service_level_systemid     | integer                     | 
+ status_code_systemid           | integer                     | 
+ organization_systemid          | integer                     | 
+...
+ from_time_zone                 | character varying(200)      | 
+ to_time_zone                   | character varying(200)      | 
+Indexes:
+    "shipment_order_pk" PRIMARY KEY, btree (system_id)
+    "shipment_order_org_uk" UNIQUE, btree (shipment_order_id, organization_systemid)
+    "idx_shipment_order1" btree (reference8)
+...
+Foreign-key constraints:
+    "fk_sho_act_service_level" FOREIGN KEY (act_service_level_systemid) REFERENCES shipment_service_level(system_id)
+    "fk_sho_airport" FOREIGN KEY (port_systemid) REFERENCES airport(system_id)
+...
+Referenced by:
+    TABLE "customer_invoice_line" CONSTRAINT "cil_shipment_order_fk" FOREIGN KEY (shipment_order_systemid) REFERENCES shipment_o
+rder(system_id)
+...
+/ TODO
+
+/ we willen de fk constraints weten op shipment order,	
+
+/ Een van de queries hierboven doet dat	,
+
+SELECT conname, pg_catalog.pg_get_constraintdef(r.oid, true) as condef
+FROM pg_catalog.pg_constraint r
+WHERE r.conrelid = '629231' AND r.contype = 'f' ORDER BY 1;
+/ of	,
+WHERE r.conrelid = 'shipment_order'::regclass AND r.contype = 'f' ORDER BY 1;
+
+                  conname                  |                                        condef                                      
+   
+-------------------------------------------+------------------------------------------------------------------------------------
+---
+ fk_sho_act_service_level                  | FOREIGN KEY (act_service_level_systemid) REFERENCES shipment_service_level(system_i
+d)
+ fk_sho_airport                            | FOREIGN KEY (port_systemid) REFERENCES airport(system_id)
+ fk_sho_assignee_fk                        | FOREIGN KEY (assignee_systemid) REFERENCES tms_user(system_id)
+ fk_sho_cost_currency                      | FOREIGN KEY (tot_cost_currency_systemid) REFERENCES currency(system_id)
+ fk_sho_req_service_level                  | FOREIGN KEY (req_service_level_systemid) REFERENCES shipment_service_level(system_i
+d)
+ shipment_order_entity_group_systemid_fkey | FOREIGN KEY (entity_group_systemid) REFERENCES oms_entity_group(system_id)
+ shipment_order_schedule_systemid_fkey     | FOREIGN KEY (schedule_systemid) REFERENCES oms_organization_schedule(system_id)
+ sho_instr_group_fk                        | FOREIGN KEY (instruction_group_systemid) REFERENCES instruction_group(system_id)
+ sho_proc_fk                               | FOREIGN KEY (order_process_systemid) REFERENCES order_process(system_id)
+ sho_rate_calc_log_fk                      | FOREIGN KEY (rate_calc_log_systemid) REFERENCES oms_entity_log(system_id)
+ so_from_country_fk                        | FOREIGN KEY (from_country_systemid) REFERENCES country(system_id)
+ so_hold_status_fk                         | FOREIGN KEY (hold_status_systemid) REFERENCES hold_status(system_id)
+ so_inco_term_fk                           | FOREIGN KEY (inco_term_systemid) REFERENCES inco_term(system_id)
+ so_invoice_country_fk                     | FOREIGN KEY (invoice_country_systemid) REFERENCES country(system_id)
+ so_order_status_fk                        | FOREIGN KEY (status_code_systemid) REFERENCES order_status(system_id)
+ so_organization_fk                        | FOREIGN KEY (organization_systemid) REFERENCES organization(system_id)
+ so_path_fk                                | FOREIGN KEY (path_systemid) REFERENCES path_template(system_id)
+ so_prefered_party_fk                      | FOREIGN KEY (prefered_party_systemid) REFERENCES party(system_id)
+ so_price_currency_fk                      | FOREIGN KEY (tot_value_currency_systemid) REFERENCES currency(system_id)
+ so_reason_code_fk                         | FOREIGN KEY (reason_code_systemid) REFERENCES reason_code(system_id)
+ so_tms_user_fk                            | FOREIGN KEY (created_by_systemid) REFERENCES tms_user(system_id)
+ so_to_country_fk                          | FOREIGN KEY (to_country_systemid) REFERENCES country(system_id)
+ so_val_alt_currency_fk                    | FOREIGN KEY (tot_val_alt_curr_systemid) REFERENCES currency(system_id)
+ so_value_currency_fk                      | FOREIGN KEY (tot_value_currency_systemid) REFERENCES currency(system_id)
+(24 rows)
+
+/ blijkbaar is 629231 de oid van de shipment_order table	,
+
+/ 7	. 
+
+/ Lees	,
+http://stackoverflow.com/questions/1152260/postgres-sql-to-list-table-foreign-keys
+/ TODO
+
+/ lees	,
+/ par 5.7 in manual 9.4	,
+http://www.postgresql.org/docs/current/interactive/ddl-schemas.html#DDL-SCHEMAS-CATALOG
+...  each database contains a pg_catalog schema, which contains the system tables and all the built-in data types, functions, and operators.
+
+/ we kunnen ook	,
+pnllogistics3=# SELECT
+    tc.constraint_name, tc.table_name, kcu.column_name, 
+    ccu.table_name AS foreign_table_name,
+    ccu.column_name AS foreign_column_name 
+FROM 
+    information_schema.table_constraints AS tc 
+    JOIN information_schema.key_column_usage AS kcu
+      ON tc.constraint_name = kcu.constraint_name
+    JOIN information_schema.constraint_column_usage AS ccu
+      ON ccu.constraint_name = tc.constraint_name
+WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name='shipment_order';
+              constraint_name              |   table_name   |         column_name         |    foreign_table_name     | foreign_
+column_name 
+-------------------------------------------+----------------+-----------------------------+---------------------------+---------
+------------
+ fk_sho_act_service_level                  | shipment_order | act_service_level_systemid  | shipment_service_level    | system_i
+d
+ fk_sho_airport                            | shipment_order | port_systemid               | airport                   | system_i
+d
+ fk_sho_assignee_fk                        | shipment_order | assignee_systemid           | tms_user                  | system_i
+d
+ fk_sho_cost_currency                      | shipment_order | tot_cost_currency_systemid  | currency                  | system_i
+d
+ fk_sho_req_service_level                  | shipment_order | req_service_level_systemid  | shipment_service_level    | system_i
+d
+ shipment_order_entity_group_systemid_fkey | shipment_order | entity_group_systemid       | oms_entity_group          | system_i
+d
+ shipment_order_schedule_systemid_fkey     | shipment_order | schedule_systemid           | oms_organization_schedule | system_i
+d
+ sho_instr_group_fk                        | shipment_order | instruction_group_systemid  | instruction_group         | system_i
+d
+ sho_proc_fk                               | shipment_order | order_process_systemid      | order_process             | system_i
+d
+ sho_rate_calc_log_fk                      | shipment_order | rate_calc_log_systemid      | oms_entity_log            | system_i
+d
+ so_from_country_fk                        | shipment_order | from_country_systemid       | country                   | system_i
+d
+ so_hold_status_fk                         | shipment_order | hold_status_systemid        | hold_status               | system_i
+d
+ so_inco_term_fk                           | shipment_order | inco_term_systemid          | inco_term                 | system_i
+d
+ so_invoice_country_fk                     | shipment_order | invoice_country_systemid    | country                   | system_i
+d
+ so_order_status_fk                        | shipment_order | status_code_systemid        | order_status              | system_i
+d
+ so_organization_fk                        | shipment_order | organization_systemid       | organization              | system_i
+d
+ so_path_fk                                | shipment_order | path_systemid               | path_template             | system_i
+d
+ so_prefered_party_fk                      | shipment_order | prefered_party_systemid     | party                     | system_i
+d
+ so_price_currency_fk                      | shipment_order | tot_value_currency_systemid | currency                  | system_i
+d
+ so_reason_code_fk                         | shipment_order | reason_code_systemid        | reason_code               | system_i
+d
+ so_tms_user_fk                            | shipment_order | created_by_systemid         | tms_user                  | system_i
+d
+ so_to_country_fk                          | shipment_order | to_country_systemid         | country                   | system_i
+d
+ so_val_alt_currency_fk                    | shipment_order | tot_val_alt_curr_systemid   | currency                  | system_i
+d
+ so_value_currency_fk                      | shipment_order | tot_value_currency_systemid | currency                  | system_i
+d
+(24 rows)
+
+
+
+
+/ Einde POSTGRES

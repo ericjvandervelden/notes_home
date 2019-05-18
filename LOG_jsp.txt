@@ -1,0 +1,238 @@
+/ 7	 
+
+/ javaserverpages bergsten
+/ oreilly page
+
+[eric@almond 2ed]$ pwd
+/home/eric/Devel/Java/jsp/2ed
+[eric@almond 2ed]$ unzip  ~/Downloads/jspbook.zip 
+[eric@almond 2ed]$ ls
+asf-struts-license.txt   JSTL-RI-ReleaseNotes.html  release_notes.html
+asf-taglibs-license.txt  ora                        src
+jdom-license.txt         Readme-License.txt
+
+[eric@almond 3ed]$ pwd
+/home/eric/Devel/Java/jsp/3ed
+[eric@almond 3ed]$ unzip  ~/Downloads/jspbook3.zip 
+[eric@almond 3ed]$ ls
+asf-struts-license.txt   jdom-license.txt  Readme-License.txt  src
+asf-taglibs-license.txt  ora               release_notes.html
+
+[eric@almond 1ed]$ pwd
+/home/eric/Devel/Java/jsp/1ed
+[eric@almond 1ed]$ unzip  ~/Downloads/jspbook\ \(1\).zip 
+[eric@almond 1ed]$ ls
+asf-jakarta-license.txt  ora                 release_notes.html
+asf-xml-license.txt      Readme-License.txt  src
+
+/ 7	. 
+
+[eric@almond 1ed]$ cp -a ora/ /home/eric/Devel/Java/Tomcat/apache-tomcat-8.5.11/webapps/
+
+[eric@almond webapps]$ pwd
+/home/eric/Devel/Java/Tomcat/apache-tomcat-8.5.11/webapps
+[eric@almond ora]$  jar tvf ./WEB-INF/lib/orataglib_1_0_3.jar | grep UserInfo
+  4087 Thu Jun 28 15:14:16 CEST 2001 com/ora/jsp/beans/userinfo/UserInfoBean.class
+
+/ Dus alle beans zitten in ./WEB-INF/lib/orataglib_1_0_3.jar	, 
+
+/ de src van de beans zitten in src/	, naast ora/	, in de download	,
+
+/ 13	. 
+
+/ Geef	,
+http://localhost:8080/ora/
+/ click User Info example 1	(ch5), 
+http://localhost:8080/ora/ch5/userinfo.html
+/ submit form	,
+http://localhost:8080/ora/ch5/userinfo1.jsp
+
+/ 1313	, 
+
+/ Als we submit	, 
+/ we zien de /ora cookie in de req header	,
+Cookie:JSESSIONID=463E18552C50CDDA91E5698EBD3B326E
+
+/ we zien onder General,																/ TODO
+Request URL:http://localhost:8080/ora/ch5/userinfo1.jsp
+Request Method:POST
+
+/ we zien onde Form Data	,
+userName:eric
+birthDate:2000-01-01
+emailAddr:ericjvandervelden@gmail.com
+sex:male
+luckyNumber:13
+
+/ 1313	. 
+
+$ vi userinfo.html
+
+   <form action="userinfo1.jsp" method="post">
+      <table>
+        <tr>
+          <td>Name:</td>
+          <td><input type="text" name="userName" >
+...
+
+/ De name attr moet precies de bean property name zijn van UserInfoBean	,
+/ want de ctrl doet	,
+      <jsp:setProperty name="userInfo" property="*" />
+
+/ we zien onder Form Data dat ze precies de name hebben van de bean properties, en kunnen de setter called 	,
+/ Dus UserInfoBean is de model	, en zien precies hier dat de controller de model schrijft	, 
+
+$ vi userinfo1.jsp										/ controller	& view	,
+
+<html>
+  <body bgcolor="white">
+    <jsp:useBean 
+      id="userInfo" 																	 / GEEN scope attr , default is page scope	, dat is hier OK, 
+																															/ maar in ch8 forward we , en dan moet request scope zijn	, 
+      class="com.ora.jsp.beans.userinfo.UserInfoBean">
+      <jsp:setProperty name="userInfo" property="*" />
+    </jsp:useBean>
+
+    The following information was saved:
+    <ul>
+      <li>User Name: <jsp:getProperty 
+                       name="userInfo" property="userName" />
+      <li>Birth Date: <jsp:getProperty 
+		...
+
+$ vi UserInfoBean.java 			/model
+    /**
+     * Returns true if all property values have valid values
+     * (they are only set if the value is valid).
+     */
+    public boolean isValid() {
+        return isInitialized() &&
+            birthDate != null &&
+            emailAddr != null &&
+            luckyNumber != null &&
+            sex != null &&
+            userName != null;
+    }
+
+
+/ Daarna speelt userinfo1.jsp de rol van view	, en toont hij  de data uit de model	, de UserInfoBean	, 
+
+/ als we userinfo.html	, dan 1ste request	,  heeft geen form data
+/ als we submit	, dan 2de request	,	heeft form data	,
+
+/ 1313	. 
+
+/ Geef in google,	
+jsp:useBean default scope
+/ Lees	,
+http://stackoverflow.com/questions/14579121/jspusebean-scope
+/-> 
+http://stackoverflow.com/tags/el/info
+
+http://stackoverflow.com/questions/1855507/scope-of-jspusebean	/ getAttributes	, see ook Servlet book (372)
+
+https://www.youtube.com/watch?v=FiSwe2xKcLk
+
+[eric@almond apache-tomcat-8.5.11]$ less work/Catalina/localhost/ora/org/apache/jsp/ch5/userinfo1_jsp.java 
+
+
+
+
+/ 1313	 
+
+/ we vullen expres een veld verkeerd in	, bijv Birth date	, 
+
+userName:eric
+birthDate:200-13-1
+emailAddr:ericjvandervelden@gmail.com
+sex:male
+luckyNumber:13
+Name
+
+/ submit	,
+/ we zien	, 
+http://localhost:8080/ora/ch5/userinfo1.jsp
+
+User Name: eric
+Birth Date:													/ leeg	,
+...
+The user input is valid: false
+
+/ 13	. 
+
+/ userinfo.html wordt nu userinfo2.jsp	, 
+
+/ Geef	, 
+http://localhost:8080/ora/ch5/userinfo2.jsp
+/ fill in , submit	, 
+http://localhost:8080/ora/ch5/userinfo2.jsp
+
+$ vi userinfo2.jsp
+
+ <body bgcolor="white">
+    <jsp:useBean id="userInfo" class="com.ora.jsp.beans.userinfo.UserInfoBean">
+      <jsp:setProperty name="userInfo" property="*" />													/ writes in model	,
+    </jsp:useBean>
+
+    <%-- Output list of values with invalid format, if any --%>
+    <font color="red">
+      <jsp:getProperty name="userInfo" property="propertyStatusMsg" />
+    </font>
+
+    <%-- Output form with submitted valid values --%>
+    <form action="userinfo2.jsp" method="post">
+
+/ Dus als we voor het eerst geven : 
+http://localhost:8080/ora/ch5/userinfo2.jsp
+/ en er geen form data is	, vult hij WH null in in de model TODO (userinfo2.jsp is controller)	,
+/ dat klopt WH  wel, want userinfo2 is ook  view, want hij doet vervolgens get op model (properties)	, en fills in de form inputs	, 
+
+/ Dan de propertyStatusMsg	,
+
+$ vi UserBeanInfo.java
+
+  public String getPropertyStatusMsg() {
+        StringBuffer msg = new StringBuffer();
+        if (!isInitialized()) {
+            msg.append("Please enter values in all fields");	/ Deze zien we inderdaad als we voor het eerst 	
+																																/ userinfo2.jsp	,
+        }
+        else if (!isValid()) {
+            msg.append("The following values are missing or invalid: ");
+            msg.append("<ul>");
+            if (birthDate == null) {
+                if (birthDateInput == null) {
+                    msg.append("<li>Birth date is missing");
+..
+
+/ 13	. 
+
+/ userinfo3.jsp als view asks the model for the formatted properties	,
+
+
+
+
+
+
+
+
+
+/ 13	. 
+
+/ Geef	,
+http://localhost:8080/ora/
+/ click Multipage example (ch 8)
+/ we maken expres fouten	, submit
+
+http://localhost:8080/ora/ch8/userinfovalidate.jsp
+/ we zien in het rood	,
+The following values are missing or invalid:
+	Birth date value is invalid: 200-13-1
+	Lucky number value is invalid: foo
+Please enter new valid values
+/ en we zien de goede inputs ingevuld	, we vullen de lege in	, en submit	,
+
+http://localhost:8080/ora/ch8/userinfovalidate.jsp
+Thanks for entering valid information!
+
+

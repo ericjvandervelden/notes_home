@@ -1,0 +1,106 @@
+/ 13	. 
+
+/ van sogeti laptop,
+
+/ google
+algorithm to mine bitcoins
+https://www.youtube.com/watch?v=UZBZPOEVyJA
+/->
+http://www.righto.com/2014/09/mining-bitcoin-with-pencil-and-paper.html
+https://www.youtube.com/watch?v=UZBZPOEVyJA
+https://www.youtube.com/watch?v=Lx9zgZCMqXE 
+https://www.youtube.com/watch?v=9mNgeTA13Gc
+/=
+https://www.youtube.com/watch?annotation_id=annotation_3457876853&feature=iv&src_vid=9mNgeTA13Gc&v=jzro6im0S6o
+
+https://www.youtube.com/watch?v=bBC-nXj3Ng4
+
+/ see,
+https://www.youtube.com/watch?v=RRP65VvIgGg / ripple 
+
+/ kijk,
+https://www.youtube.com/watch?v=gSQXq2_j-mw		/ ethereum dapp
+https://www.youtube.com/watch?v=-_Qs0XdPpw8&t=20s / ethereum dapp
+https://www.youtube.com/watch?v=vCBCyO7SE5I
+/ lees,
+https://ethereum.stackexchange.com/questions/383/what-is-a-dapp
+
+/ 7	. 
+
+/ kijk,
+https://www.youtube.com/watch?v=Lx9zgZCMqXE&t=374s	/ !
+/ -> 
+http://www.imponderablethings.com/2013/07/how-bitcoin-works-under-hood.html
+https://www.pluralsight.com/courses/bitcoin-decentralized-technology#
+https://www.youtube.com/watch?annotation_id=annotation_1936436609&feature=iv&src_vid=Lx9zgZCMqXE&v=ssbDtvY3xCs
+
+/ 7	. 
+
+https://www.youtube.com/watch?v=9SYVX2wcMVM
+/->
+https://www.bestebank.org/blockchain/tezos/
+
+https://www.youtube.com/watch?v=3xAO4K7FC6E / python & bitcoin
+
+/ 7	. 
+
+/ youtube:
+bitcoin programming
+
+/ kijk	,
+
+/ 13	. 
+https://www.youtube.com/channel/UCNcSSleedtfyDuhBvOQzFzQ / series	,
+-> 
+https://www.youtube.com/watch?v=fOMVZXLjKYo / series 1,...,12
+
+/ 13	. 
+
+https://www.youtube.com/watch?v=4qz7XehSBCc&list=PLBt51Vkow4dbtyMxlYBlzs28nE_mR8tpl
+
+/ 13	. 
+
+https://www.youtube.com/watch?v=X6jtpe2_kUc
+bitcoin-core:bitcoind, bitcoin-qt
+bincoin armory: bitcoin desktop wallet
+bitcoin wallet: android bitcoin wallet
+
+/ lees	,
+https://bitcoinfoundation.org/developers/#gettingstarted
+
+https://www.bitcoinarmory.com/
+
+https://www.youtube.com/watch?v=X6jtpe2_kUc,12:17
+https://github.com/bitcoin/bitcoin 											 / source code bitcoin	,
+
+https://github.com/goatpig/BitcoinArmory
+
+/ 13	. 
+
+/ kijk,	
+https://www.youtube.com/watch?v=uyoABcfdyAA
+https://www.gdax.com/
+https://www.coinbase.com/join
+https://www.coinbase.com/signin?locale=nl / !
+https://blog.toshi.org/
+
+/ 7	. 
+
+/ Toshi	,
+
+We use the Signal Protocol from WhisperSystems to end to end encrypt chat messages. This allows you to message other users and chat with apps.
+We use the Ethereum network as a global, open payment network.
+The apps you access use the SOFA protocol (an open standard we developed for chat bot style financial applications). In the future we plan to support Dapps via web3.js in an integrated webview.
+We plan to use uPort in the future as a decentralized identity system.
+
+https://github.com/tokenbrowser
+->
+https://github.com/toshiapp
+
+https://blog.toshi.org/introducing-token-2f2ceeab6d4c
+
+https://www.youtube.com/watch?v=R_CiemcFKis / solitity, ethereum
+
+
+
+

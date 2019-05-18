@@ -1,0 +1,6912 @@
+/ See REPLICATION 
+/ See INRICHTEN MASTER SLAVE VLG VIDEO
+/ See 2PC
+/ See FDW
+
+/ postgres in docker	,
+
+/ 7	. 
+
+eric=> select pg_typeof(timeofday());
+ pg_typeof 
+-----------
+ text
+(1 row)
+/ deze is real time	,
+
+/ 13	. 
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/functions-datetime.html
+
+/ now() is constant binnen 1 tx	, dus na commit of rollback een andere now()	,
+
+/ timestamp=timestamp without time zone
+
+eric=> select now()::date;
+    now     
+------------
+ 2018-09-27
+(1 row)
+
+eric=> select now()::time;
+       now       
+-----------------
+ 12:03:48.286897
+(1 row)
+
+eric=> select now()::timestamp;
+            now             
+----------------------------
+ 2018-09-27 12:03:48.286897
+(1 row)
+
+eric=> select now()::timestamp without time zone;
+            now             
+----------------------------
+ 2018-09-27 12:03:48.286897
+(1 row)
+
+eric=> select now()::timestamp with time zone;
+              now              
+-------------------------------
+ 2018-09-27 12:03:48.286897+00
+(1 row)
+
+/ 13	. 
+
+eric=> select now() at time zone 'America/New_York';
+          timezone          
+----------------------------
+ 2018-09-27 08:14:47.685288
+(1 row)
+
+eric=> select now() at time zone 'Europe/Amsterdam';
+          timezone          
+----------------------------
+ 2018-09-27 14:14:47.685288
+(1 row)
+
+/ 13	. 
+
+/ generate_series werkt met timestamp (with time zone)	,
+
+eric=> select generate_series('2018-09-30'::timestamp with time zone,'2019-09-30','1 month');
+    generate_series     
+------------------------
+ 2018-09-30 00:00:00+00
+ 2018-10-30 00:00:00+00
+ 2018-11-30 00:00:00+00
+ 2018-12-30 00:00:00+00
+ 2019-01-30 00:00:00+00
+ 2019-02-28 00:00:00+00
+ 2019-03-28 00:00:00+00
+ 2019-04-28 00:00:00+00
+ 2019-05-28 00:00:00+00
+ 2019-06-28 00:00:00+00
+ 2019-07-28 00:00:00+00
+ 2019-08-28 00:00:00+00
+ 2019-09-28 00:00:00+00
+(13 rows)
+
+/ je kunt ook ::date opschrijven	, maar je krijgt toch timestamps, bijv 2019-03-28 00:00:00 
+
+/ 13	. 
+
+/ lees	,
+http://www.postgresqltutorial.com/postgresql-random-range/
+
+/ dit kan ook	,
+
+eric=> select *
+from generate_series(1000,1005);
+/= 
+eric=> select generate_series 
+from generate_series(1000,1005);
+/=
+eric=> select generate_series.*
+from generate_series(1000,1005);
+/=
+ generate_series 
+-----------------
+            1000
+            1001
+            1002
+            1003
+            1004
+            1005
+(6 rows)
+eric=> select g
+from generate_series(1000,1005)g;
+  g   
+------
+ 1000
+ 1001
+ 1002
+ 1003
+ 1004
+ 1005
+(6 rows)
+
+/ we kunnen g wel of niet gebruiken:
+
+eric=> select random()
+eric-> from generate_series(1000,1005);
+      random       
+-------------------
+ 0.842651955317706
+ 0.803127884399146
+ 0.607338067144156
+ 0.715803377330303
+ 0.231338284444064
+ 0.982471334282309
+(6 rows)
+
+eric=> select g*random()
+from generate_series(1000,1005)g;
+     ?column?     
+------------------
+ 925.833757035434
+ 277.967728589196
+ 429.597465422004
+  323.56584076304
+ 833.130512157455
+ 148.938971904572
+(6 rows)
+
+/ Je zult meestal g niet use	, het zijn alleen een soort for loops	, 
+
+/ 13	. 
+
+/ google,	
+postgresql generate table with random data
+/ lees	,
+https://stackoverflow.com/questions/3371503/sql-populate-table-with-random-data/ 13	. 
+
+eric=> select generate_series(1,10)id,random()::text descr;
+ id |       descr       
+----+-------------------
+  1 | 0.594550996087492
+  2 | 0.385850602760911
+  3 | 0.734527058433741
+  4 | 0.485439496580511
+  5 | 0.691812970675528
+  6 | 0.171803401783109
+  7 | 0.237696928437799
+  8 | 0.518459002487361
+  9 | 0.277299335226417
+ 10 | 0.458857800811529
+(10 rows)
+
+eric=> select g id,random()::text descr
+eric-> from generate_series(1,10)g;
+ id |       descr        
+----+--------------------
+  1 | 0.432220437563956
+  2 | 0.782243478111923
+  3 | 0.653813883196563
+  4 | 0.128309671767056
+  5 | 0.745539156254381
+  6 | 0.375767622608691
+  7 | 0.721840503625572
+  8 | 0.0693971887230873
+  9 | 0.218419578392059
+ 10 | 0.524968388024718
+(10 rows)
+
+/ 13	. 
+
+/ lees	,
+
+http://www.postgresqltutorial.com/postgresql-stored-procedures/
+->
+http://www.postgresqltutorial.com/postgresql-create-function/
+
+eric=> create function fct(i int,j int)returns int as $$ begin
+eric$> return i+j;
+eric$> end $$
+eric-> language plpgsql;
+CREATE FUNCTION
+eric=> select fct(3,5);
+ fct 
+-----
+   8
+(1 row)
+
+/ lees	,
+http://www.postgresqltutorial.com/postgresql-create-table-as/#
+
+/ 13	. 
+
+http://www.postgresqltutorial.com/postgresql-stored-procedures/
+->
+http://www.postgresqltutorial.com/plpgsql-function-returns-a-table/
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/xfunc-sql.html
+
+eric=> 
+create or replace function fct() returns setof int as $$
+begin
+create temp table if not exists t(i int);
+delete from t;
+insert into t values(1),(2),(3);
+return query select i from t;
+end $$
+language plpgsql;
+CREATE FUNCTION
+eric=> commit;
+COMMIT
+/ je commit de function fct en de table t	,
+
+eric=> select fct();                                           
+ fct 
+-----
+   1
+   2
+   3
+(3 rows)
+eric=> select pg_typeof(fct());
+ pg_typeof 
+-----------
+ integer
+ integer
+ integer
+(3 rows)
+/ precies wat we ook zien bij	,
+eric=> select pg_typeof(generate_series(1,3));
+ pg_typeof 
+-----------
+ integer
+ integer
+ integer
+(3 rows)
+
+/ 13	. 
+
+/ we hebben nu een table t	, en een functie die hetzelfde result geven	,
+
+eric=> select *
+eric-> from fct();
+/ of	,
+eric=> select fct();
+/ of	,
+eric=> select fct
+eric-> from fct();
+/ of	,
+eric=> select fct.*
+eric-> from fct();
+
+ fct 
+-----
+   1
+   2
+   3
+(3 rows)
+
+eric=> select fct();
+
+/ maar bij een table gaat het iets anders,	 
+
+
+eric=> select*from t;
+/ of	,
+eric=> select t.*
+from t;
+ i 
+---
+ 1
+ 2
+ 3
+(3 rows)
+
+/ maar we vragen hier een rij ipv column	,
+eric=> select t
+eric-> from t;
+  t  
+-----
+ (1)
+ (2)
+ (3)
+(3 rows)
+
+/ 13	. 
+
+/ we maken een fct die meerdere columns returns	,
+
+/ omdat we de return van fct veranderen, kunnen we GEEN create or replace doen	, we moeten eerst fct() drop	, 
+
+eric=> 
+drop function fct();	-- NB ()
+create temp table if not exists t2(i int,s varchar(32));
+create or replace function fct() returns setof t2 as $$
+begin
+delete from t2;
+insert into t2 values(1,'foo'),(2,'bar'),(3,'baz');
+return query select i,s from t2;
+end $$
+language plpgsql;
+
+eric=> select fct();
+   fct   
+---------
+ (1,foo)
+ (2,bar)
+ (3,baz)
+(3 rows)
+eric=> select*                       
+from fct();
+ i |  s  
+---+-----
+ 1 | foo
+ 2 | bar
+ 3 | baz
+(3 rows)
+
+/ er is verschil tussen select fct(), waar je rows returns	, met (...) eromheen	,en select*from fct()	, waarin je columns queries	,
+
+
+/ met record krijgen we het niet voor elkaar	,
+drop function fct();	-- NB ()
+create temp table if not exists t2(i int,s varchar(32));
+create or replace function fct() returns setof record as $$ 
+begin
+delete from t2;
+insert into t2 values(1,'foo'),(2,'bar'),(3,'baz');
+select i,s from t2;
+end $$
+language plpgsql;
+/ TODO
+
+/ Het kan ook zo	,
+drop function fct();	-- NB ()
+create temp table if not exists t2(i int,s varchar(32));
+create or replace function fct() returns table(i_ int,s_ varchar(32)) as $$ 
+begin
+delete from t2;
+insert into t2 values(1,'foo'),(2,'bar'),(3,'baz');
+return query select i,s from t2;
+end $$
+language plpgsql;
+eric=> select fct();
+   fct   
+---------
+ (1,foo)
+ (2,bar)
+ (3,baz)
+(3 rows)
+
+
+eric=> select*
+eric-> from fct();
+ i_ | s_  
+----+-----
+  1 | foo
+  2 | bar
+  3 | baz
+(3 rows)
+ 
+/ 13	. 
+
+/ lees	,
+https://stackoverflow.com/questions/3371503/sql-populate-table-with-random-data
+
+
+
+select g,md5(random()::text) 
+from generate_series(1,10)g;
+/ of	,
+select generate_series(1,10)id,md5(random()::text)
+
+/ 13	. 
+
+/ select * into werkt WH alleen vanuit een andere table	,
+
+eric=> select * into t3 from t;
+SELECT 3
+eric=> select * from t3;
+ i 
+---
+ 1
+ 2
+ 3
+(3 rows)
+
+eric=> with gen as(select generate_series(1,10)id,md5(random()::text))
+select * into t4 from gen;
+SELECT 10
+
+/ of	,
+
+/ je moet de (select ...)_ een naam geven	, _ hier	, 
+
+eric=> select * into t4 from (select generate_series(1,10)id,md5(random()::text))_;
+SELECT 10
+
+/ 13	. 
+
+/ we willen opruimen	,
+
+eric=> drop table t2;
+ERROR:  cannot drop table t2 because other objects depend on it
+DETAIL:  function fct() depends on type t2
+HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+
+eric=> \df+
+                                                                               List of f
+unctions
+ Schema | Name | Result data type | Argument data types |  Type  | Security | Volatility
+ | Owner | Language |                     Source code                     | Description 
+--------+------+------------------+---------------------+--------+----------+-----------
+-+-------+----------+-----------------------------------------------------+-------------
+ public | fct  | SETOF t2         |                     | normal | invoker  | volatile  
+ | eric  | plpgsql  |                                                    +| 
+        |      |                  |                     |        |          |           
+ |       |          | begin                                              +| 
+        |      |                  |                     |        |          |           
+ |       |          | delete from t2;                                    +| 
+        |      |                  |                     |        |          |           
+ |       |          | insert into t2 values(1,'foo'),(2,'bar'),(3,'baz');+| 
+        |      |                  |                     |        |          |           
+ |       |          | return query select i,s from t2;                   +| 
+        |      |                  |                     |        |          |           
+ |       |          | end                                                 | 
+(1 row)
+
+eric=> drop table if exists t2 cascade;
+NOTICE:  drop cascades to function fct()
+DROP TABLE
+/ dus als we t2 drop, worden ook de objects die refs hebben naar t2, bijv fct , delete	,
+/ TODO wat precies wordt delete	? Als we een table r hebben , waarin r een column heeft die refs aan t2, worden de r's delete , maar de table r is er nog 
+
+
+
+/ 7	. 
+
+/ cascade, restrict
+
+t			r
+i <-  j
+-> on delete cascade
+
+/ je kunt een r  of alle r altijd rm	, 
+/ maar als je een t of alle t wilt rm, en er wordt nog naar verwezen door een r, gaat deze rm van t niet door	, 
+/ tenzij je van j gezegd hebt dat als de t verwijderd wordt, de r ook moet worden verwijderd:
+eric=> create table r(j int  references t(i) on delete cascade);
+ 
+
+eric=> \h create table
+where column_constraint is:
+  REFERENCES reftable [ ( refcolumn ) ] [ MATCH FULL | MATCH PARTIAL | MATCH SIMPLE ]
+    [ ON DELETE action ] [ ON UPDATE action ] }
+and table_constraint is:
+  FOREIGN KEY ( column_name [, ... ] ) REFERENCES reftable [ ( refcolumn [, ... ] ) ]
+    [ MATCH FULL | MATCH PARTIAL | MATCH SIMPLE ] [ ON DELETE action ] [ ON UPDATE actio
+n ] }
+
+
+eric=> create table t(i int unique);
+eric=> create table r(j int, foreign key(j)references t(i));
+/ of	,
+eric=> create table r(j int  references t(i));
+
+/ als je de fk in de column def, use dan NIET de woorden 'foreign key'	, 
+/ bij 'primary key' use je wel in de column deze woorden	,
+
+eric=> \d+ r
+                          Table "public.r"
+ Column |  Type   | Modifiers | Storage | Stats target | Description 
+--------+---------+-----------+---------+--------------+-------------
+ j      | integer |           | plain   |              | 
+Foreign-key constraints:
+    "r_j_fkey" FOREIGN KEY (j) REFERENCES t(i)
+
+/ met de fk of de referencing table met de fk kun je alles doen, delete , drop column or table	, 
+/ maar met de referenced table	, met de unique of pk column,  niet	, 
+
+/ 13	. 
+
+eric=> insert into t values(1),(2);
+INSERT 0 2
+eric=> insert into r values(1);
+INSERT 0 1
+eric=> delete from r;
+DELETE 1
+eric=> insert into r values(1);
+INSERT 0 1
+eric=> delete from t;
+ERROR:  update or delete on table "t" violates foreign key constraint "r_j_fkey" on table "r"
+DETAIL:  Key (i)=(1) is still referenced from table "r".
+eric=> rollback ;
+ROLLBACK
+
+
+
+/ 13	. 
+
+/ met de referenced table	, met de unique of pk column,  kun je ook alles doen, als je ...
+
+eric=> create table t(i int unique);
+eric=> create table r(j int  references t(i) on delete cascade);
+
+/ lees 'j int  references t(i) on delete cascade' zo: 't(i) on delete cascade'	, dus als je t delete, cascade deze delete, dus delete r ook	,
+
+eric=> insert into t values(1),(2);
+INSERT 0 2
+eric=> insert into r values(1);
+INSERT 0 1
+eric=> delete from r; 	-- kan altijd	,
+DELETE 1
+eric=> select*from t;
+ i 
+---
+ 1
+ 2
+(2 rows)
+
+eric=> insert into r values(1);
+INSERT 0 1
+eric=> delete from t;
+DELETE 2
+eric=> select*from r;		-- de r is rm	, 
+ j 
+---
+(0 rows)
+
+/ 1313	. 
+
+eric=> create table r(j int  references t(i) on delete restrict);
+eric=> insert into r values(1);
+INSERT 0 1
+eric=> delete from t;
+ERROR:  update or delete on table "t" violates foreign key constraint "r_j_fkey" on table "r"
+DETAIL:  Key (i)=(1) is still referenced from table "r".
+eric=> 
+
+eric=> create table r(j int  references t(i) on delete no action);
+eric=> insert into r values(1);
+INSERT 0 1
+eric=> delete from t;
+ERROR:  update or delete on table "t" violates foreign key constraint "r_j_fkey" on table "r"
+DETAIL:  Key (i)=(1) is still referenced from table "r".
+
+/ we zien geen verschil tussen restrict en no action	, 
+/ TODO 
+/ lees hieronder over deferred	,
+
+/ 1313	. 
+
+/ lees	,
+https://stackoverflow.com/questions/5809954/mysql-restrict-and-no-action
+NO ACTION is deferred while RESTRICT acts immediately.
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/sql-set-constraints.html
+https://begriffs.com/posts/2017-08-27-deferrable-sql-constraints.html
+
+
+
+/ 7	. 
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/queries-with.html
+
+eric=> \dt
+       List of relations
+ Schema | Name | Type  | Owner 
+--------+------+-------+-------
+ public | r    | table | eric
+ public | t    | table | eric
+(2 rows)
+
+eric=> drop table t;
+ERROR:  cannot drop table t because other objects depend on it
+DETAIL:  constraint r_j_fkey on table r depends on table t
+HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+
+eric=> \dt
+       List of relations
+ Schema | Name | Type  | Owner 
+--------+------+-------+-------
+ public | r    | table | eric
+ public | t    | table | eric
+(2 rows)
+
+eric=> drop table t cascade ;
+NOTICE:  drop cascades to constraint r_j_fkey on table r
+DROP TABLE
+eric=> \dt
+       List of relations
+ Schema | Name | Type  | Owner 
+--------+------+-------+-------
+ public | r    | table | eric
+(1 row)
+
+/ drop table t cascade rm  van table r de Foreign-key constraints: "r_j_fkey" FOREIGN KEY (j) REFERENCES t(i)
+
+
+eric=> select *from r;
+ j 
+---
+1
+(1 rows)
+eric=> drop table r;
+DROP TABLE
+
+
+eric=> drop table r;
+DROP TABLE
+eric=> with recursive t(n) as (
+eric(> values(1)
+eric(> union all
+eric(> select n+1 
+eric(> from t 
+eric(> where n<10)
+eric-> select sum(n) from t;
+ sum 
+-----
+  55
+(1 row)
+
+select n from t;
+ n  
+----
+  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+(10 rows)
+
+/ Maak zo de fct hierboven	, 
+/ TODO
+
+eric=> 
+with recursive t(n) as (
+values(1)
+union all
+select n*2 
+from t 
+where n<10)
+select n from t;
+ n  
+----
+  1
+  2
+  4
+  8
+ 16
+(5 rows)
+
+eric=> with recursive t(n,s) as (
+values(1,md5(random()::text))
+union all
+select n+1,md5(random()::text) 
+from t 
+where n<10)
+select n,s from t;
+ n  |                s                 
+----+----------------------------------
+  1 | 87f45f56d0ab7b961c465243e26bb84c
+  2 | f83294d29af04281bedf4df4b2dd5c4b
+  3 | 163c28436c85226aa46d528faadfa7a6
+  4 | 1dd1f6c679cecae242f6d30eb50409e8
+  5 | 979a141b5f035275b5ab679fc924dac2
+  6 | 4f13dcc11c544d854c563dd1f9b077fc
+  7 | 8209387c705c24ba95919e16c52d9475
+  8 | ab0d32344d6175e075e3a2509a854246
+  9 | 8ab46936cb5ded5ded7d844d866f1f56
+ 10 | 746d9ad0b5baa72ede826597536ff0b1
+(10 rows)
+/ TODO random timestamp erbij	,
+
+eric=> 
+with recursive t(n) as (
+values(1))
+select*
+from t
+eric-> ;
+ n 
+---
+ 1
+(1 row)
+
+/ 13	. 
+
+eric=> with recursive t(n,s) as (
+values(1,md5(random()::text))
+union all
+select n+1,md5(random()::text) 
+from t 
+where n<10)
+select n,s into t2 from t;
+SELECT 10
+eric=> \dt
+       List of relations
+ Schema | Name | Type  | Owner 
+--------+------+-------+-------
+ public | t2   | table | eric
+(3 rows)
+
+eric=> \d+ t2
+                          Table "public.t2"
+ Column |  Type   | Modifiers | Storage  | Stats target | Description 
+--------+---------+-----------+----------+--------------+-------------
+ n      | integer |           | plain    |              | 
+ s      | text    |           | extended |              | 
+
+/ we kunnen ook	, 
+select * into t2 from t;
+
+/ 13	. 
+
+/ we kunnen ook maar 1 column van de with-t pakken:
+eric=> 
+with recursive t(n,s) as (
+values(1,md5(random()::text))
+union all
+select n+1,md5(random()::text) 
+from t 
+where n<10)
+select n into t2 from t;
+SELECT 10
+eric=> \d+ t2
+                          Table "public.t2"
+ Column |  Type   | Modifiers | Storage | Stats target | Description 
+--------+---------+-----------+---------+--------------+-------------
+ n      | integer |           | plain   |              | 
+
+/ 7	. 
+
+/ sql syntax
+
+/ 13	. 
+
+/ drop table t cascade rm de fk van table r	,
+
+/ column constraints	,
+
+eric=> create table t(i int unique);
+/ of	,
+eric=> create table t(i int constraint foo unique);
+
+eric=> create table r(j int references t(i));
+/ of	,
+eric=> create table r(j int constraint bar references t(i));
+
+
+eric=> \d+ t
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+eric=> rollback ;
+ROLLBACK
+eric=> \d+ t
+                          Table "public.t"
+ Column |  Type   | Modifiers | Storage | Stats target | Description 
+--------+---------+-----------+---------+--------------+-------------
+ i      | integer |           | plain   |              | 
+Indexes:
+    "t_i_key" UNIQUE CONSTRAINT, btree (i)
+Referenced by:
+    TABLE "r" CONSTRAINT "r_j_fkey" FOREIGN KEY (j) REFERENCES t(i)
+
+eric=> drop table t cascade;
+NOTICE:  drop cascades to constraint r_j_fkey on table r
+DROP TABLE
+eric=> \d+ r
+                          Table "public.r"
+ Column |  Type   | Modifiers | Storage | Stats target | Description 
+--------+---------+-----------+---------+--------------+-------------
+ j      | integer |           | plain   |              | 
+
+/ de fk van table r is weg,	 
+
+
+/ 13	. 
+
+/ postgresql sql syntax met [ en {
+/ TODO
+
+/ 13	. 
+
+/ we hoeven geen 'constraint' te use, als je dat doet is dat om de constraint een naam te geven, use je constraint , en laat je de naam weg, dan ERR	,
+
+eric=> create table t(i int);
+CREATE TABLE
+eric=> create table r(j int references t(i));
+ERROR:  there is no unique constraint matching given keys for referenced table "t"
+
+/ table constraints,
+
+eric=> create table t( i int, unique(i));
+/ of	,
+eric=> create table t(i int,constraint foo unique(i));
+/ of	,
+eric=> create table t(i int);
+eric=> alter table t add unique(i);
+/ of	,
+eric=> alter table t add constraint foo unique(i);
+
+/ 13	. 
+
+/ column constraint	,
+eric=> create table r(j int references t(i));
+/ of	,
+eric=> create table r(j int constraint bar  references t(i));
+
+eric=> create table r(j int,foreign key(j)references t(i));
+/ of	,
+eric=> create table r(j int,constraint bar foreign key(j) references t(i));
+
+/ of	,
+eric=> create table r(j int);
+eric=> alter table r add constraint bar foreign key(j) references t(i);
+
+
+
+
+/ 7	. 
+
+/ deferred	,
+
+/ lees,	
+https://begriffs.com/posts/2017-08-27-deferrable-sql-constraints.html 
+
+////////////////////////////////////
+
+
+/ column of table constraint 'deferrable initially deferred' 
+/=
+/ column of table constraint 'deferrable initially immediate' 
+/ en later 'set constraints fk deferred'	,  
+
+/ column of table constraint 'deferrable initially immediate' 
+/=
+/ geen column of table constraint 'deferrable initially deferred' 
+/ en later 'set constraints fk immediate'	,  
+
+/ 13	. 
+
+/ als een fk not deferrable is (als je dit expliciet zegt, of niets zegt)	, dan kun je later niet 'set constraints fk deferred'	, 
+/ maar wel ' set constraints fd immediate'	, maar dat is hij al	,
+
+
+///////////////////////////////////////////////////////
+
+eric=> create table foo(id int primary key);
+eric=> create table bar(foo_id int constraint fk references foo(id));
+eric=> insert into foo values(1),(2);
+INSERT 0 2
+eric=> insert into bar values(3);
+INSERT 0 1
+ERROR:  insert or update on table "bar" violates foreign key constraint "fk"
+DETAIL:  Key (foo_id)=(3) is not present in table "foo".
+eric=> \dt
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+eric=> rollback ;
+ROLLBACK
+eric=> \dt
+No relations found.
+
+/ we set de fk deferrable, en initially immediate, dus initially als een gewone fk	, dus niet deferred	; je kunt hem in de loop van de tx deferred zetten met 'SET CONSTRAINTS foo_bar_fk DEFERRED'	,
+/ dat doen we niet hier vlak onder,	 we laten hem immediate	, 
+
+/ we zien dat initially immediate bij een fk net is als not deferrable: statement level -> ERR	, initially deferred, of set constraints fk deferred: transaction level -> ERR  
+
+eric=> create table foo(id int primary key);
+CREATE TABLE
+eric=> create table bar(foo_id int constraint fk references foo(id) deferrable initially immediate);
+CREATE TABLE
+eric=> insert into foo values(1),(2);
+INSERT 0 2
+eric=> insert into bar values(3);
+ERROR:  insert or update on table "bar" violates foreign key constraint "fk"
+DETAIL:  Key (foo_id)=(3) is not present in table "foo".
+eric=> rollback ;
+ROLLBACK
+eric=> \dt
+No relations found.
+
+/ maar als we het wel doen	, dan worden we pas bij commit afgestraft,
+
+eric=> create table foo(id int primary key);CREATE TABLE
+eric=> create table bar(foo_id int constraint fk references foo(id) deferrable initially immediate);
+CREATE TABLE
+eric=> insert into foo values(1),(2);
+INSERT 0 2
+eric=> set constraints fk deferred ;		/ we kunnen TAB	, constraints en deferred verschijnen	,
+SET CONSTRAINTS
+eric=> insert into bar values(3);
+INSERT 0 1
+eric=> commit;
+ERROR:  insert or update on table "bar" violates foreign key constraint "fk"
+DETAIL:  Key (foo_id)=(3) is not present in table "foo".
+eric=> 
+
+/ nu set we deferrable initially deferred	, dus zien we bij commit pas de ERR	, en daarn 'set constraints fk immediate', en zien we de ERR bij statement	,
+
+eric=> create table foo(id int primary key);
+eric=> create table bar(foo_id int constraint fk references foo(id) deferrable initially deferred);
+eric=> insert into foo values(1),(2);
+INSERT 0 2
+eric=> insert into bar values(3);
+INSERT 0 1
+eric=> commit;
+ERROR:  insert or update on table "bar" violates foreign key constraint "fk"
+DETAIL:  Key (foo_id)=(3) is not present in table "foo".
+eric=> \dt
+No relations found.
+/ Er is een rollback geweest	,
+
+eric=> create table foo(id int primary key);CREATE TABLE
+eric=> create table bar(foo_id int constraint fk references foo(id) deferrable initially deferred);
+CREATE TABLE
+eric=> insert into foo values(1),(2);
+INSERT 0 2
+eric=> set constraints fk immediate ;
+SET CONSTRAINTS
+eric=> insert into bar values(3);
+ERROR:  insert or update on table "bar" violates foreign key constraint "fk"
+DETAIL:  Key (foo_id)=(3) is not present in table "foo".
+
+
+
+
+/ 13	. 
+
+eric=> create table t(i int unique);
+/ of	,
+eric=> create table t(i int);
+eric=> alter table t add unique(i);
+
+eric=> insert into t values(1),(2);
+INSERT 0 2
+eric=> update t set i=i+1;
+ERROR:  duplicate key value violates unique constraint "t_i_key"
+DETAIL:  Key (i)=(2) already exists.
+eric=> rollback;
+ROLLBACK
+eric=> \dt
+No relations found.
+eric=> create table t(i int unique deferrable initially immediate);
+CREATE TABLE
+eric=> insert into t values(1),(2);
+INSERT 0 2
+eric=> update t set i=i+1;
+UPDATE 2
+eric=> commit;
+COMMIT
+eric=> drop table t;
+DROP TABLE
+eric=> create table t(i int unique deferrable initially deferred);
+CREATE TABLE
+eric=> insert into t values(1),(2);
+INSERT 0 2
+eric=> update t set i=i+1;
+UPDATE 2
+eric=> commit;
+COMMIT
+
+/ TODO
+/ afmaken deferred
+
+/ 	7	. 
+
+/ with recursive
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/queries-with.html
+
+eric=> create table parts(sub int,id int,qty int);
+eric=> alter table parts add primary key(id);
+eric=> alter table parts add constraint fk foreign key(sub)references parts(id);
+eric=> alter table parts alter constraint fk deferrable initially deferred;
+eric=> commit;
+eric=> insert into parts values(11,1,101),(12,1,102),(21,2,201),(null,11,1),(null,12,2),(null,21,1);
+ERROR:  duplicate key value violates unique constraint "parts_pkey"
+DETAIL:  Key (id)=(1) already exists.
+eric=> rollback ;
+ROLLBACK
+
+eric=> drop table parts;
+DROP TABLE
+eric=> create table parts(sub int,id int,qty int);
+CREATE TABLE
+eric=> alter table parts add primary key(sub,id);
+ALTER TABLE
+eric=> alter table parts add constraint fk foreign key(sub)references parts(id);
+ERROR:  there is no unique constraint matching given keys for referenced table "parts"
+/ TODO
+
+eric=> drop table parts;
+DROP TABLE
+eric=> create table parts(s int,p int,q int);
+CREATE TABLE
+eric=> alter table parts add primary key(s);
+ALTER TABLE
+eric=> insert into parts values(1,null),(11,1),(12,1),(2,null),(21,2),(3,null);
+INSERT 0 6
+eric=> insert into parts values(111,11),(112,11),(121,12),(211,21),(212,21);
+INSERT 0 5
+eric=> insert into parts values(1111,111),(1112,111),(1113,111),(1121,112),(1211,121);
+INSERT 0 5
+
+eric=> select*from parts
+eric-> ;
+  s   |  p   |  q   
+------+------+------
+    1 | null | null
+   11 |    1 | null
+   12 |    1 | null
+    2 | null | null
+   21 |    2 | null
+    3 | null | null
+  111 |   11 | null
+  112 |   11 | null
+  121 |   12 | null
+  211 |   21 | null
+  212 |   21 | null
+ 1111 |  111 | null
+ 1112 |  111 | null
+ 1113 |  111 | null
+ 1121 |  112 | null
+ 1211 |  121 | null
+(16 rows)
+
+with recursive parents(s,p,q)as(
+	select s,p,q from parts where p=1
+	union all
+	select p.s,p.p,p.q
+	from parents pt,parts p
+	where p.p=pt.s		
+)
+select s,p,q
+from parents;
+
+  s   |  p  |  q   
+------+-----+------
+   11 |   1 | null
+   12 |   1 | null
+  111 |  11 | null
+  112 |  11 | null
+  121 |  12 | null
+ 1111 | 111 | null
+ 1112 | 111 | null
+ 1113 | 111 | null
+ 1121 | 112 | null
+ 1211 | 121 | null
+(10 rows)
+
+eric=> with recursive parents(s,p,q)as(
+  select s,p,q from parts where p=2
+  union all
+  select p.s,p.p,p.q
+  from parents pt,parts p
+  where p.p=pt.s
+)
+select s,p,q
+from parents;
+
+  s  | p  |  q   
+-----+----+------
+  21 |  2 | null
+ 211 | 21 | null
+ 212 | 21 | null
+(3 rows)
+
+
+/ 13	. 
+
+eric=> rollback ;
+ROLLBACK
+eric=> create table parts(s int,p int,q int);
+CREATE TABLE
+eric=> alter table parts add constraint pk primary key(p);
+ALTER TABLE
+eric=> alter table parts drop constraint pk;
+ALTER TABLE
+eric=> alter table parts add constraint pk primary key(s);
+ALTER TABLE
+eric=> alter table parts add constraint fk foreign key(p) references parts(s);
+ALTER TABLE
+eric=> commit;
+COMMIT
+
+eric=> insert into parts values(11,1);
+ERROR:  insert or update on table "parts" violates foreign key constraint "fk"
+DETAIL:  Key (p)=(1) is not present in table "parts".
+
+/ we moeten de fk defer	,
+
+eric=> alter table parts alter constraint fk deferrable initially immediate;
+ALTER TABLE
+eric=> commit;
+COMMIT
+eric=> set constraints fk deferred ;
+SET CONSTRAINTS
+eric=> insert into parts values(1,null),(11,1),(12,1),(2,null),(21,2),(3,null);
+INSERT 0 6
+eric=> insert into parts values(111,11),(112,11),(121,12),(211,21),(212,21);
+INSERT 0 5
+eric=> insert into parts values(1111,111),(1112,111),(1113,111),(1121,112),(1211,121);
+INSERT 0 5
+eric=> set constraints fk immediate ;
+SET CONSTRAINTS
+eric=> commit;
+COMMIT
+
+/ 13	 .
+
+/ we maken ook q	,
+
+delete from parts;
+set constraints fk deferred ;
+insert into parts values(1,null,1),(11,1,3),(12,1,4),(2,null,2),(21,2,5),(3,null,3);
+insert into parts values(111,11,5),(112,11,6),(121,12,7),(211,21,7),(212,21,8);
+insert into parts values(1111,111,7),(1112,111,8),(1113,111,9),(1121,112,9),(1211,121,9);
+set constraints fk immediate ;
+commit;
+
+
+with recursive parents(s,p,q)as(
+  select s,p,q from parts where p=1
+  union all
+  select p.s,p.p,p.q
+  from parents,parts p
+  where p.p=parents.s
+)
+select s,p,q
+from parents
+;
+  s   |  p  | q 
+------+-----+---
+   11 |   1 | 3
+   12 |   1 | 4
+  111 |  11 | 5
+  112 |  11 | 6
+  121 |  12 | 7
+ 1111 | 111 | 7
+ 1112 | 111 | 8
+ 1113 | 111 | 9
+ 1121 | 112 | 9
+ 1211 | 121 | 9
+(10 rows)
+
+
+with recursive parents(s,p,q)as(
+  select s,p,q from parts where p=1
+  union all
+  select p.s,p.p,p.q
+  from parents,parts p
+  where p.p=parents.s
+)
+select p,sum(q)
+from parents 
+group by p;
+
+  p  | sum 
+-----+-----
+   1 |   7
+ 111 |  24
+  11 |  11
+ 112 |   9
+ 121 |   9
+  12 |   7
+(6 rows)
+
+/ 13	. 
+
+/ group by	,
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/sql-selectinto.html
+
+with recursive parents(s,p,q)as(
+  select s,p,q from parts where p=1
+  union all
+  select p.s,p.p,p.q
+  from parents,parts p
+  where p.p=parents.s
+)
+select s,p,q 
+into temporary temp1
+from parents
+;
+SELECT 10
+
+eric=> commit;
+COMMIT
+
+/ Intermezzo
+
+/ Ook een temporary table moet je commit	, anders is hij weg bij een rollback	,
+
+/ maar een temporary table overleeft NIET een database sessie,	 als je die sluit, en je begint een nieuwe, is hij weg	,
+
+eric=> \q
+bash-4.3$ psql -h 172.17.0.2 -Ueric 
+eric=> \dt
+       List of relations
+ Schema | Name  | Type  | Owner 
+--------+-------+-------+-------
+ public | parts | table | eric
+(1 row)
+
+with recursive parents(s,p,q)as(
+  select s,p,q from parts where p=1
+  union all
+  select p.s,p.p,p.q
+  from parents,parts p
+  where p.p=parents.s
+)
+select s,p,q 
+into temporary temp1
+from parents;
+commit;
+
+eric=> \dnS+
+                                     List of schemas
+        Name        |  Owner   |  Access privileges   |           Description            
+--------------------+----------+----------------------+----------------------------------
+ information_schema | postgres | postgres=UC/postgres+| 
+                    |          | =U/postgres          | 
+ pg_catalog         | postgres | postgres=UC/postgres+| system catalog schema
+                    |          | =U/postgres          | 
+ pg_temp_1          | postgres |                      | 
+ pg_temp_2          | postgres |                      | 
+ pg_temp_3          | postgres |                      | 
+ pg_toast           | postgres |                      | reserved schema for TOAST tables
+ pg_toast_temp_1    | postgres |                      | 
+ pg_toast_temp_2    | postgres |                      | 
+ pg_toast_temp_3    | postgres |                      | 
+ public             | postgres | postgres=UC/postgres+| standard public schema
+                    |          | =UC/postgres         | 
+(10 rows)
+
+
+
+/ Einde Intermezzo
+
+
+eric=> \dt
+         List of relations
+  Schema   | Name  | Type  | Owner 
+-----------+-------+-------+-------
+ pg_temp_2 | temp1 | table | eric
+ public    | parts | table | eric
+(2 rows)
+
+eric=> select*from temp1;
+  s   |  p  | q 
+------+-----+---
+   11 |   1 | 3
+   12 |   1 | 4
+  111 |  11 | 5
+  112 |  11 | 6
+  121 |  12 | 7
+ 1111 | 111 | 7
+ 1112 | 111 | 8
+ 1113 | 111 | 9
+ 1121 | 112 | 9
+ 1211 | 121 | 9
+(10 rows)
+
+/ 1313	. 
+
+eric=> select 
+eric-> from temp1;
+--
+(10 rows)
+
+eric=> select temp1
+eric-> from temp1;
+    temp1     
+--------------
+ (11,1,3)
+ (12,1,4)
+ (111,11,5)
+ (112,11,6)
+ (121,12,7)
+ (1111,111,7)
+ (1112,111,8)
+ (1113,111,9)
+ (1121,112,9)
+ (1211,121,9)
+(10 rows)
+
+/ 1313	. 
+
+select p,sum(q)
+from temp1
+;
+ERROR:  column "temp1.p" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: select p,sum(q)
+
+select p,sum(q)
+from temp1
+group by p;
+  p  | sum 
+-----+-----
+   1 |   7
+ 111 |  24
+  11 |  11
+ 112 |   9
+ 121 |   9
+  12 |   7
+(6 rows)
+
+select p,sum(q)
+from temp1
+group by p
+having sum(q)>10;
+  p  | sum 
+-----+-----
+ 111 |  24
+  11 |  11
+(2 rows)
+
+
+
+
+
+/ 7	. 
+
+$ vi .psqlrc
+bash-4.3$ cat ~/.psqlrc 
+\set AUTOCOMMIT off
+\pset null 'null'
+
+/ INDEXES
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/indexes-intro.html
+
+eric=> create table test1(
+eric(> id int,
+eric(> content varchar
+eric(> );
+CREATE TABLE
+
+/ met varchar kun je toch hele strings insert	,
+eric=> insert into test1 values(7,'foo');
+INSERT 0 1
+eric=> select*from test1;
+ id | content 
+----+---------
+  7 | foo
+(1 row)
+eric=> delete from test1;
+DELETE 1
+
+/ 13	. 
+
+eric=> select pg_typeof('foo');
+ pg_typeof 
+-----------
+ unknown
+(1 row)
+/ TODO
+
+eric=> select generate_series(1,10),encode('foo','base64');
+ generate_series | encode 
+-----------------+--------
+               1 | Zm9v
+               2 | Zm9v
+               3 | Zm9v
+               4 | Zm9v
+               5 | Zm9v
+               6 | Zm9v
+               7 | Zm9v
+               8 | Zm9v
+               9 | Zm9v
+              10 | Zm9v
+(10 rows)
+
+eric=> select pg_typeof(random()::text)
+eric-> ;
+ pg_typeof 
+-----------
+ text
+(1 row)
+
+
+
+
+
+
+/ Einde INDEXES
+
+/ TYPES
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/datatype.html
+
+/ google
+postgresql 
+/ lees	,
+https://www.postgresql.org/message-id/CAFj8pRCYGn2931BFmPNgW%3DW4JDZkFGmasndwOL5%3DvOoLPxux_Q%40mail.gmail.com
+
+eric=> select 'foo' c
+eric-> ;
+  c  
+-----
+ foo
+(1 row)
+
+eric=> select t.c from (select 'foo' c)t;
+  c  
+-----
+ foo
+(1 row)
+
+eric=> select t.c || ' bar' from (select 'foo' c)t;
+ERROR:  failed to find conversion function from unknown to text
+eric=> rollback ;
+ROLLBACK
+eric=> select t.c || ' bar' from (select 'foo'::text c)t;
+ ?column? 
+----------
+ foo bar
+(1 row)
+
+
+eric=> select pg_typeof('foo');
+ pg_typeof 
+-----------
+ unknown
+(1 row)
+eric=>  select pg_typeof('foo'||'bar');
+ pg_typeof 
+-----------
+ text
+(1 row)
+eric=> select pg_typeof('foo'||'');
+ pg_typeof 
+-----------
+ text
+(1 row)
+
+eric=> select c||''     
+from (select 'foo' c)t;
+ERROR:  failed to find conversion function from unknown to text
+
+eric=> select length(c)
+from (select 'foo' c)t;
+ERROR:  failed to find conversion function from unknown to text
+
+/ lees	,
+https://postgrespro.com/list/thread-id/1557541
+/ create cast
+/ TODO
+/ oid
+/ TODO
+
+
+/ Intermezzo
+
+eric=> select 'foo'+'bar';
+ERROR:  operator is not unique: unknown + unknown
+LINE 1: select 'foo'+'bar';
+HINT:  Could not choose a best candidate operator. You might need to add explicit type casts.
+
+/ Einde Intermezzo
+
+
+/ 13	. 
+
+/ lees	,
+https://stackoverflow.com/questions/22964272/postgresql-get-a-random-datetime-timestamp-between-two-datetime-timestamp
+
+> select timestamp '2014-01-10 20:00:00' + 
+	random() * (timestamp '2014-01-20 20:00:00' - timestamp '2014-01-10 10:00:00')
+          ?column?          
+----------------------------
+ 2014-01-16 16:18:26.559628
+(1 row)
+         ?column?          
+---------------------------
+ 2014-01-13 01:41:30.58514
+
+eric=> select timestamp '2014-01-20 20:00:00' -
+eric->                    timestamp '2014-01-10 10:00:00';
+     ?column?     
+------------------
+ 10 days 10:00:00
+(1 row)
+
+eric=> select pg_typeof( timestamp '2014-01-20 20:00:00' - timestamp '2014-01-10 10:00:00');
+ pg_typeof 
+-----------
+ interval
+(1 row)
+
+/ record, interval zijn types	,
+/ TODO
+
+/ 13	. 
+
+/ we kunnen het ook zo doen	,
+
+eric=> select interval '10 days'+interval '10 hours';
+     ?column?     
+------------------
+ 10 days 10:00:00
+(1 row)
+
+/ 13	. 
+
+eric=> with recursive t(n,s) as (
+values(1,timeofday())
+union all
+select n+1,md5(random()::text)
+from t
+where n<10)
+select n,s from t;
+ n  |                s
+----+----------------------------------
+  1 | 87f45f56d0ab7b961c465243e26bb84c
+  2 | f83294d29af04281bedf4df4b2dd5c4b
+
+eric=> select g*random()
+from generate_series(1000,1005)g;
+     ?column?
+------------------
+ 925.833757035434
+ 277.967728589196
+ 429.597465422004
+
+/ 13	. 
+
+////////////////////////////////////////////////////////////
+
+/ for loops	, 
+
+/ met generate_series of met with recursive 
+
+/ 1313	. 
+
+eric=> select clock_timestamp()t into ts;
+eric=> select t
+eric-> from ts;
+               t               
+-------------------------------
+ 2018-10-11 19:14:12.096713+00
+(1 row)
+
+/ dit is echt een cross join	, gewoon alle rijen verm; in t is er maar 1	,
+eric=> select t,g
+from ts cross join generate_series(1,10)g;
+               t               | g  
+-------------------------------+----
+ 2018-10-11 19:14:12.096713+00 |  1
+ 2018-10-11 19:14:12.096713+00 |  2
+ 2018-10-11 19:14:12.096713+00 |  3
+ 2018-10-11 19:14:12.096713+00 |  4
+ 2018-10-11 19:14:12.096713+00 |  5
+ 2018-10-11 19:14:12.096713+00 |  6
+ 2018-10-11 19:14:12.096713+00 |  7
+ 2018-10-11 19:14:12.096713+00 |  8
+ 2018-10-11 19:14:12.096713+00 |  9
+ 2018-10-11 19:14:12.096713+00 | 10
+(10 rows)
+
+eric=> select t+g*interval '1 day'ts,g
+from ts,generate_series(1,10)g;
+           ?column?            
+-------------------------------
+ 2018-10-12 19:14:12.096713+00
+ 2018-10-13 19:14:12.096713+00
+ 2018-10-14 19:14:12.096713+00
+ 2018-10-15 19:14:12.096713+00
+ 2018-10-16 19:14:12.096713+00
+ 2018-10-17 19:14:12.096713+00
+ 2018-10-18 19:14:12.096713+00
+ 2018-10-19 19:14:12.096713+00
+ 2018-10-20 19:14:12.096713+00
+ 2018-10-21 19:14:12.096713+00
+(10 rows)
+
+eric=> select t+g*(interval'1 day'+interval'1 hour')ts,g
+from ts,generate_series(1,10)g;
+              ts               | g  
+-------------------------------+----
+ 2018-10-12 20:14:12.096713+00 |  1
+ 2018-10-13 21:14:12.096713+00 |  2
+ 2018-10-14 22:14:12.096713+00 |  3
+ 2018-10-15 23:14:12.096713+00 |  4
+ 2018-10-17 00:14:12.096713+00 |  5
+ 2018-10-18 01:14:12.096713+00 |  6
+ 2018-10-19 02:14:12.096713+00 |  7
+ 2018-10-20 03:14:12.096713+00 |  8
+ 2018-10-21 04:14:12.096713+00 |  9
+ 2018-10-22 05:14:12.096713+00 | 10
+(10 rows)
+
+/ 1313	. 
+
+/ of zo	,
+
+with recursive t(n,s)as(
+	values(1,clock_timestamp())
+	union all
+	select n+1,s+interval'1 day'+interval'1 hour'
+	from t
+	where n<10
+)
+select *
+from t;
+ n  |               s               
+----+-------------------------------
+  1 | 2018-10-11 20:59:04.545708+00
+  2 | 2018-10-12 21:59:04.545708+00
+  3 | 2018-10-13 22:59:04.545708+00
+  4 | 2018-10-14 23:59:04.545708+00
+  5 | 2018-10-16 00:59:04.545708+00
+  6 | 2018-10-17 01:59:04.545708+00
+  7 | 2018-10-18 02:59:04.545708+00
+  8 | 2018-10-19 03:59:04.545708+00
+  9 | 2018-10-20 04:59:04.545708+00
+ 10 | 2018-10-21 05:59:04.545708+00
+(10 rows)
+
+/ Intermezzo
+
+/ with of select into (temp) of create (temp) table as 
+
+select clock_timestamp()t into ts;
+select t
+from ts;
+
+/ of	,
+
+with ts as(
+select clock_timestamp()t
+)
+select t
+from ts;
+
+/ of	,
+
+eric=> create temp table ts7 as
+select clock_timestamp()t;
+
+/ lees	,
+https://stackoverflow.com/questions/29964708/select-into-temp-table-in-postgresql
+Furthermore, CREATE TABLE AS offers a superset of the functionality offered by SELECT INTO.
+
+
+
+/ Einde Intermezzo
+
+with ts as(
+select clock_timestamp()t
+),
+recursive total(t)as(
+values(ts.t)
+union all
+select t+interval'1 day'+interval'1 hour'
+from total
+where t<ts.t+interval'1 week'+interval'7 hours'
+)
+select t 
+from total;
+/ TODO
+
+
+/ 13	. 
+
+/ Zoek naar fct met clock	,
+
+eric=> \df *clock*
+                                   List of functions
+   Schema   |      Name       |     Result data type     | Argument data types |  Type  
+------------+-----------------+--------------------------+---------------------+--------
+ pg_catalog | clock_timestamp | timestamp with time zone |                     | normal
+(1 row)
+
+
+/ 7	. 
+
+/ joins	,
+
+eric=> create table ien(i int);
+eric=> insert into ien values(1),(2);
+eric=>   select * into jen from ien;
+
+eric=> select *
+from ien,jen;
+/=
+eric=> select *
+eric-> from ien cross join jen;
+ i | i 
+---+---
+ 1 | 1
+ 1 | 2
+ 2 | 1
+ 2 | 2
+(4 rows)
+
+
+eric=> select *                   
+from ien join jen using(i);
+ i 
+---
+ 1
+ 2
+(2 rows)
+
+
+
+/ 7	. 
+
+/ time functions
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/functions-datetime.html
+https://popsql.io/learn-sql/postgresql/how-to-do-type-casting-in-postgresql/
+http://www.postgresqltutorial.com/postgresql-cast/
+
+/ 13	 .
+
+/ clock_timestamp() verandert steeds, is 2 uur te laat	,
+/=
+/ statement_timestamp()
+
+eric=> select statement_timestamp();
+/=
+eric=> select clock_timestamp();
+        clock_timestamp        
+-------------------------------
+ 2018-10-10 18:51:18.632794+00
+(1 row)
+
+eric=> select pg_typeof(clock_timestamp());
+        pg_typeof         
+--------------------------
+ timestamp with time zone
+(1 row)
+
+/ 13	. 
+
+/ timeofday() verandert ook steeds	,
+
+eric=> select timeofday();
+              timeofday              
+-------------------------------------
+ Wed Oct 10 19:14:38.476482 2018 UTC
+(1 row)
+
+eric=> select pg_typeof(timeofday());
+ pg_typeof 
+-----------
+ text
+(1 row)
+
+/ 13	. 
+
+/ current_timestamp is constant in de tx	,
+/=
+/ now()
+
+eric=> select now();
+/=
+eric=> select current_timestamp;
+              now              
+-------------------------------
+ 2018-10-10 18:48:27.735567+00
+(1 row)
+
+eric=> select pg_typeof(current_timestamp);
+        pg_typeof         
+--------------------------
+ timestamp with time zone
+(1 row)
+
+/ 13	. 
+
+/ bepaal verschil 2 timestamps	,
+
+eric=> \set bar foo;
+eric=> \set
+bar = 'foo;'
+
+/ maar hoe select in bar	,  of current_timestamp
+/ TODO
+
+/ we kunnen de 2 timestamps in 2 tables store, en die join en zo verschil berekenen	,
+
+eric=> select statement_timestamp()t into ts;
+SELECT 1
+eric=> select statement_timestamp()t into ts2;
+SELECT 1
+eric=> select ts2.t - ts.t t
+from ts,ts2;
+        t        
+-----------------
+ 00:00:08.061767
+(1 row)
+eric=> select pg_typeof(ts2.t - ts.t)d
+from ts,ts2;
+    d     
+----------
+ interval
+(1 row)
+
+/ 1313	. 
+
+eric=> select timeofday()t into ts3;
+SELECT 1
+eric=> select timeofday()t into ts4;
+SELECT 1
+eric=> select ts4.t - ts3.t t
+from ts3,ts4;
+ERROR:  operator does not exist: text - text
+LINE 1: select ts4.t - ts3.t t
+                     ^
+HINT:  No operator matches the given name and argument type(s). You might need to add explicit type casts.
+/ we kunnen ook ::text	, maar een - met 2 strings kan niet	,
+/ TODO
+
+/ 1313	. 
+
+/ casts	,
+
+/ we kunnen wel 1::integer (al is 1 al een integer)	, maar integer 1 kan niet	, integer '1' is OK	,
+
+eric=> select integer '1';
+ int4 
+------
+    1
+(1 row)
+
+eric=> select pg_typeof( integer '1');
+ pg_typeof 
+-----------
+ integer
+(1 row)
+
+eric=> select 1.0::integer;
+ int4 
+------
+    1
+(1 row)
+
+eric=> select 1::integer;
+ int4 
+------
+    1
+(1 row)
+
+eric=> select '7 day'::interval;
+ interval 
+----------
+ 7 days
+(1 row)
+
+eric=> select '7 days'::interval;
+ interval 
+----------
+ 7 days
+(1 row)
+
+eric=> select integer '1';
+ int4 
+------
+    1
+(1 row)
+
+eric=> select integer 1.0;
+ERROR:  syntax error at or near "1.0"
+LINE 1: select integer 1.0;
+                       ^
+eric=> select integer 1;
+ERROR:  syntax error at or near "1"
+LINE 1: select integer 1;
+/ TODO
+
+
+
+
+/ 7	. 
+
+/ google,
+postgresql random date
+/ lees	,
+https://stackoverflow.com/questions/22964272/postgresql-get-a-random-datetime-timestamp-between-two-datetime-timestamp
+
+
+/ 7	. 
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/typeconv-overview.html
+
+SELECT text 'Origin' AS "label", point '(0,0)' AS "value";
+
+ label  | value
+--------+-------
+ Origin | (0,0)
+(1 row)
+has two literal constants, of type text and point. If a type is not specified for a string literal, then the placeholder type unknown is assigned initially, to be resolved in later stages as described below.
+
+/ 13		. 
+
+eric=> select 'π'::bytea;
+ bytea  
+--------
+ \xcf80
+(1 row)
+
+eric=> select bytea 'π';
+ bytea  
+--------
+ \xcf80
+(1 row)
+
+eric=> select cast('π' as bytea);
+ bytea  
+--------
+ \xcf80
+(1 row)
+
+/ TODO
+/ we zien utf8	,
+
+/ 13	. 
+
+/ "" 
+
+eric=> select text 'origin' as label;
+ label  
+--------
+ origin
+(1 row)
+
+eric=> select text 'origin' as "label";
+ label  
+--------
+ origin
+(1 row)
+
+eric=> select text 'origin' as 'label';
+ERROR:  syntax error at or near "'label'"
+LINE 1: select text 'origin' as 'label';
+
+/ 13	. 
+
+eric=> select decode('\xcf80'
+/ TODO
+
+/ 13	 
+
+/ google, 
+postgresql decode utf8
+/ lees	,
+https://stackoverflow.com/questions/35476033/encoding-and-decoding-in-postgresql
+
+eric=> select 'a\n';
+ ?column? 
+----------
+ a\n
+(1 row)
+
+eric=> select e'a\n';
+ ?column? 
+----------
+ a       +
+ 
+(1 row)
+
+eric=> select e'a\n\n';
+ ?column? 
+----------
+ a       +
+         +
+ 
+(1 row)
+
+      010   8     08    BS  '\b' (backspace)   
+       012   10    0A    LF  '\n' (new line)  
+
+eric=> select e'a\b'
+;
+ ?column? 
+----------
+ a\x08
+(1 row)
+
+/ Intermezzo
+
+[eric@almond ping]$ echo 'a\bc';
+a\bc
+[eric@almond ping]$ echo -e 'a\bc';
+c
+
+/ Einde Intermezzo
+
+/ 1313		.
+
+eric=> select 'foo'::bytea;
+  bytea   
+----------
+ \x666f6f
+(1 row)
+
+
+eric=> select 'a\n'::bytea;
+ERROR:  invalid input syntax for type bytea
+LINE 1: select 'a\n'::bytea;
+               ^
+
+eric=> select e'a\n'::bytea;
+ bytea  
+--------
+ \x610a
+(1 row)
+
+eric=> select '\n'::bytea;
+ERROR:  invalid input syntax for type bytea
+LINE 1: select '\n'::bytea;
+
+
+/ 1313 	.
+
+eric=> select pg_typeof(e'a\b');
+ pg_typeof 
+-----------
+ unknown
+(1 row)
+
+eric=> select pg_typeof('a\b');
+ pg_typeof 
+-----------
+ unknown
+(1 row)
+
+/ 1313	. 
+
+eric=> select convert_to('π','utf-8');
+ convert_to 
+------------
+ \xcf80
+(1 row)
+
+eric=> select pg_typeof(convert_to('π','utf-8'));
+ pg_typeof 
+-----------
+ bytea
+(1 row)
+
+eric=> select convert_from (bytea'\xcf80','utf8');
+ convert_from 
+--------------
+ π
+(1 row)
+
+/ 13	. 
+
+/ ::bytea = convert_to utf8	, want
+
+eric=> show client_encoding;
+ client_encoding 
+-----------------
+ UTF8
+(1 row)
+eric=> select bytea'π';
+ bytea  
+--------
+ \xcf80
+(1 row)
+
+/ maar we kunnen ook expliciet,	
+
+eric=>  select convert_to('π','utf8')
+eric-> ;
+ convert_to 
+------------
+ \xcf80
+(1 row)
+
+eric=> select pg_typeof(convert_to('π','utf-8'));
+ pg_typeof 
+-----------
+ bytea
+(1 row)
+
+eric=> select convert_from (bytea'\xcf80','utf8');
+ convert_from 
+--------------
+ π
+(1 row)
+
+eric=> select pg_typeof(convert_from (bytea'\xcf80','utf8'));
+ pg_typeof 
+-----------
+ text
+(1 row)
+
+/ 13	. 
+
+eric=> select encode('π','base64');
+ encode 
+--------
+ z4A=
+(1 row)
+
+eric=> select encode('π'::bytea,'base64');
+ encode 
+--------
+ z4A=
+(1 row)
+
+eric=> select pg_typeof(encode('π'::bytea,'base64'));
+ pg_typeof 
+-----------
+ text
+(1 row)
+
+eric=> select decode('z4A=','base64');
+ decode 
+--------
+ \xcf80
+(1 row)
+eric=> select pg_typeof( decode('z4A=','base64'));
+ pg_typeof 
+-----------
+ bytea
+(1 row)
+
+eric=> select convert_from(decode('z4A=','base64'),'utf8');
+ convert_from 
+--------------
+ π
+(1 row)
+
+/ 13	. 
+
+BTW, what's going on would be clearer if you instead explicitly encoded it when you stored it rather than relying on a cast to bytea:
+
+/ cast naar bytea geeft utf8	, maar omgekeerd kan niet,
+
+eric=> select 'π'::bytea;
+ bytea  
+--------
+ \xcf80
+(1 row)
+
+eric=> select 'π'::bytea::text;
+  text  
+--------
+ \xcf80
+(1 row)
+
+/ TODO
+
+/ 13	. 
+
+/ \\ is backslash	, \0 is octal	, dus \012 is 0x0a
+
+eric=> select encode(bytea'\012','hex');
+ encode 
+--------
+ 0a
+(1 row)
+
+eric=> select encode(bytea'\\012','hex');
+  encode  
+----------
+ 5c303132
+(1 row)
+
+eric=> select encode(e'\\\012','hex');
+ERROR:  invalid input syntax for type bytea
+/ TODO
+
+/ 13	. 
+
+/ hier maakt e niet uit	, 
+
+eric=> select encode('\012','hex');
+ encode 
+--------
+ 0a
+(1 row)
+eric=> select encode(e'\012','hex');
+ encode 
+--------
+ 0a
+(1 row)
+
+/ TODO
+
+/ 13	. 
+
+eric=> select e'\n'::bytea;
+ bytea 
+-------
+ \x0a
+(1 row)
+
+eric=> select '\n'::bytea;
+ERROR:  invalid input syntax for type bytea
+LINE 1: select '\n'::bytea;
+
+eric=> select e'\n'::bytea;
+ bytea 
+-------
+ \x0a
+(1 row)
+
+eric=>   select bytea'\n';
+ERROR:  invalid input syntax for type bytea
+LINE 1: select bytea'\n';
+                    ^
+eric=> rollback ;
+ROLLBACK
+eric=>   select bytea e'\n';
+ bytea 
+-------
+ \x0a
+(1 row)
+
+eric=>   select bytea e'π\n';
+  bytea   
+----------
+ \xcf800a
+(1 row)
+
+/ 13	 .
+
+/ convert_to en encode	,
+
+/ convert_to: 'π' (unknown) -> 0xcf80 (bytea)
+
+/ encode: 0xcf80 (bytea) -> cf80 (text)
+
+eric=> select convert_to('π','utf8');
+ convert_to 
+------------
+ \xcf80
+(1 row)
+
+eric=> select encode(convert_to('π','utf8'),'hex');
+ encode 
+--------
+ cf80
+(1 row)
+
+/ 13	 .
+
+eric=> select convert_to(e'\n','utf8');
+ convert_to 
+------------
+ \x0a
+(1 row)
+
+eric=> select encode(convert_to(e'\n','utf8'),'hex');
+ encode 
+--------
+ 0a
+(1 row)
+
+/ Intermezzo
+
+eric=> show client_encoding;
+ client_encoding 
+-----------------
+ UTF8
+(1 row)
+
+/ ipv convert_to	,
+
+eric=> select bytea e'\n'
+eric-> ;
+ bytea 
+-------
+ \x0a
+(1 row)
+
+/ Einde Intermezzo
+
+/ en andersom	,
+
+eric=> select decode('cf80','hex');
+ decode 
+--------
+ \xcf80
+(1 row)
+
+eric=> select convert_from(decode('cf80','hex'),'utf8');
+ convert_from 
+--------------
+ π
+(1 row)
+
+/ 'cf80' als 1ste arg van decode heeft type unknown	,
+/ dus het is niet helemaal symmetrisch	,
+/ TODO
+
+/ 13	. 
+
+/ verder	, 
+https://www.postgresql.org/docs/9.6/static/typeconv-overview.html
+
+If a type is not specified for a string literal, then the placeholder type unknown is assigned initially, to be resolved in later stages as described below.
+
+
+
+
+
+/ 13	. 
+
+/ google,
+postgresql decode utf8
+/ lees	,
+https://postgrespro.com/list/thread-id/1554567
+
+
+/ 13	. 
+
+
+
+
+
+
+/ Einde TYPES
+
+/ DOMAINS
+
+/ lees	,
+https://www.postgresql.org/docs/9.5/static/sql-createdomain.html
+
+
+
+
+/ Einde DOMAINS
+
+/ CHECK
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/ddl-constraints.html
+
+
+
+/ EInde CHECK
+
+/ NUMERIC
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/datatype-numeric.html
+
+eric=> select pg_typeof(-3.5);
+ pg_typeof 
+-----------
+ numeric
+(1 row)
+
+eric=> select pg_typeof (generate_series(-3.5,3.5,1));
+ pg_typeof 
+-----------
+ numeric
+ numeric
+ numeric
+ numeric
+ numeric
+ numeric
+ numeric
+ numeric
+(8 rows)
+
+/ Intermezzo
+
+/ google	,
+postgresql select without table	,
+
+/ lees	,
+https://stackoverflow.com/questions/15948614/select-hardcoded-values-without-table
+
+eric=> select a
+from (values('foo'),('bar')) s(a);
+  a  
+-----
+ foo
+ bar
+(2 rows)
+
+/ dit hebben we eerder gezien, je pakt de hele rij	,
+eric=> select a from (values('foo'),('bar'))a;
+   a   
+-------
+ (foo)
+ (bar)
+(2 rows)
+
+/ anonieme tabellen doen ze niet aan in postgresql	, altijd een naam geven	,
+
+/ 13	. 
+
+/ lees	,
+https://modern-sql.com/use-case/select-without-from
+
+/ een select zonder from kan maar 1 regel return	, 
+/ een standalone values kan meerdere regels return	, dat is voordeel boven select zonder from	,
+
+/ select without from		,
+eric=> select current_date;
+    date    
+------------
+ 2018-10-07
+(1 row)
+
+/ of	, 
+/ values without insert 
+eric=> values(current_date);
+  column1   
+------------
+ 2018-10-07
+(1 row)
+
+eric=>  values(current_timestamp);
+            column1            
+-------------------------------
+ 2018-10-08 19:06:21.489325+00
+(1 row)
+
+eric=> values(timeofday());
+               column1               
+-------------------------------------
+ Mon Oct 08 19:06:43.222302 2018 UTC
+(1 row)
+
+eric=> select pg_typeof(timeofday());
+ pg_typeof 
+-----------
+ text
+(1 row)
+
+eric=> select pg_typeof(current_timestamp);
+        pg_typeof         
+--------------------------
+ timestamp with time zone
+(1 row)
+
+/ pg_typeof(values(current_timestamp) is ERR	,
+
+/ 13	. 
+
+eric=>  values(1),(2);
+ column1 
+---------
+       1
+       2
+(2 rows)
+
+eric=> select 1,2;
+ ?column? | ?column? 
+----------+----------
+        1 |        2
+(1 row)
+
+/ er verschijnen niet 2 rijen, al lijkt (1),(2) op 2 rijen	, 
+/ achter select is een projectie, selectie van een rij	, de rijen komen ergens anders vandaan,
+eric=> select (1),(2);
+ ?column? | ?column? 
+----------+----------
+        1 |        2
+(1 row)
+
+
+/ als we values standalone, kunnen we hem geen naam geven	,
+/ maar achter from moet het juist	, values(...),(...) moet wel tussen (...)	,
+
+eric=>  values(3),(5);
+ column1 
+---------
+       3
+       5
+(2 rows)
+
+eric=>  values(3),(5)t(a);
+ERROR:  syntax error at or near "t"
+
+eric=> select*from (values(3),(5))t(a);
+ a 
+---
+ 3
+ 5
+(2 rows)
+
+/ Einde Intermezzo
+
+/ Intermezzo
+
+/ generate_series(...) is anders als een tabel	,
+
+eric=> select f
+eric-> from (values(1),(2))f;
+  f  
+-----
+ (1)
+ (2)
+(2 rows)
+eric=>  select x  
+from generate_series(-3.5,3.5,1)x;
+  x   
+------
+ -3.5 			-- we zien geen (-3.5), ...
+ -2.5
+ -1.5
+ -0.5
+  0.5
+  1.5
+  2.5
+  3.5
+(8 rows)
+
+
+
+eric=> select pg_typeof(f)
+from (values(1),(2))f;
+ pg_typeof 
+-----------
+ record											-- hier zien we het verschil ook	,
+ record
+(2 rows)
+
+eric=>  select pg_typeof(x)  
+from generate_series(-3.5,3.5,1)x;
+ pg_typeof 
+-----------
+ numeric
+ numeric
+ numeric
+ numeric
+ numeric
+ numeric
+ numeric
+ numeric
+(8 rows)
+
+eric=> select pg_typeof(generate_series(1,10));
+ pg_typeof 
+-----------
+ integer
+ integer
+ integer
+ integer
+ integer
+ integer
+ integer
+ integer
+ integer
+ integer
+(10 rows)
+
+eric=> select pg_typeof(test1);
+ERROR:  column "test1" does not exist
+
+eric=> values(pg_typeof(1));
+ column1 
+---------
+ integer
+(1 row)
+
+eric=> values(pg_typeof(generate_series(1,2)));
+ERROR:  set-valued function called in context that cannot accept a set
+/ values is hier het probleem,
+
+eric=> select pg_typeof(generate_series(1,2));
+ pg_typeof 
+-----------
+ integer
+ integer
+(2 rows)
+
+/ 13	. 
+
+eric=> values(1),(2);
+ column1 
+---------
+       1
+       2
+(2 rows)
+
+eric=> values((1),(2));
+ column1 | column2 
+---------+---------
+       1 |       2
+(1 row)
+
+eric=> select pg_typeof(values(1),(2));
+ERROR:  syntax error at or near "("
+
+
+/ Einde Intermezzo
+
+/ Intermezzo
+
+eric=> create temp table t1(n numeric);
+CREATE TABLE
+eric=> insert into t1 
+eric-> select *
+eric-> from generate_series(-3.5,3.5,1);
+INSERT 0 8
+eric=> select*from t1;
+  n   
+------
+ -3.5
+ -2.5
+ -1.5
+ -0.5
+  0.5
+  1.5
+  2.5
+  3.5
+(8 rows)
+
+eric=> select t1 from t1;
+   t1   
+--------
+ (-3.5)
+ (-2.5)
+ (-1.5)
+ (-0.5)
+ (0.5)
+ (1.5)
+ (2.5)
+ (3.5)
+(8 rows)
+
+/ of zo	,
+
+eric=>  select * 
+ into t2
+from (values(1),(2))_(a);		-- er moeten () om values(1),(2)
+SELECT 2
+eric=> select*from t2;
+ a 
+---
+ 1
+ 2
+(2 rows)
+
+eric=> select *
+into t2
+from generate_series(1,10,2)t(a); 		-- () om generate_series(1,10,2) is ERR	,
+SELECT 5
+eric=> select *
+eric-> from t2;
+ a 
+---
+ 1
+ 3
+ 5
+ 7
+ 9
+(5 rows)
+
+/ Einde Intermezzo
+
+/ Einde NUMERIC
+
+/ CONSTRAINTS CHECK UNIQUE NOT NULL
+
+/ check constraint	,
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/ddl-constraints.html
+
+create table products(
+no integer,
+name text,
+price numeric check(price>0)
+);
+
+/ of	,
+
+create table products(
+no integer,
+name text,
+price numeric,
+check(price>0)
+);
+eric=> \d+ products;
+                       Table "public.products"
+ Column |  Type   | Modifiers | Storage  | Stats target | Description 
+--------+---------+-----------+----------+--------------+-------------
+ no     | integer |           | plain    |              | 
+ name   | text    |           | extended |              | 
+ price  | numeric |           | main     |              | 
+Check constraints:
+    "products_price_check" CHECK (price > 0::numeric)
+
+eric=> insert into products values(1,'foo',-2);
+ERROR:  new row for relation "products" violates check constraint "products_price_check"
+DETAIL:  Failing row contains (1, foo, -2).
+
+create table products(
+no integer,
+name text,
+price numeric,
+constraint positive_price check(price>0)
+);
+/ OK	,
+
+create table products(
+no integer,
+name text,
+price numeric constraint positive_price check(price>0),
+discounted_price numeric constraint positive_discounted_price check(discounted_price>0),
+constraint valid_discount check(discounted_price<=price)
+);
+eric=> insert into products values(1,'f',2,1);
+INSERT 0 1
+eric=> insert into products values(1,'f',2,3);
+ERROR:  new row for relation "products" violates check constraint "valid_discount"
+
+/ 13	. 
+
+
+
+/ 13	. 
+
+Adding a unique constraint will automatically create a unique B-tree index on the column or group of columns listed in the constraint. A uniqueness restriction covering only some rows cannot be written as a unique constraint, but it is possible to enforce such a restriction by creating a unique partial index.
+
+In general, a unique constraint is violated if there is more than one row in the table where the values of all of the columns included in the constraint are equal. However, two null values are never considered equal in this comparison. That means even in the presence of a unique constraint it is possible to store duplicate rows that contain a null value in at least one of the constrained columns. This behavior conforms to the SQL standard, 
+
+eric=> create table ent(
+i int,
+unique(i)
+);
+eric=> \d+ ent
+                         Table "public.ent"
+ Column |  Type   | Modifiers | Storage | Stats target | Description 
+--------+---------+-----------+---------+--------------+-------------
+ i      | integer |           | plain   |              | 
+Indexes:
+    "ent_i_key" UNIQUE CONSTRAINT, btree (i)
+
+/ we zien de btree	,
+
+/ 13	. 
+
+the primary key defines the default target column(s) for foreign keys referencing its table.
+
+/ we hoeven bij fk niet de zeggen welke column de pk is	,
+
+/ 1313	. 
+
+create table ent(
+i int,
+primary key(i)
+);
+create table ref(
+j int,
+foreign key(j)references ent
+);
+eric=> drop table ent cascade;
+NOTICE:  drop cascades to constraint ref_j_fkey on table ref
+
+/ 1313	. 
+
+/ als we unique not null, dan moeten we in de fk de column noemen, drop cascade werkt ook wel,
+
+eric=> create table ent(i int not null unique);
+CREATE TABLE
+eric=> create table ref(j int references ent);
+ERROR:  there is no primary key for referenced table "ent"
+
+eric=> create table ref(j int references ent(i));
+CREATE TABLE
+
+eric=> drop table ent cascade;
+NOTICE:  drop cascades to constraint ref_j_fkey on table ref
+
+/ 1313	. 
+
+eric=> create table ent(
+i int primary key,
+j int not null unique
+);
+eric=> create table ref(
+k int references ent,
+l int references ent(j)
+);
+
+/ 1313	 .
+
+eric=> drop table ref;
+DROP TABLE
+eric=> create table ent(
+i int,
+j int,
+primary key(i,j)
+);
+CREATE TABLE
+eric=> create table ref(
+k int,
+l int,
+foreign key(k,l) references ent
+);
+CREATE TABLE
+
+/ 1313	 .
+
+create table ent(
+i int not null,
+j int not null,
+unique(i,j)
+);
+create table ref(
+k int,
+l int,
+foreign key(k,l) references ent(i,j)
+);
+
+/ 13	 
+
+/ drop table cascade drops de fk constraint in referencing table   
+/ als de column in de referenced table primary key is of not null unique	,
+
+create table ent(
+i int primary key,
+j int not null unique
+);
+create table ref(
+j int references ent(j)
+);
+eric=> \d ref
+      Table "public.ref"
+ Column |  Type   | Modifiers 
+--------+---------+-----------
+ j      | integer | 
+Foreign-key constraints:
+    "ref_j_fkey" FOREIGN KEY (j) REFERENCES ent(j)
+
+eric=> drop table ent cascade;
+NOTICE:  drop cascades to constraint ref_j_fkey on table ref
+
+eric=> \d ref
+      Table "public.ref"
+ Column |  Type   | Modifiers 
+--------+---------+-----------
+ j      | integer | 
+
+/ 13	. 
+
+/ als we drop table cascade, dan wordt de fk constraint rm in de referencing table	, maar de data blijft in de referencing table	,
+
+eric=> create table ent(i int primary key);
+eric=> create table ref(i int references ent);
+eric=> insert into ent values(1),(2);
+eric=> insert into ref values(2);
+eric=> drop table ent cascade;
+NOTICE:  drop cascades to constraint ref_i_fkey on table ref
+
+eric=> select*from ref;
+ i 
+---
+ 2
+(1 row)
+
+/ table ent is rm	,
+/ maar in de referencing table is de data er nog	, 
+/ maar hier is wat aan te doen	,
+
+/ 13	. 
+
+eric=> create table ent(i int primary key);
+CREATE TABLE
+eric=> create table ref(i int references ent);
+CREATE TABLE
+eric=> drop table if exists ent,ref;
+DROP TABLE
+
+/ als we alleen ent rm	, dan ERR	,
+/ als we drop table ent cascade, wordt de fk van ref rm	, maar ref zelf en data blijft,	
+
+/ 13	. 
+
+/ we rm rows in referenced tables	,
+
+create table ent(i int primary key);
+create table ord(j int primary key);
+create table conn(
+i int references ent on delete restrict,
+j int references ord on delete cascade,
+primary key(i,j)
+);
+
+eric=> insert into ent values(1),(2);
+eric=> insert into ord values(11),(12);
+eric=> insert into conn values(1,11),(1,12),(2,11),(2,12);
+
+eric=> delete from ent
+eric-> where i=1;
+ERROR:  update or delete on table "ent" violates foreign key constraint "conn_i_fkey" on table "conn"
+eric=> delete from ord
+where j=11;
+DELETE 1
+
+eric=> select*from ent;
+ i 
+---
+ 1
+ 2
+(2 rows)
+eric=> select*from ord;
+ j  
+----
+ 12
+(1 row)
+eric=> select*from conn;
+ i | j  
+---+----
+ 1 | 12
+ 2 | 12
+(2 rows)
+
+
+/ Einde CONSTRAINTS CHECK UNIQUE NOT NULL
+
+/ DOMAINS
+
+/ 13	. 
+
+eric=> create table std(i serial);
+eric=> alter table std add s text not null;
+eric=> \d+ std;
+                                             Table "public.std"
+ Column |  Type   |                    Modifiers                    | Storage  | Stats target | De
+scription 
+--------+---------+-------------------------------------------------+----------+--------------+---
+----------
+ i      | integer | not null default nextval('std_i_seq'::regclass) | plain    |              | 
+ s      | text    | not null                                        | extended |              | 
+
+eric=> insert into std(s) values('foo');
+eric=> insert into std(s) values('foo');
+eric=> insert into std(s) values('foo');
+eric=> insert into std(s) values('foo');
+eric=> select*from std;
+ i |  s  
+---+-----
+ 1 | foo
+ 2 | foo
+ 3 | foo
+ 4 | foo
+(4 rows)
+
+/ 13	. 
+
+create domain us_postal_code as text
+check(
+value ~ '^\d{5}$'
+);
+CREATE DOMAIN
+
+
+eric=> \dD+ 
+                                                List of domains
+ Schema |      Name      | Type | Modifier |              Check              | Access privileges |
+ Description 
+--------+----------------+------+----------+---------------------------------+-------------------+
+-------------
+ public | us_postal_code | text |          | CHECK (VALUE ~ '^\d{5}$'::text) |                   |
+ 
+(1 row)
+
+eric=> create table us_snail_addy(
+eric(> address_id serial primary key,
+eric(> street1 text not null,
+eric(> street2 text,
+eric(> city text not null,
+eric(> postal us_postal_code not null
+eric(> );
+
+eric=>  \d+ us_snail_addy
+                                                       Table "public.us_snail_addy"
+   Column   |      Type      |                             Modifiers                              
+| Storage  | Stats target | Description 
+------------+----------------+--------------------------------------------------------------------
++----------+--------------+-------------
+ address_id | integer        | not null default nextval('us_snail_addy_address_id_seq'::regclass) 
+| plain    |              | 
+ street1    | text           | not null                                                           
+| extended |              | 
+ street2    | text           |                                                                    
+| extended |              | 
+ city       | text           | not null                                                           
+| extended |              | 
+ postal     | us_postal_code | not null                                                           
+| extended |              | 
+Indexes:
+    "us_snail_addy_pkey" PRIMARY KEY, btree (address_id)
+
+eric=> alter table us_snail_addy drop street1;
+eric=> alter table us_snail_addy drop street2;
+eric=> alter table us_snail_addy drop city;
+
+eric=> \d+ us_snail_addy
+                                                       Table "public.us_snail_addy"
+   Column   |      Type      |                             Modifiers                              
+| Storage  | Stats target | Description 
+------------+----------------+--------------------------------------------------------------------
++----------+--------------+-------------
+ address_id | integer        | not null default nextval('us_snail_addy_address_id_seq'::regclass) 
+| plain    |              | 
+ postal     | us_postal_code | not null                                                           
+| extended |              | 
+Indexes:
+    "us_snail_addy_pkey" PRIMARY KEY, btree (address_id)
+
+eric=> insert into us_snail_addy (postal) values('12345');
+/ OK	,
+eric=> insert into us_snail_addy (postal) values('1234a');
+ERROR:  value for domain us_postal_code violates check constraint "us_postal_code_check"
+eric=> insert into us_snail_addy (postal) values('1234');
+
+/ 1313	.
+
+with ts as(
+	select clock_timestamp()t
+)
+select generate_series(t,t+interval'1 week',interval'1 day')
+from ts;
+        generate_series        
+-------------------------------
+ 2018-10-15 20:26:17.645384+00
+ 2018-10-16 20:26:17.645384+00
+ 2018-10-17 20:26:17.645384+00
+ 2018-10-18 20:26:17.645384+00
+ 2018-10-19 20:26:17.645384+00
+ 2018-10-20 20:26:17.645384+00
+ 2018-10-21 20:26:17.645384+00
+ 2018-10-22 20:26:17.645384+00
+(8 rows)
+
+/ Doe NIET	,
+with ts as(
+	select clock_timestamp()t
+)
+select ts.t;
+ERROR:  missing FROM-clause entry for table "ts"
+
+/ Doe NIET	,
+with ts as(
+	select clock_timestamp()t
+)
+select *   
+from generate_series(ts.t,ts.t+interval'1 week',interval'1 day');
+ERROR:  missing FROM-clause entry for table "ts"
+
+with ts as(
+select clock_timestamp()t
+)
+select generate_series(t,t+interval'1 week',interval'1 day'+interval'1 hour')
+from ts;
+        generate_series        
+-------------------------------
+ 2018-10-15 21:17:13.935083+00
+ 2018-10-16 22:17:13.935083+00
+ 2018-10-17 23:17:13.935083+00
+ 2018-10-19 00:17:13.935083+00
+ 2018-10-20 01:17:13.935083+00
+ 2018-10-21 02:17:13.935083+00
+ 2018-10-22 03:17:13.935083+00
+(7 rows)
+
+/ 1313	. 
+
+/ we doen opnieuw	,
+
+eric=> create domain us_postal_code as text 
+check(
+value~'\^d{5}$'
+or value~'\^d{5}-\d{4}$'
+);
+eric=> \dD
+                                               List of domains
+ Schema |      Name      | Type | Modifier |                              Check                   
+            
+--------+----------------+------+----------+------------------------------------------------------
+------------
+ public | us_postal_code | text |          | CHECK (VALUE ~ '\^d{5}$'::text OR VALUE ~ '\^d{5}-\d{
+4}$'::text)
+(1 row)
+
+
+create table us_snail_addy(
+address_id serial primary key,
+postal us_postal_code not null
+);
+
+eric=> \d us_snail_addy
+                                   Table "public.us_snail_addy"
+   Column   |      Type      |                             Modifiers                              
+------------+----------------+--------------------------------------------------------------------
+ address_id | integer        | not null default nextval('us_snail_addy_address_id_seq'::regclass)
+ postal     | us_postal_code | not null
+Indexes:
+    "us_snail_addy_pkey" PRIMARY KEY, btree (address_id)
+
+/ 131313	. 
+
+create domain us_postal_code as text 
+check(
+value~'^\d{5}$'
+or value~'^\d{5}-\d{4}$'
+);
+/ TODO 
+/ -<meer dan 4 cijfers> is OK	,
+
+/ TMP
+
+create domain us_postal_code as text
+check(
+value ~ '^\d{5}$'
+);
+create table us_snail_addy(
+address_id serial primary key,
+postal us_postal_code not null
+);
+/ OK
+
+
+
+/ Einde TMP
+
+/ Einde DOMAINS 
+
+/ MASTER SLAVE
+
+https://www.youtube.com/watch?v=ldOPon17uYE
+
+/ we hebben 2 containers	,
+
+bash-4.3$ hostname
+44365345cfad
+bash-4.3$ hostname
+cade17e4db6d
+
+44365345cfad
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.2  netmask 255.255.0.0  broadcast 0.0.0.0
+
+cade17e4db6d
+bash-4.3$ ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.3  netmask 255.255.0.0  broadcast 0.0.0.0
+
+44365345cfad
+bash-4.3$ id postgres
+uid=26(postgres) gid=26(postgres) groups=26(postgres)
+
+/ dit hebben we al, en hoeven we niet te doen	,
+/ op video doen ze op beide machines	,
+# mkdir /opt/pgdata
+# chown postgres. /opt/data
+# su - postgres
+$ initdb -D /opt/pgdata
+	pg_ctl -D /opt/pgdata -l logfile start
+$ exit
+# systemctl start postgresql
+
+/ deze zien we niet	, dus hoeven we niet te doen	,
+# systemctl stop firewalld
+
+bash-4.3$ netstat -tulpen
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       User       Inode      PID/Program name    
+tcp        0      0 0.0.0.0:5432            0.0.0.0:*               LISTEN      26         22576415   1/postgres          
+tcp6       0      0 :::5432                 :::*                    LISTEN      26         22576416   1/postgres          
+
+/ lees	,
+https://forums.docker.com/t/swiching-between-root-and-non-root-users-from-interactive-console/2269
+/ zo root	, en je kunt altijd postgres worden	,
+[eric@almond ping]$ docker exec -ti --user root awesome_mayer bash
+[root@cade17e4db6d /]# su - postgres
+-bash-4.3$ exit
+logout
+[root@cade17e4db6d /]# 
+
+
+/ Einde MASTER SLAVE
+
+/ MASTER SLAVE
+
+/ 13	. 
+
+/ we start 2 docker containers met pg ,
+
+[eric@almond postgres3a]$  docker run --network=my-bridge --rm -ti my/fedora-postgres3a
+/ 1 keer  ,
+
+/ 1ste	, 
+[eric@almond postgres3a]$  docker run --network=my-bridge --rm -ti -p 12345:5432 my/fedora-postgres3a
+/ -p 12345:5432 heb ik niet nodig, want ik hoef de db niet vanaf de host de query, we kunnen $ docker exec  , maar in principe kan allebei  ,
+[eric@almond postgres3a]$ docker exec -ti optimistic_shaw bash
+bash-4.3$ psql
+psql (9.5.7)
+Type "help" for help.
+postgres=#
+
+/ 2de	,
+[eric@almond postgres3a]$ docker run --network=my-bridge --rm -ti -p 12346:5432 my/fedora-postgres3a
+LOG:  redirecting log output to logging collector process
+HINT:  Future log output will appear in directory "pg_log".
+eric@almond postgres3a]$ docker exec -ti reverent_albattani bash
+bash-4.3$ psql
+psql (9.5.7)
+Type "help" for help.
+postgres=# \q
+
+/ 1ste	,
+bash-4.3$ hostname
+376e57a45341
+bash-4.3$ ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.18.0.2  netmask 255.255.0.0  broadcast 0.0.0.0
+
+/ 2de	, 
+bash-4.3$ hostname
+f2890526e78b
+bash-4.3$ ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.18.0.3  netmask 255.255.0.0  broadcast 0.0.0.0
+
+/ 13	. 
+
+/ je kunt ook ping met hostname	,
+
+/ 2de	, 
+bash-4.3$ hostname
+f2890526e78b
+bash-4.3$ ping 172.18.0.2
+PING 172.18.0.2 (172.18.0.2) 56(84) bytes of data.
+64 bytes from 172.18.0.2: icmp_seq=1 ttl=64 time=0.122 ms
+...
+bash-4.3$ ping 376e57a45341
+PING 376e57a45341 (172.18.0.2) 56(84) bytes of data.
+64 bytes from 376e57a45341.my-bridge (172.18.0.2): icmp_seq=1 ttl=64 time=0.192 ms
+...
+
+/ 13	. 
+
+bash-4.3$ hostname
+f2890526e78b
+bash-4.3$  psql -h 376e57a45341
+psql (9.5.7)
+Type "help" for help.
+postgres=# \q
+
+/ ook naar onszelf	,
+
+bash-4.3$ psql 
+/ of	,
+bash-4.3$ psql -h localhost
+/ of	,
+bash-4.3$ psql -h f2890526e78b 
+/ of,
+bash-4.3$ echo $(hostname)
+
+/ 13	. 
+
+/ bekijk	,
+https://www.youtube.com/watch?v=ldOPon17uYE
+
+/ 1ste	,
+bash-4.3$ hostname
+376e57a45341
+        inet 172.18.0.2  netmask 255.255.0.0  broadcast 0.0.0.0
+
+/ 2de	, 
+bash-4.3$ hostname
+f2890526e78b
+        inet 172.18.0.3  netmask 255.255.0.0  broadcast 0.0.0.0
+
+/ op de video	,
+/ 1ste	,
+192.168.137.101
+
+/ 2de	, 
+192.168.137.102
+
+/ 1ste	, 
+bash-4.3$ hostname
+376e57a45341
+bash-4.3$ id postgres
+uid=26(postgres) gid=26(postgres) groups=26(postgres)
+
+/ 13	. 
+
+/ de video doet het volgende, maar wij niet, we hebben al initdb gedaan, en pg draait al	,
+
+/ met docker exec zijn we postgres	, maar met docker exec -u root worden we root	,
+
+[eric@almond postgres3a]$ docker exec -u root -ti optimistic_shaw bash
+[root@376e57a45341 /]# whoami
+root
+[root@376e57a45341 /]# mkdir /opt/pgdata
+[root@376e57a45341 /]# chown postgres: /opt/pgdata
+/ of	,
+[root@376e57a45341 /]# chown postgres. /opt/pgdata
+[root@376e57a45341 /]# ls -l /opt
+drwxr-xr-x. 2 postgres postgres 4096 Feb 11 20:50 pgdata
+
+/ als we geen . of : achter postgres, 	dan blijft de group root	,
+
+[root@376e57a45341 /]# su - postgres
+-bash-4.3$ initdb -D /opt/pgdata
+...
+Success. You can now start the database server using:
+    pg_ctl -D /opt/pgdata -l logfile start
+
+-bash-4.3$ exit
+logout
+[root@376e57a45341 /]# systemctl restart postgresql
+/ TODO
+/ hoe weet hij waar de data dir is?
+/ vertelt initdb postgres waar de data dir is?k 
+
+/ 13	. 
+
+/ doen we ook niet	,
+
+[root@376e57a45341 /]# systemctl stop firewalld
+/ draait niet bij ons	,
+/ in container doen we nooit systemctl	,
+
+/ op de host zien we	,
+-bash-4.4$ systemctl  status firewalld
+● firewalld.service - firewalld - dynamic firewall daemon
+   Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
+   Active: active (running) since Mon 2018-03-19 20:13:26 CET; 10 months 24 days ago
+     Docs: man:firewalld(1)
+ Main PID: 788 (firewalld)
+    Tasks: 2 (limit: 4915)
+   Memory: 2.0M
+      CPU: 3.255s
+   CGroup: /system.slice/firewalld.service
+           └─788 /usr/bin/python3 -Es /usr/sbin/firewalld --nofork --nopid
+
+/ 13	. 
+
+[root@376e57a45341 /]# netstat -tulpen
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       User       Inode      PID/Program name    
+tcp        0      0 0.0.0.0:5432            0.0.0.0:*               LISTEN      26         109727624  -                  
+...
+
+[root@f2890526e78b /]# netstat -tulpen 
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       User       Inode      PID/Program name    
+tcp        0      0 0.0.0.0:5432            0.0.0.0:*               LISTEN      26         110248496  -                  
+...
+
+/ PG_HBA.CONF
+
+/ 13	. 
+
+/ trust gaat over postgres accounts, zoals eric en foo en postgres	, niet over linux accounts	,
+/ peer is dat je linux accounts vertrouwd	, 
+/ trust is dat je zegt welke postgres accounts je vertrouwd	, en van waaruit	,
+
+
+/ 13	. 
+
+/ de volgorde telt in pg_hba.conf	,
+
+/ we start de container zo op	,
+[eric@almond postgres3a]$ docker run --rm -ti my/fedora-postgres3a bash
+/ dan kunnen we in de container psql doen	,
+
+/ deze 2 zijn hetzelfde	, dus beide Unix socket conn	,
+$ psql
+$ psql -h localhost
+/ deze zijn anders , tcp/ip conn	,
+$ psql -h 127.0.0.1
+$ psql -h 172.17.0.3
+/ in /etc/hosts staat: 127.0.0.1 localhost	, maar voor psql is localhost niet 127.0.0.1	, 
+
+
+
+/ we doen in docker container	,
+
+/ 1313	. 
+
+$ vi pg_hba.conf
+
+local   all             all                                     trust		  
+/ iedere pg account in de container kan psql doen, zonder -h	, 
+host    all             all             127.0.0.1/32            trust
+/ iedere pg account in de container kan psql doen met -h localhost	,
+host    all             postgres 				172.17.0.3/24           trust 
+/ postgres op de host hoeft geen password te geven bij psql -h 172.17.0.3
+host    all             all             172.17.0.3/24           md5 
+/ een ander pg account op de host moet een password geven bij psql -h 172.17.0.3
+
+/ postgres in de container	,
+$ psql
+/=
+$ psql -h localhost
+$ psql -h 127.0.01
+$ psql -h 172.17.0.3
+/ postgres op de host	,
+$ psql -h 172.17.0.3
+/ eric op de host	,
+$ psql -h 172.17.0.3
+password
+
+$ vi pg_hba.conf
+
+local   all             all                                     trust		  
+/ iedere pg account in de container kan psql doen, zonder -h	, 
+host    all             all             127.0.0.1/32            trust
+/ iedere pg account in de container kan psql doen met -h localhost	,
+host    all             all             172.17.0.3/24           md5 
+/ ieder pg account op de host moet een password geven bij psql -h 172.17.0.3
+host    all             postgres 				172.17.0.3/24           trust 
+/ overbodige regel: postgres op de host moet een password te geven bij psql -h 172.17.0.3 , want dat is de regel hierboven	,
+
+
+/ als we  
+host    all             all             172.17.0.3/24           md5 
+host    all             postgres 172.17.0.3/24           trust 
+/ dan moet postgres op een andere machine ook een password geven 	,
+
+
+/ als linux account postgres is , dan is psql of psql -h localhost in de container of psql -h 172.17.0.3 op de host genoeg	,  met de pg_hba.conf kom je meteen in de postgres db	,
+/ er is geen eric account in de container, als linux account eric is op de host , dan is psql -h 172.17.0.3 genoeg	, 
+/ met de pg_hba.conf kom je meteen in de eric db	, bij psql -h 172.17.0.3  moet eric wel zijn password geven	,
+
+/ 13	. 
+
+/ op de host walnut staat de unix socket op peer	, 
+
+/ dus onder de linux account kun je inloggen als deze ook een pg account is	,
+/ dus als eric de linux account is, kan hij zonder password inlog op pg	,
+/ dus als postgres de linux account is, kan hij zonder password inlog op pg	,
+
+[eric@almond postgres3a]$ psql test
+test=> 
+/ OK	,
+
+[eric@almond postgres3a]$ sudo su - postgres
+-bash-4.4$ psql
+postgres=# 
+
+
+
+
+/ Einde PG_HBA.CONF
+
+/ 13	 
+
+/ INRICHTEN MASTER SLAVE VLG VIDEO
+
+/ 1313	. 
+
+/ lees	,
+https://docs.docker.com/config/containers/container-networking/
+
+[eric@almond postgres3a]$  docker run my/fedora-postgres3a
+/ we zien ip & 172.17.0.2 bijv	,
+[eric@almond postgres3a]$  docker run --network=my-bridge my/fedora-postgres3a
+/ we zien ip & 172.18.0.3 bijv	,
+
+/ met docker run --network --ip kun je een ip & opgeven	, maar die moet wel van 1 van de subnets zijn	,
+
+[eric@almond postgres3a]$ docker run --network=my-bridge --ip 10.10.0.1 -ti my/fedora-postgres3a bash
+/usr/bin/docker-current: Error response from daemon: Invalid address 10.10.0.1: It does not belong to any of this network's subnets.
+
+[eric@almond postgres3a]$ docker network  ls
+NETWORK ID          NAME                DRIVER              SCOPE
+ede251d20360        bridge              bridge              local
+349ef13fadf7        host                host                local
+c360bb8026c9        my-bridge           bridge              local
+a01ab7ad5edd        none                null                local
+
+[eric@almond postgres3a]$ docker network  inspect  my-bridge 
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.18.0.0/16",
+                    "Gateway": "172.18.0.1"
+                }
+            ]
+        },
+        "Containers": {
+            "a6619da455435f13c88e057e0484e645e57f5035d8b2be4fb20a6f727f445347": {
+                "Name": "modest_raman",
+                "EndpointID": "3985c83a5efb04e697ff1b7ef98243febc63db1b7dee754b265452a54bf65590",
+                "MacAddress": "02:42:ac:12:00:03",
+                "IPv4Address": "172.18.0.3/16",
+ 
+/ er zit blijkbaar 1 container nu op dit netwerk	,
+
+/ lees	,
+https://jpetazzo.github.io/2013/10/16/configure-docker-bridge-network/
+https://blog.alejandrocelaya.com/2017/04/21/set-specific-ip-addresses-to-docker-containers-created-with-docker-compose/
+
+
+
+/ 1313	. 
+
+/ 1ste node	,
+
+/ Zo moet het	,
+
+[eric@almond postgres3a]$ pwd
+/home/eric/Devel/Docker2/fedora/postgres3a
+
+[eric@almond postgres3a]$ docker run -ti my/fedora-postgres3a bash
+/ of	,
+[eric@almond postgres3a]$ docker run --network=my-bridge -ti my/fedora-postgres3a bash
+bash-4.3$ pg_ctl start
+server starting
+bash-4.3$ LOG:  redirecting log output to logging collector process
+HINT:  Future log output will appear in directory "pg_log".
+/ geef Enter	,
+bash-4.3$ psql
+psql (9.5.7)
+Type "help" for help.
+
+postgres=# 
+
+/ als we geen --network geven	, zitten we op bridge, en dat is 172.17.0.0/24	, 
+/ als we geen --network=my-bridge geven	, zitten we op 172.18.0.0/24	, 
+
+/ we kunnen ook als root ingaan	,
+[eric@almond postgres3a]$ docker run --network=my-bridge -ti my/fedora-postgres3a bash
+[root@019ba6da8fb8 /]# su - postgres
+-bash-4.3$ pg_ctl start
+/ geef Enter,	
+-bash-4.3$ psql
+psql (9.5.7)
+Type "help" for help.
+
+postgres=# 
+
+
+
+/ laten we doen	,
+[eric@almond postgres3a]$ docker run --network=my-bridge -ti my/fedora-postgres3a bash
+
+/ 131313	. 
+
+/ Zo doen we het niet meer	, 
+
+/ we gaan binnen de container weer op user postgres over	, 
+
+/ eerder	, op beide	,
+[eric@almond postgres3a]$ docker exec -ti -u root reverent_albattani bash
+/ nu	,
+[root@376e57a45341/]# su - postgres
+
+/ Einde 131313	. 
+
+
+/ we zien 3 users in de db, eric en foo	 en postgres	,
+
+-bash-4.3$ psql  
+
+postgres=# \du
+                                   List of roles
+ Role name |                         Attributes                         | Member of 
+-----------+------------------------------------------------------------+-----------
+ eric      | Create DB                                                  | {}
+ foo       | Create DB                                                  | {}
+ postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+
+/ we doen 	,
+
+postgres=# create user replicator replication login encrypted password 'replicator' ;
+CREATE ROLE
+postgres=# \du
+                                    List of roles
+ Role name  |                         Attributes                         | Member of 
+------------+------------------------------------------------------------+-----------
+ eric       | Create DB                                                  | {}
+ foo        | Create DB                                                  | {}
+ postgres   | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+ replicator | Replication                                                | {}
+
+postgres=# \q
+
+/ 131313	. 
+
+/ we wilden dit meteen controleren	,
+
+bash-4.3$ psql -h 172.17.0.2 -U replication postgres
+psql: FATAL:  no pg_hba.conf entry for host "172.17.0.2", user "replication", database "postgres", SSL off
+
+/ we moeten toevoegen	, 
+
+bash-4.3$ vi data/pg_hba.conf 
+host all all 172.17.0.0/24 md5
+/ of	,
+host all all 172.17.0.0/32 md5
+
+/ of	,
+host    all             all             0.0.0.0/0               md5
+
+/ wat ook kan is	,
+host    all             all             123.0.0.0/0               md5
+/ maar wat niet kan is
+host    all             all             123.456.0.0/0               md5
+/ TODO
+
+bash-4.3$ pg_ctl reload
+server signaled
+bash-4.3$ psql -h 172.17.0.2 -U replicator postgres
+Password for user replicator: 
+psql (9.5.7)
+Type "help" for help.
+
+postgres=> \q
+bash-4.3$ 
+
+/ lees,
+
+/ we voegen ook meteen toe	,
+bash-4.3$ vi data/pg_hba.conf 
+host replication replicator 172.18.0.0/24	md5
+
+/ of	, 
+host    replication     replicator      0.0.0.0/0               md5
+
+bash-4.3$ pg_ctl reload
+
+/ Einde 131313	. 
+
+
+/ lees	,
+https://stackoverflow.com/questions/9764126/how-to-configure-postgresql-postgresql-conf-listen-addresses-for-multiple-ip-add
+/ neem listen_addresses='*'	,
+
+-bash-4.3$ vi data/postgresql.conf 
+
+/ alles kunnen we toevoegen aan postgresql.conf
+
+# CONNECTIONS AND AUTHENTICATION
+listen_addresses = '172.18.0.2'        # what IP address(es) to listen on;
+# TODO  dat is self	,
+
+/ of	,
+listen_addresses='*'        # what IP address(es) to listen on;
+
+# WRITE AHEAD LOG
+wal_level = hot_standby                 # minimal, archive, hot_standby, or logical
+
+# - Archiving -
+archive_mode = on               # enables archiving; off, on, or always
+archive_command = 'cp -i %p /var/lib/pgsql/data/archive/%f'     # command to use to archive a logfile segment
+
+# REPLICATION
+max_wal_senders = 3             # max number of walsender processes
+wal_keep_segments = 8           # in logfile segments, 16MB each; 0 disables
+
+# CUSTOMIZED OPTIONS
+#listen_addresses='*'
+/ TODO
+
+/ Intermezzo
+
+/ google,	
+postgresql.conf listen address
+/ lees,
+https://stackoverflow.com/questions/9764126/how-to-configure-postgresql-postgresql-conf-listen-addresses-for-multiple-ip-add
+
+listen_addresses controls which IPs the server will answer on, not which IPs the server will permit connections to authenticate from. It's entirely reasonable and normal to use listen_addresses '*' so the server will accept incoming connections on any ip assigned to an interface on the postgresql server host, while using pg_hba.conf to control access at a finer grained level for which IPs the server will accept logins from for specific databases and users.
+
+/ Einde Intermezzo
+
+-bash-4.3$ mkdir data/archive
+
+$ pg_ctl restart
+
+/ dit deden we eerst	, maar nu niet meer	,
+
+-bash-4.3$ vi data/pg_hba.conf 
+# IPv4 local connections:
+...
+host    all             all             172.18.0.2/24           md5
+
+# Allow replication connections from localhost, by a user with the
+# replication privilege.
+host    replication     replicator      172.18.0.3/32              md5
+/ TODO /32
+#host all all 172.18.0.1/24 trust
+/ TODO
+
+/ we deden in de container	,
+$ pg_ctl  -D /var/lib/pgsql restart	, 
+/ maar toen stopte de hele container	,
+
+-bash-4.3$ pg_ctl -D /var/lib/pgsql/data/ reload
+server signaled
+/ OK	,
+/ maar doet niets	,
+/ logisch	,
+-bash-4.3$ vi data/pg_log/postgresql-Wed.log 
+LOG:  parameter "listen_addresses" cannot be changed without restarting the server
+LOG:  parameter "wal_level" cannot be changed without restarting the server
+LOG:  parameter "archive_mode" cannot be changed without restarting the server
+LOG:  parameter "archive_command" changed to "cp -i %p /var/lib/pgsql/data/archive %f"
+LOG:  parameter "max_wal_senders" cannot be changed without restarting the server
+
+/ Einde dit deden we eerst	,
+
+/ 1313	. 
+
+/ google	,
+docker postgrest restart
+/ lees,	
+https://github.com/docker-library/postgres/issues/217
+
+Since there is no init system running in the container, the only process running in the container is postgres itself, so docker restart container-name or docker kill -sTERM container-name followed by docker start container-name will work.
+
+As long as you are not running the process with docker run -it --rm ..., or doing docker rm after you stop it, then the container's data will stick around and you can start it up again.
+
+/ we begonnen met	,
+[eric@almond postgres3a]$  docker run --network=my-bridge my/fedora-postgres3a
+/ toen	,
+[eric@almond postgres3a]$ docker exec -u root -ti hardcore_haibt bash
+-bash-4.3$ vi data/postgresql.conf 
+/ edit	, set max_wal_senders =3
+-bash-4.3$ exit
+logout
+[root@c416c3118640 /]# exit
+exit
+[eric@almond postgres3a]$ docker restart hardcore_haibt 
+hardcore_haibt
+[eric@almond postgres3a]$ docker ps 
+CONTAINER ID        IMAGE                  COMMAND                 CREATED             STATUS              PORTS               NAMES
+c416c3118640        my/fedora-postgres3a   "/bin/sh -c postgres"   22 hours ago        Up 3 seconds        5432/tcp            hardcore_haibt
+/ Dus hij is er nog	,
+/ dus dit kan 	,
+[eric@almond postgres3a]$ docker exec -u root -ti hardcore_haibt bash
+[root@c416c3118640 /]# su - postgres
+Last login: Wed Feb 13 21:13:49 UTC 2019
+-bash-4.3$ psql 
+psql (9.5.7)
+Type "help" for help.
+postgres=# show max_wal_senders;
+ max_wal_senders 
+-----------------
+ 3
+(1 row)
+
+/ in de console waar we eerder	,
+[eric@almond postgres3a]$  docker run --network=my-bridge  my/fedora-postgres3a
+/ is docker run returned	, dus het lijkt alsof de container eruit is, maar de container is er nog	, 
+
+/ 1313	. 
+
+/ de andere mog	,
+
+[eric@almond postgres3a]$ docker kill -sTERM hardcore_haibt 
+hardcore_haibt
+[eric@almond postgres3a]$ docker ps 
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+[eric@almond postgres3a]$ docker start hardcore_haibt
+hardcore_haibt
+[eric@almond postgres3a]$ docker ps 
+CONTAINER ID        IMAGE                  COMMAND                 CREATED             STATUS              PORTS               NAMES
+c416c3118640        my/fedora-postgres3a   "/bin/sh -c postgres"   22 hours ago        Up 2 seconds        5432/tcp            hardcore_haibt
+
+
+/ 1313	. 
+
+/ na een herstart van de docker container zijn de tabellen er nog:
+
+[eric@almond postgres3a]$ docker restart hardcore_haibt
+hardcore_haibt
+[eric@almond postgres3a]$ docker exec -u root -ti hardcore_haibt bash
+[root@c416c3118640 /]# psql -U postgres
+postgres=# \dt
+        List of relations
+ Schema | Name | Type  |  Owner   
+--------+------+-------+----------
+ public | gs   | table | postgres
+(1 row)
+
+
+
+
+/ 1313	. 
+
+/ google,
+pg_ctl reload pg_hba.conf postgresql.conf
+/ lees	,
+https://www.heatware.net/databases/postgresql-reload-config-without-restarting/
+
+Option 1: From the command-line shell
+su - postgres
+/usr/bin/pg_ctl reload
+
+Option 2: Using SQL
+SELECT pg_reload_conf();
+
+/ lees	,
+https://www.postgresql.org/docs/9.0/app-pg-ctl.html
+reload mode simply sends the postgres process a SIGHUP signal, causing it to reread its configuration files (postgresql.conf, pg_hba.conf, etc.). This allows changing of configuration-file options that do not require a complete restart to take effect.
+
+/ 1313	. 
+
+/ als we docker run zonder --rm	, kun je dan na docker stop docker reload?
+/ TODO
+
+/ 1313	. 
+
+/ nog een keer	,
+
+[eric@almond postgres3a]$  docker run --network=my-bridge --rm -ti my/fedora-postgres3a
+[eric@almond postgres3a]$ docker exec -u root -ti friendly_bohr bash
+
+[root@88f297f148b4 /]# su - postgres
+-bash-4.3$ pg_ctl status
+pg_ctl: server is running (PID: 1)
+/usr/bin/postgres
+-bash-4.3$ psql
+postgres=# select * into foo from generate_series(1,10);
+SELECT 10
+postgres=# \q
+-bash-4.3$ exit
+logout
+[root@88f297f148b4 /]# exit
+exit
+/ de container is er nog	,
+[eric@almond postgres3a]$ docker exec -u root -ti friendly_bohr bash
+[root@88f297f148b4 /]# exit
+[eric@almond postgres3a]$ docker stop friendly_bohr 
+friendly_bohr
+
+/ opnieuw,
+[eric@almond postgres3a]$  docker run --network=my-bridge --rm -ti -p 12345:5432 my/fedora-postgres3a
+[eric@almond postgres3a]$ docker ps
+...
+[eric@almond postgres3a]$ docker exec -u root -ti relaxed_hoover bash
+ 
+/ 13	. 
+
+/ 2de node	,
+
+/ zo starten we de container nu op	,
+[eric@almond postgres3a]$ docker run -ti -u root my/fedora-postgres3a bash
+[root@0852edf64ae2 /]# su - postgres
+-bash-4.3$ 
+
+
+-bash-4.3$ ls -l  
+total 8
+drwx------.  2 postgres postgres 4096 May 11  2017 backups
+drwx------. 20 postgres postgres 4096 Feb 15 21:06 data
+
+-bash-4.3$ pg_basebackup -h 172.18.0.2 -D data/ -U replicator -v -P
+pg_basebackup: directory "data/" exists but is not empty
+
+-bash-4.3$ rm -rf data/*
+/ dit is ERR, de postgres en dus de container stopt even later	,
+/ dit moet je niet doen in een draaiende postgres in een container,	
+
+/ maar zo moeten we de container helemaal niet starten	, 
+
+/ 13	. 
+
+/ als we een container zonder --rm start, met -ti, en weer exit, is hij nog Up	, 
+/ we kunnen docker exec	, maar niet docker start	,
+/ als we docker stop , is hij Exited, maar we kunnen hem weer docker start en hij is weer up	, maar we zijn er niet in, alleen met docker exec	-it	,
+
+/ maar wat wel kan is 	,
+/ en dit moet je altijd doen	,
+[eric@almond postgres3a]$ docker run --network=my-bridge -ti  my/fedora-postgres3a bash
+bash-4.3$ pg_ctl start
+server starting
+bash-4.3$ LOG:  redirecting log output to logging collector process
+HINT:  Future log output will appear in directory "pg_log".
+/ Geef Enter	,
+bash-4.3$ ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+postgres     1  0.1  0.0 119916  3468 ?        Ss   22:11   0:00 bash
+postgres    10  0.0  0.1 344960 19964 ?        S    22:11   0:00 /usr/bin/postgres
+postgres    11  0.0  0.0 197824  2500 ?        Ss   22:11   0:00 postgres: logger process  
+postgres    13  0.0  0.0 344960  3400 ?        Ss   22:11   0:00 postgres: checkpointer process  
+postgres    14  0.0  0.0 344960  3400 ?        Ss   22:11   0:00 postgres: writer process  
+postgres    15  0.0  0.0 344960  3400 ?        Ss   22:11   0:00 postgres: wal writer process  
+postgres    16  0.0  0.0 345396  5972 ?        Ss   22:11   0:00 postgres: autovacuum launcher process  
+postgres    17  0.0  0.0 199944  2524 ?        Ss   22:11   0:00 postgres: stats collector process  
+postgres    18  0.0  0.0 150008  3660 ?        R+   22:12   0:00 ps aux
+bash-4.3$ pg_ctl stop
+waiting for server to shut down.... done
+server stopped
+
+bash-4.3$ pwd
+/
+bash-4.3$ whoami
+postgres
+/ TODO
+
+/ kunnen we in postgres.conf niet de naam van de server geven ipv ip&?
+/ TODO 
+
+bash-4.3$ cp -a data/ data.bak
+bash-4.3$ rm -rf data/*
+
+/ 1313	 
+
+/ we oef in de master container 172.18.0.2 met wijzigen passwords	,
+
+postgres=# alter role replicator password 'foo';
+/ of	,
+postgres=# alter role replicator encrypted password 'foo';
+postgres=# \q
+bash-4.3$ psql -U replicator -h 172.18.0.2 postgres
+Password for user replicator: 
+psql (9.5.7)
+Type "help" for help.
+
+postgres=> \q
+
+/ 1313	 
+
+/ we gaan verder op de slave	,
+
+/ we hoeven niet eerst pg_ctl start	,
+
+bash-4.3$ pg_basebackup -h 172.18.0.2 -D data -U replicator -v -P 
+Password: 
+/ TODO MORGEN
+pg_basebackup: initiating base backup, waiting for checkpoint to complete
+pg_basebackup: checkpoint completed
+86282/86282 kB (100%), 1/1 tablespace                                         
+NOTICE:  pg_stop_backup complete, all required WAL segments have been archived
+pg_basebackup: base backup completed
+
+bash-4.3$ ls data
+archive       pg_clog	    pg_ident.conf  pg_notify	 pg_stat      pg_twophase	    postgresql.conf
+backup_label  pg_commit_ts  pg_log	   pg_replslot	 pg_stat_tmp  PG_VERSION
+base	      pg_dynshmem   pg_logical	   pg_serial	 pg_subtrans  pg_xlog
+global	      pg_hba.conf   pg_multixact   pg_snapshots  pg_tblspc    postgresql.auto.conf
+/ we zien in data/postgres.conf precies die van de master!
+
+bash-4.3$ psql 
+psql: could not connect to server: No such file or directory
+/ klopt, pg draait nu niet	,
+
+/ we gaan de copied postgres.conf van de master edit, 
+
+$ vi data/postgres.conf
+
+# CONNECTIONS AND AUTHENTICATION
+listen_addresses = '172.18.0.3'         # what IP address(es) to listen on;
+
+# - Standby Servers -
+# These settings are ignored on a master server.
+hot_standby = on                        # "on" allows queries during recovery
+
+# - Archiving -
+
+#archive_mode = on              # enables archiving; off, on, or always
+#archive_command = 'cp -i %p /var/lib/pgsql/data/archive/%f'            # command to use to archive a logfile segment
+
+bash-4.3$ vi data/recovery.conf
+standby_mode='on'
+primary_conninfo='host=172.18.0.2 port=5432 user=replicator password=foo'
+restore_command='cp /var/lib/pgsql/data/archive/%f %p'
+trigger_file='/tmp/postgresql.trigger.5432'
+
+bash-4.3$ pg_ctl start
+server starting
+bash-4.3$ LOG:  redirecting log output to logging collector process
+HINT:  Future log output will appear in directory "pg_log".
+/ Geef Enter
+bash-4.3$ less data/pg_log/postgresql-Sat.log 
+LOG:  database system was interrupted; last known up at 2019-02-16 11:44:54 UTC
+FATAL:  unrecognized recovery parameter "trigger_files"
+
+$ vi data/recovery.conf
+...
+trigger_file='/tmp/postgresql.trigger.5432' 
+
+bash-4.3$ pg_ctl -D data start
+server starting
+bash-4.3$ LOG:  redirecting log output to logging collector process
+HINT:  Future log output will appear in directory "pg_log".
+/ geef enter	,
+
+/ 1313	. 
+
+/ op de master en op slave zien we	, 
+-bash-4.3$ ps uax
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+postgres     7  0.0  0.0 197824  2460 ?        Ss   Feb15   0:00 postgres: logger process  
+postgres     9  0.0  0.0 345068  5908 ?        Ss   Feb15   0:00 postgres: checkpointer process  
+postgres    10  0.0  0.0 344960  5276 ?        Ss   Feb15   0:00 postgres: writer process  
+postgres    14  0.0  0.0 199944  2492 ?        Ss   Feb15   0:00 postgres: stats collector process  
+
+/ op master zien we 	,
+postgres     1  0.0  0.1 344960 19820 ?        Ss   Feb15   0:00 postgres
+postgres    11  0.0  0.0 344960  8176 ?        Ss   Feb15   0:00 postgres: wal writer process  
+postgres    12  0.0  0.0 345396  5776 ?        Ss   Feb15   0:00 postgres: autovacuum launcher process  
+postgres    13  0.0  0.0 199944  3592 ?        Ss   Feb15   0:00 postgres: archiver process   last was 000000010000000000
+postgres   256  0.0  0.0 345664  7088 ?        Ss   16:03   0:00 postgres: wal sender process replicator 172.18.0.3(35520
+
+/ op de slave zien we	,
+bash-4.3$ ps ajx
+ PPID   PID  PGID   SID TTY      TPGID STAT   UID   TIME COMMAND
+    1    58    56     1 ?           66 S       26   0:00 /usr/bin/postgres -D data
+   58    62    62    62 ?           -1 Ss      26   0:00 postgres: wal receiver process   streaming 0/50004C0
+   58    60    60    60 ?           -1 Ss      26   0:00 postgres: startup process   recovering 000000010000000000000005
+
+/ 1313	. 
+
+/ op master zien we	,
+-bash-4.3$ netstat -tulpen
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       User       Inode      PID/Program name    
+tcp        0      0 172.18.0.2:5432         0.0.0.0:*               LISTEN      26         112840923  1/postgres
+
+/ op slave zien we	,
+bash-4.3$ netstat -tulpen
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       User       Inode      PID/Program name    
+tcp        0      0 127.0.0.11:42255        0.0.0.0:*               LISTEN      0          112876335  -                 
+
+/ 1313	 .
+
+/ op master	,
+
+-bash-4.3$ psql
+psql (9.5.7)
+Type "help" for help.
+
+postgres=# select * from pg_stat_replication ;
+ pid | usesysid |  usename   | application_name | client_addr | client_hostname | client_port |         backend_start    
+     | backend_xmin |   state   | sent_location | write_location | flush_location | replay_location | sync_priority | syn
+c_state 
+-----+----------+------------+------------------+-------------+-----------------+-------------+--------------------------
+-----+--------------+-----------+---------------+----------------+----------------+-----------------+---------------+----
+--------
+ 271 |    16388 | replicator | walreceiver      | 172.18.0.3  |                 |       35626 | 2019-02-16 17:51:55.21763
+6+00 |              | streaming | 0/5000760     | 0/5000760      | 0/5000760      | 0/5000760       |             0 | asy
+nc
+(1 row)
+
+/ 1313	. 
+
+/ op master	,
+postgres=# create database dmz;
+CREATE DATABASE
+postgres=# \l
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   
+-----------+----------+----------+-------------+-------------+-----------------------
+ dmz       | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+...
+
+/ op slave	,
+bash-4.3$ psql
+psql (9.5.7)
+Type "help" for help.
+
+postgres=# \l
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   
+-----------+----------+----------+-------------+-------------+-----------------------
+ dmz       | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+
+/ kijk dimzrio tutorials,
+https://www.youtube.com/channel/UCL_mnuQunm9hWkHRULllDmg
+/ ook kubernetes 
+/ TODO
+
+/ 1313	. 
+
+/ we create database op de master als andere user	, ook dat zien we in de slave	,
+
+eric=# \c - eric
+You are now connected to database "postgres" as user "eric".
+eric=> create database test;
+CREATE DATABASE
+
+postgres=> \l
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   
+-----------+----------+----------+-------------+-------------+-----------------------
+...
+ test      | eric     | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+
+/ op de slave	,
+postgres=# \l
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   
+-----------+----------+----------+-------------+-------------+-----------------------
+ test      | eric     | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+
+/ 1313	. 
+
+/ op de master	,
+
+/ 13  .
+
+/ lees  ,
+https://wiki.postgresql.org/wiki/Replication,_Clustering,_and_Connection_Pooling
+
+
+
+/ Einde MASTER SLAVE
+
+/ MASTER SLAVE 
+
+/ google,
+docker postgresql master slave
+/ lees	,
+https://hub.docker.com/r/bitnami/postgresql/
+/ lees,
+https://medium.com/@2hamed/replicating-postgres-inside-docker-the-how-to-3244dc2305be
+
+/ 13	. 
+
+/ switch master bij dezelfde slave	,
+
+/ google,
+postgresql slave switch master
+/ lees	,
+https://dba.stackexchange.com/questions/29488/how-to-switch-master-server-and-warm-standby-with-streaming-replication-in-pos
+->
+https://www.postgresql.org/docs/9.5/warm-standby-failover.html
+
+https://dba.stackexchange.com/questions/212418/how-to-set-up-failover-in-postgres-9-6
+
+/ we hebben een 2de master container start	, 172.17.0.4	,
+/ we moeten in de slave 
+
+  113  rm -rf data
+  114  pg_basebackup -h 172.17.0.4 -D data -U replicator -v -P
+/ we hebben een copy van de nieuwe master	, de configuratie moeten we aanpassen:
+  115  vi data/postgresql.conf 
+# Add settings for extensions here
+hot_standby=on
+
+  116  vi data/recovery.conf
+standby_mode='on'
+primary_conninfo='host=172.17.0.4 port=5432 user=replicator password=replicator'
+restore_command='cp /var/lib/pgsql/data/archive/%f %p'
+trigger_file='/tmp/postgresql.trigger.5432'
+
+  117  pg_ctl restart
+  118  pg_ctl start
+
+/ data/pg_hba.conf kunnen we onveranderd laten, maar we kunnen ook out comment (moet op master )	,
+#host    replication     replicator       172.17.0.4/24  md5
+
+/ 13	. 
+
+/ enterprisedb.com
+ericjvandervelden
+VldWalnoot27&
+
+https://www.enterprisedb.com/free-postgres-training
+
+/ 13	. 
+
+/ failover	,
+
+/ lees	,
+postgresql failover how to
+/ google,
+https://estl.tech/replication-and-failover-in-postgresql-5ad68704d834?gi=24630db0e705
+
+
+ 
+
+/ Einde MASTER SLAVE
+
+/ WAL
+
+/ see LOG_postgresql.txt bij SQL WAL
+https://stackoverflow.com/questions/36291676/query-transaction-log-in-postgresql / !
+
+/ lees	,
+http://www.interdb.jp/pg/pgsql09.html
+
+https://blog.2ndquadrant.com/monitoring-wal-archiving-improves-postgresql-9-4-pg_stat_archiver/
+->
+https://www.postgresql.org/docs/9.4/monitoring-stats.html#PG-STAT-ARCHIVER-VIEW
+https://www.pgbarman.org/index.html
+
+[eric@almond postgres3a]$ dnf list available | grep -i barman
+barman.noarch                            2.1-2.fc26                      fedora 
+
+https://github.com/2ndquadrant-it/barman
+
+/ lees	,
+https://wiki.postgresql.org/wiki/PostgreSQL_for_Oracle_DBAs
+https://www.postgresql.org/docs/11/wal-configuration.html	 ch 30.4
+
+/ 13	 .
+
+/ lees	,
+https://wiki.postgresql.org/wiki/PostgreSQL_for_Oracle_DBAs
+
+PostgreSQL uses Write-Ahead Logging (WAL) as its approach to transaction logging. WAL's central concept is that changes to data files (where tables and indexes reside) must be written only after those changes have been logged, that is, when log records describing the changes have been flushed to permanent storage. If we follow this procedure, we do not need to flush data pages to disk on every transaction commit, because we know that in the event of a crash we will be able to recover the database using the log: any changes that have not been applied to the data pages can be redone from the log records. (This is roll-forward recovery, also known as REDO.)
+
+/ dus redo is het nog een keer doen van de inserts, ... maar nu vanuit de wal file	, daar staan ze ook altijd, want als ik insert geef, wordt eerst in wal file geschreven en dan gedaan	,
+/ het opnieuw doen vanuit de wal file is vanaf het moment uit de wal file dat al naar disk is geschreven	,
+
+WAL was introduced into PostgreSQL in version 7.1. To maintain database consistency in case of a failure, previous releases forced all data modifications to disk before each transaction commit. With WAL, only one log file must be flushed to disk, greatly improving performance while adding capabilities like Point-In-Time Recovery and transaction archiving.
+
+/ 13	. 
+
+/ lees	,
+https://medium.com/@daniel.chia/writing-a-database-part-2-write-ahead-log-2463f5cec67a
+
+/ lees	,
+https://apacheignite.readme.io/v2.4/docs/write-ahead-log
+
+It is worth mentioning that in case of a crash or restart, a cluster can always be recovered to the latest successfully committed transaction by relying on the contents of the WAL.
+
+/ lees	,
+https://work.tinou.com/2012/09/write-ahead-log.html
+->
+https://work.tinou.com/2012/03/log-structured-file-system-for-dummies.html
+
+/ 13	. 
+
+/ lees	,
+https://www.postgresql.org/docs/11/wal-intro.html
+
+Write-Ahead Logging (WAL) is a standard method for ensuring data integrity. A detailed description can be found in most (if not all) books about transaction processing. Briefly, WAL's central concept is that changes to data files (where tables and indexes reside) must be written only after those changes have been logged, that is, after log records describing the changes have been flushed to permanent storage. If we follow this procedure, we do not need to flush data pages to disk on every transaction commit, because we know that in the event of a crash we will be able to recover the database using the log: any changes that have not been applied to the data pages can be redone from the log records. (This is roll-forward recovery, also known as REDO.)
+
+/ Dus bij iedere commit wordt wal file in mem flushed naar disk	(nadat er een commit regel in de wal file in mem is gezet), maar de feitenlijke inserts, updates die ook in mem zijn gedaan in bepaalde pages, hoeven dat niet, want een redo van de wal file kunnen die ook gedaan worden	,
+/ alles wat je doet: inserts, updates wordt in wal file in mem write. Bij commit wordt er in de wal file in mem een commit regel gezet en wordt de wal file flushed naar disk	, 
+
+/ lees	,
+http://infolab.stanford.edu/~ullman/dscb.html
+
+/ google	,
+postgres when buffer are written to disk
+/ lees,	
+https://blog.okmeter.io/postgresql-exploring-how-select-queries-can-produce-disk-writes-f36c8bee6b6f
+https://dba.stackexchange.com/questions/123135/why-are-my-postgresql-sessions-writing-directly-on-disk
+
+https://www.postgresql.org/docs/9.6/wal-intro.html 	/ ch 30.2
+https://www.postgresql.org/docs/9.6/wal-configuration.html / ch 30.4
+
+https://www.postgresql.org/docs/9.6/sql-checkpoint.html
+
+A checkpoint is a point in the transaction log sequence at which all data files have been updated to reflect the information in the log. All data files will be flushed to disk. Refer to Section 30.4 for more details about what happens during a checkpoint.
+The CHECKPOINT command forces an immediate checkpoint when the command is issued, without waiting for a regular checkpoint scheduled by the system (controlled by the settings in Section 19.5.2). CHECKPOINT is not intended for use during normal operation.
+
+https://www.postgresql.org/docs/9.6/sql-commit.html
+
+COMMIT commits the current transaction. All changes made by the transaction become visible to others and are guaranteed to be durable if a crash occurs.
+
+http://cxc.harvard.edu/mta_days/mta_db/pgsql/doc/html/wal-configuration.html
+/ = postgres 7.1 docs, ch 9.3 WAL configuration	,
+https://www.postgresql.org/docs/7.1/wal-configuration.html
+/ commit: flush WAL file naar disk (constant voor elke actie, insert, begin, ... wordt de WAL file (in mem) insert,
+/ checkpoint: flush data files naar disk en	write checkpoint in WAL fil)
+
+/ alles voor de checkpoint is op disk	, 
+/ dus een tx die  
+/ TODO
+
+/ google	,
+/ lees	,
+https://dba.stackexchange.com/questions/124697/difference-between-commit-and-checkpoint
+->
+http://oracleinaction.com/checkpoints/
+http://www.orafaq.com/wiki/Checkpoint
+
+https://www.cybertec-postgresql.com/en/postgresql-writer-and-wal-writer-processes-explained/
+
+
+
+/ Einde WAL
+
+/ SQL 
+
+/ 13	. 
+
+/ create random data	,
+
+/ google	,
+postgres create table random
+
+/ lees	,
+https://www.compose.com/articles/postgresql-series-random-with/
+
+test=> select md5(random()::text) into bar;
+/ of	,
+test=> create table bar as select md5(random()::text);
+SELECT 1
+
+/ lees	,
+https://stackoverflow.com/questions/22964272/postgresql-get-a-random-datetime-timestamp-between-two-datetime-timestamp
+
+/ op master	,
+test=> select * into foo from generate_series(now()-interval'1 month',now(),interval'1 days');
+SELECT 32
+/ we zien op slave	,
+test=> select*from foo;
+        generate_series        
+-------------------------------
+ 2019-01-16 18:33:18.027982+00
+ 2019-01-17 18:33:18.027982+00
+ 2019-01-18 18:33:18.027982+00
+ 2019-01-19 18:33:18.027982+00
+ 2019-01-20 18:33:18.027982+00
+ 2019-01-21 18:33:18.027982+00
+ 2019-01-22 18:33:18.027982+00
+ 2019-01-23 18:33:18.027982+00
+ 2019-01-24 18:33:18.027982+00
+ 2019-01-25 18:33:18.027982+00
+ 2019-01-26 18:33:18.027982+00
+ 2019-01-27 18:33:18.027982+00
+ 2019-01-28 18:33:18.027982+00
+ 2019-01-29 18:33:18.027982+00
+ 2019-01-30 18:33:18.027982+00
+ 2019-01-31 18:33:18.027982+00
+ 2019-02-01 18:33:18.027982+00
+ 2019-02-02 18:33:18.027982+00
+ 2019-02-03 18:33:18.027982+00
+ 2019-02-04 18:33:18.027982+00
+ 2019-02-05 18:33:18.027982+00
+ 2019-02-06 18:33:18.027982+00
+ 2019-02-07 18:33:18.027982+00
+ 2019-02-08 18:33:18.027982+00
+ 2019-02-09 18:33:18.027982+00
+ 2019-02-10 18:33:18.027982+00
+ 2019-02-11 18:33:18.027982+00
+ 2019-02-12 18:33:18.027982+00
+ 2019-02-13 18:33:18.027982+00
+ 2019-02-14 18:33:18.027982+00
+ 2019-02-15 18:33:18.027982+00
+ 2019-02-16 18:33:18.027982+00
+(32 rows)
+
+/ 1313	. 
+
+
+
+
+
+
+/ Einde SQL
+
+/ REPLICATION 
+
+https://www.youtube.com/watch?v=4klaPUjbMZo
+
+/ google
+postgresql replication queue tables
+/ lees	,
+https://wiki.postgresql.org/wiki/Londiste_Tutorial
+
+Londiste is Skytools' asynchronous primary/secondary replication system, built atop PGQ.
+
+/ google
+postgresql pgq
+/ lees	,
+https://wiki.postgresql.org/wiki/PGQ_Tutorial
+
+/ google
+postgres replication queue tables
+/ lees	,
+https://wiki.postgresql.org/wiki/ModificationTriggerGDQ
+
+/ google	,
+postgresql streaming replication
+/ lees,	
+https://wiki.postgresql.org/wiki/Streaming_Replication
+
+/ google,
+postgresql udr
+/ lees	,
+https://wiki.postgresql.org/images/a/a8/Udr-pgconf.pdf
+
+/ google,
+postgresql bdr
+/ lees	,
+http://bdr-project.org/docs/stable/index.html
+
+BDR provides asynchronous multi-master logical replication. This means that you can write to any server and the changes will, after they have been committed, be sent row-by-row to all the other servers that are part of the same BDR group[1].
+
+
+
+/ Einde REPLICATION
+
+/ SLOW QUERIES
+
+/ google,	
+postgresql if query takes long and database changes
+/ lees	,
+https://www.datadoghq.com/blog/100x-faster-postgres-performance-by-changing-1-line/
+
+/ 13	. 
+
+
+
+
+
+
+/ Einde SLOW QUERIES
+
+/ ARRAYS
+
+[eric@almond ping]$ psql -Ueric test
+
+/ 1313	. 
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/arrays.html
+
+test=> create table sal_emp(
+name text,
+pay_by_quarter integer[],
+schedule text[][]
+);
+
+test=> insert into sal_emp 
+values('Carol',
+array[10,15,20,25],
+array[['b','c'],['p','q'],['k','l']]
+test(> );
+
+test=> insert into sal_emp 
+values('Bill',
+'{20,15,10,5}',
+'{{"f","g"},{"i","j"}}'
+);
+
+test=> insert into sal_emp 
+test-> values('Bar',array[10,10,10,10],array[['s','t'],['c','d']]
+test(> );
+
+
+Notice that the array elements are ordinary SQL constants or expressions; for instance, string literals are single quoted, instead of double quoted as they would be in an array literal. 
+/ dus "f" is geen gewone SQL constant	,
+
+/ 1313	. 
+
+/ all, any	
+
+test=> select*
+test-> from sal_emp 
+test-> ;
+ name  | pay_by_quarter |      schedule       
+-------+----------------+---------------------
+ Carol | {10,15,20,25}  | {{b,c},{p,q},{k,l}}
+ Bill  | {20,15,10,5}   | {{f,g},{i,j}}
+ Bar   | {10,10,10,10}  | {{s,t},{c,d}}
+
+test=> select *
+from sal_emp 
+where 10=all(pay_by_quarter);
+ name | pay_by_quarter |   schedule    
+------+----------------+---------------
+ Bar  | {10,10,10,10}  | {{s,t},{c,d}}
+(1 row)
+
+test=> select *
+from sal_emp 
+where 15 = any(pay_by_quarter);
+ name  | pay_by_quarter |      schedule       
+-------+----------------+---------------------
+ Carol | {10,15,20,25}  | {{b,c},{p,q},{k,l}}
+ Bill  | {20,15,10,5}   | {{f,g},{i,j}}
+(2 rows)
+
+test=> select *
+from sal_emp                                         
+where 7 = any(pay_by_quarter);
+ name | pay_by_quarter | schedule 
+------+----------------+----------
+(0 rows)
+
+/ 1313	. 
+
+
+test=> select pay_by_quarter
+test-> from sal_emp;
+ pay_by_quarter 
+----------------
+ {10,15,20,25}
+ {20,15,10,5}
+ {10,10,10,10}
+(3 rows)
+
+test=> select generate_subscripts(pay_by_quarter,1)
+from sal_emp ;
+ generate_subscripts 
+---------------------
+                   1
+                   2
+                   3
+                   4
+                   1
+                   2
+                   3
+                   4
+                   1
+                   2
+                   3
+                   4
+(12 rows)
+
+test=> select generate_subscripts(pay_by_quarter,2)
+from sal_emp ;
+ generate_subscripts 
+---------------------
+(0 rows)
+
+test=> select schedule      
+from sal_emp;
+      schedule       
+---------------------
+ {{b,c},{p,q},{k,l}}
+ {{f,g},{i,j}}
+ {{s,t},{c,d}}
+(3 rows)
+
+
+test=> select generate_subscripts(schedule,1)
+from sal_emp ;
+ generate_subscripts 
+---------------------
+                   1
+                   2
+                   3
+                   1
+                   2
+                   1
+                   2
+(7 rows)
+
+test=> select generate_subscripts(schedule,2)
+from sal_emp ;
+ generate_subscripts 
+---------------------
+                   1
+                   2
+                   1
+                   2
+                   1
+                   2
+(6 rows)
+
+/ 1313	.
+
+test=> select pay_by_quarter,generate_subscripts(pay_by_quarter,1)s
+test-> from sal_emp;
+ pay_by_quarter | s 
+----------------+---
+ {10,15,20,25}  | 1
+ {10,15,20,25}  | 2
+ {10,15,20,25}  | 3
+ {10,15,20,25}  | 4
+ {20,15,10,5}   | 1
+ {20,15,10,5}   | 2
+ {20,15,10,5}   | 3
+ {20,15,10,5}   | 4
+ {10,10,10,10}  | 1
+ {10,10,10,10}  | 2
+ {10,10,10,10}  | 3
+ {10,10,10,10}  | 4
+(12 rows)
+
+select *from (
+	select pay_by_quarter,generate_subscripts(pay_by_quarter,1)s
+	from sal_emp 
+)_
+where pay_by_quarter[s]=10;
+ pay_by_quarter | s 
+----------------+---
+ {10,15,20,25}  | 1
+ {20,15,10,5}   | 3
+ {10,10,10,10}  | 1
+ {10,10,10,10}  | 2
+ {10,10,10,10}  | 3
+ {10,10,10,10}  | 4
+(6 rows)
+
+/ 1313	. 
+
+/ andere manier van ANY	,
+
+select distinct pay_by_quarter 
+from (
+	select pay_by_quarter,generate_subscripts(pay_by_quarter,1)s
+	from sal_emp 
+)_
+where pay_by_quarter[s]=10;
+
+ pay_by_quarter 
+----------------
+ {10,10,10,10}
+ {10,15,20,25}
+ {20,15,10,5}
+(3 rows)
+
+select distinct pay_by_quarter
+from (
+  select pay_by_quarter,generate_subscripts(pay_by_quarter,1)s
+  from sal_emp
+)_
+where pay_by_quarter[s]=5;
+ pay_by_quarter 
+----------------
+ {20,15,10,5}
+(1 row)
+
+/ 1313	. 
+
+/ of zo	,
+
+test=> select pay_by_quarter
+from (
+  select pay_by_quarter,generate_subscripts(pay_by_quarter,1)s
+  from sal_emp
+)_
+where pay_by_quarter[s]=10
+group by pay_by_quarter;
+ pay_by_quarter 
+----------------
+ {10,10,10,10}
+ {10,15,20,25}
+ {20,15,10,5}
+(3 rows)
+
+/ maar dit lukt NIET	,
+
+/ we moeten group by s doen	,
+
+test=> select pay_by_quarter
+from (
+  select pay_by_quarter,generate_subscripts(pay_by_quarter,1)s
+  from sal_emp
+)_
+group by pay_by_quarter,s
+having pay_by_quarter[s]=10;
+ pay_by_quarter 
+----------------
+ {10,10,10,10}
+ {10,15,20,25}
+ {20,15,10,5}
+ {10,10,10,10}
+ {10,10,10,10}
+ {10,10,10,10}
+(6 rows)
+
+
+
+
+/ 1313	. 
+
+/ andere manier van ANY	,
+
+
+test=> SELECT * FROM sal_emp WHERE pay_by_quarter && ARRAY[10];
+ name  | pay_by_quarter |      schedule       
+-------+----------------+---------------------
+ Carol | {10,15,20,25}  | {{b,c},{p,q},{k,l}}
+ Bill  | {20,15,10,5}   | {{f,g},{i,j}}
+ Bar   | {10,10,10,10}  | {{s,t},{c,d}}
+(3 rows)
+
+test=> SELECT * FROM sal_emp WHERE pay_by_quarter && ARRAY[5];
+ name | pay_by_quarter |   schedule    
+------+----------------+---------------
+ Bill | {20,15,10,5}   | {{f,g},{i,j}}
+(1 row)
+
+/ 1313	. 
+
+/ @> is contains	,
+
+test=> select array[1,4,3] @>array[1,4];
+ ?column? 
+----------
+ t
+(1 row)
+
+
+
+
+
+/ Einde ARRAYS
+
+/ INDEX
+
+with ts as(
+select clock_timestamp()t
+)
+select generate_series(t,t+interval'1 week',interval'1 day'+interval'1 hour')
+into tst
+from ts;
+-- ok	,
+
+test=> with ts as(
+select clock_timestamp()t
+)
+select generate_series(1,7)s,t+interval'1 day'*s
+from ts;
+ERROR:  column "s" does not exist
+LINE 4: select generate_series(1,7)s,t+interval'1 day'*s
+-- TODO
+
+with ts as(
+select clock_timestamp()t
+)
+select s,ts.t+s*interval'1 day' 
+from generate_series(1,7)s
+cross join ts
+;
+
+with ts as(
+select clock_timestamp()t
+)
+select s,ts.t+s*interval'1 day't
+from generate_series(1,7)s
+cross join ts
+;
+ s |           ?column?            
+---+-------------------------------
+ 1 | 2018-10-29 00:20:48.242954+01
+ 2 | 2018-10-30 00:20:48.242954+01
+ 3 | 2018-10-31 00:20:48.242954+01
+ 4 | 2018-11-01 00:20:48.242954+01
+ 5 | 2018-11-02 00:20:48.242954+01
+ 6 | 2018-11-03 00:20:48.242954+01
+ 7 | 2018-11-04 00:20:48.242954+01
+(7 rows)
+
+with ts as(
+select clock_timestamp()t
+)
+select s,ts.t+s*interval'1 day'
+into mygen
+from generate_series(1,7)s
+cross join ts
+;
+
+/ 1313	. 
+
+/ google, 
+postgresql generate string
+/ lees	,
+https://www.dbrnd.com/2016/04/postgresql-how-to-generate-a-random-token-string/
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/datatype-numeric.html
+/ random() geef een double precision, dat is 8 types en 15 decimal	,
+
+test=> select random();
+      random       
+-------------------
+ 0.578801870811731
+(1 row)
+/ 15 cijfers achter de ,
+
+test=>  select random()+1
+test-> ;
+     ?column?     
+------------------
+ 1.23831649310887
+/ 14 cijfers achter de ,
+
+test=>  select random()+1242342
+test-> ;
+     ?column?     
+------------------
+ 1242342.83011696
+(1 row)
+/ 7 voor de , en 8 er achter	,
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/datatype-binary.html#DATATYPE-BINARY-TABLE
+
+Character strings disallow zero octets, and also disallow any other octet values and sequences of octet values that are invalid according to the database's selected character set encoding. 
+/ OK	,
+Second, operations on binary strings process the actual bytes, whereas the processing of character strings depends on locale settings
+/ TODO
+/ WH lees	,
+https://www.postgresql.org/docs/9.6/static/collation.html
+
+/ terug in datatype-binary.html	,
+
+The bytea type supports two external formats for input and output: PostgreSQL's historical "escape" format, and "hex" format. Both of these are always accepted on input. The output format depends on the configuration parameter bytea_output; the default is hex. 
+
+The SQL standard defines a different binary string type, called BLOB or BINARY LARGE OBJECT. The input format is different from bytea, but the provided functions and operators are mostly the same.
+
+test=> show bytea_output;
+ bytea_output 
+--------------
+ hex
+(1 row)
+
+/ 1313	. 
+
+/ google	,
+postgresql escape hex
+/ lees	,
+https://stackoverflow.com/questions/34823158/whats-the-e-before-a-postgres-string
+
+E'\\001\\001\\000\\000\\000\\321\\256B\\312O\\304Q\\300\\347\\030\\220\\275\\336%E@'
+The same as "standard conforming string":
+'\001\001\000\000\000\321\256B\312O\304Q\300\347\030\220\275\336%E@'
+Both are in "escape format", which can be represented more efficiently in "hex format" as:
+'\x0101000000d1ae42ca4fc451c0e71890bdde254540'
+You can use encode() and decode() to transform one form into the other.
+I answered your follow-up question on gis.SE with more details.
+/=
+https://gis.stackexchange.com/questions/177075/how-to-interpret-a-wkb-well-known-binary/177076#177076
+
+/ 1313	. 
+
+/ e'\\141'='\141'	, maar e'\141' = 'a'
+
+test=> select e'\141';
+ ?column? 
+----------
+ a
+(1 row)
+test=> select '\141';
+ ?column? 
+----------
+ \141
+(1 row)
+test=> select e'\141'='a';
+ ?column? 
+----------
+ t
+(1 row)
+test=> select e'\\141';
+ ?column? 
+----------
+ \141
+(1 row)
+
+test=> select e'\\140' = '\140';
+ ?column? 
+----------
+ t
+(1 row)
+
+test=> select e'\140' = '\140';
+ ?column? 
+----------
+ f
+(1 row)
+
+/ 1313	. 
+
+/ encode, decode	,
+https://dba.stackexchange.com/questions/115271/what-is-the-optimal-data-type-for-an-md5-field/115316#115316
+
+/ 1313	. 
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/datatype-binary.html#DATATYPE-BINARY-TABLE
+\777
+
+/ 1313	. 
+
+/ lees	,
+https://www.postgresql.org/docs/9.0/static/sql-syntax-lexical.html
+
+/ e voor een string werkt net als $ echo -e	,
+
+/ e kan met e'\n', of met e'\x0a' 	, of met e'\012'	,
+
+/ e kan voor	,
+\b	backspace
+\f	form feed
+\n	newline
+\r	carriage return
+\t	tab
+\o, \oo, \ooo (o = 0 - 7)	octal byte value
+\xh, \xhh (h = 0 - 9, A - F)	hexadecimal byte value
+\uxxxx, \Uxxxxxxxx (x = 0 - 9, A - F)	16 or 32-bit hexadecimal Unicode character value
+Any other character following a backslash is taken literally. Thus, to include a backslash character, write two backslashes (\\). Also, a single quote can be included in an escape string by writing \', in addition to the normal way of ''.
+
+test=> select e'\u03c0';
+ ?column? 
+----------
+ π
+(1 row)
+
+test=> select e'\\u03c0'='\u03c0';
+ ?column? 
+----------
+ t
+(1 row)
+
+test=> select e'\ta';
+ ?column?  
+-----------
+         a
+(1 row)
+
+/ ieder ander char na \ is taken literally, 2 voorbeelden:
+test=> select e'\y'
+test-> ;
+ ?column? 
+----------
+ y
+(1 row)
+test=> select e'\'';
+ ?column? 
+----------
+ '
+(1 row)
+
+/ maar	,
+test=> select '''';
+ ?column? 
+----------
+ '
+(1 row)
+/ TODO
+
+/ unicode kan ook zo	,
+test=> select u&'\03c0';
+ ?column? 
+----------
+ π
+(1 row)
+test=> select e'\u03c0'=u&'\03c0';
+ ?column? 
+----------
+ t
+(1 row)
+
+test=> select e'\u03c0\u03c1';
+ ?column? 
+----------
+ πρ
+(1 row)
+test=> select u&'\03c0\03c1';
+ ?column? 
+----------
+ πρ
+(1 row)
+
+/ resume	,
+
+test=> select e'\101\102\103';
+ ?column? 
+----------
+ ABC
+(1 row)
+
+test=> select e'\x41\x42\x43';
+ ?column? 
+----------
+ ABC
+(1 row)
+
+test=> select e'\u03c0\u03c1\u03c2';
+ ?column? 
+----------
+ πρς
+(1 row)
+
+/ 1313	. 
+
+/ terug	,
+https://www.postgresql.org/docs/9.0/static/datatype-binary.html
+
+test=> select e'\\141\\153\\046';
+   ?column?   
+--------------
+ \141\153\046
+(1 row)
+
+test=> select e'\141\153\046\012';
+ ?column? 
+----------
+ ak&     +
+ 
+(1 row)
+
+/ 1313	. 
+
+/ lees	,
+https://stackoverflow.com/questions/34823158/whats-the-e-before-a-postgres-string
+https://www.postgresql.org/docs/9.4/static/functions-binarystring.html
+https://www.postgresql.org/docs/9.0/static/datatype-binary.html
+
+/ 13137	. 
+
+test=> select encode(e'\u03c0','hex');
+ encode 
+--------
+ cf80
+(1 row)
+test=> select encode(u&'\03c0','hex');
+ encode 
+--------
+ cf80
+(1 row)
+
+test=> select encode(u&'\03c0\03c1','hex');
+  encode  
+----------
+ cf80cf81
+(1 row)
+
+test=> select encode(u&'\03c0\03c1','escape');
+      encode      
+------------------
+ \317\200\317\201
+(1 row)
+test=> select encode(e'\u03c0\u03c1','escape');
+      encode      
+------------------
+ \317\200\317\201
+(1 row)
+
+test=> select e'\317\200\317\201'=e'\xcf\x80\xcf\x81' ;
+ ?column? 
+----------
+ t
+(1 row)
+test=> select e'\317\200\317\201'
+test-> ;
+ ?column? 
+----------
+ πρ
+(1 row)
+test=> select e'\xcf\x80\xcf\x81' ;
+ ?column? 
+----------
+ πρ
+(1 row)
+test=> select e'\u03c0\u03c1';
+ ?column? 
+----------
+ πρ
+(1 row)
+
+test=> select encode('\u03c0','hex');
+ERROR:  invalid input syntax for type bytea
+test=> select encode(u&'03c0','hex');
+  encode  
+----------
+ 30336330
+(1 row)
+
+/ 13137	. 
+
+test=> select encode(e'\123\012','base64');
+ encode 
+--------
+ Uwo=
+(1 row)
+test=> select encode('\123\012','base64');
+ encode 
+--------
+ Uwo=
+(1 row)
+
+test=> select decode(encode(e'\123\012','base64'),'base64');
+ decode 
+--------
+ \x530a
+(1 row)
+
+test=> select encode(decode(encode(e'\123\012','base64'),'base64'),'base64');
+ encode 
+--------
+ Uwo=
+(1 row)
+
+test=> select encode(e'\x530a','base64');
+ encode 
+--------
+ UzBh
+(1 row)
+
+test=> select encode('\x530a','base64');
+ encode 
+--------
+ Uwo=
+(1 row)
+
+/ 13137	. 
+
+/ google	,
+postgresql encode decode
+/ lees	,
+https://stackoverflow.com/questions/35476033/encoding-and-decoding-in-postgresql
+
+test=>  select e'a\b';
+ ?column? 
+----------
+ a\x08
+(1 row)
+
+test=>  select e'a\n';
+ ?column? 
+----------
+ a       +
+ 
+(1 row)
+
+test=> select e'a\n'='a
+test'> ';
+ ?column? 
+----------
+ t
+(1 row)
+
+test=> select length(e'a\b');
+ length 
+--------
+      2
+(1 row)
+
+test=>  select e'a\b'::bytea;
+ bytea  
+--------
+ \x6108
+(1 row)
+
+test=> select e'\u03c0';
+ ?column? 
+----------
+ π
+(1 row)
+
+test=> select e'\u03c0'::bytea;
+ bytea  
+--------
+ \xcf80
+(1 row)
+
+/ verschil text en bytea:
+test=> select e'a\n'::text;
+ text 
+------
+ a   +
+ 
+(1 row)
+test=> select e'a\n'::bytea;
+ bytea  
+--------
+ \x610a
+(1 row)
+
+
+test=> show bytea_output;
+ bytea_output 
+--------------
+ hex
+(1 row)
+
+test=> set bytea_output='escape';
+SET
+test=> show bytea_output;
+ bytea_output 
+--------------
+ escape
+(1 row)
+
+test=> select e'a\n'::bytea;
+ bytea 
+-------
+ a\012
+(1 row)
+
+/ 13137	.
+
+test=> set bytea_output='hex';
+
+test=> select encode(e'a\b','base64');
+ encode 
+--------
+ YQg=
+(1 row)
+
+test=> select decode('YQg=','base64');
+ decode 
+--------
+ \x6108
+(1 row)
+
+test=> set bytea_output='escape';
+SET
+test=> select decode('YQg=','base64');
+ decode 
+--------
+ a\010
+(1 row)
+
+test=> select e'a\b';
+ ?column? 
+----------
+ a\x08
+(1 row)
+/ TODO Hoe krijg je deze a\010 	?
+
+test=> select e'a\b'::bytea;
+ bytea 
+-------
+ a\010
+(1 row)
+
+/ Intermezzo
+
+
+
+test=>  select *
+from pg_settings
+where name like '%_output';
+     name     | setting | unit |                    category                  
+   |            short_desc             | extra_desc | context | vartype | sour
+ce  | min_val | max_val |   enumvals   | boot_val | reset_val | sourcefile | s
+ourceline | pending_restart 
+--------------+---------+------+----------------------------------------------
+---+-----------------------------------+------------+---------+---------+-----
+----+---------+---------+--------------+----------+-----------+------------+--
+----------+-----------------
+ bytea_output | hex     |      | Client Connection Defaults / Statement Behavi
+or | Sets the output format for bytea. |            | user    | enum    | defa
+ult |         |         | {escape,hex} | hex      | hex       |            |  
+          | f
+(1 row)
+
+/ lees ook	,
+https://www.postgresql.org/docs/9.6/static/functions-string.html
+https://www.postgresql.org/docs/9.6/static/functions-binarystring.html
+https://www.postgresql.org/docs/9.6/static/datatype-binary.html#DATATYPE-BINARY-TABLE
+https://www.postgresql.org/docs/9.6/static/sql-syntax-lexical.html
+/ Einde Intermezzo
+
+/ 13137	. 
+
+test=> select e'a\n';
+ ?column? 
+----------
+ a       +
+ 
+(1 row)
+test=> select e'a\x0a';
+ ?column? 
+----------
+ a       +
+ 
+(1 row)
+test=> select e'a\010';
+ ?column? 
+----------
+ a\x08
+(1 row)
+
+test=> select e'\n'=e'\x0a';
+ ?column? 
+----------
+ t
+(1 row)
+test=> select e'\n'=e'\010';
+ ?column? 
+----------
+ f
+(1 row)
+
+/ 13137	. 
+
+test=>  select \x08;
+Invalid command \x08;. Try \? for help.
+test=> select 8;
+ ?column? 
+----------
+        8
+(1 row)
+
+test=> select e'\x08'::text;
+ text 
+------
+ \x08
+(1 row)
+
+test=> select e'\x08'::bytea;
+ bytea 
+-------
+ \x08
+(1 row)
+test=> select '\x08'::int;
+ERROR:  invalid input syntax for integer: "\x08"
+
+/ 13137	.
+
+test=> select '\xcf\x80'::bytea;
+ERROR:  invalid hexadecimal digit: "\"
+LINE 1: select '\xcf\x80'::bytea;
+               ^
+test=> select '\xcf80'::bytea;
+ bytea  
+--------
+ \xcf80
+(1 row)
+
+test=> select '\xcf80cf81'::bytea;
+   bytea    
+------------
+ \xcf80cf81
+(1 row)
+
+test=> select e'\xcf80cf81'::bytea;
+ERROR:  invalid byte sequence for encoding "UTF8": 0xcf 0x38
+
+test=> select '\cf80'::bytea;
+ERROR:  invalid input syntax for type bytea
+LINE 1: select '\cf80'::bytea;
+
+test=> select e'\cf80'::bytea;
+   bytea    
+------------
+ \x63663830
+(1 row)
+/ TODO \x63='c'	, 
+
+test=> select e'\\cf80'::bytea;
+ERROR:  invalid input syntax for type bytea
+LINE 1: select e'\\cf80'::bytea;
+               ^
+
+test=> select e'a\x080a'::bytea;
+   bytea    
+------------
+ \x61083061
+(1 row)
+/ TODO 
+
+test=> select e'a080a'::bytea;
+    bytea     
+--------------
+ \x6130383061
+(1 row)
+
+test=> select e'a\x61\x0a'::bytea;
+  bytea   
+----------
+ \x61610a
+(1 row)
+
+test=> select 'a\x61\x0a'::bytea;
+ERROR:  invalid input syntax for type bytea
+LINE 1: select 'a\x61\x0a'::bytea;
+               ^
+
+test=> show bytea_output;
+ bytea_output 
+--------------
+ hex
+(1 row)
+
+test=> select '\010\123'::bytea;
+ bytea  
+--------
+ \x0853
+(1 row)
+test=> select 'a\010\123'::bytea;
+  bytea   
+----------
+ \x610853
+(1 row)
+
+test=> set bytea_output=escape;
+SET
+/ als hij een printable ascii char terug kan geven, zal hij dat doen	,
+/ letters en cijfers,	 of andere tekens zoals +
+
+test=> select 'a\010\123'::bytea;
+ bytea  
+--------
+ a\010S
+(1 row)
+test=> select '\141\010\123'::bytea;
+ bytea  
+--------
+ a\010S
+(1 row)
+
+test=> select '\141\010\123\067'::bytea;
+  bytea  
+---------
+ a\010S7
+(1 row)
+test=> select '\141\010\123\067\053'::bytea;
+  bytea   
+----------
+ a\010S7+
+(1 row)
+
+/ 13137	.
+
+test=> set bytea_output=escape;
+SET
+
+test=> select e'\u03c0';
+ ?column? 
+----------
+ π
+(1 row)
+
+test=> select e'\u03c0'::bytea;
+  bytea   
+----------
+ \317\200
+(1 row)
+/= \xcf\x80
+/ TODO
+/ hij geeft ongevraagd de utf8 encoding	,
+
+test=> select encode(e'\u03c0','hex');
+ encode 
+--------
+ cf80
+(1 row)
+
+test=> select encode(e'\u03c0','escape');
+  encode  
+----------
+ \317\200
+(1 row)
+
+/ 13137	.
+
+test=> select convert_from('\xcf80','utf-8');
+/=
+test=> select convert_from('\xcf80','utf8');
+ convert_from 
+--------------
+ π
+(1 row)
+
+test=>  select convert_from('\xcf\x80','utf8');
+ERROR:  invalid hexadecimal digit: "\"
+
+test=>  select convert_from(e'\xcf80','utf8');
+ERROR:  invalid byte sequence for encoding "UTF8": 0xcf 0x38
+
+test=>  select convert_to(e'\u03c0','utf8');
+ convert_to 
+------------
+ \xcf80
+(1 row)
+test=>  select convert_from('\xcf80','utf8');
+ convert_from 
+--------------
+ π
+(1 row)
+
+test=>  select convert_to(e'\u03c0\u03c1','utf8');
+/=
+test=>  select convert_to(u&'\03c0\03c1','utf8');
+ convert_to 
+------------
+ \xcf80cf81
+(1 row)
+
+test=>  select convert_from('\xcf80cf81','utf8');
+ convert_from 
+--------------
+ πρ
+(1 row)
+
+/ convert_to geeft altijd hex	, 
+/ TODO
+
+/ 13137	. 
+
+test=> select encode(u&'\03c0\03c1','base64');
+  encode  
+----------
+ z4DPgQ==
+(1 row)
+
+test=> select decode('z4DPgQ==','base64')
+test-> ;
+   decode   
+------------
+ \xcf80cf81
+(1 row)
+
+test=> select convert_from(decode('z4DPgQ==','base64'),'utf8');
+
+ convert_from 
+--------------
+ πρ
+(1 row)
+
+
+/ 13137	. 
+
+test=> select e'\xcf\x80';
+ ?column? 
+----------
+ π
+(1 row)
+
+test=>  select convert_from('\xcf80','utf8');
+ convert_from
+--------------
+ π
+(1 row)
+
+test=> select e'\xcf\x80'::bytea;
+ bytea  
+--------
+ \xcf80
+(1 row)
+
+test=> select e'\xcf80'::bytea;
+ERROR:  invalid byte sequence for encoding "UTF8": 0xcf 0x38
+
+test=> select convert_from(e'\xcf\x80'::bytea,'utf8');
+ convert_from 
+--------------
+ π
+(1 row)
+
+test=> select e'\xcf\x80'::text;
+ text 
+------
+ π
+(1 row)
+
+/ 13137	 .
+
+test=> select e'\xcf\x80'::bytea='\xcf80';
+ ?column? 
+----------
+ t
+(1 row)
+
+test=> select e'\xcf\x80'='\xcf80'::bytea;
+ ?column? 
+----------
+ t
+(1 row)
+/ we hoeven maar aan 1 kant te cast	,
+/ we zien ook dat ipv e'\xcf\x80' kunnen schrijven '\xcf80'	, als het bytea zijn	, 
+/ want als text zijn ze verschillend	,
+
+test=> select e'\xcf\x80'='\xcf80';
+ ?column? 
+----------
+ f
+(1 row)
+
+/ 13131377	.
+
+/ in select = hoef je maar aan 1 kant te cast	, als je apart doet, moet je 2 keer cast	,
+
+test=> select '\xcf80'::bytea;
+ bytea  
+--------
+ \xcf80
+(1 row)
+
+test=> select e'\xcf\x80';			-- dit is type text	,
+ ?column? 
+----------
+ π
+(1 row)
+
+test=> select e'\xcf\x80'::bytea
+test-> ;
+ bytea  
+--------
+ \xcf80
+(1 row)
+
+/ einde 13131377	.
+
+/ 13137	. 
+
+/ convert_from verwacht een bytea	, dus hoeven niet te cast	, en er komt een text uit, dus die hoeven we ook niet te cast	,
+
+test=> select convert_from('\xcf80','utf8')
+ convert_from 
+--------------
+ π
+(1 row)
+/ hoe krijgen we \u03c0 te zien?
+/ TODO
+
+test=> select convert_to(u&'\03c0','utf8');
+ convert_to 
+------------
+ \xcf80
+(1 row)
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/static/functions-string.html
+/ convert_from, _to is over encoding	, utf8 bijv	,	 van bytea <-> text
+/ decode, encode is van binary naar text representatie, bijv base64	,	 van bytea <-> text	,
+
+/ '\xcf80' is voor een bytea, e'\xcf\x80' is voor een text,	
+/ '\u03c0' is voor een text,	
+
+/ 13137	. 
+
+/ encode : bytea -> text	,
+
+test=> select encode('\xcf80','hex');
+ encode 
+--------
+ cf80
+(1 row)
+
+test=> select encode('\xcf80','base64');
+ encode 
+--------
+ z4A=
+(1 row)
+
+test=> select encode('\xcf80','escape');
+  encode  
+----------
+ \317\200
+(1 row)
+
+test=> select encode('\317\200','hex');
+ encode 
+--------
+ cf80
+(1 row)
+
+test=> select encode('\317\200','base64');
+ encode 
+--------
+ z4A=
+(1 row)
+
+test=> select encode('cf80','escape');
+ encode 
+--------
+ cf80
+(1 row)
+
+/ e'\
+
+test=> select encode(e'\xcf80','escape');
+ERROR:  invalid byte sequence for encoding "UTF8": 0xcf 0x38
+/ TODO
+test=> select e'\xcf80'::bytea;
+ERROR:  invalid byte sequence for encoding "UTF8": 0xcf 0x38
+
+test=> select e'\xcf\x80'::bytea;
+ bytea  
+--------
+ \xcf80
+(1 row)
+
+test=> select e'\xcf\x80';
+/=
+test=> select e'\xcf\x80'::text;
+ text 
+------
+ π
+(1 row)
+
+/ 13137	. 
+
+/ decode: text -> bytea	,
+
+test=> select decode(e'\xcf\x80','escape');	-- met 'escape' zeg je dat je text 'n escape text is	
+ decode 
+--------
+ \xcf80
+(1 row)
+
+test=> select decode('\xcf\x80','hex');
+ERROR:  invalid hexadecimal digit: "\"
+test=> select decode(e'\xcf\x80','hex');
+ERROR:  invalid hexadecimal digit: "�"
+test=> select decode(e'\xcf\x80','base64');
+ERROR:  invalid symbol "�" while decoding base64 sequence
+
+test=> select decode('cf80','hex');
+ decode 
+--------
+ \xcf80
+(1 row)
+
+
+test=> select encode('\xcf80','base64');	-- encode als text de gegeven  bytea	,
+ encode 
+--------
+ z4A=
+(1 row)
+
+test=> select decode('z4A=','base64'); -- decode de text , en is een base64 encoded	,
+ decode 
+--------
+ \xcf80
+(1 row)
+
+/ 13137	. 
+
+test=> select encode('\xcf80','escape');
+  encode  
+----------
+ \317\200
+(1 row)
+
+test=> select decode('\317\200','escape');
+ decode 
+--------
+ \xcf80
+(1 row)
+
+test=> select encode('\307\200','escape');
+  encode  
+----------
+ \307\200
+(1 row)
+/ '\307\200' is als bytea te use, en als text	,
+
+test=> select encode('\307\200','hex');
+ encode 
+--------
+ c780
+(1 row)
+
+
+
+test=> select convert_from('\xcf80','utf8');	 -- bytea -> text
+ convert_from 
+--------------
+ π
+(1 row)
+
+test=> select convert_from('\317\200','utf8');
+ convert_from 
+--------------
+ π
+(1 row)
+
+/ 13137	. 
+
+test=> set bytea_output=hex;
+SET
+test=> select '\317\200'::bytea;
+ bytea  
+--------
+ \xcf80
+(1 row)
+
+test=> set bytea_output=escape;
+SET
+test=> select '\317\200'::bytea;
+  bytea   
+----------
+ \317\200
+(1 row)
+
+test=> select e'\xcf\x80'::bytea;
+  bytea   
+----------
+ \317\200
+(1 row)
+
+test=> set bytea_output=hex;
+SET
+
+test=> select convert_to(e'\317\200','utf8');
+ convert_to 
+------------
+ \xcf80
+(1 row)
+
+test=> select convert_to(e'\xcf\x80','utf8');
+ convert_to 
+------------
+ \xcf80
+(1 row)
+
+/ e'\317\200' is text	, '\317\200' is bytea	,
+
+/ 13137	 .
+
+test=> set bytea_output=escape;
+SET
+
+test=> select '\317\200'::bytea;
+  bytea   
+----------
+ \317\200
+(1 row)
+
+test=> select '\317\200'::text;
+   text   
+----------
+ \317\200
+(1 row)
+
+test=> select e'\317\200'::text;
+ text 
+------
+ π
+(1 row)
+
+test=> set bytea_output=hex;
+SET
+test=> select '\317\200'::bytea;
+ bytea  
+--------
+ \xcf80
+(1 row)
+
+test=> select '\317\200'::text;
+   text   
+----------
+ \317\200
+(1 row)
+
+test=> select e'\317\200'::text;
+ text 
+------
+ π
+(1 row)
+
+/ 13137	. 
+
+test=> set bytea_output=escape;
+SET
+
+test=> select convert_to(u&'\03c0','utf8');
+ convert_to 
+------------
+ \317\200
+(1 row)
+
+test=> set bytea_output=hex;
+SET
+test=> select convert_to(u&'\03c0','utf8');
+ convert_to 
+------------
+ \xcf80
+(1 row)
+
+/ 13137	. 
+
+/ HIER HIER HIER
+
+
+
+
+
+/ 13137	.
+
+test=> select encode('\x610a','escape');
+ encode 
+--------
+ a     +
+ 
+(1 row)
+test=> select e'\x610a';
+ ?column? 
+----------
+ a0a
+(1 row)
+
+test=> select encode('\141\012','escape');
+ encode 
+--------
+ a     +
+ 
+(1 row)
+
+/ 131313	.
+
+test=> select decode(encode('\141\012','escape'),'escape');
+ decode 
+--------
+ \x610a
+(1 row)
+
+test=> select decode(encode('\141\012','escape'),'hex');
+ERROR:  invalid hexadecimal digit: "
+"
+
+test=> select decode('a&','escape');
+ decode 
+--------
+ \x6126
+(1 row)
+
+test=> select decode('a&','hex');
+ERROR:  invalid hexadecimal digit: "&"
+
+/ 1313	. 
+
+test=> select encode('\x6126','hex');
+ encode 
+--------
+ 6126
+(1 row)
+
+test=> select encode('\x6126','escape');
+ encode 
+--------
+ a&
+(1 row)
+
+/ 1313	. 
+
+test=> select encode('\x6126','escape');
+ encode 
+--------
+ a&
+(1 row)
+test=> select decode('a&','escape');
+ decode 
+--------
+ \x6126
+(1 row)
+
+/ 1313	. 
+
+test=> select encode('\x6126','hex');
+ encode 
+--------
+ 6126
+(1 row)
+
+test=> select decode('6126','hex');
+ decode 
+--------
+ \x6126
+(1 row)
+
+/ 1313	. 
+
+test=> select encode('\x0112','escape');
+  encode  
+----------
+ \x01\x12
+(1 row)
+test=> select decode('\x01\x02','escape');
+ERROR:  invalid input syntax for type bytea
+test=> select decode('\001\012','escape');
+ decode 
+--------
+ \x010a
+(1 row)
+
+test=> select decode('\x0112','hex');
+ERROR:  invalid hexadecimal digit: "\"
+test=> rollback ;
+ROLLBACK
+test=> select decode('0112','hex');
+ decode 
+--------
+ \x0112
+(1 row)
+
+
+
+
+
+
+
+/ 1313	. 
+
+/ we oef	,
+
+test=> insert into bin values(e'\\000\\001\\002');
+INSERT 0 1
+test=> select*from bin;
+    b     
+----------
+ \x000102
+(1 row)
+
+test=> insert into bin values(e'\\141\\142');
+INSERT 0 1
+test=> select*from bin;
+    b     
+----------
+ \x000102
+ \x6162
+(2 rows)
+
+test=> insert into bin values(e'\x61\x62');
+INSERT 0 1
+test=> insert into bin values(e'\x6162'); 	-- doe NIET, =  x\61 en 6 en 2	,
+INSERT 0 1
+test=> select b
+test-> from bin;
+    b     
+----------
+ \x000102
+ \x6162
+ \x6162
+ \x613632	, dus \x61 en 36 en 32	,
+(3 rows)
+
+test=> insert into bin values('\x6162');
+INSERT 0 1
+test=> select b                         
+from bin;
+    b     
+----------
+ \x000102
+ \x6162
+ \x6162
+ \x613632
+ \x6162	 			-- !
+(4 rows)
+
+test=> insert into bin values('\x61\x62');
+ERROR:  invalid hexadecimal digit: "\"
+/ TODO
+
+/ 1313	. 
+
+test=> select e'\\140';
+ ?column? 
+----------
+ \140
+(1 row)
+
+test=> select e'\\140'::bytea;
+ bytea 
+-------
+ \x60
+(1 row)
+
+test=> select e'\x62\x21';
+ ?column? 
+----------
+ b!
+(1 row)
+
+
+
+
+
+
+
+
+
+
+
+/ Einde INDEX
+
+/ SAVEPOINTS
+
+/ google	,
+postgresql savepoint
+/ lees	,
+https://dba.stackexchange.com/questions/81011/transactions-within-a-transaction
+
+[eric@almond ping]$ psql -Ueric test
+test=> create table sv(i int);
+test=> insert into sv values(7);
+test=> savepoint mysv;
+-- OK	,
+test=> insert into sp values(2);
+INSERT 0 1
+test=> rollback t
+to savepoint  transaction   
+test=> rollback to savepoint mysp;		-- type to en TAB	,
+ROLLBACK
+test=> select*from sp;
+ i 
+---
+ 1
+(1 row)
+
+/ je kunt 
+rollback transaction
+rollback to savepoint
+
+test=> rollback transaction ;
+ROLLBACK
+test=> \dt
+         List of relations
+ Schema |   Name    | Type  | Owner 
+--------+-----------+-------+-------
+ public | customers | table | eric
+(1 row)
+-- nu is table sp rm	, is rollbacked	,
+
+
+/ TODO 
+
+
+
+
+/ Einde SAVEPOINTS
+
+/ GOOGLE 
+
+https://www.youtube.com/watch?v=ZZNb1NOPTp8
+
+/ Einde GOOGLE
+
+/ JNDI
+
+/ google
+jboss jndi
+/ lees,	
+https://docs.jboss.org/jbossweb/3.0.x/jndi-resources-howto.html
+
+
+/ Einde JNDI
+ 
+/ JOINS
+
+/ lees	chapter 7	, queries, table expressions	,
+
+https://www.postgresql.org/docs/9.6/queries-table-expressions.html
+
+/ 13	. 
+
+test=> create table par(s text,i int);
+test=> create table chld(s text,i int);
+test=> insert into par values('foo',1),('bar', 2);
+test=> insert into chld values('foo',1),('bar', 2);
+test=> alter table par add f int ;
+test=> update par set f=i*i;
+
+test=> alter table chld add g text;
+test=> update chld set g=s||s;
+
+test=> insert into par values('baz',3,3*3);
+test=> insert into chld values('gee',3,'gee'||'gee');
+
+test=> select*from par;
+  s  | i | f 
+-----+---+---
+ foo | 1 | 1
+ bar | 2 | 4
+ baz | 3 | 9
+(3 rows)
+
+test=> select *from chld;
+  s  | i |   g    
+-----+---+--------
+ foo | 1 | foofoo
+ bar | 2 | barbar
+ gee | 3 | geegee
+(3 rows)
+
+/ natural inner join = natural join ziet welke welke columns hetzelfde zijn	, s en i hier	, WH qua name en type	, en pakt die rijen met dezelfde values	 van s en i	, en pakt s en i maar 1 keer	, 
+
+test=> select*from par natural inner join chld;
+test=> select*from par natural join chld;
+test=> select*from par join chld using(s,i);
+
+  s  | i | f |   g    
+-----+---+---+--------
+ bar | 2 | 4 | barbar
+ foo | 1 | 1 | foofoo
+(2 rows)
+
+test=> select*from par natural  outer join chld;
+/ ERR	,
+
+/ 13	. 
+
+/ inner join on geeft de columns dubbel	,
+
+test=> select *from par join chld on par.s=chld.s and par.i=chld.i;
+  s  | i | f |  s  | i |   g    
+-----+---+---+-----+---+--------
+ bar | 2 | 4 | bar | 2 | barbar
+ foo | 1 | 1 | foo | 1 | foofoo
+(2 rows)
+
+
+
+/ Einde JOINS
+
+/ 2PC
+
+https://wiki.postgresql.org/wiki/2PC_on_FDW
+
+
+/ Einde 2PC
+
+/ FDW
+
+/ lees  ,
+https://www.postgresql.org/docs/9.5/postgres-fdw.html
+https://www.percona.com/blog/2018/08/21/foreign-data-wrappers-postgresql-postgres_fdw/
+
+/ 7	. 
+
+https://www.postgresql.org/docs/9.5/postgres-fdw.html
+
+
+[eric@almond ping]$ docker run --rm -ti my/fedora-postgres3a bash
+
+/ we zijn op docker cont 172.17.0.5	,
+
+bash-4.3$ pg_ctl start
+postgres=# create extension postgres_fdw;
+CREATE EXTENSION
+postgres=# create server foreign_server
+postgres-# foreign data wrapper postgres_fdw 
+postgres-# options(host'172.17.0.4',port '5432',dbname 'foreign_db' );
+CREATE SERVER
+
+postgres=# create user mapping for local_user server foreign_server options(user 'eric',password 'eric');
+ERROR:  role "local_user" does not exist
+postgres=# create user mapping for foo server foreign_server options(user 'eric',password 'eric');
+CREATE USER MAPPING
+
+  \det[+] [PATTERN]      list foreign tables
+  \des[+] [PATTERN]      list foreign servers
+  \deu[+] [PATTERN]      list user mappings
+  \dew[+] [PATTERN]      list foreign-data wrappers
+  \df[antw][S+] [PATRN]  list [only agg/normal/trigger/window] functions
+
+postgres=# drop user mapping for foo server foreign_server;
+DROP USER MAPPING
+postgres=# create user mapping for eric server foreign_server options(user 'eric',password 'eric');
+
+postgres=# drop server hr;
+DROP SERVER
+postgres=# CREATE SERVER hr
+ FOREIGN DATA WRAPPER postgres_fdw
+ OPTIONS (dbname 'postgres', host '172.17.0.4', port '5432');
+CREATE SERVER
+
+postgres=# CREATE USER MAPPING for eric    
+SERVER hr
+OPTIONS (user 'eric', password 'eric');
+CREATE USER MAPPING
+
+CREATE FOREIGN TABLE employee
+(id int, first_name character varying(20), last_name character varying(20))
+SERVER hr 
+OPTIONS (schema_name 'public', table_name 'employee');
+
+postgres=# grant all on employee to eric;
+GRANT
+postgres=# \c - eric
+You are now connected to database "postgres" as user "eric".
+postgres=> select*from employee;
+ id | first_name | last_name 
+----+------------+-----------
+  1 | jobin      | augustine
+  2 | avinash    | vallarapu
+  3 | fernando   | camargos
+(3 rows)
+
+/ Dus we zien dat we op 172.17.0.5 de foreign table employee die op 172.17.0.4 is kunnen query	,
+
+/ als we op 172.17.0.5 insert, dan zien we die ook op 172.17.0.4.
+
+/ 1313	. 
+
+postgres=# create foreign table foreign_table (
+id integer not null,
+data text)
+server foreign_server 
+options(schema_name 'some_schema',table_name 'some_table');
+CREATE FOREIGN TABLE
+/ als we dit als foo doen krijgen we : ERROR:  permission denied for foreign server foreign_server
+
+/ we zien op 172.17.0.4 wel de foreign_db database, maar geen some_table of some_schema
+/ TODO
+
+/ 7	. 
+
+https://www.percona.com/blog/2018/08/21/foreign-data-wrappers-postgresql-postgres_fdw/
+
+/ source = 172.17.0.4
+/ destination = 172.17.0.5 	,
+
+/ op destination	,
+postgres=# grant USAGE on foreign data wrapper postgres_fdw to eric;
+GRANT
+
+
+
+
+
+/ Einde FDW
+
+/ DOCKER
+
+/ we hebben 
+$ docker pull postgres
+/ we hebben docker.io/postgres	, 
+
+/ als we 		,
+[eric@almond postgres3a]$ docker run -it --rm docker.io/postgres bash
+/ dan wordt initdb run	, en runs postgres 	,
+/ maar als we ,
+$ docker exec -ti <container name> bash
+/ dan OK, maar als we $ pg_ctl -D data restart	, dan stopt de container	, in door --rm ook rm	,
+
+/ herinnner	,
+$ docker container ls
+$ docker container stop <container name>
+
+/ daarom doen we	, 
+[eric@almond postgres3a]$ docker run -it --rm docker.io/postgres bash
+
+/ vreemd: 
+/ we komen als in als root, 	en pg_ctl is in /usr/lib/postgresql/11/bin	, maar is niet in het path	,
+/ maar dat hoeft ook niet: pg_ctl moet in het path van user postgres,	
+/ ook initdb zit dan in het path van postgres	,
+/ bij initdb en pg_ctl moeten we met -D de data/ opgeven	,
+/ TODO
+
+root@86b873ecb0ed:/# su - postgres
+postgres@86b873ecb0ed:~$ cd 
+postgres@86b873ecb0ed:~$ pwd
+/var/lib/postgresql
+postgres@86b873ecb0ed:~$ PATH=/usr/lib/postgresql/11/bin:$PATH
+postgres@86b873ecb0ed:~$ initdb -D data
+...
+postgres@86b873ecb0ed:~$ pg_ctl -D data start 
+...
+postgres@86b873ecb0ed:~$ ps fux
+...
+postgres@86b873ecb0ed:~$ cat >>data/postgresql.conf 
+max_prepared_foreign_transactions = 200 # max_connections = 100 and two shard servers
+max_prepared_transactions = 10
+
+postgres@86b873ecb0ed:~$ pg_ctl -D data restart
+...
+waiting for server to start....2019-03-27 21:00:59.590 GMT [42] LOG:  unrecognized configuration parameter "max_prepared_foreign_transactions" in file "/var/lib/postgresql/data/postgresql.conf" line 689
+2019-03-27 21:00:59.590 GMT [42] FATAL:  configuration file "/var/lib/postgresql/data/postgresql.conf" contains errors
+/ TODO
+
+
+
+
+/ Einde DOCKER
+
+/ WAL
+
+/ op een standalone	pg	,
+
+/ lees	,
+http://www.interdb.jp/pg/pgsql09.html
+
+/ bij een insert wordt de insert naar de WAL buffer write, in mem	,
+/ bij een commit wordt een commit regel naar de WAL buffer write, en flushes alles naar de WAL file op disk	, 
+
+postgres=# begin ;
+BEGIN
+postgres=# insert into t1 values(7),(13);
+INSERT 0 2
+postgres=# insert into t1 values(7),(13);
+INSERT 0 2
+postgres=# insert into t1 values(7),(13);
+INSERT 0 2
+postgres=# commit;
+COMMIT
+
+/ voor de commit zien we de inserts niet in de wal	, pas na de commit	,
+
+bash-4.3$ pg_xlogdump data/pg_xlog/000000010000000000000001 | awk '{$3=$4=$5=$6=$6="";print}' 
+...
+rmgr: Heap     tx: 1882, lsn: 0/017C6118, prev 0/017C60A8, desc: INSERT off 3, blkref #0: rel 1663/13328/16388 blk 0 FPW
+rmgr: Heap     tx: 1882, lsn: 0/017C61D8, prev 0/017C6118, desc: INSERT off 4, blkref #0: rel 1663/13328/16388 blk 0
+rmgr: Heap     tx: 1882, lsn: 0/017C6218, prev 0/017C61D8, desc: INSERT off 5, blkref #0: rel 1663/13328/16388 blk 0
+rmgr: Heap     tx: 1882, lsn: 0/017C6258, prev 0/017C6218, desc: INSERT off 6, blkref #0: rel 1663/13328/16388 blk 0
+rmgr: Heap     tx: 1882, lsn: 0/017C6298, prev 0/017C6258, desc: INSERT off 7, blkref #0: rel 1663/13328/16388 blk 0
+rmgr: Heap     tx: 1882, lsn: 0/017C62D8, prev 0/017C6298, desc: INSERT off 8, blkref #0: rel 1663/13328/16388 blk 0
+rmgr: Transaction     tx: 1882, lsn: 0/017C6318, prev 0/017C62D8, desc: COMMIT 2019-03-30 20:14:13.173026 UTC
+rmgr: XLOG     tx: 0, lsn: 0/017C6340, prev 0/017C6318, desc: CHECKPOINT_ONLINE redo 0/17C6340; tli 1; prev tli 1; fpw true; xid 0/1883; oid 24580; multi 1; offset 0; oldest xid 1869 in DB 1; oldest multi 1 in DB 1; oldest/newest commit timestamp xid: 0/0; oldest running xid 0; online
+
+/ 13	. 
+
+/ lees	,
+https://dba.stackexchange.com/questions/61822/what-happens-in-postgresql-checkpoint
+https://dba.stackexchange.com/questions/185502/postgresql-checkpoint-log-explained
+
+/ Einde WAL
+
+/ WAL
+
+/ wal op master & slave	, 
+
+/ WH gedraagt de wal zich op een master, slave anders: als je 
+# begin;
+# insert into t7 values(7),(13)
+/ dan zien we deze 2 inserts direct in de wal	, terwijl dat op een standalone alleen zo is als je commit hebt gedaan	,
+
+//////////////////////////////
+/ lees	,
+https://www.opsdash.com/blog/postgresql-wal-archiving-backup.html
+
+/ ->
+https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-ARCHIVE-COMMAND
+
+The local shell command to execute to archive a completed WAL file segment. Any %p in the string is replaced by the path name of the file to archive, and any %f is replaced by only the file name. (The path name is relative to the working directory of the server, i.e., the cluster's data directory.) Use %% to embed an actual % character in the command. It is important for the command to return a zero exit status only if it succeeds. For more information see Section 25.3.1.
+
+/ we hebben	, 
+cp -i %p /var/lib/pgsql/data/archive/%f
+/ dus WH %p=archive/000000010000000000000001	, en %f=000000010000000000000001
+
+bash-4.3$ ls data/pg_xlog/
+000000010000000000000011  000000010000000000000012  archive_status
+bash-4.3$ ls data/archive/
+000000010000000000000001		  000000010000000000000005  00000001000000000000000B
+000000010000000000000002		  000000010000000000000006  00000001000000000000000C
+000000010000000000000002.00000028.backup  000000010000000000000007  00000001000000000000000D
+000000010000000000000003		  000000010000000000000008  00000001000000000000000E
+000000010000000000000004		  000000010000000000000009  00000001000000000000000F
+000000010000000000000004.00000028.backup  00000001000000000000000A  000000010000000000000010
+
+bash-4.3$ pg_xlogdump data/archive/000000010000000000000001
+/ OK	,
+bash-4.3$ pg_xlogdump data/pg_xlog/000000010000000000000012
+/ OK	,
+bash-4.3$ pg_xlogdump data/pg_xlog/000000010000000000000013
+pg_xlogdump: FATAL:  could not find a valid record after 0/13000000
+/ TODO
+/ lees	,
+https://www.postgresql.org/message-id/20130423093018.GA12051%40awork2.anarazel.de
+Probably not. Those are likely renamed wal files that do not yet contain
+valid data.
+
+/ op de master	,
+bash-4.3$ ls -ltr data/pg_xlog/
+total 163848
+-rw-------. 1 postgres postgres 16777216 Mar 22 21:20 000000010000000000000013
+-rw-------. 1 postgres postgres 16777216 Mar 22 21:23 00000001000000000000000A
+-rw-------. 1 postgres postgres 16777216 Mar 22 21:25 00000001000000000000000B
+-rw-------. 1 postgres postgres 16777216 Mar 22 21:26 00000001000000000000000C
+-rw-------. 1 postgres postgres 16777216 Mar 23 15:49 00000001000000000000000D
+-rw-------. 1 postgres postgres 16777216 Mar 23 15:50 00000001000000000000000E
+-rw-------. 1 postgres postgres 16777216 Mar 23 15:50 00000001000000000000000F
+-rw-------. 1 postgres postgres 16777216 Mar 28 20:10 000000010000000000000010
+-rw-------. 1 postgres postgres 16777216 Mar 28 20:10 000000010000000000000011
+-rw-------. 1 postgres postgres      305 Mar 28 20:10 000000010000000000000011.00000028.backup
+drwx------. 2 postgres postgres     4096 Mar 28 20:15 archive_status
+-rw-------. 1 postgres postgres 16777216 Mar 28 22:05 000000010000000000000012
+
+
+bash-4.3$ less data/pg_xlog/archive_status/0000000100000000000000
+00000001000000000000000A.done                  00000001000000000000000F.done
+00000001000000000000000B.done                  000000010000000000000010.done
+00000001000000000000000C.done                  000000010000000000000011.00000028.backup.done
+00000001000000000000000D.done                  000000010000000000000011.done
+00000001000000000000000E.done                  
+/ wat is  ?
+-rw-------. 1 postgres postgres 16777216 Mar 22 21:20 000000010000000000000013
+/ TODO
+
+/ 13	. 
+
+/ als we een restart van pg doen, verschijnt er een nieuwe wal file	,
+
+bash-4.3$ ls -ltr data/pg_xlog/
+...
+-rw-------. 1 postgres postgres 16777216 Mar 29 20:42 000000010000000000000013
+
+/ dit is de nieuwe, want we hebben een restart gedaan	,
+/ we doen in psql
+postgres=# begin;
+postgres=# insert into t8 values(55);
+postgres=# insert into t8 values(55);
+postgres=# insert into t8 values(55);
+postgres=# end; 
+postgres=# begin;
+postgres=# insert into t8 values(55);
+postgres=# insert into t8 values(55);
+postgres=# end; 
+
+/ we zien	,
+bash-4.3$ pg_xlogdump data/pg_xlog/000000010000000000000013
+
+/ 7	. 
+
+/ lees	,
+https://www.postgresql.org/docs/9.4/logicaldecoding-example.html
+
+/ we doen op de master psql	, en lezen de WAL file op de slave	,
+
+/ 13	. 
+
+/ master	,
+
+postgres=# alter system set  max_replication_slots =1;
+ALTER SYSTEM
+postgres=# show max_replication_slots ;
+ max_replication_slots 
+-----------------------
+ 0
+(1 row)
+postgres=# \q
+
+bash-4.3$ pg_ctl restart
+
+bash-4.3$ psql
+postgres=# show max_replication_slots ;
+ max_replication_slots 
+-----------------------
+ 1
+(1 row)
+
+postgres=# select*from pg_create_logical_replication_slot('slot','test_decoding');
+ slot_name | xlog_position 
+-----------+---------------
+ slot      | 0/150001E8
+(1 row)
+
+/ 13	. 
+
+/ we kijken op de slave	,
+/ of docker exec	,
+
+/ we zien checkpoints op de shutdown, en online ; redo
+/ TODO
+
+bash-4.3$ pg_xlogdump data/pg_xlog/000000010000000000000017 | awk '{$3="";$4="";$5="";$6="";$7="";print}'
+/ of	,
+bash-4.3$ pg_xlogdump data/pg_xlog/000000010000000000000017 | awk '{$3=$4=$5=$6=$7="";print}'
+...
+/ klopt: 150001E8	,
+
+/ of met	,
+cut -f5 --complement
+/ TODO
+
+
+/ 13	. 
+
+/ op master	,
+
+postgres=# begin;
+BEGIN
+postgres=# insert into t8 values(55);
+INSERT 0 1
+postgres=# insert into t8 values(55);
+INSERT 0 1
+postgres=# insert into t8 values(55);
+INSERT 0 1
+postgres=# end;
+COMMIT
+postgres=# begin;
+BEGIN
+postgres=# insert into t8 values(55);
+INSERT 0 1
+postgres=# insert into t8 values(55);
+INSERT 0 1
+postgres=# end;
+COMMIT
+postgres=# select *from pg_logical_slot_peek_changes('slot',null,null);
+  location  | xid  |                         data                         
+------------+------+------------------------------------------------------
+ 0/150005A0 | 1926 | BEGIN 1926
+ 0/150005A0 | 1926 | table public.t8: INSERT: generate_series[integer]:55
+ 0/15000870 | 1926 | table public.t8: INSERT: generate_series[integer]:55
+ 0/150008B0 | 1926 | table public.t8: INSERT: generate_series[integer]:55
+ 0/15000920 | 1926 | COMMIT 1926
+ 0/15000920 | 1927 | BEGIN 1927
+ 0/15000920 | 1927 | table public.t8: INSERT: generate_series[integer]:55
+ 0/15000960 | 1927 | table public.t8: INSERT: generate_series[integer]:55
+ 0/150009D0 | 1927 | COMMIT 1927
+(9 rows)
+
+/ op slave	,
+
+
+/ 13	. 
+
+/ master	,
+
+/ de create table zien we niet in de WAL	,
+/ TODO
+
+postgres=# begin;
+BEGIN
+postgres=# create table t9(i int);
+CREATE TABLE
+postgres=# insert into t9 values(7);
+INSERT 0 1
+postgres=# insert into t9 values(13);
+INSERT 0 1
+postgres=# end;
+COMMIT
+postgres=# select *from t9;
+ i  
+----
+  7
+ 13
+(2 rows)
+
+postgres=# select *from t9;
+ i  
+----
+  7
+ 13
+(2 rows)
+
+postgres=# select *from pg_logical_slot_peek_changes('slot',null,null);
+  location  | xid  |                         data                         
+------------+------+------------------------------------------------------
+...
+ 0/150009D0 | 1927 | COMMIT 1927 		# vorige	,
+ 0/15000B38 | 1928 | BEGIN 1928
+ 0/15017B28 | 1928 | table public.t9: INSERT: i[integer]:7
+ 0/15017B68 | 1928 | table public.t9: INSERT: i[integer]:13
+ 0/15017D40 | 1928 | COMMIT 1928
+(13 rows)
+
+/ op de slave	,
+
+/ 13	. 
+
+/ op de master	,
+
+postgres=# create table t10(i int);
+CREATE TABLE
+postgres=# insert into t10 values(7);
+INSERT 0 1
+postgres=# insert into t10 values(13);
+INSERT 0 1
+
+/ op de slave zien we	,
+
+
+/ 13	. 
+
+/ op de master	,
+
+postgres=# insert into t10 values(13);
+INSERT 0 1
+postgres=# delete from t10 ;
+DELETE 3
+postgres=# select *from pg_logical_slot_peek_changes('slot',null,null);
+  location  | xid  |                         data                         
+------------+------+------------------------------------------------------
+...
+ 0/15030DE8 | 1932 | BEGIN 1932
+ 0/15030DE8 | 1932 | table public.t10: INSERT: i[integer]:13
+ 0/15030EE0 | 1932 | COMMIT 1932
+ 0/15030EE0 | 1933 | BEGIN 1933
+ 0/15030EE0 | 1933 | table public.t10: DELETE: (no-tuple-data)
+ 0/15030F18 | 1933 | table public.t10: DELETE: (no-tuple-data)
+ 0/15030F50 | 1933 | table public.t10: DELETE: (no-tuple-data)
+ 0/15030FB8 | 1933 | COMMIT 1933
+
+
+/ op de slave	,
+
+
+/ 13	. 
+
+/ master	,
+
+postgres=#  select * into t11 from generate_series(1,7);
+
+postgres=# select *from pg_logical_slot_peek_changes('slot',null,null);
+  location  | xid  |                         data                         
+------------+------+------------------------------------------------------
+...
+ 0/15031100 | 1934 | BEGIN 1934
+ 0/1504A648 | 1934 | table public.t11: INSERT: generate_series[integer]:1
+ 0/1504A688 | 1934 | table public.t11: INSERT: generate_series[integer]:2
+ 0/1504A6C8 | 1934 | table public.t11: INSERT: generate_series[integer]:3
+ 0/1504A708 | 1934 | table public.t11: INSERT: generate_series[integer]:4
+ 0/1504A748 | 1934 | table public.t11: INSERT: generate_series[integer]:5
+ 0/1504A788 | 1934 | table public.t11: INSERT: generate_series[integer]:6
+ 0/1504A7C8 | 1934 | table public.t11: INSERT: generate_series[integer]:7
+ 0/1504A9A0 | 1934 | COMMIT 1934
+
+
+/ op slave	,
+
+...
+rmgr: Transaction len (rec/tot):    376/   405, tx:       1934, lsn: 0/1504A808, prev 0/1504A7C8, desc: COMMIT 2019-03-29 21:49:03.398369 UTC; inval msgs: catcache 63 catcache 62 catcache 63 catcache 62 catcache 45 catcache 44 catcache 7 catcache 6 catcache 7 catcache 6 catcache 7 catcache 6 catcache 7 catcache 6 catcache 7 catcache 6 catcache 7 catcache 6 catcache 7 catcache 6 snapshot 2608 relcache 16477
+rmgr: Standby     len (rec/tot):     24/    50, tx:          0, lsn: 0/1504A9A0, prev 0/1504A808, desc: RUNNING_XACTS nextXid 1935 latestCompletedXid 1934 oldestRunningXid 1935
+pg_xlogdump: FATAL:  error in WAL record at 0/1504A9A0: i
+
+/ 13	. 
+
+/ master	,
+
+postgres=#  select * into t12 from generate_series(1,50);
+SELECT 50
+
+/ slave,	
+
+
+/ 13	. 
+
+/ op master	,
+bash-4.3$ pg_recvlogical -d postgres --slot=test --create-slot
+pg_recvlogical: could not connect to server: FATAL:  no pg_hba.conf entry for replication connection from host "[local]", user "postgres", SSL off
+
+/ lees	,
+https://dba.stackexchange.com/questions/82351/postgresql-doesnt-accept-replication-connection
+
+/ daarom	
+$ vi data/pg_hba.conf
+local replication postgres trust
+
+bash-4.3$ pg_recvlogical -d postgres --slot=test --create-slot
+pg_recvlogical: could not send replication command "CREATE_REPLICATION_SLOT "test" LOGICAL "test_decoding"": ERROR:  all replication slots are in use
+HINT:  Free one or increase max_replication_slots.
+
+/ 1313	. 
+
+/ google	,
+postgresql delete replication slot
+/ lees	,
+https://stackoverflow.com/questions/30854961/how-to-delete-replication-slot-in-postgres-9-4
+
+/ klopt	, we hadden gedaan	,
+
+postgres=# alter system set  max_replication_slots =1;
+ALTER SYSTEM
+bash-4.3$ pg_ctl restart
+postgres=# show max_replication_slots ;
+ max_replication_slots
+-----------------------
+ 1
+(1 row)
+postgres=# select*from pg_create_logical_replication_slot('slot','test_decoding');
+
+postgres=# select*from pg_replication_slots;
+ slot_name |    plugin     | slot_type | datoid | database | active | active_pid | xmin | catalog_xmin | restart_lsn 
+-----------+---------------+-----------+--------+----------+--------+------------+------+--------------+-------------
+ slot      | test_decoding | logical   |  13328 | postgres | f      |            |      |         1926 | 0/150001E8
+(1 row)
+
+/ usage:
+/ peek or show	,
+postgres=# select *from pg_logical_slot_peek_changes('slot',null,null);
+
+postgres=# select pg_drop_replication_slot('slot' );
+ pg_drop_replication_slot 
+--------------------------
+ 
+(1 row)
+
+postgres=# select*from pg_replication_slots;
+ slot_name | plugin | slot_type | datoid | database | active | active_pid | xmin | catalog_xmin | restart_lsn 
+-----------+--------+-----------+--------+----------+--------+------------+------+--------------+-------------
+(0 rows)
+
+/ 1313	. 
+
+/ op de master	,
+bash-4.3$ pg_recvlogical -d postgres --slot=test --create-slot
+bash-4.3$ 
+
+/ we waren op 	,
+https://www.postgresql.org/docs/11/logicaldecoding-example.html
+
+/ we kunnen met ^z en fg doen, maar we kunnen ook aanhaken met 
+[eric@almond postgres3a]$ docker exec -ti festive_leavitt 
+bash-4.3$ pg_recvlogical -d postgres --slot=test --start -f -
+
+/ geef in 1ste console	, 
+bash-4.3$ psql
+postgres=# insert into t7 values(44);
+INSERT 0 1
+
+/ we zien in docker exec	,
+bash-4.3$ pg_recvlogical -d postgres --slot=test --start -f -
+BEGIN 1937
+table public.t7: INSERT: i[integer]:44
+COMMIT 1937
+
+/ 13	. 
+
+/ lees	,
+http://www.interdb.jp/pg/pgsql09.html#_9.7.
+Write Ahead Logging — WAL
+
+/ lees	,
+http://www.interdb.jp/pg/pgsql05.html#_5.4.3.
+Concurrency control
+
+/ 13	. 
+
+/ lees	,
+http://www.interdb.jp/pg/pgsql09.html#_9.7.
+Write Ahead Logging — WAL
+
+/ bij commit wordt de tx afgesloten, vrijgegeven, en de andere txs kunnen het result lezen	, dit zien we niet	,
+/ ook wordt bij commit de acties in de tx naar de WAL geschreven	,
+
+/ bij een checkpoint worden de data in mem naar disk geschreven, dus de inserts, deletes die gedaan zijn	,
+
+/ waarom worden alle acties in de WAL geschreven? Voor bij calamiteiten, er wordt een redo gedaan van de acties na de laatste checkpoint. Ook zijn dit acties uit een committed tx, want anders staan ze niet in de WAL. 
+/ Als het normaal verloopt, dus niet bij een calamiteit, maakte ik een denkfout: in de WAL staan dezelfde inserts, deletes die er al gedaan zijn, en die dus data in mem op zullen leveren, maar dat is allemaal al gedaan, en hoeft niet te redo,
+/ het is dus niet zo dat bij een checkpoint de acties in de WAL worden gedaan die na het vorige checkpoint staan, want die acties zijn al gedaan	, 
+
+/ bij een redo wordt er ahw gedaan alsof er een checkpoint wordt gedaan	,
+
+postgres=# begin ;
+BEGIN
+postgres=# insert into t1 values(7),(13);
+INSERT 0 2
+postgres=# insert into t1 values(7),(13);
+INSERT 0 2
+postgres=# insert into t1 values(7),(13);
+INSERT 0 2
+postgres=# commit;
+COMMIT
+
+rmgr: Heap     tx: 1882, lsn: 0/017C6118, prev 0/017C60A8, desc: INSERT off 3, blkref #0: rel 1663/13328/16388 blk 0 FPW
+rmgr: Heap     tx: 1882, lsn: 0/017C61D8, prev 0/017C6118, desc: INSERT off 4, blkref #0: rel 1663/13328/16388 blk 0
+rmgr: Heap     tx: 1882, lsn: 0/017C6218, prev 0/017C61D8, desc: INSERT off 5, blkref #0: rel 1663/13328/16388 blk 0
+rmgr: Heap     tx: 1882, lsn: 0/017C6258, prev 0/017C6218, desc: INSERT off 6, blkref #0: rel 1663/13328/16388 blk 0
+rmgr: Heap     tx: 1882, lsn: 0/017C6298, prev 0/017C6258, desc: INSERT off 7, blkref #0: rel 1663/13328/16388 blk 0
+rmgr: Heap     tx: 1882, lsn: 0/017C62D8, prev 0/017C6298, desc: INSERT off 8, blkref #0: rel 1663/13328/16388 blk 0
+rmgr: Transaction     tx: 1882, lsn: 0/017C6318, prev 0/017C62D8, desc: COMMIT 2019-03-30 20:14:13.173026 UTC
+
+/ op een gegeven moment komt er een checkpoint	,
+rmgr: XLOG     tx: 0, lsn: 0/017C6340, prev 0/017C6318, desc: CHECKPOINT_ONLINE redo 0/17C6340; tli 1; prev tli 1; fpw true; xid 0/1883; oid 24580; multi 1; offset 0; oldest xid 1869 in DB 1; oldest multi 1 in DB 1; oldest/newest commit timestamp xid: 0/0; oldest running xid 0; online
+
+/ 13	. 
+
+/ vervang multiple space door 1 space	,
+
+/ lees,
+https://unix.stackexchange.com/questions/145978/replace-multiple-spaces-with-one-using-tr-only
+
+bash-4.3$ pg_xlogdump data/pg_xlog/000000010000000000000001 | awk '{$1=$1}1' 
+/ of	
+bash-4.3$ pg_xlogdump data/pg_xlog/000000010000000000000001 | tr -s " " 
+
+rmgr: Btree len (rec/tot): 2/ 6645, tx: 1881, lsn: 0/017C2DD8, prev 0/017C2D88, desc: INSERT_LEAF off 226, blkref #0: rel 1663/13328/2673 blk 38 FPW
+...
+rmgr: Heap len (rec/tot): 3/ 59, tx: 1882, lsn: 0/017C62D8, prev 0/017C6298, desc: INSERT off 8, blkref #0: rel 1663/13328/16388 blk 0
+rmgr: Transaction len (rec/tot): 8/ 34, tx: 1882, lsn: 0/017C6318, prev 0/017C62D8, desc: COMMIT 2019-03-30 20:14:13.173026 UTC
+rmgr: XLOG len (rec/tot): 80/ 106, tx: 0, lsn: 0/017C6340, prev 0/017C6318, desc: CHECKPOINT_ONLINE redo 0/17C6340; tli 1; prev tli 1; fpw true; xid 0/1883; oid 24580; multi 1; offset 0; oldest xid 1869 in DB 1; oldest multi 1 in DB 1; oldest/newest commit timestamp xid: 0/0; oldest running xid 0; online
+
+/ rmgr= resource manager	,
+
+/ 13	. 
+
+/ google,	
+postgresql.conf archive
+/ lees	,
+https://www.postgresql.org/docs/11/continuous-archiving.html
+https://www.opsdash.com/blog/postgresql-wal-archiving-backup.html
+
+
+/ Einde WAL
+
+/ SOURCE 
+
+[eric@almond postgres]$ pwd
+/home/eric/Devel/Postgres/postgres
+[eric@almond postgres]$ git fetch
+[eric@almond postgres]$ git checkout -b REL_11_STABLE 
+[eric@almond postgres]$ git branch -a
+* REL_11_STABLE
+  master
+
+/ lees README.git en niet README	, want we hebben geen tarball, maar met git 	,
+/ daar staat dat we de installatie instructies moeten lezen op,
+
+https://www.postgresql.org/docs/devel/static/installation.html
+
+[eric@almond postgres]$ ./configure CFLAGS=-g
+[eric@almond postgres]$ make | tee LOG_make.txt
+
+
+/ Einde SOURCE
+
+

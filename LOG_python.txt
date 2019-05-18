@@ -1,0 +1,4401 @@
+/ Lees	,
+https://developer.fedoraproject.org/tech/languages/python/scipy.html
+
+[eric@almond h2]$ python3
+>>> print('foo')
+foo
+
+/ Lees	, 
+http://www.scipy-lectures.org
+
+http://bigdata-madesimple.com/8-best-python-data-science-books/
+->
+http://greenteapress.com/wp/think-stats-2e/
+
+https://docs.scipy.org/doc/numpy-1.12.0/reference/routines.linalg.html
+
+
+/ LEARNING PYTHON
+
+
+/ 7	. 
+
+[eric@almond ch3]$ ls -l /usr/bin/python3
+lrwxrwxrwx. 1 root root 9 May 11  2017 /usr/bin/python3 -> python3.5
+
+[eric@almond ch3]$ python3
+Python 3.5.3 (default, May 11 2017, 09:10:41) 
+[GCC 6.3.1 20161221 (Red Hat 6.3.1-1)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> 
+
+
+/ ch3 
+
+[eric@almond ch3]$ pwd
+/home/eric/Devel/python/learning/ch3
+
+/ 13	. 
+
+/ we moeten 2 keer Enter geven	,
+
+>>> for x in 'span':print(x)	/ Enter
+... 	/ Enter
+s
+p
+a
+n
+
+>>> for x in 'span':
+...     print(x)			/ geef TAB of space	,	
+... 
+s
+p
+a
+n
+
+/ als we een script file maken	,
+/ daar hoeven we geen extra Enter te geven	, 
+ 
+
+
+
+/ 13	. 
+
+$ vi script.py
+#!/usr/bin/python3
+import sys
+print(sys.platform)
+print(2**100)
+x='Spam!'
+print(x*8)
+
+[eric@almond ch3]$ python3 script.py 
+linux
+1267650600228229401496703205376
+Spam!Spam!Spam!Spam!Spam!Spam!Spam!Spam!
+
+[eric@almond ch3]$ python3
+Python 3.4.3 (default, Jun 29 2015, 12:16:01) 
+[GCC 5.1.1 20150618 (Red Hat 5.1.1-4)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import script																										/ GEEN .py , dus NIET import script.py	,
+linux
+1267650600228229401496703205376
+Spam!Spam!Spam!Spam!Spam!Spam!Spam!Spam!
+>>> import script
+>>> 
+/ klopt, 1 keer maar	, 
+/ maar we kunnen	, 
+>>> from importlib import reload
+>>> reload(script)
+linux
+1267650600228229401496703205376
+Spam!Spam!Spam!Spam!Spam!Spam!Spam!Spam!
+<module 'script' from '/home/eric/Devel/python/learning/ch3/script.py'>
+
+////////////////////
+/ om importlib.reload te use, moet je wel eerst een keer 'import script' hebben gedaan,
+
+[eric@almond ch3]$ python3
+>>> import script
+linux
+1024
+Spam!Spam!Spam!Spam!Spam!Spam!Spam!Spam!
+>>> import script
+>>> importlib.relead(script)
+NameError: name 'importlib' is not defined
+>>> from importlib import reload
+>>> reload(script)
+linux
+1024
+Spam!Spam!Spam!Spam!Spam!Spam!Spam!Spam!
+<module 'script' from '/home/eric/Devel/python/learning/ch3/sc
+
+/ 13	. 
+
+/ dit kan ook,
+
+[eric@almond ch3]$ cat myprint.py 
+for x in 'span':
+    print(x)
+
+$ python3
+>>> import myprint
+s
+p
+a
+n
+>>> import myprint
+>>> importlib.reload(myprint)
+NameError: name 'importlib' is not defined
+>>> import importlib
+>>> importlib.reload(myprint)
+s
+p
+a
+n
+<module 'myprint' from '/home/eric/Devel/python/learning/ch3/myprint.py'>
+>>> importlib.reload(myprint)
+s
+p
+a
+n
+<module 'myprint' from '/home/eric/Devel/python/learning/ch3/print.py'>
+
+/ hierna kunnen we ook nog,
+>>> from importlib import reload
+>>> reload(myprint)
+s
+p
+a
+n
+<module 'print' from '/home/eric/Devel/python/learning/ch3/print.py'>
+
+/ we moeten () use	,
+>>> reload print
+SyntaxError: invalid syntax
+
+/ Intermezzo
+
+/ 13	. 
+
+/ google,
+TypeError: 'module' object is not callable
+/ lees	,
+https://stackoverflow.com/questions/4534438/typeerror-module-object-is-not-callable
+
+/ Noem een script nooit print.py	, en import hem dan	, 
+/ want als we hierna:
+
+>>> if 1:
+...  print('OK')
+... 
+TypeError: 'module' object is not callable
+
+/ wat hier staat is dat hij in print('OK') print voor een module aanziet ipv een functie, en een module kun je niet call	, 
+
+/ 13	. 
+
+/ we kunnen het in dezelfde python3 session repareren	,
+
+/ google 
+unimport module
+/ lees	,
+https://stackoverflow.com/questions/32234156/how-to-unimport-a-python-module-which-is-already-imported
+
+>>> del print
+>>> dir()
+['__builtins__', '__doc__', '__loader__', '__name__', '__package__', '__spec__', 'myif', 'mysum', 'mysum2', 'reload']
+>>> if 1:
+...     print('OK')
+... 
+OK
+/ werkt weer	,
+>>> dir()
+['__builtins__', '__doc__', '__loader__', '__name__', '__package__', '__spec__', 'myif', 'myprint', 'mysum', 'mysum2', 'reload']
+
+/ 13	. 
+
+/ na een del moeten we import, en reload 
+/ de import doet niets	, net als dat je import na een import doet	,
+
+>>> import script
+linux
+1024
+Spam!Spam!Spam!Spam!Spam!Spam!Spam!Spam!
+>>> del script
+>>> import script				
+>>> reload						/ hebben we reload?
+<function reload at 0x7efea914ff28>	 	/ ja	, 
+>>> reload(script)
+linux
+1024
+Spam!Spam!Spam!Spam!Spam!Spam!Spam!Spam!
+<module 'script' from '/home/eric/Devel/python/learning/ch3/script.py'>
+
+/ voor reload moeten we eerst hebben gedaan: import script	,
+
+/ 13	. 
+
+[eric@almond ch3]$ cat print.py 
+for x in 'span':
+    print(x)
+y=13
+
+/ als we toch  de module print noemen (en het script dus print.py)	, dan werkt print in het module wel	, WH omdat je in het script geen import print doet)	, maar op de command line ,waar je import print deed, niet	,
+
+>>> import print
+s
+p
+a
+n
+>>> print('ok')
+TypeError: 'module' object is not callable
+
+>>> from importlib import reload
+>>> reload(print)
+s
+p
+a
+n
+<module 'print' from '/home/eric/Devel/python/learning/ch3/print.py'>
+
+/ 13	. 
+
+[eric@almond ch3]$ mv print.py myprint.py
+>>> del print
+>>> import myprint
+s
+p
+a
+n
+>>> print('ok')
+ok
+>>> reload(myprint)
+s
+p
+a
+n
+<module 'myprint' from '/home/eric/Devel/python/learning/ch3/myprint.py'>
+
+/ Einde Intermezzo
+
+/ 13	. 
+
+/ ga naar, 
+https://docs.python.org/3/
+
+/ als we in een andere window,
+$ vi script.py
+print(2**10)
+/ en we doen in onze shell weer
+>>> reload(script)
+linux
+1024
+Spam!Spam!Spam!Spam!Spam!Spam!Spam!Spam!
+<module 'script' from '/home/eric/Devel/python/learning/ch3/script.py'
+
+/ 13	. 
+
+/ 'import script' maakt een namespace 'script', met daarin x bijvoorbeeld, als je x def in de current namespace is dat dus een andere x	, 
+/ als script verandert, moet je een reload doen, de namespace blijft script, dus x in de current namespace blijft onveranderd, 
+
+/ bij 'exec(open('script.py').read()) execs hij script.py in de current ns	, als je niet eerder 'import script' hebt gedaan, is er niet eens een namespace 'script'	,
+
+[eric@almond ch3]$ python3
+>>> import script
+linux
+1024
+Spam!Spam!Spam!Spam!Spam!Spam!Spam!Spam!
+>>> x
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'x' is not defined
+>>> script.x
+'Spam!'
+///////////////////////////////////
+>>> x=99
+>>> x
+99
+>>> script.x
+'Spam!'
+
+>>> from importlib import reload
+>>> reload
+<function reload at 0x7f7833d89048>
+/ reload zit dus in deze namespace, niet in die van importlib, wiens namespace we niet eens hebben, 
+/ daarvoor moeten we 'import importlib' doen	, 
+>>> importlib.reload
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'importlib' is not defined
+>>> import importlib
+>>> importlib.reload
+<function reload at 0x7f7833d89048>
+>>> reload																	/ hadden we al	,
+<function reload at 0x7f7833d89048>
+
+>>> reload(script)
+linux
+1024
+Spam!Spam!Spam!Spam!Spam!Spam!Spam!Spam!
+<module 'script' from '/home/eric/Devel/python/learning/ch3/script.py'>
+>>> x
+99
+>>> script.x
+'Spam!'
+/////////////////////////////
+/ de ns blijven behouden	,
+
+/ als je reload(script) wilt doen, moet je eerst import script hebben gedaan	, en from importlib import reload; en script en reload moeten in de huidige ns	,
+
+/ 13	. 
+
+import importlib
+importlib.reload is OK	,
+
+
+[eric@almond ch3]$ cat p41.py 
+#!/usr/bin/python3							/ maakt niet uit als je $ python3 p41.py doet	,
+for x in 'spam': print(x)
+print('done')
+
+>>> import p41
+s
+p
+a
+m
+done
+>>> import importlib
+>>> importlib.reload(p41)
+s
+p
+a
+m
+done
+<module 'p41' from '/home/eric/Devel/python/learning/ch3/p41.py'>
+
+/ 13	. 
+
+>>> exec(open('script.py').read())
+linux
+1024
+Spam!Spam!Spam!Spam!Spam!Spam!Spam!Spam!
+>>> x
+'Spam!'
+>>> script.x
+'Spam!'
+////////////////////////////////////////////////
+>>> reload
+<function reload at 0x7f7833d89048>
+>>> script.reload
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'module' object has no attribute 'reload'
+
+/ 13	. 
+
+[eric@almond ch3]$ cat p55.py 
+#!/usr/bin/python3
+a='foo'
+b='bar'
+c='baz'
+print(a,b,c)
+
+[eric@almond ch3]$ python3
+>>> import p55
+foo bar baz
+>>> import p55	/ niets	, is al imported	,
+>>> p55.b,p55.c
+('bar', 'baz')
+/ b en c zijn in ns p55	, p55 in current ns	,
+
+>>> dir(p55)
+['__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'a', 'b', 'c']
+
+/ 13	. 
+
+>>> 2**1000
+10715086071862673209484250490600018105614048117055336074437503883703510511249361224931983788156958581275946729175531468251871452856923140435984577574698574803934567774824230985421074605062371141877954182153046474983581941267398767559165543946077062914571196477686542167660429831652624386837205668069376
+
+/ 13	. 
+
+>>> import math
+>>> math.pi
+3.141592653589793
+>>> math.pi**2 								/ NIET math.pi^2
+9.869604401089358
+
+>>> dir (math)
+['__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'acos', 'acosh', 'asin', 'asinh', 'atan', 'atan2', 'atanh', 'ceil', 'copysign', 'cos', 'cosh', 'degrees', 'e', 'erf', 'erfc', 'exp', 'expm1', 'fabs', 'factorial', 'floor', 'fmod', 'frexp', 'fsum', 'gamma', 'gcd', 'hypot', 'inf', 'isclose', 'isfinite', 'isinf', 'isnan', 'ldexp', 'lgamma', 'log', 'log10', 'log1p', 'log2', 'modf', 'nan', 'pi', 'pow', 'radians', 'sin', 'sinh', 'sqrt', 'tan', 'tanh', 'tau', 'trunc']
+
+/ 13	. 
+
+/ lees	,
+https://docs.python.org/3/contents.html
+What’s New in Python
+The Python tutorial
+Python setup and usage
+The python language reference
+The python standard library										<-
+Extending and Embedding the Python Interpreter
+Python C/API reference manual
+Distributing Python Modules
+Installing Python Modules
+Python HOWTOs
+Python Frequently Asked Questions
+
+/ 13	. 
+
+>>> import random
+>>> help(random)
+>>> help(random.random)
+
+
+/ of	, 
+https://docs.python.org/3
+/ search: random	,
+https://docs.python.org/3/library/random.html?highlight=random#module-random
+
+/ lees	,
+https://github.com/vivekseth/generic_oauth/issues/1
+
+import secrets
+/ not found
+/ TODO
+
+>>> random
+<module 'random' from '/usr/lib64/python3.6/random.py'>
+>>> random.random()
+0.9561382726802409
+>>> random.random()
+0.12609889194710944
+
+
+/ 13	 .
+
+>>> type('spam')
+<class 'str'>
+
+
+>>> S='spam'
+>>> S[0]='t'												/ een string is immutable	,
+TypeError: 'str' object does not support item assignment
+>>> S='t'+S[1:]										/ make new string	,
+>>> S
+'tpam'
+
+>>> '%s'%'spam'
+'spam'
+>>> '{0}'.format('spam')
+'spam'
+
+/ geen namespace	,
+>>> dir('')
+['__add__', '__class__', '__contains__', '__delattr__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__getnewargs__', '__gt__', '__hash__', '__init__', '__iter__', '__le__', '__len__', '__lt__', '__mod__', '__mul__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__rmod__', '__rmul__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', 'capitalize', 'casefold', 'center', 'count', 'encode', 'endswith', 'expandtabs', 'find', 'format', 'format_map', 'index', 'isalnum', 'isalpha', 'isdecimal', 'isdigit', 'isidentifier', 'islower', 'isnumeric', 'isprintable', 'isspace', 'istitle', 'isupper', 'join', 'ljust', 'lower', 'lstrip', 'maketrans', 'partition', 'replace', 'rfind', 'rindex', 'rjust', 'rpartition', 'rsplit', 'rstrip', 'split', 'splitlines', 'startswith', 'strip', 'swapcase', 'title', 'translate', 'upper', 'zfill']
+/ string fcts	,
+
+>>> help(''.replace)
+
+>>> s='\u03c0'		# we moeten ook de 0 geven	, '\u3c0' is ERR	,
+>>> print(s)
+π
+>>> t='π'			# zoals we het altijd doen: ctrl+shift+u+3c0
+>>> s==t
+True
+
+/ lees	,
+https://stackoverflow.com/questions/3215168/how-to-get-character-in-a-string-in-python
+
+>>> ord('π')
+960
+>>> format(ord('π'),'x')
+'3c0'
+
+/ als de unicode uit 1 byte bestaat kunnen we
+'\xb0'
+/ '\ub0' is ERR, je moet '\u00b0' is OK	,
+/ Dus of '\xb0' of \u00b0'	, 
+
+>>> '\u03c0'
+'π'
+>>> '\u03c0'.encode()
+b'\xcf\x80'
+>>> '\u03c0'.encode().decode()
+'π'
+>>> b'\xcf\x80'.decode()
+'π'
+>>> '\xcf\x80'.decode()
+AttributeError: 'str' object has no attribute 'decode'
+
+>>> type(b'')
+<class 'bytes'>
+>>> type('')
+<class 'str'>
+
+>>> '\xb0'
+'°'
+>>> b'\xb0'
+b'\xb0'
+
+>>> 'a'.encode()
+b'a'
+>>> b'a'.decode()
+'a'
+>>> ord('a')
+97
+>>> b'\x61'.decode()
+'a'
+>>> '97'.encode()
+b'97'
+>>> b'97'.decode()
+'97'
+
+/ je kunt niet \x61 geven	, en wel 0x61	, '\x61' en b'\x61'	,
+>>> type(\x61)
+  File "<stdin>", line 1
+    type(\x61)
+SyntaxError: unexpected character after line continuation character
+>>> type('\x61')
+<class 'str'>
+>>> type(b'\x61')
+<class 'bytes'>
+>>> b'\x61'==97
+False
+>>> 0x61==97
+True
+
+>>> b'\xcf\x80'.decode()
+'π'
+>>> b'\xcf\x81'.decode()
+'ρ'
+>>> b'\xcf\x82'.decode()
+'ς'
+>>> b'\xcf\x83'.decode()
+'σ'
+>>> b'\xcf\x84'.decode()
+'τ'
+
+>>> '\u03c0\u03f5'.encode()
+b'\xcf\x80\xcf\xb5'
+>>> '\u03c0\u03f5'.encode().decode()
+'πϵ'
+
+
+/ 13	. 
+
+/ lees	,
+https://stackoverflow.com/questions/5796238/python-convert-decimal-to-hex
+
+>>> hex(ord('a'))
+'0x61'
+>>> "%x" % 97
+'61'
+>>> '{0:b}'.format(97)
+'1100001'
+>>> '{0:x}'.format(97)
+'61'
+>>> '{0:b},{1:x}'.format(97,98)
+'1100001,62'
+
+>>> x=0x61
+>>> x
+97
+/ Hoe krijgen we hier 
+0x61
+/ TODO
+
+>>> ord('a')
+97
+>>> hex(97)
+'0x61'
+>>> int('0x61',16)
+97
+/ of in 1 keer	
+>>> int(hex(ord('a')),16)
+97
+
+>>> '%x'%10
+'a'
+>>> '%x'%11
+'b'
+>>> '%x'%97
+'61'
+
+/ 13	. 
+
+>>> ord('a')
+97
+>>> ord(b'a')
+97
+>>> 'a'==b'a'
+False
+
+>>> b'è'
+  File "<stdin>", line 1
+SyntaxError: bytes can only contain ASCII literal characters.
+>>> b'π'
+  File "<stdin>", line 1
+SyntaxError: bytes can only contain ASCII literal characters.
+
+/ TODO
+/ want	,
+>>> 'è'.encode('latin')
+b'\xe8'									/ NIET ascii
+>>> 'è'.encode('utf8')
+b'\xc3\xa8'
+>>> '\xc3'						/ NIET ascii
+'Ã'
+>>> '\xa8'					/ NIET ascii
+'¨'
+
+>>> '\u00e8' is 'è'
+True
+>>> '\xe8' is 'è'
+True
+>>> b'\xe8' is 'è'
+False
+>>> '\u00e8' is '\xe8'
+True
+>>> b'\u00e8' is b'\xe8'
+False
+>>> b'\u00e8'
+b'\\u00e8'
+>>> b'\xe8'
+b'\xe8'
+
+/ 13	. 
+
+>>> str(13).encode()
+b'13'
+>>> str(13) is '13'
+False
+>>> str(13) == '13'
+True
+/ TODO
+
+>>> b'1' is '\x01'
+False
+>>> b'1' is '\x1'
+  File "<stdin>", line 1
+SyntaxError: (unicode error) 'unicodeescape' codec can't decode bytes in position 0-2: truncated \xXX escape
+
+/ boek(904)
+>>> str('π'.encode(),encoding='utf8')
+'π'
+>>> str(b'\xcf\x80','utf8')
+'π'
+>>> str(b'\xe8','latin')
+'è'
+
+/ HIER HIER HIER
+
+
+
+/ 13	. 
+
+/ we kunnen multiline string maken met ''' of """	, 
+/ '''...''' resulteert in "..."	, tenzij er "..." in '''...''' staat	,
+
+>>> '''\'foo\''''
+"'foo'"
+>>> """'foo'"""
+"'foo'"
+>>> '''\'foo\'\''''
+"'foo''"
+>>> '''
+... ''foo''
+... '''
+"\n''foo''\n"
+
+/ we hoeven ' niet te escape als er een ander char tussen zit	,
+>>> '''bar''foo'''
+"bar''foo"
+>>> '''\'bar\''''
+"'bar'"
+
+>>> '''b'''
+'b'
+>>> '''b'b'''
+"b'b"
+/ we zien wel ""	,
+>>> '''"'"'''
+'"\'"'
+
+
+
+
+>>> s='''
+... bar''foo
+... '''
+>>> s
+"\nbar''foo\n"
+
+>>> s='''
+... bar """ foo
+... '''
+>>> s
+'\nbar """ foo\n'
+
+>>> s="""
+... bar"""foo
+  File "<stdin>", line 2
+    bar"""foo
+            ^
+SyntaxError: invalid syntax
+
+/ 13	. 
+
+/ pattern matching
+
+>>> import re
+>>> m=re.match('Hello[ \t]*(.*)world','Hello   \t  python world')
+>>> m
+<_sre.SRE_Match object; span=(0, 23), match='Hello   \t  python world'>
+>>> m.group(0)
+'Hello   \t  python world'
+>>> m.group(1)
+'python '
+>>> m.group(2)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+IndexError: no such group
+
+/ we kunnen tabs geven met tab toets	, of met \t	,
+>>> m=re.match('[ \t]*(.*)','           \t      foo bar')
+/ type tabs met tab toets	, en type \t: geen verschil	,
+>>> m.group(0)
+'  \t\t\t  \tfoo bar'
+>>> m.group(1)
+'foo bar'
+
+
+/ 13	. 
+
+/ Dit kan in python	,
+
+>>> s='spam'
+>>> type(s)
+<class 'str'>
+>>> s=1
+>>> type(s)
+<class 'int'>
+
+/ 13	. 
+
+/ integers, strings zijn immutable, 
+/ lists zijn mutable,
+
+/ l[1:] is new list
+/ l+[3,'foo'] is new list
+/ l.append(3) is dezelfde list
+/ l.sort() is dezelfde list
+
+/ 13	. 
+
+/ list comprehension, zoals in Erlang	,
+
+>>> m=[[1,2,3],[4,5,6],[7,8,9]]				# cols
+>>> [x[1] for x in m]
+[2, 5, 8]
+>>> [x[0] for x in m]
+[1, 4, 7]
+>>> [[x[i] for x in m]for i in [0,1,2]]
+[[1, 4, 7], [2, 5, 8], [3, 6, 9]]			# rows
+>>> [x[1:] for x in m]
+[[2, 3], [5, 6], [8, 9]]
+
+>>> [i for i in range(3)] 		# of met in range(3) ipv in [0,1,2]
+[0, 1, 2]
+>>> [[x[i] for x in m]for i in range(3)]
+[[1, 4, 7], [2, 5, 8], [3, 6, 9]]
+
+/ Intermezzo
+
+/ m[0:1] is een slice	, 
+/ het is een list, net als m	,
+
+>>> m[0]
+[1, 12, 3]		/ toevallig ook een list	,
+>>> m[0:1]
+[[1, 12, 3]]	/ net als m	,
+
+>>> m[0:2]
+[[1, 12, 3], [4, 5, 6]]
+>>> m[0:3]
+[[1, 12, 3], [4, 5, 6], [7, 8, 9]]
+>>> m
+[[1, 12, 3], [4, 5, 6], [7, 8, 9]]
+>>> m[0:3]==m		/ lists zijn equal	, 
+True
+>>> m[0:3] is m	/ maar niet gelijk,	
+False
+
+
+/ Einde Intermezzo
+
+>>> [x[0:1] for x in m]
+[[1], [4], [7]]
+>>> [x[0] for x in m]
+[1, 4, 7]
+
+>>> [x[1] for x in m if x[1]%2==0]
+[2, 8]
+>>> [x[1] for x in m if x[1]%2==1]
+[5]
+>>> [x[1]**2 for x in m if x[1]%2==0]
+[4, 64]
+
+/ 13	. 
+
+/ (89)
+
+>>> [m[i][i] for i in [0,1,2]]	 / diagonaal	,
+[1, 5, 9]
+>>> [c*2 for c in 'spam']
+['ss', 'pp', 'aa', 'mm']
+
+/ 13	. 
+
+
+[eric@almond ch3]$ cat myfcts.py 
+def mysum(l):
+	if l==[]:
+		return 0
+	else:
+		return l[0]+mysum(l[1:])
+
+>>> M=[[1,2,3],[4,5,6],[7,8,9]]
+>>> list(map(sum,M))					 / som elems in kolom	,
+[6, 15, 24]
+>>> set(map(sum,M))
+{24, 6, 15}
+>>> import myfcts
+>>> list(map(myfcts.mysum,M))	 / zo werkt het: namespace = name file	,
+[6, 15, 24]
+/ of	,
+>>> from myfcts import mysum
+>>> M=[[1,2,3],[4,5,6]]
+>>> list(map(mysum,M))
+[6, 15]
+
+/ map(fct,list) past fct toe op elk elem in de list	,
+
+/ je kunt dus een module import in current ns	, of 1 fct in de current ns, maar dan moet je from module doen	,
+
+/ zo kun je map ook use	,
+>>> [i for i in map(sum,M)]
+[6, 15, 24]
+/ makkelijker:
+>>> [sum(i)for i in m]
+[6, 15, 24]
+
+
+/ 13	. 
+
+/ lees	,
+https://docs.python.org/3/
+->
+https://docs.python.org/3.6/tutorial/
+https://docs.python.org/3/library/index.html
+->
+https://docs.python.org/3/library/stdtypes.html#sequence-types-list-tuple-range
+
+/ map(fct,iterable, ...)
+
+Using the type constructor: list() or list(iterable)
+
+
+/ 13	. 
+
+>>> m=[[1,2,3],[4,5,6],[7,8,9]]
+>>> [sum(x) for x in m]
+[6, 15, 24]
+
+>>> iter(m)
+<list_iterator object at 0x7f66d0ebb278>
+>>> (sum(x)for x in m)
+<generator object <genexpr> at 0x7f66d0f6bc18>
+>>> map(sum,m)
+<map object at 0x7f66d0fa3e10>
+>>> list(iter(m))
+[[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+>>> list(sum(x)for x in m)
+[6, 15, 24]
+>>> list(map(sum,m))
+[6, 15, 24]
+
+>>> i=iter(m)
+>>> next(i)
+[1, 2, 3]
+>>> next(i)
+[4, 5, 6]
+>>> next(i)
+[7, 8, 9]
+
+/ book (90)
+>>> g=(sum(x) for x in m)
+>>> type(g)
+<class 'generator'>
+>>> next(g)
+6
+>>> next(g)
+15
+>>> next(g)
+24
+>>> next(g)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+StopIteration
+
+/ 13	. 
+
+>>> map(sum,m)
+<map object at 0x7fd6ad64d710>
+>>> type(map(sum,m))
+<class 'map'>
+>>> list(map(sum,m))
+[6, 15, 24]
+>>> [x for x in map(sum,m)]
+[6, 15, 24]
+
+>>> {sum(x)for x in m}
+{24, 6, 15}
+>>> [sum(x) for x in m]
+[6, 15, 24]
+
+>>> {x:sum(m[x])for x in range(3)}
+{0: 6, 1: 15, 2: 24}
+
+>>> range(3)
+range(0, 3)
+>>> [x for x in range(3)]
+[0, 1, 2]
+
+/ 13	. 
+
+>>> def foo():return 'foo'
+... 					/ extra Enter	,
+/ of	,
+>>> def foo():
+...  return 'foo' 
+...								/ extra Enter	, 
+>>> foo()
+'foo'
+
+/ lees	,
+https://superuser.com/questions/817301/how-to-add-indent-in-python-3-4-interactive-mode-terminator-linux
+/ interactive / in script kunnen we SPACE geven , of TAB 
+
+>>> if 1:
+...  print('OK')
+... 						/ extra Enter	,
+OK
+
+>>> if 0:
+...  print('OK')
+... else:
+...  print('ERR')
+... 							/ extra Enter	,
+ERR
+
+/ 13	. 
+
+[eric@almond ch3]$ cat myif.py 
+if 0:
+ print('OK')
+else:
+ print('ERR')
+
+>>> import myif
+ERR								/ dit is geen ERR	, maar de string die wij print	,
+>>> import myif 	/ altijd zo	,
+>>> import importlib
+>>> importlib.reload(myif)
+ERR
+<module 'myif' from '/home/eric/Devel/python/learning/ch3/myif.py'>
+
+/ of	, 
+>>> from importlib import reload
+>>> reload(myif)
+/ je kunt reload pas use na een import, dus
+>>> import myif
+...
+>>> reload(myif)
+
+/ 13	. 
+
+[eric@almond ch3]$ cat myfcts.py 
+def mysum(l):
+	if l==[]:
+		return 0
+	else:
+		return l[0]+mysum(l[1:])
+
+>>> import myfcts
+>>> myfcts.mysum([1,3,4])
+8
+
+/ als je iets heb gewijzigd in myfcts.py	, 
+>>> import importlib
+>>> importlib.reload(mysum)
+>>> myfcts.mysum([1,3,4])
+...
+
+/ 13	. 
+
+>>> [i for i in filter(lambda x:x%2==0,[1,3,4])]
+[4]
+>>> [i for i in filter(lambda x:x%2==1,[1,3,4])]
+[1, 3]
+
+>>> list(map(lambda x:2*x,[1,4,5]))
+[2, 8, 10]
+>>> [2*i for i in [1,4,5]] 								/ list comprehension is ipv list & map	,
+[2, 8, 10]
+
+>>> list(map(lambda x:2*x,filter(lambda x:x%2==1,[1,4,5])))
+[2, 10]
+/ of	,
+>>> [2*i for i in [1,4,5] if i%2==1]		/ list comprehension ipv list & map & filter	,
+[2, 10]
+
+>>> [i for i in map(lambda x:2*x,[1,4,5])] 	/ onnodig ingewikkeld	,
+[2, 8, 10]
+
+/ we kunnen niet op 1 line:
+>>> def mysum(l): if l==[]:return 0
+                  ^
+/ maar zo	,
+>>> def mysum(l):
+...  if l==[]:return 0	 / 1 space is OK	,
+... 
+>>> mysum([])
+0
+>>> mysum([1])
+>>> 
+
+
+/ 13	. 
+
+>>> L=[1,1,1]
+>>> L[3]=2
+IndexError: list assignment index out of range
+>>> L[2]=2
+>>> L.append(20)
+>>> L
+[1, 1, 2, 20]
+
+/ bij dict mag je wel ahw L[3]=2:
+
+>>> d={}
+>>> d['0']='foo'
+>>> d[1]='foo'
+>>> d
+{1: 'foo', '0': 'foo'}
+
+/ 13	. 
+
+/ sort keys in dictionary	,
+
+>>> d={'a':1,'b':2,'c':3}
+>>> d
+{'b': 2, 'a': 1, 'c': 3}
+>>> d.keys()
+dict_keys(['a', 'b', 'c'])
+>>> k=list(d.keys())
+>>> k
+['b', 'a', 'c']
+>>> k.sort()
+>>> k
+['a', 'b', 'c']
+>>> for key in k:
+...  print(key,d[key])		# 1 space voor print	,
+... 											# extra Enter	means: go	,
+a 1
+b 2
+c 3
+
+>>> k=list(d.keys())
+>>> k
+['b', 'a', 'c']
+>>> for key in sorted(d):		# geen d.keys() nodig	, 
+...  print (key,d[key])
+... 
+a 1
+b 2
+c 3
+
+>>> type(d)
+<class 'dict'>
+>>> type(d.keys())
+<class 'dict_keys'>
+>>> type(k)
+<class 'list'>
+>>> type(sorted(d))
+<class 'list'>
+
+>>> help(sorted)
+sorted(...)
+    sorted(iterable, key=None, reverse=False) --> new sorted list
+
+>>> help(d.keys)
+keys(...) method of builtins.dict instance
+    D.keys() -> a set-like object providing a view on D's keys
+
+>>> d={'a':1,'b':2,'c':3,'a':5}
+>>> d
+{'a': 5, 'b': 2, 'c': 3}
+/ de keys zijn inderdaad set-like	,
+
+/ 13	.
+
+(94) 
+
+>>> x=4
+>>> while(x>0):
+...  print ('spam!'*x)
+...  x-=1
+... 
+spam!spam!spam!spam!
+spam!spam!spam!
+spam!spam!
+spam!
+
+/ 13	. 
+
+>>> d
+{'b': 2, 'a': 1, 'c': 3}
+
+>>> 'f' in d
+False
+>>> if not 'f' in d:
+...  print ('missing')
+... 
+missing
+
+>>> v=d['x'] if 'x' in d else 'foo'
+>>> v
+'foo'
+
+/ 13	. 
+
+>>> f=open('data.txt','w')	 # data.txt is er	,
+>>> f.write('π\n')
+2
+>>> f.write('\u03c0\n')			# kan ook	,
+2
+>>> f.flush()								# 'π\n' staat in data.txt
+
+$  cat data.txt
+π
+π
+>>> g=open('data.txt')
+>>> g.read()
+'π\nπ\n'
+>>> g.seek(0)
+0
+>>> text=g.read()
+>>> text
+'π\nπ\n'
+
+>>> text.encode()
+b'\xcf\x80\n\xcf\x80\n'
+
+>>> g.read()
+''
+>>> g=open('data.txt')		# open stream opnieuw op data.txt	, 
+												# we hadden de vorige g ook g.close()	, hoeft niet TODO (is dat een mem leak?, of wordt gc?)
+										# doe g.seek(0) ipv g=open('data.txt')
+>>> g.read()
+'π\nπ\n'
+
+/ OVERZICHT IO
+
+/ je kunt afwisselend write & read	,
+
+>>> f=open('data.txt','w')
+>>> f.write('\u03c0\n')
+2
+>>> f.flush()
+>>> g=open('data.txt')
+>>> g.read()							# reads hele file	,
+'π\n'
+>>> g.read()
+''
+>>> f.write('\u03c0\n')
+2
+>>> f.flush()
+>>> g.read()
+'π\n'
+>>> g.read()
+''
+
+/ WH automatisch encoding als we 'π' write 	, als we met een program read, of dat cat is of met python's open('data.txt'), deze doet aut. decoding, dus zien we 'π'	, 
+
+/ we kunnen ook	bytes wegschrijven	, dus doen we zelf de encoding	,
+
+>>> f=open('data.bin','wb')
+>>> f.write(b'\xcf\x80\n')
+3
+>>> f.flush()
+[eric@almond ch3]$ cat data.bin
+π
+
+/ een 'w' stream writes strings dus '\u03c0'	, een 'wb' stream writes bytes dus b'\xcf\x80' 
+>>> f.write('\u03c0\n')
+TypeError: 'str' does not support the buffer interface
+
+>>> f2=open('data.bin','w')
+>>> f2.write(b'\xcf\x80\n')
+TypeError: must be str, not bytes
+
+/ 13	. 
+
+>>> g.seek(0)
+0
+/ set g weer vooraan	, dan kun je weer vanaf het begin lezen	,
+
+>>> h=open('data.bin','a')
+>>> h.write('a')
+1
+>>> h.write('b')
+1
+>>> h.flush()
+>>> g=open('data.bin','r')
+>>> g.read()							/ want g staat nog vooraan	,
+'ab'
+>>> g.read()
+''
+>>> g.seek(0)
+0
+>>> g.read()
+'ab'
+>>> g.read()
+''
+>>> f=open('data.bin','a')
+>>> f.write('c')
+1
+>>> f.write('d')
+1
+>>> f.flush()
+>>> g.read()			/ g staat op index 2	, dus leest vanaf daar	,
+'cd'
+>>> g.seek(0)
+0
+>>> g.read()
+'abcd'
+
+/ 7	. 
+
+>>> f=open('enc.txt',mode='w',encoding='utf-8')
+>>> f.write('\xe8')
+>>> f.flush()
+[eric@almond ch3]$ od -t x1 enc.txt 
+0000000  c3  a8
+
+>>> g=open('enc.txt',mode='w',encoding='latin')
+>>> g.write('\xe8')
+1
+>>> g.flush()
+[eric@almond ch3]$ od -t x1 enc.txt 
+0000000  e8
+
+>>> g.seek(0)
+0
+>>> g.write('\x41')
+1
+>>> g.flush()
+[eric@almond ch3]$ od -t x1 -t c enc.txt 
+0000000  41
+          A
+/ od kan met -t c alleen ascii print	, latin niet	,
+
+>>> g=open('enc.txt',mode='bw')
+/ een encoding kan niet	, want	,
+ValueError: binary mode doesn't take an encoding argument
+
+>>> g.write(b'\xe4')
+1
+>>> g.flush()
+[eric@almond ch3]$ od -t x1  enc.txt 
+0000000 e4
+
+>>> g.seek(0)
+0
+>>> g.write('\x41')
+1
+>>> g.flush()
+
+
+
+/ Einde OVERZICHT IO
+
+
+/ 13	. 
+
+>>> {x**2 for x in range(1,5)}
+{16, 1, 9, 4}
+>>> [x**2 for x in range(1,5)]
+[1, 4, 9, 16]
+
+/ 13	. 
+
+>>> X=set('spam')
+>>> X
+{'s', 'p', 'a', 'm'}
+>>> Y=set('ham')
+>>> X,Y																	
+({'s', 'p', 'a', 'm'}, {'h', 'a', 'm'})
+
+/ 13	. 
+
+/ OPEN 2018-02-17
+
+/ 13	. 
+
+/ tuples (225)	,
+
+/ tuple=immutable list	,
+
+>>> t=(1,2,3,4)
+>>> t[1]
+2
+>>> t[1:]
+(2, 3, 4)
+
+>>> 10,t[1:]			/ NIET de bedoeling	,
+(10, (2, 3, 4))
+>>> (10,)+t[1:]		/ OK	,
+(10, 2, 3, 4)
+
+>>> help(tuple)
+...
+
+/ lees	,
+https://stackoverflow.com/questions/3523048/add-another-tuple-to-a-tuple-of-tuples
+>>> (10,)+t
+(10, 1, 2, 3, 4)
+/
+>>> 10,t
+(10, (1, 2, 3, 4))
+
+>>> type((10,))
+<class 'tuple'>
+>>> type((10))
+<class 'int'>
+>>> type(10,)
+<class 'int'>
+
+ 
+
+/ 13	 ,
+
+/ , operator	,
+
+>>> 'foo',1
+('foo', 1)
+>>> {'foo',1}
+{1, 'foo'}
+>>> {'foo',1},{'bar'}
+({1, 'foo'}, {'bar'})
+>>> ({'foo',1},{'bar'})
+({1, 'foo'}, {'bar'})
+>>> {'foo',1}|{'bar'} 	/ union	,
+{1, 'foo', 'bar'}
+
+>>> True,False
+(True, False)
+>>> 'foo',1
+('foo', 1)
+
+/ 13	. 
+
+/ None is iets van python	,
+
+/ CH 5
+
+/ 13	. 
+
+>>> type(.3+1j)
+<class 'complex'>
+/ complex heeft WH float in zich	,
+
+>>> 4/2
+2.0
+>>> type(4/2)
+<class 'float'>		# !
+
+/ floor	, 
+>>> 4//2
+2
+>>> type(4//2)
+<class 'int'>
+>>> 5//2
+2
+>>> type(5//2)
+<class 'int'>
+
+/ floor	,
+>>> -5/2
+-2.5
+>>> -5//2
+-3
+
+/ truncate	,
+>>> import math
+>>> math.trunc(-5/2)
+-2
+
+/ Maar	, 
+>>> 4/2
+2.0
+>>> 4j/2
+2j
+/ TODO
+>>> 2.0j
+2j
+>>> 2.0
+2.0
+>>> 2.0==2
+True
+>>> 2.0 is 2
+False
+>>> 2.0j is 2j
+True
+
+>>> (4j/2)/1j
+(2+0j)										# not 2
+>>> 2+0j is 2
+False
+>>> 2+0j==2
+True
+>>> type((4j/2)/1j)
+<class 'complex'>
+>>> (4j/2)/1j==2
+True
+>>> 2.0==2
+True
+>>> 4/2
+2.0
+>>> 4/2 is 2
+False
+>>> 4j/2
+2j
+>>> 4j/2 is 2j
+False
+/ TODO
+
+
+>>> 4j/2.0
+2j
+>>> 4j/3
+1.3333333333333333j
+/ TODO
+
+/ In python 2.7.10	, classic division:
+>>> 4/2
+2
+>>> type(4/2)
+<type 'int'>
+>>> 4/2.0
+2.0
+>>> type(4/2.0)
+<type 'float'>
+
+/ 13	. 
+
+>>> '%e' % (1/3)	
+'3.333333e-01'
+/ we moeten () want	,
+>>> '%e' % 1/3
+TypeError: unsupported operand type(s) for /: 'str' and 'int'
+>>> '%e' % 1
+'1.000000e+00'
+
+>>> '%4.2f' % (1/3)
+'0.33'
+>>> '%5.2f' % (1/3)
+' 0.33'
+>>> '%8.2f' % (1/3)
+'    0.33'
+
+>>> '{0:4.2f}'.format(1/3)
+'0.33'
+>>> '{0:5.2f}'.format(1/3)
+' 0.33'
+/ 0 betekent 1ste arg	, er is hier maar 1 arg	,
+
+/ 13	. 
+
+>>> 1>0.9
+True
+>>> 1>1j
+TypeError: unorderable types: int() > complex()
+>>> 1j>0.3j
+TypeError: unorderable types: complex() > complex()
+
+
+>>> 1<2<3
+True
+>>> 1<2 and 2<3
+True
+
+
+/ 13	. 
+
+>>> 2/3+1/2
+1.1666666666666665
+>>> from fractions import Fraction
+>>> f=Fraction(2,3)
+>>> g=Fraction(1,2)
+>>> f+g
+Fraction(7, 6)
+
+
+/ 13	. 
+
+/ octal 0o	, hex 0x	, bin 0b	, 
+
+>>> 0o10
+8
+>>> 0x10
+16
+>>> 0b10
+2
+/ of	,
+>>> int('10',8)
+8
+>>> int('0o10',8)
+8
+>>> int('12',8)
+10
+>>> int('12',9)
+11
+
+/ Intermezzo
+
+//////////////////////////////////////////
+
+/ Dit gaan we hieronder bestuderen	,
+
+/ bin: int -> str
+/ int: str -> int	,
+
+>>> int('100',2)
+4
+>>> int('100',2)==0b100
+True
+>>> int(b'100',2)==0b100
+True
+/ je mag int een string of bytes geven	,
+
+/ hex,oct,bin zijn inverse van int	,
+>>> bin(81)
+'0b1010001'
+>>> int('0b1010001',2)
+81
+>>> int(bin(81),2)
+81
+>>> bin(int('0b1010001',2))
+'0b1010001'
+
+//////////////////////////////////////////////////
+
+/ als je int met een base geeft, moet 1ste arg een string, bytes of byte array	,
+/ int geeft altijd in decimal (dat kun je veranderen, staat ergens in deze notes, je kunt hex krijgen altijd TODO)
+
+/ als je int met 1ste arg is een string, dan moet je de juiste base use	, 
+/ maar je kunt ook int use met getal, dan altijd dec returns:
+
+>>> int(0o10)
+8
+>>> int(0b111)
+7
+
+>>> int(0o10,8)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: int() can't convert non-string with explicit base
+>>> int('0o10', 8) 		/ de base moet 8 zijn, anders ERR	,
+8
+
+>>> bytes([1,1,1])
+b'\x01\x01\x01'
+>>> b'\x31\x31\x31'==b'111'
+True
+
+>>> int (b'111' ,2) 	/ b betekent byte	,
+7
+>>> int (b'111' ,4)
+21
+>>> int('0b111',4)		/ 0b betekent binary	,
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: invalid literal for int() with base 4: '0b111'
+>>> int('0b111',2)
+7
+>>> int('0b111')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: invalid literal for int() with base 10: '0b111'
+>>> int(0b111)
+7
+>>> int(0b111,4)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: int() can't convert non-string with explicit base
+
+>>> bytes(b'111')
+b'111'
+>>> bytes('111')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: string argument without an encoding
+
+>>> bytes('a','ascii')
+b'a'
+>>> bytes('a','utf-8')
+b'a'
+
+/ 'è' (\u00e8, maar we kunnen ctrl+shift+u e8)	, is NIET ascii, WEL latin en utf-8	,
+>>> bytes('è','ascii')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+UnicodeEncodeError: 'ascii' codec can't encode character '\xe8' in position 0: ordinal not in range(128)
+>>> bytes('è','latin')
+b'\xe8'
+>>> bytes('è','utf-8')
+b'\xc3\xa8'
+
+/ Intermezzo
+
+/ boek (913)
+
+/ 'n bytes object is seq. of integers	from 0 to 255, that are printed as ASCII chars when displayed	,
+
+>>> '1'
+'1'
+>>> b'1'
+b'1'
+
+>>> b'\x41'
+b'A'
+>>> '\x41'
+'A'
+>>> b'\x31'
+b'1'
+>>> '\x31'
+'1'
+>>> b'\x01'
+b'\x01'
+>>> '\x01'
+'\x01'
+
+
+>>> b'\x41' is b'A'
+True
+>>> b'\x31' is b'1'
+True
+>>> b'\xe8' is b'è'
+  File "<stdin>", line 1
+SyntaxError: bytes can only contain ASCII literal characters.
+
+/ type è door ^ue8
+
+
+>>> 'è'.encode()
+b'\xc3\xa8'
+>>> 'è'.encode('latin')
+b'\xe8'
+>>> b'\xe8'
+b'\xe8'
+/ hij print niet vanzelf 'è'	,
+>>> b'\xe8'.decode('latin')
+'è'
+/ WH omdat è in latin encoding \xe8 is	, maar hij print alleen ascii dus b'\x31' print hij als b'1', 
+/ misschien ook omdat '1' in latin en in unicode gelijk is, namelijk de ascii encoding	, maar è is in latin en unicode anders	, \xe8 en \xc3\xa8	, en er is ook geen ascii encoding (anders waren de latin en unicode daaraan gelijk)	, 
+
+/ Einde Intermezzo
+
+
+>>> bytes('π','ascii')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+UnicodeEncodeError: 'ascii' codec can't encode character '\u03c0' in position 0: ordinal not in range(128)
+>>> bytes('π','utf-8')
+b'\xcf\x80'
+
+/ 13	. 
+
+>>> help(bytes)
+class bytes(object)
+ |  bytes(iterable_of_ints) -> bytes
+ |  bytes(string, encoding[, errors]) -> bytes
+ |  bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer
+ |  bytes(int) -> bytes object of size given by the parameter initialized with null bytes
+ |  bytes() -> empty bytes object
+ |  
+ |  Construct an immutable array of bytes from:
+ |    - an iterable yielding integers in range(256)
+ |    - a text string encoded using the specified encoding
+ |    - any object implementing the buffer API.
+ |    - an integer
+
+>>> type([97,98,99])
+<class 'list'>
+>>> bytes([97,98,99])
+b'abc'
+>>> bytes('π','utf8')
+b'\xcf\x80'
+>>> bytes(b'111')
+b'111'
+>>> bytes(4)
+b'\x00\x00\x00\x00'
+
+>>> b'11' is b'\x31\x31'
+True
+>>> b'11' == b'\x31\x31'
+True
+
+/ 13	.
+
+
+>>> bytes('111','utf-8')
+/ of	,
+>>> bytes(b'111')
+/ of	,
+>>> bytes(b'\x31\x31\x31')
+/ of	,
+>>> bytes([49,49,49])
+b'111'
+
+
+>>> '1'=='\x31'	 / '1' is dus de 
+True
+>>> int('1',2) is 1
+True
+
+>>> '1' is '\x31'
+True
+>>> b'1' is b'\x31'
+True
+/ TODO	 / vergl met '\x01' of b'\x01' 	, 
+/ TODO Wat is b'...' eigenlijk	?
+>>> '\x01' is b'\x01'
+False
+
+/ 13	 .
+
+>>> bytes([\x31,\x31,\x31])
+  File "<stdin>", line 1
+    bytes([\x31,\x31,\x31])
+SyntaxError: unexpected character after line continuation character
+
+/ klopt	, je kunt wel 7 schrijven maar geen \x07	, alleen wel b'\x07'	, 
+
+>>> 7 is b'\x07'
+False
+>>> b'7' is b'\x37'
+True
+>>> '7' is '\x37'
+True
+
+>>> int(b'\x07')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: invalid literal for int() with base 10: b'\x07'
+>>> int(b'\x37')
+7
+>>> int('7')
+7
+
+>>> bytes([7,7,7])
+b'\x07\x07\x07'
+
+>>> bytes([7])
+b'\x07'
+>>> bytes([7]) is b'\x07'
+False
+>>> bytes([7]) == b'\x07'
+True
+>>> bytes([7]) is bytes([7])
+False
+
+/ omgekeerd	,
+/ lees	,
+https://docs.python.org/3/library/stdtypes.html
+
+>>> int.from_bytes(b'\x07',byteorder='big')
+7
+>>> int.from_bytes(b'\x07\x08',byteorder='big')
+1800
+>>> hex(int.from_bytes(b'\x07\x08',byteorder='big'))
+'0x708'
+
+>>> sys.byteorder
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'sys' is not defined
+>>> import sys;sys.byteorder
+'little'
+>>> sys.byteorder
+'little'
+
+/ vergl	,
+>>> int(b'\x37')
+7
+>>> int('7')
+7
+>>> (7).to_bytes(1,byteorder='big')
+b'\x07'
+>>> int.from_bytes(b'\x07',byteorder='big')
+7
+
+>>> int(b'\0x7')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: invalid literal for int() with base 10: b'\x07'
+>>> int(b'\x37')
+7
+
+>>> b'\x07'
+b'\x07'
+/ dus is OK, maar je kunt er geen int van maken op de manier zoals int() dat doet,	
+
+>>> b'\12'
+b'\n'
+>>> b'\19' 	/ '\1' is octal, daarachter staat '9'	, 
+b'\x019'
+>>> b'\x39'
+b'9'
+>>> b'\39'
+b'\x039'
+
+/ je kunt octal hex, ascii door elkaar use	, 
+
+>>> b'\12341t\n' 	'\123' is 'S'	, daarachter staan '4' en '1'	,
+b'S41t\n'
+>>> b'\129'	 '\12' is '\n' en omdat '\129' niet octal is	, 
+b'\n9'
+>>> b'\127'
+b'W'
+
+>>> b'\000' is b'\x00'
+True
+>>> b'\x30' is b'0'
+True
+>>> b'\0000' is b'\x000'
+True
+>>> b'\0000' is b'\x00\x30'	 / is b'\000' en b'0' == b'\x30' = b'\60'
+True
+>>> b'\0000' is b'\x00\60'
+True
+
+
+
+
+
+
+
+/ 13	. 
+
+>>> type(b'111')
+<class 'bytes'>
+>>> type('0b111')
+<class 'str'>
+
+>>> int(bytearray([49,49,49]),2)
+7
+>>> int(bytes([49,49,49]),2)
+7
+>>> int(bytes([49,49,49]),3)
+13
+>>> bytes([49,49,49])
+b'111'
+>>> int(b'111',3)
+13
+>>> int(b'7')	
+/=
+>>> int(b'7',10)	
+7
+>>> b'\x07'
+b'\x07'
+>>> int(b'\x37')
+7
+>>> b'\x37' is b'7'
+True
+>>> b'\n' is b'\x0a'
+True
+
+/ een byte array b'\x..\x..' ziet er uit als een string, door de '...'	, maar het zijn bytes	,
+/ bijv	,
+>>> b'\x37\x27'
+b"7'"
+>>> b'\x37\x37'
+b'77'
+
+
+>>> bytes([49,49,49])
+b'111'
+
+/ 13	. 
+
+/ verschil byte array en string	,
+
+/ van string -> byte array -> string	,
+>>> '\u03c0'.encode()
+b'\xcf\x80'
+>>> b'\xcf\x80'.decode()
+'π'
+
+
+/ dit kan allebei	,
+>>> b'\x37\x37'
+b'77'
+>>> '\x37\x37'
+'77'
+
+>>> '\x37'.encode()
+b'7'
+>>> '\x37'.encode().decode()
+'7'
+
+>>> '7'.encode()
+b'7'
+>>> b'7'.decode()
+'7'
+
+/ google, 
+python cast to byte	, 
+/ lees	, 
+https://stackoverflow.com/questions/14043886/python-2-3-convert-integer-to-bytes-cleanly
+
+>>> bytes([7])
+b'\x07'
+>>> bytes([7,8])
+b'\x07\x08'
+
+>>> bytes([7,8,9,10,11,12,13])
+b'\x07\x08\t\n\x0b\x0c\r'
+>>> bytes(b'\x07\x08\x09\x0a\x0b\x0c\x0d')
+b'\x07\x08\t\n\x0b\x0c\r'
+>>> bytes('\x07\x08\x09\x0a\x0b\x0c\x0d','utf8')	/ moet met encoding	,
+b'\x07\x08\t\n\x0b\x0c\r'
+/ en	,
+>>> [7] is b'\x07'
+False
+>>> [7] == b'\x07'
+False
+
+
+/ 13	,
+
+>>> bytes([7]) == b'7'
+False
+>>> bytes([7]) == b'\x07'									/ !
+True
+>>> bytes([49,50,51]) is b'123'
+False
+>>> bytes([49,50,51]) == b'123'
+True
+
+>>> bytes(['\x07']) == b'\x07'
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'str' object cannot be interpreted as an integer
+>>> bytes([b'\x07']) == b'\x07'
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'bytes' object cannot be interpreted as an integer
+
+>>> int.from_bytes(b'\x07','big')
+7
+
+>>> bytes([7]) is b'\x07'
+False
+
+
+/ 13	. 
+
+/ lees	,
+https://docs.python.org/3/reference/lexical_analysis.html
+/ we kunnen in b'...' \x (hex) en \ (oct) geven	,
+/ TODO
+>>> b'\x31'
+b'1'
+>>> b'\31'
+b'\x19'
+>>> b'1'
+b'1'
+/ maar	,
+>>> b'\49'
+b'\x049'
+/ en	,
+>>> b'\111'
+b'I'
+>>> b'\11'
+b'\t'
+>>> b'\10'
+b'\x08'
+>>> b'\12'
+b'\n'
+>>> b'\1212'
+b'Q2'
+
+/ 13	. 
+
+///////////////////////////////////////////
+
+/ BYTES, STRING, INT	,
+
+/ let op verschil	,
+/ 0x51	en '\x51'	, 
+
+>>> '\x51'
+'Q'
+>>> 0x51
+81
+>>> chr(0x51)
+'Q'
+>>> chr(0x51) is '\x51'
+True
+>>> ord('\x51') is 0x51
+True
+
+>>> bin(15)
+'0b1111'
+>>> int('0b1111',2)
+15
+
+>>> oct(15)
+'0o17'
+>>> int('0o17',8)
+15
+
+>>> hex(15)
+'0xf'
+>>> int('0xf',16)
+15
+
+>>> bytes([0x15])
+b'\x15'
+
+>>> bytes([0x37])
+b'7'
+>>> int.from_bytes(b'7','big')
+55
+>>> hex(int.from_bytes(b'7','big'))
+'0x37'
+>>> bytes([0x07])
+b'\x07'
+>>> hex(int.from_bytes(b'\x07','big'))
+'0x7'
+
+
+
+
+/ elkaar inverse	,
+>>> ord('Q')
+81
+>>> chr(81)
+'Q'
+
+>>> '\x51'
+'Q'
+>>> '\121'
+'Q'
+>>> b'Q' == 'Q'
+False
+>>> b'Q' == 'Q'.encode()
+True
+
+>>> int('0x15',16)
+21
+>>> int.from_bytes( b'\x15','big')
+21
+>>> int.from_bytes( '\x15','big')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: cannot convert 'str' object to bytes
+
+/ 13	. 
+
+/ 0x37 en \x37
+
+>>> b'\x37' is b'7'
+True
+>>> 0x37
+55
+>>> b'0x37' is b'55'
+False
+>>> 0x37 is 55
+True
+
+>>> '\111'
+'I'
+>>> 0o111
+73
+>>> chr(73)
+'I'
+
+>>> '\x37'
+'7'
+>>> chr(0x37)
+'7'
+>>> ord('7')
+55
+>>> hex(ord('7'))
+'0x37'
+
+>>> '\x37'
+'7'
+>>> oct(0x37)
+'0o67'
+>>> '\67'
+'7'
+>>> '\067'
+'7'
+
+>>> bin(0x37)
+'0b110111'
+
+/ 13	.
+
+>>> bin(55)
+'0b110111'
+>>> oct(55)
+'0o67'
+>>> hex(55)
+'0x37'
+>>> 0o67
+55
+>>> 0b110111
+55
+>>> 0o67 is 55
+True
+
+>>> chr(0x03c0)
+'π'
+>>> '\u03c0'
+'π'
+
+>>> oct(0x03c0)
+'0o1700'
+>>> '\x03c0'
+'\x03c0'
+>>> '\01700'
+'\x0f00'
+
+
+>>> oct(0x37)
+'0o67'
+>>> '\067'
+'7'
+>>> '\67'
+'7'
+>>> '\67\67'
+'77'
+>>> '\x37\x37\x37'
+'777'
+
+/ dit kan niet	, '\x37' is  
+>>> '\x373737'
+'73737'
+>>> '\u37373737' '\u3737' is OK in een string van chars	, niet van bytes (zie hieronder)
+'㜷3737'
+/ maar dit kan wel	,
+>>> 0xaabbccddeeffaa
+48057234611961770
+
+>>> b'\u3737'
+b'\\u3737'
+>>> b'\12'
+b'\n'
+
+>>> '37'.encode()
+b'37'
+>>> b'37' is b'\x33\x37'
+True
+
+>>> b'\x3737'
+b'737'
+/ want b'\x37' is b'7'	,
+
+
+/ 13	. 
+
+>>> int('777777',8) == 0o777777
+True
+>>> int('777777',8) is 0o777777
+False
+/ TODO
+
+>>> int(b'\x3777',8) == 0o777
+True
+>>> int(b'\06777',8) == 0o777
+True
+/ we moeten de 0 geven	, anders ziet hij WH \677 en dat is ERR	,
+
+/ we kunnen ipv '7' ook '\067' of \x37
+/ dus 
+int('77',8) == 0o77
+int('\0677',8) == 0o77
+
+>>> '\6777'
+'ƿ7'
+>>> b'\677'
+b'\xbf'
+>>> b'\0677'
+b'77'
+>>> '\0677'
+'77'
+
+/ als \677	, dan vat hij dit op als 1 char	, doe \0677 als je 77 bedoelt	,
+/ als je alleen \67  of \67\67 , dan OK	,
+
+>>> int(b'\677',8)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: invalid literal for int() with base 8: b'\xbf'
+
+>>> int('\677',8)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: invalid literal for int() with base 8: 'ƿ'
+
+>>> int('\67',8)
+7
+>>> int('\67\67',8)
+63
+>>> oct(int('\67\67',8))
+/ of	,
+>>> oct(int('\067\067',8))
+'0o77'
+
+>>> chr(0o67)
+'7'
+>>> chr(0o67) == '\67'
+True
+/ Dit geldt maar voor 1 unicode (arg of chr)	,
+
+/ 13	. 
+
+>>> int('7')
+7
+>>> '7' == '\67'
+True
+/ dus '7' -> 7 
+
+>>> int(b'\007')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: invalid literal for int() with base 10: b'\x07'
+
+>>> int('7') == 0x07
+True
+>>> int('7') == 0o007
+True
+>>> '7' == '\x37' 
+True
+>>> int('\x37')==0x07
+True
+>>> chr(0x37)=='\x37'
+True
+>>> ord('\x37')==0x37
+True
+
+[eric@almond enc]$ pwd
+/home/eric/Devel/C/C/enc
+[eric@almond enc]$ ls
+convert.c      convert.java
+/ we zien in C en Java dat '7'==55	, 
+/ maar in Python is dat niet zo	,
+
+/ in python: int('7') is geen cast	, maar converts	, zoals in C '7'-'0' , en Integer.parseInt('7') in Java.
+
+/ 13	 
+
+/ het tegenovergestelde van int zijn bin,oct,hex	,
+/ bij int moet je wel altijd de goede base erbij geven	,
+/ je kunt dus 0x geven , en daarachter een groot aantal cijfers,	
+
+>>> oct(0xffffffffffffffffffffffffffff)
+'0o17777777777777777777777777777777777777'
+>>> int('0o777777777777777777777777777777777777',8)
+324518553658426726783156020576255
+
+/ '\x..' kan maar 1 byte zijn	,
+
+>>> '\u03c0'
+'π'
+>>> '\u03c0'.encode()
+b'\xcf\x80'
+>>> '\u03c0\u03c0'.encode()
+b'\xcf\x80\xcf\x80'
+
+
+/ Einde BYTES, STRING, INT	,
+
+/////////////////////////////////////////////
+
+/ 13	. 
+
+
+>>> 0o121
+/ of	,
+>>> ord('\121')
+81
+>>> hex(0o121)
+'0x51'				/ 'n str	,
+>>> '\121\x51'
+'QQ'
+>>> '\121\x51\u0051'
+'QQQ'
+>>> '\121\x51\u005181'
+'QQQ81'
+>>> '\121\x51\u005181\p\t'
+'QQQ81\\p\t'
+
+>>> 16
+16
+>>> 0x10
+16
+>>> 0o20
+16
+>>> 0b1000
+8
+>>> 0b10000
+16
+>>> type(0b10000)
+<class 'int'>
+
+>>> int('10000',16)
+65536
+>>> int('0b10000',16)	/ b is hex digit 11	,
+11599872
+>>> int('0g10000',16)
+ValueError: invalid literal for int() with base 16: '0g10000'
+>>> int('x10000',16)
+ValueError: invalid literal for int() with base 16: 'x10000'
+>>> int('0x10000',16)			/ 0x wordt wel accept	,
+65536
+>>> int('10000',8)
+4096
+>>> int('0o10000',8)			/ 0o wordt wel accept	,
+4096
+>>> int('0p10000',8)
+ValueError: invalid literal for int() with base 8: '0p10000'
+
+>>> int('0b10000',2)	/ 0b wordt accept	,
+16
+>>> int('010000',2)	/ dit kan niet op de command line, see hieronder	,
+16
+>>> int('10000',2)
+16
+
+>>> 10
+10
+>>> 010
+SyntaxError: invalid token
+>>> 0b10
+2
+>>> 0o10
+8
+>>> 0x10
+16
+
+//////////////////////////////////////////
+>>> int('100',2)
+4
+>>> int('100',2)==0b100
+True
+>>> int(b'100',2)==0b100
+True
+/ je mag int een string of bytes geven	,
+
+/ hex,oct,bin zijn inverse van int	,
+>>> bin(81)
+'0b1010001'
+>>> int('0b1010001',2)
+81
+>>> int(bin(81),2)
+81
+>>> bin(int('0b1010001',2))
+'0b1010001'
+
+
+/ 13	 .
+
+//////////////////////////////////////////////////
+
+/ lees	,
+https://stackoverflow.com/questions/1476/how-do-you-express-binary-literals-in-python
+
+>>> 0b111
+7
+>>> 0o101
+65
+>>> int('0b101',2)
+5
+>>> 0b101
+5
+
+>>> type('a')
+<class 'str'>
+>>> type(b'a')
+<class 'bytes'>
+>>> bytes('a','utf-8')==b'a'
+True
+/ maar voor int maakt dat niet uit:
+>>> int('a',16)
+10
+>>> int(b'a',16)
+10
+
+>>> bytes('π','utf-8')
+b'\xcf\x80'
+>>> bytes('π','ascii')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+UnicodeEncodeError: 'ascii' codec can't encode character '\u03c0' in position 0: ordinal not in range(128)
+
+>>> bytes(b'a')
+b'a'
+/ logisch, doet niets, want je geeft bytes al een bytes	,
+
+/ Einde Intermezzo
+
+
+/ int('...',base) is inverse van oct, hex, bin	,
+/ oct, hex, bin zijn als format, %	,
+
+/ de andere kant op: oct, hex, bin
+>>> oct(8)
+'0o10'
+>>> '{0:o},{1:x},{2:b}'.format(16,16,16)
+'20,10,10000'
+>>> '%o,%x' % (16,16)							# %b kan niet	,
+'20,10'
+
+/ int maakt van 'n string een getal	, 
+/ bin, oct, hex maken van een getal een string	, 
+>>> 0xff
+255
+>>> int('0xff',16)
+255
+>>> bin(0xff)
+'0b11111111'
+>>> int('0b11111111',2)
+255
+
+
+>>> 0xffffffffffffffffffffffffffffffffffffff
+5708990770823839524233143877797980545530986495
+>>> oct(0xffffffffffffffffffffffffffffffffffffff)
+'0o377777777777777777777777777777777777777777777777777'
+>>> '%o' % 0xffffffffffffffffffffffffffffffffffffff
+'377777777777777777777777777777777777777777777777777'
+
+>>> type(0xff)
+<class 'int'>
+>>> type(oct(0xff))
+<class 'str'>
+
+>>> 1<<2
+4
+>>> 1|2
+3
+>>> 2&1
+0
+
+/ 13	. 
+
+>>> sum((1,2,3))
+6
+>>> type((1,2,3))
+<class 'tuple'>
+>>> sum(1,2,3)
+TypeError: sum expected at most 2 arguments, got 3
+>>> max(1,2,3,4)
+4
+>>> max((1,2,3,4))
+4
+
+/ 13	 
+
+>>> .1
+0.1
+>>> .1+.2
+0.30000000000000004
+>>> .1+.2-.3
+5.551115123125783e-17
+
+>>> 1/7
+0.14285714285714285
+>>> import decimal
+>>> decimal.getcontext().prec=4
+>>> decimal.Decimal(1)/decimal.Decimal(7)
+Decimal('0.1429')
+
+/ 13	. 
+
+/ (129)
+
+/ lees	,
+https://pymotw.com/3/fractions/
+
+>>> import fractions
+>>> x=fractions.Fraction(.25)
+/ of	,
+>>> from fractions import Fraction
+>>> x=Fraction(.25)
+ 
+
+>>> x=Fraction(1,7)
+>>> x
+Fraction(1, 7)
+>>> print(x)
+1/7
+
+>>> Fraction(.25)
+Fraction(1, 4)
+>>> Fraction(0.1)
+Fraction(3602879701896397, 36028797018963968)
+/ TODO Waarom niet Fraction(1,10)? 
+
+>>> Fraction(0.2)
+Fraction(3602879701896397, 18014398509481984)
+>>> Fraction(0.3)	
+Fraction(5404319552844595, 18014398509481984)
+>>> Fraction(0.4)
+Fraction(3602879701896397, 9007199254740992)
+>>> Fraction(0.5)
+Fraction(1, 2)
+>>> Fraction(0.6)
+Fraction(5404319552844595, 9007199254740992)
+...
+
+/ 13	. 
+
+>>> (2.5).as_integer_ratio()
+(5, 2)
+>>> (.3).as_integer_ratio()
+(5404319552844595, 18014398509481984)
+
+/ het verschil met Fraction(.3) is de type	,
+>>> type(Fraction(.3))
+<class 'fractions.Fraction'>
+>>> type((.3).as_integer_ratio())
+<class 'tuple'>
+
+>>> float(Fraction(.3))
+0.3
+>>> float((.3).as_integer_ratio())
+TypeError: float() argument must be a string or a number, not 'tuple'
+
+>>> float(Fraction(1,3)).as_integer_ratio()
+(6004799503160661, 18014398509481984)
+
+/ van tuple naar Fraction	,
+
+>>> Fraction(*(1,3))
+Fraction(1, 3)
+
+/ 13	. 
+
+>>> 4/3
+1.3333333333333333
+>>> (4/3).as_integer_ratio()
+(6004799503160661, 4503599627370496)
+
+>>> 6004799503160661/4503599627370496
+1.3333333333333333
+
+>>> x=Fraction(*(4,3))
+>>> x
+Fraction(4, 3)
+
+>>> y=Fraction(4/3)
+>>> y
+Fraction(6004799503160661, 4503599627370496)
+>>> y.numerator
+6004799503160661
+>>> y.denominator
+4503599627370496
+/ Dus Fraction doet hetzelfde als as_integer_ratio	, we zien dezelfde getallen	,
+
+>>> (4/3).as_integer_ratio()
+(6004799503160661, 4503599627370496)
+>>> a=Fraction(*(4/3).as_integer_ratio())
+>>> a==y
+True
+
+
+>>> Fraction(*(.3).as_integer_ratio())
+Fraction(5404319552844595, 18014398509481984)
+>>> Fraction(*(.3).as_integer_ratio()).limit_denominator()
+Fraction(3, 10)
+/ TODO *
+
+>>> Fraction(*(.3).as_integer_ratio()).limit_denominator(10)
+Fraction(3, 10)
+>>> Fraction(*(.3).as_integer_ratio()).limit_denominator(9)
+Fraction(2, 7)
+
+/ 13	. 
+
+/ sets are mutable,
+/ sets are iterables	,
+
+>>> set('abcde')				# arg 'abcde' is een iterable
+{'b', 'e', 'a', 'c', 'd'}
+
+/ dat zie je ook zo:
+>>> set('aaa')
+{'a'}
+>>> {i for i in 'aaa'}
+{'a'}
+
+
+>>> x=set('abcde')			
+>>> for i in x:print(i*3)
+... 
+bbb
+eee
+aaa
+ccc
+ddd
+>>> {i*3 for i in x}
+{'ddd', 'ccc', 'aaa', 'eee', 'bbb'}
+
+>>> {i*2 for i in {i*3 for i in x}}
+{'eeeeee', 'cccccc', 'bbbbbb', 'aaaaaa', 'dddddd'}
+
+>>> x.add('abcde')
+>>> x
+{'a', 'b', 'e', 'c', 'abcde', 'd'}
+/ Dus 'abcde' wordt hier niet als iterable gezien zoals bij de ctor	,
+
+/ p136
+
+>>> {i for i in (1,1,2,2)}
+{1, 2}
+>>> [i for i in (1,1,2,2)]
+[1, 1, 2, 2]
+
+/ (1,2,3) een tuple is ook een iterable	,
+
+/ lees	,
+https://stackoverflow.com/questions/9884132/what-exactly-are-iterator-iterable-and-iteration
+An iterable is an object that has an __iter__ method which returns an iterator, or which defines a __getitem__ method that can take sequential indexes starting from zero (and raises an IndexError when the indexes are no longer valid). So an iterable is an object that you can get an iterator from.
+An iterator is an object with a next (Python 2) or __next__ (Python 3) method.
+>>> help(range)
+/ of	,
+>>> help(list)
+  __iter__(self, /)
+ |      Implement iter(self).
+
+
+
+>>> {i for i in range(-5,5)}
+{0, 1, 2, 3, 4, -5, -4, -3, -2, -1}
+
+/ een dict zonder values is als een set	, maar is niet ==	,
+>>> {1:'foo',1:'bar'}
+{1: 'bar'}
+>>> {1,1}
+{1}
+>>> {1}=={1:None}
+False
+
+/ == : hebben 2 objects dezelfde values	,
+/ is : gaat het om hetzelfde object	,
+>>> {1,2}=={1,2}
+True
+>>> {1,2}is{1,2}
+False
+
+/ CH7
+
+
+/ python strings uiteindelijk met ''	, maar je mag "" use	,
+
+>>> "foo"
+'foo'
+>>> "foo " 'bar'
+'foo bar'
+
+>>> [ord(i) for i in 'foo']
+[102, 111, 111]
+>>> [hex(ord(i)) for i in 'foo']
+['0x66', '0x6f', '0x6f']
+>>> [oct(ord(i)) for i in 'foo']
+['0o146', '0o157', '0o157']
+>>> [bin(ord(i)) for i in 'foo']
+['0b1100110', '0b1101111', '0b1101111']
+
+>>> chr(0x03c0)
+'π'
+>>> '\u03c0'
+'π'
+>>> '\x41'
+'A'
+>>> oct(0x41)
+'0o101'
+>>> '\101'				\ !
+'A'
+>>> '\101\102'
+'AB'
+
+>>> 0o101
+65
+>>> 0x41
+65
+/////////////////////////////////////////////////////
+/ als number doe je 0o101 en 0x41	, in string doe je \101 en \x41	,
+
+/ Intermezzo
+
+/ python maakt shallow copy	, 
+/ lees	,
+https://stackoverflow.com/questions/509211/understanding-pythons-slice-notation
+https://stackoverflow.com/questions/19068707/does-a-slicing-operation-give-me-a-deep-or-shallow-copy
+A copy of a list creates a new outer list, but the new list merely receives references to the exact same objects.
+
+>>> l=[1,2,3,4,5,6,7,8]
+/ of	,
+>>> l=list(range(1,8))
+>>> l[::2]
+[1, 3, 5, 7]
+>>> l[::2][1]=100
+>>> l[::2]
+[1, 3, 5, 7]
+/ Dit is GEEN 'change list in-place'	, want je doet niet: l[::2]=...; l[::2] is een copy	, en die verander je	,
+
+/ Dit is WEL een 'change list in-place'	,
+>>> l=list(range(1,8))
+>>> l[1:2]=[11,12]
+>>> l
+[1, 11, 12, 3, 4, 5, 6, 7]
+
+
+>>> m[::2][1]=[11,12,13]	/ m[::2] is een copy van m; we vervangen in de copy een ref (niet een int)	, maar dan blijft m onveranderd	, hieronder passen we de ref aan (ipv vervangen), en dus ook m zelf ook	,
+>>> m
+[[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+>>> m[::2][1][2]=13				/ m[::2] is a (part of a) copy of m, but because m[::2][1] is a ref , it refers to the same element as in m	, so if we modify it, we also modify m	,
+>>> m
+[[1, 2, 3], [4, 5, 6], [7, 8, 13]]
+
+>>> m
+[[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+>>> m[0:2]
+[[1, 2, 3], [4, 5, 6]]
+>>> m[0:2][1]
+[4, 5, 6]
+>>> m[0:2][0][1]=100
+>>> m
+[[1, 100, 3], [4, 5, 6], [7, 8, 9]]
+
+>>> m[::2]
+[[1, 2, 3], [7, 8, 9]]
+>>> m[::2][0]
+[1, 2, 3]
+>>> m[::2][0][1]=100
+>>> m
+[[1, 100, 3], [4, 5, 6], [7, 8, 9]]
+
+/ we kunnen het ook testen	,
+
+is will return True if two variables point to the same object, == if the objects referred to by the variables are equal.
+
+
+>>> l
+[1, 2, 3, 4, 5, 6, 7, 8]
+>>> l[:]
+[1, 2, 3, 4, 5, 6, 7, 8]
+>>> l[:] == l
+True
+>>> l[:] is  l
+False
+
+>>> n
+[[1, 2], [10, 4, 5]]
+>>> n[:]==n
+True
+>>> n[:] is n
+False
+>>> n[:][0] is n[0]
+True
+
+/ change list in-place	,
+
+>>> l=[1,2,3,4]
+>>> l[1:2]=[]
+>>> l
+[1, 3, 4]
+
+>>> l=[1,2,3,4,5,6,7,8]
+>>> l
+[1, 2, 3, 4, 5, 6, 7, 8]
+>>> l[1:4]=[11,12]
+>>> l
+[1, 11, 12, 5, 6, 7, 8]
+>>> l[1]=100
+>>> l
+[1, 100, 12, 5, 6, 7, 8]
+>>> l[1:4]
+[100, 12, 5]
+>>> l[1:4][1]=102
+>>> l[1:4]
+[100, 12, 5]
+>>> l
+[1, 100, 12, 5, 6, 7, 8]
+>>> l[1:4]=[1,3]
+>>> l
+[1, 1, 3, 6, 7, 8]
+>>> l[1:4]=[5]				# l[1:4]=5 is ERR	,
+>>> l
+[1, 5, 7, 8]
+
+>>> l=[1,2,3,4,5,6,7,8]
+>>> l[1:6][2:4]=[10]
+>>> l
+[1, 2, 3, 4, 5, 6, 7, 8]
+
+>>> m=l[2]
+>>> m=10
+>>> l
+[1, 2, 3, 4, 5, 6, 7, 8]
+>>> l[2]=10
+>>> l
+[1, 2, 10, 4, 5, 6, 7, 8]
+
+# m=l[2:5] is altijd een copie	, maar de ene keer van elementen (getallen, strings)	, en de andere keer van references (lists)	,
+# als je in de copie iets verandert, dan verander je de list alleen, als je references gekopieerd hebt	,
+
+>>> m=l[2:5] 	# m copies numbers	, 
+>>> m
+[3, 4, 5]
+>>> m=[11,12]
+>>> l
+[1, 2, 3, 4, 5, 6, 7, 8]
+>>> l[2:5]=[11,12]
+>>> l
+[1, 2, 11, 12, 6, 7, 8]
+
+>>> l=[[1,2,3],[4,5,6],[7,8,9]]
+>>> l[0][0:2]=[10,11]
+>>> l
+[[10, 11, 3], [4, 5, 6], [7, 8, 9]]
+
+>>> l
+[[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+>>> m=l[0]												# m copies references	, 
+>>> m[0:2]=[10,11]
+>>> l
+[[10, 11, 3], [4, 5, 6], [7, 8, 9]]
+
+/ 13	. 
+
+>>> l
+[[1], [2], [3]]
+>>> l[0:2][1]=[12]
+>>> l
+[[1], [2], [3]]
+>>> l[0][1:5]=[6]
+>>> l
+[[1, 6], [2], [3]]
+
+>>> m=l[0:2]
+>>> m
+[[1], [2]]
+>>> m is l[0:2]		# 2 copies van deel van l	,
+False
+>>> n=l[0]
+>>> n is l[0]		# n en l[0] zijn deel van l	, 
+True
+/ Dus l[0:2] 
+/ we kunnen ook en is nog duidelijker, (we hadden al 2 copies nl m en l[0:2], maar met m2=l[0:2] expliciter)
+>>> m2=l[0:2]
+>>> m is m2
+False
+>>> n2=l[0]
+>>> n is n2
+True
+
+/ 13	. 
+
+>>> l=[[1,2],3]
+>>> m=l[0:2]
+>>> m is l
+False
+>>> m[0] is l[0]
+True
+>>> m[1] is l[1]
+True
+>>> [1,2] is [1,2]
+False
+>>> 3 is 3
+True
+
+/ 13	. 
+
+>>> l=[1,2,3,4,1,2,3,4]
+>>> l[0:5]=[6]
+>>> l
+[6, 2, 3, 4]
+>>> l[0:5][1]=7
+>>> l
+[6, 2, 3, 4]
+
+/ verschil l[0] en l[0:1]	, l[0:1] is copy van l[0]	,
+>>> l=[[1,2],[1,3],[1,4]]
+>>> l[0][0]=12
+>>> l
+[[12, 2], [1, 3], [1, 4]]
+>>> l[0:1][0]=13
+>>> l
+[[12, 2], [1, 3], [1, 4]]
+
+>>> l[0:1]=[11,12,13]
+>>> l
+[11, 12, 13, [1, 3], [1, 4]]
+
+>>> l=[[1,2],[1,3],[1,4]]
+>>> l[0]=7
+>>> l
+[7, [1, 3], [1, 4]]
+
+>>> l=[[1,2],[1,3],[1,4]]
+>>> l[0:1]=7
+TypeError: can only assign an iterable
+
+>>> l=[[1,2],[1,3],[1,4]]
+>>> l[0:1]=[[11,12,13]]
+>>> l
+[[11, 12, 13], [1, 3], [1, 4]]
+
+/ 13	 .
+
+>>> l=[[1,2],3]
+>>> l[0:1][0][1]=12
+>>> l
+[[1, 12], 3]
+
+
+
+/ google,
+python list slice is copy?
+/ lees	,
+https://stackoverflow.com/questions/5131538/slicing-a-list-in-python-without-generating-a-copy
+/->
+https://stackoverflow.com/questions/15541404/python-string-interning
+https://stackoverflow.com/questions/19068707/does-a-slicing-operation-give-me-a-deep-or-shallow-copy
+
+>>> l
+[1, 2, 3, 4, 1, 2, 3, 4]
+>>> m=l[0:2]
+>>> m2=l[0:2]
+>>> id(m)
+140079569465288
+>>> id(m2)
+140079569464008
+#
+>>> n=l[0]
+>>> n2=l[0]
+>>> id(n)
+140079803522784
+>>> id(n2)
+140079803522784
+#
+>>> id(m[0])
+140079803522784
+>>> id(m2[0])
+140079803522784
+
+>>> l=[[1,2],[1,2]]
+>>> id(l[0])
+140079568526216
+>>> id(l[1])
+140079568526984
+#
+>>> l=[1,1]
+>>> id(l[0])
+140079803522784
+>>> id(l[1])
+140079803522784
+
+/ put question on stackoverflow	,
+
+>>> l=[1,2,3,4]
+>>> id(l[0])
+140079803522784
+>>> id(l[0:1][0])
+140079803522784
+
+They are the same. But:
+
+>>> l[0]=7
+>>> l
+[7, 2, 3, 4]
+>>> l[0:1][0]=13
+>>> l
+[7, 2, 3, 4]
+
+/ 13	. 
+
+>>> l=[[1,2],[3,4]]
+>>> l[0:1]=[[1,2,3]]
+>>> l
+[[1, 2, 3], [3, 4]]
+
+>>> l[0:1][0]=[4,5]
+>>> l
+[[1, 2, 3], [3, 4]]
+>>> l[0:1][0][0]=7
+>>> l
+[[7, 2, 3], [3, 4]]
+
+/ 13	. 
+
+>>> l=[7,2,3,4]
+>>> l[0:1]=[[1,2,3]]
+>>> l
+[[1, 2, 3], 2, 3, 4]
+>>> l=[7,2,3,4]
+>>> l[0:1]=[1,2,3]
+>>> l
+[1, 2, 3, 2, 3, 4]
+
+
+////////////////////////////////////
+/ 7	. 
+
+/ SLICES OF LISTS
+
+/ 13	. 
+
+/ 1ste vb	,
+
+>>> l
+[[7, 2, 3], [3, 4]]
+>>> m=l[0:1]				# m is another list as l
+>>> m
+[[7, 2, 3]]
+>>> m[0]=[1,2]			# change list m NOT-> change list l
+>>> l
+[[7, 2, 3], [3, 4]]
+>>> m
+[[1, 2]]
+>>> m[0][0]=3				# the first element of m NOT anymore == first list of l, so change first element of m 
+										# does not change first element of m
+>>> l
+[[7, 2, 3], [3, 4]]
+>>> m[0]
+[3, 2]
+
+>>> l
+[[7, 2, 3], [3, 4]]
+>>> m=l[0:1] 				# m is another list	, but the first element equals the first element of l
+>>> m
+[[7, 2, 3]]
+>>> m[0][0]=13	 		# change first element of m = change first element of l
+>>> l
+[[13, 2, 3], [3, 4]]
+
+/ 13	. 
+
+/ 2de vb	,
+
+# we kunnen in dit voorbeeld niet het 0-element van l aanpassen	,
+>>> l=[1,2,3,4]
+>>> m=l[0:1]
+>>> m
+[1]
+>>> m[0]=7	# je vervangt het 0-element in m	,
+>>> m
+[7]
+>>> l
+[1, 2, 3, 4]
+
+/ je kunt wel	, 
+>>> id(l[0])
+140079803522784
+>>> id(m[0])
+140079803522784
+/ maar het enigste wat we hierboven doen is m[0] vervangen	, tot 140079803523219 bijvoorbeeld	, we passen 140079803522784 niet aan	,
+
+>>> l=[[1,2],[3,4]]
+>>> m=l[0:1]
+>>> m
+[[1, 2]]
+>>> m[0][1]=13 	# pas m[0] aan	, en dus ook l[0]	, we vervangen NIET m	, zodat l[0] onveranderd zou blijven	,
+>>> m
+[[1, 13]]
+>>> l
+[[1, 13], [3, 4]]
+
+/ 13	. 
+
+>>> l=[11,12,13,14]
+>>> m=l
+>>> id(l)
+140079569464328
+>>> id(m)
+140079569464328
+>>> m=[]
+>>> id(m)
+140079568545864
+/ met id zien we dus de & niet van m zelf, maar van zijn value	, waar hij naar ref	,
+
+>>> l=[11,12,13,14]
+>>> m=l
+>>> m[0]=1	/ in-place replacement	,
+>>> l
+[1, 12, 13, 14]
+
+>>> l=[11,12,13,14]
+>>> m=l[:]
+>>> id(l)
+140079568545864
+>>> id(m)
+140079569464328
+>>> m[0]=1
+>>> l
+[11, 12, 13, 14]
+>>> m
+[1, 12, 13, 14]
+
+
+>>> m=[]
+>>> m
+[]
+>>> l
+[11, 12, 13, 14]
+>>> l[:]=[]
+>>> l
+[]
+
+/ 13	. 
+
+/ lees	,
+https://stackoverflow.com/questions/10623302/how-assignment-works-with-python-list-slice
+
+b = a[0:2]
+This makes a copy of the slice of a and assigns it to b.
+
+2) slice assignment:
+a[0:2] = b
+This replaces the slice of a with the contents of b.
+
+/ ook,
+
+>>> a=[1,2,3]
+>>> b=a
+>>> b
+[1, 2, 3]
+>>> a[:]=[4,5]
+>>> a
+[4, 5]
+>>> b
+[4, 5]
+
+>>> a=[1,2,3]
+>>> b=a
+>>> a=[4,5]
+>>> a
+[4, 5]
+>>> b
+[1, 2, 3]
+
+/ het verschil kun je zien:
+
+>>> a=[1,2,3]
+>>> id(a)
+140079569464328
+>>> a[:]=[4,5]	# je verandert de(zelfde) list	, 'in-place' replacement	,
+>>> a
+[4, 5]
+>>> id(a)
+140079569464328	 # dus b is dit ook	,
+
+>>> a=[4,5]		# je vervangt de list
+>>> id(a)
+140079569465288	# dus b != a
+
+>>> a=[1,2,3]
+>>> a[:][0]=6	# change the copy	, geen 'in-place' replacement	, 
+>>> a
+[1, 2, 3]
+
+
+/ lees,	
+https://stackoverflow.com/questions/10623302/how-assignment-works-with-python-list-slice
+->
+https://docs.python.org/3/reference/simple_stmts.html#assignment-statements 
+
+/ 13	. 
+
+>>> a=[1,2,3]
+>>> a[1]=7
+>>> a
+[1, 7, 3]
+>>> a[:][1]=13
+>>> a
+[1, 7, 3]
+>>> a[:]=[4,5,6]	  # 'in-place' replacement	,
+>>> a
+[4, 5, 6]
+>>> a[:]=[1,[2,3,4],5]
+>>> a
+[1, [2, 3, 4], 5]	
+>>> a[:][1]=[7,8,9]	# replace in copy	,
+>>> a
+[1, [2, 3, 4], 5]
+>>> a[:][1][0]=7		# replace ref in copy, so in a	,
+>>> a
+[1, [7, 3, 4], 5]
+
+
+
+/ Einde SLICES OF LISTS
+ 
+
+
+/ Einde Intermezzo
+
+/ 7	. 
+
+/ (165)
+
+/ slicing	,
+
+/ 13	. 
+
+/ let op verschil :-1 en ::-1	,
+
+>>> 'interesting'[:-1]
+/ of	,
+>>> 'interesting'[:-1:]
+'interestin'
+>>> 'interesting'[::-1]
+'gnitseretni'
+
+>>> 'interesting'[5:1:-1] 	# van 5 tot 1	, reverse	,
+'eret'
+>>> 'interesting'[:1:-1]		# van laatste tot 1	, reverse	,
+'gnitseret'
+>>> 'interesting'[1::-1]		# van 1 tot eerste	, reverse	,
+'ni'
+
+
+
+
+/ 13	. 
+
+>>> 'spam'[:2]
+'sp'
+>>> 'spam'[:-1]
+'spa'
+
+>>> 'spam'[:] is 'spam'
+True
+/ WH optimalizatie voor strings, 
+/ maar	,
+>>> 'spam'[::2] is 'sa'
+False
+
+>>> 'spam'[::2]
+'sa'
+>>> 'spam'[::-1]
+'maps'
+
+>>> 'interesting'[2:7]	 / van 2 tot 7	,
+'teres'
+>>> 'interesting'[7:2:-1] / van 7 tot 2	,
+'tsere'
+>>> 'interesting'[::-1]
+'gnitseretni'
+>>> 'interesting'[:2:-1]
+'gnitsere'
+>>> 'interesting'[2::-1]
+'tni'
+
+>>> 'interesting'[-4:]
+'ting'
+
+/ let op verschil	,
+>>> 'interesting'[::-1]
+'gnitseretni'
+>>> 'interesting'[:-1]
+'interestin'
+>>> 'interesting'[::1]
+'interesting'
+>>> 'interesting'[:1]
+'i'
+
+
+
+
+
+/ (175)
+
+>>> 'interesting'.find('e')
+3
+/ finds alleen de 1ste	,
+
+/ finds all	,
+/ lees	,
+https://stackoverflow.com/questions/4664850/find-all-occurrences-of-a-substring-in-python
+>>> import re
+>>> [m for m in re.finditer('e','interesting')]
+[<_sre.SRE_Match object; span=(3, 4), match='e'>, <_sre.SRE_Match object; span=(5, 6), match='e'>]
+>>> [m.start() for m in re.finditer('e','interesting')]
+[3, 5]
+
+/ (182)
+
+/ 6 is length string 	, 0 op spaces niet bij -	,
+>>> '%6d'%1234
+'  1234'
+>>> '%-6d'%1234
+'1234  '
+>>> '%06d'%1234
+'001234'
+>>> '%-06d'%1234
+'1234  '
+>>> '%0-6d'%1234
+'1234  '
+
+>>> '%6d'%1234
+'  1234'
+>>> '%06d'%1234
+'001234'
+>>> '%-6d'%1234
+'1234  '
+
+
+>>> '%2d'%1234
+'1234'
+/ integers worden altijd geheel gegeven	,
+
+>>> '%f'%1234.567
+'1234.567000'
+>>> '%2.1f'%1234.567
+'1234.6'
+>>> '%7.1f'%1234.567
+' 1234.6'
+>>> '%07.1f'%1234.567
+'01234.6'
+>>> '%-7.1f'%1234.567
+'1234.6 '
+/ we zien dat fractions worden gegeven zoals je opgeeft	, maar dat integers altijd in zijn geheel worden gegeven	,
+
+/ (182)
+
+/ formatting dictionary	,
+
+>>> '%(n)d %(x)s'%{'n':1234,'x':'foo bar'}
+'1234 foo bar'
+
+/ ipv %2.1f hebben we nu %(name)f: de name ertussen ipv. 2.1	, 
+/ name is de key in de dict erachter	,
+
+/ 13	. 
+
+
+>>> r='''
+... Hi %(n)s
+... '''
+>>> r
+'\nHi %(n)s\n'
+>>> r%{'n':'πε'}
+'\nHi πε\n'
+>>> r%{'n':'\u03c0\u03b5\u03b6\u03b7'}
+'\nHi πεζη\n'
+
+>>> r%{'n':['\u03c0','\u03b5']}
+"\nHi ['π', 'ε']\n"
+
+/ 13	. 
+
+>>> vars()
+{'n': [[1, 2], [10, 4, 5]], 'M': [[1, 2, 3], [4, 5, 6], [7, 8, 9]], 'reply': '\nGreetings...\nHello Foo Bar!\nYour age is 17\n', '__name__': '__main__', '__warningregistry__': {'version': 0, ("unclosed file <_io.TextIOWrapper name='data.bin' mode='w' encoding='UTF-8'>", <class 'ResourceWarning'>, 1): True, ("unclosed file <_io.BufferedWriter name='data.bin'>", <class 'ResourceWarning'>, 1): True, ("unclosed f...
+
+/ (187)
+
+/ * i format string	,
+
+/ lees	,
+https://docs.python.org/2.4/lib/typesseq-strings.html
+Precision (optional), given as a "." (dot) followed by the precision. If specified as "*" (an asterisk), the actual width is read from the next element of the tuple in values, and the value to convert comes after the precision.
+
+>>> '%.*f, %.*f' % (4,1/3,3,1/15)
+'0.3333, 0.067'
+>>> '%.4f, %.3f' % (1/3,1/15)
+'0.3333, 0.067'
+
+ 
+/ CH 8
+
+/ 7	. 
+
+/ iterator	,
+
+>>> for k in {'a':1,'b':2}.keys():
+...  print(k)
+... 
+b
+a
+
+/ of zonder .keys()
+>>> for k in {'a':1,'b':2}:
+...  print(k)
+... 
+b
+a
+
+
+/ of met list, set	,
+
+>>> list({'a':1,'b':2}.keys())
+['b', 'a']
+>>> set({'a':1,'b':2}.keys())
+{'b', 'a'}
+/ dict TODO
+
+/ 7	. 
+
+/ (211)
+>>> d={'a':1}
+>>> d.update({'a':2})
+>>> d
+{'a': 2}
+
+/ (212)
+for lang in table:
+/ of	,
+for lang in table.keys():
+/ lang is achtereenvolgens steeds de key	,
+/ je hoeft dus geen .keys(), en daardoor werkt 'for in' ook op dicts	,
+
+/ (213)
+
+>>> l=[0]*100
+>>> l
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+>>> l[99]=99
+>>> l
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 99]
+>>> l[100]=100
+IndexError: list assignment index out of range
+
+/ (217)
+
+>>> list(zip('abc',[1,2,3,4]))
+[('a', 1), ('b', 2), ('c', 3)]
+>>> dict(zip('abc',[1,2,3,4]))
+{'a': 1, 'b': 2, 'c': 3}
+>>> list(zip('abc',[1,2,3,4],(11,12)))
+[('a', 1, 11), ('b', 2, 12)]
+>>> dict(zip('abc',[1,2,3,4],(11,12)))
+ValueError: dictionary update sequence element #0 has length 3; 2 is required
+>>> dict(zip('abc',[1,2,3,4]))
+{'a': 1, 'b': 2, 'c': 3}
+
+>>> {x:x**2 for x in range(1,5)}
+{1: 1, 2: 4, 3: 9, 4: 16}
+>>> {k:v for (k,v) in zip('abc','123')}
+{'a': '1', 'b': '2', 'c': '3'}
+>>> type({k:v for (k,v) in zip('abc','123')})
+<class 'dict'>
+
+>>> d=dict(a=1,b=2,c=3)
+>>> d
+{'a': 1, 'b': 2, 'c': 3}
+>>> k=d.keys()					
+>>> k
+dict_keys(['a', 'b', 'c'])	 # WH iterable	,
+>>> hasattr(k,'__iter__')		# check is a iterable
+True
+>>> list(k)			
+['a', 'b', 'c']
+>>> {x for x in k}	 # k is een iterable
+{'a', 'b', 'c'}
+>>> i=d.items()
+dict_items([('a', 1), ('b', 2), ('c', 3)])	# WH iterable
+>>> i=d.items()
+>>> i
+dict_items([('a', 1), ('b', 2), ('c', 3)])
+>>> hasattr(i,'__iter__' )									# check is iterable	,
+True
+>>> dict(d.items())
+{'a': 1, 'b': 2, 'c': 3}
+
+/ Intermezzo
+
+/ lees over check if object is iterable	,
+https://stackoverflow.com/questions/1952464/in-python-how-do-i-determine-if-an-object-is-iterable
+
+>>> k=d.keys()
+>>> v=d.values()
+>>> i=d.items()
+>>> k
+dict_keys(['a', 'b', 'c'])
+>>> v
+dict_values([1, 2, 3])
+>>> i
+dict_items([('a', 1), ('b', 2), ('c', 3)])
+
+>>> list(k)
+['a', 'b', 'c']
+>>> dict(k)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: dictionary update sequence element #0 has length 1; 2 is required
+>>> dict(i)
+{'a': 1, 'b': 2, 'c': 3}
+
+/ ook	,
+>>> dict(d)
+{'a': 1, 'b': 2, 'c': 3}
+>>> list(k)		# k is treated as its keys	,
+['a', 'b', 'c']
+
+/ ook	,
+>>> dict(k=k)
+{'k': dict_keys(['a', 'b', 'c'])}
+
+
+/ Einde Intermezzo
+
+/ (221)
+
+/ een list is niet hashable	,
+
+/ kan daarom niet voorkomen in een set	,
+>>> {[1,2]}
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: unhashable type: 'list'
+
+/ we zien het ook 	,
+
+>>> d={1:1}
+>>> d.keys()
+dict_keys([1])
+>>> d.items()
+dict_items([(1, 1)])
+>>> d.keys()|d.items()
+{1, (1, 1)}
+
+>>> d={1:[1,2]}
+>>> d.keys()
+dict_keys([1])
+>>> d.items()
+dict_items([(1, [1, 2])])
+>>> d.keys()|d.items()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: unhashable type: 'list'
+
+/ 13	. 
+
+/ lees	,
+https://stackoverflow.com/questions/14535730/what-do-you-mean-by-hashable-in-python
+->
+https://docs.python.org/3/glossary.html
+/ glossary=woordenlijst	,
+
+An object is hashable if it has a hash value which never changes during its lifetime (it needs a __hash__() method), and can be compared to other objects (it needs an __eq__() or __cmp__() method). Hashable objects which compare equal must have the same hash value.
+
+Hashability makes an object usable as a dictionary key and a set member, because these data structures use the hash value internally.
+
+All of Python’s immutable built-in objects are hashable, while no mutable containers (such as lists or dictionaries) are. Objects which are instances of user-defined classes are hashable by default; they all compare unequal, and their hash value is their id().
+
+
+/ (222)
+
+>>> d
+{0: 0, 1: 1, 2: 2}
+>>> k
+dict_keys(['a', 'b', 'c'])
+>>> list(k).sort()
+>>> for x in k:print(x)
+... 
+a
+b
+c
+
+/ we moeten NIET,
+>>> l=list(k).sort()
+>>> for x in l:print(x)
+... 
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'NoneType' object is not iterable
+
+/ wel,
+>>> l=sorted(k)
+>>> for x in l:print(x)
+... 
+0
+1
+2
+
+/ of ,
+>>> l=sorted(d)
+>>> for x in l:print(x)
+... 
+0
+1
+2
+
+/ 13	. 
+
+>>> d={'c':2,'b':1,'a':0}
+>>> k=d.keys()
+>>> for x in d:print(x);
+... 
+c
+b
+a
+
+
+/ CH 9
+
+/ tuples zijn immutable, 
+/ in-place substitution als bij lists is er niet 	,
+
+>>> (0)
+0
+>>> (0,)
+(0,)
+>>> type((0))
+<class 'int'>
+>>> type((0,))
+<class 'tuple'>
+
+>>> type([1])
+<class 'list'>
+>>> type([1,])
+<class 'list'>
+
+
+>>> type(())
+<class 'tuple'>
+
+/ dus (), (0,) zijn tuples, en (0) niet	,
+
+>>> tuple(0)
+TypeError: 'int' object is not iterable
+>>> tuple('abc')
+('a', 'b', 'c')
+
+/ 13	. 
+
+/ je kunt tuple op een iterator nemen, maar is zelf ook een iterable:
+
+>>> for x in '123' : print(x)
+... 
+1
+2
+3
+>>> for x in tuple('123' ):print(x)
+... 
+1
+2
+3
+>>> hasattr('123','__iter__')
+True
+>>> hasattr(123,'__iter__')
+False
+>>> hasattr(tuple('123'),'__iter__')
+True
+
+/ 13	. 
+
+/ '123' en ('123') zijn strings	,
+
+>>> '123'
+'123'
+>>> ('123')
+'123'
+>>> tuple('123')
+('1', '2', '3')
+
+
+
+/ 13	. 
+
+>>> t=tuple('abcde')
+>>> t
+('a', 'b', 'c', 'd', 'e')
+>>> 'bc' in t
+False
+>>> 'b' in t
+True
+
+>>> 1,2,3
+(1, 2, 3)
+
+>>> 1,2,3*4
+(1, 2, 12)
+>>> (1,2,3)*4
+(1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3)
+
+>>> sorted("My name is Eric")
+[' ', ' ', ' ', 'E', 'M', 'a', 'c', 'e', 'i', 'i', 'm', 'n', 'r', 's', 'y']
+/ een list	,
+
+/ 13	. 
+
+/ .sort is een list function	,
+
+>>> k=[4,3,2]
+>>> k=sorted(k)
+>>> k
+[2, 3, 4]
+/ of	,
+>>> sorted([4,3,2])
+[2, 3, 4]
+
+>>> k=[4,3,2]
+>>> k.sort()
+>>> k
+[2, 3, 4]
+
+/ 13	. 
+
+>>> t
+(11, 13, 12, 17, 13, 12, 12, 13)
+>>> t.index(12)
+2
+>>> t.index(12,2)					# 12 vanaf index 2	, is ook op 2	, 
+2
+>>> t.index(13,2)
+4
+
+/ (229)
+
+>>> {(1,):1}
+{(1,): 1}
+>>> {[1,]:1}
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: unhashable type: 'list'
+
+>>> {3:1}
+{3: 1}
+>>> dict(3=1)
+SyntaxError: keyword can't be an expression
+/ TODO
+
+/ 7	. 
+
+/ lees	,
+https://stackoverflow.com/questions/1466000/python-open-built-in-function-difference-between-modes-a-a-w-w-and-r
+
+``r''   Open text file for reading.  The stream is positioned at the
+         beginning of the file.
+
+ ``r+''  Open for reading and writing.  The stream is positioned at the
+         beginning of the file.
+
+ ``w''   Truncate file to zero length or create text file for writing.
+         The stream is positioned at the beginning of the file.
+
+ ``w+''  Open for reading and writing.  The file is created if it does not
+         exist, otherwise it is truncated.  The stream is positioned at
+         the beginning of the file.
+
+ ``a''   Open for writing.  The file is created if it does not exist.  The
+         stream is positioned at the end of the file.  Subsequent writes
+         to the file will always end up at the then current end of file,
+         irrespective of any intervening fseek(3) or similar.
+
+ ``a+''  Open for reading and writing.  The file is created if it does not
+         exist.  The stream is positioned at the end of the file.  Subse-
+         quent writes to the file will always end up at the then current
+         end of file, irrespective of any intervening fseek(3) or similar.
+
+/ w sets position to begin file	, which is truncated	,
+/ a sets position to end of file, which is not truncated	,
+
+>>> o=open('file.txt','w')
+/ er is een file 'file.txt' created in het fs,
+/ 'w' of 'a' slaat op open , niet op write later, 
+/ als file.txt bestaat, en je doet open('file.txt', 'w'), dan is file.txt weer leeg	,
+/ als file.txt bestaat, en je doet open('file.txt', 'a'), dan is file.txt zoals voor open	, 
+>>> o.write('foo')
+3
+>>> o.flush()
+>>>
+
+/ in bash	,
+[eric@almond ch3]$ cat file.txt 
+foo[eric@almond ch3]$
+
+>>> o.write('bar\n')
+4
+>>> o.flush()
+>>>
+
+foo[eric@almond ch3]$ cat file.txt 
+foobar
+[eric@almond ch3]$ 
+
+>>> o.read()
+io.UnsupportedOperation: not readable
+>>> o=open('file.txt','a+')
+>>> o.read()
+''
+>>> o.seek(0)
+0
+>>> o.read()
+'foobar\n'
+>>> o.read()
+''
+>>> o.seek(0)
+0
+>>> o.read()
+'foobar\n'
+
+/ (231)
+
+>>> o=open('file.txt','a+',0)
+ValueError: can't have unbuffered text I/O
+/ TODO
+
+>>> o.write(0)
+TypeError: must be str, not int
+
+/ (232)
+
+/ lees	,
+https://docs.python.org/3/library/functions.html#open
+
+buffering is an optional integer used to set the buffering policy. Pass 0 to switch buffering off (only allowed in binary mode), 1 to select line buffering (only usable in text mode), and an integer > 1 to indicate the size in bytes of a fixed-size chunk buffer. When no buffering argument is given, the default buffering policy works as follows:
+Binary files are buffered in fixed-size chunks; the size of the buffer is chosen using a heuristic trying to determine the underlying device’s “block size” and falling back on io.DEFAULT_BUFFER_SIZE. On many systems, the buffer will typically be 4096 or 8192 bytes long.
+“Interactive” text files (files for which isatty() returns True) use line buffering. Other text files use the policy described above for binary files.
+
+/ als je niet de hele tijd flush() wilt doen, doe dan	,
+/ je moet dan wel aan het eind \n geven	, 
+>>> o=open('file.txt','a+',1)
+>>> o.isatty()
+False
+>>> o.write('xyz\n')
+4
+[eric@almond ch3]$ od -t x1 -t c file.txt 
+0000000  62  61  72  0a  cf  80  cf  80  0a  61  62  63  0a  78  79  7a
+          b   a   r  \n 317 200 317 200  \n   a   b   c  \n   x   y   z
+0000020  0a
+         \n
+0000021
+
+/ 13	 .
+
+/ we zien vaak 
+open(r'C:\file.txt')
+
+>>> len('\n')
+1
+>>> len(r'\n')
+2
+>>> o.write(r'\n')
+2
+>>> o.write('\n')
+1
+[eric@almond ch3]$ od -t x1 -t c file.txt 
+0000000  62  61  72  0a  cf  80  cf  80  0a  61  62  63  0a  78  79  7a
+          b   a   r  \n 317 200 317 200  \n   a   b   c  \n   x   y   z
+0000020  0a  5c  6e  0a
+         \n   \   n  \n
+0000024
+
+/ 13	. 
+
+>>> o=open('file.txt','ba+',0)
+/ 0 kan alleen bij binary stream	,
+>>> o.write('xyz')
+TypeError: 'str' does not support the buffer interface
+
+/ lees	,
+https://docs.python.org/3/c-api/buffer.html
+
+>>> o.write(b'xyz')
+3
+[eric@almond ch3]$ od -t x1 -t c file.txt 
+0000000  62  61  72  0a  cf  80  cf  80  0a  61  62  63  0a  78  79  7a
+          b   a   r  \n 317 200 317 200  \n   a   b   c  \n   x   y   z
+0000020  0a  5c  6e  0a  78  79  7a
+         \n   \   n  \n   x   y   z
+>>> o.write(b'π\n')
+SyntaxError: bytes can only contain ASCII literal characters.
+/ TODO je kunt ook o.write(b'\xcf\x80') write	, 
+>>> o.write(b'\n')
+1
+
+/ lees	,
+https://nl.wikipedia.org/wiki/ASCII_(tekenset)
+https://nl.wikipedia.org/wiki/ANSI-tekenset
+https://nl.wikipedia.org/wiki/ISO_8859-1
+/ Met ASCII bedoelen ze WH ...
+/ TODO 
+
+/ 13	. 
+
+/ file seen as text file vs. binary file	,
+
+/ lees	,
+https://www.devdungeon.com/content/working-binary-data-python
+https://www.nayuki.io/page/what-are-binary-and-text-files
+
+>>> o=open('file.txt','w+',1)
+>>> o.write('\u03c0\n')
+2
+
+[eric@almond ch3]$ od -t x1 -t c file.txt 
+0000000  cf  80  0a
+        317 200  \n
+0000003
+
+>>> o.close()
+>>> o=open('file.txt','a+',1)	 / 1 = line buffered	,
+>>> o.read()
+''
+>>> o.seek(0)
+0
+>>> o.read()
+'π\n'
+>>> o.read()
+''
+>>> o.close()
+>>> o=open('file.txt','ba+',0)	/ 0 = no buffer	,
+>>> o.read()
+b''
+>>> o.seek(0)
+0
+>>> o.read()
+b'\xcf\x80\n'
+>>> o.close()
+>>> o=open('file.txt','bw+',0)
+>>> o.write(b'\xcf\x80\n')
+3
+
+[eric@almond ch3]$ od -t x1 -t c file.txt 
+0000000  cf  80  0a
+        317 200  \n
+0000003
+
+>>> o=open('file.txt','a+',1)
+>>> o.read()
+''
+>>> o.seek(0)
+0
+>>> o.read()
+'π\n'
+
+/ (233)
+
+/ file iterators ipv read	,
+
+>>> o=open('file.txt','w+',1)
+>>> o.write(l+d+'\n')
+26
+>>> o=open('file.txt','w+',1)
+>>> o.write('first line\n')
+11
+>>> o.write('second line\n')
+12
+>>> o.seek(0)
+0
+>>> for line in o:print(line)
+... 
+first line
+
+second line
+
+>>> o.seek(0)
+0
+>>> for line in o:print(line,end='')
+... 
+first line
+second line
+>>> 
+
+/ Als je een file open met 'r', dan staat hij aan het begin van de file, en kun je meteen read	,
+/ Als je een file open met 'a+', dan staat hij aan het eind van de file, dus moet je eerst seek(0) voor read	,
+/ Als je een file open met 'w+', dan is de file leeg, dus dat moet je niet doen als je wilt lezen	, 
+
+
+/ (234) 
+
+>>> l=str([1,2,3])
+'[1, 2, 3]'
+>>> d=str({'a':1,'b':2})
+>>> d
+"{'b': 2, 'a': 1}"
+>>> o=open('file.txt','w+',1)
+>>> o.write(l+d+'\n')
+26
+[eric@almond ch3]$ od -t x1 -t c file.txt 
+0000000  5b  31  2c  20  32  2c  20  33  5d  7b  27  62  27  3a  20  32
+          [   1   ,       2   ,       3   ]   {   '   b   '   :       2
+0000020  2c  20  27  61  27  3a  20  31  7d  0a
+          ,       '   a   '   :       1   }  \n
+0000032
+
+/ (236)
+
+/ 13	. 
+
+/ eval	,
+
+>>> l=eval('[1,2,3]')
+>>> type(l)
+<class 'list'>
+>>> l
+[1, 2, 3]
+
+>>> d=eval("{'a':1,'b':2}")
+/ of	,
+>>> d=eval('{\'a\':1,\'b\':2}')
+>>> type(d)
+<class 'dict'>
+>>> d
+{'b': 2, 'a': 1}
+
+/ pickle (serialization)
+/ dump/load: serialize, unserialize	,
+
+>>> d
+{'b': 2, 'a': 1}
+>>> fp=open('file.txt','wb')
+>>> import pickle
+>>> pickle.dump(d,fp)
+>>> fp.close()
+[eric@almond ch3]$ od -t x1 -t c file.txt 
+0000000  80  03  7d  71  00  28  58  01  00  00  00  62  71  01  4b  02
+        200 003   }   q  \0   (   X 001  \0  \0  \0   b   q 001   K 002
+0000020  58  01  00  00  00  61  71  02  4b  01  75  2e
+          X 001  \0  \0  \0   a   q 002   K 001   u   .
+0000034
+>>> e=pickle.load(fp)
+>>> e
+{'b': 2, 'a': 1}
+
+/ 1313	. 
+
+>>> fp=open('file.txt','wb')
+>>> pickle.dump('abc$π\n',fp)
+>>> fp.close()
+[eric@almond ch3]$ od -t x1 -t c file.txt 
+0000000  80  03  58  07  00  00  00  61  62  63  24  cf  80  0a  71  00
+        200 003   X  \a  \0  \0  \0   a   b   c   $ 317 200  \n   q  \0
+0000020  2e
+          .
+0000021
+
+/ we kunnen de file ook zo bekijken	,
+>>> open('file.txt','rb').read()
+b'\x80\x03X\x07\x00\x00\x00abc$\xcf\x80\nq\x00.'
+
+/ of je use fp	, maar dan moet je hem wel met 'wb+' , en unbuffered	, en je moet seek	,
+
+>>> fp=open('file.txt','wb+',0)
+>>> pickle.dump('abc$π\n',fp)
+>>> fp.seek(0)
+0
+>>> fp.read()
+b'\x80\x03X\x07\x00\x00\x00abc$\xcf\x80\nq\x00.'
+
+>>> fp.seek(0)
+0
+>>> e=pickle.load(fp)
+>>> e
+'abc$π\n'
+
+
+/ (237)
+
+/ lees	,
+https://docs.python.org/3/library/struct.html
+
+/ pack & strings
+https://stackoverflow.com/questions/3753589/packing-and-unpacking-variable-length-array-string-using-the-struct-module-in-py
+
+>>> bytes('\u03c0')
+TypeError: string argument without an encoding
+>>> bytes('\u03c0','utf8')
+/ of	,
+>>> bytes('\u03c0','utf-8')
+/ of	,
+>>> '\u03c0'.encode()
+b'\xcf\x80'
+
+>>> b='\u03c0'.encode()
+>>> b
+b'\xcf\x80'
+>>> 'I%ds' % len(b)
+'I2s'
+>>> f='I%ds' % len(b)
+>>> f
+'I2s'
+>>> struct.pack(f,len(b),b)
+b'\x02\x00\x00\x00\xcf\x80'
+/ default is machine endian, little endian, dus	,
+>>> f='>I%ds' % len(b)
+>>> struct.pack(f,len(b),b)
+b'\x00\x00\x00\x02\xcf\x80'
+
+>>> b='abc'.encode()
+>>> f='I%ds' % len(b)
+>>> struct.pack(f,len(b),b)
+b'\x03\x00\x00\x00abc'
+
+>>> d=struct.pack('<i3sh',7,b'foo',8)
+>>> d
+b'\x07\x00\x00\x00foo\x08\x00'
+
+>>> v=struct.unpack('<i3sh',d)
+>>> v
+(7, b'foo', 8)
+
+/ (245)
+
+>>> {'a':1,'b':2}=={'b':2,'a':1}
+True
+/ == op dicts sorteert eerst op de keys	,
+/ maar < kan niet op dicts	,
+>>> {'a':1,'b':2}<{'a':1,'b':3}
+TypeError: unorderable types: dict() < dict()
+
+>>> sorted({'a':1,'b':2})==sorted({'a':1,'b':3})
+/ of	,
+>>> sorted({'a':1,'b':2}.keys())==sorted({'a':1,'b':3}.keys())
+True
+>>> sorted({'a':1,'c':2}.keys())>sorted({'a':1,'b':3}.keys())
+True
+>>> sorted({'a':1,'b':2}.items())<sorted({'a':1,'b':3}.items())
+True
+>>> sorted({'a':1,'b':2}.values())<sorted({'a':1,'b':3}.values())
+True
+
+/ (247)
+
+>>> if not ({}):print('OK')
+... 
+OK
+f({1}):print('OK')
+... 
+OK
+
+/ 13	. 
+
+/ (246)
+
+/ python recognizes {} of '' als False, maar deze zijn het niet; False==0 en True==1
+
+/ (...) bij if hoeft niet	,
+/ (...) bij print moet	, fct call	,
+
+>>> if ""==False:print('OK')
+... 
+>>> if not "" :print('OK')
+... 
+OK
+/ Dus "" is niet gelijk aan False	, maar "" alleen wordt wel opgevat als False	,
+/ hetzelfde geldt voor None	,
+/ hetzelfde geldt voor 2	, 
+/ hetzelfde geldt voor ''	, 
+>>> if None==False:print('OK')
+... 
+>>> if not None:print('OK')
+... 
+OK
+
+>>> if 0==False:print('OK')
+... 
+OK
+/ False==0	,
+>>> if not 0:print('OK')
+... 
+OK
+>>> if 2==True:print('OK')
+... 
+>>> if 2:print('OK')
+... 
+OK
+
+>>> type(False)
+<class 'bool'>
+
+>>> if not False : print('OK')
+... 
+OK
+>>> if not None : print('OK')
+... 
+OK
+>>> if not '' : print('OK')
+... 
+OK
+
+/ 13	. 
+
+>>> x=None
+>>> if not x:print('OK')
+... 
+OK
+>>> x=''
+>>> if not x:print('OK')
+... 
+OK
+
+/ 13	. 
+
+>>> del x
+>>> if not x: print('OK')
+... 
+NameError: name 'x' is not defined
+
+/ Dus del x is iets anders dan x=None
+/ TODO
+
+
+/ 13	. 
+
+/ see (101)	, 
+
+>>> x=1
+>>> isinstance(x,object)
+True
+>>> isinstance(type(x),object)
+True
+
+>>> list
+<class 'list'>
+/ TODO ctor	?
+>>> type(list)
+<class 'type'>
+>>> sorted
+<built-in function sorted>
+>>> type(sorted)
+<class 'builtin_function_or_method'>
+>>> def f():pass
+... 
+>>> type(f)
+<class 'function'>
+
+>>> callable(sorted)
+True
+>>> isinstance(sorted,object)
+True
+
+>>> callable(list)
+True
+>>> isinstance(list,object)
+True
+
+>>> callable(f)
+True
+>>> callable(type)
+True
+>>> callable(object)
+True
+
+/ (252)
+
+>>> 'abc'*4
+'abcabcabcabc'
+>>> list('abc')
+['a', 'b', 'c']
+>>> list('abc')*4
+['a', 'b', 'c', 'a', 'b', 'c', 'a', 'b', 'c', 'a', 'b', 'c']
+>>> list(range(0,5))*4
+[0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4]
+
+>>> l=[4,5,6]
+>>> l
+[4, 5, 6]
+>>> l*4
+[4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6]
+>>> [l]
+[[4, 5, 6]]
+>>> [l]*4
+[[4, 5, 6], [4, 5, 6], [4, 5, 6], [4, 5, 6]]
+/ misschien zo duidelijker	,
+>>> [4,5,6]*4
+[4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6]
+>>> [[4,5,6]]*4
+[[4, 5, 6], [4, 5, 6], [4, 5, 6], [4, 5, 6]]
+
+
+>>> list(list(range(0,5)))
+[0, 1, 2, 3, 4]
+>>> [list(range(0,5))]
+[[0, 1, 2, 3, 4]]
+>>> [list(range(0,5))]*4
+[[0, 1, 2, 3, 4], [0, 1, 2, 3, 4], [0, 1, 2, 3, 4], [0, 1, 2, 3, 4]]
+>
+
+/ 7	. 
+
+/ (269)
+
+/ op 1 regel met ; ertussen kan niet met compound statements	,
+>>> x=1;if x:print('OK');y=2
+  File "<stdin>", line 1
+    x=1;if x:print('OK');y=2
+         ^
+SyntaxError: invalid syntax
+
+/ (271)
+
+/ als we break niet voldoende indent:
+>>> while True:
+...     reply=input('Enter text:')
+...     if reply=='stop':
+...     break
+  File "<stdin>", line 4
+    break
+        ^
+IndentationError: expected an indented block
+
+/ nu alles OK	, na extra enter runs code meteen: 
+>>> while True:
+...     reply=input('Enter text:')
+...     if reply=='stop':
+...             break
+...     print(reply.upper())
+... 
+Enter text:bar
+BAR
+Enter text:foo
+FOO
+Enter text:stop
+>>> 
+
+/ 7	 .
+
+/ (293)
+
+/ we hebben module myprint.py	, 
+
+/ myprint wordt var als je hem import	,
+
+>>> import myprint
+s
+p
+a
+n
+>>> myprint
+<module 'myprint' from '/home/eric/Devel/python/learning/ch3/myprint.py'>
+>>> myprint=5
+>>> myprint
+5
+
+>>> reload(myprint)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/usr/lib64/python3.6/imp.py", line 315, in reload
+    return importlib.reload(module)
+  File "/usr/lib64/python3.6/importlib/__init__.py", line 139, in reload
+    raise TypeError("reload() argument must be a module")
+TypeError: reload() argument must be a module
+>>> import myprint
+>>> reload(myprint)
+s
+p
+a
+n
+<module 'myprint' from '/home/eric/Devel/python/learning/ch3/myprint.py'>
+
+
+
+
+/ Einde LEARNING PYTHON
+

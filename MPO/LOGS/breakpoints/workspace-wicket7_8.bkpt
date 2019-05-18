@@ -1,0 +1,908 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<breakpoints>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="4535" lineNumber="156" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:AbstractDataGridView [line: 156] - populateItem(Item&lt;T&gt;)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.grid(AbstractDataGridView.class[AbstractDataGridView"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="4535"/>
+<attrib name="charEnd" value="4602"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.grid(AbstractDataGridView.class"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.extensions.markup.html.repeater.data.grid.AbstractDataGridView"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="20160" lineNumber="587" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:AbstractDefaultAjaxBehavior [line: 587] - onRequest()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.ajax(AbstractDefaultAjaxBehavior.class[AbstractDefaultAjaxBehavior"/>
+<attrib name="charStart" value="20160"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="20231"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.ajax(AbstractDefaultAjaxBehavior.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.ajax.AbstractDefaultAjaxBehavior"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="2017" lineNumber="61" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:AbstractFilter [line: 61] - getStateLocator()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(AbstractFilter.class[AbstractFilter"/>
+<attrib name="charStart" value="2017"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="2049"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(AbstractFilter.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.extensions.markup.html.repeater.data.table.filter.AbstractFilter"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="2094" lineNumber="66" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:AbstractFilter [line: 66] - getStateModel()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(AbstractFilter.class[AbstractFilter"/>
+<attrib name="charStart" value="2094"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="2126"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(AbstractFilter.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.extensions.markup.html.repeater.data.table.filter.AbstractFilter"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="2163" lineNumber="71" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:AbstractFilter [line: 71] - getState()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(AbstractFilter.class[AbstractFilter"/>
+<attrib name="charStart" value="2163"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="2201"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(AbstractFilter.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.extensions.markup.html.repeater.data.table.filter.AbstractFilter"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="1621" lineNumber="43" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:AbstractMarkupFragment [line: 43] - find(String, int)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup(AbstractMarkupFragment.class[AbstractMarkupFragment"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="1621"/>
+<attrib name="charEnd" value="1647"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup(AbstractMarkupFragment.class"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.markup.AbstractMarkupFragment"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="2321" lineNumber="71" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:AbstractPropertyModel [line: 71] - getObject()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.model(AbstractPropertyModel.class[AbstractPropertyModel"/>
+<attrib name="charStart" value="2321"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="2370"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.model(AbstractPropertyModel.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.model.AbstractPropertyModel"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="2329" lineNumber="84" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:AjaxLink [line: 84] - newAjaxEventBehavior(String)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.ajax.markup.html(AjaxLink.class[AjaxLink"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="2329"/>
+<attrib name="charEnd" value="2349"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.ajax.markup.html(AjaxLink.class"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.ajax.markup.html.AjaxLink"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="1483" lineNumber="45" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:Behaviors [line: 45] - add(Behavior...)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket(Behaviors.class[Behaviors"/>
+<attrib name="charStart" value="1483"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="1522"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket(Behaviors.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.Behaviors"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="72557" lineNumber="2296" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:Component [line: 2296] - render()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket(Component.class[Component"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="72557"/>
+<attrib name="charEnd" value="72593"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket(Component.class"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.Component"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="73515" lineNumber="2345" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:Component [line: 2345] - internalRender()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket(Component.class[Component"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="73515"/>
+<attrib name="charEnd" value="73554"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket(Component.class"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.Component"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="119849" lineNumber="4054" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:Component [line: 4054] - replaceComponentTagBody(MarkupStream, ComponentTag, CharSequence)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket(Component.class[Component"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="119849"/>
+<attrib name="charEnd" value="119885"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket(Component.class"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.Component"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="4181" lineNumber="147" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:CompoundRequestMapper [line: 147] - mapRequest(Request)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-request\/7.2.0\/wicket-request-7.2.0.jar&lt;org.apache.wicket.request.mapper(CompoundRequestMapper.class[CompoundRequestMapper"/>
+<attrib name="charStart" value="4181"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="4227"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-request\/7.2.0\/wicket-request-7.2.0.jar&lt;org.apache.wicket.request.mapper(CompoundRequestMapper.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.request.mapper.CompoundRequestMapper"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="13829" lineNumber="572" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:DataTable$DefaultDataGridView [line: 572] - newCellItem(String, int, IModel)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table(DataTable$DefaultDataGridView.class[DefaultDataGridView"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="13829"/>
+<attrib name="charEnd" value="13886"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table(DataTable$DefaultDataGridView.class"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable$DefaultDataGridView"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/wicket-examples-step-by-step/src/main/java/org/apache/wicket/examples/repeater/DataTableFilterToolbarMy3aPage.java" type="1"/>
+<marker charStart="2783" lineNumber="67" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:DataTableFilterToolbarMy3aPage [line: 67] - populateItem(Item&lt;ICellPopulator&lt;Contact&gt;&gt;, String, IModel&lt;Contact&gt;)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/src\/main\/java&lt;org.apache.wicket.examples.repeater{DataTableFilterToolbarMy3aPage.java[DataTableFilterToolbarMy3aPage~DataTableFilterToolbarMy3aPage["/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="2783"/>
+<attrib name="charEnd" value="2817"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.examples.repeater.DataTableFilterToolbarMy3aPage"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="1756" lineNumber="52" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:FilterStateModel [line: 52] - FilterStateModel(IFilterStateLocator&lt;T&gt;)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(FilterStateModel.class[FilterStateModel"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="1756"/>
+<attrib name="charEnd" value="1781"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(FilterStateModel.class"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterStateModel"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="1884" lineNumber="61" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:FilterStateModel [line: 61] - getObject()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(FilterStateModel.class[FilterStateModel"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="1884"/>
+<attrib name="charEnd" value="1918"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(FilterStateModel.class"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterStateModel"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="2054" lineNumber="70" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:FilterStateModel [line: 70] - setObject(T)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(FilterStateModel.class[FilterStateModel"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="2054"/>
+<attrib name="charEnd" value="2087"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(FilterStateModel.class"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterStateModel"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="3235" lineNumber="94" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:FilterToolbar [line: 94] - FilterToolbar(DataTable&lt;T, S&gt;, FilterForm&lt;F&gt;)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(FilterToolbar.class[FilterToolbar"/>
+<attrib name="charStart" value="3235"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="3287"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(FilterToolbar.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterToolbar"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="4282" lineNumber="134" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:FilterToolbar [line: 134] - FilterToolbar(DataTable&lt;T, S&gt;, FilterForm&lt;F&gt;)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(FilterToolbar.class[FilterToolbar"/>
+<attrib name="charStart" value="4282"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="4349"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(FilterToolbar.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterToolbar"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="29954" lineNumber="933" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:Form [line: 933] - process(IFormSubmitter)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.form(Form.class[Form"/>
+<attrib name="charStart" value="29954"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="30011"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.form(Form.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.markup.html.form.Form"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="30627" lineNumber="963" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:Form [line: 963] - process(IFormSubmitter)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.form(Form.class[Form"/>
+<attrib name="charStart" value="30627"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="30658"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.form(Form.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.markup.html.form.Form"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="30865" lineNumber="974" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:Form [line: 974] - process(IFormSubmitter)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.form(Form.class[Form"/>
+<attrib name="charStart" value="30865"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="30904"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.form(Form.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.markup.html.form.Form"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="54459" lineNumber="1829" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:Form [line: 1829] - updateFormComponentModels()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.form(Form.class[Form"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="54459"/>
+<attrib name="charEnd" value="54497"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.form(Form.class"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.markup.html.form.Form"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="1867" lineNumber="60" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:GenericBaseModel [line: 60] - setObject(T)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.model.util(GenericBaseModel.class[GenericBaseModel"/>
+<attrib name="charStart" value="1867"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="1907"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.model.util(GenericBaseModel.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.model.util.GenericBaseModel"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="1854" lineNumber="62" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:GoFilter [line: 62] - GoFilter(String, IModel&lt;String&gt;)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(GoFilter.class[GoFilter"/>
+<attrib name="charStart" value="1854"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="1866"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(GoFilter.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.extensions.markup.html.repeater.data.table.filter.GoFilter"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="2002" lineNumber="71" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:GoFilter [line: 71] - GoFilter(String, IModel&lt;String&gt;)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(GoFilter.class[GoFilter"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="2002"/>
+<attrib name="charEnd" value="2023"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(GoFilter.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.extensions.markup.html.repeater.data.table.filter.GoFilter"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="1476" lineNumber="56" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:ListModel [line: 56] - createSerializableVersionOf(List&lt;T&gt;)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.model.util(ListModel.class[ListModel"/>
+<attrib name="charStart" value="1476"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="1497"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.model.util(ListModel.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.model.util.ListModel"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="5393" lineNumber="139" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:ListView [line: 139] - ListView(String, IModel&lt;? extends List&lt;T&gt;&gt;)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.list(ListView.class[ListView"/>
+<attrib name="charStart" value="5393"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="5412"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.list(ListView.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.markup.html.list.ListView"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="5966" lineNumber="161" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:ListView [line: 161] - ListView(String, List&lt;T&gt;)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.list(ListView.class[ListView"/>
+<attrib name="charStart" value="5966"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="5997"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.list(ListView.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.markup.html.list.ListView"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="14731" lineNumber="516" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:ListView [line: 516] - onPopulate()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.list(ListView.class[ListView"/>
+<attrib name="charStart" value="14731"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="14795"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.list(ListView.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.markup.html.list.ListView"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="7142" lineNumber="234" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:ListenerInterfaceRequestHandler [line: 234] - respond(IRequestCycle)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.core.request.handler(ListenerInterfaceRequestHandler.class[ListenerInterfaceRequestHandler"/>
+<attrib name="charStart" value="7142"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="7161"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.core.request.handler(ListenerInterfaceRequestHandler.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.core.request.handler.ListenerInterfaceRequestHandler"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="7200" lineNumber="239" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:ListenerInterfaceRequestHandler [line: 239] - invokeListener()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.core.request.handler(ListenerInterfaceRequestHandler.class[ListenerInterfaceRequestHandler"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="7200"/>
+<attrib name="charEnd" value="7233"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.core.request.handler(ListenerInterfaceRequestHandler.class"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.core.request.handler.ListenerInterfaceRequestHandler"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="23598" lineNumber="762" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:MarkupContainer [line: 762] - renderAssociatedMarkup(String, String)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket(MarkupContainer.class[MarkupContainer"/>
+<attrib name="charStart" value="23598"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="23678"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket(MarkupContainer.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.MarkupContainer"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="49788" lineNumber="1746" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:MarkupContainer [line: 1746] - renderAll(MarkupStream, ComponentTag)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket(MarkupContainer.class[MarkupContainer"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="49788"/>
+<attrib name="charEnd" value="49820"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket(MarkupContainer.class"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.MarkupContainer"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="false" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="7859" lineNumber="221" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:MarkupFactory [line: 221] - getMarkup(MarkupContainer, Class&lt;?&gt;, boolean)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup(MarkupFactory.class[MarkupFactory"/>
+<attrib name="charStart" value="7859"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="7901"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup(MarkupFactory.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="false"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.markup.MarkupFactory"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/scratch/src/scratch/NestedInnerStudy.java" type="1"/>
+<marker charStart="244" lineNumber="14" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:NestedInnerStudy$Inner [line: 14] - fct()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=scratch/src&lt;scratch{NestedInnerStudy.java[NestedInnerStudy[Inner"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="244"/>
+<attrib name="charEnd" value="308"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="scratch.NestedInnerStudy$Inner"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/scratch/src/scratch/NestedInnerStudy.java" type="1"/>
+<marker charStart="432" lineNumber="22" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:NestedInnerStudy$Nested [line: 22] - fct()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=scratch/src&lt;scratch{NestedInnerStudy.java[NestedInnerStudy[Nested"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="432"/>
+<attrib name="charEnd" value="456"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="scratch.NestedInnerStudy$Nested"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="3081" lineNumber="71" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:PanelMarkupSourcingStrategy [line: 71] - PanelMarkupSourcingStrategy(boolean)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.panel(PanelMarkupSourcingStrategy.class[PanelMarkupSourcingStrategy"/>
+<attrib name="charStart" value="3081"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="3136"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.panel(PanelMarkupSourcingStrategy.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.markup.html.panel.PanelMarkupSourcingStrategy"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="3499" lineNumber="83" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:PanelMarkupSourcingStrategy [line: 83] - onComponentTagBody(Component, MarkupStream, ComponentTag)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.panel(PanelMarkupSourcingStrategy.class[PanelMarkupSourcingStrategy"/>
+<attrib name="charStart" value="3499"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="3539"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.html.panel(PanelMarkupSourcingStrategy.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.markup.html.panel.PanelMarkupSourcingStrategy"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="2925" lineNumber="93" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:RefreshingView [line: 93] - onPopulate()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.repeater(RefreshingView.class[RefreshingView"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="2925"/>
+<attrib name="charEnd" value="2972"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.markup.repeater(RefreshingView.class"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.markup.repeater.RefreshingView"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="6879" lineNumber="219" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:RequestCycle [line: 219] - processRequest()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.request.cycle(RequestCycle.class[RequestCycle"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="6879"/>
+<attrib name="charEnd" value="6932"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.request.cycle(RequestCycle.class"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.request.cycle.RequestCycle"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="7396" lineNumber="258" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:RequestListenerInterface [line: 258] - internalInvoke(Component, Object)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket(RequestListenerInterface.class[RequestListenerInterface"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="7396"/>
+<attrib name="charEnd" value="7421"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket(RequestListenerInterface.class"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.RequestListenerInterface"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/scratch/src/scratch/ShadowTest.java" type="1"/>
+<marker charStart="336" lineNumber="17" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:ShadowTest$FirstLevel [line: 17] - methodInFirstLevel(int)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=scratch/src&lt;scratch{ShadowTest.java[ShadowTest[FirstLevel"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="336"/>
+<attrib name="charEnd" value="355"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="scratch.ShadowTest$FirstLevel"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/wicket-examples-step-by-step/src/main/java/org/apache/wicket/examples/repeater/SortableContactDataProvider_my.java" type="1"/>
+<marker charStart="1667" lineNumber="46" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:SortableContactDataProvider_my [line: 46] - SortableContactDataProvider_my()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/src\/main\/java&lt;org.apache.wicket.examples.repeater{SortableContactDataProvider_my.java[SortableContactDataProvider_my"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="1667"/>
+<attrib name="charEnd" value="1711"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.examples.repeater.SortableContactDataProvider_my"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/wicket-examples-step-by-step/src/main/java/org/apache/wicket/examples/repeater/SortableContactDataProvider_my.java" type="1"/>
+<marker charStart="2127" lineNumber="66" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:SortableContactDataProvider_my [line: 66] - filterContacts(List&lt;Contact&gt;)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/src\/main\/java&lt;org.apache.wicket.examples.repeater{SortableContactDataProvider_my.java[SortableContactDataProvider_my"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="2127"/>
+<attrib name="charEnd" value="2178"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.examples.repeater.SortableContactDataProvider_my"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/wicket-examples-step-by-step/src/main/java/org/apache/wicket/examples/repeater/SortableContactDataProvider_my.java" type="1"/>
+<marker charStart="3755" lineNumber="128" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:SortableContactDataProvider_my [line: 128] - size()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/src\/main\/java&lt;org.apache.wicket.examples.repeater{SortableContactDataProvider_my.java[SortableContactDataProvider_my"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="3755"/>
+<attrib name="charEnd" value="3823"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.examples.repeater.SortableContactDataProvider_my"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/wicket-examples-step-by-step/src/main/java/org/apache/wicket/examples/repeater/SortableContactDataProvider_my.java" type="1"/>
+<marker charStart="4002" lineNumber="137" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:SortableContactDataProvider_my [line: 137] - model(Contact)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/src\/main\/java&lt;org.apache.wicket.examples.repeater{SortableContactDataProvider_my.java[SortableContactDataProvider_my"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="4002"/>
+<attrib name="charEnd" value="4046"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.examples.repeater.SortableContactDataProvider_my"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/wicket-examples-step-by-step/src/main/java/org/apache/wicket/examples/repeater/SortableContactDataProvider_my.java" type="1"/>
+<marker charStart="4107" lineNumber="143" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:SortableContactDataProvider_my [line: 143] - getFilterState()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/src\/main\/java&lt;org.apache.wicket.examples.repeater{SortableContactDataProvider_my.java[SortableContactDataProvider_my"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="4107"/>
+<attrib name="charEnd" value="4133"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.examples.repeater.SortableContactDataProvider_my"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/wicket-examples-step-by-step/src/main/java/org/apache/wicket/examples/repeater/SortableContactDataProvider_my.java" type="1"/>
+<marker charStart="4204" lineNumber="149" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:SortableContactDataProvider_my [line: 149] - setFilterState(ContactFilter_my)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/src\/main\/java&lt;org.apache.wicket.examples.repeater{SortableContactDataProvider_my.java[SortableContactDataProvider_my"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charStart" value="4204"/>
+<attrib name="charEnd" value="4232"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.examples.repeater.SortableContactDataProvider_my"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="10392" lineNumber="264" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:StringResourceModel$AssignmentWrapper [line: 264] - load()"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.model(StringResourceModel$AssignmentWrapper.class[AssignmentWrapper"/>
+<attrib name="charStart" value="10392"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="10442"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-core\/7.2.0\/wicket-core-7.2.0.jar&lt;org.apache.wicket.model(StringResourceModel$AssignmentWrapper.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.model.StringResourceModel$AssignmentWrapper"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="1587" lineNumber="48" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:TextFilter [line: 48] - TextFilter(String, IModel&lt;T&gt;, FilterForm&lt;?&gt;)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(TextFilter.class[TextFilter"/>
+<attrib name="charStart" value="1587"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="1605"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(TextFilter.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.extensions.markup.html.repeater.data.table.filter.TextFilter"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="2490" lineNumber="70" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:TextFilteredPropertyColumn [line: 70] - getFilter(String, FilterForm&lt;?&gt;)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(TextFilteredPropertyColumn.class[TextFilteredPropertyColumn"/>
+<attrib name="charStart" value="2490"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="2557"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(TextFilteredPropertyColumn.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.extensions.markup.html.repeater.data.table.filter.TextFilteredPropertyColumn"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" persistant="true" registered="true">
+<resource path="/" type="8"/>
+<marker charStart="2853" lineNumber="83" type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+<attrib name="message" value="Line breakpoint:TextFilteredPropertyColumn [line: 83] - getFilterModel(FilterForm&lt;?&gt;)"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(TextFilteredPropertyColumn.class[TextFilteredPropertyColumn"/>
+<attrib name="charStart" value="2853"/>
+<attrib name="org.eclipse.jdt.debug.core.suspendPolicy" value="2"/>
+<attrib name="charEnd" value="2931"/>
+<attrib name="org.eclipse.jdt.debug.core.installCount" value="0"/>
+<attrib name="org.eclipse.jdt.internal.core.JavaModelManager.handleId" value="=wicket-examples-step-by-step/\/home\/eric\/.m2\/repository\/org\/apache\/wicket\/wicket-extensions\/7.2.0\/wicket-extensions-7.2.0.jar&lt;org.apache.wicket.extensions.markup.html.repeater.data.table.filter(TextFilteredPropertyColumn.class"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.jdt.debug.core.typeName" value="org.apache.wicket.extensions.markup.html.repeater.data.table.filter.TextFilteredPropertyColumn"/>
+<attrib name="workingset_name" value=""/>
+<attrib name="workingset_id" value="org.eclipse.debug.ui.breakpointWorkingSet"/>
+</marker>
+</breakpoint>
+</breakpoints>

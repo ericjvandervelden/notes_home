@@ -1,0 +1,299 @@
+LOG_8_sep_2014.txt
+LOG_6_OCT_2014.txt
+LOG_29_sep_2015.txt
+LOG_new.txt
+LOG_23_jul_2015.txt
+LOG_sho.txt
+LOG_camel.txt
+
+[eric@localhost test]$ PGPASSWORD=mpopostgres@mpo psql  -U  mpopostgres pnllogistics6a
+[eric@localhost wicket]$ local-db.sh /home/eric/DB_TAP/Firebird/Local/first.fdb <<_
+
+/ 7	. 
+
+/ 13 dec 2016
+
+http://stackoverflow.com/questions/5564634/getting-a-wicket-text-boxs-value-in-an-ajax-onchange-event
+
+https://solutiondesign.com/blog/-/blogs/spring-and-mockito-happy-together
+http://sdg.repositoryhosting.com/git_public/sdg/sdg-blog.git/tree/HEAD:/sdg-mockitospring
+
+/ inject mocks	,
+http://stackoverflow.com/questions/20270391/mockito-inject-real-objects-into-private-autowired-fields
+http://www.baeldung.com/mockito-annotations
+http://stackoverflow.com/questions/22374650/mock-a-parent-class-in-a-child-class-with-mockito
+http://stackoverflow.com/questions/9076302/using-mock-and-injectmocks
+
+/ java	,
+http://stackoverflow.com/questions/509076/how-do-i-address-unchecked-cast-warnings
+http://mydailyjava.blogspot.nl/2013/11/cglib-missing-manual.html
+
+/ h2	, noem table NIET users	,	 
+https://groups.google.com/forum/#!topic/h2-database/0lTX7Jzwprw
+
+/ find
+http://stackoverflow.com/questions/246215/how-can-i-list-files-with-their-absolute-path-in-linux
+
+/ kainulainen
+https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-integration-testing/
+https://www.petrikainulainen.net/programming/tips-and-tricks/mocking-spring-beans-with-apache-wicket-and-mockito/
+
+/ git
+http://stackoverflow.com/questions/67699/how-to-clone-all-remote-branches-in-git
+
+/ 7	. 
+
+/ 16 feb 2017
+
+LOG_scs-821.txt
+LOG_spring.txt
+LOG_java.txt
+LOG_bli-78.txt
+LOG_mockito.txt
+LOG_wicket.txt
+LOG_29_sep_2015.txt
+
+/home/eric/Devel/Java/Eclipse/eclipse-jee	/ see ~/bin/env-mpo.sh
+/ we zien	,
+PATH=/opt/apache-maven-3.2.5/bin:/home/eric/Devel/Java/jdk1.6.0_45//bin:/usr/lib64/qt-3.3/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/home/eric/.local/bin:/home/eric/bin:/opt/gradle-2.0/bin
+JAVA_HOME=/home/eric/Devel/Java/jdk1.6.0_45/
+M2_HOME=/opt/apache-maven-3.2.5
+
+/home/eric/Devel/Java/Eclipse/eclipse-jee
+/home/eric/Devel/Java/Tomcat/apache-tomcat-8.0.28	$ bin/catalina.sh jpda run
+/home/eric/Devel/Java/ActiveMQ/apache-activemq-5.10.1	 $ bin/activemq console
+/home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/trunk
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/mposcs
+/home/eric/Devel/Java/h2			java -cp h2-1.4.193.jar org.h2.tools.Server -tcp -pg ...
+									java -cp h2-1.4.193.jar org.h2.tools.Shell -url jdbc:h2:tcp://localhost/./test
+									 1008  java -cp h2-1.4.193.jar org.h2.tools.Shell -url jdbc:pg:tcp://localhost/./test2
+/home/eric/Devel/Java/Wicket/wicket-examples-step-by-step
+/home/eric/Devel/Java/Spring
+/home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace-wicket7_5/my-stereo-autoconfig
+/home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace-wicket7_5/wicket-spring
+/home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace-wicket7_5/JavaLang/src/main/java/generics	 $ javap -c EraseStudy.class
+/home/eric/bin 	$ forticlientsslvpn.sh
+/home/eric/tmp/java-stuff
+
+/home/eric/DB_TAP/Firebird/Dsvfms 	$ isql-fb -user sysdba -password masterkey dsvfms.fdb_20160127-003030.fdb
+$ PGPASSWORD=foo psql -U foo
+$ PGPASSWORD=mpopostgres@mpo psql  -U mpopostgres bakker20160207_t
+
+/ 7	. 
+
+/ 14 maart 2017
+
+http://stackoverflow.com/questions/17001849/awk-partly-string-match-if-column-partly-matches
+http://www.postgresqltutorial.com/postgresql-union/
+http://stackoverflow.com/questions/5342440/reset-auto-increment-counter-in-postgres
+https://www.postgresql.org/docs/8.4/static/queries-with.html
+http://www.postgresqltutorial.com/postgresql-recursive-query/
+https://community.oracle.com/blogs/enicholas/2006/05/04/understanding-weak-references
+
+/ 15 maart 2017
+https://www.javacodegeeks.com/2012/02/manipulating-java-class-files-with-asm.html
+http://download.forge.objectweb.org/asm/asm4-guide.pdf
+https://community.oracle.com/blogs/enicholas/2006/05/04/understanding-weak-references
+
+/ 17 maart 2017
+http://www.baeldung.com/mockito-annotations
+https://static.javadoc.io/org.mockito/mockito-core/2.2.16/org/mockito/InjectMocks.html
+http://stackoverflow.com/questions/124865/xml-schema-xsd-validation-tool
+http://www.oracle.com/technetwork/articles/java/javaserial-1536170.html
+https://ask.fedoraproject.org/en/question/60584/how-to-restart-gnome-shell-314/
+
+http://stackoverflow.com/questions/13963720/how-to-effectively-destroy-session-in-java-servlet
+http://unix.stackexchange.com/questions/280892/command-substitution-cat-file-inserts-quotes
+
+/ 7	. 
+
+/ 22 maart 2017
+
+http://joel-costigliola.github.io/assertj/assertj-core-quick-start.html								<-
+http://www.vogella.com/tutorials/Hamcrest/article.html													<-
+http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/Matchers.html
+http://junit.sourceforge.net/javadoc/org/junit/Assert.html#assertThat(T, org.hamcrest.Matcher)
+https://objectpartners.com/2013/09/18/the-benefits-of-using-assertthat-over-other-assert-methods-in-unit-tests/		<- 
+http://joel-costigliola.github.io/assertj/
+http://joel-costigliola.github.io/assertj/core/api/org/assertj/core/api/Assert.html
+https://static.javadoc.io/org.mockito/mockito-core/2.7.19/org/mockito/BDDMockito.html			<-
+https://github.com/mockito/mockito/wiki/What%27s-new-in-Mockito-2							<-
+https://docs.oracle.com/javase/7/docs/api/java/lang/reflect/Proxy.html			<-
+
+http://stackoverflow.com/questions/26165188/hibernate-entity-proxy-initialization		/ javassist
+https://coderanch.com/t/615081/databases/Hibernate-handler-target
+
+https://zeroturnaround.com/rebellabs/testing-the-performance-of-4-java-runtime-code-generators-cglib-javassist-jdk-proxy-byte-buddy/		/ last part	,
+/->
+https://zeroturnaround.com/rebellabs/how-to-make-java-more-dynamic-with-runtime-code-generation/		/ first part	,
+https://zeroturnaround.com/rebellabs/how-my-new-friend-byte-buddy-enables-annotation-driven-java-runtime-code-generation/	/ second part	, 
+
+/ 31 maart 2017
+
+LOG_testing.txt
+LOG_scs_6338.txt
+LOG_postgresql.txt	<- MAANDAGOCHTEND
+LOG_servlet.txt
+LOG_scs-6393.txt 	<- MAANDAGOCHTEND
+LOG_scs_sb_xml.txt
+LOG_mockito.txt
+LOG_wicket.txt
+LOG_system-admin.txt
+
+[eric@localhost bin]$ PGPASSWORD=mpopostgres@mpo psql  -U mpopostgres bakker20160207_t
+
+eric@mposerv8:~$ PGPASSWORD=mqi8o0e6aeg56tpghje2bo0gehgthoi6 psql -U mposcs_dev -p 5433 -h localhost mposcs-dev
+
+/home/eric/Integration/Bakker/imports/CustomerOrder/2017-03/14
+
+/home/eric/tmp/copy_study
+[eric@localhost copy_study]$ less seo_export_20160323_pretty.txt 
+[eric@localhost copy_study]$ less seo_sho_with_att_pretty_print.txt 
+
+
+[eric@localhost bin]$ vs-test-3.sh 
+
+/home/eric/Devel/Java/Eclipse/eclipse-jee-test
+[eric@localhost eclipse-jee-test]$ eclipse/eclipse 
+
+/home/eric/Devel/Java/Tomcat/apache-tomcat-7.0.76-src
+/home/eric/Devel/Java/Tomcat/apache-tomcat-7.0.76-src/output/build
+
+/home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/scs
+
+/home/eric/Devel/Java/ActiveMQ/apache-activemq-5.10.1
+[eric@localhost apache-activemq-5.10.1]$ bin/activemq console
+
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/mposcs/conf
+
+/home/eric/Devel/Java/Wicket/wicket-testing
+
+/home/eric/Devel/Java/cglib
+
+
+/ 8 mei 2017
+
+/ in chrome,	 
+
+https://cwiki.apache.org/confluence/display/WICKET/Working+with+Wicket+models#WorkingwithWicketmodels-Chainingmodels
+http://jeremythomerson.com/2008/11/06/wicket-the-power-of-nested-models/
+
+
+https://www.intertech.com/Blog/spring-4-meta-annotations/
+http://www.baeldung.com/spring-expression-language
+https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-jta.html
+
+http://stackoverflow.com/questions/124865/xml-schema-xsd-validation-tool
+
+https://community.oracle.com/blogs/enicholas/2006/05/04/understanding-weak-references
+
+https://www.postgresql.org/docs/9.3/static/typeconv-overview.html
+http://stackoverflow.com/questions/11989465/sql-how-to-cast-a-select-query
+http://chirupgadmin.blogspot.nl/
+https://www.postgresql.org/docs/9.4/static/datatype-oid.html
+https://www.postgresql.org/docs/9.3/static/ddl-schemas.html
+
+http://www.h2database.com/html/features.html
+
+http://stackoverflow.com/questions/18599711/how-can-i-split-a-shell-command-over-multiple-lines-when-using-an-if-statement
+
+https://vladmihalcea.com/2014/07/21/hibernate-hidden-gem-the-pooled-lo-optimizer/
+
+/ 23 mei 2017
+
+http://localhost:9090/tba/wicket/page?1
+http://activemq.apache.org/objectmessage.html
+https://www.w3schools.com/sql/sql_autoincrement.asp
+http://www.postgresqltutorial.com/postgresql-array/
+http://activemq.apache.org/mqtt.html
+http://www.postgresqltutorial.com/plpgsql-function-parameters/
+https://dev.mysql.com/doc/refman/5.6/en/create-table-foreign-keys.html
+https://stackoverflow.com/questions/4004205/mysql-show-constraints-on-tables-command
+https://www.digitalocean.com/community/tutorials/a-basic-mysql-tutorial#-how-to-install-mysql-on-ubuntu-and-centos-
+https://docs.oracle.com/javase/tutorial/java/generics/rawTypes.html
+https://stackoverflow.com/questions/42141346/how-is-a-generic-list-type-erased-when-i-try-it-myself-it-gives-an-error
+https://github.com/arquillian/arquillian-examples
+
+/ 31 mei 2017
+
+LOG_mysql_and_postgres.txt
+LOG_java.txt
+LOG_spring.txt
+LOG_hibernate.txt
+LOG_postgresql.txt
+LOG_scs-6437.txt
+LOG_scs-821.txt
+LOG_wicket_table.txt
+LOG_wicket.txt
+LOG_mockito.txt
+LOG_testing.txt
+
+[eric@localhost Chapter_11]$ pwd
+/home/eric/Devel/Java/Spring/SpringiA4_SourceCode/Chapter_11
+[eric@localhost mposcs]$ pwd
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/mposcs
+[eric@localhost workspace]$ pwd
+/home/eric/Devel/Java/Eclipse/eclipse-jee/workspace
+[eric@localhost activemq-core-5.3.2-sources]$ pwd
+/home/eric/Devel/Java/ActiveMQ/activemq-core-5.3.2-sources
+[eric@localhost apache-activemq-5.14.5]$ pwd
+/home/eric/Devel/Java/ActiveMQ/apache-activemq-5.14.5
+[eric@localhost apache-tomcat-8.0.28]$ pwd
+/home/eric/Devel/Java/Tomcat/apache-tomcat-8.0.28
+[eric@localhost eclipse-interfacing-testing]$ pwd
+/home/eric/Devel/Java/Eclipse/eclipse-interfacing-testing
+[eric@localhost eclipse-jee-test]$ pwd
+/home/eric/Devel/Java/Eclipse/eclipse-jee-test
+[eric@localhost eclipse-jee]$ pwd
+/home/eric/Devel/Java/Eclipse/eclipse-jee
+
+
+
+
+/ postgres pages	,
+https://www.postgresql.org/docs/current/static/queries-table-expressions.html#QUERIES-TABLEFUNCTIONS
+https://www.postgresql.org/docs/8.3/static/functions-matching.html
+https://www.postgresql.org/message-id/CAMr3DCMJfbxFAK08rpOZSoGKNMCA%2BfM%2BYO6X%3DRkTeczrX_8sLQ@mail.gmail.com
+https://www.postgresql.org/docs/9.0/static/plpgsql-declarations.html
+https://www.postgresql.org/docs/9.3/static/rowtypes.html
+https://www.postgresql.org/docs/9.4/static/gist-builtin-opclasses.html
+https://www.postgresql.org/docs/9.3/static/sql-selectinto.html
+https://www.postgresql.org/docs/9.5/static/sql-select.html
+https://www.postgresql.org/docs/9.2/static/xfunc-sql.html
+https://www.postgresql.org/docs/9.6/static/datatype-pseudo.html
+https://www.postgresql.org/docs/9.1/static/sql-createtableas.html
+https://www.postgresql.org/message-id/20031222035353.A27167%40quality.qadas.com
+https://www.postgresql.org/docs/9.2/static/functions-comparisons.html
+https://www.postgresql.org/docs/9.1/static/arrays.html
+https://www.postgresql.org/docs/9.4/static/sql-createfunction.html
+https://www.postgresql.org/docs/8.4/static/datatype-pseudo.html
+https://www.postgresql.org/docs/9.3/static/xfunc-sql.html
+https://www.postgresql.org/docs/9.1/static/functions-srf.html
+http://www.postgresqltutorial.com/plpgsql-function-parameters/
+http://www.postgresqltutorial.com/postgresql-array/
+
+http://localhost:9090/wicket-examples-step-by-step/repeater/filtermy3a?1
+
+https://www.digitalocean.com/community/tutorials/a-basic-mysql-tutorial#-how-to-install-mysql-on-ubuntu-and-centos-
+
+https://www.jouwictvacature.nl/vacature/java-developer-3?utm_source=indeed&utm_medium=cpc&utm_campaign=D&O
+https://www.indeed.nl/vacatures?q=ilionx&l=
+https://www.dictu.nl/
+https://www.indeed.nl/viewjob?jk=a393f0082b08d38f&q=plsql&tk=1bh9rb3kk9mpd8is&from=web
+https://www.indeed.nl/viewjob?jk=f01c85dc4ea45597&q=postgresql&tk=1bh7cf6na9mpd8qt&from=web
+https://nn-careers.com/nl/jobs/full-stack-developer-tijdelijk/?utm_source=Indeed&utm_medium=organic&utm_campaign=Indeed
+https://www.personnelsearch.nl/vacatures/vacature_java_developer_oo_spring_rotterdam_799228_11.html
+
+/ 14 june 2017
+
+https://www.postgresql.org/docs/9.4/static/xfunc-sql.html
+https://www.postgresql.org/docs/9.4/static/xindex.html
+https://www.postgresql.org/docs/current/static/queries-table-expressions.html
+https://blog.heapanalytics.com/postgresqls-powerful-new-join-type-lateral/
+https://www.postgresql.org/docs/9.3/static/functions-json.html
+http://illuminatedcomputing.com/posts/2015/02/postgres_lateral_join/
+https://www.postgresql.org/docs/9.1/static/functions-array.html
+https://www.postgresql.org/docs/9.1/static/collation.html
+
+
+https://stackoverflow.com/questions/10312521/how-to-fetch-all-git-branches

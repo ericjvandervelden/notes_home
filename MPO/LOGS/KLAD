@@ -1,0 +1,311 @@
+select seo.service_order_id
+from service_order seo
+join consignment cons on cons.service_order_systemid=seo.system_id
+join service_action sa on sa.consignment_systemid=cons.system_id
+join shipment_order sho on sa.shipment_order_systemid=sho.system_id
+group by seo.service_order_id
+having count(seo.service_order_id)>10;
+
+select seo.service_order_id,seoty.service_order_type
+from service_order seo
+join consignment cons on cons.service_order_systemid=seo.system_id
+join service_action sa on sa.consignment_systemid=cons.system_id
+join shipment_order sho on sa.shipment_order_systemid=sho.system_id
+join service_order_type seoty on seo.service_order_type_systemid=seoty.system_id
+--where seoty.service_order_type='COLLECT'
+group by seo.service_order_id,seoty.service_order_type
+having count(seo.service_order_id)>10;
+
+select seo.service_order_id,seoty.service_order_type
+from service_order seo
+join consignment cons on cons.service_order_systemid=seo.system_id
+join service_action sa on sa.consignment_systemid=cons.system_id
+join shipment_order sho on sa.shipment_order_systemid=sho.system_id
+join service_order_type seoty on seo.service_order_type_systemid=seoty.system_id
+--join event_event ev on ev.service_order_systemid=seo.system_id
+--join event_type evty on ev.event_type_systemid=evty.system_id
+--where evty.name='J95'
+--where seoty.service_order_type='COLLECT'
+group by seo.service_order_id,seoty.service_order_type
+having count(seo.service_order_id)>10;
+
+select seo.service_order_id
+from service_order seo
+join consignment cons on cons.service_order_systemid=seo.system_id
+join service_action sa on sa.consignment_systemid=cons.system_id
+join shipment_order sho on sa.shipment_order_systemid=sho.system_id
+join service_order_type seoty on seo.service_order_type_systemid=seoty.system_id
+--where seoty.service_order_type='COLLECT'
+--where seoty.service_order_type='LINEHAUL'
+where seoty.service_order_type='DELIVERY_NOTE'
+group by seo.service_order_id
+having count(seo.service_order_id)>10; 
+
+select seo.service_order_id,seoty.service_order_type
+from service_order seo
+join consignment cons on cons.service_order_systemid=seo.system_id
+join service_action sa on sa.consignment_systemid=cons.system_id
+join shipment_order sho on sa.shipment_order_systemid=sho.system_id
+join service_order_type seoty on seo.service_order_type_systemid=seoty.system_id
+--where seoty.service_order_type='COLLECT'
+--where seoty.service_order_type='LINEHAUL'
+--where seoty.service_order_type='DELIVERY_NOTE'
+group by seo.service_order_id,seoty.service_order_type
+having count(seo.service_order_id)>10; 
+
+select count(seo.service_order_id)
+from service_order seo
+join consignment cons on cons.service_order_systemid=seo.system_id
+join service_action sa on sa.consignment_systemid=cons.system_id
+join shipment_order sho on sa.shipment_order_systemid=sho.system_id
+join service_order_type seoty on seo.service_order_type_systemid=seoty.system_id
+where 
+--where seoty.service_order_type='COLLECT'
+--group by seo.service_order_id,seoty.service_order_type
+--having count(seo.service_order_id)>10;
+
+select s.m,count(t.n)
+from s
+join st on s.m=st.m
+join t on st.n=t.n
+group by s.m,t.n
+having count(s.m)>1
+
+select s.m
+from s
+join st on s.m=st.m
+join t on st.n=t.n
+group by s.m
+having count(s.m)>0
+
+
+/ 7	.
+
+select seo.service_order_id,count(seo.service_order_id),seoty.service_order_type
+from service_order seo
+join consignment cons on cons.service_order_systemid=seo.system_id
+join service_action sa on sa.consignment_systemid=cons.system_id
+join shipment_order sho on sa.shipment_order_systemid=sho.system_id
+join service_order_type seoty on seo.service_order_type_systemid=seoty.system_id
+--join event_event ev on ev.service_order_systemid=seo.system_id
+--join event_type evty on ev.event_type_systemid=evty.system_id
+--where evty.name='J95'
+--where seoty.service_order_type='COLLECT'
+group by seo.service_order_id,seoty.service_order_type
+having count(seo.service_order_id)>10;
+
+pnllogistics-> having count(seo.service_order_id)>10;
+ service_order_id  | count | service_order_type 
+-------------------+-------+--------------------
+ N0002202          |    27 | LINEHAUL
+ N0002197          |    26 | DELIVERY_NOTE
+ N0003617          |    11 | COLLECT
+ N0001173          |    13 | LINEHAUL
+ N0002196          |    27 | LINEHAUL
+ N0002205          |    13 | DELIVERY_NOTE
+ N0002203          |    15 | DELIVERY_NOTE
+ N0002193          |    25 | LINEHAUL
+ N0001679-20150619 |    95 | COLLECT
+ N0001172          |    13 | COLLECT
+ N0002252          |    11 | DELIVERY_NOTE
+ N0003618          |    11 | LINEHAUL
+(12 rows)
+
+pnllogistics=> select seo.service_order_id,count(seo.service_order_id),seoty.service_order_type
+from service_order seo
+join consignment cons on cons.service_order_systemid=seo.system_id
+join service_action sa on sa.consignment_systemid=cons.system_id
+join shipment_order sho on sa.shipment_order_systemid=sho.system_id
+join service_order_type seoty on seo.service_order_type_systemid=seoty.system_id
+join event_event ev on ev.service_order_systemid=seo.system_id
+--join event_type evty on ev.event_type_systemid=evty.system_id
+--where evty.name='J95'
+--where seoty.service_order_type='COLLECT'
+group by seo.service_order_id,seoty.service_order_type
+having count(seo.service_order_id)>10;
+ service_order_id  | count | service_order_type 
+-------------------+-------+--------------------
+ N0001172          |   169 | COLLECT
+ N0001173          |   338 | LINEHAUL
+ N0001285          |    15 | COLLECT
+ N0001308          |    18 | COLLECT
+ N0001437          |    98 | COLLECT
+ N0001470          |    18 | COLLECT
+ N0001474          |    32 | COLLECT
+ N0001557          |    32 | LINEHAUL
+ N0001628          |    98 | LINEHAUL
+ N0001679-20150619 | 78185 | COLLECT
+ N0001679-20150623 |    43 | COLLECT
+ N0001690-20150625 |    52 | COLLECT
+ N0001690-20150626 |    16 | COLLECT
+
+
+select count(*) 
+from service_order seo
+join consignment cons on cons.service_order_systemid=seo.system_id
+join service_action sa on sa.consignment_systemid=cons.system_id
+join shipment_order sho on sa.shipment_order_systemid=sho.system_id
+join service_order_type seoty on seo.service_order_type_systemid=seoty.system_id
+--join event_event ev on ev.service_order_systemid=seo.system_id
+--join event_type evty on ev.event_type_systemid=evty.system_id
+--where evty.name='J95'
+--where seoty.service_order_type='COLLECT'
+where seo.service_order_id='N0001679-20150619'
+ count 
+-------
+    95
+(1 row)
+
+/ maar met join event_event
+gistics=> select count(*)
+from service_order seo
+join consignment cons on cons.service_order_systemid=seo.system_id
+join service_action sa on sa.consignment_systemid=cons.system_id
+join shipment_order sho on sa.shipment_order_systemid=sho.system_id
+join service_order_type seoty on seo.service_order_type_systemid=seoty.system_id
+join event_event ev on ev.service_order_systemid=seo.system_id
+--join event_type evty on ev.event_type_systemid=evty.system_id
+--where evty.name='J95'
+--where seoty.service_order_type='COLLECT'
+where seo.service_order_id='N0001679-20150619'
+;
+ count 
+-------
+ 78185
+(1 row)
+
+/ 7	.
+
+/ J27
+
+select*
+from shipment_item shi
+join shipment_order sho on shi.shipment_order_systemid=sho.system_id
+where sho. shipment_order_id='SH000002544';
+
+/ 7	.
+
+ SELECT so.system_id AS service_order_systemid,
+    so.service_order_id,
+    sho.system_id AS shipment_order_systemid,
+    sho.shipment_order_id,
+    sho.reference1,
+    sho.reference2
+   FROM shipment_order sho,
+    service_action sa,
+    consignment c,
+    service_order so
+  WHERE c.service_order_systemid = so.system_id AND sa.consignment_systemid = c.system_id AND sho.system_id = sa.shipment_order_systemid;
+
+pnllogistics=> select * from service_order_shipment_order where shipment_order_id='SH000001927';
+ service_order_systemid | service_order_id | shipment_order_systemid | shipment_order_id | reference1 | reference2
+------------------------+------------------+-------------------------+-------------------+------------+------------
+               26785282 | N0001725         |                26785264 | SH000001927       | 3613       |
+               26785247 | N0001721         |                26785264 | SH000001927       | 3613       |
+               26785275 | N0001724         |                26785264 | SH000001927       | 3613       |
+               26785253 | N0001722         |                26785264 | SH000001927       | 3613       |
+(4 rows)
+
+pnllogistics=> select * from service_order_shipment_order where shipment_order_id='SH000002543';
+
+/ 7	. 
+
+select evt.system_id as evt,shi.system_id as shi,sa.system_id as sa,so.system_id as so,
+    sa_dlv.system_id as sa_dlv2,sa_dlv_ty.service_action_type
+from event_event evt
+join event_type et on et.system_id = evt.event_type_systemid
+    and et.name = 'J27'
+join shipment_item shi on shi.system_id = evt.shipment_item_system_id
+    and shi.reference1='3SHEVC0013004'
+left join shipment_order sho on shi.shipment_order_systemid=sho.system_id
+left join service_order so on evt.service_order_systemid=so.system_id
+left join service_action sa on evt.service_action_systemid=sa.system_id
+
+left join service_action sa_dlv
+    join service_action_type sa_dlv_ty
+    on sa_dlv.service_action_type_systemid=sa_dlv_ty.system_id
+    and sa_dlv_ty.service_action_type='DELIVERY2'
+on sa_dlv.shipment_order_systemid=sho.system_id;
+   evt    |   shi    |    sa    |    so    | sa_dlv2 | service_action_type
+----------+----------+----------+----------+---------+---------------------
+ 26827614 | 26827360 | 26827607 | 26827369 |         |
+(1 row)
+
+
+select evt.system_id as evt,shi.system_id as shi,sa.system_id as sa,so.system_id as so,sho.system_id as sho,
+    sa_dlv.system_id as sa_dlv2,sa_dlv_ty.service_action_type
+from event_event evt
+join event_type et on et.system_id = evt.event_type_systemid
+    and et.name = 'J27'
+join shipment_item shi on shi.system_id = evt.shipment_item_system_id
+    and shi.reference1='3SHEVC0013004'
+left join shipment_order sho on shi.shipment_order_systemid=sho.system_id
+left join service_order so on evt.service_order_systemid=so.system_id
+left join service_action sa on evt.service_action_systemid=sa.system_id
+
+left join service_action sa_dlv on sa_dlv.shipment_order_systemid=sho.system_id
+left join service_action_type sa_dlv_ty on sa_dlv.service_action_type_systemid=sa_dlv_ty.system_id
+    and sa_dlv_ty.service_action_type='DELIVERY2';
+   evt    |   shi    |    sa    |    so    |   sho    | sa_dlv2  | service_action_type 
+----------+----------+----------+----------+----------+----------+---------------------
+ 26827614 | 26827360 | 26827607 | 26827369 | 26827349 | 26827607 | 
+ 26827614 | 26827360 | 26827607 | 26827369 | 26827349 | 26827609 | 
+ 26827614 | 26827360 | 26827607 | 26827369 | 26827349 | 26827608 | 
+ 26827614 | 26827360 | 26827607 | 26827369 | 26827349 | 26827695 | 
+(4 rows)
+
+/ 13	. 
+
+select 
+	evt.system_id as evt,
+	shi.system_id as shi,
+	sa.system_id as sa,
+	so.system_id as so,
+	sho.system_id as sho,
+
+   	SO_DELIVERY.system_id as SO_DELIVERY, 
+	so_dlv_ty.service_order_type as so_dlv_ty,
+
+ 	SO_DELIVERY3.system_id as SO_DELIVERY3 ,
+	so_dlv_ty3.service_order_type as so_dlv_ty3,
+
+  	SO_DELIVERY2.system_id as SO_DELIVERY2, 
+	sa_dlv_ty2.system_id as sa_dlv_ty2,
+	'Last'
+from event_event evt
+join event_type evt_ty on evt_ty.system_id = evt.event_type_systemid
+    and evt_ty.name = 'J27'
+join shipment_item shi on shi.system_id = evt.shipment_item_system_id
+    and shi.reference1='3SHEVC0013004'
+left join shipment_order sho on shi.shipment_order_systemid=sho.system_id
+left join service_order so on evt.service_order_systemid=so.system_id
+left join service_action sa on evt.service_action_systemid=sa.system_id
+
+left join service_order_shipment_order SHOSO_DELIVERY
+    join service_order SO_DELIVERY
+    on SHOSO_DELIVERY.service_order_systemid = SO_DELIVERY.system_id
+    join service_order_type so_dlv_ty
+    on SO_DELIVERY.service_order_type_systemid = so_dlv_ty.system_id
+        and so_dlv_ty.service_order_type = 'DELIVERY'
+on SHOSO_DELIVERY.shipment_order_systemid = sho.system_id
+
+left join service_action sa_dlv3 on sa_dlv3.shipment_order_systemid=sho.system_id
+left join consignment con_dlv3 on sa_dlv3.consignment_systemid=con_dlv3.system_id
+left join service_order SO_DELIVERY3
+    join service_order_type so_dlv_ty3
+    on SO_DELIVERY3.service_order_type_systemid=so_dlv_ty3.system_id
+        and so_dlv_ty3.service_order_type='DELIVERY'
+on con_dlv3.service_order_systemid=SO_DELIVERY3.system_id
+
+left join service_action sa_dlv2
+    join service_action_type sa_dlv_ty2
+    on sa_dlv2.service_action_type_systemid=sa_dlv_ty2.system_id
+        and sa_dlv_ty2.service_action_type='DELIVERY'
+on sa_dlv2.shipment_order_systemid=sho.system_id
+left join consignment con_dlv2 on sa_dlv2.consignment_systemid=con_dlv2.system_id
+left join service_order SO_DELIVERY2 on con_dlv2.service_order_systemid=SO_DELIVERY2.system_id
+
+
+
+
+

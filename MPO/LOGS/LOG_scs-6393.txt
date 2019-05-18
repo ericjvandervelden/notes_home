@@ -1,0 +1,630 @@
+/ See SCS-6393
+/ See DEBUG SCS-6393
+
+/ SCS-6393
+
+/ 7	. 
+
+$ ssh jboss@192.168.3.103	/ vs-test-3	,
+password: jboss@mpo
+jboss@vs-test-3:~$ less /local/apps/jboss-4.0.5.GA/server/scstest2/deploy/postgres-ds.xml 
+
+                <xa-datasource-class>org.postgresql.xa.PGXADataSource</xa-datasource-class>
+                <xa-datasource-property name="ServerName">192.168.1.8</xa-datasource-property>
+                <xa-datasource-property name="PortNumber">5433</xa-datasource-property>
+                <xa-datasource-property name="DatabaseName">scstest2</xa-datasource-property>
+                <xa-datasource-property name="User">scstest</xa-datasource-property>
+                <xa-datasource-property name="Password">al5deewaoNgaavie3Oit6cheeWohdaYi</xa-datasource-property>
+
+[eric@localhost bin]$ ssh mposerv8
+$ PGPASSWORD=al5deewaoNgaavie3Oit6cheeWohdaYi psql -U scstest -h localhost -p 5433 scstest2
+
+update DASHBOARD_QUERY 
+set NAME='All', SEQUENCE_NUMBER=40, BASE_QUERY='SELECT * FROM SHIPMENT_ORDER SHO WHERE SHO.STATUS_CODE_SYSTEMID IN (SELECT SYSTEM_ID FROM ORDER_STATUS OS WHERE ${STATUS_CLAUSE}) AND IS_TEMPLATE = 0 AND SHO.SYSTEM_ENTRY_DATE > ''2013-03-31 23:59:59''', IS_TEST='0', LAST_CHANGED_ON='2017-03-31 10:49:14.964000 +02:00:00', LAST_CHANGED_BY=30325341, TEST_STATUS='PASSED', ORDER_TYPE='SHIPMENT_ORDER', SCREEN='', ORGANIZATION_SYSTEMID=3150, DASHBOARD_TYPE='', ENTITY=NULL 
+where SYSTEM_ID=91 
+
+/ we oef	, on laptop in foo	, 
+foo=> create table if not exists chrs(s varchar(32));
+CREATE TABLE
+foo=> commit;
+COMMIT
+
+/ 7	. 
+
+/ Configuration, Administration,  Dashboard Queries
+=
+DashboardQueryPage
+
+public class DashboardQueryPage extends VOEditPage<DashboardQueryVO> {
+public abstract class VOEditPage<T extends ValueObject> extends VOSelectPage<T> implements VOEditFormCallback {
+public abstract class VOSelectPage<T extends ValueObject> extends VOListPage<T> {
+public abstract class VOListPage<T extends ValueObject> extends BaseContextPage {
+public class BaseContextPage extends BasePage implements Serializable {
+public class BasePage extends WebPage implements Serializable {
+
+$ vi VOEditPage.html
+	<wicket:extend>
+		<form wicket:id="createForm">
+		<button wicket:id="createButton" class="button-primary" wicket:message="title:create">
+			<i class="fa fa-file-o" aria-hidden="true"></i>
+			<span><wicket:message	key="create">Create new</wicket:message></span>
+		</button>
+		</form>
+		<div wicket:id="editWindow"></div>
+		<wicket:child />
+	</wicket:extend>
+
+
+$ vi VOListPage.html
+		<wicket:extend>
+			<div wicket:id="feedback"></div>
+			<div wicket:id="evoSearchList"></div>
+			<wicket:child />
+		</wicket:extend>
+
+$ vi BaseContextPage.html 	/ RM	,
+<wicket:extend>
+	<wicket:child/>
+</wicket:extend>
+
+$ vi BasePage.html
+<body wicket:id="pageId">
+<div class="wicketPage">
+	<wicket:child />
+	<script type="text/javascript" src="script/feedBackPanelValidation.js"></script>
+</div>
+
+/ evoSearchList wordt in principe set in VOListPage.class	, in 	protected void createListPanel() {
+/ maar wordt overwrite in DashboarQueryPage, in 	
+
+public class DashboardQueryPage extends VOEditPage<DashboardQueryVO> {
+
+	protected void createListPanel() {
+		searchListPanel = new VOSearchListPanel<T>("evoSearchList", null, webComponentEventSwitchBoard, daoWrapper, getListActions());
+
+	protected Collection<EntityAction<DashboardQueryVO>> getListPanelAction() {
+		EntityActionButton<DashboardQueryVO> button = new EntityActionAjaxButton<DashboardQueryVO>("edit", new ResourceModel("edit").wrapOnAssignment(DashboardQueryPage.this)) {
+			@Override
+			protected void onSubmit(Button aButton, AjaxRequestTarget aTarget, IModel<DashboardQueryVO> aSelection) {
+				editPage.setPageTitle(editPageTitle.getObject());
+				editPage.setEditRecord(aSelection.getObject());
+				if (useAjax && aTarget != null) {
+					editWindow.show(aTarget);
+				} else {
+					setResponsePage(editPage);
+				}
+
+	@Override
+	protected void createPage() {
+		super.createPage();
+		editPage = new DashboardQueryEditFormPage(this, daoWrapper, dataProperties);
+	}
+
+$ vi DashboardQueryEditFormPage.html
+
+	<wicket:extend>	
+		<div wicket:id="messageValidatorWindow"></div>
+		<wicket:child />
+	</wicket:extend>
+
+$ vi VOEditFormPage.html
+
+	<wicket:extend>
+		<div wicket:id="feedback"></div>
+		<div wicket:id="editPanel"></div>
+		<wicket:child />
+	</wicket:extend>
+
+$ vi BasePage.html
+
+<body wicket:id="pageId">
+<div class="wicketPage">
+	<wicket:child />
+	<script type="text/javascript" src="script/feedBackPanelValidation.js"></script>
+</div>
+
+
+public class DashboardQueryEditFormPage extends VOEditFormPage<DashboardQueryVO> {
+public class VOEditFormPage<T extends ValueObject> extends BaseContextPage {
+public class BaseContextPage extends BasePage implements Serializable {
+public class BasePage extends WebPage implements Serializable {
+
+$ vi DashboardQueryEditFormPage.html
+	<wicket:extend>	
+		<div wicket:id="messageValidatorWindow"></div>
+		<wicket:child />
+	</wicket:extend>
+
+$ vi VOEditFormPage.html
+
+	<wicket:extend>
+		<div wicket:id="feedback"></div>
+		<div wicket:id="editPanel"></div>
+		<wicket:child />
+	</wicket:extend>
+
+public class DashboardQueryEditPanel extends VOEditPanel<DashboardQueryVO> {
+public class VOEditPanel<T extends ValueObject> extends GenericFormPanel<T> {
+abstract public class GenericFormPanel<T extends EntityInterface> extends BaseWebComponent {
+abstract public class BaseWebComponent extends Panel implements WebComponentListener, Serializable {
+
+$ vi DashboardQueryEditPanel.html
+
+     <wicket:extend>
+        <table>
+          <tr>
+            <td class="label" valign="top">
+              <wicket:message key="code">
+              Query Name
+              </wicket:message>
+            </td>
+            <td nowrap="nowrap" class="input">
+            <input wicket:id="code" />
+              <span wicket:id="code_feedback">
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="label" valign="top">
+              <wicket:message key="sequenceNumber">
+              Sequence
+              </wicket:message>
+            </td>
+            <td nowrap="nowrap" class="input">
+            <input wicket:id="sequenceNumber" />
+              <span wicket:id="sequenceNumber_feedback">
+              </span>
+            </td>
+          </tr>
+          <tr>
+          <td class="label" valign="top">
+              <wicket:message key="organization">
+                Organization
+              </wicket:message>
+            </td>
+            <td nowrap="nowrap" class="input">
+              <span wicket:id="organization"/>
+              <span wicket:id="organization_feedback">
+              </span>
+            </td>
+          </tr>
+         <tr>
+            <td class="label" valign="top">
+              <wicket:message key="orderType">
+              Query type
+              </wicket:message>
+            </td>
+            <td nowrap="nowrap" class="input">
+            <select wicket:id="orderType"/>
+              <span wicket:id="orderType_feedback">
+              </span>
+            </td>
+          </tr>
+         <tr>
+            <td class="label" valign="top">
+              <wicket:message key="customerStatusEntity">
+              Entity
+              </wicket:message>
+            </td>
+            <td nowrap="nowrap" class="input">
+              <select wicket:id="entity"/>
+              <span wicket:id="entity_feedback"></span>
+            </td>
+          </tr>
+          <tr>
+            <td class="label" valign="top">
+              <wicket:message key="screen">
+              Screen
+              </wicket:message>
+            </td>
+            <td nowrap="nowrap" class="input">
+            <input wicket:id="screen" />
+              <span wicket:id="screen_feedback">
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="label" valign="top">
+              <wicket:message key="normalQuery">
+              Query
+              </wicket:message>
+            </td>
+           <td nowrap="nowrap">
+            <textarea wicket:id="normalQuery" name="normalQuery" rows="4" cols="50"></textarea>
+              <span wicket:id="normalQuery_feedback">
+              </span>
+            </td>
+          </tr>
+          	<tr>
+				<td class="label" valign="top"><wicket:message key="testFlag">Is test</wicket:message></td>
+				<td nowrap="nowrap" class="input" valign="top"><input type="checkbox" wicket:id="testFlag" /> <span wicket:id="testFlag_feedback"></span></td>
+			</tr>
+			 <tr>
+            <td class="label" valign="top">
+              <wicket:message key="lastChangedByName">
+              Last updated by
+              </wicket:message>
+            </td>
+           <td nowrap="nowrap">
+           <input wicket:id="lastChangedByName"/>
+              <span wicket:id="lastChangedByName_feedback">
+              </span>
+            </td>
+          </tr>
+           <tr>
+            <td class="label" valign="top">
+              <wicket:message key="lastChangedOn">
+              Last updated on
+              </wicket:message>
+            </td>
+           <td nowrap="nowrap">
+           <label wicket:id="lastChangedOn"/>
+              <span wicket:id="lastChangedOn_feedback">
+              </span>
+            </td>
+          </tr>
+           <tr>
+            <td class="label" valign="top">
+              <wicket:message key="testStatus">
+              Test result
+              </wicket:message>
+            </td>
+           <td nowrap="nowrap">
+            <select wicket:id="testStatus"/>
+              <span wicket:id="testStatus_feedback">
+              </span>
+            </td>
+          </tr>
+                    </table>
+        <wicket:child />
+      </wicket:extend>
+
+$ vi VOEditPanel.html			/ RM
+
+	<wicket:extend>
+			<wicket:child />
+	</wicket:extend>
+
+$ vi GenericFormPanel.html
+
+<wicket:extend>
+
+<div wicket:id="status" class="status">[[status messages]]</div>
+
+<form class="genericForm" name="genericForm" id="genericForm" wicket:id="genericForm">
+	<h2><div wicket:id="formTitle"/></h2>
+	<wicket:child/>
+	<div class="actionPanelContainer" wicket:id="actionPanel" />
+</form>
+</wicket:extend>
+
+
+
+$ vi DashboardQueryEditFormPage.class
+
+	@Override
+	protected void createEditPanel() {
+		EntityFormActionBuilder<DashboardQueryVO> myPanelBuilder = new EntityFormActionBuilder<DashboardQueryVO>(getDashBoardFormActions());
+		editPanel = new DashboardQueryEditPanel("editPanel", new WebComponentEventSwitchBoard(), myPanelBuilder, daoWrapper, dataProperties);
+
+
+	@SuppressWarnings("serial")
+	protected Collection<EntityAction<DashboardQueryVO>> getDashBoardFormActions() {
+		List<EntityAction<DashboardQueryVO>> actions = new ArrayList<EntityAction<DashboardQueryVO>>();
+		EntityActionButton<DashboardQueryVO> saveBtn = new EntityActionAjaxButton<DashboardQueryVO>("ok", new ResourceModel("save")) {
+			@Override
+			protected void onSubmit(Button aButton, AjaxRequestTarget aTarget, IModel<DashboardQueryVO> aSelection) {
+
+/ 7	. 
+
+/ ERRs
+
+/ 13	. 
+
+2017-03-31 14:40:51,132 ERROR [org.hibernate.util.JDBCExceptionReporter] (TP-Processor8:) Batch entry 0 update DASHBOARD_QUERY set NAME='All', SEQUENCE_NUMBER=40, BASE_QUERY='SELECT * FROM SHIPMENT_ORDER SHO WHERE SHO.STATUS_CODE_SYSTEMID IN (SELECT SYSTEM_ID FROM ORDER_STATUS OS WHERE ${STATUS_CLAUSE}) AND IS_TEMPLATE = 0 AND SHO.SYSTEM_ENTRY_DATE > ''2013-03-31 23:59:59''', IS_TEST='0', LAST_CHANGED_ON='2017-03-31 14:40:51.116000 +02:00:00', LAST_CHANGED_BY=30325341, TEST_STATUS='UNTESTED', ORDER_TYPE='SHIPMENT_ORDER', SCREEN='', ORGANIZATION_SYSTEMID=3150, DASHBOARD_TYPE='', ENTITY=NULL where SYSTEM_ID=30337156 was aborted.  Call getNextException to see the cause.
+2017-03-31 14:40:51,132 WARN  [org.hibernate.util.JDBCExceptionReporter] (TP-Processor8:) SQL Error: 0, SQLState: 42804
+2017-03-31 14:40:51,132 ERROR [org.hibernate.util.JDBCExceptionReporter] (TP-Processor8:) ERROR: column "is_test" is of type integer but expression is of type boolean
+  Hint: You will need to rewrite or cast the expression.
+  Position: 80
+/=
+update DASHBOARD_QUERY 
+set NAME='All', 
+SEQUENCE_NUMBER=40, 
+BASE_QUERY='SELECT * FROM SHIPMENT_ORDER SHO WHERE SHO.STATUS_CODE_SYSTEMID IN (SELECT SYSTEM_ID FROM ORDER_STATUS OS WHERE ${STATUS_CLAUSE}) AND IS_TEMPLATE = 0 AND SHO.SYSTEM_ENTRY_DATE > ''2013-03-31 23:59:59''', 
+IS_TEST='0', 
+LAST_CHANGED_ON='2017-03-31 14:40:51.116000 +02:00:00', 
+LAST_CHANGED_BY=30325341, 
+TEST_STATUS='UNTESTED', 
+ORDER_TYPE='SHIPMENT_ORDER', 
+SCREEN='', 
+ORGANIZATION_SYSTEMID=3150, 
+DASHBOARD_TYPE='', 
+ENTITY=NULL 
+where SYSTEM_ID=30337156 
+;
+
+/ we zien dat base_query goed gaat	, omdat er 3 ''' wordt used, 	
+
+/ we zien 	,
+
+
+
+/ 13	. 
+
+/ local on my laptop	, 
+
+LOG:  execute <unnamed>: update DASHBOARD_QUERY set NAME=$1, SEQUENCE_NUMBER=$2, BASE_QUERY=$3, IS_TEST=$4, LAST_CHANGED_ON=$5, LAST_CHANGED_BY=$6, TES
+T_STATUS=$7, ORDER_TYPE=$8, SCREEN=$9, ORGANIZATION_SYSTEMID=$10, DASHBOARD_TYPE=$11, ENTITY=$12 where SYSTEM_ID=$13
+DETAIL:  parameters: $1 = 'All Purchase Order Lines', $2 = '0', $3 = 'SELECT COL.* FROM CUSTOMER_ORDER_LINE COL WHERE ${CUSTOMER_STATUS_CLAUSE} AND COL
+.requested_start_after > ${TODAY-${DAYS_BACK}}', $4 = 'f', $5 = '2017-03-31 13:14:27.772', $6 = '27223886', $7 = 'PASSED', $8 = 'CUSTOMER_STATUS', $9 =
+ 'customerorder', $10 = '13000', $11 = '', $12 = 'CUSTOMER_ORDER_LINE', $13 = '27249790'
+
+mposcs2=# \d dashboard_query
+ base_query            | text                        | 
+ is_test               | smallint                    | 
+
+/ op vs-test-3	, 
+scstest2=> \d dashboard_query
+ is_test               | integer                     | 
+
+/ 13	. 
+
+$ vi LOG_1_mei_2014.txt
+
+postgres=# CREATE CAST (boolean AS smallint)
+WITH FUNCTION int2(boolean)
+AS IMPLICIT;
+
+[eric@localhost ~]$ psql -U mpopostgres -W mpo
+Password for user mpopostgres:
+psql (9.3.4)
+Type "help" for help.
+
+mpo=> CREATE OR REPLACE FUNCTION int2(boolean)
+RETURNS smallint AS
+$BODY$
+begin
+if $1 then return 1; else return 0; end if;
+end;
+$BODY$
+LANGUAGE plpgsql;
+
+/ we zien in 
+mposcs2=# \dC+
+ boolean                     | smallint                    | int2               | yes           | 
+
+/ In foo zien we deze NIET	,
+
+/ Maar waar created	?
+/ TODO
+
+/ 13	. 
+
+/ op laptop	, 
+mposcs2=#  select*from mpo_scs_patch where name='patch-399-dasboard-query-istest-smallint$postgresql.sql';
+ system_id |     entry_date      | module |                          name                           |                         sql_script               
+          | status  | patch_comment 
+-----------+---------------------+--------+---------------------------------------------------------+--------------------------------------------------
+----------+---------+---------------
+       770 | 2014-03-20 01:23:49 | oms    | patch-399-dasboard-query-istest-smallint$postgresql.sql | ALTER TABLE dashboard_query ALTER is_test TYPE sm
+allint;\r+| APPLIED | NULL
+           |                     |        |                                                         |                                                  
+          |         | 
+(1 row)
+
+/ op vs-test-3	, 
+scstest2=> select*from mpo_scs_patch where name='patch-399-dasboard-query-istest-smallint$postgresql.sql';
+-[ RECORD 1 ]-+-----------------------------------------------------------
+system_id     | 771
+entry_date    | 2014-03-19 20:16:15.427
+module        | oms
+name          | patch-399-dasboard-query-istest-smallint$postgresql.sql
+sql_script    | ALTER TABLE dashboard_query ALTER is_test TYPE smallint;\r
+              | 
+status        | SKIPPED
+patch_comment | Patch not needed for DB: Firebird
+
+
+/ MAANDAGOCHTEND
+
+
+/ Einde SCS-6393
+
+/ FIX SCS-6393
+
+/ op vs-test-3's db	, 
+
+scstest2=> ALTER TABLE dashboard_query ALTER is_test TYPE smallint;
+ALTER TABLE
+scstest2=> update mpo_scs_patch set status='MANUALLY_APPLIED' where name='patch-399-dasboard-query-istest-smallint$postgresql.sql';
+
+/ Einde FIX SCS-6393
+
+/ DEBUG SCS-6393
+
+/ Geef	, 
+/ Configuration, Administration, Dashboard queries
+
+/c
+/ stack
+/s
+Daemon Thread [http-0.0.0.0-8080-3] (Suspended (breakpoint at line 91 in DashboardQueryEditFormPage))	
+	DashboardQueryEditFormPage.createEditPanel() line: 91	
+		editPanel = new DashboardQueryEditPanel("editPanel", new WebComponentEventSwitchBoard(), myPanelBuilder, daoWrapper, dataProperties);
+		editPanel.setOutputMarkupId(true);
+		add(editPanel);
+/cb
+	DashboardQueryEditFormPage(VOEditFormPage).createPage() line: 143	
+		add(new Label("pageTitle", new PropertyModel<String>(this, "pageTitle")));
+		createFeedbackPanel();
+		createEditPanel();
+/cb
+	DashboardQueryEditFormPage(VOEditFormPage).<init>(VOEditFormCallback, BeanWrapper<BaseDAOInterface<T>>, EvoDataProperties) line: 90	
+		super();
+		callback = aCallback;
+		daoWrapper = aDaoWrapper;
+		dataProperties = aDataProperties;
+		panelBuilder = new EntityFormActionBuilder<T>(getFormActions());
+		createPage();
+/cb
+	DashboardQueryEditFormPage.<init>(VOEditFormCallback, BeanWrapper<BaseDAOInterface<DashboardQueryVO>>, EvoDataProperties) line: 49	
+		super(aCallback, aDaoWrapper, aDataProperties);
+/cb
+	DashboardQueryPage.createPage() line: 63	
+		super.createPage();
+		editPage = new DashboardQueryEditFormPage(this, daoWrapper, dataProperties);
+/cb
+	DashboardQueryPage(VOListPage).<init>() line: 52	
+		super();
+		daoWrapper = getBeanWrapper();
+		setDataProperties();
+		createPage();
+/cb
+	DashboardQueryPage(VOSelectPage).<init>() line: 21	
+		super();
+/cb
+	DashboardQueryPage(VOEditPage).<init>() line: 78	
+		super();
+/cb
+	DashboardQueryPage.<init>() line: 34	
+		super();
+/cb
+	GeneratedConstructorAccessor3388.newInstance(Object[]) line: not available	
+	DelegatingConstructorAccessorImpl.newInstance(Object[]) line: not available	
+	Constructor.newInstance(Object...) line: 526	
+	DefaultPageFactory.createPage(Constructor<Page>, PageParameters) line: 192	
+	DefaultPageFactory.newPage(Class<C>, PageParameters) line: 97	
+	BaseHomePage.doRedirect() line: 63	
+	BaseHomePage.<init>() line: 27	
+	GeneratedConstructorAccessor3587.newInstance(Object[]) line: not available	
+	DelegatingConstructorAccessorImpl.newInstance(Object[]) line: not available	
+	Constructor.newInstance(Object...) line: 526	
+	DefaultPageFactory.createPage(Constructor<Page>, PageParameters) line: 192	
+	DefaultPageFactory.newPage(Class<C>, PageParameters) line: 97	
+	BookmarkablePageRequestTarget.newPage(Class<C>, RequestCycle) line: 305	
+	BookmarkablePageRequestTarget.getPage(RequestCycle) line: 320	
+	BookmarkablePageRequestTarget.processEvents(RequestCycle) line: 234	
+	WebRequestCycleProcessor(AbstractRequestCycleProcessor).processEvents(RequestCycle) line: 92	
+	MpoWebRequestCycle(RequestCycle).processEventsAndRespond() line: 1279	
+	MpoWebRequestCycle(RequestCycle).step() line: 1358	
+	MpoWebRequestCycle(RequestCycle).steps() line: 1465	
+	MpoWebRequestCycle(RequestCycle).request() line: 545	
+	WicketFilter.doGet(HttpServletRequest, HttpServletResponse) line: 486	
+	WicketServlet.doGet(HttpServletRequest, HttpServletResponse) line: 138	
+	WicketServlet(HttpServlet).service(HttpServletRequest, HttpServletResponse) line: 697	
+	WicketServlet(HttpServlet).service(ServletRequest, ServletResponse) line: 810	
+
+/ click edit op een dashboard query	,
+/ stack	,
+/s
+Daemon Thread [http-0.0.0.0-8080-2] (Suspended (breakpoint at line 94 in DashboardQueryPage$1))	
+	DashboardQueryPage$1.onSubmit(Button, AjaxRequestTarget, IModel<DashboardQueryVO>) line: 94	
+				editPage.setPageTitle(editPageTitle.getObject());
+				editPage.setEditRecord(aSelection.getObject());
+				if (useAjax && aTarget != null) {
+/n
+					editWindow.show(aTarget);
+/n
+				} else {
+/j
+					setResponsePage(editPage);
+this	DashboardQueryPage$1  (id=24966)	
+	this$0	DashboardQueryPage  (id=24959)	
+		editPage	DashboardQueryEditFormPage  (id=25542)		/ is hierboven created	,
+/cb
+	EntityActionAjaxButton$1.onSubmit(AjaxRequestTarget, Form<?>) line: 56	
+	AjaxFallbackButton$1.onSubmit(AjaxRequestTarget) line: 74	
+	AjaxFallbackButton$1(AjaxFormSubmitBehavior).onEvent(AjaxRequestTarget) line: 156	
+	AjaxFallbackButton$1(AjaxEventBehavior).respond(AjaxRequestTarget) line: 177	
+	AjaxFallbackButton$1(AbstractDefaultAjaxBehavior).onRequest() line: 312	
+	BehaviorRequestTarget.processEvents(RequestCycle) line: 157	
+	WebRequestCycleProcessor(AbstractRequestCycleProcessor).processEvents(RequestCycle) line: 92	
+	MpoWebRequestCycle(RequestCycle).processEventsAndRespond() line: 1279	
+	MpoWebRequestCycle(RequestCycle).step() line: 1358	
+	MpoWebRequestCycle(RequestCycle).steps() line: 1465	
+	MpoWebRequestCycle(RequestCycle).request() line: 545	
+	WicketFilter.doGet(HttpServletRequest, HttpServletResponse) line: 486	
+	WicketServlet.doPost(HttpServletRequest, HttpServletResponse) line: 160	
+	WicketServlet(HttpServlet).service(HttpServletRequest, HttpServletResponse) line: 717	
+	WicketServlet(HttpServlet).service(ServletRequest, ServletResponse) line: 810	
+
+/ we zien een dashboard query	, 
+/ click Save	, 
+/ stack	,
+/s
+Daemon Thread [http-0.0.0.0-8080-1] (Suspended (breakpoint at line 111 in DashboardQueryEditFormPage$3))	
+	DashboardQueryEditFormPage$3.onSubmit(Button, AjaxRequestTarget, IModel<DashboardQueryVO>) line: 111	
+	EntityActionAjaxButton$1.onSubmit(AjaxRequestTarget, Form<?>) line: 56	
+	AjaxFallbackButton$1.onSubmit(AjaxRequestTarget) line: 74	
+	AjaxFallbackButton$1(AjaxFormSubmitBehavior).onEvent(AjaxRequestTarget) line: 156	
+	AjaxFallbackButton$1(AjaxEventBehavior).respond(AjaxRequestTarget) line: 177	
+	AjaxFallbackButton$1(AbstractDefaultAjaxBehavior).onRequest() line: 312	
+	BehaviorRequestTarget.processEvents(RequestCycle) line: 157	
+	WebRequestCycleProcessor(AbstractRequestCycleProcessor).processEvents(RequestCycle) line: 92	
+	MpoWebRequestCycle(RequestCycle).processEventsAndRespond() line: 1279	
+	MpoWebRequestCycle(RequestCycle).step() line: 1358	
+	MpoWebRequestCycle(RequestCycle).steps() line: 1465	
+	MpoWebRequestCycle(RequestCycle).request() line: 545	
+	WicketFilter.doGet(HttpServletRequest, HttpServletResponse) line: 486	
+	WicketServlet.doPost(HttpServletRequest, HttpServletResponse) line: 160	
+	WicketServlet(HttpServlet).service(HttpServletRequest, HttpServletResponse) line: 717	
+ 	WicketServlet(HttpServlet).service(ServletRequest, ServletResponse) line: 810	
+/ debug	,
+				DashboardQueryVO reloadDashboardQueryVO = daoWrapper.getBean().getBySystemId(aSelection.getObject().getSystemId());
+/=
+			protected void onSubmit(Button aButton, AjaxRequestTarget aTarget, IModel<DashboardQueryVO> aSelection) {
+
+reloadDashboardQueryVO	DashboardQueryVO_$$_javassist_17  (id=23794)	
+	handler	JavassistLazyInitializer  (id=23874)	
+		target	DashboardQueryVO  (id=24002)	
+			systemId	27249790	
+			normalQuery	"SELECT CO.* FROM CUSTOMER_ORDER CO WHERE ${CUSTOMER_STATUS_CLAUSE}  AND CO.CREATION_DATE >  ${TODAY-${DAYS_BACK}}" (id=27549)	
+/ een String,	 
+
+				DashboardQueryVO aDashboardQueryVO = aSelection.getObject();
+aDashboardQueryVO	DashboardQueryVO_$$_javassist_17  (id=23794)	
+/= reloadDashboardQueryVO
+
+				aDashboardQueryVO.setLastChangedOn(new Date());
+				aDashboardQueryVO.setLastChangedBy(AuthenticationUtils.getResource());
+/ Hier gaat het mis op test	,
+
+
+
+
+
+
+
+/ Einde DEBUG SCS-6393
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

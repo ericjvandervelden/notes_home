@@ -1,0 +1,13 @@
+Ik ben benieuwd of er voor mij een mogelijkheid is bij u om te programmeren op het gebied van encryptie. 
+
+Ik sprak bij de afgelopen J-Fall met uw collega Angelo van der Sijpt, na zijn voordracht, en het werk dat hij doet zou ik ook willen doen. 
+
+Ik heb wiskunde gestudeerd en 's avonds en in het weekend studeer ik getaltheorie en meetkunde (elliptische krommen) en de toepassingen in encryptie (algoritmes). Maar thuis ook houd ik de nieuwe ontwikkelingen bij in de Java frameworks zoals Spring en Wicket, want programmeren is ook mijn hobby.  
+
+Op het ogenblik ben ik werkzaam als Java ontwikkelaar binnen de logistiek. Ik werk met Spring, Hibernate, PostgreSQL en de laatste tijd vooral met Wicket, een programma waarvan ik ook de source code helemaal doorneem. 
+
+Ik hoop dat u kennis met me wilt maken. 
+
+Met vriendelijke groeten, 
+
+Eric Van der Velden.  

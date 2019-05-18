@@ -1,0 +1,750 @@
+/ See TAIL IN COMMONS-IO
+/ See REGEX BOOK
+/ See REGEX SELF 
+	See PATTERN.SPLIT 
+/ 	See PATTERN.MATCHER
+
+/ TAIL IN COMMONS-IO
+/ 7. 
+
+/ Lees	, 
+http://stackoverflow.com/questions/22987170/apache-commons-io-tailer-example/22987713
+http://stackoverflow.com/questions/557844/java-io-implementation-of-unix-linux-tail-f
+
+/ Lees	, 
+http://alvinalexander.com/java/jwarehouse/commons-io-2.0/src/test/java/org/apache/commons/io/input/TailerTest.java.shtml
+
+/ Lees	, 
+https://commons.apache.org/
+/ Veel projects: io, beanutils	, ...
+/->
+https://commons.apache.org/proper/commons-io/
+/ -> User guide	,  
+http://commons.apache.org/proper/commons-io/description.html
+
+/ Lees	,  
+https://en.wikipedia.org/wiki/Apache_Commons
+http://www.java67.com/2015/07/how-to-stop-thread-in-java-example.html
+
+
+/ Lees api	,
+https://commons.apache.org/proper/commons-io/javadocs/api-2.5/
+
+$ vi Tailer.java
+public class Tailer implements Runnable {
+
+/ 7	. 
+
+[eric@localhost bin]$ cat /tmp/server.log 
+foo bar
+ericj
+
+/ 7	. 
+
+
+/ DEBUG
+
+/ je kunt een b set in	, 
+Main.class
+public class Main {
+	public static void main(String[] args) {
+		File file=new File("/tmp/server.log");						<- b
+		TailerListener listener=new MyListener();
+		Tailer tailer=Tailer.create(file, listener);
+	}
+}
+
+/ Als we step, zien we Thread[main] in eclipse in Debug view	, 
+
+/ set b in 	,
+Tailer.class
+    private long readLines(final RandomAccessFile reader) throws IOException {
+        ByteArrayOutputStream lineBuf = new ByteArrayOutputStream(64);				<- b
+
+/c
+/ we zien een 2 threads in eclipse	, 
+/s
+first.Main at localhost:41647	
+	Thread [main] (Suspended)	
+		org.apache.commons.io.input.Tailer.create(java.io.File, java.nio.charset.Charset, org.apache.commons.io.input.TailerListener, long, boolean, boolean, int) line: 319	
+		org.apache.commons.io.input.Tailer.create(java.io.File, org.apache.commons.io.input.TailerListener, long, boolean, boolean, int) line: 297	
+		org.apache.commons.io.input.Tailer.create(java.io.File, org.apache.commons.io.input.TailerListener, long, boolean, int) line: 280	
+		org.apache.commons.io.input.Tailer.create(java.io.File, org.apache.commons.io.input.TailerListener, long, boolean) line: 333	
+		org.apache.commons.io.input.Tailer.create(java.io.File, org.apache.commons.io.input.TailerListener) line: 372	
+		first.Main.main(java.lang.String[]) line: 13	
+	Daemon Thread [Thread-0] (Suspended)	
+		org.apache.commons.io.input.Tailer.readLines(java.io.RandomAccessFile) line: 522	
+		org.apache.commons.io.input.Tailer.run() line: 459	
+		java.lang.Thread.run() line: 745	
+
+/ debug	,  
+/s
+	java.lang.Thread.run() line: 745	
+        if (target != null) {
+            target.run();
+/s
+	org.apache.commons.io.input.Tailer.run() line: 459	
+            long last = 0; // The last time the file was checked for changes
+            long position = 0; // position within the file
+            // Open the file
+            while (getRun() && reader == null) {
+                try {
+                    reader = new RandomAccessFile(file, RAF_MODE);
+                } else {
+                    // The current position in the file
+                    position = end ? file.length() : 0;	/ end==false	, dus begint vooraan	, 
+                    last = file.lastModified();		/ 1491207815000
+                    reader.seek(position);
+                }
+            while (getRun()) {
+                final boolean newer = FileUtils.isFileNewer(file, last); // IO-279, must be done first
+false
+                // Check the file length to see if it was rotated
+                final long length = file.length();
+14
+                if (length < position) {
+/n
+position==0
+                } else {
+                    // File was not rotated
+                    // See if the file needs to be read again
+                    if (length > position) {
+/j
+                        // The file has more content than it did last time
+                        position = readLines(reader);
+/s
+	org.apache.commons.io.input.Tailer.readLines(java.io.RandomAccessFile) line: 522	
+/=
+    private long readLines(final RandomAccessFile reader) throws IOException {
+
+/ Intermezzo
+    /**
+     * Buffer on top of RandomAccessFile.
+     */
+    private final byte inbuf[];
+
+/ raf leest file in inbuf	, 
+/ deze method readLines writes in lineBuf	, 
+
+/ Einde  Intermezzo
+
+        ByteArrayOutputStream lineBuf = new ByteArrayOutputStream(64);		/ write result in	,
+        long pos = reader.getFilePointer();
+0
+        long rePos = pos; // position to re-read
+        int num;
+        boolean seenCR = false;
+        while (getRun() && ((num = reader.read(inbuf)) != EOF)) {		/ de raf leest (part of ) file in een byte[] inbuf	, nl inbuf.length bytes veel (max) 
+num=14
+            for (int i = 0; i < num; i++) {									/ 2de loop, die per line gaat  in inbug	, 
+																/ dus 2 loops achter elkaar	, 															
+                final byte ch = inbuf[i];	/ 107	, eclipse inspect (char)ch: 'f'
+                switch (ch) {
+                default:
+                    if (seenCR) {
+/n
+                    lineBuf.write(ch);
+
+/ volgende	, 
+            for (int i = 0; i < num; i++) {
+/ na de f leest ook oo bar	, 
+/ volgende, 	
+            for (int i = 0; i < num; i++) {
+                final byte ch = inbuf[i];			/ 10	, 	(char)ch='\n'
+                switch (ch) {
+                case '\n':
+                    seenCR = false; // swallow CR before LF			/ op unix is er geen \r	, 
+                    listener.handle(new String(lineBuf.toByteArray(), cset));	/ lineBuf een stream	,  
+/s
+first.MyListener.handle(java.lang.String) line: 8	
+		System.out.println(line);
+/t
+org.apache.commons.io.input.Tailer.readLines(java.io.RandomAccessFile) line: 529	
+                    listener.handle(new String(lineBuf.toByteArray(), cset));	/ lineBuf een stream	,  
+/d
+                    lineBuf.reset();
+                    rePos = pos + i + 1;	/ 0+7+1=8	, is position 1ste char op volgende line, 
+                    break;					/ falls niet in default	,
+/ volgende line , 	
+            for (int i = 0; i < num; i++) {
+                final byte ch = inbuf[i];
+                switch (ch) {
+                default:
+                    if (seenCR) {
+/n
+                    lineBuf.write(ch);
+                }
+/ volgende	, 
+            for (int i = 0; i < num; i++) {
+                final byte ch = inbuf[i];
+                switch (ch) {
+                case '\n':
+                    seenCR = false; // swallow CR before LF
+                    listener.handle(new String(lineBuf.toByteArray(), cset));
+                    lineBuf.reset();
+                    rePos = pos + i + 1;	/ 0+13+1=14
+                    break;
+/ volgende line	, 
+            for (int i = 0; i < num; i++) {
+/n	, want i==14 en num==14	, 
+            pos = reader.getFilePointer();	/ 14
+/ volgende,	 
+        while (getRun() && ((num = reader.read(inbuf)) != EOF)) {
+/n
+        IOUtils.closeQuietly(lineBuf); // not strictly necessary
+/s
+                closeable.close();
+/t
+        reader.seek(rePos); // Ensure we can re-read if necessary
+rePos=14	,
+        if (listener instanceof TailerListenerAdapter) {
+            ((TailerListenerAdapter) listener).endOfFileReached();	/ NIETS
+
+        return rePos;
+/t
+org.apache.commons.io.input.Tailer.run() line: 460	
+           while (getRun()) {
+                final boolean newer = FileUtils.isFileNewer(file, last); // IO-279, must be done first
+                // Check the file length to see if it was rotated
+                final long length = file.length();
+                if (length < position) {
+/n
+                } else {
+                    // File was not rotated
+                    // See if the file needs to be read again
+                    if (length > position) {								/ position was 0 toen	, 
+                        // The file has more content than it did last time
+                        position = readLines(reader);							/ 14	, readLines returned de eerstvolgende positie die hij zou gaan doen	,
+                        last = file.lastModified();
+1491207815000
+                if (reOpen) {
+/n
+                Thread.sleep(delayMillis);
+                if (getRun() && reOpen) {
+/n
+/ volgende	, 
+/ Dit blijft doorgaan, totdat we hem stop	,
+            while (getRun()) {
+                final boolean newer = FileUtils.isFileNewer(file, last); // IO-279, must be done first	
+/s
+        			return file.lastModified() > timeMillis;
+/t
+false
+
+                final long length = file.length();
+                if (length < position) {
+					// File was rotated	,
+/n	, 14==14
+                } else {
+                    // File was not rotated
+                    // See if the file needs to be read again
+                    if (length > position) {
+/n
+                    } else if (newer) {
+/n
+                if (reOpen) {
+/n
+               Thread.sleep(delayMillis);
+                if (getRun() && reOpen) {
+/n
+/ volgende	, 
+...
+
+
+
+/ Einde DEBUG
+
+/ OEF
+
+/ 7	. 
+
+$ vi /tmp/bytes.txt
+π				/ ctrl+shift+u 3c0
+
+[eric@localhost apache-tomcat-7.0.76-src]$ od -t x1 -t c /tmp/byte.txt 
+0000000  cf  80  0a
+        317 200  \n
+
+/ Inspect in eclipse	, 
+new String(new byte[]{(byte)0xcf,(byte)0x80},Charset.defaultCharset())
+
+/ we zien π
+
+/ We doen in eclipse inspect	, 
+java.security.AccessController.doPrivileged(new sun.security.action.GetPropertyAction("file.encoding"))	"UTF-8" 	, een String	, 
+/ Einde OEF
+
+/ Einde TAIL IN COMMONS
+
+/ REGEX BOOK
+
+/ ws workspace-wicket7_7
+/ proj niocode
+
+/ Ga naar	, 
+http://www.javanio.info/filearea/bookexamples/
+
+/ Download niosrc.jar	, 
+
+[eric@localhost book]$ pwd
+/home/eric/Devel/Java/nio/book
+[eric@localhost book]$ jar xvf ~/Downloads/niosrc.jar 
+[eric@localhost book]$ ls
+build.xml  com  META-INF  nioexamples.jar
+
+/ we import deze in eclipse	, 
+File , New, Project...	, Java project from existing Ant Buildfile	, Next
+/ Kies Ant buildfile: /home/eric/Devel/Java/nio/book/build.xml
+/ eclipse fills in Project name: niocode
+/ Install Ant view	, 
+/ click rechts: add build files	,
+/ Select project niocode	, open en click build.xml
+/ dan zien we bekende Ant targets	, 
+
+/ we debug Pool	, 
+
+/ 13	 .
+
+input	"poodle zoo" (id=70)	
+limit	1	
+
+		Pattern space = Pattern.compile (" ");
+				String [] tokens = pattern.split (input, limit);
+tokens	java.lang.String[1]  (id=98)	
+	[0]	"poodle zoo" (id=70)	
+
+		Pattern d = Pattern.compile ("d");
+				String [] tokens = pattern.split (input, limit);
+tokens	java.lang.String[1]  (id=122)	
+	[0]	"poodle zoo" (id=70)	
+
+		Pattern o = Pattern.compile ("o");
+tokens	java.lang.String[1]  (id=140)	
+	[0]	"poodle zoo" (id=70)	
+
+/ 13	. 
+
+input	"poodle zoo" (id=70)	
+limit	2	
+
+		Pattern space = Pattern.compile (" ");
+				String [] tokens = pattern.split (input, limit);
+tokens	java.lang.String[2]  (id=161)	
+	[0]	"poodle" (id=162)	
+	[1]	"zoo" (id=163)	
+
+		Pattern d = Pattern.compile ("d");
+				String [] tokens = pattern.split (input, limit);
+tokens	java.lang.String[2]  (id=190)	
+	[0]	"poo" (id=191)	
+	[1]	"le zoo" (id=192)	
+
+		Pattern o = Pattern.compile ("o");
+tokens	java.lang.String[2]  (id=221)	
+	[0]	"p" (id=222)	
+	[1]	"odle zoo" (id=223)	
+
+
+/ 13	. 
+
+input	"poodle zoo" (id=70)	
+limit	2	
+
+		Pattern space = Pattern.compile (" ");
+				String [] tokens = pattern.split (input, limit);
+
+		Pattern d = Pattern.compile ("d");
+				String [] tokens = pattern.split (input, limit);
+
+		Pattern o = Pattern.compile ("o");
+
+/ 13	. 
+
+input	"poodle zoo" (id=70)	
+limit	2	
+
+		Pattern space = Pattern.compile (" ");
+				String [] tokens = pattern.split (input, limit);
+
+		Pattern d = Pattern.compile ("d");
+				String [] tokens = pattern.split (input, limit);
+
+		Pattern o = Pattern.compile ("o");
+
+
+/ 13	. 
+
+input	"poodle zoo" (id=70)	
+limit	2	
+
+		Pattern space = Pattern.compile (" ");
+				String [] tokens = pattern.split (input, limit);
+
+		Pattern d = Pattern.compile ("d");
+				String [] tokens = pattern.split (input, limit);
+
+		Pattern o = Pattern.compile ("o");
+
+/ 13	. 
+
+input	"poodle zoo" (id=70)	
+limit	2	
+
+		Pattern space = Pattern.compile (" ");
+				String [] tokens = pattern.split (input, limit);
+
+		Pattern d = Pattern.compile ("d");
+				String [] tokens = pattern.split (input, limit);
+
+		Pattern o = Pattern.compile ("o");
+
+
+/ Einde REGEX BOOK
+
+/ REGEX SELF
+
+/ ws workspace-wicket7_7
+/ proj io 
+
+
+/ 7	. 
+
+/ PATTERN.SPLIT
+
+/ bij split: als we split op "o"	, en we hebben ...|o|...	, dan valt de string in 2 stukken uiteen	, de o zelf is niet in het result	,
+
+/ In Pattern.split is limit het aantal stukken waarin de string wordt opgedeeld	, 
+
+$ vi FirstTest.java
+
+	 private String[] split(String input,String pattern_,int limit){
+		 Pattern pattern=Pattern.compile(pattern_);
+		 String[]res=pattern.split(input,limit);
+		 return res;
+	 }
+
+/ 13	. 
+
+	 @Test
+	 public void testSplit(){
+		 String input="boo:and:foo";
+		 String pattern="o";
+		 int limit=2;
+		 String[]res=split(input, pattern, limit);
+res	java.lang.String[2]  (id=709)	
+	[0]	"b" (id=711)	
+	[1]	"o:and:foo" (id=712)	
+
+/ we delen op: b|o|o:and:foo	, dus we houden 2 stukken over: b en o:and:foo
+
+/ 13	. 
+
+	 @Test
+	 public void testSplit(){
+		 String input="boo:and:foo";
+		 String pattern="o";
+		 int limit=3;
+		 String[]res=split(input, pattern, limit);
+res	java.lang.String[3]  (id=712)	
+	[0]	"b" (id=714)	
+	[1]	"" (id=715)	
+	[2]	":and:foo" (id=716)	
+
+/ we delen op: b|o||o|:and:foo	, dus we houden 3 stukken over: b en "", ":and:foo"
+
+/ 13	. 
+
+	 @Test
+	 public void testSplit(){
+		 String input="boo:and:foo";
+		 String pattern="o";
+		 int limit=4;
+		 String[]res=split(input, pattern, limit);
+res	java.lang.String[4]  (id=711)	
+	[0]	"b" (id=713)	
+	[1]	"" (id=714)	
+	[2]	":and:f" (id=715)	
+	[3]	"o" (id=716)	
+
+/ We delen op b|o||o|:and f|o|o	, dus 4 stukken: b, "", :and f,"o"
+
+
+	 @Test
+	 public void testSplit(){
+		 String input="boo:and:foo";
+		 String pattern="o";
+		 int limit=5;
+		 String[]res=split(input, pattern, limit);
+res	java.lang.String[5]  (id=713)	
+	[0]	"b" (id=715)	
+	[1]	"" (id=716)	
+	[2]	":and:f" (id=717)	
+	[3]	"" (id=718)	
+	[4]	"" (id=719)	
+
+ 
+/ We delen op b|o||o|:and f|o||o|	, dus 5 stukken: b, "", :and f,"",""
+
+
+/ 7	. 
+
+/ PATTERN.MATCHER
+
+/ lees	, 
+https://docs.oracle.com/javase/6/docs/api/
+
+An engine that performs match operations on a character sequence by interpreting a Pattern.
+
+A matcher is created from a pattern by invoking the pattern's matcher method. Once created, a matcher can be used to perform three different kinds of match operations:
+
+The matches method attempts to match the entire input sequence against the pattern.
+
+The lookingAt method attempts to match the input sequence, starting at the beginning, against the pattern.
+
+The find method scans the input sequence looking for the next subsequence that matches the pattern.
+
+/ ws workspace-wicket7_7
+/ proj io
+$ vi FirstTest.java
+
+	 @Test
+	 public void testFind(){
+		 Pattern pattern=Pattern.compile("a+b");
+		 Matcher matcher=pattern.matcher("aabbbabaaabbaa");
+
+		 while(matcher.find()	){
+			 print(matcher);
+		 }
+
+	 }
+	 private void print(Matcher matcher){
+		 int start=matcher.start();
+		 int end=matcher.end();
+		 String group=matcher.group();
+		 System.out.println("["+start+","+end+"):"+group);
+		 
+	 }
+
+/ we proberen in de test hierboven meerdere patterns	, 
+
+/ 13	. 
+		 Matcher matcher=pattern.matcher("aabbbabaaabbaa");
+		 Pattern pattern=Pattern.compile("ab");
+[1,3):ab
+[5,7):ab
+[9,11):ab
+
+/ 13	. 
+		 Matcher matcher=pattern.matcher("aabbbabaaabbaa");
+		 Pattern pattern=Pattern.compile("a*b");
+[0,3):aab
+[3,4):b
+[4,5):b
+[5,7):ab
+[7,11):aaab
+[11,12):b
+
+/ 13	. 
+		 Matcher matcher=pattern.matcher("aabbbabaaabbaa");
+		 Pattern pattern=Pattern.compile("a+b");
+[0,3):aab
+[5,7):ab
+[7,11):aaab
+
+/ 13	. 
+		 Matcher matcher=pattern.matcher("aabbbabaaabbaa");
+		 Pattern pattern=Pattern.compile("a*b*");
+[0,5):aabbb
+[5,7):ab
+[7,12):aaabb
+[12,14):aa
+[14,14):						/ TODO
+
+/ 13	. 
+		 Matcher matcher=pattern.matcher("aabbbabaaabbaa");
+		 Pattern pattern=Pattern.compile("a*");
+[0,2):aa
+[2,2):
+[3,3):
+[4,4):
+[5,6):a
+[6,6):
+[7,10):aaa
+[10,10):
+[11,11):
+[12,14):aa
+[14,14):
+
+/ 7	. 
+
+/ ws workspace-wicket7_7
+/ proj io
+
+/ Met Matcher.reset reset we de input line	, 
+
+$ vi FirstTest.java
+	 
+	 @Test
+	 public void testReset(){
+		 Pattern pattern=Pattern.compile("a*");
+		 Matcher matcher=pattern.matcher("");
+		 while(matcher.find()	){
+			 print(matcher);
+		 }
+		 matcher.reset("aabbbabaaabbaa");
+		 while(matcher.find()	){
+			 print(matcher);
+		 }
+	 }
+	 private void print(Matcher matcher){
+		 int start=matcher.start();
+		 int end=matcher.end();
+		 String group=matcher.group();
+		 System.out.println("["+start+","+end+"):"+group);
+		 
+	 }
+
+/ we zien 	,
+[0,0):			/ de 1ste	, 
+[0,2):aa		/ na de reset	,
+[2,2):
+[3,3):
+[4,4):
+[5,6):a
+[6,6):
+[7,10):aaa
+[10,10):
+[11,11):
+[12,14):aa
+[14,14):
+
+/ 7	. 
+
+/ 7	 
+
+/ Lees	, 
+http://tutorials.jenkov.com/java-regex/matcher.html
+
+/13	. 
+
+	 @Test
+	 public void testAppend2a(){
+	        String text    =
+	                  "And John White writes about this, and John Doe writes about that," +
+	                          " and John Wayne writes about everything."
+	                ;
+
+	        String patternString1 = "((John) (.+?) )";
+
+	        Pattern      pattern      = Pattern.compile(patternString1);
+	        Matcher      matcher      = pattern.matcher(text);
+	        StringBuffer stringBuffer = new StringBuffer();
+
+	        while(matcher.find()){
+	            matcher.appendReplacement(stringBuffer, "Joe $2 ");
+	            System.out.println("group: "+matcher.group());
+	            System.out.println("group1: "+matcher.group(1));
+	            System.out.println("group2: "+matcher.group(2));
+	            System.out.println("group3: "+matcher.group(3));
+
+	            System.out.println(stringBuffer.toString());
+	        }
+	        matcher.appendTail(stringBuffer);
+
+	        System.out.println(stringBuffer.toString());
+	 }
+
+/ We zien	, 
+
+group: John White 
+group1: John White
+group2: John
+group3: White
+And Joe White 
+group: John Doe 
+group1: John Doe
+group2: John
+group3: Doe
+And Joe White writes about this, and Joe Doe 
+group: John Wayne 
+group1: John Wayne
+group2: John
+group3: Wayne
+And Joe White writes about this, and Joe Doe writes about that, and Joe Wayne 
+And Joe White writes about this, and Joe Doe writes about that, and Joe Wayne writes about everything.
+
+/ 1313	, 
+
+/ we moeten NIET de space achteraan vergeten, want door ? (reluctant) is hij is NIET greedy		, 
+/ als we dit doen, 
+	        String patternString1 = "((John) (.+?))";
+/ dan	, 
+group: John W
+group1: John W
+group2: John
+group3: W
+And Joe W 
+group: John D
+group1: John D
+group2: John
+group3: D
+And Joe W hite writes about this, and Joe D 
+group: John W
+group1: John W
+group2: John
+group3: W
+And Joe W hite writes about this, and Joe D oe writes about that, and Joe W 
+And Joe W hite writes about this, and Joe D oe writes about that, and Joe W ayne writes about everything.
+
+/ 1313	. 
+
+/ Stel we laten de ? weg	, 
+	        String patternString1 = "((John) (.+) )";
+/ dan is hij greedy		,  en stopt bij de laatste space	, 
+group: John White writes about this, and John Doe writes about that, and John Wayne writes about 
+group1: John White writes about this, and John Doe writes about that, and John Wayne writes about 
+group2: John
+group3: White writes about this, and John Doe writes about that, and John Wayne writes about
+And Joe White writes about this, and John Doe writes about that, and John Wayne writes about 
+And Joe White writes about this, and John Doe writes about that, and John Wayne writes about everything.
+
+/ 1313	. 
+
+/ we laten de ? weg	, en de laatste space	, 
+	        String patternString1 = "((John) (.+))";
+/ dan 	, 
+group: John White writes about this, and John Doe writes about that, and John Wayne writes about everything.
+group1: John White writes about this, and John Doe writes about that, and John Wayne writes about everything.
+group2: John
+group3: White writes about this, and John Doe writes about that, and John Wayne writes about everything.
+And Joe White writes about this, and John Doe writes about that, and John Wayne writes about everything. 
+And Joe White writes about this, and John Doe writes about that, and John Wayne writes about everything. 
+
+/ 1313
+
+/ Die buitenste haakjes zijn onnodig	, vergeet de space niet achteraan	,  
+	        String patternString1 = "(John) (.+?) ";
+	            matcher.appendReplacement(stringBuffer, "Joe $2 ");
+//	            System.out.println("group3: "+matcher.group(3));
+
+group: John White 
+group1: John
+group2: White
+And Joe White 
+group: John Doe 
+group1: John
+group2: Doe
+And Joe White writes about this, and Joe Doe 
+group: John Wayne 
+group1: John
+group2: Wayne
+And Joe White writes about this, and Joe Doe writes about that, and Joe Wayne 
+And Joe White writes about this, and Joe Doe writes about that, and Joe Wayne writes about everything.
+
+
+/ 7	. 
+
+
+
+  
+/ Einde REGEX SELF

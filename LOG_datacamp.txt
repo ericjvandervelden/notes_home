@@ -1,0 +1,14 @@
+
+https://www.datacamp.com/courses/intro-to-python-for-data-science		<-
+/ this course is part of these tracks:
+Data analyst with python
+Data scientist with python
+Python developer
+Python programming
+
+
+/ later	,
+https://campus.datacamp.com/courses/intermediate-python-for-data-science/matplotlib?ex=1
+
+/ Lees Google to learn programming	 ,
+https://www.technotification.com/2016/07/google-cs-education.html?ref=pp

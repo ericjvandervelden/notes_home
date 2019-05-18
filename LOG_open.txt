@@ -1,0 +1,2833 @@
+/ 2016.11.06
+
+/ Java
+
+/home/eric/Devel/Eclipse
+cpp  jee-jbosstools  Mars  Neon  scala  STS  sts-bundle  tmp
+/ ->scala, STS
+/ TODO in welke jboss 
+
+/home/eric/Devel/Eclipse/scala
+[eric@almond scala]$ eclipse/eclipse 
+
+
+/home/eric/Devel/Java/scala
+
+/home/eric/Devel/Eclipse/STS/sts-bundle/sts-3.8.2.RELEASE
+[eric@almond sts-3.8.2.RELEASE]$ STS
+
+
+
+
+/home/eric/Devel/Eclipse/Neon/java
+[eric@almond scala]$ eclipse/eclipse 
+/ TODO
+
+/home/eric/Devel/Java/JBoss/wildfly
+
+
+/home/eric/Devel/Eclipse/Mars
+eclipse           workspace-spring-a4-new  workspace-wildfly-swarm
+workspace-gradle  workspace-spring-boot
+workspace-spring  workspace-spring-sia2
+/ WH alleen workspace-spring-boot
+
+/home/eric/Devel/Eclipse/STS/workspace/first-gradle
+/home/eric/Devel/Java/gradle
+
+/home/eric/Devel/Java/jboss
+LOG_install_in_eclipse.txt  LOG_install_skipTests.txt  previous-builds  wildfly  wildfly-core  workspace-wildfly-src
+
+/home/eric/Devel/Gradle/Java/gradle-2.13/samples/java
+
+/ R
+
+/home/eric/Devel/R/downloaded_packages
+gmp  gmp_0.5-12.tar.gz  polynom_1.3-8.tar.gz  Rmpfr_0.6-0.tar.gz  sfsmisc_1.1-0.tar.gz
+
+/home/eric/Devel/R/Manual
+
+
+/ Go
+
+/home/eric/Devel/Golang/work2
+/home/eric/Devel/Golang/go
+
+/ Postgres
+
+/home/eric/Devel/Postgres
+
+
+/ Knuth
+
+/home/eric/Devel/Asm
+/home/eric/Devel/MIX/Manual
+/home/eric/Devel/MIX/ACP/Vol2/test
+/home/eric/Devel/MIX/ACP/Vol2
+
+/ JavaScript
+
+/home/eric/Devel/JavaScript/Node/Polymer/polymer-first-elements
+/home/eric/Devel/JavaScript/Node/React/Manual/react-bootstrap-my
+/home/eric/Devel/JavaScript/Node/Polymer/my-el
+/home/eric/Devel/JavaScript/Node/Angular2/codeschool
+/home/eric/Devel/JavaScript/Node/CodeSchool/Express
+/home/eric/Devel/JavaScript/Node/React/Manual/tutorial/express_
+/home/eric/Devel/JavaScript/Node/Webpack/video3
+/home/eric/Devel/JavaScript/Node/Bootstrap/getting_started
+/home/eric/Devel/JavaScript/Node/Webpack/bootstrap-webpack-example
+
+/ Git
+/home/eric/Devel/Git/my-first-repo
+
+
+/ Docker
+
+[eric@almond postgres]$  docker run --rm --name pg -v $(pwd)/root/.psqlrc:/root/.psqlrc -v $(pwd)/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d  postgres 
+
+/home/eric/Devel/Docker2/misc
+[eric@al[eric@almond misc]$ sudo docker run --rm --name test misc
+
+/ LOG
+
+LOG_wildfly.txt
+LOG_git.txt
+LOG_spring_boot.txt
+LOG_2_nov_2015.txt 	/ Go
+LOG_31_jan_2015.txt
+LOG_23_may_2016.txt
+LOG_2_apr_2016.txt	/ codeschoool
+log_R.txt
+LOG_7_aug_2015.txt / R
+LOG_10_feb_2016.txt
+LOG_gradle.txt
+LOG_scala.txt
+
+
+
+/ 2016.12.01
+
+/ bookmarks
+Java->Spring
+Java->Spring->Test
+Fedora->Redhat
+Java->Gradle
+Java->Arquillian
+Java->Mockito
+Java->Wildfly
+
+https://www.youtube.com/watch?v=wvsoUqZR8IE 	/ openshift video shipley
+https://vts.inxpo.com/scripts/Server.nxp?LASCmd=AI:1;F:US!100&PreviousLoginCount=0&ForceProfileToBeFilledOut=0&DisplayItem=NULL&ShowKey=35254&ShowFrameFormatOverride=NULL&RandomValue=1480618594591 / webinar shipley over openshift	,
+
+https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-integration-testing/
+
+http://docs.scala-lang.org/tutorials/tour/singleton-objects
+http://booksites.artima.com/programming_in_scala/examples/html/ch04.html#sec1
+http://www.artima.com/pins1ed/		/ staircase book	,
+http://stackoverflow.com/questions/11277967/pros-and-cons-of-using-sbt-vs-maven-in-scala-project
+http://docs.scala-lang.org/overviews/core/futures.html
+
+https://solutiondesign.com/blog/-/blogs/spring-and-mockito-happy-together		/ SpringJUnit4ClassRunner.class , werkte NIET	,
+http://stackoverflow.com/questions/20395158/why-field-injection-causes-class-is-difficult-to-test
+
+http://arquillian.org/guides/testing_java_persistence/
+
+http://stackoverflow.com/questions/24852219/android-buildscript-repositories-jcenter-vs-mavencentral
+https://docs.gradle.org/current/userguide/installation.html
+
+http://www.baeldung.com/mockito-annotations
+http://static.javadoc.io/org.mockito/mockito-core/2.2.7/org/mockito/Mockito.html
+
+http://docs.jboss.org/weld/reference/1.1.0.Final/en-US/html/beanscdi.html
+https://github.com/wildfly/wildfly
+https://ci.wildfly.org/login.html
+
+http://www.math.uah.edu/stat/sample/Normal.html
+http://www.math.uah.edu/stat/sample/Variance.html
+https://stat.ethz.ch/R-manual/R-devel/library/base/html/typeof.html
+https://en.wikipedia.org/wiki/Proofs_related_to_chi-squared_distribution
+http://www.columbia.edu/~ks20/4703-Sigman/4703-07-Notes-ARM.pdf
+http://stackoverflow.com/questions/28723059/can-we-get-factor-matrices-in-r
+https://www.datascienceriot.com/how-to-install-r-in-linux-ubuntu-16-04-xenial-xerus/kris/	/ for in docker container	,
+https://cran.r-project.org/doc/manuals/R-intro.html#Index-matrices
+
+https://coderwall.com/p/euwpig/a-better-git-log
+http://stackoverflow.com/questions/2304087/what-is-head-in-git
+https://www.youtube.com/watch?v=MAHKV1LkGm4
+http://stackoverflow.com/questions/2765421/how-to-push-a-new-local-branch-to-a-remote-git-repository-and-track-it-too
+https://help.github.com/articles/generating-an-ssh-key/
+https://github.com/ericjvandervelden/my-first-repo/tree/me
+http://stackoverflow.com/questions/14613540/git-tag-in-branches
+https://www.atlassian.com/git/tutorials/inspecting-a-repository/git-log
+
+http://docs.spring.io/spring-boot/docs/current/reference/html/index.html
+http://www.tomaszezula.com/2014/02/09/spring-series-part-5-component-vs-bean/
+http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-sql.html
+https://spring.io/guides/gs/accessing-data-rest/	/ Accessing JPA Data with REST
+https://spring.io/guides/gs/rest-service/		/ Building a RESTful Web Service
+https://spring.io/guides/tutorials/bookmarks/	/ Building REST services with Spring
+http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html
+http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#beans-annotation-config
+
+http://localhost:8080/reservations
+
+https://www.postgresql.org/docs/9.4/static/overview.html
+https://www.postgresql.org/docs/9.4/static/sql-explain.html
+http://www.postmind.net/pgxl_docker-en.html
+http://pgsnaga.blogspot.nl/2014/06/deploying-postgres-xl-in-2-minutes-with.html
+http://www.postgres-xl.org/download/
+
+https://www.youtube.com/watch?v=f6kdp27TYZs	/ go	 concurrency	,
+https://tour.golang.org/basics/8
+
+https://www.cockroachlabs.com/docs/start-a-local-cluster.html	/ cockroach in docker	,
+
+http://redhatstackblog.redhat.com/2016/07/25/introduction-to-red-hat-openstack-platform-director/
+http://developers.redhat.com/blog/2016/07/18/jboss-eap-7-on-openshift/	/ jboss developer on openshift	,
+http://developers.redhat.com/products/cdk/overview/	/ TODO
+https://mail.google.com/mail/u/0/?zx=r1ip19bqrou#search/redhat/155df7cc01fff8a1 / Red Hat Developers Newsletter - July
+http://www.meetup.com/JBoss-User-Group-Worldwide/events/228454602/	/ Java EE Microservices with WildFly Swarm
+http://devops-assess.rhcloud.com/ 
+
+http://www.javaworld.com/article/3060078/big-data/big-data-messaging-with-kafka-part-1.html
+
+http://crosbymichael.com/advanced-docker-volumes.html
+https://docs.docker.com/v1.11/engine/userguide/eng-image/dockerfile_best-practices/#volume
+https://docs.docker.com/v1.11/engine/reference/builder/#entrypoint
+https://docs.docker.com/v1.11/engine/examples/running_ssh_service/
+
+http://googlecloudplatform.github.io/
+https://console.cloud.google.com/home/dashboard?project=web-server-project-1148&pli=1
+https://cloud.google.com/container-engine/docs/quickstart
+https://console.cloud.google.com/launcher?project=web-server-project-1148&cat=INFRASTRUCTURE
+
+http://kubernetes.io/docs/hellonode/
+https://console.cloud.google.com/home/dashboard?project=my-kubernetes-codelab-150420
+https://cloud.google.com/
+
+/ 7	 
+
+history
+             -c     Clear the history list by deleting all the entries.
+              -d offset
+                     Delete the history entry at position offset.
+              -a     Append the ``new'' history lines (history lines entered since the beginning of the current bash
+                     session) to the history file.
+              -n     Read  the  history  lines not already read from the history file into the current history list.
+                     These are lines appended to the history file since the beginning of the current bash session.
+              -r     Read the contents of the history file and append them to the current history list.
+              -w     Write the current history list to the history file, overwriting the history file's contents.
+              -p     Perform history substitution on the following args and display the result on the standard  out‐
+                     put.   Does not store the results in the history list.  Each arg must be quoted to disable nor‐
+                     mal history expansion.
+              -s     Store the args in the history list as a single entry.  The last command in the history list  is
+                     removed before the args are added.
+
+
+/ 7	. 
+
+/ 21 dec 2016
+
+/ BASH 
+
+[eric@almond wildfly]$ pwd
+/home/eric/Devel/Java/JBoss/wildfly
+[eric@almond wildfly]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/tmp/LOG_home_eric_Devel_Java_JBoss_wildfly.txt
+/ OK
+ 1048  pwd | sed 's/\//_/g' | xargs -I % echo "/tmp/LOG%.txt" | xargs -I % echo "Foo Bar" >%
+/ ERR
+/ TODO redirection in pipe	, 
+
+
+
+/ 7	. 	 
+
+
+/ BASH OPEN
+
+$ mkdir /home/eric/Devel/Logs/history
+
+[eric@almond wildfly]$ pwd
+/home/eric/Devel/Java/JBoss/wildfly
+[eric@almond wildfly]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Java_JBoss_wildfly.txt
+[eric@almond wildfly]$ history  > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Java_JBoss_wildfly.txt
+
+[eric@almond my-first-repo]$ pwd
+/home/eric/Devel/Git/my-first-repo
+[eric@almond my-first-repo]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Git_my-first-repo.txt
+[eric@almond my-first-repo]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Git_my-first-repo.txt
+
+[eric@almond work2]$ pwd
+/home/eric/Devel/Golang/work2
+[eric@almond work2]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Golang_work2.txt
+[eric@almond work2]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Golang_work2.txt
+[eric@almond work2]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Golang_work2_2.txt
+[eric@almond work2]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Golang_work2_3.txt
+[eric@almond work2]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Golang_work2_4.txt
+/ 2 work2 shells	, 2 verschillende histories	, 
+/ TODO
+
+[eric@almond src]$ pwd
+/home/eric/Devel/Golang/work2/src
+[eric@almond src]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Golang_work2_src.txt
+[eric@almond src]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Golang_work2_src.txt
+
+[eric@almond go]$ pwd
+/home/eric/Devel/Golang/go
+[eric@almond go]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Golang_go.txt
+[eric@almond go]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Golang_go.txt
+
+
+[eric@almond R]$ pwd
+/home/eric/Devel/R
+[eric@almond R]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_R.txt
+[eric@almond R]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_R.txt
+
+[eric@almond downloaded_packages]$ pwd
+/home/eric/Devel/R/downloaded_packages
+[eric@almond downloaded_packages]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_R_downloaded_packages.txt
+[eric@almond downloaded_packages]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_R_downloaded_packages.txt
+
+[eric@almond Manual]$ pwd
+/home/eric/Devel/R/Manual
+[eric@almond Manual]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_R_Manual.txt
+[eric@almond Manual]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_R_Manual.txt
+[eric@almond Manual]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_R_Manual_2.txt
+
+[eric@almond Asm]$ pwd
+/home/eric/Devel/Asm
+[eric@almond Asm]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Asm.txt
+[eric@almond Asm]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Asm.txt
+[eric@almond Asm]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Asm_2.txt
+[eric@almond Asm]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Asm_3.txt
+
+[eric@almond Manual]$ pwd
+/home/eric/Devel/MIX/Manual
+[eric@almond Manual]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_MIX_Manual.txt
+[eric@almond Manual]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_MIX_Manual.txt
+[eric@almond Manual]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_MIX_Manual_2.txt
+[eric@almond Manual]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_MIX_Manual_3.txt
+
+[eric@almond test]$ pwd
+/home/eric/Devel/MIX/ACP/Vol2/test
+[eric@almond test]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_MIX_ACP_Vol2_test.txt
+[eric@almond test]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_MIX_ACP_Vol2_test.txt
+
+[eric@almond Vol2]$ pwd
+/home/eric/Devel/MIX/ACP/Vol2
+[eric@almond Vol2]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_MIX_ACP_Vol2.txt
+[eric@almond Vol2]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_MIX_ACP_Vol2.txt
+
+[eric@almond Leeds]$ pwd
+/home/eric/Devel/MIX/Leeds
+[eric@almond Leeds]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_MIX_Leeds.txt
+[eric@almond Leeds]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_MIX_Leeds.txt
+
+
+
+[eric@almond jboss]$ pwd
+/home/eric/Devel/Java/jboss
+[eric@almond jboss]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Java_jboss.txt
+[eric@almond jboss]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Java_jboss.txt
+
+[eric@almond Postgres]$ pwd
+/home/eric/Devel/Postgres
+[eric@almond Postgres]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Postgres.txt
+[eric@almond Postgres]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Postgres.txt
+[eric@almond Postgres]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Postgres_2.txt
+
+[eric@almond ch44]$ pwd
+/home/eric/Devel/Gradle/Java/my/ch44
+[eric@almond ch44]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Gradle_Java_my_ch44.txt
+[eric@almond ch44]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Gradle_Java_my_ch44.txt
+
+[eric@almond java]$ pwd
+/home/eric/Devel/Gradle/Java/gradle-2.13/samples/java
+[eric@almond java]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Gradle_Java_gradle-2.13_samples_java.txt
+[eric@almond java]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Gradle_Java_gradle-2.13_samples_java.txt
+
+[eric@almond first-gradle]$ pwd
+/home/eric/Devel/Eclipse/STS/workspace/first-gradle
+[eric@almond first-gradle]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Eclipse_STS_workspace_first-gradle.txt
+[eric@almond first-gradle]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Eclipse_STS_workspace_first-gradle.txt
+
+
+
+[eric@almond postgres]$ pwd
+/home/eric/Devel/Docker2/postgres
+[eric@almond postgres]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Docker2_postgres.txt
+[eric@almond postgres]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Docker2_postgres.txt
+
+[eric@almond my]$ pwd
+/home/eric/Devel/Docker2/postgres/my
+[eric@almond my]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Docker2_postgres_my.txt
+[eric@almond my]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Docker2_postgres_my.txt
+
+[eric@almond misc]$ pwd
+/home/eric/Devel/Docker2/misc
+[eric@almond misc]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Docker2_misc.txt
+[eric@almond misc]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Docker2_misc.txt
+
+
+[eric@almond Mars]$ pwd
+/home/eric/Devel/Eclipse/Mars
+[eric@almond Mars]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Eclipse_Mars.txt
+[eric@almond Mars]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Eclipse_Mars.txt
+[eric@almond Mars]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Eclipse_Mars_2.txt
+[eric@almond Mars]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Eclipse_Mars_3.txt
+
+
+[eric@almond java]$ pwd
+/home/eric/Devel/Eclipse/Neon/java
+[eric@almond java]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Eclipse_Neon_java.txt
+[eric@almond java]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Eclipse_Neon_java.txt
+
+[eric@almond jee]$ pwd
+/home/eric/Devel/Eclipse/Neon/jee
+[eric@almond jee]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Eclipse_Neon_jee.txt
+[eric@almond jee]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Eclipse_Neon_jee.txt
+[eric@almond jee]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Eclipse_Neon_jee_2.txt
+
+
+[eric@almond Spring]$ pwd
+/home/eric/Devel/Java/Spring
+[eric@almond Spring]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Java_Spring.txt
+[eric@almond Spring]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Java_Spring.txt
+
+[eric@almond apache-tomcat-8.5.8]$ pwd
+/home/eric/Devel/Java/Tomcat/apache-tomcat-8.5.8
+[eric@almond apache-tomcat-8.5.8]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Java_Tomcat_apache-tomcat-8.5.8.txt
+[eric@almond apache-tomcat-8.5.8]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Java_Tomcat_apache-tomcat-8.5.8.txt
+
+[eric@almond hellonode]$ pwd
+/home/eric/Devel/kubernetes/hellonode
+[eric@almond hellonode]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_kubernetes_hellonode.txt
+[eric@almond hellonode]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_kubernetes_hellonode.txt
+
+[eric@almond openshift]$ pwd
+/home/eric/Devel/openshift
+[eric@almond openshift]$  pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_openshift.txt
+[eric@almond openshift]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_openshift.txt
+
+[eric@almond bootstrap-webpack-example]$ pwd
+/home/eric/Devel/JavaScript/Node/Webpack/bootstrap-webpack-example
+[eric@almond bootstrap-webpack-example]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Webpack_bootstrap-webpack-example.txt
+[eric@almond bootstrap-webpack-example]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Webpack_bootstrap-webpack-example.txt
+
+[eric@almond Express]$ pwd
+/home/eric/Devel/JavaScript/Node/CodeSchool/Express
+[eric@almond Express]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_CodeSchool_Express.txt
+[eric@almond Express]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_CodeSchool_Express.txt
+[eric@almond Express]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_CodeSchool_Express_2.txt
+
+[eric@almond polymer-first-elements]$ pwd
+/home/eric/Devel/JavaScript/Node/Polymer/polymer-first-elements
+[eric@almond polymer-first-elements]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Polymer_polymer-first-elements.txt
+[eric@almond polymer-first-elements]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Polymer_polymer-first-elements.txt
+[eric@almond polymer-first-elements]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Polymer_polymer-first-elements_2.txt
+
+[eric@almond react-bootstrap-my]$ pwd
+/home/eric/Devel/JavaScript/Node/React/Manual/react-bootstrap-my
+[eric@almond react-bootstrap-my]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_React_Manual_react-bootstrap-my.txt
+[eric@almond react-bootstrap-my]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_React_Manual_react-bootstrap-my.txt
+[eric@almond react-bootstrap-my]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_React_Manual_react-bootstrap-my_2.txt
+
+[eric@almond my-el]$ pwd
+/home/eric/Devel/JavaScript/Node/Polymer/my-el
+[eric@almond my-el]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Polymer_my-el.txt
+[eric@almond my-el]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Polymer_my-el.txt
+
+[eric@almond codeschool]$ pwd
+/home/eric/Devel/JavaScript/Node/Angular2/codeschool
+[eric@almond codeschool]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Angular2_codeschool.txt
+[eric@almond codeschool]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Angular2_codeschool.txt
+
+[eric@almond express_]$ pwd
+/home/eric/Devel/JavaScript/Node/React/Manual/tutorial/express_
+[eric@almond express_]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_React_Manual_tutorial_express_.txt
+[eric@almond express_]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_React_Manual_tutorial_express_.txt
+
+[eric@almond video3]$ pwd
+/home/eric/Devel/JavaScript/Node/Webpack/video3
+[eric@almond video3]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Webpack_video3.txt
+[eric@almond video3]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Webpack_video3.txt
+
+[eric@almond getting_started]$ pwd
+/home/eric/Devel/JavaScript/Node/Bootstrap/getting_started
+[eric@almond getting_started]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Bootstrap_getting_started.txt
+[eric@almond getting_started]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Bootstrap_getting_started.txt
+
+[eric@almond video]$ pwd
+/home/eric/Devel/JavaScript/Node/Babel/video
+[eric@almond video]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Babel_video.txt
+[eric@almond video]$ history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Babel_video.txt
+
+[eric@almond Logs]$ pwd
+/home/eric/Devel/Logs
+[eric@almond Logs]$ pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+/home/eric/Devel/Logs/history/LOG_home_eric_Devel_Logs.txt
+[eric@almond Logs]$ history> /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Logs.txt
+
+/ 13	. 
+
+/ log files	, 
+
+LOG_open.txt
+LOG_jsf.txt
+LOG_git.txt
+LOG_spring.txt
+LOG_2_nov_2015.txt	/ go
+LOG_31_jan_2015.txt	/ hadoop
+LOG_23_may_2016.txt		/ gradle
+LOG_2_apr_2016.txt		/ codeschool
+LOG_R.txt
+LOG_7_aug_2015.txt	/ R
+LOG_akka.txt
+LOG_spring-mvc.txt
+
+/ 7	. 
+
+/ 18 feb 2017
+
+/ gesloten	,
+
+https://gmplib.org/manual/Simultaneous-Integer-Init-_0026-Assign.html#Simultaneous-Integer-Init-_0026-Assign
+https://gmplib.org/manual/Initializing-Integers.html#Initializing-Integers
+https://www.cs.colorado.edu/~srirams/courses/csci2824-spr14/gmpTutorial.html
+
+https://fedoramagazine.org/experimenting-docker-openshift/			<-
+https://github.com/openshift/origin/issues/4191
+https://fedoraproject.org/wiki/OpenShift_Origin#Installation.2C_Configuration.2C_and_Documentation
+https://www.openshift.com/devpreview/register.html
+
+https://www.youtube.com/watch?v=VKH_3TmJ6To		<- fabric8
+
+http://stackoverflow.com/questions/30553951/how-to-enable-deltarpm-for-dnf-package-manager-in-fedora-22
+
+https://www.postgresql.org/docs/9.6/static/libpq-example.html
+
+https://www.oreilly.com/ideas/should-you-containerize-your-go-code?imm_mid=0ed107&cmp=em-prog-na-na-newsltr_20170204
+
+https://www.cs.tut.fi/~jkorpela/forms/cgic.html
+http://serverfault.com/questions/222226/how-to-set-js-source-directory-in-apache2
+http://www.cgi.com/hello2a2.html
+http://www.cgi.com/callbacks_flags.html
+https://www.tutorialspoint.com/cplusplus/cpp_web_programming.htm			<-
+http://httpd.apache.org/docs/2.4/vhosts/
+https://fedoraproject.org/wiki/Apache_HTTP_Server
+https://docs.fedoraproject.org/en-US/Fedora/22/html/System_Administrators_Guide/ch-Web_Servers.html
+http://www.thegeekstuff.com/2012/05/install-apache-2-on-centos-6/?utm_source=feedburner
+http://apr.apache.org/
+https://httpd.apache.org/docs/2.4/howto/cgi.html
+
+http://api.jquery.com/jQuery.Callbacks/
+
+http://homepage.cs.uiowa.edu/~slonnegr/plf/Book/Chapter5.pdf
+http://www.inf.fu-berlin.de/lehre/WS03/alpi/lambda.pdf
+
+http://stackoverflow.com/questions/18088183/do-git-tags-apply-to-all-branches		<-
+http://stackoverflow.com/questions/292357/difference-between-git-pull-and-git-fetch
+http://stackoverflow.com/questions/10588291/git-branching-master-vs-origin-master-vs-remotes-origin-master
+http://stackoverflow.com/questions/2003505/how-to-delete-a-git-branch-both-locally-and-remotely
+https://www.youtube.com/watch?v=Yvy5PijsVZw		<- Git video's	,
+https://guides.github.com/activities/hello-world/
+https://coderwall.com/p/euwpig/a-better-git-log
+http://stackoverflow.com/questions/2765421/how-to-push-a-new-local-branch-to-a-remote-git-repository-and-track-it-too
+https://help.github.com/articles/generating-an-ssh-key/						<-
+http://stackoverflow.com/questions/14613540/git-tag-in-branches
+https://www.atlassian.com/git/tutorials/inspecting-a-repository/git-log
+
+https://en.wikipedia.org/wiki/Regression_analysis
+http://www.ats.ucla.edu/stat/r/modules/dummy_vars.htm
+
+http://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SingleCluster.html#Standalone_Operation
+http://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/YARN.html
+
+http://stackoverflow.com/questions/4529459/malloc-undefined
+
+https://www.youtube.com/watch?v=AZht1rkHIxk		<- Google map reduce not anymore
+
+https://en.wikipedia.org/wiki/Unitary_matrix
+http://web.stanford.edu/~gavish/documents/SVD_ans_you.pdf
+https://en.wikipedia.org/wiki/Singular_value_decomposition	
+http://www.columbia.edu/~ks20/4703-Sigman/4703-07-Notes-ARM.pdf			/ Knuth
+http://stackoverflow.com/questions/28723059/can-we-get-factor-matrices-in-r
+https://www.datascienceriot.com/how-to-install-r-in-linux-ubuntu-16-04-xenial-xerus/kris/
+https://cran.r-project.org/
+
+
+https://github.com/wildfly/wildfly
+https://ci.wildfly.org/login.html
+
+http://arquillian.org/guides/testing_java_persistence/
+
+https://spring.io/guides/gs/accessing-data-rest/
+https://spring.io/guides/gs/rest-service/
+https://spring.io/guides/tutorials/bookmarks/
+
+http://www.javaworld.com/article/3060078/big-data/big-data-messaging-with-kafka-part-1.html
+
+/ open	, 
+
+https://cloud.google.com/
+https://console.cloud.google.com/home/dashboard?project=my-kubernetes-codelab-150420
+http://kubernetes.io/docs/hellonode/
+https://console.cloud.google.com/launcher?project=web-server-project-1148&cat=INFRASTRUCTURE
+https://cloud.google.com/container-engine/docs/quickstart
+https://console.cloud.google.com/home/dashboard?project=web-server-project-1148&pli=1
+http://googlecloudplatform.github.io/
+
+https://www.docker.com/
+https://docs.docker.com/engine/userguide/eng-image/baseimages/
+https://docs.docker.com/engine/userguide/eng-image/baseimages/
+https://docs.docker.com/v1.11/engine/reference/builder/#entrypoint
+https://github.com/docker-training/webapp/blob/master/webapp/requirements.txt
+http://crosbymichael.com/advanced-docker-volumes.html
+http://www.systutorials.com/5217/how-to-statically-link-c-and-c-programs-on-linux-with-gcc/
+
+https://www.meetup.com/JBoss-User-Group-Worldwide/events/228454602/
+https://developers.redhat.com/products/cdk/overview/
+https://developers.redhat.com/blog/2016/07/18/jboss-eap-7-on-openshift/
+
+http://redhatstackblog.redhat.com/2016/07/25/introduction-to-red-hat-openstack-platform-director/
+
+https://www.cockroachlabs.com/docs/start-a-local-cluster.html
+
+https://spring.io/guides/tutorials/bookmarks/
+
+http://api.jquery.com/jQuery.Callbacks/
+http://www.cgi.com/callbacks_flags.html
+http://www.cgi.com/hello2a2.html
+
+/ 4 mrt 2017
+
+http://machinesaredigging.com/2013/10/29/how-does-a-web-session-work/
+
+http://tomcat.apache.org/tomcat-8.5-doc/index.html
+/ click menu links Reference, Configuration	,
+http://tomcat.apache.org/tomcat-8.5-doc/config/engine.html
+/ ook	,
+https://tomcat.apache.org/tomcat-8.5-doc/api/index.html
+https://tomcat.apache.org/tomcat-8.5-doc/servletapi/
+
+http://tomcat.apache.org/maven-plugin-2.0/tomcat7-maven-plugin/index.html
+/ of
+http://tomcat.apache.org/maven-plugin-trunk/tomcat7-maven-plugin/plugin-info.html 	2.3-SNAPSHOT is niet in repo2	,
+
+http://tomcat.apache.org/maven-plugin-2.0/source-repository.html	/ Hoe werkt tomcat7:run	TODO
+http://tomcat.apache.org/maven-plugin-trunk/tomcat7-maven-plugin/plugin-info.html
+
+http://localhost:8080/tomcat-servlet2/
+
+http://www.mkyong.com/tutorials/spring-mvc-tutorials/
+
+/ 7	. 
+
+/ 2017-04-10
+
+LOG_spring.txt
+LOG_asm.txt
+LOG_jquery.txt
+LOG_httpd.txt
+LOG_c++.txt
+LOG_erlang.txt
+LOG_statistics.txt
+LOG_hadoop.txt
+LOG_gmp.txt
+LOG_git.txt
+LOG_R.txt
+
+/home/eric/Devel/Eclipse/scala
+/home/eric/Devel/Postgres/postgresql-9.6.2
+/home/eric/Devel/Postgres/manual/32.21 [eric@almond 32.21]$ vi libpqex.c 
+/home/eric/Devel/kubernetes
+/home/eric/Devel/Eclipse/cpp
+/home/eric/Devel/gmp/gmp-6.1.2
+/home/eric/Devel/Apache/site.cgi/cgi
+/home/eric/Devel/Apache/site.cgi/html	 [eric@almond html]$ vi deferred.html 
+/home/eric/Devel/Hadoop/hadoop-2.7.3-src
+/home/eric/Devel/Git/wicket/2/wicket
+/home/eric/Devel/Eclipse/scala/workspace-spring/asm-study
+/home/eric/Devel/Java/Tomcat/apache-tomcat-8.5.11 [eric@almond apache-tomcat-8.5.11]$ bin/catalina.sh jpda run
+/home/eric/Devel/Java/gradle
+/home/eric/Devel/Eclipse/scala/workspace-spring/bar
+
+/home/eric/Devel/Docker2/fedora/sshd [eric@almond sshd]$ less Dockerfile 
+/home/eric/Devel/Docker2/fedora/cli [eric@almond cli]$ docker inspect web2
+
+/ 2017-04-17
+
+/ browser pages	,
+https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings
+https://dzone.com/articles/functional-programming-in-java-8-part-0-motivation					<-
+https://dzone.com/articles/functional-programming-in-java-8-part-2-optionals
+https://dzone.com/users/2945180/nwuensche.html
+http://stackoverflow.com/questions/42783416/weakhashmap-size-and-system-runfinalization/42784912?noredirect=1#comment72688337_42784912
+
+
+https://docs.spring.io/spring/docs/current/javadoc-api/
+https://docs.spring.io/spring/docs/current/spring-framework-reference/html/expressions.html
+https://docs.spring.io/spring/docs/current/spring-framework-reference/html/index.html
+
+http://stackoverflow.com/questions/25562123/how-to-modify-a-java-bytecode-using-asm-4-0
+http://www.programcreek.com/java-api-examples/index.php?class=org.objectweb.asm.tree.MethodNode&method=visitLdcInsn
+http://asm.ow2.org/asm50/javadoc/user/index.html
+https://www.javacodegeeks.com/2012/02/manipulating-java-class-files-with-asm.html
+http://asm.ow2.org/doc/tutorial-asm-2.0.html
+http://download.forge.objectweb.org/asm/asm4-guide.pdf
+
+https://dzone.com/articles/cglib-missing-manual
+http://mydailyjava.blogspot.nl/2013/11/cglib-missing-manual.html
+
+https://dzone.com/devops-tutorials-tools-news
+
+https://www.postgresql.org/docs/9.1/static/ddl-inherit.html
+
+https://www.youtube.com/watch?v=IfsTINNCooY&t=74s		/ spanner
+
+https://www.tensorflow.org/install/install_linux
+
+http://localhost:8080/ora/ch8/userinfoinput.jsp
+
+http://stackoverflow.com/questions/6025998/difference-between-view-and-request-scope-in-managed-beans		<-
+http://stackoverflow.com/questions/8887140/jsf-request-scoped-bean-keeps-recreating-new-stateful-session-beans-on-every-req		<-	 
+/ Geef : managed bean stateless session bean,	
+http://stackoverflow.com/questions/6793351/difference-between-a-managed-bean-and-a-session-bean 
+/->
+http://stackoverflow.com/questions/8626291/jsf-managed-bean-ejb-injection/8627413#8627413	 
+
+https://www.mkyong.com/spring3/spring-3-and-jsr-330-inject-and-named-example/
+http://docs.spring.io/spring-framework/docs/current/javadoc-api/
+
+http://machinesaredigging.com/2013/10/29/how-does-a-web-session-work/
+
+http://www.mojohaus.org/exec-maven-plugin/examples/example-exec-using-plugin-dependencies.html
+
+https://github.com/fmarchioni/mastertheboss/tree/master/cdi/cdi-j2se
+http://www.mastertheboss.com/jboss-frameworks/cdi/building-a-cdi-2-standalone-java-application		<-
+http://weld.cdi-spec.org/
+
+/ 25 mei 2017
+
+https://www.youtube.com/watch?v=N5bN-wvLZMg / jhipster
+https://www.youtube.com/watch?v=zVNIZXf4BG8&t=898s 	/ josh long reactive spring
+https://netty.io/
+https://dzone.com/articles/spring-5-reactive-web-services?oid=facebook&utm_content=buffer0394f&utm_medium=social&utm_source=facebook.com&utm_campaign=buffer
+https://spring.io/guides/tutorials/bookmarks/		/ Building REST services with Spring
+https://commons.apache.org/proper/commons-logging/guide.html		/ spring uses	,
+https://www.tutorialspoint.com/log4j/log4j_configuration.htm
+
+https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html
+https://docs.oracle.com/javase/tutorial/java/javaOO/examples/RosterTest.java
+
+https://cran.r-project.org/doc/manuals/r-release/R-intro.html#Factors
+
+https://www.youtube.com/watch?annotation_id=annotation_2558118107&feature=iv&src_vid=eqTY6Cyb0do&v=tt8gVXDsh7Q	/ quantum , interference	,
+https://www.youtube.com/watch?v=gh7xITmvgyU / quantum spin	,
+https://www.youtube.com/watch?v=eqTY6Cyb0do&t=133s	/ de broglie
+
+https://nl.wikipedia.org/wiki/Navier-Stokes-vergelijkingen
+https://en.wikipedia.org/wiki/MapReduce
+
+https://www.youtube.com/watch?v=AZht1rkHIxk	/ Bean, Flume, Google does not use mapreduce anymore
+
+http://weld.cdi-spec.org/
+
+https://docs.gradle.org/3.4/userguide/tutorial_gradle_command_line.html
+
+http://wildfly-swarm.io/generator/
+
+https://tour.golang.org/list
+
+https://docs.docker.com/engine/reference/commandline/create/#parent-command
+https://www.docker.com/
+https://docs.docker.com/engine/userguide/storagedriver/imagesandcontainers/
+
+https://www.systutorials.com/5217/how-to-statically-link-c-and-c-programs-on-linux-with-gcc/
+
+http://api.jquery.com/jQuery.when/
+
+https://www.cockroachlabs.com/docs/start-a-local-cluster.html
+
+
+https://www.tutorialspoint.com/java8/java8_streams.htm
+https://www.meetup.com/JBoss-User-Group-Worldwide/events/228454602/	/ Java EE Microservices with WildFly Swarm
+
+/ 6 jun 2017
+
+https://www.tutorialspoint.com/log4j/log4j_configuration.htm
+https://www.youtube.com/watch?v=k8r76d8QzXs&t=31s 	/ Angular4 for Java developers
+https://www.youtube.com/watch?v=ya4UHuXNygM		/ Crockford over functions
+https://www.youtube.com/watch?v=sbPSjI4tt10&t=1466s	/ josh long spring boot
+http://letstalkdata.com/2013/08/postgresql-generate_series-tricks/
+
+[eric@almond cli]$ pwd
+/home/eric/Devel/Docker2/fedora/cli
+[eric@almond cli]$  docker run -p 80  --rm --name web2 -h hazelnut.nuts.org --volumes-from web my/fedora-misc
+
+[eric@almond misc]$ pwd
+/home/eric/Devel/Docker2/fedora/misc
+[eric@almond misc]$ docker run --rm -ti my/fedora-misc bash
+
+[eric@almond sshd]$ pwd
+/home/eric/Devel/Docker2/fedora/sshd
+[eric@almond sshd]$  docker run  --rm --volumes-from webbase -v $(pwd):/backup my/fedora-misc tar cvf /backup/logs.tar -C / logs/webapp 
+[eric@almond misc]$ docker run --rm -ti my/fedora-misc bash
+[eric@almond sshd]$  docker run --rm -ti my/fedora-locale bash
+[eric@almond sshd]$ docker ps -a
+[eric@almond sshd]$ docker network ls
+[eric@almond sshd]$ docker build --rm=true -t my/fedora-locale .
+[eric@almond sshd]$ docker images -a | awk '/<none>/' | awk '{print $3}' | xargs -I % docker rmi %
+
+[eric@almond asm-study]$ pwd
+/home/eric/Devel/Eclipse/scala/workspace-spring/asm-study
+[eric@almond asm-study]$ javap  -c -verbose /tmp/bytes.class  | less
+
+[eric@almond apache-tomcat-8.5.11]$ bin/catalina.sh jpda run
+
+[eric@almond gradle]$ pwd
+/home/eric/Devel/Java/gradle
+[eric@almond gradle]$ gradle -q -b sub/build.gradle  f
+[eric@almond gradle]$ gradle doIt
+[eric@almond gradle]$ gradle -q projects
+
+[eric@almond postgresql-9.6.2]$ pwd
+/home/eric/Devel/Postgres/postgresql-9.6.2
+[eric@almond postgresql-9.6.2]$ ./configure --help
+
+[eric@almond 32.21]$ pwd
+/home/eric/Devel/Postgres/manual/32.21
+[eric@almond 32.21]$ gcc -Wall -g libpqex.c -lpq
+[eric@almond 32.21]$ ./a.out dbname=eric
+[eric@almond 32.21]$ ls
+a.out  libpqex.c
+
+[eric@almond kubernetes]$ pwd
+/home/eric/Devel/kubernetes
+[eric@almond kubernetes]$ gcloud components install kubectl
+[eric@almond kubernetes]$ export PROJECT_ID="my-kubernetes-codelab-150420"
+
+[eric@almond cpp]$ pwd
+/home/eric/Devel/Eclipse/cpp
+[eric@almond cpp]$ eclipse/eclipse 
+
+[eric@almond gmp-6.1.2]$ pwd
+/home/eric/Devel/gmp/gmp-6.1.2
+[eric@almond gmp-6.1.2]$ ./pexpr 2^100 | xargs ./factorize 
+[eric@almond gmp-6.1.2]$ make factorize | tee LOG_make_factorize.txt
+[eric@almond gmp-6.1.2]$ ./factorize 2^100
+[eric@almond gmp-6.1.2]$ make isprime | tee LOG_make_isprime.txt
+[eric@almond gmp-6.1.2]$ ./isprime 14
+
+[eric@almond cgi]$ pwd
+/home/eric/Devel/Apache/site.cgi/cgi
+[eric@almond cgi]$ gcc -Wall hello2a2.c -o hello2a2.cgi 
+[eric@almond cgi]$ ls
+echo2.c        echo_ajax_my.c    echo.cgi    hello2a2.c    hello2a.cgi  hello.c
+echo_ajax.c    echo_ajax_my.cgi  hello1.c    hello2a2.cgi  hello2.c     hello.cgi
+echo_ajax.cgi  echo.c            hello1.cgi  hello2a.c     hello2.cgi   mycgi.cgi
+
+[eric@almond html]$ pwd
+/home/eric/Devel/Apache/site.cgi/html
+[eric@almond html]$ ls
+callbacks_fire.html   deferred.html   hello2a2.html  index.html       ready.html
+callbacks_flags.html  echo_ajax.html  hello2a.html   jquery-3.1.1.js
+
+[eric@almond hadoop-2.7.3-src]$ pwd
+/home/eric/Devel/Hadoop/hadoop-2.7.3-src
+[eric@almond hadoop-2.7.3-src]$ less ./hadoop-mapreduce-project/hadoop-mapreduce-examples/src/main/java/org/apache/hadoop/examples/Grep.java 
+[eric@almond hadoop-2.7.3-src]$ less hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-jobclient/src/test/java/org/apache/hadoop/mapred/WordCount.java
+
+[eric@almond hadoop-2.7.3]$  rm -rf ../output/
+[eric@almond hadoop-2.7.3]$ bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar wordcount ../input/ ../output
+[eric@almond hadoop-2.7.3]$ cat ../output/part-r-00000 
+
+[eric@almond wicket]$ pwd
+/home/eric/Devel/Git/wicket/2/wicket
+[eric@almond wicket]$ git tag -l  | grep 7.6.0 | xargs -I % git checkout %
+
+1055  cd hello-world/
+ 1056  ls
+ 1057  vi second.sh
+ 1058  git status
+ 1059  git add .
+ 1060  git commit -m "second script"
+ 1061  git status
+ 1062  git push
+ 1063  git status 
+ 1064  git show
+ 1065  git log
+ 1066  vi second.sh 
+ 1067  git status 
+ 1068  git add .
+ 1069  git commit -m "edited second script"
+ 1070  git statu
+ 1071  git status
+ 1072  git push
+ 1073  git show
+ 1074  git log
+ 1075  git show
+ 1076  git log
+ 1077  git log HEAD^^..HEAD 
+ 1078  git log HEAD^^..HEAD  -p
+ 1079  git log HEAD~2..HEAD  -p
+ 1080  git log HEAD~2..HEAD 
+ 1081  git log
+ 1082  git show
+ 1083  cat .git/HEAD 
+ 1084  cat .git/refs/heads/master 
+ 1085  cat .git/refs/tags/
+ 1086  git pull
+ 1087  pwd
+ 1088  git remote -v
+ 1089  git status
+ 1090  git branch ericsidea
+ 1091  git checkout ericsidea 
+ 1092  git branch 
+ 1093  vi second.sh 
+ 1094  git status 
+ 1095  git add .
+ 1096   git stau
+ 1097   git status
+ 1098  git commit -m "edited second.sh on ericsidea"
+ 1099  git log
+ 1100  git push
+ 1101  git -v
+ 1102  git --version
+ 1103  cat ~/.gitconfig 
+ 1104  git push --set-upstream origin ericsidea 
+ 1105  git branch 
+ 1106  git branch  -a
+ 1107  git diff origin/master..master
+ 1108  git diff origin/master master
+ 1109  git diff --help
+ 1110  git pull
+ 1111  git branch -a
+ 1112  git checkout hansidea
+ 1113  git branch 
+ 1114  git checkout ericsidea 
+ 1115  git branch 
+ 1116  git branch -a
+ 1117  git checkout hansidea 
+ 1118  ls
+ 1119  vi first.sh 
+ 1120  cat first.sh 
+ 1121  cat second.sh 
+ 1122   git branch -a
+ 1123  git diff ericsidea origin/ericsidea 
+ 1124  git diff ericsidea remotes/origin/ericsidea 
+ 1125  git status
+ 1126  git checkout ericsidea 
+ 1127  vi second.sh 
+ 1128  cat second.sh 
+ 1129  git commit -a -m "Added In hello-world to second.txt"
+ 1130  git push
+ 1131  git pull
+ 1132  cat first.sh 
+ 1133  git checkout -b ericsidea2
+ 1134  ls
+ 1135  vi third.sh
+ 1136  git commit -a -m "Added In hello-world to third.sh"
+ 1137  ls
+ 1138  git add .
+ 1139  git commit -m "Added In hello-world to third.sh"
+ 1140  git push origin ericsidea2
+ 1141  git branch -a
+ 1142  git push --set-upstream origin ericsidea2
+ 1143  git branch -a
+ 1144   git push --delete origin ericsidea2
+ 1145   git push  origin ericsidea2
+ 1146   git pull
+ 1147   git branch -a
+ 1148  git  push --delete origin ericsidea2
+ 1149  git branch -a
+ 1150  git rm --help
+ 1151  git branch -d ericsidea2
+ 1152  git checkout master
+ 1153  git branch -d ericsidea2
+ 1154  git branch -D ericsidea2
+ 1155  git branch -a
+ 1156  git remote prune origin .
+ 1157  git branch -a
+ 1158  git checkout -b ericsidea2
+ 1159  ls
+ 1160  vi third.sh
+ 1161  git commit -a -m "Added In hello-world to third.sh"
+ 1162  git add .
+ 1163  git commit -m "Added In hello-world to third.sh"
+ 1164  git branch -a
+ 1165  git pull
+ 1166  git push origin ericsidea2
+ 1167  git pull
+ 1168  git branch -a
+ 1169  git checkout hansidea2
+ 1170  git branch -a
+ 1171  git checkout ericsidea2
+ 1172  vi third.sh 
+ 1173  git add .
+ 1174  git commit -a -m "Another In hello-world to third.sh"
+ 1175  git push
+ 1176  git pull
+ 1177  git branch --set-upstream-to=origin/ericsidea2 ericsidea2
+ 1178  git pull
+ 1179  vi third.sh 
+ 1180  git commit -a -m "mergethird.sh"
+ 1181  git pull
+ 1182  git push
+ 1183  git checkout hansidea2
+ 1184  vi third.sh 
+ 1185  git add .
+ 1186  git commit -a -m "edited third.sh"
+ 1187  git push
+ 1188  vi third.sh 
+ 1189  git branch --unset-upstream --help
+ 1190  git branch --unset-upstream origin/ericsidea2
+ 1191  git branch --unset-upstream ericsidea2
+ 1192  git pull
+ 1193  git checkout ericsidea2
+ 1194  less third.sh 
+ 1195  git branch --set-upstream-to=ericsidea2 ericsidea2
+ 1196  git branch --set-upstream-to=origin//ericsidea2 ericsidea2
+ 1197  git branch --set-upstream-to=origin/ericsidea2 ericsidea2
+ 1198  git pull
+ 1199  less third.sh 
+ 1200  git branch --unset-upstream ericsidea2
+ 1201  git pull
+ 1202  [eric@almond hello-world]$ git branch --unset-upstream ericsidea2
+ 1203  [eric@almond hello-world]$ git pull
+ 1204  remote: Counting objects: 3, done.
+ 1205  remote: Compressing objects: 100% (1/1), done.
+ 1206  remote: Total 3 (delta 2), reused 3 (delta 2), pack-reused 0
+ 1207  Unpacking objects: 100% (3/3), done.
+ 1208  From github.com:ericjvandervelden/hello-world
+ 1209     65130f1..9ba2d2b  ericsidea2 -> origin/ericsidea2
+ 1210  There is no tracking information for the current branch.
+ 1211  Please specify which branch you want to merge with.
+ 1212  See git-pull(1) for details
+ 1213      git pull <remote> <branch>
+ 1214  If you wish to set tracking information for this branch you can do so with:
+ 1215      git branch --set-upstream-to=origin/<branch> ericsidea2
+ 1216  git branch -a
+ 1217  git pull origin ericsidea2
+ 1218  git pull
+ 1219  git pull origin ericsidea2
+ 1220  git remote -v
+ 1221  git remote add --help
+ 1222  git remote add origin_https https://github.com/ericjvandervelden/hello-world.git
+ 1223  git remote -v
+ 1224  git pull
+ 1225  git pull origin
+ 1226  git pull origin ericsidea2
+ 1227  git pull origin_https  ericsidea2
+ 1228  git branch -a
+ 1229  git checkout ericsidea2
+ 1230  git push
+ 1231  vi third.sh 
+ 1232  git commit -a -m "edited third.sh"
+ 1233  git push origin_https ericsidea2
+ 1234  git push --help
+ 1235  git push origin ericsidea2
+ 1236  vi third.sh 
+ 1237  git commit -a -m "edited third.sh"
+ 1238  git remote --help
+ 1239  git commit -a -m "edited third.sh"
+ 1240  vi third.sh 
+ 1241  git commit -a -m "edited third.sh"
+ 1242  git push origin_https ericsidea2
+ 1243  less .git/config 
+ 1244  less ~/.gitconfig 
+ 1245  cat .git/config 
+ 1246  git remote prune origin_https 
+ 1247  git remote -v
+ 1248  cat .git/config 
+ 1249  git remote -h
+ 1250  git remote remove origin_https 
+ 1251  git remote -v
+ 1252  cat .git/config 
+ 1253  git remote prune origin_https 
+ 1254  vi .git/config 
+ 1255  git remote -v
+ 1256  git push origin ericsidea2
+ 1257  git checkout -b ericsidea3
+ 1258  ls
+ 1259  cat third.sh 
+ 1260  vi fourth.sh
+ 1261  git commit -a -m "created fourth.sh"
+ 1262  git add .
+ 1263  git commit -m "created fourth.sh"
+ 1264  git remote add origin-https https://github.com/ericjvandervelden/hello-world.git
+ 1265  git push --set-upstream origin-https ericsidea3
+ 1266  git remote -v
+ 1267  cat .git/config 
+ 1268  git remote remove origin-https 
+ 1269  git remote set-url  origin-https https://github.com/ericjvandervelden/hello-world.git
+ 1270  git remote add origin-https https://github.com/ericjvandervelden/hello-world.git
+ 1271  git push --set-upstream origin-https ericsidea3
+ 1272  cat .git/config 
+ 1273  cat ~/.gitconfig 
+ 1274  git push --help
+ 1275  git remote -v
+ 1276  git log
+ 1277  ls 
+ 1278  ls .git/logs/refs/remotes/origin_https/
+ 1279  git remote -v
+ 1280  git remote set-url  origin-https https://ericjvandervelden:vlWalnoot27@github.com/ericjvandervelden/hello-world.git
+ 1281  git push --set-upstream origin-https ericsidea3
+ 1282  cat .git/config 
+ 1283  ls .git/refs/remotes/origin-https/
+ 1284  less .git/refs/remotes/origin-https/
+ 1285  cat .git/refs/remotes/origin-https/
+ 1286  cat .git/refs/remotes/origin-https/ericsidea3 
+ 1287  git remote remove origin_https
+ 1288  git remote prune origin_https
+ 1289  git fetch origin-https 
+ 1290  git pull origin-https 
+ 1291  cat .git/config 
+ 1292  git branch -a
+ 1293  pwd
+ 1294  cd ../
+ 1295  ls
+ 1296  git clone git://git.apache.org/wicket.git
+ 1297  git branch -a
+ 1298  cd wicket/
+ 1299  git branch -a
+ 1300  git tag -l
+ 1301   cd ..
+ 1302  pwd
+ 1303  cd ..
+ 1304  ls
+ 1305  mkdir wicket
+ 1306  mv mastering_git/wicket/ wicket/
+ 1307  mkdir wicket/1
+ 1308  mv wicket/wicket/ wicket/1
+ 1309  cd wicket/1
+ 1310  pwd
+ 1311  cd ../2
+ 1312  mkdir ../2
+ 1313  cd ../2
+ 1314  git clone git@github.com:apache/wicket.git
+ 1315  cd wicket/
+ 1316  git tag -l
+ 1317   git branch 
+ 1318  git checkout -b v-7.6.0 rel/wicket-7.6.0 
+ 1319  git branch 
+ 1320  ls
+ 1321  git tag -l
+ 1322   git checkout -b v-6.26.0 rel/wicket-6.26.0
+ 1323  ls
+ 1324  git branch 
+ 1325  cat .git/refs/heads/v-7.6.0 
+ 1326  find .git -name HEAD
+ 1327  cat .git/HEAD 
+ 1328  cat .git/refs/heads/v-6.26.0 
+ 1329  git checkout v-7.6.0 
+ 1330  find .git -name HEAD
+ 1331  cat .git/HEAD 
+ 1332  cat .git/refs/heads/v-7.6.0 
+ 1333  git tag -l 
+ 1334  git tag -l  | grep 7.6.0
+ 1335  git tag -l  | grep 7.6.0 | xargs -I % git checkout %
+ 1336  cat .git/HEAD 
+ 1337  ls
+ 1338  pwd
+ 1339  ls
+ 1340  pwd
+ 1341  history 
+[eric@almond wicket]$ 
+
+> df=data.frame(1:4,matrix(1:4,nrow=2))
+> df
+  X1.4 X1 X2
+1    1  1  3
+2    2  2  4
+3    3  1  3
+4    4  2  4
+
+/ 7	 
+
+/ 2 juli 2017
+
+https://stackoverflow.com/questions/34758730/differences-between-rowtype-type-and-record-in-postgresql
+
+http://docs.spring.io/spring/docs/3.2.18.RELEASE/javadoc-api/
+
+https://developer.yahoo.com/weather/archive.html
+http://localhost:8080/simple-webapp/weather.x?zip=01201
+https://maven.apache.org/guides/introduction/introduction-to-optional-and-excludes-dependencies.html
+https://github.com/eclipse/smarthome/pull/1275/commits/de4b9c6c373e525aee52d782f031b9f5f0c6f7e6
+https://query.yahooapis.com/v1/public/yql?format=xml&q=SELECT%20*%20FROM%20weather.forecast%20WHERE%20u=%27c%27%20AND%20woeid%20=%20%2701201%27
+
+https://www.slf4j.org/manual.html
+
+https://jdbc.postgresql.org/documentation/head/logging.html
+https://www.tutorialspoint.com/h2_database/h2_database_jdbc_connection.htm
+https://jdbc.postgresql.org/documentation/94/connect.html
+https://jdbc.postgresql.org/download.html
+
+http://www.netlib.org/lapack/lug/node38.html		/ linear eqations
+https://dynamithead.wordpress.com/2012/06/30/introduction-to-how-to-call-lapack-from-a-cc-program-example-solving-a-system-of-linear-equations/
+http://www.netlib.org/lapack/explore-html/d8/db2/group__real_p_ocomputational_gaaf31db7ab15b4f4ba527a3d31a15a58e.html#gaaf31db7ab15b4f4ba527a3d31a15a58e
+http://www.netlib.org/lapack/lug/node5.html
+http://www.netlib.org/lapack/lapacke.html#_function_list
+https://nl.wikipedia.org/wiki/Cholesky-decompositie
+http://www.netlib.org/lapack/explore-html/d1/d7a/group__double_p_ocomputational_ga2f55f604a6003d03b5cd4a0adcfb74d6.html
+https://stackoverflow.com/questions/44799292/when-usng-rows-with-lapacke-sgetrs-why-must-ldb-1-instead-of-3-instead-of-n/44834279#44834279
+http://www.netlib.org/lapack/explore-html/de/d9e/group___s_y.html
+http://www.netlib.org/lapack/lug/node48.html													/ symmetric eigenvalue problems
+
+
+http://python-guide-pt-br.readthedocs.io/en/latest/scenarios/ci/#jenkins
+
+https://en.wikipedia.org/wiki/Java_Transaction_API
+https://en.wikipedia.org/wiki/Dot_product
+
+http://localhost:8080/jsfreg/faces/register.xhtml
+
+
+http://docs.jboss.org/hibernate/orm/5.2/quickstart/html_single/             <-
+
+http://www.h2database.com/html/features.html#in_memory_databases
+
+https://stats.idre.ucla.edu/r/modules/coding-for-categorical-variables-in-regression-models/
+https://www.stat.berkeley.edu/classes/s133/factors.html
+
+
+/ 8 july 2017
+
+/ onder	,
+
+[eric@almond wicket]$ pwd
+/home/eric/Devel/Git/wicket/2/wicket
+
+[eric@almond hadoop-2.7.3]$ pwd
+/home/eric/Devel/Hadoop/hadoop-2.7.3
+[eric@almond hadoop-2.7.3]$  rm -rf ../output/
+[eric@almond hadoop-2.7.3]$ bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar wordcount ../input/ ../output
+[eric@almond hadoop-2.7.3]$ bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar grep ../input/ ../output 'dfs[a-z.]+'
+
+[eric@almond hadoop-2.7.3-src]$ pwd
+/home/eric/Devel/Hadoop/hadoop-2.7.3-src
+[eric@almond hadoop-2.7.3-src]$ grep wordcount -r *
+[eric@almond hadoop-2.7.3-src]$ less hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-jobclient/src/test/java/org/apache/hadoop/mapred/WordCount.java
+
+[eric@almond html]$ pwd
+/home/eric/Devel/Apache/site.cgi/html
+[eric@almond html]$ ls
+callbacks_fire.html   deferred.html   hello2a2.html  index.html       ready.html
+callbacks_flags.html  echo_ajax.html  hello2a.html   jquery-3.1.1.js
+[eric@almond html]$ vi hello2a.html 
+
+[eric@almond cgi]$ pwd
+/home/eric/Devel/Apache/site.cgi/cgi
+[eric@almond cgi]$ ls
+echo2.c        echo_ajax_my.c    echo.cgi    hello2a2.c    hello2a.cgi  hello.c
+echo_ajax.c    echo_ajax_my.cgi  hello1.c    hello2a2.cgi  hello2.c     hello.cgi
+echo_ajax.cgi  echo.c            hello1.cgi  hello2a.c     hello2.cgi   mycgi.cgi
+[eric@almond cgi]$ gcc -Wall hello2a2.c -o hello2a2.cgi 
+
+[eric@almond gmp-6.1.2]$ pwd
+/home/eric/Devel/gmp/gmp-6.1.2
+[eric@almond gmp-6.1.2]$ find -name "*h" | xargs grep mpz_add_ui
+[eric@almond gmp-6.1.2]$ ./pexpr 2^100 | xargs ./factorize 
+[eric@almond gmp-6.1.2]$ ./factorize 2^100
+[eric@almond gmp-6.1.2]$ make factorize | tee LOG_make_factorize.txt
+[eric@almond gmp-6.1.2]$ ./isprime 14
+[eric@almond gmp-6.1.2]$ make isprime | tee LOG_make_isprime.txt
+
+[eric@almond cpp]$ pwd
+/home/eric/Devel/Eclipse/cpp
+[eric@almond cpp]$ eclipse/eclipse 
+
+[eric@almond kubernetes]$ pwd
+/home/eric/Devel/kubernetes
+[eric@almond kubernetes]$ export PROJECT_ID="my-kubernetes-codelab-150420"
+[eric@almond kubernetes]$ gcloud components install kubectl
+
+[eric@almond 32.21]$ pwd
+/home/eric/Devel/Postgres/manual/32.21
+[eric@almond 32.21]$ gcc -Wall libpqex.c -lpq -g
+[eric@almond 32.21]$  ./a.out dbname=eric
+
+[eric@almond postgresql-9.6.2]$ pwd
+/home/eric/Devel/Postgres/postgresql-9.6.2
+[eric@almond postgresql-9.6.2]$ make -pn | grep -A1 "^# makefile"| grep -v "^#\|^--" | sort | uniq | grep CFLAGS
+[eric@almond postgresql-9.6.2]$ ./configure --help
+[eric@almond postgresql-9.6.2]$ less ./src/interfaces/libpq/libpq-fe.h
+
+[eric@almond scala]$ pwd
+/home/eric/Devel/Eclipse/scala
+[eric@almond scala]$ eclipse/eclipse 
+
+[eric@almond bar]$  pwd
+/home/eric/Devel/Eclipse/scala/workspace-spring/bar
+[eric@almond bar]$ jar tvf ~/.m2/repository/hsqldb/hsqldb/1.8.0.7/hsqldb-1.8.0.7.jar  | grep jdbcDr
+[eric@almond bar]$ rm -rf  ~/.m2/repository/javax/transaction/jta/1.0.1B/
+
+[eric@almond gradle]$ pwd
+/home/eric/Devel/Java/gradle
+[eric@almond gradle]$ gradle -q test
+[eric@almond gradle]$ gradle -q -b sub/build.gradle foo
+[eric@almond gradle]$ gradle doIt
+[eric@almond gradle]$ gradle :tasks
+
+[eric@almond asm-study]$ pwd
+/home/eric/Devel/Eclipse/scala/workspace-spring/asm-study
+
+[eric@almond my]$ pwd
+/home/eric/Devel/C/lapack/my
+
+[eric@almond Angular2]$ pwd
+/home/eric/Devel/JavaScript/Node/Angular2
+[eric@almond Angular2]$ npm install -g @angular/cli
+
+[eric@almond video2]$ pwd
+/home/eric/Devel/JavaScript/Node/Webpack/video2
+[eric@almond video2]$  vi bear4.js 
+[eric@almond video2]$ npm start
+
+[eric@almond jsf2-tcr-code-examples]$ pwd
+/home/eric/Devel/Eclipse/scala/workspace-jsf/jsf2-tcr-code-examples
+[eric@almond jsf2-tcr-code-examples]$ ls ch10/trainer-secondEdition/trainer/
+
+[eric@almond wicket]$ pwd
+/home/eric/Devel/Java/Wicket/wicket
+[eric@almond wicket]$ less ./wicket-core/src/main/java/org/apache/wicket/markup/repeater/RefreshingView.java
+
+/ boven	,
+
+[eric@almond sshd]$ pwd
+/home/eric/Devel/Docker2/fedora/sshd
+[eric@almond sshd]$ docker images -a | awk '/<none>/' | awk '{print $3}' | xargs -I % docker rmi %
+[eric@almond sshd]$  docker network inspect  bridge 
+[eric@almond sshd]$  docker run --rm -ti my/fedora-locale bash
+[eric@almond sshd]$ vi Dockerfile 
+[eric@almond sshd]$ docker ps -a
+[eric@almond sshd]$  docker run  --rm --volumes-from webbase -v $(pwd):/backup my/fedora-misc tar cvf /backup/logs.tar -C / logs/webapp 
+[eric@almond sshd]$  docker run  --rm --volumes-from webbase -v $(pwd):/backup my/fedora-locale tar cvf /backup/logs.tar -C / /logs/webapp
+[eric@almond sshd]$  docker run  --rm --volumes-from webbase -v $(pwd):/backup my/fedora-misc tar cvf /backup/logs.tar /logs/webapp 
+[eric@almond sshd]$  docker run  --rm --volumes-from webbase -v $(pwd):/backup my/fedora-locale tar cvf /backup/logs.tar /logs/webapp 
+[eric@almond sshd]$ docker create -v /var/lib/docker/volumes/0887a54dca65f937d2507c87ba5db907324b7a78545d56133fe3550f1824cb7e:/logs/webapp --name webbase my/fedora-misc true
+[eric@almond sshd]$ sudo ls /var/lib/docker/volumes/0887a54dca65f937d2507c87ba5db907324b7a78545d56133fe3550f1824cb7e/_data
+[eric@almond sshd]$ docker build --rm -t my/fedora-misc .
+[eric@almond sshd]$ vi Dockerfile 
+
+[eric@almond misc]$ pwd
+/home/eric/Devel/Docker2/fedora/misc
+[eric@almond misc]$ docker run --rm -ti my/fedora-misc bash
+
+[eric@almond cli]$ pwd
+/home/eric/Devel/Docker2/fedora/cli
+[eric@almond cli]$ docker run --rm --name loc -t my/fedora-locale bash
+[eric@almond cli]$ docker inspect web
+[eric@almond cli]$ rm-all-containers.sh 
+[eric@almond cli]$ docker build --rm -t my/fedora-read .
+[eric@almond cli]$ docker run --rm --name read -t my/fedora-read
+[eric@almond cli]$ docker build --rm -t my/fedora-ping .
+
+[eric@almond wildfly]$ pwd
+/home/eric/Devel/Java/jboss/wildfly
+/ git
+
+[eric@almond cli]$ pwd
+/home/eric/Devel/Docker2/fedora/cli
+[eric@almond cli]$  docker run -p 80  --rm --name web2 -h hazelnut.nuts.org --volumes-from web my/fedora-misc
+[eric@almond cli]$ sudo ls /var/lib/docker/volumes/dc92883777575f178142e010f422be4799e14065474eb475f6dda19102026778/_data
+[eric@almond cli]$ sudo ls /var/lib/docker/network/files
+[eric@almond cli]$ docker run --rm --name loc -it my/fedora-locale bash
+[eric@almond cli]$ docker network create  my-bridge
+[eric@almond cli]$ docker attach --help
+[eric@almond cli]$ curl http://localhost:32779
+[eric@almond cli]$ docker network connect bridge web
+[eric@almond cli]$ docker network disconnect bridge web
+[eric@almond cli]$ docker network inspect bridge
+[eric@almond cli]$ docker exec -it web bash
+[eric@almond cli]$ curl http://peanut.nuts.org:32775
+[eric@almond cli]$ docker exec -it web bash
+
+[eric@almond ch-multi-spring]$ pwd
+/home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi-spring
+
+[eric@almond hibernate_xml_N_1_bidir_a]$ pwd
+/home/eric/Devel/Eclipse/scala/workspace-hibernate/hibernate_xml_N_1_bidir_a
+
+[eric@almond hibernate]$ pwd
+/home/eric/Devel/Java/hibernate
+[eric@almond hibernate]$ less hibernate-orm/documentation/src/main/asciidoc/quickstart/tutorials/basic/src/test/java/org/hibernate/tutorial/hbm/Event.hbm.xml
+
+[eric@almond bin]$ java -cp h2-1.4.196.jar org.h2.tools.Server -tcp
+TCP server running at tcp://192.168.123.182:9092 (only local connections)
+
+[eric@almond hello-world-3]$ pwd
+/home/eric/Devel/Git/mastering_git/video5/hello-world-3
+[eric@almond hello-world-3]$ git push
+[eric@almond hello-world-3]$ git log
+[eric@almond hello-world-3]$ git commit -a -m "edit third.sh in hello-world-3"
+
+[eric@almond asm-study]$ pwd
+/home/eric/Devel/Eclipse/scala/workspace-spring/asm-study
+[eric@almond asm-study]$ javap -c X.class 
+[eric@almond asm-study]$ vi asm-study/src/test/java/first/FirstTest.java 
+[eric@almond asm-study]$ unzip -l ~/Downloads/asm-study.zip 
+
+
+
+
+[root@almond httpd]# pwd
+/etc/httpd
+[root@almond httpd]# less conf.d/my-virtual-hosts.conf 
+
+
+/ Einde 8 july 2017
+
+/ 2 aug 17
+
+http://www.postgresqltutorial.com/postgresql-create-function/
+http://www.postgresqltutorial.com/postgresql-random-range
+
+https://logging.apache.org/log4j/2.x/manual/configuration.html
+http://howtodoinjava.com/log4j/slf4j-vs-log4j-which-one-is-better/
+
+http://www.netlib.org/lapack/lug/node48.html
+https://en.wikipedia.org/wiki/QR_algorithm
+http://www.netlib.org/lapack/lug/node38.html
+
+https://www.stat.berkeley.edu/classes/s133/factors.html		/ R
+
+http://docs.spring.io/spring/docs/current/javadoc-api/index.html?overview-summary.html
+http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/beans/factory/config/BeanPostProcessor.html
+
+
+	
+
+/ Einde 2 aug 17
+
+/ 2017-12-9
+
+https://fedoramagazine.org/upgrading-fedora-24-fedora-25/
+https://fedoraproject.org/wiki/DNF_system_upgrade
+
+https://hub.docker.com/_/fedora/
+https://docs.docker.com/v1.10/engine/userguide/containers/dockerimages/
+https://docs.docker.com/engine/userguide/storagedriver/imagesandcontainers/#the-copy-on-write-strategy
+https://docs.docker.com/v1.11/engine/reference/builder/#entrypoint
+https://docs.docker.com/v1.11/engine/reference/builder/#entrypoint
+https://github.com/docker-training/webapp/blob/master/webapp/requirements.txt
+http://crosbymichael.com/advanced-docker-volumes.html
+
+https://developers.redhat.com/products/cdk/overview/
+https://developers.redhat.com/blog/2016/07/18/jboss-eap-7-on-openshift/
+http://redhatstackblog.redhat.com/2016/07/25/introduction-to-red-hat-openstack-platform-director/
+
+https://spring.io/guides/tutorials/bookmarks	/ Building REST services with Spring
+
+https://help.github.com/articles/connecting-to-github-with-ssh/
+
+
+https://cloud.google.com/
+https://console.cloud.google.com/home/dashboard?project=my-kubernetes-codelab-150420
+https://kubernetes.io/docs/tutorials/stateless-application/hello-minikube/
+https://console.cloud.google.com/launcher?project=web-server-project-1148&cat=INFRASTRUCTURE
+https://cloud.google.com/container-engine/docs/quickstart
+https://console.cloud.google.com/home/dashboard?project=web-server-project-1148&pli=1
+http://googlecloudplatform.github.io/
+
+http://en.cppreference.com/w/cpp/language/return
+https://stackoverflow.com/questions/793469/how-to-force-the-compiler-to-use-explicit-copy-constructor
+
+https://stackoverflow.com/questions/132988/is-there-a-difference-between-and-is-in-python
+https://pyformat.info/
+https://stackoverflow.com/questions/10623302/how-assignment-works-with-python-list-slice
+https://stackoverflow.com/questions/132988/is-there-a-difference-between-and-is-in-python
+https://docs.python.org/2/howto/functional.html
+https://stackoverflow.com/questions/4664850/find-all-occurrences-of-a-substring-in-python
+https://stackoverflow.com/questions/3013449/list-filtering-list-comprehension-vs-lambda-filter
+http://www.secnetix.de/olli/Python/lambda_functions.hawk
+
+
+https://channel9.msdn.com/Shows/Microsoft-Research/Keynote-Model-Based-Machine-Learning
+
+https://www.youtube.com/watch?v=iHTVRMqAGYo&feature=push-u-sub&attr_tag=J4EpSvP1FyDrXcsM-6	/ bitcoin !
+https://www.youtube.com/watch?v=X6jtpe2_kUc	/ ! install bitcoin locally	,
+https://bitcoinfoundation.org/membership/
+https://github.com/goatpig/BitcoinArmory
+https://github.com/bitcoin/bitcoin/blob/master/src/test/addrman_tests.cpp
+https://blog.toshi.org/introducing-token-2f2ceeab6d4c
+https://github.com/toshiapp/toshi-ethereum-service/blob/master/README.md
+
+https://nl.wikipedia.org/wiki/Desoxyribonucle%C3%AFnezuur / DNA
+https://en.wikipedia.org/wiki/Polymorphism_(computer_science)
+
+http://www.cgi.com/deferred.html
+http://www.cgi.com/hello2a2.html
+
+https://www.openssh.com/portable.html
+https://anongit.mindrot.org/openssh.git
+http://www.tc.umn.edu/~hick0088/files/openssh-howto.html
+
+
+https://stackoverflow.com/questions/6793351/difference-between-a-managed-bean-and-a-session-bean
+https://stackoverflow.com/questions/8626291/jsf-managed-bean-ejb-injection/8627413#8627413
+
+https://www.postgresql.org/docs/9.4/static/xfunc-sql.html#XFUNC-SQL-FUNCTIONS-RETURNING-SET
+https://www.postgresql.org/docs/current/static/plpgsql-statements.html
+https://www.postgresql.org/docs/9.4/static/sql-createtableas.html
+
+https://eclipsesource.com/blogs/tutorials/egit-tutorial/
+https://wiki.eclipse.org/EGit/User_Guide#Cloning_a_Repository
+
+https://developer.jboss.org/thread/272544	/ self compile wildfly	,
+https://github.com/wildfly/wildfly/tree/master/build
+
+https://stackoverflow.com/questions/2065990/defining-erlang-functions-in-the-shell
+http://erlang.org/doc/reference_manual/data_types.html
+http://erlang.org/doc/apps/stdlib/unicode_usage.html
+https://stackoverflow.com/questions/45121008/erlang-has-no-shared-memory-so-what-happens-with-the-sum-function-for-example
+
+https://github.com/javaee/jaxb-v2/tree/master/jaxb-ri
+
+https://vladmihalcea.com/2017/08/29/the-best-way-to-map-a-projection-query-to-a-dto-with-jpa-and-hibernate/#more-7798
+
+/ we laten open	,
+https://www.youtube.com/watch?v=5Tr13l0O1Ws&t=87s
+https://ethereum.org/#cancel
+https://www.youtube.com/watch?v=Kxv_ecBPXPw
+https://www.npmjs.com/package/ethereumjs-testrpc
+file:///home/eric/Devel/Node/Your_First_Decentralized_Application/index.html#
+https://medium.com/blockchannel/the-use-of-revert-assert-and-require-in-solidity-and-the-new-revert-opcode-in-the-evm-1a3a7990e06e
+https://github.com/trufflesuite/ganache-cli
+https://www.npmjs.com/package/ganache-cli/tutorial
+https://geth.ethereum.org/
+https://github.com/ethereum/go-ethereum
+https://blog.zeppelin.solutions/the-hitchhikers-guide-to-smart-contracts-in-ethereum-848f08001f05
+https://www.youtube.com/watch?v=gSQXq2_j-mw
+/->
+https://github.com/llSourcell/Your_First_Decentralized_Application
+
+/ Einde 2017-12-9
+
+/ 2017-12-25 OPEN BASH
+
+[eric@almond ch3]$ pwd
+/home/eric/Devel/python/learning/ch3
+eric@almond ch3]$ python3
+
+[eric@almond bin]$  pwd
+/home/eric/Devel/Eclipse/scala/workspace-spring/asm-study/bin
+[eric@almond bin]$ javap -c -p -private first/X.class 
+[eric@almond bin]$ javap -c -verbose -p sia/knights/RescueDamselQuest.class 
+
+[eric@almond Eclipse]$ dir
+cpp  jee-jbosstools  Mars  Neon  new-sts  scala  STS  sts-bundle  tmp
+[eric@almond Eclipse]$ cd cpp/
+[eric@almond cpp]$ eclipse/eclipse 
+
+--------
+
+[eric@almond gradle]$ pwd
+/home/eric/Devel/Java/gradle
+[eric@almond gradle]$ gradle -q -b sub/build.gradle foo
+
+[eric@almond apache-tomcat-8.5.11]$ pwd
+/home/eric/Devel/Java/Tomcat/apache-tomcat-8.5.11
+[eric@almond apache-tomcat-8.5.11]$ bin/catalina.sh jpda run
+
+[eric@almond asm-study]$ less ~/Devel/Java/Tomcat/apache-tomcat-8.5.11/webapps/jsfreg
+
+[eric@almond my]$ pwd
+/home/eric/Devel/C/lapack/my
+[eric@almond my]$ gcc -Wall spotrf3.c -llapack -llapacke
+
+[eric@almond Angular2]$ pwd
+/home/eric/Devel/JavaScript/Node/Angular2
+[eric@almond Angular2]$ ls
+codeschool  my-proj
+[eric@almond Angular2]$ vi webpack.config.js
+
+[eric@almond video2]$ pwd
+/home/eric/Devel/JavaScript/Node/Webpack/video2
+[eric@almond video2]$ npm start
+[eric@almond video2]$ cat bear4.js 
+[eric@almond video2]$ cp -a style3.css style4.css
+
+[eric@almond jsf2-tcr-code-examples]$ pwd
+/home/eric/Devel/Eclipse/scala/workspace-jsf/jsf2-tcr-code-examples
+[eric@almond jsf2-tcr-code-examples]$ ls ch10/trainer-secondEdition/trainer/
+[eric@almond jsf2-tcr-code-examples]$ ls
+archetype  ch02  ch03  ch05  ch06  ch08  ch09  ch10  ch11  ch12  ch14
+
+[eric@almond wicket]$ evince ~/Documents/pari-gp/tutorial.pdf 
+
+[eric@almond wicket]$ pwd
+/home/eric/Devel/Git/wicket/2/wicket
+
+[eric@almond work]$ pwd
+/home/eric/Devel/R/work
+[eric@almond work]$ R
+
+eric@almond hadoop-2.7.3]$ pwd
+/home/eric/Devel/Hadoop/hadoop-2.7.3
+[eric@almond hadoop-2.7.3]$ bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar grep ../input/ ../output 'dfs[a-z.]+'
+
+[eric@almond hadoop-2.7.3-src]$ pwd
+/home/eric/Devel/Hadoop/hadoop-2.7.3-src
+[eric@almond hadoop-2.7.3-src]$ less ./hadoop-mapreduce-project/hadoop-mapreduce-examples/src/main/java/org/apache/hadoop/examples/Grep.java 
+
+[eric@almond html]$ pwd
+/home/eric/Devel/Apache/site.cgi/html
+[eric@almond html]$ vi deferred.html 
+
+[eric@almond cgi]$ pwd
+/home/eric/Devel/Apache/site.cgi/cgi
+[eric@almond cgi]$ gcc -Wall hello2a2.c -o hello2a2.cgi 
+
+[eric@almond gmp-6.1.2]$ pwd
+/home/eric/Devel/gmp/gmp-6.1.2
+[eric@almond gmp-6.1.2]$ make isprime | tee LOG_make_isprime.txt
+[eric@almond gmp-6.1.2]$ ./isprime 14
+[eric@almond gmp-6.1.2]$ make factorize | tee LOG_make_factorize.txt
+[eric@almond gmp-6.1.2]$ ./factorize 15
+eric@almond gmp-6.1.2]$ ./pexpr 2^100
+[eric@almond cgi]$ pwd
+/home/eric/Devel/Apache/site.cgi/cgi
+[eric@almond cgi]$ gcc -Wall hello2a2.c -o hello2a2.cgi
+[eric@almond gmp-6.1.2]$ pwd
+
+[eric@almond kubernetes]$ pwd
+/home/eric/Devel/kubernetes
+[eric@almond kubernetes]$ export PROJECT_ID="my-kubernetes-codelab-150420"
+[eric@almond kubernetes]$ gcloud components install kubectl
+
+[eric@almond 32.21]$ vi libpqex.c 
+[eric@almond 32.21]$ pwd
+/home/eric/Devel/Postgres/manual/32.21
+[eric@almond 32.21]$  ./a.out dbname=eric
+[eric@almond postgresql-9.6.2]$ pwd
+/home/eric/Devel/Postgres/postgresql-9.6.2
+[eric@almond postgresql-9.6.2]$ less ./src/interfaces/libpq/libpq-fe.h
+
+[eric@almond scala]$ pwd
+/home/eric/Devel/Eclipse/scala
+[eric@almond scala]$ eclipse/eclipse 
+
+[eric@almond bar]$  pwd
+/home/eric/Devel/Eclipse/scala/workspace-spring/bar
+
+---
+
+[eric@almond dockerfile]$ pwd
+/home/eric/Devel/Docker2/fedora/dockerfile
+[eric@almond dockerfile]$ vi Dockerfile 
+...
+
+[eric@almond cli]$ psql -U eric -h localhost
+password: eric
+eric=>  create or replace function cpy7()returns setof tab2 as '
+eric'> declare
+eric'>   t2 tab2;
+eric'> begin
+eric'>   select*into t2 from tab2 ;
+eric'>   return query select t2;  
+eric'> end
+eric'> ' language plpgsql;
+CREATE FUNCTION
+
+[eric@almond Olinux-x86_64.dbg]$ pwd
+/home/eric/Devel/Math/pari-2.9.2/Olinux-x86_64.dbg
+[eric@almond Olinux-x86_64.dbg]$  gp
+? m = qfminim(G, norml2(M[,4])-1,50 , 2)
+%235 = [100, 28667766899426054399.000000000000000000, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6, 7, -7, 8, -8, 9, -9, 10, -10, 11, -11, 12, -12, 13, -13; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+
+[eric@almond wildfly]$ echo -n 2.6881171418161354484126255515800135874 | wc
+      0       1      39
+
+[eric@almond cli]$ pwd
+/home/eric/Devel/Docker2/fedora/cli
+[eric@almond cli]$ docker exec -it web bash
+[eric@almond cli]$ curl http://localhost:32772
+[eric@almond cli]$ docker network inspect bridge
+[eric@almond cli]$ docker network disconnect bridge web
+[eric@almond sshd]$ pwd
+/home/eric/Devel/Docker2/fedora/sshd
+[eric@almond sshd]$  docker run --rm -ti my/fedora-locale
+[eric@almond sshd]$ pwd
+/home/eric/Devel/Docker2/fedora/sshd
+[eric@almond sshd]$  docker run  --rm --volumes-from webbase -v $(pwd):/backup my/fedora-locale tar cvf /backup/logs.tar -C / /logs/webapp
+[eric@almond sshd]$  docker run  --rm --volumes-from webbase -v $(pwd):/backup my/fedora-misc tar cvf /backup/logs.tar -C / logs/webapp 
+[eric@almond misc]$ pwd
+/home/eric/Devel/Docker2/fedora/misc
+[eric@almond misc]$ docker run --rm -ti my/fedora-misc bash
+[eric@almond dockerfile]$ pwd
+/home/eric/Devel/Docker2/fedora/dockerfile
+[eric@almond dockerfile]$ docker build --rm=true -t my/fedora-locale .
+eric@almond dockerfile]$ docker run --rm -ti my/fedora-locale bash
+
+[eric@almond ch-multi-spring]$ pwd
+/home/eric/Devel/Eclipse/scala/workspace-maven/examples/ch-multi-spring
+
+[eric@almond hibernate_xml_N_1_bidir_a]$ pwd
+/home/eric/Devel/Eclipse/scala/workspace-hibernate/hibernate_xml_N_1_bidir_a
+[eric@almond hibernate_xml_N_1_bidir_a]$ less src/main/resources/hibernate.cfg.xml 
+
+[eric@almond hibernate]$ pwd
+/home/eric/Devel/Java/hibernate
+[eric@almond hibernate]$ less hibernate-orm/documentation/src/main/asciidoc/quickstart/tutorials/basic/src/test/java/org/hibernate/tutorial/hbm/Event.hbm.xml
+
+[eric@almond bin]$ pwd
+/home/eric/Devel/Java/h2/h2/bin
+[eric@almond bin]$ java -cp h2-1.4.196.jar org.h2.tools.Server -tcp
+TCP server running at tcp://192.168.123.182:9092 (only local connections)
+
+---
+
+[eric@almond Erlang]$ pwd
+/home/eric/Devel/Erlang
+[eric@almond Erlang]$ vi geo.erl 
+[eric@almond Erlang]$ erl +pc unicode
+1> c(geo).
+13> shop1:total([{milk,3},{pears,6}]).
+
+[eric@almond ~]$ cd Devel/Eclipse/Neon/java
+eclipse  workspace-egit  workspace-gradle  workspace-jsf
+[eric@almond java]$ eclipse/eclipse 
+/ WH eclipse met ws workspace-wildfly-src
+
+[eric@almond egitstudy]$ pwd
+/home/eric/Devel/Eclipse/Neon/java/workspace-egit/egitstudy
+[eric@almond egitstudy]$ git branch -a
+* alt
+  master
+[eric@almond egitstudy]$ echo $LANG
+en_US.UTF-8
+
+---
+
+[eric@almond hello-world-3]$ pwd
+/home/eric/Devel/Git/mastering_git/video5/hello-world-3
+[eric@almond hello-world-3]$ git log
+
+[root@almond httpd]# pwd
+/etc/httpd
+[root@almond httpd]# less logs/error_log
+[root@almond httpd]# less logs/error_log-20170206
+[root@almond httpd]# ls
+conf  conf.d  conf.modules.d  logs  modules  run
+[root@almond httpd]# less conf.d/
+autoindex.conf         my-virtual-hosts.conf  userdir.conf
+mod_dnssd.conf         README                 welcome.conf
+[root@almond httpd]# less conf.d/my-virtual-hosts.conf 
+
+[eric@almond asm-study]$ pwd
+/home/eric/Devel/Eclipse/scala/workspace-spring/asm-study
+[eric@almond asm-study]$ unzip -l ~/Downloads/asm-study.zip 
+[eric@almond asm-study]$ javap -c X.class 
+public class first.X {
+  public first.X();
+    Code:
+...
+
+[root@almond httpd]# pwd
+/etc/httpd
+[root@almond httpd]# vi conf/httpd.conf 
+[root@almond httpd]# apachectl graceful
+[root@almond httpd]# vi conf.d/my-virtual-hosts.conf 
+[root@almond httpd]# apachectl graceful
+
+
+
+
+
+
+
+
+/ Einde 2017-12-25 OPEN BASH
+
+/ 2018-01-09 OPEN CHROME
+
+https://github.com/llSourcell/Your_First_Decentralized_Application
+https://ethereum.org/#cancel
+https://www.youtube.com/watch?v=Kxv_ecBPXPw / ethereum
+https://www.npmjs.com/package/ethereumjs-testrpc
+file:///home/eric/Devel/Node/Your_First_Decentralized_Application/index.html#
+https://medium.com/blockchannel/the-use-of-revert-assert-and-require-in-solidity-and-the-new-revert-opcode-in-the-evm-1a3a7990e06e
+https://github.com/trufflesuite/ganache-cli
+https://www.npmjs.com/package/ganache-cli/tutorial
+https://github.com/ethereum/go-ethereum
+https://blog.zeppelin.solutions/the-hitchhikers-guide-to-smart-contracts-in-ethereum-848f08001f05
+https://www.youtube.com/watch?v=66SaEDzlmP4	 / uitvinder ethereum
+https://gitter.im/ethereum/cpp-ethereum?source=orgpage
+https://geth.ethereum.org/
+
+https://www.youtube.com/watch?v=v7b4J2INq9c	/ Q#
+https://www.microsoft.com/en-us/quantum/development-kit
+https://docs.microsoft.com/en-us/qsharp/api/prelude/microsoft.quantum.primitive.swap?view=qsharp-preview
+
+https://www.youtube.com/watch?v=iVpXrbZ4bnU / quantum mechanics Khytoryansky
+https://www.youtube.com/watch?v=jvvkomcmyuo / schrodinger eq
+https://www.youtube.com/watch?annotation_id=annotation_267628149&feature=iv&src_vid=jvvkomcmyuo&v=LZie2QC5Jbc / quantum operators
+
+https://technet.microsoft.com/en-us/library/ms175521(v=sql.105).aspx / sql server
+
+http://pari.math.u-bordeaux.fr/pub/pari/manuals/2.9.0/users.pdf
+
+https://developers.redhat.com/products/rhel/hello-world/  / rhel	,
+
+https://fedoramagazine.org/upgrading-fedora-24-fedora-25/
+https://fedoraproject.org/wiki/DNF_system_upgrade / !
+https://forums.fedoraforum.org/showthread.php?308451-Can-I-Find-Broken-Dependencies-with-DNF
+http://dnf.readthedocs.io/en/latest/command_ref.html#upgrade-command-label
+https://possiblelossofprecision.net/?p=885 / rpmnew en rpmsave
+https://fedoraproject.org/wiki/Vagrant
+https://bugzilla.redhat.com/show_bug.cgi?id=1434107
+
+https://www.youtube.com/watch?v=kOa_llowQ1c&feature=push-u-sub&attr_tag=rJmM6--a2-ItyAlZ-6	/ kubernetes & git !
+
+
+
+https://docs.docker.com/engine/installation/linux/docker-ce/fedora/#uninstall-old-versions
+
+
+
+
+
+
+https://www.safaribooksonline.com/library/view/python-cookbook-3rd/9781449357337/ch03s04.html
+https://stackoverflow.com/questions/1476/how-do-you-express-binary-literals-in-python
+https://pymotw.com/3/fractions/
+https://docs.python.org/3/library/functions.html#open
+https://stackoverflow.com/questions/3753589/packing-and-unpacking-variable-length-array-string-using-the-struct-module-in-py
+
+
+
+
+https://www.gnu.org/software/make/manual/html_node/Suffix-Rules.html#Suffix-Rules
+https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html
+https://www.gnu.org/software/make/manual/html_node/Suffix-Rules.html
+
+
+
+
+
+
+/ Einde 2018-01-09 OPEN CHROME
+
+/ 2018-02-14 OPEN CHROME
+
+https://github.com/llSourcell/Your_First_Decentralized_Application
+
+https://ethereum.org/#cancel
+https://www.npmjs.com/package/ethereumjs-testrpc
+file:///home/eric/Devel/Node/Your_First_Decentralized_Application/index.html#
+https://medium.com/blockchannel/the-use-of-revert-assert-and-require-in-solidity-and-the-new-revert-opcode-in-the-evm-1a3a7990e06e
+https://github.com/trufflesuite/ganache-cli
+https://www.npmjs.com/package/ganache-cli/tutorial
+https://github.com/ethereum/go-ethereum
+https://blog.zeppelin.solutions/the-hitchhikers-guide-to-smart-contracts-in-ethereum-848f08001f05
+https://www.youtube.com/watch?v=66SaEDzlmP4 	/ ethereum's creator
+https://gitter.im/ethereum/cpp-ethereum?source=orgpage
+https://geth.ethereum.org/
+https://www.youtube.com/watch?v=qE_E7CWK4i8 / bitcoin
+https://www.youtube.com/watch?v=2iF73cybTBs	/ blockchain in Switzerland
+https://www.youtube.com/watch?v=e1ZoWT54mbk&feature=push-u-sub&attr_tag=YijbIFFcz_69P-Po-6	/ blockchain
+
+
+https://www.safaribooksonline.com/library/view/python-cookbook-3rd/9781449357337/ch03s04.html
+https://stackoverflow.com/questions/1476/how-do-you-express-binary-literals-in-python
+https://pymotw.com/3/fractions/
+https://docs.python.org/3/library/functions.html#open
+https://stackoverflow.com/questions/3753589/packing-and-unpacking-variable-length-array-string-using-the-struct-module-in-py
+https://www.youtube.com/watch?v=s3VmuVPfu0s&feature=push-u-sub&attr_tag=dCW8jrgMuwpXDaoC-6 / pydata , xgboost
+
+
+https://www.gnu.org/software/make/manual/html_node/Suffix-Rules.html#Suffix-Rules
+https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html
+https://www.gnu.org/software/make/manual/html_node/Suffix-Rules.html
+
+https://www.youtube.com/watch?v=v7b4J2INq9c	/ quantum computing microsoft !
+https://www.microsoft.com/en-us/quantum/development-kit
+https://docs.microsoft.com/en-us/qsharp/api/prelude/microsoft.quantum.primitive.swap?view=qsharp-preview
+https://www.youtube.com/watch?v=iVpXrbZ4bnU 	/ quantum mechanics Khutoryansky
+https://www.youtube.com/watch?v=jvvkomcmyuo / quantum mechanics Khutoryansky
+https://www.youtube.com/watch?annotation_id=annotation_267628149&feature=iv&src_vid=jvvkomcmyuo&v=LZie2QC5Jbc /  quantum mechanics Khutoryansky
+
+https://technet.microsoft.com/en-us/library/ms175521(v=sql.105).aspx	/ sql server	,
+https://www.youtube.com/watch?v=dU8_wSDhIFU&t=1040s / what will we do with quantum computing
+
+http://pari.math.u-bordeaux.fr/pub/pari/manuals/2.9.0/users.pdf
+
+https://developers.redhat.com/products/rhel/hello-world/ / !
+https://fedoramagazine.org/upgrading-fedora-24-fedora-25/
+https://fedoraproject.org/wiki/DNF_system_upgrade					/ !
+https://forums.fedoraforum.org/showthread.php?308451-Can-I-Find-Broken-Dependencies-with-DNF
+http://dnf.readthedocs.io/en/latest/command_ref.html#upgrade-command-label
+https://possiblelossofprecision.net/?p=885 / rpmnew	, rpmsave
+https://www.redhat.com/archives/rhl-list/2003-December/msg04713.html / rpmnew !
+https://fedoraproject.org/wiki/Vagrant
+https://bugzilla.redhat.com/show_bug.cgi?id=1434107 / System upgrade fails with missing GPG key
+https://help.gnome.org/users/gnome-help/stable/mouse-touchpad-click.html.en
+/ google: gnome no mousepad section, afbeeldingen
+https://ask.fedoraproject.org/en/question/89443/how-to-enable-touchpad-edge-scrolling/?answer=89545#post-id-89545
+https://serverfault.com/questions/48776/why-do-i-have-rpmnew-file-after-an-update
+https://docs.fedoraproject.org/f26/system-administrators-guide/servers/Mail_Servers.html	/ TODO
+
+
+
+https://www.youtube.com/watch?v=kOa_llowQ1c&feature=push-u-sub&attr_tag=rJmM6--a2-ItyAlZ-6 / kubernetes & git !
+
+
+https://docs.docker.com/engine/installation/linux/docker-ce/fedora/#uninstall-old-versions
+
+https://www.youtube.com/watch?v=k9OT-5mYw4k&feature=push-u-sub&attr_tag=BfpJZY6TNcB0gmsp-6	/ openshift & security
+
+https://www.youtube.com/watch?v=uOA392B82qs&feature=push-u-sub&attr_tag=s_KuowemlX-Z2FZX-6 / neocortex for ai
+
+https://www.youtube.com/watch?v=Bs76JDSx1X4&feature=push-u-sub&attr_tag=Us7uF9kQHfxP8ZSg-6 / java & reactive Venkat
+
+https://www.youtube.com/watch?v=3haRIpjp_aQ&feature=push-u-sub&attr_tag=w1wQkumxedHF1x1--6 / erlang
+ 
+https://stackoverflow.com/questions/26371215/how-to-add-compiler-options-in-eclipse-ide
+https://help.eclipse.org/neon/index.jsp?topic=%2Forg.eclipse.cdt.doc.user%2Fgetting_started%2Fcdt_w_newproj.htm / eclipse c++ : create makefile project
+
+https://golang.org/doc/install
+
+https://www.youtube.com/watch?v=PVHDIiqvBaU&feature=push-u-sub&attr_tag=Q-2YX4AdpPREmpR0-6 / cryptography microsoft
+https://safecurves.cr.yp.to/index.html
+
+https://jenkins.io/doc/tutorials/build-a-java-app-with-maven/#fork-sample-repository
+http://localhost:8080/blue/organizations/jenkins/simple-java-maven-app/detail/simple-java-maven-app/4/pipeline/
+https://github.com/ericjvandervelden/simple-java-maven-app
+https://www.atlassian.com/git/tutorials/saving-changes
+https://stackoverflow.com/questions/40310932/git-hub-clone-all-branches-at-once/42172410
+https://git-scm.com/docs/git-merge
+https://stackoverflow.com/questions/7726949/remove-local-branches-no-longer-on-remote
+https://zaiste.net/posts/removing_docker_containers/
+https://docs.docker.com/v1.10/engine/userguide/eng-image/dockerfile_best-practices/#onbuild
+https://docs.docker.com/v1.10/engine/reference/builder/
+https://store.docker.com/images/maven
+https://hackernoon.com/crafting-perfect-java-docker-build-flow-740f71638d63
+https://github.com/carlossg/docker-maven/tree/alpine/jdk-7
+
+
+
+https://www.youtube.com/watch?v=RifZRDuq418&feature=push-u-sub&attr_tag=GGeJLdpSasOyMF89-6	/ work in the future	,
+
+https://www.youtube.com/watch?v=w8fhWq3UhTI&feature=push-u-sub&attr_tag=tzYqZY9siPphWv9z-6	/ the power of simple algorithms: from data	!
+
+/ google: but-1-een, afbeeldingen
+
+https://www.youtube.com/watch?v=spUNpyF58BY / fourier transform, 3blue1brown
+
+https://www.youtube.com/watch?v=_8PKs8k0cmE&feature=push-u-sub&attr_tag=ODO8Aztxjvs6Zvma-6 / tensorflow on mobile
+
+
+
+/ Einde 2018-02-14 OPEN CHROME
+
+/ 2018-02-17 OPEN BASH
+
+$ vi LOG_mysql.txt 	/memcached
+$ vi LOG_docker.txt
+$ vi LOG_jenkins.txt
+
+[root@almond ~]# vim -R -d /usr/lib64/R/etc/Makeconf.rpmsave /usr/lib64/R/etc/Makeconf
+
+[eric@almond simple-java-maven-app]$ pwd
+/home/eric/GitHub/simple-java-maven-app
+[eric@almond simple-java-maven-app]$ ls
+jenkins  Jenkinsfile  pom.xml  README.md  src
+
+[eric@almond second]$ pwd
+/home/eric/Devel/Git/second
+[eric@almond second]$ ls
+another.sh  flakey-deploy.sh  Jenkinsfile1  Jenkinsfile4  root.sh
+child.sh    health-check.sh   Jenkinsfile2  Jenkinsfile5  run-smoke-tests.sh
+deploy.sh   Jenkinsfile       Jenkinsfile3  Jenkinsfile6  sibling.sh
+
+[eric@almond Jenkins]$ pwd 	/ speelt WH geen rol	,
+/home/eric/Devel/Jenkins
+[eric@almond Jenkins]$ docker run -u root --rm -p 8080:8080 -v jenkins-data:/var/jenkins_home -v /var/run/docr.sock:/var/run/docker.sock -v "$HOME":/home jenkinsci/blueocean
+
+[eric@almond locale]$ pwd
+/home/eric/Devel/Docker2/fedora/locale
+[eric@almond locale]$ sudo ls /var/lib/docker/volumes/jenkins-data/_data
+
+[eric@almond dockerfile]$ pwd
+/home/eric/Devel/Docker2/fedora/dockerfile
+
+[eric@almond maven]$ pwd
+/home/eric/Devel/Docker2/maven
+[eric@almond maven]$ docker inspect maven:3-alpine
+[eric@almond maven]$ docker run -it maven:3-alpine --rm bash
+
+[eric@almond scala]$ pwd
+/home/eric/Devel/Eclipse/scala
+[eric@almond scala]$ cp  ./workspace-maven/examples/ch-simple-web/simple-webapp/pom.xml /home/eric/Devel/Jenkins/misc/maven
+
+[eric@almond second]$ pwd
+/home/eric/Devel/Git/sub/second
+
+[eric@almond ch3]$ pwd
+/home/eric/Devel/python/learning/ch3
+[eric@almond ch3]$ python3
+
+[eric@almond work2]$ pwd
+/home/eric/Devel/Golang/work2
+[eric@almond work2]$ go build hello/hello
+
+[eric@almond cpp]$ pwd
+/home/eric/Devel/Eclipse/cpp
+[eric@almond cpp]$ eclipse/eclipse 
+
+[eric@almond Logs]$ /opt/google/chrome/chrome
+
+
+
+/ Einde 2018-02-17 OPEN BASH
+
+/ 2018-03-13 OPEN IN CHROME
+
+https://www.youtube.com/watch?v=rDRa23k70CU / go
+https://www.youtube.com/watch?v=k9Zbuuo51go&feature=push-u-sub&attr_tag=itF_W1rnOCexjDpU-6 / go, Pike	,
+
+https://docs.fedoraproject.org/quick-docs/en-US/creating-windows-virtual-machines-using-virtio-drivers.html
+
+https://www.youtube.com/watch?annotation_id=annotation_3955911457&feature=iv&src_vid=iVpXrbZ4bnU&v=v657Ylwh-_k / ! Quantum Entanglement, Bell Inequality, EPR paradox, Khutoryanski
+https://www.youtube.com/watch?v=iVpXrbZ4bnU	 / Khutoryanski , quantum mech, waves , double slit	,
+https://www.youtube.com/watch?v=e5_V78SWGF0 / ! Quantum Theory Made Easy [1]
+https://www.youtube.com/watch?v=BFrBr8oUVXU
+
+https://www.youtube.com/watch?v=k9Zbuuo51go&feature=push-u-sub&attr_tag=itF_W1rnOCexjDpU-6/ big bang	,
+
+https://www.youtube.com/watch?v=koi54cPRlhQ&feature=push-u-sub&attr_tag=Eh999LP01Feaquw8-6/ hacking	,
+
+
+https://www.youtube.com/watch?v=S8L9qTaEO7Y / Heiko Braun wildfly swarm	,
+http://docs.wildfly-swarm.io/2018.1.0/ / widlfly-swarm docs,
+
+https://access.redhat.com/documentation/en-us/red_hat_jboss_web_server/1.0/html/hibernate_core_reference_guide/querysql-namedqueries
+https://stackoverflow.com/questions/8948872/jpa-hibernate-native-query-for-prepared-statement-slow / !
+https://www.youtube.com/watch?v=W0-3H4_luOA&t=302s	/ jpa and native query, thoughts on Java
+
+http://blog.angularjs.org/
+
+https://www.youtube.com/watch?v=8a7wBLg5Q8U&feature=push-u-sub&attr_tag=gl84pNEk_Euxuv1X-6 / chris bishop	,
+
+https://www.youtube.com/watch?v=gdTd9Djt9gA&feature=push-sd&attr_tag=nI5a_vYhnRya5f0v-6	/ Dogethereum Bridge Live Demo for Judges 
+
+https://fedoraproject.org/wiki/DNF_system_upgrade
+https://fedoramagazine.org/upgrading-fedora-24-fedora-25/
+
+https://brilliant.org/wiki/extended-euclidean-algorithm/#extended-euclidean-algorithm	/ extended eucl algorithm	,
+
+https://www.youtube.com/watch?v=spUNpyF58BY / fourier transform, 3blue1brown	,
+
+https://www.redhat.com/archives/rhl-list/2003-December/msg04713.html / rpmnew, rpmsave
+
+https://github.com/carlossg/docker-maven/tree/alpine
+/ TODO
+https://docs.docker.com/v1.10/engine/reference/builder/	/ alle cmds in Dockerfile	,
+https://docs.docker.com/v1.10/engine/userguide/eng-image/dockerfile_best-practices/#onbuild
+https://github.com/ericjvandervelden/simple-java-maven-app
+
+http://localhost:8080/blue/organizations/jenkins/simple-java-maven-app/detail/simple-java-maven-app/4/pipeline/
+https://jenkins.io/doc/tutorials/build-a-java-app-with-maven/#fork-sample-repository
+
+https://www.youtube.com/watch?v=PVHDIiqvBaU&feature=push-u-sub&attr_tag=Q-2YX4AdpPREmpR0-6	/ Fiat Cryptography: Automatic Correct-by-Construction Generation of Low-Level Cryptographic Code Microsoft	,
+
+https://www.youtube.com/watch?v=kOa_llowQ1c&feature=push-u-sub&attr_tag=rJmM6--a2-ItyAlZ-6 / !!!!!!!!!!! also git	,
+https://github.com/kelseyhightower/kubernetes-the-hard-way
+
+
+
+
+/ Einde 018-03-13 OPEN IN CHROME
+
+/ 20180429 OPEN IN CHROME
+
+/ kubernetes & git !
+https://www.youtube.com/watch?v=kOa_llowQ1c&feature=push-u-sub&attr_tag=rJmM6--a2-ItyAlZ-6
+
+/ wildfly-swarm
+https://www.youtube.com/watch?v=S8L9qTaEO7Y	
+
+/ windows vm in virtio	,
+https://docs.fedoraproject.org/quick-docs/en-US/creating-windows-virtual-machines-using-virtio-drivers.html
+
+/ go channels	,
+https://www.youtube.com/watch?v=rDRa23k70CU
+/ go scale	!	,
+https://www.youtube.com/watch?v=5bYO60-qYOI
+/ go scale	,
+https://www.youtube.com/watch?v=NX0sHF8ZZgw
+/ go gRPC
+https://www.youtube.com/watch?v=J-NTfvYL_OE&t=1670s
+/ GoClipse
+https://github.com/GoClipse/goclipse/blob/latest/documentation/UserGuide.md
+
+
+
+/ quantum mechanics
+https://www.youtube.com/watch?v=e5_V78SWGF0
+
+/ arquillian	,
+https://docs.jboss.org/arquillian/spi/1.0.3.Final/org/jboss/arquillian/container/test/api/RunAsClient.html
+
+/ python	,
+http://book.pythontips.com/en/latest/map_filter.html
+https://docs.python.org/3/library/stdtypes.html#sequence-types-list-tuple-range
+
+/ selinux
+https://www.youtube.com/watch?v=Wv9kwlabdlo
+https://www.youtube.com/watch?v=O8YQVpneH5w part 2
+
+/ erlide
+http://erlide.org/articles/eclipse/120_Installing-and-updating.html
+
+/ swagger
+https://www.youtube.com/watch?v=wC5hxY0RItQ
+
+/ git	,
+https://stackoverflow.com/questions/10312521/how-to-fetch-all-git-branches
+https://stackoverflow.com/questions/10002239/difference-between-git-checkout-track-origin-branch-and-git-checkout-b-branch
+https://stackoverflow.com/questions/4298960/git-add-and-commit-in-one-command
+http://dont-be-afraid-to-commit.readthedocs.io/en/latest/git/commandlinegit.htmlhttps://www.git-tower.com/learn/git/faq/track-remote-upstream-branch
+
+
+
+/ jboss
+https://stackoverflow.com/questions/21042633/jboss-7-classloading-miracles/21096562#21096562
+
+/ misc	,
+http://localhost:8080/simple-webapp/weather.x?zip=01201 / ERRs
+https://unix.stackexchange.com/questions/229188/journalctl-how-to-prevent-text-from-truncating-in-terminal / journalctl -xn | less
+
+/ postgres
+https://stackoverflow.com/questions/49415381/after-upgrade-from-9-4-to-9-6-postgresql-does-not-start-anymore
+/->
+https://fedoraproject.org/wiki/PostgreSQL#Upgrade
+
+/ maven	,
+https://github.com/sonatype/maven-example-en/tree/build
+
+/ crypto	,
+https://crypto.stackexchange.com/questions/2068/complexity-of-arithmetic-in-a-finite-field
+https://en.wikipedia.org/wiki/Jacobi_symbol
+https://en.wikipedia.org/wiki/Cyclic_group
+https://math.stackexchange.com/questions/502089/prove-that-ap-1-2-equiv-1-mod-p-and-ap-1-2-equiv-1-mod-p
+https://www.tecmint.com/ssh-passwordless-login-using-ssh-keygen-in-5-easy-steps/
+
+/ latex	,
+https://www.tug.org/twg/mactex/tutorials/ltxprimer-1.0.pdf
+
+/ statistics
+https://en.wikipedia.org/wiki/Bayes%27_theorem
+
+/ irina shayk
+https://www.youtube.com/watch?v=eaUZOwgOw1c
+
+/ Einde OPEN IN CHROME
+
+/ OPEN IN CHROME 2018 JUNE 
+
+https://stackoverflow.com/questions/2116625/how-to-validate-hibernate-mapping-against-database
+https://stackoverflow.com/questions/11083132/hibernate-manytoone-without-foreign-key?rq=1
+
+http://www.lmfdb.org/Character/Dirichlet/
+
+https://docs.python.org/3/index.html
+Library reference	/ als je iets wilt weten over array, of strings	,
+->
+https://docs.python.org/3/library/functions.html
+
+https://en.wikipedia.org/wiki/Singular-value_decomposition				/ !
+https://en.wikipedia.org/wiki/Categorical_variable
+https://en.wikipedia.org/wiki/Witt_vector
+
+https://stackoverflow.com/questions/9537392/git-fetch-remote-branch	/ !
+
+https://github.com/jbosstm/quickstart
+http://narayana.io/documentation/index.html
+
+http://www.math.uconn.edu/~kconrad/blurbs/galoistheory/perfect.pdf
+http://pari.math.u-bordeaux.fr/lists-index.html
+
+https://www.cprogramming.com/tutorial/unicode.html
+
+https://www.youtube.com/watch?v=kOa_llowQ1c&feature=push-u-sub&attr_tag=rJmM6--a2-ItyAlZ-6
+/ kubernets & git	!!!!!!!!!!!!!!!!
+
+https://www.youtube.com/watch?v=S8L9qTaEO7Y
+“Right Size” your Services with WildFly Swarm by Heiko Braun/Dimitris Andreadis
+
+https://docs.fedoraproject.org/quick-docs/en-US/creating-windows-virtual-machines-using-virtio-drivers.html
+/ virtIO
+
+https://www.youtube.com/watch?v=rDRa23k70CU
+/ Golang	,
+https://www.youtube.com/watch?v=5bYO60-qYOI
+Program your next server in Go
+https://www.youtube.com/watch?v=NX0sHF8ZZgw
+Go Kit
+https://www.youtube.com/watch?v=5bYO60-qYOI&t=342s
+!!!!!!!!!!!!!!
+https://www.youtube.com/watch?v=J-NTfvYL_OE&t=1670s
+gRPC and Go
+https://github.com/GoClipse/goclipse/blob/latest/documentation/UserGuide.md
+Goclipse
+
+http://erlide.org/articles/eclipse/120_Installing-and-updating.html
+erlang ide
+
+https://www.youtube.com/watch?v=e5_V78SWGF0
+/ h/2π
+
+https://docs.jboss.org/arquillian/spi/1.0.3.Final/org/jboss/arquillian/container/test/api/RunAsClient.html
+/ arquillian	,
+
+http://book.pythontips.com/en/latest/map_filter.html
+https://docs.python.org/3/index.html
+	Complete table of contents
+->
+https://docs.python.org/3/contents.html
+
+https://www.youtube.com/watch?v=Wv9kwlabdlo
+Are you listening to what SELinux is telling you?
+
+[eric@almond ch3]$ pwd
+/home/eric/Devel/python/learning/ch3
+[eric@almond ch3]$ python3
+
+[eric@almond foo]$ git remote -v
+origin	git@github.com:ericjvandervelden/foo.git (fetch)
+origin	git@github.com:ericjvandervelden/foo.git (push)
+
+[eric@almond latex]$ pwd
+/home/eric/Documents/latex
+
+eric@almond latex]$ evince ~/Documents/pari-gp/tutorial.pdf 
+
+[eric@almond bin]$ pwd
+/home/eric/Devel/Math/pari-2.9.2-build/bin
+[eric@almond bin]$ gp
+
+[eric@almond simple-parent]$ pwd
+/home/eric/Devel/Eclipse/oxygen-2/workspace-maven0/examples/ch-multi-spring/simple-parent
+
+[eric@almond oxygen-2]$ pwd
+/home/eric/Devel/Eclipse/oxygen-2
+[eric@almond oxygen-2]$ eclipse/eclipse 
+
+[eric@almond work4]$ pwd
+/home/eric/Devel/Golang/work4
+[eric@almond work4]$ go build src/welcome/multiple-results.go 
+
+[eric@almond my]$ pwd
+/home/eric/Devel/C/lapack/my
+[eric@almond my]$ vi dgels.c 
+
+[eric@almond enc]$ pwd
+/home/eric/Devel/C/C/enc
+[eric@almond enc]$ ls
+a.out       convert.c      convert.java  enc3.c  enc.c          enc.txt
+convert2.c  convert.class  enc2.c        enc4.c  enc_latin.txt
+
+[eric@almond jta-1_2-standalone]$ pwd
+/home/eric/Devel/Java/jboss/narayana/quickstart/jta-1_2-standalone
+[eric@almond jta-1_2-standalone]$ mvn clean test
+[eric@almond quickstart]$ pwd
+/home/eric/Devel/Java/jboss/narayana/quickstart
+[eric@almond quickstart]$ less jta-1_2-standalone/pom.xml 
+[eric@almond quickstart]$ find -name *pom* | xargs grep jboss-public-repository-group
+
+
+[eric@almond Jenkins]$ pwd
+/home/eric/Devel/Jenkins
+[eric@almond Jenkins]$ cat pipeline/tour/hello-world/Jenkinsfile 
+[eric@almond workspace]$ pwd
+/home/eric/.jenkins/workspace
+[eric@almond workspace]$ ls fourth_other-FB37YTUQ4JI2K7EMCYHWJCTQAXL3I34BPA57MTGRW6P3ACEISDHQ
+first.sh  Jenkinsfile  second.sh  third.sh
+
+[eric@almond Jenkins]$ sudo systemctl start docker
+[eric@almond Jenkins]$ sudo systemctl enable docker
+[eric@almond Jenkins]$  docker run --rm -ti my/fedora-locale bash
+[eric@almond dockerfile]$ pwd
+/home/eric/Devel/Docker2/fedora/dockerfile
+[eric@almond dockerfile]$ vi Dockerfile 
+[eric@almond dockerfile]$ docker build -t my/fedora-dockerfile .
+[eric@almond dockerfile]$ docker run -ti --rm --entrypoint top my/fedora-dockerfile
+[eric@almond Jenkins]$ pwd
+/home/eric/Devel/Jenkins
+[eric@almond Jenkins]$ java -jar jenkins.war -httpPort=8080
+
+[eric@almond oxygen-2]$ echo $XDG_SESSION_TYPE
+wayland
+[eric@almond oxygen-2]$ psql -Ueric 
+psql: could not connect to server: No such file or directory
+[eric@almond oxygen-2]$ echo $GDMSESSION
+gnome
+[eric@almond oxygen-2]$ loginctl show-session c1 -pType
+Type=wayland
+[eric@almond oxygen-2]$ pwd
+/home/eric/Devel/Eclipse/oxygen-2
+[eric@almond oxygen-2]$ ls
+eclipse           workspace-maven0  workspace-maven2
+thedefiniteguide  workspace-maven1  workspace-wildfly
+
+
+[eric@almond bar]$ pwd
+/home/eric/Devel/Eclipse/oxygen-2/workspace-maven2/bar
+[eric@almond bar]$ git status
+[eric@almond bar]$ dnf list installed readline
+
+
+
+
+
+
+
+
+
+
+
+/ Einde OPEN IN CHROME 2018 JUNE
+
+/ OPEN IN CHROME 2018 NOVEMBER 
+
+https://www.postgresql.org/docs/9.6/queries-table-expressions.html		/ ! joins	,
+https://www.numpy.org/devdocs/user/basics.types.html
+
+https://feeding.cloud.geek.nz/posts/setting-up-centralied-git-repository/	/ setup git repo self	,
+
+https://wireless.wiki.kernel.org/en/users/Drivers/b43
+https://www.tekbyte.net/install-broadcom-wifi-drivers-for-fedora-27/
+https://koji.fedoraproject.org/koji/buildinfo?buildID=922748
+
+
+https://www.thegeekstuff.com/2016/10/jenkins-git-setup/			/ open	,
+http://localhost:8080/job/fifth/configure		/ open	,
+
+https://docs.docker.com/v1.13/
+https://docs.docker.com/engine/examples/postgresql_service/ / dockerize postgres	/ open,
+https://docs.docker.com/config/containers/container-networking/#published-ports	/ -p 8080:80 
+https://github.com/docker-library/postgres/pull/75	/ initdb in Dockerfile
+https://stackoverflow.com/questions/47742146/use-here-document-with-entrypoint-cmd-in-dockerfile
+
+http://www.postgresqltutorial.com/plpgsql-function-returns-a-table/
+https://www.postgresql.org/docs/9.6/static/indexes-intro.html
+https://www.postgresql.org/docs/9.6/static/sql-selectinto.html
+https://wiki.postgresql.org/wiki/Return_more_than_one_row_of_data_from_PL/pgSQL_functions
+https://www.postgresql.org/docs/9.6/static/plpgsql-declarations.html
+https://www.postgresql.org/docs/9.6/static/xfunc-sql.html
+https://www.postgresql.org/docs/9.6/static/queries-with.html
+https://www.postgresql.org/docs/9.6/static/sql-set-constraints.html
+https://begriffs.com/posts/2017-08-27-deferrable-sql-constraints.html
+https://www.postgresql.org/docs/9.6/static/functions-string.html
+https://www.postgresql.org/docs/9.6/static/datatype-numeric.html
+https://postgrespro.com/list/thread-id/1557541 / String literal doesn't autocast to text type
+https://www.postgresql.org/docs/9.6/static/functions-srf.html	/ open, generate_series
+https://stackoverflow.com/questions/22964272/postgresql-get-a-random-datetime-timestamp-between-two-datetime-timestamp / open	,
+https://www.postgresql.org/docs/9.6/static/typeconv-overview.html
+https://postgrespro.com/list/thread-id/1554567	/ convert from hex to string	/ open	,
+/ google: postgresql difference convert encode
+https://www.postgresql.org/docs/9.5/static/sql-createdomain.html
+https://www.postgresql.org/docs/9.6/static/ddl-constraints.html / open	,
+https://www.postgresql.org/docs/9.6/static/datatype-numeric.html
+https://www.postgresql.org/docs/9.6/static/warm-standby.html#STREAMING-REPLICATION
+https://www.postgresql.org/docs/9.6/static/ddl-depend.html
+https://wiki.postgresql.org/wiki/Streaming_Replication / open	,
+https://wiki.postgresql.org/images/a/a8/Udr-pgconf.pdf / downloaded in Documents
+https://pgtap.org/ / test framework for postgres	,	/ open	,
+https://dba.stackexchange.com/questions/81011/transactions-within-a-transaction / savepoints	, / open
+http://bdr-project.org/docs/stable/bdr-concepts.html	/ open	, 2nd quadrant, postgres	,
+
+
+
+
+https://docs.jboss.org/jbossweb/3.0.x/jndi-resources-howto.html
+
+https://www.ssh.com/ssh/keygen/		/ open	,
+
+
+
+
+
+/ Einde OPEN IN CHROME 2018 NOVEMBER 
+
+/ OPEN IN CHROME 2019 FEBRUARI 
+
+https://docs.docker.com/engine/examples/postgresql_service/
+https://stackoverflow.com/questions/28721699/root-password-inside-a-docker-container
+https://github.com/docker-library/postgres/blob/3f585c58df93e93b730c09a13e8904b96fa20c58/9.6/Dockerfile	/ postgres Dockerfile
+https://docs.docker.com/v1.13/engine/examples/running_ssh_service/		/ ! wilde nog doen, bestaat niet meer, TODO 
+https://docs.docker.com/v1.13/engine/tutorials/dockervolumes/		/ bestaat niet meer	,
+https://docs.docker.com/storage/storagedriver/select-storage-driver/#other-considerations	/ overlay TODO
+/ google: dockerfile env run env
+https://medium.com/@mccode/processes-in-containers-should-not-run-as-root-2feae3f0df3b		/ ! lees	, TODO
+https://stackoverflow.com/questions/52468029/dockerfiles-env-does-not-see-other-environment-variables/52468400#52468400	/ ! eigen vraag TODO env in dockerfile	,
+https://github.com/docker-library/postgres/issues/217	/ ! , maar toch niet nodig gehad	,
+
+https://www.postgresql.org/docs/9.6/functions-srf.html		/ generate_series	,
+https://stackoverflow.com/questions/22964272/postgresql-get-a-random-datetime-timestamp-between-two-datetime-timestamp	/ ! lezen we altijd, rij datumtijds	,
+https://postgrespro.com/list/thread-id/1554567	 / hex to string	,
+https://www.postgresql.org/docs/9.6/ddl-constraints.html	/ checks in ddl	,
+https://www.datadoghq.com/blog/100x-faster-postgres-performance-by-changing-1-line/
+https://dba.stackexchange.com/questions/81011/transactions-within-a-transaction	/ ! lees	, TODO
+https://www.dbrnd.com/2016/04/postgresql-how-to-generate-a-random-token-string/
+https://www.postgresql.org/docs/9.6/datatype-binary.html
+https://www.postgresql.org/docs/9.6/functions-string.html
+https://stackoverflow.com/questions/34823158/whats-the-e-before-a-postgres-string
+https://www.postgresql.org/docs/9.6/functions-binarystring.html
+https://stackoverflow.com/questions/53135319/how-to-generate-a-certain-table-on-the-fly-in-a-with-statement/53135581#53135581	/ eigen vraag	,	test=> select * from (values(7),(3))_;
+https://stackoverflow.com/questions/35476033/encoding-and-decoding-in-postgresql
+https://www.postgresql.org/docs/9.3/view-pg-settings.html	/ show all; is OK	,
+https://www.postgresql.org/docs/9.6/sql-syntax-lexical.html		/ unicode	,
+https://www.postgresql.org/docs/9.6/queries-table-expressions.html
+https://stackoverflow.com/questions/42284591/python-pandas-difference-between-timestamps-and-period-range
+https://www.compose.com/articles/postgresql-series-random-with/	/ ! 
+
+
+/ postgres tz	,
+https://stackoverflow.com/questions/6663765/postgres-default-timezone
+https://stackoverflow.com/questions/7065164/how-to-make-an-unaware-datetime-timezone-aware-in-python
+https://docs.python.org/3/library/datetime.html#tzinfo-objects
+http://pytz.sourceforge.net/	/ timezones	,
+https://stackoverflow.com/questions/25264811/pytz-converting-utc-and-timezone-to-local-time
+https://www.postgresql.org/docs/9.6/config-setting.html#CONFIG-SETTING-NAMES-VALUES
+
+/ postgres replication	, 
+https://wiki.postgresql.org/wiki/Streaming_Replication
+http://bdr-project.org/docs/stable/bdr-concepts.html	 / master-master	,
+
+/ 2pc postgres	,
+https://wiki.postgresql.org/wiki/2PC_on_FDW
+https://www.percona.com/blog/2018/08/21/foreign-data-wrappers-postgresql-postgres_fdw/
+
+https://www.ssh.com/ssh/keygen/
+https://help.github.com/articles/checking-for-existing-ssh-keys/
+https://www.ssh.com/ssh/authorized_keys/openssh
+http://www.linuxproblem.org/art_9.html		/ lezen we altijd	,passwordless login	,
+
+https://docs.jboss.org/author/display/WFLY/Command+Line+Interface		/ wildfly cli	,
+https://docs.jboss.org/author/display/WFLY10/Clustering+and+Domain+Setup+Walkthrough
+
+https://jenkins.io/doc/pipeline/tour/hello-world/
+
+https://en.wikipedia.org/wiki/Schur_complement
+
+https://pandas.pydata.org/pandas-docs/stable/getting_started/basics.html
+https://pandas.pydata.org/pandas-docs/stable/user_guide/categorical.html
+https://pandas.pydata.org/pandas-docs/stable/user_guide/advanced.html
+https://stackoverflow.com/questions/48647534/python-pandas-find-difference-between-two-data-frames
+https://docs.scipy.org/doc/numpy-1.14.5/reference/arrays.dtypes.html
+https://docs.scipy.org/doc/numpy-1.14.5/reference/arrays.datetime.html		/ !
+https://pandas.pydata.org/pandas-docs/stable/user_guide/text.html
+https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html
+http://pandas.pydata.org/pandas-docs/version/0.12/timeseries.html
+https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DatetimeIndex.tz_localize.html
+https://stackoverflow.com/questions/42826388/using-time-zone-in-pandas-to-datetime
+
+/ matplotlib	,
+https://en.wikipedia.org/wiki/Hue
+
+/ antwoorden ml boek	,
+https://www.microsoft.com/en-us/research/wp-content/uploads/2016/05/prml-web-sol-2009-09-08.pdf
+
+https://www.baeldung.com/java-future
+https://www.baeldung.com/java-timer-and-timertask
+
+
+http://erlang.org/doc/man/erlang.html#list_to_integer-1
+
+/ Einde OPEN IN CHROME 2019 FEBRUARI 
+
+/ OPEN IN CHROME 2019 FEBRUARI 
+
+/ ml	,
+https://stats.stackexchange.com/questions/345064/bayes-billiard-balls
+https://www.youtube.com/watch?v=eDMGDhyDxuY&t=1773s	/ video over bayesian Kristin Lennox	,
+http://mlg.eng.cam.ac.uk/teaching/4f13/1819/marginal%20likelihood.pdf	/ marginal likelihood	, 
+https://machinelearningmastery.com/classification-versus-regression-in-machine-learning/
+
+/ python	,
+http://www.netlib.org/lapack/lapacke.html#_introduction		/ c interface to lapack	,
+https://stackoverflow.com/questions/1668223/how-to-de-import-a-python-module
+https://www.anaconda.com/download/#linux	/ python's anaconda	, wij hebben miniconda	,
+https://conda.io/projects/conda/en/latest/user-guide/configuration/index.html	/ docs, user guide, configuration	,
+http://pynash.org/2013/03/06/timing-and-profiling/		/ over ipython	,
+https://stackoverflow.com/questions/51600969/no-fortran-order-in-numpy-array#51601170	/ ! eigen vraag	,
+https://stackoverflow.com/questions/51643687/how-to-use-exp-in-integration-function
+https://stackoverflow.com/questions/40857930/how-does-numpy-sum-with-axis-work
+http://docs.astropy.org/en/stable/development/astropy-package-template.html
+https://www.saltycrane.com/blog/2008/01/how-to-use-args-and-kwargs-in-python/	/ ! variable number of args in python	
+https://github.com/ipython/ipython/issues/9834	/ matplotlib inline 
+https://stackoverflow.com/questions/3190122/python-how-to-print-range-a-z
+
+/ jupyter	,
+https://ipython.org/notebook.html	/ jupyter	, ipython	,
+http://localhost:8888/login?next=%2Ftree%2FPythonDataScienceHandbook%2Fnotebooks	/ jupyter setup password	,
+
+/ numpy	,
+https://docs.scipy.org/doc/numpy-1.14.0/reference/arrays.ndarray.html
+https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.random.random.html
+https://docs.scipy.org/doc/numpy-1.13.0/reference/index.html												/ index van numpy	,
+https://docs.scipy.org/doc/numpy-1.14.0/reference/generated/numpy.random.multivariate_normal.html
+https://stackoverflow.com/questions/6252280/find-the-most-frequent-number-in-a-numpy-vector
+https://github.com/numpy/numpy/tree/v1.14.5	/ numpy source code	,
+https://docs.scipy.org/doc/numpy-1.14.1/reference/generated/numpy.dtype.html#numpy.dtype
+https://docs.scipy.org/doc/numpy-1.10.1/reference/generated/numpy.chararray.join.html
+/ google: numpy concatenate boolean arrays
+
+
+/ pandas	,
+https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html
+https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.drop.html
+https://stackoverflow.com/questions/37863660/pandas-dataframe-query-fetch-not-null-rows-pandas-equivalent-to-sql-is-no 
+https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html
+https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.set_index.html
+
+
+
+/ pg	,
+https://www.postgresql.org/docs/current/sql-select.html
+https://www.postgresql.org/docs/9.6/wal-reliability.html
+https://docs.microsoft.com/en-us/sql/relational-databases/logs/the-transaction-log-sql-server?view=sql-server-2017
+https://www.postgresql.org/docs/9.6/logicaldecoding.html
+
+/ pg	, wal
+https://www.postgresql.org/docs/9.6/runtime-config-wal.html	/ 19.5 write ahead log	,
+https://www.postgresql.org/docs/9.6/warm-standby.html		/ 26.2 warm standby or log shipping	, stuurt constant de wal over	, dat is WH wat wij doen?  TODO
+https://www.postgresql.org/docs/9.6/wal-intro.html			/ 30.2 wal	, write ahead logging	,
+https://www.postgresql.org/docs/9.6/wal-async-commit.html	/  30.3 
+https://www.postgresql.org/docs/9.6/wal-configuration.html	/ 30.4	 wal configuration	,
+/ in ch 19 is er ook over wal, replication	, query planning	, en ch 30 is alleen over wal en reliability	,
+https://www.postgresql.org/docs/9.6/pgxlogdump.html	/ pg_xlogdump -- display a human-readable rendering of the write-ahead log of a PostgreSQL database cluster
+https://paquier.xyz/postgresql-2/postgres-9-3-feature-highlight-pg_xlogdump/	 / !
+http://www.interdb.jp/pg/pgsql09.html	 / ! wal	, checkpoints, redopoints	,
+http://www.interdb.jp/pg/pgsql10.html	/ ! base backup, point in time recovery	,
+https://www.opsdash.com/blog/postgresql-backup-restore.html 	/ !
+
+/ pg	, misc	,
+https://blog.2ndquadrant.com/basics-of-tuning-checkpoints/
+https://www.sqlite.org/wal.html
+https://dev.mysql.com/doc/refman/5.7/en/innodb-recovery.html
+http://www.moeding.net/2012/07/postgresql-wal-vs.-oracle-redo-log
+/ google: postgresql how to read write ahead log
+https://www.youtube.com/watch?v=XiH2LzjgWV4	/ ! video over wal	, van die ene man 	, 
+http://oracleinaction.com/checkpoints
+https://playground.tensorflow.org		/ ! 
+https://www.postgresql.org/docs/current/admin.html	/ III server administration	,
+https://fedoraproject.org/wiki/PostgreSQL 	/ ! postgresql-setup upgrade
+https://www.digitalocean.com/community/tutorials/how-to-customize-the-postgresql-prompt-with-psqlrc-on-ubuntu-14-04
+
+
+https://docs.docker.com/v1.13/engine/tutorials/dockervolumes/ 
+https://github.com/docker-library/postgres/blob/36294f464a4253017c4d9e04657d5469556f27f8/9.6/alpine/Dockerfile
+/ of	,
+https://github.com/docker-library/postgres/blob/master/9.6/Dockerfile
+
+https://www.youtube.com/watch?v=ZZNb1NOPTp8	/ oude video van google	,
+https://cloud.google.com/solutions/mobile/mobile-app-backend-services	/ Firebase	,...
+
+https://en.wikipedia.org/wiki/Self-adjoint_operator
+https://en.wikipedia.org/wiki/Percentile
+
+
+/ Einde OPEN IN CHROME 2019 FEBRUARI 
+
+/ OPEN IN CHROME 2019 FEBRUARI 
+
+https://docs.jboss.org/author/display/WFLY10/Clustering+and+Domain+Setup+Walkthrough
+https://docs.jboss.org/author/display/WFLY10/Management+Clients#ManagementClients-ConfigurationFiles
+https://docs.jboss.org/author/display/WFLY10/Domain+Setup
+https://docs.jboss.org/author/display/WFLY10/Class+Loading+in+WildFly
+http://localhost:9990/console/App.html#home
+https://hub.docker.com/r/jboss/wildfly
+
+https://docs.docker.com/engine/reference/builder/#add	/ Dockerfile reference	,
+https://cloud.docker.com/repository/list	/ mijn eigen docker hub repo	,
+https://docs.docker.com/get-started/part4/
+
+https://spring.io/projects/spring-cloud
+
+https://jenkins.io/doc/pipeline/tour/hello-world/
+http://localhost:8080/view/all/job/sixth/configure
+https://github.com/ericjvandervelden/sixth
+
+/ google: fedora docker-machine
+
+/ thorntail
+https://developers.redhat.com/blog/2018/10/17/announcing-thorntail-2-2-general-availability/ / ! launch into openshift	,
+
+https://istio.io/docs/concepts/what-is-istio/
+https://cloud.google.com/istio/
+
+https://medium.com/@2hamed/replicating-postgres-inside-docker-the-how-to-3244dc2305be	/ ! pg master-slave met docker	,
+
+
+/ Einde OPEN IN CHROME 2019 FEBRUARI 
+
+/ 2019-04-05
+
+[eric@almond Logs]$ vi LOG_yaml.txt 
+[eric@almond Logs]$ vi LOG_virtualization.txt 
+[eric@almond Logs]$ vi LOG_python.txt 
+[eric@almond Logs]$ vi LOG_VanderPlas.txt 
+[eric@almond Logs]$ vi LOG_erlang.txt 
+[eric@almond Logs]$ vi LOG_jenkins.txt 
+[eric@almond Logs]$ vi LOG_docker.txt 
+[eric@almond Logs]$ vi LOG_docker2.txt 
+[eric@almond Logs]$ vi LOG_pari.txt 
+[eric@almond Logs]$ vi LOG_wildfly.txt 
+[eric@almond Logs]$ vi LOG_postgresql2.txt
+[eric@almond Logs]$ vi LOG_postgresql.txt 
+[eric@almond Logs]$ vi LOG_eclipse.txt 
+[eric@almond Logs]$ vi LOG_golang.txt 
+[eric@almond Logs]$ vi LOG_postgres3.txt
+[eric@almond Logs]$ less LOG_2_nov_2015.txt 
+
+
+[eric@almond composetest]$ pwd
+/home/eric/Devel/Docker2/compose/composetest
+[eric@almond postgres3a]$ pwd
+/home/eric/Devel/Docker2/fedora/postgres3a
+[eric@almond ping]$ pwd
+/home/eric/Devel/Docker2/fedora/ping
+[eric@almond wildfly]$ pwd
+/home/eric/Devel/Docker2/fedora/wildfly
+[eric@almond part3]$ pwd
+/home/eric/Devel/Docker2/getting-started/part3
+
+/ 13	.
+
+[eric@almond Erlang]$ pwd
+/home/eric/Devel/Erlang
+[eric@almond Erlang]$ erl +pc unicode
+[eric@almond Erlang]$ erl -man erlang
+
+/ 13	. 
+
+[eric@almond ping]$ psql test
+test=> select * from (values(7),(3))_;
+ column1 
+---------
+       7
+       3
+(2 rows)
+
+/ 13	.
+
+[eric@almond latex]$ pwd
+/home/eric/Documents/latex
+[eric@almond latex]$ vi gemeente.tex 
+[eric@almond latex]$ pdflatex LOG_gemeente.tex 
+[eric@almond latex]$ dnf list installed readline
+
+
+/ 13	. 
+
+[eric@almond vanderplas]$ pwd
+/home/eric/Devel/python/vanderplas
+ 1001  find  /home/eric/miniconda3/ -name "*openssl*"
+ 1002* ls ~eric//miniconda3/
+ 1003  find  /home/eric/miniconda3/ -name "*openssl*"
+ 1004  ls ~/miniconda3/pkgs/
+ 1005  find  /home/eric/miniconda3/ -name "*pgi*"
+ 1006  find  /home/eric/miniconda3/ -name "*openssl*"
+[eric@almond vanderplas]$ ls ~eric/miniconda3/lib/python3.6/site-packages/  | grep pgi
+
+/ 13	. 
+
+[eric@almond ch3]$ python3
+Python 3.6.4 (default, Jan 23 2018, 22:25:37) 
+[GCC 7.2.1 20170915 (Red Hat 7.2.1-2)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> help(str)
+
+>>> 'π'.encode
+<built-in method encode of str object at 0x7f976b3ca0d0>
+>>> 'π'.encode()
+b'\xcf\x80'
+>>> str('π'.encode()(
+... 
+KeyboardInterrupt
+>>> str('π'.encode())
+"b'\\xcf\\x80'"
+
+/ 13	. 
+
+[eric@almond Logs]$ ls /lib/firmware/b43-open/
+b0g0bsinitvals5.fw  b0g0initvals5.fw  ucode5.fw
+
+
+
+
+/ Einde 2019-04-05
+
+/ 2019-04-28
+
+/ OPEN IN CHROME
+
+http://localhost:8889/tree?token=5de185caff636c8ae8c04a70ed76d3a844b38b7ec74cb540
+
+https://docs.jboss.org/author/display/WFLY10/Clustering+and+Domain+Setup+Walkthrough
+https://docs.jboss.org/author/display/WFLY10/Management+Clients#ManagementClients-ConfigurationFiles
+https://docs.jboss.org/author/display/WFLY10/Domain+Setup
+https://docs.jboss.org/author/display/WFLY10/Class+Loading+in+WildFly
+
+https://hub.docker.com/r/jboss/wildfly
+https://github.com/docker-library/redis/blob/60db7082c81f5d457046f199244c5d651f04b3fa/5.0/alpine/Dockerfile
+https://docs.docker.com/storage/volumes/
+https://docs.docker.com/compose/compose-file/
+https://docs.docker.com/machine/install-machine/
+https://docs.docker.com/engine/reference/builder/
+https://hub.docker.com/r/ericjvandervelden/getting-started/tags
+
+
+/ docker compose
+https://rominirani.com/docker-tutorial-series-part-8-linking-containers-69a4e5bf50fb 
+https://medium.com/@2hamed/replicating-postgres-inside-docker-the-how-to-3244dc2305be
+https://estl.tech/replication-and-failover-in-postgresql-5ad68704d834
+
+
+
+https://spring.io/projects/spring-cloud
+
+https://jenkins.io/doc/pipeline/tour/hello-world/
+http://localhost:8080/login?from=%2Fview%2Fall%2Fjob%2Fsixth%2Fconfigure
+
+https://github.com/ericjvandervelden/sixth
+
+https://docs.fedoraproject.org/en-US/quick-docs/getting-started-with-virtualization/
+
+https://www.postgresql.org/docs/11/wal-configuration.html
+https://wiki.postgresql.org/wiki/PostgreSQL_for_Oracle_DBAs
+https://stackoverflow.com/questions/36291676/query-transaction-log-in-postgresql
+https://work.tinou.com/2012/09/write-ahead-log.html
+https://work.tinou.com/2012/03/log-structured-file-system-for-dummies.html
+https://www.postgresql.org/docs/7.1/wal-configuration.html
+http://cxc.harvard.edu/mta_days/mta_db/pgsql/doc/html/wal-configuration.html
+https://www.postgresql.org/docs/9.6/auth-methods.html
+https://www.postgresql.org/docs/10/warm-standby.html
+https://www.postgresql.org/docs/9.5/mvcc-intro.html
+https://www.postgresql.org/docs/9.6/functions-srf.html	 / generate_series	,
+https://dba.stackexchange.com/questions/212418/how-to-set-up-failover-in-postgres-9-6	/ pg_basebackup, pg_rewind, rsync	,
+https://www.postgresql.org/docs/9.6/runtime-config-wal.html	/ wal	,
+https://dba.stackexchange.com/questions/185502/postgresql-checkpoint-log-explained
+https://www.postgresql.org/docs/11/wal-configuration.html		/ checkpoints	 / !
+https://www.postgresql.org/docs/11/continuous-archiving.html		/ point in time recovery	,
+https://www.postgresql.org/docs/devel/supported-platforms.html
+
+
+http://www.interdb.jp/pg/pgsql09.html#_9.7. 		/ !
+http://www.interdb.jp/pg/pgsql05.html#_5.4.3. / !
+https://www.opsdash.com/blog/postgresql-wal-archiving-backup.html	/ !
+
+https://wiki.postgresql.org/wiki/2PC_on_FDW
+https://www.postgresql.org/docs/9.5/postgres-fdw.html
+https://www.postgresql.org/docs/9.5/logicaldecoding-explanation.html
+https://www.postgresql.org/docs/11/logicaldecoding-example.html
+
+
+http://try.redis.io/
+https://redis.io/commands/INCR
+https://redis.io/topics/rediscli
+http://localhost:5000/	/ docker app	,
+
+https://stackoverflow.com/questions/55107803/hibernate-onetomany-error-while-adding-second-record
+
+https://activemq.apache.org/components/artemis/
+https://github.com/apache/activemq-artemis
+
+/ Einde OPEN IN CHROME
+
+/ OPEN IN BASH
+
+[eric@almond vanderplas]$ pwd
+/home/eric/Devel/python/vanderplas
+[eric@almond vanderplas]$ ipython
+[eric@almond vanderplas]$ jupyter notebook	/ vindt notebooks in deze dir	, /home/eric/Devel/python/vanderplas	,
+
+[eric@almond handson-ml]$ pwd
+/home/eric/Devel/python/geron/handson-ml
+[eric@almond handson-ml]$  jupyter notebook
+
+[eric@almond fifth]$ pwd
+/home/eric/Devel/Git/fifth
+[eric@almond fifth]$ git remote show origin
+
+[eric@almond Jenkins]$ pwd
+/home/eric/Devel/Jenkins
+[eric@almond Jenkins]$ java -jar jenkins.war -httpPort=8080
+
+/ in ipython	,
+In [2048]: yaml.load("""
+      ...: version: 3
+      ...: services:
+      ...:   web:
+      ...:     build: .
+      ...:     ports:
+      ...:      - 
+      ...:       5000:5000
+      ...:   redis:
+      ...:     image: 
+      ...:         redis:alpine
+      ...: """)
+Out[2048]: 
+{'version': 3,
+ 'services': {'web': {'build': '.', 'ports': ['5000:5000']},
+  'redis': {'image': 'redis:alpine'}}}
+
+
+
+
+
+/ Einde OPEN IN BASH
+
+/ Einde 2019-04-28
+
+
+
+
+
+
+
+

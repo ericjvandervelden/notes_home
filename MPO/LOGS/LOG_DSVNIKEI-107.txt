@@ -1,0 +1,1610 @@
+/ See PATCH ERRORS
+
+/ See DEBUG DATABASEPATCHER
+/ 	See EVENTUAL ERRORS WITH PATCHES
+/ 	See UPDATE PATCHES IN DATABASE FINAL
+/ 	See AGAIN AFTER REPAIR
+
+/ See FIX
+
+
+
+/ 7	. 
+
+$ vi application.properties
+base.product=dsvcts
+
+$ vi dsvcts-build-config.properties
+...
+module.carconclient.component=module 						/ NB. Geen space achter deze lines	, 
+module.omscarcon.component=module 
+
+/ 7	. 
+
+/ Lees email	, 
+https://mail.google.com/mail/u/0/#search/from+%3A+michiel.hendriks%40mp-objects.com/159cb7635caa196e
+
+/ we rm files to ~/tmp/dsvcts/deploy
+
+[eric@localhost deploy]$ mv ejb-deployer.xml bsh-deployer.xml cache-invalidation-service.xml client-deployer-service.xml ear-deployer.xml hsqldb-ds.xml http-invoker.sar/ jboss-aop.deployer/ jboss-bean.deployer/ jboss-ha-local-jdbc.rar jboss-ha-xa-jdbc.rar jbossws14.sar/ jms/ jmx-invoker-service.xml jsr88-service.xml management/ mail-ra.rar mail-service.xml monitoring-service.xml properties-service.xml sqlexception-service.xml uuid-key-generator.sar/ ~/tmp/dsvcts/deploy/
+
+[eric@localhost deploy]$ cp -a ~/Downloads/ejb-deployer.xml .
+
+[eric@localhost deploy]$ ls -1
+dsvcts-schedule-service.xml
+ejb-deployer.xml
+jbossjca-service.xml
+jboss-local-jdbc.rar
+jbossweb-tomcat55.sar
+jboss-xa-jdbc.rar
+jmx-console.war
+mpo-management.sar
+postgres-ds.xml
+tms.jar
+tms.war
+
+/ PATCH ERRORS
+
+/ 7	. 
+
+$ vi postgres-ds.xml
+...
+
+/ we build de inst	, 
+
+/ we start de inst	, 
+
+2017-04-10 16:27:05,904 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [omscarcon/patch-001-responsexrule.sql]: 
+2017-04-10 16:27:05,904 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) create table CARCON_RESPONSE_XRULE (
+        SYSTEM_ID int not null primary key,
+        ORGANIZATION_SYSTEMID int not null references ORGANIZATION(SYSTEM_ID),
+        CONTEXT varchar(64) not null,
+        SOURCE_EXPR varchar(512) character set utf8,
+        TARGET_EXPR varchar(512) character set utf8,
+        MATCH_EXPR varchar(512) character set utf8
+)
+2017-04-10 16:27:05,904 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERROR: type "pg_catalog.varchar_utf8" does not exist
+  Position: 195
+
+/ 13	.  
+
+https://dev.mysql.com/doc/refman/5.7/en/charset-column.html
+
+CREATE TABLE t1
+(
+    col1 VARCHAR(5)
+      CHARACTER SET latin1
+      COLLATE latin1_german1_ci
+);
+
+ALTER TABLE t1 MODIFY
+    col1 VARCHAR(5)
+      CHARACTER SET latin1
+      COLLATE latin1_swedish_ci;
+
+/ Lees	, 
+https://dev.mysql.com/doc/refman/5.7/en/adding-collation.html
+A collation is a set of rules that defines how to compare and sort character strings. Each collation in MySQL belongs to a single character set. Every character set has at least one collation, and most have two or more collations.
+
+dsvcts=# show LC_COLLATE;
+ lc_collate  
+-------------
+ en_US.UTF-8
+(1 row)
+dsvcts=# show LC_CTYPE;
+  lc_ctype   
+-------------
+ en_US.UTF-8
+(1 row)
+
+/ 13	. 
+
+dsvcts=# select current_user;
+ current_user 
+--------------
+ mpopostgres
+(1 row)
+
+dsvcts=# \du
+                              List of roles
+  Role name  |                   Attributes                   | Member of 
+-------------+------------------------------------------------+-----------
+ mpopostgres | Superuser, Create DB                           | {}
+ postgres    | Superuser, Create role, Create DB, Replication | {}
+
+/ 7	 
+
+
+13:38:38,461 ERROR [DataBasePatcher] Problem while executing SQL statement in patch [omscarcon/patch-002-ccrespxrule-seq.sql]: 
+13:38:38,461 ERROR [DataBasePatcher] alter table CARCON_RESPONSE_XRULE add SEQUENCE_NR int default 0 not null
+13:38:38,461 ERROR [DataBasePatcher] org.postgresql.util.PSQLException: ERROR: relation "carcon_response_xrule" does not exist
+
+/ Einde PATCH ERRORS
+
+
+/ DEBUG DATABASEPATCHER
+
+/ we hebben 
+./module/omscarcon/src/sql/patch/patch-001-responsexrule.sql
+/ rename to
+./module/omscarcon/src/sql/patch/patch-001-responsexrule$firebird.sql
+/en created	, 
+./module/omscarcon/src/sql/patch/patch-001-responsexrule$postgresql.sql
+
+/ we hebben de appl opnieuw build	, in de inst zien we	,
+[eric@localhost dsvcts]$ ls -1 deploy/tms.war/omscarcon/patch/
+patch-001-responsexrule$firebird.sql
+patch-001-responsexrule$postgresql.sql
+patch-002-ccrespxrule-seq.sql
+
+/ we hebben in de mpo_scs_patch table patch-001-responsexrule.sql op SKIPPED set	, 
+
+/ Als we we appl opnieuw start	, dan zien 	we	, 
+
+2017-04-11 13:38:38,415 INFO  [com.mpobjects.dbpatch.DataBasePatcher] (main:) Searching patches for module [omscarcon] ... 
+2017-04-11 13:38:38,419 DEBUG [com.mpobjects.dbpatch.DataBasePatcher] (main:) Found patch file which is more specific [/home/eric/Deve
+l/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/omscarcon/patch/patch-001-responsexrule$firebird.sql], but generic patch [oms
+carcon/patch-001-responsexrule.sql] is already applied, skipping patch
+2017-04-11 13:38:38,421 DEBUG [com.mpobjects.dbpatch.DataBasePatcher] (main:) Found patch file which is more specific [/home/eric/Deve
+l/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/omscarcon/patch/patch-001-responsexrule$postgresql.sql], but generic patch [o
+mscarcon/patch-001-responsexrule.sql] is already applied, skipping patch
+
+/ start dsvcts	, 
+/s
+/ stack	,
+	Thread [main] (Suspended (breakpoint at line 76 in DataBasePatcher))	
+		DataBasePatcher.<init>() line: 76	
+		DatabasePatchService.startPatchProcess(File) line: 50	
+		DatabasePatchService.beforeWarDeployment(File) line: 23	
+		DatabasePatchService(AbstractListenerServiceMBeanSupport).handleNotification2(Notification, Object) line: 34	
+		DatabasePatchService(ListenerServiceMBeanSupport).handleNotification(Notification, Object) line: 403	
+		GeneratedMethodAccessor8.invoke(Object, Object[]) line: not available	
+		DelegatingMethodAccessorImpl.__invoke(Object, Object[]) line: 43	
+		DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+		DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+		Method.invoke(Object, Object...) line: 606	
+		NotificationListenerProxy.invoke(Object, Method, Object[]) line: 153	
+		$Proxy26.handleNotification(Notification, Object) line: not available	
+		WebModule(JBossNotificationBroadcasterSupport).handleNotification(NotificationListener, Notification, Object) line: 127	
+		WebModule(JBossNotificationBroadcasterSupport).sendNotification(Notification) line: 108	
+		WebModule(ServiceMBeanSupport).sendStateChangeNotification(int, int, String, Throwable) line: 519	
+		WebModule(ServiceMBeanSupport).jbossInternalStart() line: 284	
+		WebModule(ServiceMBeanSupport).jbossInternalLifecycle(String) line: 245	
+		GeneratedMethodAccessor7.invoke(Object, Object[]) line: not available	
+		DelegatingMethodAccessorImpl.__invoke(Object, Object[]) line: 43	
+		DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+		DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+		Method.invoke(Object, Object...) line: 606	
+		ReflectedDispatcher.invoke(Invocation) line: 155	
+		Invocation.dispatch() line: 94	
+		Invocation.invoke() line: 86	
+		XMBean(AbstractMBeanInvoker).invoke(String, Object[], String[]) line: 264	
+		MBeanServerImpl.invoke(ObjectName, String, Object[], String[]) line: 659	
+		ServiceController$ServiceProxy.invoke(Object, Method, Object[]) line: 978	
+		$Proxy3.start() line: not available	
+		ServiceController.start(ObjectName) line: 417	
+		GeneratedMethodAccessor13.invoke(Object, Object[]) line: not available	
+		DelegatingMethodAccessorImpl.__invoke(Object, Object[]) line: 43	
+		DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+		DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+		Method.invoke(Object, Object...) line: 606	
+		ReflectedDispatcher.invoke(Invocation) line: 155	
+		Invocation.dispatch() line: 94	
+		Invocation.invoke() line: 86	
+		XMBean(AbstractMBeanInvoker).invoke(String, Object[], String[]) line: 264	
+		MBeanServerImpl.invoke(ObjectName, String, Object[], String[]) line: 659	
+		MBeanProxyExt.invoke(Object, Method, Object[]) line: 210	
+		$Proxy33.start(ObjectName) line: not available	
+		Tomcat5(AbstractWebContainer).start(DeploymentInfo) line: 466	
+		NativeMethodAccessorImpl.invoke0(Method, Object, Object[]) line: not available [native method]	
+		NativeMethodAccessorImpl.invoke(Object, Object[]) line: 57	
+		DelegatingMethodAccessorImpl.__invoke(Object, Object[]) line: 43	
+		DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+		DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+		Method.invoke(Object, Object...) line: 606	
+		ReflectedDispatcher.invoke(Invocation) line: 155	
+		Invocation.dispatch() line: 94	
+		NullInterceptor(AbstractInterceptor).invoke(Invocation) line: 133	
+		Invocation.invoke() line: 88	
+		ModelMBeanOperationInterceptor.invoke(Invocation) line: 142	
+		DynamicInterceptor.invoke(Invocation) line: 97	
+		Invocation.invoke() line: 88	
+		XMBean(AbstractMBeanInvoker).invoke(String, Object[], String[]) line: 264	
+		MBeanServerImpl.invoke(ObjectName, String, Object[], String[]) line: 659	
+		MBeanProxyExt.invoke(Object, Method, Object[]) line: 210	
+		$Proxy34.start(DeploymentInfo) line: not available	
+		MainDeployer.start(DeploymentInfo) line: 1025	
+		MainDeployer.deploy(DeploymentInfo) line: 819	
+		MainDeployer.deploy(URL) line: 782	
+		NativeMethodAccessorImpl.invoke0(Method, Object, Object[]) line: not available [native method]	
+		NativeMethodAccessorImpl.invoke(Object, Object[]) line: 57	
+		DelegatingMethodAccessorImpl.__invoke(Object, Object[]) line: 43	
+		DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+		DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+		Method.invoke(Object, Object...) line: 606	
+		ReflectedDispatcher.invoke(Invocation) line: 155	
+		Invocation.dispatch() line: 94	
+		NullInterceptor(AbstractInterceptor).invoke(Invocation) line: 133	
+		Invocation.invoke() line: 88	
+		ModelMBeanOperationInterceptor.invoke(Invocation) line: 142	
+		Invocation.invoke() line: 88	
+		XMBean(AbstractMBeanInvoker).invoke(String, Object[], String[]) line: 264	
+		MBeanServerImpl.invoke(ObjectName, String, Object[], String[]) line: 659	
+		MBeanProxyExt.invoke(Object, Method, Object[]) line: 210	
+		$Proxy13.deploy(URL) line: not available	
+		URLDeploymentScanner.deploy(URLDeploymentScanner$DeployedURL) line: 421	
+		URLDeploymentScanner.scan() line: 634	
+		AbstractDeploymentScanner$ScannerThread.doScan() line: 263	
+		URLDeploymentScanner(AbstractDeploymentScanner).startService() line: 336	
+		URLDeploymentScanner(ServiceMBeanSupport).jbossInternalStart() line: 289	
+		URLDeploymentScanner(ServiceMBeanSupport).jbossInternalLifecycle(String) line: 245	
+		GeneratedMethodAccessor7.invoke(Object, Object[]) line: not available	
+		DelegatingMethodAccessorImpl.__invoke(Object, Object[]) line: 43	
+		DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+		DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+		Method.invoke(Object, Object...) line: 606	
+		ReflectedDispatcher.invoke(Invocation) line: 155	
+		Invocation.dispatch() line: 94	
+		Invocation.invoke() line: 86	
+		XMBean(AbstractMBeanInvoker).invoke(String, Object[], String[]) line: 264	
+		MBeanServerImpl.invoke(ObjectName, String, Object[], String[]) line: 659	
+		ServiceController$ServiceProxy.invoke(Object, Method, Object[]) line: 978	
+		$Proxy3.start() line: not available	
+		ServiceController.start(ObjectName) line: 417	
+		GeneratedMethodAccessor13.invoke(Object, Object[]) line: not available	
+		DelegatingMethodAccessorImpl.__invoke(Object, Object[]) line: 43	
+		DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+		DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+		Method.invoke(Object, Object...) line: 606	
+		ReflectedDispatcher.invoke(Invocation) line: 155	
+		Invocation.dispatch() line: 94	
+		Invocation.invoke() line: 86	
+		XMBean(AbstractMBeanInvoker).invoke(String, Object[], String[]) line: 264	
+		MBeanServerImpl.invoke(ObjectName, String, Object[], String[]) line: 659	
+		MBeanProxyExt.invoke(Object, Method, Object[]) line: 210	
+		$Proxy8.start(ObjectName) line: not available	
+		SARDeployer.start(DeploymentInfo) line: 302	
+		MainDeployer.start(DeploymentInfo) line: 1025	
+		MainDeployer.deploy(DeploymentInfo) line: 819	
+		MainDeployer.deploy(URL) line: 782	
+		MainDeployer.deploy(String) line: 766	
+		NativeMethodAccessorImpl.invoke0(Method, Object, Object[]) line: not available [native method]	
+		NativeMethodAccessorImpl.invoke(Object, Object[]) line: 57	
+		DelegatingMethodAccessorImpl.__invoke(Object, Object[]) line: 43	
+		DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+		DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+		Method.invoke(Object, Object...) line: 606	
+		ReflectedDispatcher.invoke(Invocation) line: 155	
+		Invocation.dispatch() line: 94	
+		NullInterceptor(AbstractInterceptor).invoke(Invocation) line: 133	
+		Invocation.invoke() line: 88	
+		ModelMBeanOperationInterceptor.invoke(Invocation) line: 142	
+		Invocation.invoke() line: 88	
+		XMBean(AbstractMBeanInvoker).invoke(String, Object[], String[]) line: 264	
+		MBeanServerImpl.invoke(ObjectName, String, Object[], String[]) line: 659	
+		MBeanProxyExt.invoke(Object, Method, Object[]) line: 210	
+		$Proxy9.deploy(String) line: not available	
+		ServerImpl.doStart() line: 482	
+		ServerImpl.start() line: 362	
+		Main.boot(String[]) line: 200	
+		Main$1.run() line: 490	
+		Thread.run() line: 745	
+/debug	, 
+/s
+public class DataBasePatcher {
+	DataBasePatcher() throws Exception {
+		initDataSource();
+		checkAndCreatePatchTable();	/ checks of mpo_scs_table er is	, 
+	}
+/t
+DatabasePatchService.startPatchProcess(File) line: 51	
+			DataBasePatcher myPatcher = new DataBasePatcher();
+/d
+			myPatcher.patch(aWar);
+aWar	File  (id=7690)	/ /home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war
+
+/ Intermezzo
+
+/ is een dir	, 
+
+[eric@localhost dsvcts]$ ls deploy/tms.war/
+authentication/     document/           generated/          menu.xml            optimize/           systemlog/
+carconclient/       dsvcts/             interfacing/        module-order.txt    ratecalc/           tax/
+core/               emailnot/           invoice/            mpolookandfeel2016/ readme.txt          tracking/
+customerinvoice/    event/              lookandfeel/        oms/                scannerinterface/   WEB-INF/
+dataexport/         extracking/         menu-app.xml        omscarcon/          sitemap.xmap        
+[eric@localhost dsvcts]$ ls deploy/tms.war/WEB-INF/
+applicationContext.xml  cocoon.xconf            jboss-web.xml           logkit.xconf            tld/
+classes/                entities/               lib/                    tags/                   web.xml
+
+[localhost dsvcts]$ ls deploy/tms.war/omscarcon/patch/
+patch-001-responsexrule$firebird.sql  patch-001-responsexrule$postgresql.sql  patch-002-ccrespxrule-seq.sql
+[eric@localhost dsvcts]$ ls -1 deploy/tms.war/omscarcon/patch/
+patch-001-responsexrule$firebird.sql
+patch-001-responsexrule$postgresql.sql
+patch-002-ccrespxrule-seq.sql
+
+/ Einde Intermezzo
+
+/s
+DataBasePatcher.patch(File) line: 92	
+		warDir = aWarDir;
+		dao = new PatchDAO(dataSource);
+/s
+PatchDAO.<init>(DataSource) line: 31	
+		dataSource = aDataSource;
+		setLastSystemId();
+/s
+PatchDAO.setLastSystemId() line: 204	
+			myConnection = dataSource.getConnection();
+			Statement myStatement = myConnection.createStatement();
+			ResultSet mySet = myStatement.executeQuery("select max(system_id) from mpo_scs_patch");
+			if (mySet.next()) {
+				lastSystemId = mySet.getInt(1);
+1312
+/t
+DataBasePatcher.patch(File) line: 94	
+		dao = new PatchDAO(dataSource);
+		updatePatchTable();
+/s
+DataBasePatcher.updatePatchTable() line: 290	
+		} else {
+			initializing = false;
+		File[] files = warDir.listFiles();
+/ Dat zijn deze	, 
+[eric@localhost tms.war]$ ls -1
+authentication
+carconclient
+core
+customerinvoice
+dataexport
+document
+dsvcts
+emailnot
+event
+extracking
+generated
+interfacing
+invoice
+lookandfeel
+menu-app.xml
+menu.xml
+module-order.txt			<- generated	, 
+mpolookandfeel2016
+oms
+omscarcon
+optimize
+ratecalc
+readme.txt
+scannerinterface
+sitemap.xmap
+systemlog
+tax
+tracking
+WEB-INF
+
+		for (File myChild : files) {
+			if (myChild.getName().equalsIgnoreCase("module-order.txt")) {
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/module-order.txt
+				myModuleOrder = myChild;
+
+			if (".".equals(myChild.getName()) || "..".equals(myChild.getName()) || "web-inf".equalsIgnoreCase(myChild.getName()) || !myChild.isDirectory()) {
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/readme.txt
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/menu-app.xml
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/menu.xml
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/sitemap.xmap
+			}
+			myModuleDirs.put(myChild.getName().toLowerCase(), myChild);
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/dataexport
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/emailnot
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/optimize
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/extracking
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/authentication
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/generated
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/event
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/lookandfeel
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/oms
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/interfacing
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/tax
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/document
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/mpolookandfeel2016
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/systemlog
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/scannerinterface
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/ratecalc
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/carconclient
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/core
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/invoice
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/tracking
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/customerinvoice
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/omscarcon
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/dsvcts
+
+		} else {
+			BufferedReader myReader = new BufferedReader(new FileReader(myModuleOrder));
+			String myLine = myReader.readLine();
+				} else {
+					File myModule = myModuleDirs.get(myLine.toLowerCase()); 
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/core		/ heeft GEEN patch/	, 
+					} else {
+						updatePatchTableForModule(myModule);
+/s
+DataBasePatcher.updatePatchTableForModule(File) line: 340	
+/t
+DataBasePatcher.updatePatchTable() line: 320	
+		} else {
+			BufferedReader myReader = new BufferedReader(new FileReader(myModuleOrder));
+			while (true) {
+				String myLine = myReader.readLine();
+				} else {
+					File myModule = myModuleDirs.get(myLine.toLowerCase());
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/authentication
+					} else {
+						updatePatchTableForModule(myModule);
+
+[eric@localhost tms.war]$ ls authentication/
+authentication-sitemap.xmap  images  jsp  patch  xsp
+[eric@localhost tms.war]$ ls authentication/patch/
+patch-001.sql
+
+/s
+DataBasePatcher.updatePatchTableForModule(File) line: 340	
+		String myModule = aModule.getName();
+		for (File myChild : aModule.listFiles()) {
+			if ("patch".equalsIgnoreCase(myChild.getName())) {
+/j
+				File[] myPatchFiles = myChild.listFiles(new FileFilter() {
+					@Override
+					public boolean accept(File aFile) {
+						return aFile.getName().toLowerCase().endsWith(".sql");
+					}
+				});
+[/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/authentication/patch/patch-001.sql]
+				for (File myPatchFile : myPatchFiles) {
+
+					// This gets either the db specific patch or the generic entry.
+					Patch myPatch = dao.get(myModule, myPatchFile.getName());
+/s
+PatchDAO.get(String, String) line: 46	
+aModule	"authentication" (id=7439)	
+aName	"patch-001.sql" (id=7465)	
+
+		String myGenericName = aName.toLowerCase();
+		String mySpecificName = aName.toLowerCase();
+
+///////////////////////////////////////////////////////////
+/ Zoek altijd naar een generic en naar specifics	,
+		if (aName.indexOf("$") > 0) {				/ zoek in db ook naar de general, en deze specific	, 
+/n
+			myGenericName = mySpecificName.substring(0, mySpecificName.indexOf("$")) + ".sql";
+/n
+		} else {																					/ zoek in db ook naar alle specifics
+			mySpecificName = mySpecificName.substring(0, mySpecificName.indexOf(".sql")) + "$%.sql";
+patch-001$%.sql
+		Connection myConnection = null;
+		try {
+			myConnection = dataSource.getConnection();
+			myConnection.setAutoCommit(false);
+			StringBuffer mySql = new StringBuffer();
+			mySql.append("select * from mpo_scs_patch ");
+			mySql.append("where module = ? and ");
+			mySql.append("(lower(name) = ? or lower(name) like ?)");
+select * from mpo_scs_patch where module = ? and (lower(name) = ? or lower(name) like ?)
+
+			PreparedStatement myStatement = myConnection.prepareStatement(mySql.toString());
+			myStatement.setString(1, aModule);
+			myStatement.setString(2, myGenericName);
+			myStatement.setString(3, mySpecificName);
+			ResultSet mySet = myStatement.executeQuery();
+
+/ we zien in de postgres log	, 
+LOG:  execute <unnamed>: select * from mpo_scs_patch where module = $1 and (lower(name) = $2 or lower(name) like $3)	/ zoek naar de general en de specifics	,
+DETAIL:  parameters: $1 = 'authentication', $2 = 'patch-001.sql', $3 = 'patch-001$%.sql'
+/=
+select * from mpo_scs_patch where module = 'authentication' and (lower(name) = 'patch-001.sql' or lower(name) like 'patch-001$%.sql')
+
+			List<Patch> myList = resultSetToList(mySet);
+[authentication/patch-001.sql]
+			if (!myList.isEmpty()) {
+				return myList.get(0);
+/t
+DataBasePatcher.updatePatchTableForModule(File) line: 359	
+					Patch myPatch = dao.get(myModule, myPatchFile.getName());
+/d
+authentication/patch-001.sql
+					if (myPatch == null) {
+/n
+					} else {
+						boolean myNewPatchIsDbSpecific = myPatchFile.getName().contains("$");
+/n
+						boolean myExisitingPatchIsDbSpecific = myPatch.getName().contains("$");
+/n
+						if (myPatch.getStatus().equals(PatchStatus.NOT_APPLIED) || myPatch.getStatus().equals(PatchStatus.FAILED)) {
+/n
+						} else {
+							if (myNewPatchIsDbSpecific && !myExisitingPatchIsDbSpecific) {
+/n
+								LOG.debug("Found patch file which is more specific [" + myPatchFile + "], but generic patch [" + myPatch
+										+ "] is already applied, skipping patch");
+							} else {
+/j
+								LOG.debug("Skipping patch [" + myPatchFile + "], status is " + myPatch.getStatus());	/ VAAK	,
+
+
+/ Intermezzo
+
+				for (File myPatchFile : myPatchFiles) {						/ in fs	,
+					Patch myPatch = dao.get(myModule, myPatchFile.getName());	/ in db ?
+					if (myPatch == null) { / insert in db	,
+					} else {
+						boolean myNewPatchIsDbSpecific = myPatchFile.getName().contains("$");		/ fs
+						boolean myExisitingPatchIsDbSpecific = myPatch.getName().contains("$");	/ db
+
+						if (myExisitingPatchIsDbSpecific && !myNewPatchIsDbSpecific) {	/  ERR, run ant task clean-patch-files 
+						if (myPatch.getStatus().equals(PatchStatus.NOT_APPLIED) || myPatch.getStatus().equals(PatchStatus.FAILED)) {	/ set NOT_APPLIED
+							if (myNewPatchIsDbSpecific && !myExisitingPatchIsDbSpecific) {	/ db specific is applied	,
+							} else {	/ is reapplied
+						} else {
+							if (myNewPatchIsDbSpecific && !myExisitingPatchIsDbSpecific) {	/ generic is al applied	, skip	, want dat is OK	, als 
+							} else {			/ skip 	/ VAAK	,
+
+/ Einde Intermezzo
+
+/c
+				for (File myPatchFile : myPatchFiles) {
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/oms/patch/patch-509-rangeprefixorganizationrangeparty$firebird.sql
+
+					// This gets either the db specific patch or the generic entry.
+					Patch myPatch = dao.get(myModule, myPatchFile.getName());	/ zoek naar deze specific en de general	, 
+oms/patch-509-rangeprefixorganizationrangeparty.sql
+
+/we zien	, 
+LOG:  execute <unnamed>: select * from mpo_scs_patch where module = $1 and (lower(name) = $2 or lower(name) like $3)
+DETAIL:  parameters: $1 = 'oms', $2 = 'patch-509-rangeprefixorganizationrangeparty.sql', $3 = 'patch-509-rangeprefixorganizationrangeparty$firebird.sql'
+/ dus	, 
+select * 
+from mpo_scs_patch 
+where module = 'oms' 
+and (lower(name) = 'patch-509-rangeprefixorganizationrangeparty.sql' or lower(name) like 'patch-509-rangeprefixorganizationrangeparty$firebird.sql')
+;
+/ er is alleen de general patch-509-rangeprefixorganizationrangeparty.sql	, 
+
+					if (myPatch == null) {
+/n
+/ Dus gaat NIET insert de specific firebird patch
+/ TODO
+					} else {
+						boolean myNewPatchIsDbSpecific = myPatchFile.getName().contains("$");	
+true
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/oms/patch/patch-509-rangeprefixorganizationrangeparty$firebird.sql
+						boolean myExisitingPatchIsDbSpecific = myPatch.getName().contains("$");
+false
+						if (myExisitingPatchIsDbSpecific && !myNewPatchIsDbSpecific) {	/ in db is specific en in fs general	, is ERR	,
+/n 
+						if (myPatch.getStatus().equals(PatchStatus.NOT_APPLIED) || myPatch.getStatus().equals(PatchStatus.FAILED)) {
+/n
+						} else {
+							if (myNewPatchIsDbSpecific && !myExisitingPatchIsDbSpecific) {
+/j
+397:							LOG.debug("Found patch file which is more specific [" + myPatchFile + "], but generic patch [" + myPatch
+										+ "] is already applied, skipping patch");
+
+
+/ 7	. 
+
+/ EVENTUAL ERRORS WITH PATCHES
+
+/ 13	. 
+
+/ overbodige specific patchfiles	, 
+./oms/patch/patch-509-rangeprefixorganizationrangeparty$postgresql.sql
+./oms/patch/patch-509-rangeprefixorganizationrangeparty$firebird.sql
+/ ze zijn hetzelfde	, 
+
+/s
+DataBasePatcher.updatePatchTableForModule(File) line: 397	
+
+[eric@localhost tms.war]$ find -name "*patch-509-rangeprefixorganizationrangeparty*"
+./oms/patch/patch-509-rangeprefixorganizationrangeparty$postgresql.sql
+./oms/patch/patch-509-rangeprefixorganizationrangeparty$firebird.sql
+
+
+				for (File myPatchFile : myPatchFiles) {
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/oms/patch/patch-509-rangeprefixorganizationrangeparty$firebird.sql
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/oms/patch/patch-509-rangeprefixorganizationrangeparty$postgresql.sql
+
+					Patch myPatch = dao.get(myModule, myPatchFile.getName());
+myPatch=oms/patch-509-rangeprefixorganizationrangeparty.sql
+
+						} else {
+							if (myNewPatchIsDbSpecific && !myExisitingPatchIsDbSpecific) {
+								LOG.debug("Found patch file which is more specific [" + myPatchFile + "], but generic patch [" + myPatch
+										+ "] is already applied, skipping patch");
+
+/ we zouden 	, 
+dsvcts=# update mpo_scs_patch set status='NOT_APPLIED'  where name like '%patch-509-rangeprefixorganizationrangeparty%';
+/ maar de generic patch is applied en die is OK, de specifics zijn onnodig	, en zijn hetzelfde	, 
+
+[eric@localhost tms.war]$ cat ./oms/patch/patch-509-rangeprefixorganizationrangeparty\$postgresql.sql
+ALTER TABLE organization_range ADD prefix character varying(80);
+ALTER TABLE invoice_f_p_range ADD prefix character varying(80);
+
+[eric@localhost tms.war]$ cat ./oms/patch/patch-509-rangeprefixorganizationrangeparty\$firebird.sql 
+ALTER TABLE ORGANIZATION_RANGE ADD PREFIX VARCHAR(80);
+ALTER TABLE INVOICE_F_P_RANGE ADD PREFIX VARCHAR(80);
+
+
+/ Einde EVENTUAL ERRORS WITH PATCHES
+
+/ we 
+
+/ 7	. 
+
+/ UPDATE PATCHES IN DATABASE FINAL
+
+/ In db was patch-001-responsexrule.sql
+/ in fs is patch-001-responsexrule$firebird.sql	, patch-001-responsexrule$postgresql.sql
+/ set status patch-001-responsexrule.sql op NOT_APPLIED
+/ dan komen in db patch-001-responsexrule$firebird.sql , patch-001-responsexrule$postgresql.sql	, met hun content	, 
+
+/c
+DataBasePatcher.updatePatchTableForModule(File) line: 357	
+
+		for (File myChild : aModule.listFiles()) {
+			if ("patch".equalsIgnoreCase(myChild.getName())) {
+
+				File[] myPatchFiles = myChild.listFiles(new FileFilter() {
+					@Override
+					public boolean accept(File aFile) {
+						return aFile.getName().toLowerCase().endsWith(".sql");
+					}
+				});
+				/* Sort in alphabetical order */
+				Arrays.sort(myPatchFiles);
+
+
+				for (File myPatchFile : myPatchFiles) {
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/omscarcon/patch/patch-001-responsexrule$firebird.sql
+
+					// This gets either the db specific patch or the generic entry.
+					Patch myPatch = dao.get(myModule, myPatchFile.getName());			/ WH: in db is of een generic patch of multiple specific patches	,
+/s
+PatchDAO.get(String, String) line: 50	
+		String myGenericName = aName.toLowerCase();
+patch-001-responsexrule$firebird.sql
+		String mySpecificName = aName.toLowerCase();
+patch-001-responsexrule$firebird.sql
+		if (aName.indexOf("$") > 0) {
+			myGenericName = mySpecificName.substring(0, mySpecificName.indexOf("$")) + ".sql";
+patch-001-responsexrule.sql
+
+			mySql.append("select * from mpo_scs_patch ");
+			mySql.append("where module = ? and ");
+			mySql.append("(lower(name) = ? or lower(name) like ?)");
+			PreparedStatement myStatement = myConnection.prepareStatement(mySql.toString());
+			myStatement.setString(1, aModule);
+			myStatement.setString(2, myGenericName);
+			myStatement.setString(3, mySpecificName);
+			List<Patch> myList = resultSetToList(mySet);
+[omscarcon/patch-001-responsexrule.sql]
+
+/ Klopt	, 
+LOG:  execute <unnamed>: select * from mpo_scs_patch where module = $1 and (lower(name) = $2 or lower(name) like $3)
+DETAIL:  parameters: $1 = 'omscarcon', $2 = 'patch-001-responsexrule.sql', $3 = 'patch-001-responsexrule$firebird.sql'
+/ Alleen patch-001-responsexrule.sql is in mpo_scs_patch	, status='NOT_APPLIED'
+
+			if (!myList.isEmpty()) {
+				return myList.get(0);		/ staat de generic altijd vooraan? TODO
+
+/t
+DataBasePatcher.updatePatchTableForModule(File) line: 359	
+					if (myPatch == null) {
+/n
+						boolean myNewPatchIsDbSpecific = myPatchFile.getName().contains("$");
+true
+						boolean myExisitingPatchIsDbSpecific = myPatch.getName().contains("$");
+false
+						if (myPatch.getStatus().equals(PatchStatus.NOT_APPLIED) || myPatch.getStatus().equals(PatchStatus.FAILED)) {
+/ er is een specifieke patch bijgekomen	, staat in fs	,
+							myPatch.setName(myPatchFile.getName());
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/omscarcon/patch/patch-001-responsexrule$firebird.sql
+							myPatch.setEntryDate(new Date());
+							myPatch.setScript(FileUtils.readFileToString(myPatchFile));	/ FileUtils is commons-io
+/s
+   /**
+     * Reads the contents of a file into a String using the default encoding for the VM. 
+     * The file is always closed.
+     *
+FileUtils.readFileToString(File) line: 1748		/ commons-io
+        return readFileToString(file, Charset.defaultCharset()); file=/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/omscarcon/patch/patch-001-responsexrule$firebird.sql
+/s
+FileUtils.readFileToString(File, Charset) line: 1709	
+            in = openInputStream(file);
+/s
+				        return new FileInputStream(file);
+/t
+            return IOUtils.toString(in, Charsets.toCharset(encoding));
+/s
+IOUtils.toString(InputStream, Charset) line: 777	
+        StringBuilderWriter sw = new StringBuilderWriter();	/ commons-io
+/t
+DataBasePatcher.updatePatchTableForModule(File) line: 386	
+							myPatch.setScript(FileUtils.readFileToString(myPatchFile));
+/d
+myPatch	Patch  (id=4467)	
+	script	"\r\ncreate table CARCON_RESPONSE_XRULE (\r\n\tSYSTEM_ID int not null primary key,\r\n\tORGANIZATION_SYSTEMID int not null references ORGANIZATION(SYSTEM_ID),\r\n\tCONTEXT varchar(64) not null,\r\n\tSOURCE_EXPR varchar(512) character set utf8,\r\n\tTARGET_EXPR varchar(512) character set utf8,\r\n\tMATCH_EXPR varchar(512) character set utf8\r\n);\r\n" (id=4549)	
+
+							myPatch.setStatus(PatchStatus.NOT_APPLIED);
+							myPatch.setComment("");
+							dao.update(myPatch);
+/s
+PatchDAO.update(Patch) line: 150	
+			myConnection = dataSource.getConnection();
+			myConnection.setAutoCommit(false);
+			StringBuffer mySql = new StringBuffer();
+			mySql.append("update mpo_scs_patch ");
+			mySql.append("set entry_date = ?, ");
+			mySql.append("module = ?, ");
+			mySql.append("name = ?, ");
+			mySql.append("sql_script = ?, ");
+			mySql.append("status = ?, ");
+			mySql.append("patch_comment = ? where system_id = ?");
+			PreparedStatement myStatement = myConnection.prepareStatement(mySql.toString());
+			myStatement.setTimestamp(1, new Timestamp(aPatch.getEntryDate().getTime()));		
+			myStatement.setString(2, aPatch.getModule());
+			myStatement.setString(3, aPatch.getName());
+			myStatement.setString(4, aPatch.getScript());
+			myStatement.setString(5, aPatch.getStatus().name());
+			myStatement.setString(6, aPatch.getComment());
+			myStatement.setInt(7, aPatch.getSystemId());
+			myStatement.executeUpdate();
+
+/ we zien	, 
+LOG:  execute <unnamed>: update mpo_scs_patch set entry_date = $1, module = $2, name = $3, sql_script = $4, status = $5, patch_comment = $6 where system_id = $7
+DETAIL:  parameters: 
+$1 = '2017-04-12 11:55:42.795', 
+$2 = 'omscarcon', 
+$3 = 'patch-001-responsexrule$firebird.sql', 
+$4 = '
+        create table CARCON_RESPONSE_XRULE (
+                SYSTEM_ID int not null primary key,
+                ORGANIZATION_SYSTEMID int not null references ORGANIZATION(SYSTEM_ID),
+                CONTEXT varchar(64) not null,
+                SOURCE_EXPR varchar(512) character set utf8,
+                TARGET_EXPR varchar(512) character set utf8,
+                MATCH_EXPR varchar(512) character set utf8
+        );
+        ', 
+$5 = 'NOT_APPLIED', 
+$6 = '', 
+$7 = '1311'
+
+			myConnection.commit();
+
+/ we zien	, 
+
+dsvcts=# select * from  mpo_scs_patch  where name like '%patch-001-responsexrule%';
+ system_id |       entry_date        |  module   |                 name                 |                                    sql_script                          
+          |   status    | patch_comment 
+-----------+-------------------------+-----------+--------------------------------------+------------------------------------------------------------------------
+----------+-------------+---------------
+      1311 | 2017-04-12 11:55:42.795 | omscarcon | patch-001-responsexrule$firebird.sql | \r                                                                     
+         +| NOT_APPLIED | 
+           |                         |           |                                      | create table CARCON_RESPONSE_XRULE (\r                                 
+         +|             | 
+           |                         |           |                                      |         SYSTEM_ID int not null primary key,\r                          
+         +|             | 
+           |                         |           |                                      |         ORGANIZATION_SYSTEMID int not null references ORGANIZATION(SYST
+EM_ID),\r+|             | 
+           |                         |           |                                      |         CONTEXT varchar(64) not null,\r                                
+         +|             | 
+           |                         |           |                                      |         SOURCE_EXPR varchar(512) character set utf8,\r                 
+         +|             | 
+           |                         |           |                                      |         TARGET_EXPR varchar(512) character set utf8,\r                 
+         +|             | 
+           |                         |           |                                      |         MATCH_EXPR varchar(512) character set utf8\r                   
+         +|             | 
+           |                         |           |                                      | );\r                                                                   
+         +|             | 
+           |                         |           |                                      |                                                                        
+          |             | 
+(1 row)
+
+/t
+DataBasePatcher.updatePatchTableForModule(File) line: 390	
+							dao.update(myPatch);
+/d
+							if (myNewPatchIsDbSpecific && !myExisitingPatchIsDbSpecific) {
+								LOG.info("Found patch file which is more specific [" + myPatchFile + "], applying this one instead of generic patch [" + myPatch
+										+ "]");
+/ volgende	, 
+				for (File myPatchFile : myPatchFiles) {
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/omscarcon/patch/patch-001-responsexrule$postgresql.sql
+
+					// This gets either the db specific patch or the generic entry.
+					Patch myPatch = dao.get(myModule, myPatchFile.getName());
+/s
+PatchDAO.get(String, String) line: 48	
+		String myGenericName = aName.toLowerCase();
+patch-001-responsexrule$postgresql.sql
+		String mySpecificName = aName.toLowerCase();
+patch-001-responsexrule$postgresql.sql
+		if (aName.indexOf("$") > 0) {
+			myGenericName = mySpecificName.substring(0, mySpecificName.indexOf("$")) + ".sql";
+patch-001-responsexrule.sql
+
+			myConnection = dataSource.getConnection();
+			myConnection.setAutoCommit(false);
+			StringBuffer mySql = new StringBuffer();
+			mySql.append("select * from mpo_scs_patch ");
+			mySql.append("where module = ? and ");
+			mySql.append("(lower(name) = ? or lower(name) like ?)");
+			PreparedStatement myStatement = myConnection.prepareStatement(mySql.toString());
+			myStatement.setString(1, aModule);
+			myStatement.setString(2, myGenericName);
+			myStatement.setString(3, mySpecificName);
+			ResultSet mySet = myStatement.executeQuery();
+/ we zien	, 
+LOG:  execute <unnamed>: select * from mpo_scs_patch where module = $1 and (lower(name) = $2 or lower(name) like $3)
+DETAIL:  parameters: $1 = 'omscarcon', $2 = 'patch-001-responsexrule.sql', $3 = 'patch-001-responsexrule$postgresql.sql'
+
+			List<Patch> myList = resultSetToList(mySet);
+[]
+		return null;
+/t
+DataBasePatcher.updatePatchTableForModule(File) line: 359	
+					Patch myPatch = dao.get(myModule, myPatchFile.getName());
+
+					if (myPatch == null) {
+						myPatch = new Patch();
+						myPatch.setEntryDate(new Date());
+						myPatch.setModule(myModule);			/ omscarcon
+						myPatch.setName(myPatchFile.getName());	/ patch-001-responsexrule$postgresql.sql
+						myPatch.setScript(FileUtils.readFileToString(myPatchFile));
+						if (initializing) {
+/n
+						} else {
+							myPatch.setStatus(PatchStatus.NOT_APPLIED);
+						}
+						dao.insert(myPatch);
+/s
+PatchDAO.insert(Patch) line: 123	
+			lastSystemId++;
+			aPatch.setSystemId(lastSystemId);
+1313
+			myConnection = dataSource.getConnection();
+			myConnection.setAutoCommit(false);
+			String mySql = "insert into mpo_scs_patch(system_id,entry_date,module,name,sql_script,status,patch_comment) values (?,?,?,?,?,?,?)";
+			PreparedStatement myStatement = myConnection.prepareStatement(mySql);
+			myStatement.setInt(1, aPatch.getSystemId());
+			myStatement.setTimestamp(2, new Timestamp(aPatch.getEntryDate().getTime()));
+			myStatement.setString(3, aPatch.getModule());
+			myStatement.setString(4, aPatch.getName());
+			myStatement.setString(5, aPatch.getScript());
+			myStatement.setString(6, aPatch.getStatus().name());
+			myStatement.setString(7, aPatch.getComment());
+			myStatement.executeUpdate();
+			myConnection.commit();
+
+/ we zien	, 
+LOG:  execute <unnamed>: insert into mpo_scs_patch(system_id,entry_date,module,name,sql_script,status,patch_comment) values ($1,$2,$3,$4,$5,$6,$7)
+DETAIL:  parameters: $1 = '1313', $2 = '2017-04-12 13:42:05.553', $3 = 'omscarcon', $4 = 'patch-001-responsexrule$postgresql.sql', $5 = '
+        create table CARCON_RESPONSE_XRULE (
+                SYSTEM_ID int not null primary key,
+                ORGANIZATION_SYSTEMID int not null references ORGANIZATION(SYSTEM_ID),
+                CONTEXT varchar(64) not null,
+                SOURCE_EXPR varchar(512),
+                TARGET_EXPR varchar(512),
+                MATCH_EXPR varchar(512)
+        );
+        ', $6 = 'NOT_APPLIED', $7 = NULL
+LOG:  execute S_2: COMMIT
+
+/ we zien	, 
+dsvcts=# select * from  mpo_scs_patch  where name like '%patch-001-responsexrule%';
+ system_id |       entry_date        |  module   |                  name                  |                                    sql_script                        
+            |   status    | patch_comment 
+-----------+-------------------------+-----------+----------------------------------------+----------------------------------------------------------------------
+------------+-------------+---------------
+      1311 | 2017-04-12 11:55:42.795 | omscarcon | patch-001-responsexrule$firebird.sql   | \r                                                                   
+           +| NOT_APPLIED | 
+           |                         |           |                                        | create table CARCON_RESPONSE_XRULE (\r                               
+           +|             | 
+           |                         |           |                                        |         SYSTEM_ID int not null primary key,\r                        
+           +|             | 
+           |                         |           |                                        |         ORGANIZATION_SYSTEMID int not null references ORGANIZATION(SY
+STEM_ID),\r+|             | 
+           |                         |           |                                        |         CONTEXT varchar(64) not null,\r                              
+           +|             | 
+           |                         |           |                                        |         SOURCE_EXPR varchar(512) character set utf8,\r               
+           +|             | 
+           |                         |           |                                        |         TARGET_EXPR varchar(512) character set utf8,\r               
+           +|             | 
+           |                         |           |                                        |         MATCH_EXPR varchar(512) character set utf8\r                 
+           +|             | 
+           |                         |           |                                        | );\r                                                                 
+           +|             | 
+           |                         |           |                                        |                                                                      
+            |             | 
+      1313 | 2017-04-12 13:42:05.553 | omscarcon | patch-001-responsexrule$postgresql.sql | \r                                                                   
+           +| NOT_APPLIED | NULL
+           |                         |           |                                        | create table CARCON_RESPONSE_XRULE (\r                               
+           +|             | 
+           |                         |           |                                        |         SYSTEM_ID int not null primary key,\r                        
+           +|             | 
+           |                         |           |                                        |         ORGANIZATION_SYSTEMID int not null references ORGANIZATION(SY
+STEM_ID),\r+|             | 
+           |                         |           |                                        |         CONTEXT varchar(64) not null,\r                              
+           +|             | 
+           |                         |           |                                        |         SOURCE_EXPR varchar(512),\r                                  
+           +|             | 
+           |                         |           |                                        |         TARGET_EXPR varchar(512),\r                                  
+           +|             | 
+           |                         |           |                                        |         MATCH_EXPR varchar(512)\r                                    
+           +|             | 
+           |                         |           |                                        | );\r                                                                 
+           +|             | 
+           |                         |           |                                        |                                                                      
+            |             | 
+(2 rows)
+
+/t
+DataBasePatcher.updatePatchTableForModule(File) line: 354	
+					if (myPatch == null) {
+						myPatch = new Patch();
+						myPatch.setEntryDate(new Date());
+						myPatch.setModule(myModule);
+						myPatch.setName(myPatchFile.getName());
+						myPatch.setScript(FileUtils.readFileToString(myPatchFile));
+						if (initializing) {
+							myPatch.setStatus(PatchStatus.APPLIED);
+						} else {
+							myPatch.setStatus(PatchStatus.NOT_APPLIED);
+						}
+						dao.insert(myPatch);
+/d
+/ volgende	, 
+
+/ omscarcon/patch-002-ccrespxrule-seq.sql staat NOT_APPLIED in db	, dan gaat hij hem opnieuw update vanuit fs	, onnodig, maar OK
+
+
+				for (File myPatchFile : myPatchFiles) {
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/omscarcon/patch/patch-002-ccrespxrule-seq.sql
+
+					// This gets either the db specific patch or the generic entry.
+					Patch myPatch = dao.get(myModule, myPatchFile.getName());
+omscarcon/patch-002-ccrespxrule-seq.sql
+
+						if (myPatch.getStatus().equals(PatchStatus.NOT_APPLIED) || myPatch.getStatus().equals(PatchStatus.FAILED)) {
+							myPatch.setName(myPatchFile.getName());
+							myPatch.setEntryDate(new Date());
+							myPatch.setScript(FileUtils.readFileToString(myPatchFile));
+							myPatch.setStatus(PatchStatus.NOT_APPLIED);
+							myPatch.setComment("");
+							dao.update(myPatch);
+							} else {
+								LOG.info("Updated patch [" + myPatch + "], it will be reapplied");
+
+
+/ UPDATE PATCHES IN DATABASE FINAL
+
+/ UPDATE PATCHES AGAIN  
+
+/ In db was patch-001-responsexrule.sql
+/ vanuit fs hebben we in db patch-001-responsexrule$firebird.sql , patch-001-responsexrule$postgresql.sql	, met hun content	, 
+/ We hebben toen de start server gestopt	, Wat gebeurt er als we het nog een keer doen	?
+/ hij updates de patches opnieuw vanuit fs	, en sets ze op NOT_APPLIED	, dit is OK	.
+
+/s
+DataBasePatcher.updatePatchTableForModule(File) line: 357	
+				for (File myPatchFile : myPatchFiles) {
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/omscarcon/patch/patch-001-responsexrule$firebird.sql
+
+					// This gets either the db specific patch or the generic entry.
+					Patch myPatch = dao.get(myModule, myPatchFile.getName());	/ in db is of generic of multiple specific patch files	,
+omscarcon/patch-001-responsexrule$firebird.sql
+
+					if (myPatch == null) {
+/n
+						boolean myNewPatchIsDbSpecific = myPatchFile.getName().contains("$");
+true
+						boolean myExisitingPatchIsDbSpecific = myPatch.getName().contains("$");
+true
+						if (myPatch.getStatus().equals(PatchStatus.NOT_APPLIED) || myPatch.getStatus().equals(PatchStatus.FAILED)) {
+/j
+							myPatch.setName(myPatchFile.getName());
+							myPatch.setEntryDate(new Date());
+							myPatch.setScript(FileUtils.readFileToString(myPatchFile));
+							myPatch.setStatus(PatchStatus.NOT_APPLIED);
+							myPatch.setComment("");
+							dao.update(myPatch);
+							if (myNewPatchIsDbSpecific && !myExisitingPatchIsDbSpecific) {
+/n
+							} else {
+								LOG.info("Updated patch [" + myPatch + "], it will be reapplied");
+
+/ volgende	, 
+				for (File myPatchFile : myPatchFiles) {
+					Patch myPatch = dao.get(myModule, myPatchFile.getName());
+omscarcon/patch-001-responsexrule$postgresql.sql
+
+					} else {
+						boolean myNewPatchIsDbSpecific = myPatchFile.getName().contains("$");
+						boolean myExisitingPatchIsDbSpecific = myPatch.getName().contains("$");
+
+						if (myPatch.getStatus().equals(PatchStatus.NOT_APPLIED) || myPatch.getStatus().equals(PatchStatus.FAILED)) {
+							myPatch.setName(myPatchFile.getName());
+							myPatch.setEntryDate(new Date());
+							myPatch.setScript(FileUtils.readFileToString(myPatchFile));
+							myPatch.setStatus(PatchStatus.NOT_APPLIED);
+							myPatch.setComment("");
+							dao.update(myPatch);
+							if (myNewPatchIsDbSpecific && !myExisitingPatchIsDbSpecific) {
+/n
+							} else {
+								LOG.info("Updated patch [" + myPatch + "], it will be reapplied");
+
+/ Einde UPDATE PATCHES AGAIN
+
+/ RUN PATCHES (AFTER UPDATE)
+
+Thread [main] (Suspended (breakpoint at line 245 in com.mpobjects.dbpatch.DataBasePatcher))	
+	com.mpobjects.dbpatch.DataBasePatcher.runPatches() line: 245	
+	com.mpobjects.dbpatch.DataBasePatcher.patch(java.io.File) line: 95	
+		warDir = aWarDir;
+		dao = new PatchDAO(dataSource);
+		updatePatchTable();
+/d
+		runPatches();
+/cb
+	com.mpobjects.dbpatch.DatabasePatchService.startPatchProcess(java.io.File) line: 51	
+			DataBasePatcher myPatcher = new DataBasePatcher();
+			myPatcher.patch(aWar);
+/cb
+	com.mpobjects.dbpatch.DatabasePatchService.beforeWarDeployment(java.io.File) line: 23	
+		boolean mySuccess = startPatchProcess(aWarFile);
+/cb
+	com.mpobjects.dbpatch.DatabasePatchService(com.mpobjects.dbpatch.AbstractListenerServiceMBeanSupport).handleNotification2(javax.management.Notification, java.lang.Object) line: 34	
+		LOG.info("Received notification [" + aNotification + "/" + anObject + "]");
+		if (aNotification.getMessage().equals("WebModule starting")) {
+			String myBaseDir = System.getProperty("jboss.server.home.dir");
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts
+			String[] myContext = aNotification.getSource().toString().split("[=,]");
+[jboss.web.deployment:war, tms.war, id, -1484255405]
+			File myWar = new File(myBaseDir.replace('\\', '/') + "/deploy", myContext[1]);
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war
+			if (isSystemWar(myWar.getName())) {
+/n
+			} else if (!myWar.isDirectory()) {
+/n
+			} else {
+/j
+				beforeWarDeployment(myWar);
+/cb	
+	com.mpobjects.dbpatch.DatabasePatchService(org.jboss.system.ListenerServiceMBeanSupport).handleNotification(javax.management.Notification, java.lang.Object) line: 403	
+	sun.reflect.GeneratedMethodAccessor8.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	sun.reflect.DelegatingMethodAccessorImpl.__invoke(java.lang.Object, java.lang.Object[]) line: 43	
+	sun.reflect.DelegatingMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	sun.reflect.DelegatingMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object...) line: 606	
+	org.jboss.mx.notification.NotificationListenerProxy.invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[]) line: 153	
+	com.sun.proxy.$Proxy26.handleNotification(javax.management.Notification, java.lang.Object) line: not available	
+	org.jboss.web.WebModule(org.jboss.mx.util.JBossNotificationBroadcasterSupport).handleNotification(javax.management.NotificationListener, javax.management.Notification, java.lang.Object) line: 127	
+	org.jboss.web.WebModule(org.jboss.mx.util.JBossNotificationBroadcasterSupport).sendNotification(javax.management.Notification) line: 108	
+	org.jboss.web.WebModule(org.jboss.system.ServiceMBeanSupport).sendStateChangeNotification(int, int, java.lang.String, java.lang.Throwable) line: 519	
+	org.jboss.web.WebModule(org.jboss.system.ServiceMBeanSupport).jbossInternalStart() line: 284	
+	org.jboss.web.WebModule(org.jboss.system.ServiceMBeanSupport).jbossInternalLifecycle(java.lang.String) line: 245	
+	sun.reflect.GeneratedMethodAccessor7.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	sun.reflect.DelegatingMethodAccessorImpl.__invoke(java.lang.Object, java.lang.Object[]) line: 43	
+	sun.reflect.DelegatingMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	sun.reflect.DelegatingMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object...) line: 606	
+	org.jboss.mx.interceptor.ReflectedDispatcher.invoke(org.jboss.mx.server.Invocation) line: 155	
+	org.jboss.mx.server.Invocation.dispatch() line: 94	
+	org.jboss.mx.server.Invocation.invoke() line: 86	
+	org.jboss.mx.modelmbean.XMBean(org.jboss.mx.server.AbstractMBeanInvoker).invoke(java.lang.String, java.lang.Object[], java.lang.String[]) line: 264	
+	org.jboss.mx.server.MBeanServerImpl.invoke(javax.management.ObjectName, java.lang.String, java.lang.Object[], java.lang.String[]) line: 659	
+	org.jboss.system.ServiceController$ServiceProxy.invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[]) line: 978	
+	com.sun.proxy.$Proxy3.start() line: not available	
+	org.jboss.system.ServiceController.start(javax.management.ObjectName) line: 417	
+	sun.reflect.GeneratedMethodAccessor13.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	sun.reflect.DelegatingMethodAccessorImpl.__invoke(java.lang.Object, java.lang.Object[]) line: 43	
+	sun.reflect.DelegatingMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	sun.reflect.DelegatingMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object...) line: 606	
+	org.jboss.mx.interceptor.ReflectedDispatcher.invoke(org.jboss.mx.server.Invocation) line: 155	
+	org.jboss.mx.server.Invocation.dispatch() line: 94	
+	org.jboss.mx.server.Invocation.invoke() line: 86	
+	org.jboss.mx.modelmbean.XMBean(org.jboss.mx.server.AbstractMBeanInvoker).invoke(java.lang.String, java.lang.Object[], java.lang.String[]) line: 264	
+	org.jboss.mx.server.MBeanServerImpl.invoke(javax.management.ObjectName, java.lang.String, java.lang.Object[], java.lang.String[]) line: 659	
+	org.jboss.mx.util.MBeanProxyExt.invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[]) line: 210	
+	com.sun.proxy.$Proxy33.start(javax.management.ObjectName) line: not available	
+	org.jboss.web.tomcat.tc5.Tomcat5(org.jboss.web.AbstractWebContainer).start(org.jboss.deployment.DeploymentInfo) line: 466	
+	sun.reflect.NativeMethodAccessorImpl.invoke0(java.lang.reflect.Method, java.lang.Object, java.lang.Object[]) line: not available [native method]	
+	sun.reflect.NativeMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: 57	
+	sun.reflect.DelegatingMethodAccessorImpl.__invoke(java.lang.Object, java.lang.Object[]) line: 43	
+	sun.reflect.DelegatingMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	sun.reflect.DelegatingMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object...) line: 606	
+	org.jboss.mx.interceptor.ReflectedDispatcher.invoke(org.jboss.mx.server.Invocation) line: 155	
+	org.jboss.mx.server.Invocation.dispatch() line: 94	
+	org.jboss.mx.interceptor.NullInterceptor(org.jboss.mx.interceptor.AbstractInterceptor).invoke(org.jboss.mx.server.Invocation) line: 133	
+	org.jboss.mx.server.Invocation.invoke() line: 88	
+	org.jboss.mx.interceptor.ModelMBeanOperationInterceptor.invoke(org.jboss.mx.server.Invocation) line: 142	
+	org.jboss.mx.interceptor.DynamicInterceptor.invoke(org.jboss.mx.server.Invocation) line: 97	
+	org.jboss.mx.server.Invocation.invoke() line: 88	
+	org.jboss.mx.modelmbean.XMBean(org.jboss.mx.server.AbstractMBeanInvoker).invoke(java.lang.String, java.lang.Object[], java.lang.String[]) line: 264	
+	org.jboss.mx.server.MBeanServerImpl.invoke(javax.management.ObjectName, java.lang.String, java.lang.Object[], java.lang.String[]) line: 659	
+	org.jboss.mx.util.MBeanProxyExt.invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[]) line: 210	
+	com.sun.proxy.$Proxy34.start(org.jboss.deployment.DeploymentInfo) line: not available	
+	org.jboss.deployment.MainDeployer.start(org.jboss.deployment.DeploymentInfo) line: 1025	
+	org.jboss.deployment.MainDeployer.deploy(org.jboss.deployment.DeploymentInfo) line: 819	
+	org.jboss.deployment.MainDeployer.deploy(java.net.URL) line: 782	
+	sun.reflect.NativeMethodAccessorImpl.invoke0(java.lang.reflect.Method, java.lang.Object, java.lang.Object[]) line: not available [native method]	
+	sun.reflect.NativeMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: 57	
+	sun.reflect.DelegatingMethodAccessorImpl.__invoke(java.lang.Object, java.lang.Object[]) line: 43	
+	sun.reflect.DelegatingMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	sun.reflect.DelegatingMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object...) line: 606	
+	org.jboss.mx.interceptor.ReflectedDispatcher.invoke(org.jboss.mx.server.Invocation) line: 155	
+	org.jboss.mx.server.Invocation.dispatch() line: 94	
+	org.jboss.mx.interceptor.NullInterceptor(org.jboss.mx.interceptor.AbstractInterceptor).invoke(org.jboss.mx.server.Invocation) line: 133	
+	org.jboss.mx.server.Invocation.invoke() line: 88	
+	org.jboss.mx.interceptor.ModelMBeanOperationInterceptor.invoke(org.jboss.mx.server.Invocation) line: 142	
+	org.jboss.mx.server.Invocation.invoke() line: 88	
+	org.jboss.mx.modelmbean.XMBean(org.jboss.mx.server.AbstractMBeanInvoker).invoke(java.lang.String, java.lang.Object[], java.lang.String[]) line: 264	
+	org.jboss.mx.server.MBeanServerImpl.invoke(javax.management.ObjectName, java.lang.String, java.lang.Object[], java.lang.String[]) line: 659	
+	org.jboss.mx.util.MBeanProxyExt.invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[]) line: 210	
+	com.sun.proxy.$Proxy13.deploy(java.net.URL) line: not available	
+	org.jboss.deployment.scanner.URLDeploymentScanner.deploy(org.jboss.deployment.scanner.URLDeploymentScanner$DeployedURL) line: 421	
+	org.jboss.deployment.scanner.URLDeploymentScanner.scan() line: 634	
+	org.jboss.deployment.scanner.AbstractDeploymentScanner$ScannerThread.doScan() line: 263	
+	org.jboss.deployment.scanner.URLDeploymentScanner(org.jboss.deployment.scanner.AbstractDeploymentScanner).startService() line: 336	
+	org.jboss.deployment.scanner.URLDeploymentScanner(org.jboss.system.ServiceMBeanSupport).jbossInternalStart() line: 289	
+	org.jboss.deployment.scanner.URLDeploymentScanner(org.jboss.system.ServiceMBeanSupport).jbossInternalLifecycle(java.lang.String) line: 245	
+	sun.reflect.GeneratedMethodAccessor7.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	sun.reflect.DelegatingMethodAccessorImpl.__invoke(java.lang.Object, java.lang.Object[]) line: 43	
+	sun.reflect.DelegatingMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	sun.reflect.DelegatingMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object...) line: 606	
+	org.jboss.mx.interceptor.ReflectedDispatcher.invoke(org.jboss.mx.server.Invocation) line: 155	
+	org.jboss.mx.server.Invocation.dispatch() line: 94	
+	org.jboss.mx.server.Invocation.invoke() line: 86	
+	org.jboss.mx.modelmbean.XMBean(org.jboss.mx.server.AbstractMBeanInvoker).invoke(java.lang.String, java.lang.Object[], java.lang.String[]) line: 264	
+	org.jboss.mx.server.MBeanServerImpl.invoke(javax.management.ObjectName, java.lang.String, java.lang.Object[], java.lang.String[]) line: 659	
+	org.jboss.system.ServiceController$ServiceProxy.invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[]) line: 978	
+	com.sun.proxy.$Proxy3.start() line: not available	
+	org.jboss.system.ServiceController.start(javax.management.ObjectName) line: 417	
+	sun.reflect.GeneratedMethodAccessor13.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	sun.reflect.DelegatingMethodAccessorImpl.__invoke(java.lang.Object, java.lang.Object[]) line: 43	
+	sun.reflect.DelegatingMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	sun.reflect.DelegatingMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object...) line: 606	
+	org.jboss.mx.interceptor.ReflectedDispatcher.invoke(org.jboss.mx.server.Invocation) line: 155	
+	org.jboss.mx.server.Invocation.dispatch() line: 94	
+	org.jboss.mx.server.Invocation.invoke() line: 86	
+	org.jboss.mx.modelmbean.XMBean(org.jboss.mx.server.AbstractMBeanInvoker).invoke(java.lang.String, java.lang.Object[], java.lang.String[]) line: 264	
+	org.jboss.mx.server.MBeanServerImpl.invoke(javax.management.ObjectName, java.lang.String, java.lang.Object[], java.lang.String[]) line: 659	
+	org.jboss.mx.util.MBeanProxyExt.invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[]) line: 210	
+	com.sun.proxy.$Proxy8.start(javax.management.ObjectName) line: not available	
+	org.jboss.deployment.SARDeployer.start(org.jboss.deployment.DeploymentInfo) line: 302	
+	org.jboss.deployment.MainDeployer.start(org.jboss.deployment.DeploymentInfo) line: 1025	
+	org.jboss.deployment.MainDeployer.deploy(org.jboss.deployment.DeploymentInfo) line: 819	
+	org.jboss.deployment.MainDeployer.deploy(java.net.URL) line: 782	
+	org.jboss.deployment.MainDeployer.deploy(java.lang.String) line: 766	
+	sun.reflect.NativeMethodAccessorImpl.invoke0(java.lang.reflect.Method, java.lang.Object, java.lang.Object[]) line: not available [native method]	
+	sun.reflect.NativeMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: 57	
+	sun.reflect.DelegatingMethodAccessorImpl.__invoke(java.lang.Object, java.lang.Object[]) line: 43	
+	sun.reflect.DelegatingMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	sun.reflect.DelegatingMethodAccessorImpl.invoke(java.lang.Object, java.lang.Object[]) line: not available	
+	java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object...) line: 606	
+	org.jboss.mx.interceptor.ReflectedDispatcher.invoke(org.jboss.mx.server.Invocation) line: 155	
+	org.jboss.mx.server.Invocation.dispatch() line: 94	
+	org.jboss.mx.interceptor.NullInterceptor(org.jboss.mx.interceptor.AbstractInterceptor).invoke(org.jboss.mx.server.Invocation) line: 133	
+	org.jboss.mx.server.Invocation.invoke() line: 88	
+	org.jboss.mx.interceptor.ModelMBeanOperationInterceptor.invoke(org.jboss.mx.server.Invocation) line: 142	
+	org.jboss.mx.server.Invocation.invoke() line: 88	
+	org.jboss.mx.modelmbean.XMBean(org.jboss.mx.server.AbstractMBeanInvoker).invoke(java.lang.String, java.lang.Object[], java.lang.String[]) line: 264	
+	org.jboss.mx.server.MBeanServerImpl.invoke(javax.management.ObjectName, java.lang.String, java.lang.Object[], java.lang.String[]) line: 659	
+	org.jboss.mx.util.MBeanProxyExt.invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[]) line: 210	
+	com.sun.proxy.$Proxy9.deploy(java.lang.String) line: not available	
+	org.jboss.system.server.ServerImpl.doStart() line: 482	
+	org.jboss.system.server.ServerImpl.start() line: 362	
+	org.jboss.Main.boot(java.lang.String[]) line: 200	
+	org.jboss.Main$1.run() line: 490	
+	java.lang.Thread.run() line: 745	
+/ debug	, 
+/s
+DataBasePatcher.runPatches() line: 245	
+		List<Patch> myPatchList = dao.getNonAppliedPatches();
+/s
+PatchDAO.getNonAppliedPatches() line: 102	
+			myConnection = dataSource.getConnection();
+			myConnection.setAutoCommit(false);
+			StringBuffer mySql = new StringBuffer();
+			mySql.append("select * from mpo_scs_patch ");
+			mySql.append("where status IN ('NOT_APPLIED','FAILED') ");
+			mySql.append("order by system_id ");
+			PreparedStatement myStatement = myConnection.prepareStatement(mySql.toString());
+			ResultSet mySet = myStatement.executeQuery();
+
+/ we zien	, 
+LOG:  execute <unnamed>: select * from mpo_scs_patch where status IN ('NOT_APPLIED','FAILED') order by system_id 
+
+
+			myList = resultSetToList(mySet);
+[omscarcon/patch-001-responsexrule$firebird.sql, omscarcon/patch-002-ccrespxrule-seq.sql, omscarcon/patch-001-responsexrule$postgresql.sql]
+
+		return myList;
+/t
+DataBasePatcher.runPatches() line: 246	
+		List<Patch> myPatchList = dao.getNonAppliedPatches();
+/d
+/ LIST PATCHES
+[omscarcon/patch-001-responsexrule$firebird.sql, omscarcon/patch-002-ccrespxrule-seq.sql, omscarcon/patch-001-responsexrule$postgresql.sql]
+
+			for (Patch myPatch : myPatchList) { / omscarcon/patch-001-responsexrule$firebird.sql
+					// Generic patch
+					if (myPatch.getName().indexOf("$") < 0) {
+/n
+					} else {
+						// Specific patch
+						if (myPatch.getName().indexOf("$" + dataBaseProductName.toLowerCase()) > 1) {	/ PostgreSQL
+/n
+
+/ Intermezzo
+
+	private void checkAndCreatePatchTable() throws Exception {
+
+		Connection myConnection = null;
+		try {
+			myConnection = dataSource.getConnection();
+			myConnection.setAutoCommit(false);
+			DatabaseMetaData myMetaData = myConnection.getMetaData();
+			dataBaseProductName = myMetaData.getDatabaseProductName();
+
+/ we vielen hier NIET in	, 
+/ TODO
+
+/ Einde Intermezzo
+						} else {
+							LOG.info("Patch [" + myPatch + "] not needed for DB [" + dataBaseProductName + "]");
+							myPatch.setStatus(PatchStatus.SKIPPED);
+							myPatch.setComment("Patch not needed for DB: " + dataBaseProductName);
+							dao.update(myPatch);
+/s
+PatchDAO.update(Patch) line: 150	
+			myConnection = dataSource.getConnection();
+			myConnection.setAutoCommit(false);
+			StringBuffer mySql = new StringBuffer();
+			mySql.append("update mpo_scs_patch ");
+			mySql.append("set entry_date = ?, ");
+			mySql.append("module = ?, ");
+			mySql.append("name = ?, ");
+			mySql.append("sql_script = ?, ");
+			mySql.append("status = ?, ");
+			mySql.append("patch_comment = ? where system_id = ?");
+			PreparedStatement myStatement = myConnection.prepareStatement(mySql.toString());
+			myStatement.setTimestamp(1, new Timestamp(aPatch.getEntryDate().getTime()));
+			myStatement.setString(2, aPatch.getModule());
+			myStatement.setString(3, aPatch.getName());
+			myStatement.setString(4, aPatch.getScript());
+			myStatement.setString(5, aPatch.getStatus().name());
+			myStatement.setString(6, aPatch.getComment());
+			myStatement.setInt(7, aPatch.getSystemId());
+			myStatement.executeUpdate();
+			myConnection.commit();
+
+/ we zien	, 
+
+LOG:  execute <unnamed>: update mpo_scs_patch set entry_date = $1, module = $2, name = $3, sql_script = $4, status = $5, patch_comment = $6 where system_id = $7
+DETAIL:  parameters: $1 = '2017-04-12 14:33:14.423', $2 = 'omscarcon', $3 = 'patch-001-responsexrule$firebird.sql', $4 = '
+        create table CARCON_RESPONSE_XRULE (
+                SYSTEM_ID int not null primary key,
+                ORGANIZATION_SYSTEMID int not null references ORGANIZATION(SYSTEM_ID),
+                CONTEXT varchar(64) not null,
+                SOURCE_EXPR varchar(512) character set utf8,
+                TARGET_EXPR varchar(512) character set utf8,
+                MATCH_EXPR varchar(512) character set utf8
+        );
+        ', $5 = 'SKIPPED', $6 = 'Patch not needed for DB: PostgreSQL', $7 = '1311'
+
+/ we zien 	, 
+dsvcts=# select * from  mpo_scs_patch  where name like '%patch-001-responsexrule%';
+ system_id |       entry_date        |  module   |                  name                  |                                    sql_script                        
+            |   status    |            patch_comment            
+-----------+-------------------------+-----------+----------------------------------------+----------------------------------------------------------------------
+------------+-------------+-------------------------------------
+      1311 | 2017-04-12 14:33:14.423 | omscarcon | patch-001-responsexrule$firebird.sql   | \r                                                                   
+           +| SKIPPED     | Patch not needed for DB: PostgreSQL
+           |                         |           |                                        | create table CARCON_RESPONSE_XRULE (\r                               
+           +|             | 
+...
+      1313 | 2017-04-12 14:36:01.968 | omscarcon | patch-001-responsexrule$postgresql.sql | \r                                                                   
+           +| NOT_APPLIED | 
+           |                         |           |                                        | create table CARCON_RESPONSE_XRULE (\r                               
+...
+/t
+DataBasePatcher.runPatches() line: 270	
+						} else {
+							LOG.info("Patch [" + myPatch + "] not needed for DB [" + dataBaseProductName + "]");
+							myPatch.setStatus(PatchStatus.SKIPPED);
+							myPatch.setComment("Patch not needed for DB: " + dataBaseProductName);
+							dao.update(myPatch);
+/d
+/ volgende	, 
+			for (Patch myPatch : myPatchList) {
+omscarcon/patch-002-ccrespxrule-seq.sql
+					// Generic patch
+					if (myPatch.getName().indexOf("$") < 0) {
+						if (!runPatch(myPatch)) {
+/s
+DataBasePatcher.runPatch(Patch) line: 173	
+			myConnection = dataSource.getConnection();
+			myConnection.setAutoCommit(false);
+			SqlStatementParser statements = new SqlStatementParser(aPatch.getScript());
+/s
+SqlStatementParser.<init>(String) line: 74	
+													/ in <init> was eerder: protected HashMap<String, String> blocks;
+		statementGroup = aStatement;
+alter table CARCON_RESPONSE_XRULE add SEQUENCE_NR int default 0 not null;
+
+		blocks = new HashMap<String, String>();
+		blocks.put("begin", "end");
+		blocks.put("/*", "*/");
+		blocks.put("//", "\n");
+		blocks.put("--", "\n");
+		// Not completely correct, but it's at least something instead of nothing
+		// http://www.postgresql.org/docs/9.0/static/sql-syntax-lexical.html#SQL-SYNTAX-DOLLAR-QUOTING
+		blocks.put("$verbatim$", "$verbatim$");
+/t
+DataBasePatcher.runPatch(Patch) line: 183	
+			SqlStatementParser statements = new SqlStatementParser(aPatch.getScript());
+/d
+statements	SqlStatementParser  (id=11608)	
+	blocks	HashMap  (id=11613)	
+	statementGroup	"\r\nalter table CARCON_RESPONSE_XRULE add SEQUENCE_NR int default 0 not null;\r\n" (id=11609)	
+
+				if (startsWithEmptyLine(mySql) && myToCommitCount > 0) {
+/n
+				mySql = mySql.trim();
+alter table CARCON_RESPONSE_XRULE add SEQUENCE_NR int default 0 not null
+				Statement statement = myConnection.createStatement();
+				statement.execute(mySql);
+		} catch (Exception anException) {
+/ Klopt, de table  CARCON_RESPONSE_XRULE is er nog niet	, eerst moet patch patch-001-responsexrule$postgresql.sql 
+			try {
+				if (myConnection != null) {
+					myConnection.rollback();
+		} finally {
+			if (myConnection != null) {
+				try {
+					myConnection.close();
+		if (mySuccess) {
+/n
+		} else {
+			aPatch.setStatus(PatchStatus.FAILED);
+			String myMessage = myException.toString();
+			aPatch.setComment(myMessage);
+		try {
+			dao.update(aPatch);
+
+/ we zien	,
+
+dsvcts=# select * from  mpo_scs_patch  where name like '%patch-002-ccrespxrule-seq.sql';
+ system_id |       entry_date        |  module   |             name              |                                 sql_script                                  | 
+status |                                       patch_comment                                       
+-----------+-------------------------+-----------+-------------------------------+-----------------------------------------------------------------------------+-
+-------+-------------------------------------------------------------------------------------------
+      1312 | 2017-04-12 14:37:51.298 | omscarcon | patch-002-ccrespxrule-seq.sql | \r                                                                         +| 
+FAILED | org.postgresql.util.PSQLException: ERROR: relation "carcon_response_xrule" does not exist
+           |                         |           |                               | alter table CARCON_RESPONSE_XRULE add SEQUENCE_NR int default 0 not null;\r+| 
+       | 
+           |                         |           |                               |                                                                             | 
+       | 
+(1 row)
+
+		return mySuccess;
+/t
+DataBasePatcher.runPatches() line: 255	
+						if (!runPatch(myPatch)) {
+/d
+							throw new Exception("Problem when executing patch, terminating, check log, repair patchfile and run again");
+/t
+DatabasePatchService.startPatchProcess(File) line: 54	
+			myPatcher.patch(aWar);
+/d
+		} catch (Exception anException) {
+			LOG.error("Error while patching database", anException);
+		return mySuccess;
+/t
+DatabasePatchService.beforeWarDeployment(File) line: 25	
+		boolean mySuccess = startPatchProcess(aWarFile);
+/d
+		if (!mySuccess) {
+/j
+			LOG.info("Stopping application server, fix patch errors and restart.");
+			// Write to stderr so that it becomes visible in start/stop scripts
+			System.err.println("Stopping application server, fix patch errors and restart.");
+			System.err.flush();
+			Runtime.getRuntime().halt(FAILED);
+
+/ 7	.
+
+/ Ik heb een email gestuurd	, 
+
+In the database there are 2 patches:
+
+patch-001-responsexrule.sql            -- creates a table
+patch-002-ccrespxrule-seq.sql         -- updates that table
+
+But patch-001-responsexrule.sql  must be split in a firebird and a postgres version. So in the filesystem there is now patch-001-responsexrule$firebird.sql and patch-001-responsexrule-postgresql.sql.
+
+I put the status of the patches to NOT_APPLIED. patch-001-responsexrule.sql  has system_id=1311, and patch-002-ccrespxrule-seq.sql 1312.
+
+Now DatabasePatcher updates patch-001-responsexrule.sql to patch-001-responsexrule$firebird.sql. This patch has system_id 1311. Then it creates patch-001-responsexrule-postgresql.sql. This gets system_id 1313.  With patch-002-ccrespxrule-seq.sql effectively nothing happens, it has system_id 1312. 
+
+But now you see the problem when it runs the patches: DatabasePatcher orders them by system_id. Patch 1311 is skipped because on my machine is postgres.
+
+Then patch 1312 is executed, but the table mentioned above is not there yet, patch 1313 should have run before 1312.
+
+I can fix it by hand now in this particular case, but I thinks DatabasePatcher must be modified.
+
+
+/ Einde RUN PATCHES (AFTER UPDATE)
+
+
+
+/ Einde DEBUG DATABASEPATCHER
+
+/ DEBUG DATABASEPATCHER WITH ONLY GENERIC PATCH
+
+/s
+DataBasePatcher.updatePatchTableForModule(File) line: 357	
+
+		for (File myChild : aModule.listFiles()) {
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/omscarcon/patch
+				for (File myPatchFile : myPatchFiles) {
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/omscarcon/patch/patch-001-responsexrule.sql
+
+					// This gets either the db specific patch or the generic entry.
+					Patch myPatch = dao.get(myModule, myPatchFile.getName());	/ in de list is er nu maar 1 patch	, patch-001-responsexrule.sql
+omscarcon/patch-001-responsexrule.sql
+
+					} else {
+						boolean myNewPatchIsDbSpecific = myPatchFile.getName().contains("$");
+false
+						boolean myExisitingPatchIsDbSpecific = myPatch.getName().contains("$");
+false
+
+						if (myPatch.getStatus().equals(PatchStatus.NOT_APPLIED) || myPatch.getStatus().equals(PatchStatus.FAILED)) {
+/j
+							myPatch.setName(myPatchFile.getName());
+							myPatch.setEntryDate(new Date());
+							myPatch.setScript(FileUtils.readFileToString(myPatchFile));
+							myPatch.setStatus(PatchStatus.NOT_APPLIED);
+							myPatch.setComment("");
+							dao.update(myPatch);
+/ Deze updates de sql_script in de patch in de db	, 
+
+							} else {
+								LOG.info("Updated patch [" + myPatch + "], it will be reapplied");
+
+/ volgende	, 
+				for (File myPatchFile : myPatchFiles) {
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/dsvcts/deploy/tms.war/omscarcon/patch/patch-002-ccrespxrule-seq.sql
+					// This gets either the db specific patch or the generic entry.
+					Patch myPatch = dao.get(myModule, myPatchFile.getName());
+...
+/c
+DataBasePatcher.runPatches() line: 245	
+		List<Patch> myPatchList = dao.getNonAppliedPatches();
+[omscarcon/patch-001-responsexrule.sql, omscarcon/patch-002-ccrespxrule-seq.sql]
+			for (Patch myPatch : myPatchList) {
+				if (myPatch.getName().indexOf(ON_PATCH_SUCCESS) == -1) {
+					// Generic patch
+					if (myPatch.getName().indexOf("$") < 0) {
+						if (!runPatch(myPatch)) { / omscarcon/patch-001-responsexrule.sql
+/s
+DataBasePatcher.runPatch(Patch) line: 173	
+			SqlStatementParser statements = new SqlStatementParser(aPatch.getScript());
+			int myToCommitCount = 0;
+			while (statements.hasNext()) {
+				mySql = statements.next();
+mySql	"\r\ncreate table CARCON_RESPONSE_XRULE (\r\n\tSYSTEM_ID int not null primary key,\r\n\tORGANIZATION_SYSTEMID int not null references ORGANIZATION(SYSTEM_ID),\r\n\tCONTEXT varchar(64) not null,\r\n\tSOURCE_EXPR varchar(512),\r\n\tTARGET_EXPR varchar(512),\r\n\tMATCH_EXPR varchar(512)\r\n)" (id=11335)	
+
+				if (startsWithEmptyLine(mySql) && myToCommitCount > 0) {
+					LOG.debug("Executing intermediate commit for [" + myToCommitCount + "] statements");
+					myConnection.commit();
+					myToCommitCount = 0;
+				}
+				mySql = mySql.trim();
+mySql	"create table CARCON_RESPONSE_XRULE (\r\n\tSYSTEM_ID int not null primary key,\r\n\tORGANIZATION_SYSTEMID int not null references ORGANIZATION(SYSTEM_ID),\r\n\tCONTEXT varchar(64) not null,\r\n\tSOURCE_EXPR varchar(512),\r\n\tTARGET_EXPR varchar(512),\r\n\tMATCH_EXPR varchar(512)\r\n)" (id=11336)	
+
+				Statement statement = myConnection.createStatement();
+				statement.execute(mySql);
+			myConnection.commit();
+
+/ we zien	, 
+dsvcts=# \d *xrule
+            Table "public.carcon_response_xrule"
+        Column         |          Type          | Modifiers 
+-----------------------+------------------------+-----------
+ system_id             | integer                | not null
+ organization_systemid | integer                | not null
+ context               | character varying(64)  | not null
+ source_expr           | character varying(512) | 
+ target_expr           | character varying(512) | 
+ match_expr            | character varying(512) | 
+Indexes:
+    "carcon_response_xrule_pkey" PRIMARY KEY, btree (system_id)
+Foreign-key constraints:
+    "carcon_response_xrule_organization_systemid_fkey" FOREIGN KEY (organization_systemid) REFERENCES organization(system_id)
+
+
+
+
+
+/ Einde DEBUG DATABASEPATCHER WITH ONLY GENERIC PATCH
+
+
+/ FIX
+
+/ 13	. 
+
+/ we hadden eerst in eclipse (of fs) 2 patches created	, 
+$ vi file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2016.12/module/omscarcon/src/sql/patch/patch-001-responsexrule$firebird.sql 
+$ vi file:///home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2016.12/module/omscarcon/src/sql/patch/patch-001-responsexrule$postgresql.sql 
+/ in mpo_scs_patch was patch-001-responsexrule.sql
+
+/ en toen de DatabasePatcher run	,  werd in update patch table:
+patch-001-responsexrule.sql -> patch-001-responsexrule$firebird.sql	, 						system_id=1311	,
+patch-002-ccrespxrule-seq.sql was er al, 	en wordt updated met wat er al in stond	,		system_id=1312	, 
+patch-001-responsexrule$postgresql.sql wordt created	, 									system_id=1313	,
+/ Dit is ERR	, want als hij de patches gaat run, orders hij op system_id, en hij gaat dus eerst patch-002-ccrespxrule-seq.sql doen	, en dat had patch-001-responsexrule$postgresql.sql moeten doen	, 
+
+/ 13	. 
+
+/ omdat firebird toch niet meer wordt gebruikt (2016.12)	, rm we patch-001-responsexrule$firebird.sql, patch-001-responsexrule$postgresql.sql en maken weer alleen patch-001-responsexrule$postgresql.sql
+/ Build the appl	, dan ook op fs in jboss's instance 	,
+[eric@localhost tms.war]$ ls omscarcon/patch/patch-00
+patch-001-responsexrule.sql    patch-002-ccrespxrule-seq.sql  
+
+
+/ in mpo_scs_patch update we ook	,
+dsvcts=# update mpo_scs_patch
+dsvcts-# set name='patch-001-responsexrule.sql'
+dsvcts-#     ,status='NOT_APPLIED'
+dsvcts-# where system_id=1311;
+UPDATE 1
+dsvcts=# commit;
+COMMIT
+
+dsvcts=# select *from mpo_scs_patch where system_id=1311;
+-[ RECORD 1 ]-+---------------------------------------------------------------------------------
+system_id     | 1311
+entry_date    | 2017-04-12 14:33:14.423
+module        | omscarcon
+name          | patch-001-responsexrule.sql
+sql_script    | \r
+              | create table CARCON_RESPONSE_XRULE (\r
+              |         SYSTEM_ID int not null primary key,\r
+              |         ORGANIZATION_SYSTEMID int not null references ORGANIZATION(SYSTEM_ID),\r
+              |         CONTEXT varchar(64) not null,\r
+              |         SOURCE_EXPR varchar(512) character set utf8,\r
+              |         TARGET_EXPR varchar(512) character set utf8,\r
+              |         MATCH_EXPR varchar(512) character set utf8\r
+              | );\r
+              | 
+status        | NOT_APPLIED
+patch_comment | Patch not needed for DB: PostgreSQL
+
+/ De script klopt dus niet , maar DatabasePatcher pakt hem op	, 
+/ we komen in update patch table	, 
+/ See DEBUG DATABASEPATCHER WITH ONLY GENERIC PATCH
+/ OK
+
+/ Einde FIX
+
+
+
+

@@ -1,0 +1,10 @@
+/ See MYSQL INSTALL
+
+/ MYSQL INSTALL
+
+/ Lees	,
+https://fedoraproject.org/wiki/MariaDB			<-
+https://www.if-not-true-then-false.com/2013/install-mariadb-on-fedora-centos-rhel/
+
+
+

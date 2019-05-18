@@ -1,0 +1,2088 @@
+/ See WAIT NOTIFY 
+/ See CONSTRUCTORS
+/ See NESTED INNER CLASS
+/ See GENERICS
+/ See SERIALIZE
+
+/ 7	. 
+
+/ lees
+http://www.programcreek.com/2011/07/java-equals-and-hashcode-contract/
+
+public class Apple {
+	private String color;
+ 
+	public Apple(String color) {
+		this.color = color;
+	}
+ 
+	public boolean equals(Object obj) {
+		if(obj==null) return false;
+		if (!(obj instanceof Apple))
+			return false;	
+		if (obj == this)
+			return true;
+		return this.color.equals(((Apple) obj).color);
+	}
+ 
+	public static void main(String[] args) {
+		Apple a1 = new Apple("green");
+		Apple a2 = new Apple("red");
+ 
+		//hashMap stores apple type and its quantity
+		HashMap<Apple, Integer> m = new HashMap<Apple, Integer>();
+		m.put(a1, 10);
+		m.put(a2, 20);
+		System.out.println(m.get(new Apple("green")));
+	}
+}
+/ hij print null
+
+The problem is caused by the un-overridden method "hashCode()". The contract between equals() and hashCode() is:
+1) If two objects are equal, then they must have the same hash code.
+2) If two objects have the same hash code, they may or may not be equal.
+
+The idea behind a Map is to be able to find an object faster than a linear search. Using hashed keys to locate objects is a two-step process. Internally the Map stores objects as an array of arrays. The index for the first array is the hash code of the key. This locates the second array which is searched linearly by using equals() to determine if the object is found.
+
+/ je get op new Apple("green") en deze heeft andere hash code dan die in de hash table zit	, 
+
+/ Dus equal -> same hashcode
+
+/ 7	. 
+
+/ java proxy	,
+
+/ Lees	,
+https://docs.oracle.com/javase/7/docs/api/
+java.lang.reflect
+Class Proxy
+
+/ lees	,
+http://javahowto.blogspot.nl/2011/12/java-dynamic-proxy-example.html
+
+/ ws wicket7_5
+/ proj spring-framework
+
+/ we zien dat we de volgende InvocationHandlers hebben	, 
+java.lang.reflect
+net.sf.cglib.proxy
+org.springframework.cglib.proxy
+
+$ less IGreet.java
+
+package reflect;
+public interface IGreet {
+	String hello(String name);
+}
+
+$ less GreetImpl.java
+
+package reflect;
+public class GreetImpl implements IGreet{
+	public String hello(String name) {
+		String r=String.format("Hello %s, this is %s", name,this);
+		return r;
+	}
+}
+
+$ less GreetInvHandler.java
+
+package reflect;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+public class GreetInvHandler implements InvocationHandler {
+	private Object object;
+	public GreetInvHandler(Object object) {
+		this.object=object;
+	}
+	public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
+		if(Object.class==method.getDeclaringClass()){
+			String name=method.getName();
+			if("equals".equals(name)){
+				return proxy==args[0];
+			}else if("hashCode".equals(name)){
+				return System.identityHashCode(proxy);
+			}else if("toString".equals(name)){
+				return proxy.getClass().getName()+"@"+Integer.toHexString(System.identityHashCode(proxy))
+						+" with invocation handler "+this;
+			}else throw new IllegalStateException(String.valueOf(method));
+		}
+		return method.invoke(object, args);
+	}
+}
+
+
+$ less GreetInvHandler.java
+
+package reflect;
+
+import java.lang.reflect.Proxy;
+
+public class GreetTest {
+
+	@Test
+	public void test(){
+		Object _=Proxy.newProxyInstance(
+				IGreet.class.getClassLoader(), 
+				new Class<?>[]{IGreet.class}, 
+				new GreetInvHandler(new GreetImpl()));
+		IGreet prx=(IGreet)_;
+		String $=prx.hello("Foo Bar");
+		System.out.println($);
+		int $2=_.hashCode();
+		System.out.println($2);
+		boolean $3=_.equals(_);
+		System.out.println($3);
+		String $4=_.toString();
+		System.out.println($4);
+	}
+}
+
+/ we hebben een proxy, met een handler, die een target heeft	,  
+_	$Proxy4  (id=35)	
+	h	GreetInvHandler  (id=34)	
+		object	GreetImpl  (id=70)	
+
+/ je kunt alle method die je op IGreet en Object kunt call, op de proxy call	, 
+/ de proxy stuurt ze door naar de invocation handler, 
+/ onze invocation handler kijkt of het Object of IGreet methods zijn	, 
+
+/ we moeten	,
+			if("equals".equals(name)){
+				return proxy==args[0];
+/ anders	,
+		return method.invoke(object, args);
+/ en args=[proxy]	, en returns false	,
+
+/ we moeten	,
+			}else if("hashCode".equals(name)){
+				return System.identityHashCode(proxy);
+/ anders	, 
+		return method.invoke(object, args);
+/ en args=[], dus gaat return hashcode van object	, en niet van de proxy	,
+
+/ final methods zoals .getClass(), komen niet in de invocation handler	,
+/ doe NIET in de invocation handler	
+	Arrays.toString(args)
+/ want dit is een Object method, en krijgen we een infinite stack	,
+
+/ de client ziet alleen de proxy, de GreetImpl niet	,
+
+/ we komen achtereenvolgens in de handler's invoke	,
+/s
+/ stack	,
+	GreetInvHandler.invoke(Object, Method, Object[]) line: 21	
+	$Proxy4.hashCode() line: not available	
+	GreetTest.test() line: 18	
+/ debug	,
+
+/s
+GreetInvHandler.invoke(Object, Method, Object[]) line: 28	
+
+proxy	$Proxy4  (id=35)	
+method	Method  (id=52)	public abstract java.lang.String reflect.IGreet.hello(java.lang.String)
+args	Object[1]  (id=55)	
+	[0]	"Foo Bar" (id=79)	
+
+/ de declaring class is 'interface reflect.IGreet', niet Object	, 
+		return method.invoke(object, args);
+
+
+GreetInvHandler.invoke(Object, Method, Object[]) line: 21	
+proxy	$Proxy4  (id=35)	
+method=public native int java.lang.Object.hashCode()
+args	null	
+		if(Object.class==method.getDeclaringClass()){
+/j
+/ Dat is de betekenis van method.getDeclaringClass(),
+
+			}else if("hashCode".equals(name)){
+				return System.identityHashCode(proxy);
+/c
+proxy	$Proxy4  (id=35)	
+method	Method  (id=85)	public boolean java.lang.Object.equals(java.lang.Object)
+args	Object[1]  (id=86)	
+	[0]	$Proxy4  (id=35)	
+
+			if("equals".equals(name)){
+				return proxy==args[0];
+/j
+
+/c
+proxy	$Proxy4  (id=35)	
+method	Method  (id=130)	public java.lang.String java.lang.Object.toString()
+args	null	
+			}else if("toString".equals(name)){
+				return proxy.getClass().getName()+"@"+Integer.toHexString(System.identityHashCode(proxy))
+						+" with invocation handler "+this;
+->
+com.sun.proxy.$Proxy4@743b4f79 with invocation handler reflect.GreetInvHandler@61decc8c
+
+/ 13	. 
+
+/ in de test	,
+		String $=prx.hello("Foo Bar"); / args=["Foo Bar"]
+		int $2=_.hashCode();	/ args=[]
+		boolean $3=_.equals(_); / args=[$Proxy4]
+		String $4=_.toString();	/ args=[]
+
+/ in zou het volgende doen	, het gaat om de object , niet om de proxy	,
+
+public class GreetInvHandler implements InvocationHandler {
+	public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
+
+		if(Object.class==method.getDeclaringClass()){
+			String name=method.getName();
+			if("equals".equals(name)){
+				if(proxy==args[0])
+					return true;
+				else 
+					return object==args[0];
+			}else if("hashCode".equals(name)){
+				return System.identityHashCode(object);
+			}else if("toString".equals(name)){
+				return proxy.getClass().getName()+"@"+Integer.toHexString(System.identityHashCode(object))
+						+" with invocation handler "+this;
+			}else throw new IllegalStateException(String.valueOf(method));
+
+
+
+/ 7	. 
+
+/ cglib	,
+
+/ Lees	,
+http://mydailyjava.blogspot.nl/2013/11/cglib-missing-manual.html
+
+/ ws wicket7_5
+/ proj spring-framework
+
+/ 13	. 
+
+/ we proxy een method zonder args	,
+
+$ less Sample.java
+
+package cg;
+
+public class Sample {
+	public String hello() {
+		String r=String.format("Hello, this is %s", this);
+		return r;
+	}
+}
+
+$ less SampleTest.java
+
+package cg;
+
+import net.sf.cglib.proxy.Callback;
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.FixedValue;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class SampleTest {
+
+	@Test
+	public void test(){
+		Enhancer enhancer=new  Enhancer();
+		enhancer.setSuperclass(Sample.class);
+		
+		Callback callback=new FixedValue() {
+			public Object loadObject() throws Exception {
+				String r=String.format("Hello, this is %s",this);
+				return r;
+			}
+		};
+		enhancer.setCallback(callback);
+		Object _=enhancer.create();
+		Sample prx=(Sample)_;
+		String $=prx.hello();
+		System.out.println($);
+
+		String $2=new Sample().hello();
+		System.out.println($2);
+	}
+}
+
+/ we zien	,
+Hello, this is cg.SampleTest$1@49b66175
+Hello, this is cg.Sample@64b86e21
+
+
+/ 13	. 
+
+$ less SampleTest.java
+
+	@Test
+	public void test2(){
+		Enhancer enhancer=new  Enhancer();
+		enhancer.setSuperclass(Sample.class);
+		
+		Callback callback=new InvocationHandler() {
+			
+			public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
+				if (method.getDeclaringClass()==Sample.class && method.getReturnType()==String.class){
+					String r=String.format("Hello, this is %s",this);
+					return r;
+				}else{
+					throw new RuntimeException("Do not know");
+				}
+			}
+		};
+		enhancer.setCallback(callback);
+		Object _=enhancer.create();
+		Sample prx=(Sample)_;
+		String $=prx.hello();
+		System.out.println($);
+		
+		try{
+			String $2=prx.toString();
+			System.out.println($2);
+		}catch(Throwable throwable){
+			System.out.println(throwable.getMessage());
+		}
+
+/ we zien	, 
+
+Hello, this is cg.SampleTest$2@51a0d6c9
+Do not know
+
+/ we kunnen in test2	infinite loop	 krijgen	,
+
+/ daarom in test3	,
+
+/ 13	. 
+
+	@Test
+	public void test3(){
+		Enhancer enhancer=new  Enhancer();
+		enhancer.setSuperclass(Sample.class);
+		
+		Callback callback=new MethodInterceptor() {
+			
+			public Object intercept(Object proxy, Method method, Object[] args,MethodProxy methodProxy) throws Throwable {
+				if (method.getDeclaringClass()==Sample.class && method.getReturnType()==String.class){
+					String r=String.format("Hello, this is %s",this);
+					return r;
+				}else{
+					return methodProxy.invokeSuper(proxy, args);
+				}
+			}
+		};
+		enhancer.setCallback(callback);
+		Object _=enhancer.create();
+		Sample prx=(Sample)_;
+		String $=prx.hello();
+		System.out.println($);
+		
+		try{
+			String $2=prx.toString();
+			System.out.println($2);
+		}catch(Throwable throwable){
+			System.out.println(throwable.getMessage());
+		}
+		int $3=prx.hashCode();
+		System.out.println($3);
+		
+	}
+
+/ we zien	,
+Hello, this is cg.SampleTest$3@3fd3659b
+cg.Sample$$EnhancerByCGLIB$$4dd3e140@3d78aa0f
+1031318031
+
+/ hoe gaat het, want bij prx.toString komt hij 2 keer in intercept, en beide keren komt hij in methodProxy.invokeSuper(
+/ TODO
+
+/ 13	. 
+
+/ we kunnen in Wicket NIET Model<String>.of("Foo")	, alleen Model.of("Foo")
+
+/ Lees	,
+http://stackoverflow.com/questions/4409100/how-to-make-a-java-generic-method-static
+
+public static <E> E[] appendToArray(E[] array, E item) { ...
+Note the <E>.
+
+Static generic methods need their own generic declaration (public static <E>) separate from the class's generic declaration (public class ArrayUtils<E>).
+
+If the compiler complains about a type ambiguity in invoking a static generic method (again not likely in your case, but, generally speaking, just in case), here's how to explicitly invoke a static generic method using a specific type (_class_.<_generictypeparams_>_methodname_):
+
+String[] newStrings = ArrayUtils.<String>appendToArray(strings, "another string");
+This would only happen if the compiler can't determine the generic type because, e.g. the generic type isn't related to the method arguments.
+
+/ 7	. 
+
+/ generics	,
+
+/ ws workspace-wicket7_7
+/ proj wicket-examples-step-by-step
+/ prog GenericsTest
+
+/ 13	. 
+
+/ polymorphisn: een class plays different roles	,
+/ vb	, 
+public interface Vegetarian{}
+public class Animal{}
+public class Deer extends Animal implements Vegetarian{}
+
+/ Deer is a Object, Deer, Animal, Vegetarian	
+/ Hier horen verschilllende fcts bij	,
+
+   private transient HashMap<E,Object> map;
+
+    // Dummy value to associate with an Object in the backing Map
+    private static final Object PRESENT = new Object();
+
+    /**
+     * Constructs a new, empty set; the backing <tt>HashMap</tt> instance has
+     * default initial capacity (16) and load factor (0.75).
+     */
+    public HashSet() {
+        map = new HashMap<>();
+    }
+
+/ 13	. 
+
+/ Lees	, 
+http://stackoverflow.com/questions/18176594/when-to-use-generic-methods-and-when-to-use-wild-card
+https://docs.oracle.com/javase/tutorial/java/generics/boundedTypeParams.html
+
+/ geef in google	,
+java generic array
+/ Lees	,
+http://stackoverflow.com/questions/529085/how-to-create-a-generic-array-in-java
+http://stackoverflow.com/questions/18581002/how-to-create-a-generic-array
+/ Geef in google	,
+java array.newinstance
+/ lees	,
+https://docs.oracle.com/javase/tutorial/reflect/special/arrayInstance.html
+http://stackoverflow.com/questions/17737416/are-there-any-generic-version-of-array-newinstance
+
+/ lees	,
+https://docs.oracle.com/javase/tutorial/collections/implementations/wrapper.html
+
+/ TODO (Afmaken) Volg new HashMap	,
+
+
+-rw-rw-r--+ 1 jboss jboss 44101729 Dec 23 12:35 tms-geosco-25954-2016.09_geosco-patch_build4910.zip
+-rw-rw-r--+ 1 jboss jboss 44117187 Jan 11 12:19 tms-geosco-26115-2016.09_geosco-patch_build4948.zip
+
+/ 7	. 
+
+/ lees	,
+https://docs.oracle.com/javase/tutorial/java/javaOO/nested.html
+
+/ 7	. 
+
+/ lees	 over final in anonymous object	, 
+http://stackoverflow.com/questions/4732544/why-are-only-final-variables-accessible-in-anonymous-class
+
+/ 7	. 
+
+/ GENERICS
+
+/ Generics	,
+
+/ workspace-wicket7_5
+/ Gradle project JavaLang
+/ maken package generics in src/main/java en src/main/test
+/ maken First en GenericsTest	,
+
+public class GenericsTest {
+
+	@Test
+	public void test(){
+		Assert.assertNotNull(new Generics());
+	}
+}
+/ Er zijn 2 views	, Gradle Tasks en Gradle Executions
+/ op Gradle tasks, 
+verification
+	test
+/ dubbel click daarop	, we zine in Gradle Executions hoe het gaat	,
+
+/ 13	. 
+
+/ In test4 willen we 2 Box's vergelijken	, 
+/ Daarom moeten we de Box.equals method maken	,
+/ we oef eerst met test2a	,
+
+$ vi GenericsTest.java 
+
+public class GenericsTest {
+
+	@Test
+	public void test2a(){
+		Box<Integer>box=new Box<Integer>(13);
+		Box<Integer>box2=new Box<Integer>(13);
+		Assert.assertEquals(box, box2);
+
+	}
+	
+	@Test
+	public void test4(){
+		Pair<String,Integer>pair=new OrderedPair<String, Integer>("even", 8);
+		Pair<String,Integer>pair2=new OrderedPair<String, Integer>("even", 8);
+		boolean b=Util.<String,Integer>compare(pair, pair2);
+		Assert.assertEquals(true, b);
+		
+		Pair<String,Box<Integer>>pair3=new OrderedPair<String, Box<Integer>>("first", new Box<Integer>(13));
+		Pair<String,Box<Integer>>pair4=new OrderedPair<String, Box<Integer>>("first", new Box<Integer>(13));
+		b=Util.<String,Box<Integer>>compare(pair3, pair4);
+		Assert.assertEquals(true, b);
+
+	}
+}
+
+
+/ Lees	,
+http://stackoverflow.com/questions/16382887/how-to-implement-equals-method-for-generics-using-instanceof
+
+public boolean equals(Object other){
+    if (other instanceof SingularNode<?>){
+        if ( ((SingularNode<?>)other).value.equals(value) ){
+            return true;
+        }
+    }
+    return false;
+}
+
+/ Lees	,
+https://docs.oracle.com/javase/tutorial/java/generics/erasure.html
+
+
+Evgeniy's solution and Michal's reasoning are correct - you don't need to worry about the type of T here. The reason is that the equals method doesn't depend on generics to work correctly. Instead, it is declared by Object and it takes an Object. Thus, it's responsible for checking the runtime type of whatever was passed in.
+
+If this happens to be SingularNode<String> and you compare it with a SingularNode<Integer>, then ((SingularNode<?>)other).value.equals(value) is perfectly fine because calling Integer.equals with a String argument will correctly return false.
+
+$ vi Box.java
+
+public class Box<T> {
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Box<?>){
+			if( ((Box<?>)obj).getT().equals(getT()) ){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return getT().hashCode();
+	}
+}
+
+/ Wat is het verschil als we <?> gewoon weglaten	?
+/ TODO
+
+/ 13	. 
+
+/ type inference	,
+
+public class Util {
+	public static <K,V> boolean compare(Pair<K, V>pair,Pair<K, V>pair2){
+		boolean b=pair.getKey().equals(pair2.getKey()) && pair.getValue().equals(pair2.getValue());
+		return b;
+	}
+	public static <T> T pick(T a1,T a2){
+		return a2;
+	}
+
+}
+
+$ vi GenericTest.java
+	@Test
+	public void test5(){
+		Serializable s=Util.pick("d", new ArrayList<Integer>());
+		System.out.println(s.getClass());
+	}
+}
+
+/ we moeten build.gradle aanpassen, om de System.out.println te kunnen zien	, 
+
+/ lees	,
+https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html
+
+$ vi build.gradle
+
+test{
+	// show standard out and standard error of the test JVM(s) on the console
+  testLogging.showStandardStreams = true
+}
+
+/ run Gradle task verification , test, 
+/ ga naar Console	,
+:compileJava UP-TO-DATE
+:processResources UP-TO-DATE
+:classes UP-TO-DATE
+:compileTestJava
+:processTestResources UP-TO-DATE
+:testClasses
+:test
+
+generics.GenericsTest > test5 STANDARD_OUT
+    class java.util.ArrayList
+
+BUILD SUCCESSFUL
+
+/ Toch vreemd	,
+		Serializable s=Util.pick("d", new ArrayList<Integer>());
+/ er staat	,
+	public static <T> T pick(T a1,T a2){
+/ Dus waarom moeten beide args niet dezelfde type hebben?
+/ TODO
+
+
+/ 1313	. 
+
+/ we veranderen	, 
+
+public class Util {
+	public static <T> T pick(T a1,T a2){
+		return a1;										<-
+	}
+
+}
+
+:compileJava
+:processResources UP-TO-DATE
+:classes
+:compileTestJava
+:processTestResources UP-TO-DATE
+:testClasses
+:test
+
+generics.GenericsTest > test5 STANDARD_OUT
+    class java.lang.String
+
+BUILD SUCCESSFUL
+
+/ Klopt	,
+
+/ 1313	. 
+
+/ Maar type inference zoals bij pick kan niet bij pick2	, 
+
+$ vi Util.java
+	public static <T> T pick(T a1,T a2){
+		return a1;
+	}
+	
+	public static <T> T pick2(T t,Box<T>b){
+		return b.getT();
+	}
+
+}
+
+	@Test
+	public void test5(){
+		Serializable s=Util.pick("d", new ArrayList<Integer>());	 / OK
+
+		Object o=Util.pick2("d", new Box<Integer>(13));	/ ERR , kan niet eens	,
+		Object o=Util.<Integer>pick2("d", new Box<Integer>(13));	/ ERR , kan niet eens	,
+		
+		Object o=Util.pick2(Integer.valueOf(7), new Box<Integer>(13));	/ OK 
+	
+/ TODO	
+
+/ 13	. 
+
+/ type inference ook vanuit target type	, 
+
+public class Collections {
+    public static final <T> List<T> emptyList() {
+        return (List<T>) EMPTY_LIST;
+    }
+
+public class GenericsTest {
+	@Test
+	public void test7(){
+		List<String>list=Collections.emptyList();			/ inference
+		List<String>list2=Collections.<String>emptyList();	/ explicit, no inference	,
+//		List<String>list2=Collections.<Integer>emptyList();	/ kan niet	, logisch	, 
+
+	}
+}
+
+/ 13	. 
+
+/ inference vanuit argument type	, 
+
+public class Util {
+	public static void processList(List<String>list){
+	}
+}
+
+	@Test
+	public void test8(){
+		// Util.processList(Collections.emptyList()); 	/ kan niet infer in Java 7	, wel in Java 8
+		Util.processList(Collections.<String>emptyList());	/ OK in Java 7	,
+	}
+
+/ 13	. 
+
+/ bounds	, 
+
+$ vi Box.java
+
+	public <U extends Number>void inspect(U u){
+		System.out.println(t.getClass().getName());
+		System.out.println(u.getClass().getName());
+	}   
+
+	@Test
+	public void test9(){
+		Box<Integer>box=new Box<Integer>();
+		box.setT(Integer.valueOf(13));
+//		box.inspect("d");			/ ERR, omdat U extends Number	, als we <U> alleen doen, dan OK	, 
+	}
+}
+
+/ 13	. 
+
+/ bounds	,
+
+public interface I {
+	String f();
+}
+public interface J {
+	Integer g();
+}
+public class X implements I, J {
+	@Override
+	public String f() {
+		return "J";
+	}
+	@Override
+	public Integer g() {
+		return Integer.valueOf(13);
+	}
+}
+
+public class K<T extends I> {
+	private T t;
+	public K(T t) {
+		this.t=t;
+	}
+	public String h(){
+		return t.f();
+	}
+
+}
+/ Omdat T extends I	, kunnen we t.f() geven	, eclipse ziet het ook,	 
+
+public class L<T extends J> {
+	private T t;
+	public L(T t) {
+		this.t=t;
+	}
+	public Integer h(){
+		return t.g();
+	}
+
+}
+/ Omdat T extends J	, kunnen we t.g() geven	, eclipse ziet het ook,	 
+
+public class M<T extends I & J>{
+	private T t;
+	public M(T t) {
+		this.t=t;
+	}
+	public String h(){
+		return t.f();
+	}
+	public Integer h2(){
+		return t.g();
+	}
+}
+/ Omdat T extends I & J	, kunnen we t.f() en t.g() geven	, eclipse ziet het ook,	 
+/ we write dus X implements I,J en <T extends I&J>
+
+	@Test
+	public void test10(){
+		X x=new X();
+		K<X> k=new K<>(x);
+		String s=k.h();
+		Assert.assertEquals("J", s);
+		L<X>l=new L<>(x);
+		Integer i=l.h();
+		Assert.assertEquals(Integer.valueOf(13), i);
+		M<X>m=new M<X>(x);
+		s=m.h();
+		i=m.h2();
+		Assert.assertEquals("J", s);
+		Assert.assertEquals(Integer.valueOf(13), i);
+	}
+
+/ 13	. 
+
+/ we bootsen probleem in EvoListPage na	,
+
+
+public class M<T extends I & J>{
+	private T t;
+	public M(T t) {
+		this.t=t;
+	}
+	public String h(){
+		return t.f();
+	}
+	public Integer h2(){
+		return t.g();
+	}
+//	public void p(){
+//		new M<T>(new X());					<- ERR
+//	}
+}
+/ Solutions	,
+	public M<T>p(){							/ OK
+		return new M<T>((T) new X());					/ TODO (T) 
+	}
+	public static <T extends I&J> M<T> p2(){	/ OK
+		return new M<T>((T) new X());					/ TODO (T)
+	}
+
+
+/ 1313	. 
+
+public class K<T extends I> {
+	private T t;
+	public K(T t) {
+		this.t=t;
+	}
+	public String h(){
+		return t.f();
+	}
+//	public void p(){
+//		new M<T>(new X());					<- ERR
+//	}
+}
+/ Solutions
+	public <U extends I&J> void p(){
+		new M<U>((U)new X());
+	}
+	public static <U extends I&J> M<U> p2(){
+		return new M<U>((U)new X());
+	}
+
+GenericsTest.class
+	@Test
+	public void test10(){
+		X x=new X();
+		M<X>m2=M.p2();	/ OK
+		M<X>k2=K.p2();	/ OK
+	}
+}
+
+/ Lees	,
+http://stackoverflow.com/questions/17739720/inferred-type-is-not-a-valid-substitute-for-a-comparable-generic-type
+
+/ 13	. 
+
+	@Test
+	public void test10(){
+		X x=new X();
+		M<X>m=new M<X>(x);
+/ OK	, 
+/ Vergl met hierboven	, 
+	new M<T>(new X());					<- ERR
+/ waar we moesten	, 
+	new M<T>((T)new X());					<- OK
+
+/ 13	. 
+
+public class Box<T> {
+	private T t;
+	public T get() {
+		return t;
+	}
+	
+	public void f(){
+	}
+	public <U> void g(Object obj){
+		((Box<U>)obj).f();
+		U u=((Box<U>)obj).getT();
+		Object o=((Box<?>)obj).getT();
+	}
+}
+
+/ 13	. 
+
+/ compareTo
+
+class Util
+	public static <T> int countGreaterThan(T[]array,T elem){			/ ERR
+		int count=0;
+		for(T t:array){
+			if(t>elem){		/ > is niet def voor T	,
+				count++;
+			}
+		}
+	}
+
+	public static <T extends Comparable<T>> int countGreaterThan(T[]array,T elem){	 / OK
+		int count=0;
+		for(T t:array){
+			if(t.compareTo(elem)>0){
+				count++;
+			}
+		}
+		return count;
+	}
+
+
+/ 13	. 
+
+/ extensions	,
+
+public interface D<T>{
+	Class<?> f(T t);
+	T g(T t);
+}
+public class O<T> implements D<T> {
+	@Override
+	public Class<?> f(T t) {
+		return t.getClass();
+	}
+	@Override
+	public T g(T t) {
+		return t;
+	}
+}
+public class GenericsTest {
+	@Test
+	public void test12(){
+		D<String>d=new O<String>();
+		Class<String>class1=(Class<String>) d.f("");
+		Class<?>class2=d.f("");
+		String s=d.g("");
+	}
+}
+
+/ 13	. 
+
+/ wildcards	,
+/ ? is een wildcard	, T NIET	,
+
+public class Util {
+	public static <T> void process(D<T>d){	
+	}
+	public static <T extends Number> void process2(D<T>d){			/ public static <T> void process2(D<T extends Number>d) kan NIET	, 
+	}
+	public static void process3(D<? extends Number>d){	
+	}
+}
+
+/ .intValue= (int)	, gaat richting de int	, 
+/ -13.7 -> -13
+/ 13.7 -> 13
+
+public class Util {
+	public static <T extends Number> int sum(List<T>list){
+		int sum=0;
+		for(Number n:list){
+			sum+=n.intValue();
+		}
+		return sum;
+	}
+	public static int sum2(List<? extends Number>list){
+		int sum=0;
+		for(Number n:list){
+			sum+=n.intValue();
+		}
+		return sum;
+	}
+/ Dit kan allebei	,
+
+public class GenericsTest {
+	@Test
+	public void test13(){
+		List<Integer>list=Arrays.asList(7,13,-2,4);
+		int sum=Util.sum(list);
+		Assert.assertEquals(22, sum);
+		sum=Util.sum2(list);
+		Assert.assertEquals(22, sum);
+		List<Double>list2=Arrays.asList(7.3,13.934234,-2.2342342,4.7);
+		sum=Util.sum(list);
+		Assert.assertEquals(22, sum);
+		sum=Util.sum2(list);
+		Assert.assertEquals(22, sum);
+
+		Assert.assertEquals(13,(int)13.7);
+		Assert.assertEquals(-13,(int)-13.7);
+	}
+
+/ 1313	. 
+
+public class Object {
+    public final native Class<?> getClass();
+
+public final class Class<T> implements java.io.Serializable,
+    public static Class<?> forName(String className)
+    public T newInstance()
+
+
+	@Test
+	public void test13(){
+		try {
+			Class<?>class1=Integer.valueOf(7).getClass();
+			Object o=class1.newInstance();
+			Class<Integer>class2=(Class<Integer>)Integer.valueOf(7).getClass();
+			Integer i=class2.newInstance();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+/ class2 is een Class<Integer>	, dus class2.newInstance is een Integer	,
+
+/ 13	. 
+
+public interface List<E> extends Collection<E> {
+    E get(int index);
+    E set(int index, E element);
+
+Util.class
+//	public static void foo(List<?>list){		
+//		list.set(0, list.get(0));				/ ERR, The method set(int, capture#2-of ?) in the type List<capture#2-of ?> is not applicable for the arguments (int, capture#3-of ?)
+//	}	
+//	public static void foo2(List<? extends Number>list){		
+//		list.set(0, list.get(0));				/ ERR	, The method set(int, capture#4-of ? extends Number) in the type List<capture#4-of ? extends Number> is not applicable for the arguments (int, capture#5-of ? extends Number)
+//	}
+	public static <T> void foo3(List<T>list){	/ OK
+		list.set(0, list.get(0));
+	}
+/  the compiler is not able to confirm the type of object that is being inserted into the list
+
+	public static void foo(List<?>list){
+		fooHelper(list);
+	}
+	private static <T> void fooHelper(List<T>list){
+			list.set(0, list.get(0));
+	}
+
+/ 13	. 
+
+/ Lees	, 
+http://stackoverflow.com/questions/6008241/java-generics-e-and-t-what-is-the-difference
+
+Util.class
+	public static <T extends Number> void add(T num,List<? super Number>list){
+		list.add(num);
+	}	
+
+GenericTest.class
+	@Test
+	public void test14(){
+		List<Object>list3=new ArrayList<Object>();
+		list3.add(Integer.valueOf(7));
+	}
+
+/ lees	,
+http://stackoverflow.com/questions/6231973/difference-between-list-list-listt-liste-and-listobject
+http://stackoverflow.com/questions/19470317/java-generics-difference-between-t-and-extends-t
+
+Util.class
+	public static <T> int  count(List<? extends T>list){
+		return list.size();
+	}
+
+/Lees	,
+http://www.angelikalanger.com/GenericsFAQ/JavaGenericsFAQ.html
+
+/ 13	. 
+
+/ type erasure
+
+public class E<T extends Number> {
+	private T t;
+	public E(T t) {
+		this.t=t;
+	}
+	public int get(){
+		return t.intValue();
+	}
+	public T get2(){
+		return t;
+	}
+}
+
+public class E2{
+	private Number t;
+	public E2(Number t){
+		this.t=t;
+	}
+	public int get(){
+		return t.intValue();
+	}
+	public Number get2(){
+		return t;
+	}
+}
+
+GenericsTest.class
+	@Test
+	public void test15(){
+		E<Integer>e=new E(5);
+		Assert.assertEquals(5, e.get());
+		Assert.assertEquals(Integer.valueOf(5), e.get2());
+		E<Double>e2=new E(5.7);
+		Assert.assertEquals(5, e2.get());
+		Assert.assertEquals(Double.valueOf(5.7), e2.get2());
+		
+		E2 e3=new E2(5);
+		Assert.assertEquals(5, e3.get());
+		Assert.assertEquals(Integer.valueOf(5), e3.get2());		/ e3.get2() is een Integer	,
+		E2 e4=new E2(5.7);
+		Assert.assertEquals(5, e4.get());
+		Assert.assertEquals(Double.valueOf(5.7), e4.get2());	/ e4.get2() is een Double	,
+	}
+}
+
+/ 13	. 
+
+/ type erasure		,
+
+/ Deze gaat OK	,
+
+	public static <T extends Number> int count(T[]array,T elem){
+		int count=0;
+		for(T t:array){
+			if(t.equals(elem)){
+				count++;
+			}
+		}
+		return count;
+	}
+	public static  int count2(Number[]array,Number elem){
+		int count=0;
+		for(Number t:array){
+			if(t.equals(elem)){
+				count++;
+			}
+		}
+		return count;
+	}
+
+/ een foreach loop moet je eerst een gewone for loop van maken	, 
+
+	public static <T extends Number> int sum(List<T>list){
+		int sum=0;
+		for(Number n:list){
+			sum+=n.intValue();
+		}
+		return sum;
+	}
+	public static int sum3(List list){
+		int sum=0;
+		for(Number n:list){			<- Type mismatch: cannot convert from element type Object to Number
+			sum+=n.intValue();
+		}
+		return sum;
+	}
+/ Daarom erased	,
+	public static int sum3(List list){ // erased sum	,
+		int sum=0;
+		for(Iterator<Number>iterator=list.iterator();iterator.hasNext();){
+			Number number=(Number)iterator.next();
+			sum+=number.intValue();
+		}
+		return sum;
+}
+
+/ 13	. 
+
+/ bridge bij erase	,
+
+public class Node<T> {
+	T data;
+	public Node(T data) {
+		this.data=data;
+	}
+	public void setData(T data){
+		this.data=data;
+	}
+}
+
+public class MyNode extends Node<Integer>{
+	public MyNode(Integer data){
+		super(data);
+	}
+	@Override								/ !
+	public void setData(Integer data){
+		super.setData(data);
+	}
+}
+
+public class NodeErased {
+	Object data;
+	public NodeErased(Object data) {
+		this.data=data;
+	}
+	public void setData(Object data){
+		this.data=data;
+	}
+}
+
+public class MyNodeErased extends NodeErased{
+	public MyNodeErased(Integer data){
+		super(data);
+	}
+	@Override
+	public void setData(Object data) {		/ Bridge method	,
+		setData((Integer)data);
+	}
+	public void setData(Integer data){		/ overrides NodeErased.setData NIET	, want paramaeters zijn van ander type	,
+		super.setData(data);
+	}
+
+}
+
+/ 13	. 
+
+/ voorbeeld type erase	,
+
+/ we erase for over array en list	,
+
+/ array	,
+
+	public static <T extends Comparable<T>> int countGreaterOrEqualThan(T[]array,T elem){
+		int count=0;
+		for(T t:array){
+			if(t.compareTo(elem)>=0){
+				count++;
+			}
+		}
+		return count;
+	}
+	public static <T extends Comparable<T>> int countGreaterOrEqualThanWithFor(T[]array,T elem){
+		int count=0;
+		for(int i=0;i<array.length;i++){
+			if(array[i].compareTo(elem)>=0){
+				count++;
+			}
+		}
+		return count;
+	}
+	public static int countGreaterOrEqualThanWithForErased(Comparable[]array,Comparable elem){
+		int count=0;
+		for(int i=0;i<array.length;i++){
+			if(array[i].compareTo(elem)>=0){
+				count++;
+			}
+		}
+		return count;
+	}
+
+/ list	,
+
+	public static <T extends Comparable<T>> int countGreaterThanWithList(List<T>list,T elem){
+		int count=0;
+		for(T t:list){
+			if(t.compareTo(elem)>0){
+				count++;
+			}
+		}
+		return count;
+	}
+	public static <T extends Comparable<T>> int countGreaterThanWithListWithIterator(List<T>list,T elem){
+		int count=0;
+		for(Iterator<T>iterator=list.iterator();iterator.hasNext();){
+			if(iterator.next().compareTo(elem)>0){
+				count++;
+			}
+		}
+		return count;
+	}
+	public static int countGreaterThanWithListWithIteratorErased(List list,Comparable elem){
+		int count=0;
+		for(Iterator iterator=list.iterator();iterator.hasNext();){
+			if( ((Comparable)iterator.next()).compareTo(elem)>0){
+				count++;
+			}
+		}
+		return count;
+	}
+
+t
+	public void test11_erased(){
+		Integer[]ints={13,7,21,-5,-11,102};
+		int count=Util.countGreaterOrEqualThanWithForErased(ints, 7);
+		Assert.assertEquals(4, count);
+		List list=Arrays.asList(13,7,21,-5,-11,102);
+		count=Util.countGreaterThanWithListWithIteratorErased(list, 7);
+		Assert.assertEquals(3, count);
+
+	}
+
+/ 7	. 
+
+/ erasure ?
+
+/ lees	,
+http://stackoverflow.com/questions/272535/how-do-i-decompile-java-class-files
+
+[eric@localhost java-stuff]$ pwd
+/home/eric/tmp/java-stuff
+/ we hebben gedeelte Util in EraseStudy	, 
+$ javac EraseStudy.java
+[eric@localhost java-stuff]$ javap -c EraseStudy.class >EraseStudy.javap
+
+$ vi EraseStudy.java
+
+public class EraseStudy {
+	
+	///////////////////
+	// sum with list	,
+	public static <T extends Number> int sum(List<T>list){
+		int sum=0;
+		for(Number n:list){
+			sum+=n.intValue();
+		}
+		return sum;
+	}
+	public static <T extends Number> int sumWithIterator(List<T>list){
+		int sum=0;
+		for(Iterator<T>iterator=list.iterator();iterator.hasNext();){
+			T n=iterator.next();
+			sum+=n.intValue();
+		}
+		return sum;
+	}
+	public static int sumWithIteratorErased(List list){
+		int sum=0;
+		for(Iterator iterator=list.iterator();iterator.hasNext();){
+			Number n=(Number)iterator.next();
+			sum+=n.intValue();
+		}
+		return sum;
+	}
+	/////////////////////
+	
+
+	public static int sumWithQm(List<? extends Number>list){
+		int sum=0;
+		for(Number n:list){
+			sum+=n.intValue();
+		}
+		return sum;
+	}
+//	public static int sumWithQmWithIterator(List<? extends Number> list){							/ TODO
+//		int sum=0;
+//		for(Iterator<? extends Number> iterator=list.iterator();iterator.hasNext();){
+//			? n=iterator.next();
+//			sum+=n.intValue();
+//		}
+//		return sum;
+//	}
+	public static int sumWithQmWithIteratorErased(List list){
+		int sum=0;
+		for(Iterator iterator=list.iterator();iterator.hasNext();){
+			Number n=(Number)iterator.next();
+			sum+=n.intValue();
+		}
+		return sum;
+	}
+}
+
+/ Alle methods hebben dezelfde bytecodes	,
+
+  public static <T extends java/lang/Number> int sum(java.util.List<T>);
+    Code:
+       0: iconst_0
+       1: istore_1
+       2: aload_0
+       3: invokeinterface #2,  1            // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+       8: astore_2
+       9: aload_2
+      10: invokeinterface #3,  1            // InterfaceMethod java/util/Iterator.hasNext:()Z
+      15: ifeq          38
+      18: aload_2
+      19: invokeinterface #4,  1            // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      24: checkcast     #5                  // class java/lang/Number
+      27: astore_3
+      28: iload_1
+      29: aload_3
+      30: invokevirtual #6                  // Method java/lang/Number.intValue:()I
+      33: iadd
+      34: istore_1
+      35: goto          9
+      38: iload_1
+      39: ireturn
+
+/ Lees	,
+http://stackoverflow.com/questions/31583697/how-type-erasure-works-for-wildcard-in-java
+ 
+/ 13	. 
+
+/ Dit geeft compile ERR	, 
+
+public class ResourceTypeListPage extends BaseContextPage {
+
+	protected BeanWrapper<BaseDAOInterface<ResourceType>> daoWrapper;
+
+	public ResourceTypeListPage() {
+		daoWrapper = new BeanWrapper(ResourceTypeDAO.class);
+
+	protected <U extends EnumeratedValueObjectInterface> void createSoftDeletableLinkPanel() {
+		Panel softDeletableLinkPanel = new SoftDeletableLinkPanel<U>("softDeletableLinkPanel") {
+
+			@Override
+			protected BeanWrapper<? extends SoftDeletableDAOInterface<U>> getBeanWrapper() {
+				return (BeanWrapper<? extends SoftDeletableDAOInterface<U>>) daoWrapper;
+			}
+
+			@Override
+			protected WebPage getResponsePage() {
+				return getWebPage();
+			}
+
+		};
+		add(softDeletableLinkPanel);
+	}
+}
+public class ResourceTypeDAOImpl extends EnumeratedValueObjectHibernateDAO<ResourceType> implements ResourceTypeDAO {
+/e
+public class EnumeratedValueObjectHibernateDAO<T extends EnumeratedValueObjectInterface> extends GenericHibernateDAO<T> implements EnumeratedValueObjectDAOInterface<T>, SoftDeletableDAOInterface<T> {
+
+///////////////////////////////////////////////////////////////
+/ we kunnen denken	voor het nadoen hier beneden	,
+public class ResourceTypeDAOImpl implements SoftDeletableDAOInterface<ResourceType> 
+
+/ 1313	. 
+
+/ we maken het na	,
+
+/ we doen nog niet 	
+U extends EnumeratedValueObjectInterface	
+/ , maar 
+ResourceType  
+
+
+public class B<T> {
+	private T t;
+	public B(T t) {
+		this.t=t;
+	}
+}
+public interface I2<T> {
+}
+public interface N2<T> extends I2<T> {
+}
+public class N2Impl<T> implements N2<T> {
+}
+public class R{
+}
+
+GenericTest.class
+
+// comment out	, want compiles niet	, @Ignore heeft  daar niets mee te maken	,
+	@Test
+	public void test17(){
+		B<I2<R>>b=new B(new N2Impl<R>());
+221:	B<? extends N2<R>>b2=(B<? extends N2<R>>)b;
+	}
+	@Test 
+	public void test17b(){
+		B<? extends I2<R>>b=new B(new N2Impl<R>());
+		B<? extends N2<R>>b2=(B<? extends N2<R>>)b;
+	}
+
+:compileTestJava/home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace-wicket7_5/JavaLang/src/test/java/generics/GenericsTest.java:221: error: inconvertible types
+		B<? extends N2<R>>b2=(B<? extends N2<R>>)b;
+		                                         ^
+  required: B<? extends N2<R>>
+  found:    B<I2<R>>
+
+/ wel logisch	, kan niet van I2 naar ? extends N2	, 
+/ cast naar B<? extends I2> gaat OK	,
+
+/ Hoe wordt hij type erased	?
+
+  public static void erase_b();
+    Code:
+       0: new           #8                  // class generics/B
+       3: dup           
+       4: new           #9                  // class generics/N2Impl
+       7: dup           
+       8: invokespecial #10                 // Method generics/N2Impl."<init>":()V
+      11: invokespecial #11                 // Method generics/B."<init>":(Ljava/lang/Object;)V
+      14: astore_0      
+      15: aload_0       
+      16: astore_1									<- de cast	,      
+      17: return  
+
+/ we hebben ook een eenvoudigere versie gemaakt	, met I3, N3, N3Impl	, die geen type param hebben	,
+
+$ vi GenericTest.java
+
+// comment out	, want compiles niet	,	 	
+	@Test
+	public void test18(){
+		B<I3>b=new B(new N3Impl());
+		B<? extends N3>b3=(B<? extends N3>)b;
+	}
+	@Test
+	public void test18b(){
+		B<? extends I3>b=new B(new N3Impl());
+		B<? extends N3>b3=(B<? extends N3>)b;
+	}
+
+/ test 18:
+  required: B<? extends N3>
+  found:    B<I3>
+
+/ hij kan niet van I3 naar ? extends N3	,
+/ OK
+
+
+
+/ 1313	. 
+
+/ MORGENOCHTEND
+/ Waarom 1ste NIET compiles	,
+/ Geef in google	,
+java generic cast wildcard
+/ Lees	,
+http://stackoverflow.com/questions/12914401/java-wildcards-dont-allow-type-casting
+https://www.thecodingforums.com/threads/generic-type-cast-involving-wildcard-type.692846/			<-
+/ EN
+/ oef met R.f()	, en S extends R .f()	, ...
+
+/ Einde GENERICS
+
+/ SERIALIZE
+
+/ 7. 	
+
+/ proj scratch	, 
+/ workspace-wicket7_7
+
+/ ser	.
+
+/ 13	. 
+
+public class PersistentTime {
+	private Date time;
+	public PersistentTime() {
+		setTime(Calendar.getInstance().getTime());
+	}
+	public Date getTime() {
+		return time;
+	}
+	public void setTime(Date time) {
+		this.time = time;
+	}
+	
+}
+public class PersistentTimeTest {
+
+	@Test
+	public void test()throws IOException{
+		PersistentTime time=new PersistentTime();
+		ObjectOutputStream oos=new ObjectOutputStream(new FileOutputStream("time.ser"));
+		oos.writeObject(time);
+
+	}
+}
+
+/ run de test	,
+
+java.io.NotSerializableException: scratch.PersistentTime
+	at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1183)
+	at java.io.ObjectOutputStream.writeObject(ObjectOutputStream.java:347)
+	at scratch.PersistentTimeTest.test(PersistentTimeTest.java:15)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:50)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:467)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:683)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:390)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:197)
+
+/ 13	. 
+
+public class PersistentTime implements Serializable{
+...
+/ Nu is de test OK	,
+
+/ we zien de file time.ser	,
+
+/ 13	. 
+
+	@Test
+	public void testDeser()throws IOException,ClassNotFoundException{
+		ObjectInputStream ois=new ObjectInputStream(new FileInputStream("time.ser"));
+		PersistentTime time=(PersistentTime)ois.readObject();
+		Assert.assertNotNull(time.getTime());
+	}
+/ passes als time in PersistentTime is NIET transient	,
+/ passes NIET  als time in PersistentTime is WEL transient	,
+
+/ Einde SERIALIZE
+
+/ NESTED INNER CLASSES 
+
+/ workspace wicket7_5
+/ proj. wicket-testing
+
+public class NestedInnerContainer {
+	
+	public static String skey="skey";
+	public static Nested snested;
+	static{
+		 snested=new Nested();
+//		Inner sinner=new Inner();
+	}
+	
+	public String ikey="ikey";
+	public Nested inested;
+	public Inner iinner;
+	public NestedInnerContainer() {
+		inested=new Nested();
+		iinner=new Inner();
+	}
+
+	public static class Nested{
+		public static String sname="sname";
+		public String iname="iname";
+		public String get(){
+			return skey+sname+iname;	// ikey
+		}
+	}
+	public class Inner{
+		public static final String sname="sname";	//  final !
+		public String iname="name";
+		public String get(){
+			return skey+ikey+sname+iname;
+		}
+	}
+	
+	public void f(){
+		boolean b=false;
+	}
+}
+
+public class NestedInnerContainerTest {
+
+	@Test
+	public void test(){
+		NestedInnerContainer container=new NestedInnerContainer();
+		String s=container.snested.iname;
+		s=container.snested.sname;
+		s=container.inested.iname;
+		s=container.inested.sname;
+		boolean b=false;
+	}
+
+container	NestedInnerContainer  (id=39)	
+	skey	"skey" (id=55)	
+	snested	NestedInnerContainer$Nested  (id=56)	
+	iinner	NestedInnerContainer$Inner  (id=58)	
+	ikey	"ikey" (id=60)	
+	inested	NestedInnerContainer$Nested  (id=61)	
+s	"sname" (id=46)	
+
+/ Dus nested and inner classes worden beide met $ named	,
+
+/ Einde NESTED INNER CLASSES 
+
+/ WEAK REFERENCE
+
+/ geef in google	, 
+weak reference tutorial
+/ Lees	, 
+http://javapapers.com/core-java/java-weak-reference/
+https://community.oracle.com/blogs/enicholas/2006/05/04/understanding-weak-references
+https://www.tutorialspoint.com/java/java_weakhashmap_class.htm
+
+$ vi Runtime.class
+    /**
+     * Runs the garbage collector.
+     * Calling this method suggests that the Java virtual machine expend
+     * effort toward recycling unused objects in order to make the memory
+     * they currently occupy available for quick reuse. When control
+     * returns from the method call, the virtual machine has made
+     * its best effort to recycle all discarded objects.
+     * <p>
+     * The name <code>gc</code> stands for "garbage
+     * collector". The virtual machine performs this recycling
+     * process automatically as needed, in a separate thread, even if the                   <-
+     * <code>gc</code> method is not invoked explicitly.
+     * <p>
+     * The method {@link System#gc()} is the conventional and convenient
+     * means of invoking this method.
+     */
+    public native void gc();
+
+/ Lees  ,
+http://stackoverflow.com/questions/30453551/garbage-collector-doesnt-immediately-collect-finished-thread
+
+/ Einde WEAK REFERENCE
+
+/ 
+
+/ Lees	, 
+http://stackoverflow.com/questions/11388840/java-compiled-classes-contain-dollar-signs
+/-> 
+http://stackoverflow.com/questions/487126/is-usage-of-anonymous-classes-in-java-considered-bad-style-or-good
+
+/ Lees	, 
+http://stackoverflow.com/questions/1075207/what-are-the-1-in-class-file
+
+public class anonymous {
+	public static void main(String[] args) {
+		X x=new X();
+		X x2=new X(){	
+		};
+		Class<? extends Object>c=x.getClass();
+		Class<? extends Object>s=x.getClass().getSuperclass();
+		Class<? extends Object>c2=x2.getClass();
+		Class<? extends Object>s2=x2.getClass().getSuperclass();
+
+		boolean b=false;
+	}
+	private static class X{		
+	}
+}
+/ we zien	, 
+x	anonymous$X  (id=19)	
+x2	anonymous$1  (id=21)	
+c	Class<T> (scratch.anonymous$X) (id=18)	
+s	Class<T> (java.lang.Object) (id=8)	
+c2	Class<T> (scratch.anonymous$1) (id=20)	
+s2	Class<T> (scratch.anonymous$X) (id=18)	
+
+///////////////////////////////////////////////////////////////////
+/ Aan s2 zien we dat new X(){} is een instance van een subclass of X	, 
+
+/ we hebben beantwoord in 	,
+http://stackoverflow.com/questions/1075207/what-are-the-1-in-class-file/42927323#42927323
+
+public class A {
+    public static void main(String[] args) {
+        X x=new X();
+        X x2=new X(){   
+        };
+        Class<? extends Object>c2=x2.getClass();
+        Class<? extends Object>s2=x2.getClass().getSuperclass();
+
+        boolean b=false;
+    }
+    private static class X{     
+    } }
+It is hard to see from the code (new X{}() would have been better than new X(){}), but x2 is an instance of a subclass of A$X. This subclass is A$1.
+
+/ 7	. 
+
+/ Lees	, 
+https://examples.javacodegeeks.com/core-java/io/randomaccessfile/java-randomaccessfile-example/
+
+private static void writeToFile(String filePath, String data, int position) throws IOException {
+        RandomAccessFile file = new RandomAccessFile(filePath, "rw");
+        file.seek(position);
+        file.write(data.getBytes());
+        file.close();
+/ 7	. 
+
+/ WAIT NOTIFY 
+
+/ Lees	, 
+http://www.journaldev.com/1037/java-thread-wait-notify-and-notifyall-example
+
+/ ws workspace-wicket7_7
+/ proj scratch
+
+$ vi Message.java
+public class Message{
+	private String msg;
+	
+	public Message(String msg) {
+		this.msg=msg;
+	}
+
+	public String getMsg() {
+		return msg;
+	}
+
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+}
+
+$ vi Waiter.java
+public class Waiter implements Runnable{
+	private Message message;
+	public Waiter(Message message) {
+		this.message=message;
+	}
+	@Override
+	public void run() {
+		synchronized (message) {
+			try{
+				message.wait();
+			}catch(InterruptedException e){
+			}
+			System.out.println("Waiter: "+message.getMsg());
+		}
+		
+	}
+}
+
+$ vi Notifier.java
+
+public class Notifier implements Runnable{
+	private Message message;
+	public Notifier(Message message) {
+		this.message=message;
+	}
+	@Override
+	public void run() {
+		synchronized (message) {
+			message.setMsg("foo bar");
+			message.notifyAll();
+		}
+	}
+}
+
+$ vi WaitNotifyTest.java
+
+public class WaitNotifyTest {
+
+	@Test
+	public void test(){
+		Message m=new Message("");
+		Waiter w=new Waiter(m);
+		Waiter w2=new Waiter(m);
+
+		Notifier n=new Notifier(m);
+		new Thread(w).start();
+		new Thread(w2).start();
+
+		new Thread(n).start();
+	}
+}
+
+/ we zien	, 
+Waiter: foo bar
+Waiter: foo bar
+
+
+
+
+
+/ Einde WAIT NOTIFY 
+
+/ CONSTRUCTORS
+
+/ ws workspace-wicket7_3
+/ proj scratch
+
+$ vi X.java
+public class X {
+}
+/=
+public class X {
+	public X(){
+	}
+}
+
+/ we zien een default ctor	, 
+
+[eric@localhost scratch]$ javap -c -p -verbose  bin/scratch/X.class 
+  Last modified Apr 7, 2017; size 244 bytes
+  MD5 checksum f10b7ed5477253cda757c5e655d8ac75
+  Compiled from "X.java"
+public class scratch.X
+  SourceFile: "X.java"
+  minor version: 0
+  major version: 51
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+   #1 = Class              #2             //  scratch/X
+   #2 = Utf8               scratch/X
+   #3 = Class              #4             //  java/lang/Object
+   #4 = Utf8               java/lang/Object
+   #5 = Utf8               <init>
+   #6 = Utf8               ()V
+   #7 = Utf8               Code
+   #8 = Methodref          #3.#9          //  java/lang/Object."<init>":()V
+   #9 = NameAndType        #5:#6          //  "<init>":()V
+  #10 = Utf8               LineNumberTable
+  #11 = Utf8               LocalVariableTable
+  #12 = Utf8               this
+  #13 = Utf8               Lscratch/X;
+  #14 = Utf8               SourceFile
+  #15 = Utf8               X.java
+{
+  public scratch.X();
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0       
+         1: invokespecial #8                  // Method java/lang/Object."<init>":()V
+         4: return        
+      LineNumberTable:
+        line 3: 0
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+               0       5     0  this   Lscratch/X;
+}
+
+/ 7	 
+
+/ als we 1 ctor maken met args, dan hebben we GEEN default ctor	, 
+
+public class X {
+	public X(String s){
+	}
+}
+
+[eric@localhost scratch]$ javap -c -p -verbose  bin/scratch/X.class 
+Classfile /home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace-wicket7_3/scratch/bin/scratch/X.class
+  Last modified Apr 7, 2017; size 307 bytes
+  MD5 checksum 5188a13acad2f368b3956723e07b7ad0
+  Compiled from "X.java"
+public class scratch.X
+  SourceFile: "X.java"
+  minor version: 0
+  major version: 51
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+   #1 = Class              #2             //  scratch/X
+   #2 = Utf8               scratch/X
+   #3 = Class              #4             //  java/lang/Object
+   #4 = Utf8               java/lang/Object
+   #5 = Utf8               <init>
+   #6 = Utf8               (Ljava/lang/String;)V
+   #7 = Utf8               Code
+   #8 = Methodref          #3.#9          //  java/lang/Object."<init>":()V
+   #9 = NameAndType        #5:#10         //  "<init>":()V
+  #10 = Utf8               ()V
+  #11 = Utf8               LineNumberTable
+  #12 = Utf8               LocalVariableTable
+  #13 = Utf8               this
+  #14 = Utf8               Lscratch/X;
+  #15 = Utf8               s
+  #16 = Utf8               Ljava/lang/String;
+  #17 = Utf8               SourceFile
+  #18 = Utf8               X.java
+{
+  public scratch.X(java.lang.String);
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=2, args_size=2
+         0: aload_0       
+         1: invokespecial #8                  // Method java/lang/Object."<init>":()V
+         4: return        
+      LineNumberTable:
+        line 4: 0
+        line 6: 4
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+               0       5     0  this   Lscratch/X;
+               0       5     1     s   Ljava/lang/String;
+}
+
+
+
+
+/ Einde CONSTRUCTORS
+
+/ JIT
+
+/ Lees	, 
+http://stackoverflow.com/questions/1503479/how-to-see-jit-compiled-code-in-jvm
+
+-XX:+PrintOptoAssembly -XX:CompileThreshold=# 
+
+-XX:+UnlockDiagnosticVMOptions -XX:+PrintAssembly
+-XX:+UnlockDiagnosticVMOptions -XX:CompileCommand=print,*MyClass.myMethod
+
+
+http://fcml-lib.com/manual.html#examples-hsdis
+/ Einde JIT
+
+/ NESTED INNER CLASS
+
+/ Als we in een inner class method zijn , is this=inner class inst	, 
+/ In een inner class kun je een method call uit de outer class	, je kunt ook explicit weergeven dat je dat doet:
+
+/ Voorbeeld	, 
+
+   private class Inner{
+        public String fct(){
+            String s=rtn("foo"); 
+//=
+            String t=NestedInnerStudy.this.rtn("foo");
+
+/ Als we in deze outer class fct zijn	, is this de outer class inst	, 
+
+/ Als we in de inner class method zijn , zien we in de debugger	, 
+
+this	StringResourceModel$AssignmentWrapper  (id=65)		/ inner class inst	, 
+	this$0	StringResourceModel  (id=212)					/ outer class inst	,
+
+
+
+$ vi NestedInnerStudy.java
+
+public class NestedInnerStudy {
+	public static void main(String[] args) {
+		new NestedInnerStudy();
+	}
+	public NestedInnerStudy() {
+		new Inner().fct();
+		new Nested().fct();
+	}
+	private class Inner{
+		public String fct(){
+			String s=rtn("foo"); // this	NestedInnerStudy$Inner  (id=16)	
+//=
+			String t=NestedInnerStudy.this.rtn("foo");
+			return s;
+		}
+	}
+	private static class Nested{
+		public String fct(){
+			String s=srtn("foo");
+			return s;
+		}
+	}
+	public String rtn(String s){
+		return "Hello "+s; // this	NestedInnerStudy  (id=17)	
+	}
+	public static String srtn(String s){
+		return "Hello "+s;
+	}
+}
+
+
+/ Einde NESTED INNER CLASS

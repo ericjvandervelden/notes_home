@@ -1,0 +1,127 @@
+
+/ MISC
+
+/ 7	. 
+
+sco2p=# select st.transaction_type,st.is_dirty from stock_transaction st join product p on st.product_systemid=p.system_id where p.productid='9815434180' and st.is_dirty != 0;
+
+select count(st.*)
+select st.system_id
+from stock_transaction st 
+join product p on st.product_systemid=p.system_id 
+join stock_location sl on st.stock_location_systemid=sl.system_id 
+join goods_status gs on st.goods_status_systemid=gs.system_id  
+where p.productid='9815434180' 
+and sl.name='GEODIS_WHS_FR_SOCHAUX'
+and gs.code='GOOD'
+and st.is_dirty != 0;
+ count 
+-------
+     1 
+(1 row)
+
+select count(st.*)
+from stock_transaction st
+join product p on st.product_systemid=p.system_id
+join stock_location sl on st.stock_location_systemid=sl.system_id
+where p.productid='9815434180'
+and sl.name='GEODIS_WHS_FR_SOCHAUX'
+and st.is_dirty != 0;
+ count 
+-------
+    44
+(1 row)
+
+
+select gs.code , count(gs.code)
+from stock_transaction st 
+join product p on st.product_systemid=p.system_id 
+join stock_location sl on st.stock_location_systemid=sl.system_id 
+join goods_status gs on st.goods_status_systemid=gs.system_id  
+where p.productid='9815434180' 
+and sl.name='GEODIS_WHS_FR_SOCHAUX'
+and st.is_dirty != 0
+group by gs.code;
+ code | count 
+------+-------
+ BAD  |    43
+ GOOD |     1
+(2 rows)
+
+select this_.system_id 
+from STOCK_TRANSACTION this_ 
+left outer join TMS_PRODUCT_ITEM productite2_ on this_.PRODUCT_ITEM_SYSTEMID=productite2_.SYSTEM_ID 
+left outer join TMS_PRODUCT_ITEM productite3_ on productite2_.PARENT_SYSTEMID=productite3_.SYSTEM_ID 
+inner join ORGANIZATION organizati4_ on this_.ORGANIZATION_SYSTEMID=organizati4_.SYSTEM_ID 
+left outer join ORGANIZATION organizati5_ on organizati4_.ORGANIZATION_GROUP=organizati5_.SYSTEM_ID 
+where this_.PRODUCT_SYSTEMID=26878587
+and this_.STOCK_LOCATION_SYSTEMID=26878346
+and this_.GOODS_STATUS_SYSTEMID=26877284 
+and this_.IS_DIRTY=true
+order by this_.TRANSACTION_DATE asc, this_.SYSTEM_ID asc;
+ system_id 
+-----------
+  27392136
+(1 row)
+/ TODO (H antwoord klopt niet met deze)
+
+/ 7	. 
+
+select gs.code , count(gs.code)
+from stock_transaction st 
+join product p on st.product_systemid=p.system_id 
+join stock_location sl on st.stock_location_systemid=sl.system_id 
+join goods_status gs on st.goods_status_systemid=gs.system_id  
+where p.productid='9806313580' 
+and sl.name='GEODIS_WHS_FR_SOCHAUX'
+and st.is_dirty != 0
+group by gs.code;
+ code | count 
+------+-------
+ BAD  |    43
+ GOOD |     1
+(2 rows)
+
+/ 7	. 
+
+/ we zien   ,
+select count(*)
+from STOCK_TRANSACTION this_ 
+left outer join TMS_PRODUCT_ITEM productite2_ on this_.PRODUCT_ITEM_SYSTEMID=productite2_.SYSTEM_ID 
+left outer join TMS_PRODUCT_ITEM productite3_ on productite2_.PARENT_SYSTEMID=productite3_.SYSTEM_ID 
+inner join ORGANIZATION organizati4_ on this_.ORGANIZATION_SYSTEMID=organizati4_.SYSTEM_ID 
+left outer join ORGANIZATION organizati5_ on organizati4_.ORGANIZATION_GROUP=organizati5_.SYSTEM_ID 
+where this_.PRODUCT_SYSTEMID=26878527
+and this_.STOCK_LOCATION_SYSTEMID=26878346
+and this_.GOODS_STATUS_SYSTEMID=26877284
+and (this_.TRANSACTION_DATE>'2016-06-08 05:15:40.0' or (this_.TRANSACTION_DATE='2016-06-08 05:15:40.0' and this_.SYSTEM_ID>27392043))
+--order by this_.TRANSACTION_DATE asc, this_.SYSTEM_ID asc;
+ count
+-------
+   230
+(1 row)
+/ TODO (Als we order, en vragen count(*)    , dan ERR: de fields waarop je order by, moeten in group by , of in een aggregate function
+ ,
+
+
+/ Einde MISC
+
+$ vi interfacing-jms.sb.xml
+
+com.mpobjects.inventory.queue.stocktransaction
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

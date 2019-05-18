@@ -1,0 +1,6 @@
+/ Lees	, 
+http://in.relation.to/2016/11/18/meet-rafael-winterhalter-and-bytebuddy/
+
+https://zeroturnaround.com/rebellabs/how-my-new-friend-byte-buddy-enables-annotation-driven-java-runtime-code-generation/
+/->
+https://zeroturnaround.com/rebellabs/how-to-make-java-more-dynamic-with-runtime-code-generation/

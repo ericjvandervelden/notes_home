@@ -1,0 +1,6 @@
+/ google	,
+finite field number of operations multiplication
+/ lees	,
+https://crypto.stackexchange.com/questions/2068/complexity-of-arithmetic-in-a-finite-field
+
+

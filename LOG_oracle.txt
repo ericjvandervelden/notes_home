@@ -1,0 +1,2 @@
+/ lees	,
+https://oracle-base.com/articles/12c/oracle-db-12cr2-installation-on-fedora-28

@@ -1,0 +1,857 @@
+/ SAVE SEO
+
+/ op seo form 	,
+pln end date : 19 mei (was: 16 mei)
+pln start date : 13 mei (was: 14 mei)
+ldn:	1.20	 (was : 0.40)
+
+public class ServiceOrderSaveAction extends BoundSaveAction {
+	public void handleSave() throws java.lang.Exception {
+			theVO = (ServiceOrderVO) getValueObject();
+
+//////////////////////////////////////
+/ getValueObject() komt uit het form	,
+/ calls getFetchedData()	,  komt uit het form	,
+
+/ theVO.handler.target
+	theDateSetVO
+		thePlannedEndAfter	19 mei
+		thePlannedEndBefore 	16 mei	. TODO
+		thePlannedStartAfter	13 mei
+		thePlannedStartBefore 	15 mei	, TODO
+	theRequestedTotalLoadingMeters	1.20
+/ requested heet nu zo, maar komt niet van de sho	,
+
+/ Waar komt thePlannedEndBefore vandaan?
+/ TODO
+/ Want	,  
+
+frame=document.getElementsByTagName("frame")[1]
+<frame src=​"opening_page" name=​"main_frame" scrolling=​"none">​
+#document
+</frame>​
+frdoc=frame.contentDocument
+#document
+frdoc.getElementById("plannedEndAfterDate")
+<input type=​"text" name=​"plannedEndAfterDate" onmouseover=​"userTimeZoneDateTime(this ,'plannedEndAfterDate','Europe/​Amsterdam','Europe/​Amsterdam')​;​" id=​"plannedEndAfterDate" size=​"12" value=​"16-May-2014" class=​"dateField required  changed" readonly=​"readonly" title=​"19-May-2014 17:​00">​
+frdoc.getElementById("plannedEndBeforeDate")
+null
+
+/ we zien dat de date picker value="16-May-2014" laat, maar title="19-May-2014" set	, 
+/ Hoe dan hierboven	,
+		thePlannedEndAfter	19 mei	, nieuwe	,
+		thePlannedEndBefore 	16 mei	, TODO
+/ TODO
+
+
+/ WH komt thePlannedEndAfter van #plannedEndAfterDate in de main frame's document, maar er is geen #plannedEndBeforeDate 	,
+
+	updateVO(theVO);
+/ NIETS
+
+			} else {
+				myEventContext.addFlag(TMSEventContext.FLAG_UPDATE_SERVICE_ENTITY_DETAILS);
+				theVO = MpoBeanFactory.getBean(ServiceOrderService.class).updateServiceOrder(theVO, myEventContext, true, true);
+/s
+public class ServiceOrderServiceImpl implements ServiceOrderService {
+	public ServiceOrderVO updateServiceOrder(ServiceOrderVO aServiceOrder, TMSEventContext aContext, boolean propagate, boolean replan) {
+propagate=true
+replan=true
+
+				applyTimeWindowLogic(aServiceOrder);
+/ NIETS
+				ServiceOrderVO myOldServiceOrderVO = getOld(aServiceOrder);
+/ theRequestedTotalLoadingMeters=0.40	, de oude	, zoals nu in de db	,
+/ theDataSetVO
+	thePlannedEndAfter	16 May		, oude
+	thePlannedEndBefore	16 May		, TODO
+	thePlannedStartAfter	14 May		, oude
+	thePlannedStartBefore	15 May 		, TODO, is ineens een timestamp	,
+/ TODO
+
+/ Intermezzo
+
+/ we hebben de so save met	,
+planned end after 20 may
+planned start after 16 may
+ldm 1.20
+
+/ Q ERICJ 
+				so			co			sa		
+ requested_start_before		2014-05-16 17:00:00	2014-05-19 17:00:00	2014-05-19 17:00:00 
+ requested_start_after		2014-05-16 17:00:00 	2014-05-19 17:00:00	2014-05-19 17:00:00
+ planned_start_before 		2014-05-15 16:00:00	2014-05-13 16:00:00 	2014-05-13 16:00:00
+ planned_start_after 		2014-05-14 16:00:00	2014-05-13 16:00:00	2014-05-13 16:00:00	
+ original_planned_start_before 
+ original_planned_start_after	2014-05-15 16:00:00 	
+ requested_end_before		2014-05-16 17:00:00	2014-05-19 17:00:00	2014-05-19 17:00:00 
+ requested_end_after		2014-05-16 17:00:00 	2014-05-19 17:00:00	2014-05-19 17:00:00 
+ planned_end_before 		2014-05-16 17:00:00	2014-05-16 17:00:00	2014-05-16 17:00:00	
+ planned_end_after 		2014-05-20 17:00:00 	2014-05-20 17:00:00	2014-05-20 17:00:00
+ original_planned_end_before	2014-05-15 17:00:00 				
+ original_planned_end_after 	2014-05-15 17:00:00 	
+ actual_start 			2014-05-15 16:30:00	2014-05-15 16:30:00	2014-05-15 16:30:00	
+ actual_end 
+
+				sho
+ requested_departure_before 	2014-05-01 10:43:00
+ requested_departure_after	2014-04-30 06:58:00 
+ planned_departure_before 	2014-05-13 16:00:00 
+ planned_departure_after 	2014-05-13 16:00:00
+ org_planned_departure_before	 
+ org_planned_departure_after 
+ requested_arrival_before 	2014-05-19 17:00:00
+ requested_arrival_after 	2014-05-15 16:00:00
+ planned_arrival_before 	2014-05-16 17:00:00
+ planned_arrival_after		2014-05-20 17:00:00 
+ org_planned_arrival_before 
+ org_planned_arrival_after 
+ actual_departure  		2014-05-15 16:30:00 
+ actual_arrival
+
+mpo=> select requested_start_before , requested_start_after , planned_start_before , planned_start_after , original_planned_start_before , original_planned_start_after , requested_end_before , requested_end_after , planned_end_before , planned_end_after , original_planned_end_before , original_planned_end_after , actual_start , actual_end  from service_order where system_id=26632537\g
+ requested_start_before | requested_start_after | planned_start_before | planned_start_after | original_planned_start_befo
+re | original_planned_start_after | requested_end_before | requested_end_after | planned_end_before  |  planned_end_after 
+ | original_planned_end_before | original_planned_end_after |    actual_start     | actual_end 
+------------------------+-----------------------+----------------------+---------------------+----------------------------
+---+------------------------------+----------------------+---------------------+---------------------+--------------------
+-+-----------------------------+----------------------------+---------------------+------------
+2014-05-16 17:00:00    | 2014-05-16 17:00:00   | 2014-05-15 16:00:00  | 2014-05-14 16:00:00 |                            
+   | 2014-05-15 16:00:00          | 2014-05-16 17:00:00  | 2014-05-16 17:00:00 | 2014-05-16 17:00:00 | 2014-05-20 17:00:00
+ | 2014-05-15 17:00:00         | 2014-05-15 17:00:00        | 2014-05-15 16:30:00 | 
+
+
+mpo=> select requested_start_before , requested_start_after , planned_start_before , planned_start_after , org_planned_start_before , org_planned_start_after , requested_end_before , requested_end_after , planned_end_before  ,  planned_end_after  , org_planned_end_before , org_planned_end_after ,    actual_start     , actual_end from consignment where system_id=26632540\g
+ requested_start_before | requested_start_after | planned_start_before | planned_start_after | org_planned_start_before | 
+org_planned_start_after | requested_end_before | requested_end_after | planned_end_before  |  planned_end_after  | org_pla
+nned_end_before | org_planned_end_after |    actual_start     | actual_end 
+------------------------+-----------------------+----------------------+---------------------+--------------------------+-
+------------------------+----------------------+---------------------+---------------------+---------------------+--------
+----------------+-----------------------+---------------------+------------
+ 2014-05-19 17:00:00    | 2014-05-19 17:00:00   | 2014-05-13 16:00:00  | 2014-05-13 16:00:00 |                          | 
+                        | 2014-05-19 17:00:00  | 2014-05-19 17:00:00 | 2014-05-16 17:00:00 | 2014-05-20 17:00:00 |        
+                |                       | 2014-05-15 16:30:00 | 
+(2 rows)
+
+
+mpo=> select requested_start_before , requested_start_after , planned_start_before , planned_start_after , original_planned_start_before , original_planned_start_after , requested_end_before , requested_end_after , planned_end_before  ,  planned_end_after  , original_planned_end_before , original_planned_end_after ,    actual_start     , actual_end from service_action where system_id=26632538\g
+ requested_start_before | requested_start_after | planned_start_before | planned_start_after | original_planned_start_befo
+re | original_planned_start_after | requested_end_before | requested_end_after | planned_end_before  |  planned_end_after 
+ | original_planned_end_before | original_planned_end_after |    actual_start     | actual_end 
+------------------------+-----------------------+----------------------+---------------------+----------------------------
+---+------------------------------+----------------------+---------------------+---------------------+--------------------
+-+-----------------------------+----------------------------+---------------------+------------
+ 2014-05-19 17:00:00    | 2014-05-19 17:00:00   | 2014-05-13 16:00:00  | 2014-05-13 16:00:00 |                            
+   |                              | 2014-05-19 17:00:00  | 2014-05-19 17:00:00 | 2014-05-16 17:00:00 | 2014-05-20 17:00:00
+ |                             |                            | 2014-05-15 16:30:00 | 
+(1 row)
+
+
+
+mpo=> select requested_departure_before , requested_departure_after , planned_departure_before , planned_departure_after , org_planned_departure_before , org_planned_departure_after , requested_arrival_before , requested_arrival_after , planned_arrival_before , planned_arrival_after , org_planned_arrival_before , org_planned_arrival_after ,  actual_departure   , actual_arrival from shipment_order where system_id=26632024\g
+ requested_departure_before | requested_departure_after | planned_departure_before | planned_departure_after | org_planned
+_departure_before | org_planned_departure_after | requested_arrival_before | requested_arrival_after | planned_arrival_bef
+ore | planned_arrival_after | org_planned_arrival_before | org_planned_arrival_after |  actual_departure   | actual_arriva
+l 
+----------------------------+---------------------------+--------------------------+-------------------------+------------
+------------------+-----------------------------+--------------------------+-------------------------+--------------------
+----+-----------------------+----------------------------+---------------------------+---------------------+--------------
+--
+ 2014-05-01 10:43:00        | 2014-04-30 06:58:00       | 2014-05-13 16:00:00      | 2014-05-13 16:00:00     |            
+                  |                             | 2014-05-19 17:00:00      | 2014-05-15 16:00:00     | 2014-05-16 17:00:00
+    | 2014-05-20 17:00:00   |                            |                           | 2014-05-15 16:30:00 | 
+(1 row)
+
+
+
+/ Einde Intermezzo
+
+				setStatus(aServiceOrder);
+/ NIETS
+				applySyncFlags(aServiceOrder);
+/ Haalt de from party en to party uit de consignment en set in de seo	,
+
+				ensureInstructions(aServiceOrder);
+/ NIETS 
+
+				if (invoiceModulePresent) {
+					setVatExportLevel(aServiceOrder);
+/ TODO
+
+				handleCustomSoCostEntry(aServiceOrder);
+/ NIETS
+
+				if (propagate) {
+/ JA
+					consignmentService.handleServiceOrderActualDateChange(aServiceOrder, myOldServiceOrderVO);
+/s
+
+		Date myOldActualStart = myOldServiceOrder.getDateSetVO().getActualStart();
+		Date myNewActualStart = myNewServiceOrder.getDateSetVO().getActualStart();
+		Date myOldActualEnd = myOldServiceOrder.getDateSetVO().getActualEnd();
+		Date myNewActualEnd = myNewServiceOrder.getDateSetVO().getActualEnd();
+		Date myOldCloseDate = myOldServiceOrder.getDateSetVO().getCloseDate();
+		Date myNewCloseDate = myNewServiceOrder.getDateSetVO().getCloseDate();
+
+/t
+					consignmentService.handleServiceOrderPlannedDateChange(aServiceOrder, myOldServiceOrderVO);
+/s
+		Date myOldPlannedStartAfter = myOldServiceOrder.getDateSetVO().getPlannedStartAfter();
+		Date myNewPlannedStartAfter = myNewServiceOrder.getDateSetVO().getPlannedStartAfter();
+		Date myOldPlannedEndAfter = myOldServiceOrder.getDateSetVO().getPlannedEndAfter();
+		Date myNewPlannedEndAfter = myNewServiceOrder.getDateSetVO().getPlannedEndAfter();
+
+		Date myOldPlannedEndBefore = myOldServiceOrder.getDateSetVO().getPlannedEndBefore();
+		Date myNewPlannedEndBefore = myNewServiceOrder.getDateSetVO().getPlannedEndBefore();
+/ TODO (Vraag aan SANDER over plannedEndBefore)
+
+			if (myCoStart == null || mySoStart == null || mySoStart.before(myCoStart) || 
+				!keepRestrictions && !DateUtils.equals(myOldPlannedStartAfter, myNewPlannedStartAfter)) {
+/ JA
+/ mySoStart=12 may, myCoStart=13 May	,
+/ de so dates myOldPlannedStartAfter, myNewPlannedStartAfter zijn verschillend	,
+
+				myConsignmentVO.getDateSetVO().setPlannedStartAfter(mySoStart);
+				// TODO: This is a quick fix. Needs to be reviewed when we start using time windows!
+/ WH
+				myConsignmentVO.getDateSetVO().setPlannedStartBefore(mySoStart);
+
+			if (myCoEnd == null || mySoEnd == null || myCoEnd.before(mySoEnd) || 
+				!keepRestrictions && !DateUtils.equals(myOldPlannedEndAfter, myNewPlannedEndAfter)) {
+/ JA, 
+/ mySoEnd=21 May, myCoEnd=20 May	,
+/ the so dates myOldPlannedEndAfter, myNewPlannedEndAfter zijn verschillend	,
+
+				myConsignmentVO.getDateSetVO().setPlannedEndAfter(mySoEnd);
+				// TODO: This is a quick fix. Needs to be reviewed when we start using time windows!
+				myConsignmentVO.getDateSetVO().setPlannedEndBefore(mySoEndBefore);
+
+				updateConsignmentAfterServiceOrderChange(myOld, myConsignmentVO);
+/c
+	private void updateConsignmentAfterServiceOrderChange(ConsignmentVO anOld, ConsignmentVO aConsignment) throws ConsignmentException {
+			setDates(aConsignment);
+/////////////
+/ sa->co	, requested...
+/s
+	private void setDates(ConsignmentVO aConsignmentVO) {
+		DateSetVO myDateSet = aConsignmentVO.getDateSetVO();
+		ServiceActionVO myFirst = null;
+				myFirst = myServiceActionVO;
+			myFirstSet = myFirst.getDateSetVO();
+		// Always take the requested start date from the first ServiceAction
+		myDateSet.setRequestedStartAfter(myFirstSet.getRequestedStartAfter());
+		myDateSet.setRequestedStartBefore(myFirstSet.getRequestedStartBefore());
+
+		// Always take the requested end date from the last ServiceAction
+		myDateSet.setRequestedEndAfter(myLastSet.getRequestedEndAfter());
+		myDateSet.setRequestedEndBefore(myLastSet.getRequestedEndBefore());
+
+/t
+			setStatus(aConsignment);
+/ s
+	private void setStatus(ConsignmentVO aConsignment) throws AbstractException {
+		DateSetVO myDateSet = aConsignment.getDateSetVO();
+		} else if (myDateSet.isStarted()) {
+/ JA
+			aConsignment.setOrderStatusVO(orderStatusDAO.getByCode(OrderStatusVO.STATUS_SHIPPED));
+/t
+			consignmentDAO.saveConsignment(aConsignment);
+
+			serviceActionService.handleConsignmentDateChange(aConsignment, replan);
+replan=true
+/////////////////////
+/ Dit is een lange method	, in deze method is propagate=false	, na deze method voor rate recalc	,
+/s
+	public void handleConsignmentDateChange(ConsignmentVO myNewConsignmentVO, boolean replan) {
+		handleConsignmentDateChange(myNewConsignmentVO, replan, false);
+/s
+public class ServiceActionServiceImpl implements ServiceActionService {
+	public void handleConsignmentDateChange(ConsignmentVO myNewConsignmentVO, boolean replan, boolean propagate) {
+propagate=false
+
+			for (ServiceActionVO myServiceActionVO : myNewConsignmentVO.getServiceActionList()) {
+
+/ een co is een coll sa's	,een co heeft multiple sa's	,  dus WH heeft in hibernate een co een one-to-many list van sa's en een sa een ref naar een co	,
+
+				setDatesAndStatus(myServiceActionVO);
+/s
+public class ServiceActionServiceImpl implements ServiceActionService {
+	private void setDatesAndStatus(ServiceActionVO aServiceActionVO) {
+
+		DateSetVO myDateSet = aServiceActionVO.getDateSetVO();
+		ShipmentOrderVO myShipmentOrderVO = shipmentOrderDao.getBySystemId(aServiceActionVO.getShipmentOrderVO().getSystemId());
+
+			calculateMileStones(myShipmentOrderVO);
+///////////////
+/ sho->sa
+/s
+			MileStoneCalculatorFactory.getInstance().getMileStoneCalculator().calculate(aShipmentOrderVO);
+/s
+	public void calculate(ShipmentOrderVO aShipmentOrderVO) {
+
+this	BasicMileStoneCalculator  (id=14339)	
+	theShipmentOrderVO	ShipmentOrderVO_$$_javassist_106  (id=14352)	
+/ == aShipmentOrderVO
+
+		String myMode = aShipmentOrderVO.getPreferedPath().getRequestedDateMode().toString();
+BACKWARD
+		if (myMode.equalsIgnoreCase("BACKWARD")) {
+			theCalculationMode = PathRequestedDateMode.BACKWARD;
+
+				calculateEndBefore();
+/s
+public class BasicMileStoneCalculator implements MileStoneCalculator {
+	private boolean calculateEndBefore() {
+
+		Date myShipmentOrderEnd = theShipmentOrderVO.getDateSetVO().getRequestedEndBefore();
+2014-05-19 17:00:00.0
+			Date myEndDate = myShipmentOrderEnd;
+
+			myReverse.addAll(theShipmentOrderVO.getServiceActionList());
+			for (ServiceActionVO myAction : myReverse.descendingSet()) {
+
+				setRequestedStartAndEndBefore(myAction, myEndDate);
+/s
+///////////////////
+/ met lead	,
+public class BasicMileStoneCalculator implements MileStoneCalculator {
+	private void setRequestedStartAndEndBefore(ServiceActionVO aServiceActionVO, Date aRequestedEndBefore) {
+
+	DateSetVO myDateSet = aServiceActionVO.getDateSetVO();
+...
+/ 13	.
+			myDateSet.setRequestedEndBefore(aRequestedEndBefore);
+/ sets theRequestedEndBefore	,
+...
+			myLeadTime = new BigDecimal(0);
+0
+		myCalendar.setTime(aRequestedEndBefore);
+		myCalendar.add(Calendar.HOUR_OF_DAY, -1 * myHours.intValue());
+0
+		myCalendar.add(Calendar.MINUTE, -1 * myMinutes.intValue());
+0
+/ 13	.
+			myDateSet.setRequestedStartBefore(myCalendar.getTime());
+/ bij ons=requested end before	,
+
+/t
+	private boolean calculateEndBefore() {
+				setRequestedStartAndEndBefore(myAction, myEndDate);
+/ D
+					copyBeforeToAfter(myAction);
+myAction	ServiceActionVO  (id=14306)	
+/s
+////////////
+/ met time window	,
+	private void copyBeforeToAfter(ServiceActionVO aServiceActionVO) {
+		DateSetVO myDateSet = aServiceActionVO.getDateSetVO();
+
+		myDateSet.setRequestedEndAfter(new Date(myDateSet.getRequestedEndBefore().getTime() - endTimeWindow));
+/ endTimeWindow=0
+		myDateSet.setRequestedStartAfter(new Date(myDateSet.getRequestedStartBefore().getTime() - startTimeWindow));
+/startTimeWindow=0
+	}
+
+/t
+ServiceActionServiceImpl.setDatesAndStatus(ServiceActionVO) line: 1080	
+	private void setDatesAndStatus(ServiceActionVO aServiceActionVO) {
+			calculateMileStones(myShipmentOrderVO);
+///////////////
+/ sho->sa
+/ D
+			DateSetVO myCoDateSet = new DateSetVO();
+			ConsignmentVO myConsignmentVO = aServiceActionVO.getConsignmentVO();
+			if (myConsignmentVO != null) {
+				myConsignmentVO = consignmentService.getConsignment(myConsignmentVO.getSystemId());
+			}
+			if (myConsignmentVO != null) {
+				myCoDateSet = myConsignmentVO.getDateSetVO();
+				aServiceActionVO.setOrderStatusVO(myConsignmentVO.getOrderStatusVO());
+//////////
+/ sa->co
+
+		DateSetVO myDateSet = aServiceActionVO.getDateSetVO();
+				myCoDateSet = myConsignmentVO.getDateSetVO();
+///////////////
+/ co->sa
+
+			myDateSet.setPlannedStartAfter(myCoDateSet.getPlannedStartAfter());
+			myDateSet.setPlannedStartBefore(myCoDateSet.getPlannedStartBefore());
+			myDateSet.setPlannedEndAfter(myCoDateSet.getPlannedEndAfter());
+			myDateSet.setPlannedEndBefore(myCoDateSet.getPlannedEndBefore());
+			myDateSet.setActualStart(myCoDateSet.getActualStart());
+			myDateSet.setActualEnd(myCoDateSet.getActualEnd());
+			myDateSet.setCloseDate(myCoDateSet.getCloseDate());
+
+/t
+ServiceActionServiceImpl.handleConsignmentDateChange(ConsignmentVO, boolean, boolean) line: 453	
+				setDatesAndStatus(myServiceActionVO);
+/ D
+				ServiceActionVO myNew = myDAO.merge(myServiceActionVO);
+
+				shipmentOrderService.handleServiceActionChange(myNew, myOld);
+/ myNew en myOld zijn beide sa's	,
+/s
+ShipmentOrderServiceImpl.handleServiceActionChange(ServiceActionVO, ServiceActionVO) line: 931	
+	public void handleServiceActionChange(ServiceActionVO aNewServiceActionVO, ServiceActionVO aOldServiceActionVO) {
+
+		ShipmentOrderVO myNewShipmentOrder = aNewServiceActionVO.getShipmentOrderVO();
+		updateShipmentOrder(myNewShipmentOrder, false);
+/ s
+	public ShipmentOrderVO updateShipmentOrder(ShipmentOrderVO aShipmentOrder, boolean propagateChange) {
+/ propagateChange=false
+
+		return updateShipmentOrder(aShipmentOrder, new TMSEventContext(), propagateChange);
+/ s
+public class ShipmentOrderServiceImpl implements ShipmentOrderService {
+	public ShipmentOrderVO updateShipmentOrder(ShipmentOrderVO aShipmentOrder, TMSEventContext anEventContext, boolean propagateChange) {
+			aShipmentOrder.setLastUpdate(timeService.getPresentDate(aShipmentOrder.getOrganizationVO()));
+/ nu, current time	,
+
+			if (aShipmentOrder.isTemplate()) {
+/ NEE
+			} else {
+				if (aShipmentOrder.isVolatile()) {
+/ NEE
+
+				setHoldStatus(myOldVO, aShipmentOrder);
+/ Doet NIETS	,
+
+				myNew.performCustomRecalculation(myOldVO);
+/ NIETS	,
+
+				setDatesAndStatus(myNew);
+myNew	ShipmentOrderVO  (id=14575)	
+
+/ s
+ShipmentOrderServiceImpl.setDatesAndStatus(ShipmentOrderVO) line: 1978	
+	private void setDatesAndStatus(ShipmentOrderVO aShipmentOrderVO) throws AbstractException {
+
+				DateSetVO myDateSet = aShipmentOrderVO.getDateSetVO();
+/ sho's 
+
+				Collection myServiceActionList = aShipmentOrderVO.getServiceActionList();
+					for (Iterator myIterator = myServiceActionList.iterator(); myIterator.hasNext();) {
+						ServiceActionVO myServiceActionVO = (ServiceActionVO) myIterator.next();
+							myFirst = myServiceActionVO;
+							myLast = myServiceActionVO;
+
+				DateSetVO myLastSet = myLast.getDateSetVO();
+/ sa's 
+
+
+///////////////////////////////
+/ PLANNED IN SHO 
+/ Inderdaad, we filled in in de seo pln. start date en pln. after date	, bijv 9 may en 22 may	,
+/ sa -> sho planned dates	,
+					myDateSet.setPlannedStartAfter(myFirstPlanned.getDateSetVO().getPlannedStartAfter());
+					myDateSet.setPlannedStartBefore(myFirstPlanned.getDateSetVO().getPlannedStartBefore());
+					myDateSet.setPlannedEndAfter(myLastPlanned.getDateSetVO().getPlannedEndAfter());
+					myDateSet.setPlannedEndBefore(myLastPlanned.getDateSetVO().getPlannedEndBefore());
+
+					myDateSet.setActualStart(myFirstShipped.getDateSetVO().getActualStart());
+
+				if (myLast != null && myAllEndedOrClosed) {
+/ NEE
+				} else {
+					myDateSet.setActualEnd(null);
+
+				} else if (myDateSet.isStarted()) {
+					aShipmentOrderVO.setOrderStatusVO(MpoBeanFactory.getBean(OrderStatusDAO.class).getByCode(OrderStatusVO.STATUS_SHIPPED));
+
+				// Set the customer status after the order status as the CS may depend on the order status
+				MpoBeanFactory.getBean(CustomerStatusService.class).updateStatusNoUpdate(aShipmentOrderVO);
+/ TODO
+
+/t
+ShipmentOrderServiceImpl.updateShipmentOrder(ShipmentOrderVO, TMSEventContext, boolean) line: 1653	
+	public ShipmentOrderVO updateShipmentOrder(ShipmentOrderVO aShipmentOrder, TMSEventContext anEventContext, boolean propagateChange) {
+				setDatesAndStatus(myNew);
+/ D
+				applySyncFlags(myNew);
+/ NIETS
+				handleTimeWindow(myNew);
+/ NIETS
+				ShipmentOrderPartyUtil.createShipmentOrderParties(myNew);
+/ NIETS
+				myNew.recalculate();
+myNew	ShipmentOrderVO  (id=14658)	
+/s
+public abstract class LogisticsOrderVO extends EntityDetailSupport {
+this	ShipmentOrderVO  (id=14658)	
+	public void recalculate() {
+
+			LogisticsOrderTotalsCalculator<? extends LogisticsOrderVO> calc = getLogisticsOrderTotalsCalculator(false);
+calc	ShipmentOrderTotalsCalculator  (id=14814)	
+	altValueCurrencyVO	null	
+	calculateRequestedTotalAltValue	true	
+	calculateRequestedTotalColli	true	
+	calculateRequestedTotalItems	true	
+	calculateRequestedTotalLDM	false	
+	calculateRequestedTotalValue	true	
+	calculateRequestedTotalVolume	true	
+	calculateRequestedTotalWeight	true	
+	entity	ShipmentOrderVO  (id=14658)	
+	requestedTotalAltValue	null	
+	requestedTotalColli	null	
+	requestedTotalItems	null	
+	requestedTotalLDM	null	
+	requestedTotalValue	null	
+	requestedTotalVolume	null	
+	requestedTotalWeight	null	
+	shipmentItemWeightMode	ShipmentOrderTotalsCalculator$ShipmentItemWeightMode  (id=14838)	
+	valueCurrencyVO	null	
+
+			Collection items = getCustomerLogisticsOrderList();
+/ 2 sho's	,
+/s
+	protected Collection<LogisticsOrderVO> getCustomerLogisticsOrderList() {
+		ArrayList<LogisticsOrderVO> myList = new ArrayList<LogisticsOrderVO>();
+		myList.addAll(getShipmentItemList());
+/ 2 sho's	,
+		myList.addAll(getProductItemList());
+
+/ t	
+	public void recalculate() {
+			Collection items = getCustomerLogisticsOrderList();
+/ D
+				for (Object o : items) {
+						LogisticsOrderVO item = (LogisticsOrderVO) o;
+  							item.recalculate();
+/s
+public class ShipmentItemVO extends LogisticsOrderVO implements StringSequencedEntity {
+	public void recalculate() {
+			recalculateComputedItemWeightKg();
+/ TODO
+
+/t
+  							item.recalculate();
+/ D
+							calc.addValues(item);
+/ s
+public class LogisticsOrderTotalsCalculator<T extends LogisticsOrderVO> {
+	public void addValues(LogisticsOrderVO aItem) {
+		if (calculateRequestedTotalColli) {
+			addColliValue(aItem);
+/s
+	protected void addColliValue(@Nonnull LogisticsOrderVO aItem) {
+		BigDecimal val = aItem.getRequestedTotalColli();
+1
+		if (requestedTotalColli == null) {
+/ JA
+			requestedTotalColli = val;
+
+/t
+		if (calculateRequestedTotalItems) {
+			addItemsValue(aItem);
+/ NIETS, want val==null	,
+
+		if (calculateRequestedTotalWeight) {
+			addWeightValue(aItem);
+		}
+/ TODO
+		if (calculateRequestedTotalVolume) {
+			addVolumeValue(aItem);
+		}
+/ TODO
+		if (calculateRequestedTotalLDM) {
+			addLDMValue(aItem);
+		}
+/ TODO
+		if (calculateRequestedTotalValue) {
+			addValueValue(aItem);
+		}
+/ TODO
+		if (calculateRequestedTotalAltValue) {
+			addAltValueValue(aItem);
+		}
+/ TODO
+
+/t
+public class ShipmentOrderServiceImpl implements ShipmentOrderService {
+	public ShipmentOrderVO updateShipmentOrder(ShipmentOrderVO aShipmentOrder, TMSEventContext anEventContext, boolean propagateChange) {
+				myNew.recalculate();
+/ D
+				// Calculate total price /cost
+				updatePricePart(myNew);
+myNew	ShipmentOrderVO  (id=14658)	
+/ NIETS
+				myNew.calculatePrice();
+/s
+	public void calculatePrice() {
+		CurrencyGroup myGroup = getPriceGroup();
+		setPrice(myGroup.getAmount());
+null
+		setPriceCurrencyVO(myGroup.getCurrency());
+null
+		setPriceMethod(myGroup.getMethod());
+null
+
+/t
+				myNew.calculateTotalCosts();
+/s
+	public void calculateTotalCosts() {
+		Collection<ShipmentOrderCostPartVO> myCostList = getShipmentOrderCostPartList();
+/ TODO
+[SystemId: 26632549 Amount: 50.00
+ Type: 26632542        50.00
+ SystemId: 26632550 Amount: 145.52
+ Type: 26632541       145.52
+ SystemId: 26632548 Amount: 18.92
+ Type: 26632543        18.92]
+
+	for (ShipmentOrderCostPartVO myCost : myCostList) {
+			switch (myCost.getStatus()) {
+				case ESTIMATED:
+					myEstimate.add(myCost.getCurrencyVO(), myCost.getAmount());
+214.44 EUR
+/ telt ze op	,
+
+		} else {
+			setCost(myEstimate.getAmount());
+/ sets this=ShipmentOrderVO'	, cost
+			setCostCurrency(myEstimate.getCurrency());
+/ sets this=ShipmentOrderVO'	, costCurrencySystemId
+			setCostMethod(myEstimate.getMethod());
+/ sets this=ShipmentOrderVO'	, costMethod
+
+/t
+	public ShipmentOrderVO updateShipmentOrder(ShipmentOrderVO aShipmentOrder, TMSEventContext anEventContext, boolean propagateChange) {
+				myNew.calculateTotalCosts();
+/ D
+				getTriggerHandler().handleUpdate(myOldVO, myNew);
+/ NIETS
+
+				if (propagateChange) {
+/ NEE
+
+
+/ propagateChange=false set in 
+	public void handleServiceActionChange(ServiceActionVO aNewServiceActionVO, ServiceActionVO aOldServiceActionVO) {
+			updateShipmentOrder(myNewShipmentOrder, false);
+
+/t
+public class ServiceActionServiceImpl implements ServiceActionService {
+	public void handleConsignmentDateChange(ConsignmentVO myNewConsignmentVO, boolean replan, boolean propagate) {
+				shipmentOrderService.handleServiceActionChange(myNew, myOld);
+/ D
+				if (replan) {
+/ JA
+					replan(myNew);
+/ TODO
+
+
+				if (propagate) {
+/ NEE
+
+/t
+public class ServiceActionServiceImpl implements ServiceActionService {
+	public void handleConsignmentDateChange(ConsignmentVO myNewConsignmentVO, boolean replan, boolean propagate) {
+/ D
+
+/t
+public class ConsignmentServiceImpl implements ConsignmentService {
+	private void updateConsignmentAfterServiceOrderChange(ConsignmentVO anOld, ConsignmentVO aConsignment) throws ConsignmentException {
+				serviceActionService.handleConsignmentDateChange(aConsignment, replan);
+replan=true
+/ D
+////////////////////
+/ Dit was een lange method	, in deze method was propagate=false	, na deze method voor rate recalc	,
+
+			triggerEventHandler(anOld, aConsignment, true, new TMSEventContext());
+/s
+public class ConsignmentServiceImpl implements ConsignmentService {
+	private void triggerEventHandler(ConsignmentVO anOldVO, ConsignmentVO aNewVO, boolean anIsInitiatedByServiceOrderChange, TMSEventContext anEventContext)
+		} else {
+			myEvent = new ConsignmentEvent(anOldVO, aNewVO, ConsignmentEvent.UPDATED, myContext);
+		}
+		if (myEvent != null) {
+...
+			eventHandlerService.handleEvent(myEvent);
+/s
+public class EventHandlerServiceImpl implements EventHandlerService {
+	public void handleEvent(Event anEvent) throws ChangeManagementException {
+			listenerList.fireEvent(anEvent);
+/s
+RateCalcEventListener.handleEvent(Event) line: 67	
+				recalcServiceOrderCost(anEvent);
+/s
+RateCalcEventListener.recalcServiceOrderCost(Event) line: 164	
+		if (myType.equals(ConsignmentEvent.UPDATED) || myType.equals(ConsignmentEvent.CREATED)) {
+/ JA
+					recalculate(myOrderVO, RateType.RATE_TYPE_SERVICE_ORDER_COST, anEvent.getEventContext());
+/s
+RateCalcEventListener.recalculate(ServiceOrderVO, String, TMSEventContext) line: 258	
+			if (calculateServiceOrderCostsImmediately) {
+/ JA
+				myService.recalculate(myOrder, RateType.RATE_TYPE_SERVICE_ORDER_COST, anEventContext);
+/s
+CalculationServiceImpl.recalculate(LogisticsOrderVO, String, TMSEventContext) line: 346	
+			RateAgreementVO mySelectedRateAgreement = getFirstMatchingRateAgreement(anOrder, aRateType);
+/s
+	private RateAgreementVO getFirstMatchingRateAgreement(LogisticsOrderVO aLogisticsOrder, String aRateType) {
+aRateType="service_order_cost"
+					myKey = "SO-" + aLogisticsOrder.getSystemId() + "-" + EntityUtil.getSystemId(((ServiceOrderVO) aLogisticsOrder).getExecutedByPartyVO());
+myKey	"SO-26632537-26631670" (id=13663)	
+
+mpo=> select*from party\g
+...
+  26631670 |          0 | OEGEMA            |            26631667 |                  4000 | Oegema Transport Dedemsvaart B
+.V. |       | Pascalstraat 32 |          | Dedemsvaart | 7701 SE |             4153 |              | info@oegematransport.
+nl | +31 523 612028 | +31 523 612039 |              |          |            |            |            |            |      
+      |                              |                 |           |           |          |                   |           
+     0 | Aaaaa
+
+			for (RateAgreementVO myRateAgreementVO : getRateAgreementList(aRateType)) {
+
+[theSystemId: 26631869Name :OEGEMA
+Description :null
+Organization :SystemId:4000	Id:HAAL-ZW	Description:HAAL
+Unit :theSystemId: 1000072	Symbol :EUR	Description :Euro	UnitType :CURRENCY	IsDeleted :0	
+IsDeleted :false
+RateType :service_order_cost
+...
+
+/t
+CalculationServiceImpl.recalculate(LogisticsOrderVO, String, TMSEventContext) line: 346	
+			RateAgreementVO mySelectedRateAgreement = getFirstMatchingRateAgreement(anOrder, aRateType);
+/ D
+			// Now calculate the rates
+			RateCalculationVO myRateCalculationVO = new RateCalculationVO();
+			if (anOrder instanceof ServiceOrderVO) {
+/ JA
+				myRateCalculationVO.setServiceOrder((ServiceOrderVO) anOrder);
+
+			if (mySelectedRateAgreement != null) {
+/ JA
+				myRateCalculationVO.setRateAgreementVO(mySelectedRateAgreement);
+
+				// do not recalculate when values have not changed
+				if (anOrder instanceof ServiceOrderVO) {
+					ServiceOrderVO myServiceOrder = (ServiceOrderVO) anOrder;
+
+					if (!myRateCalculationVO.rateCalculationRequired()) {
+/s
+	public boolean rateCalculationRequired() {
+		if (serviceOrder != null && !StringUtils.isEmpty(serviceOrder.getRatecalcMd5Hash())) {
+			String myHash = RateCalcHashCalculator.calculate(rateAgreement, getOrder());
+/s
+ublic class RateCalcHashCalculator {
+	public static String calculate(RateAgreementVO aRateAgreement, LogisticsOrderVO anOrder) {
+			Hibernate.initialize(anOrder.getEntityDetails());
+{}
+
+/ Intermezzo
+
+/ Configuration, Finance, Rate calc, Rate agreements
+
+May 2014
+Su	Mo	Tu	We	Th	Fr	Sa
+1	2	3
+4	5	6	7	8	9	10
+11	12	13	14	15	16	17
+18	19	20	21	22	23	24
+25	26	27	28	29	30	31
+
+
+----|--------------------------------------|----------------------------------|----------------------------------
+  release=9 May				start after=14 May			start before=16 May
+=start after-(lt_carrier=3WD)		=(req end after=15 May)-1WD		=(req end before=19 May)-1
+
+ RC_FUEL : RP_FUEL ( MULTIPLY ) = 18.92 EUR
+ 	FreeValue ( ) = 0.13000
+ 	RP_FREIGHT ( NOT EMPTY ) = 145.52 EUR
+ 		RT_NL_DE_OUTPUT ( RATE TABLE ) = 145.52 EUR
+ 			TO POSTALCODE ( ) = 20095
+ 			TO COUNTRY ( ) = DE
+ 			RP_LDM_WEIGHT ( MULTIPLY ) = 2100.0000000 KG
+ 				FreeValue ( ) = 1750.00000
+ 				CALC_LDM ( ) = 1.20 LDM
+
+ RC_START_AFTER : RP_START_DATE_AFTER ( STARTDATE ) = 2014-05-14 16:00:00 DATE
+ 	REQ_END_AFTER ( ) = 2014-05-15 16:00:00 DATE
+ 	FreeValue ( ) = 1.00000
+
+ RC_SERVICE : SERVICE ( STRING ) = STANDARD
+ 	SERVICE LEVEL ( ) = STANDARD
+
+ RC_FREIGHT : RP_FREIGHT ( NOT EMPTY ) = 145.52 EUR
+ 	RT_NL_DE_OUTPUT ( RATE TABLE ) = 145.52 EUR
+ 		TO POSTALCODE ( ) = 20095
+ 		TO COUNTRY ( ) = DE
+ 		RP_LDM_WEIGHT ( MULTIPLY ) = 2100.0000000 KG
+ 			FreeValue ( ) = 1750.00000
+ 			CALC_LDM ( ) = 1.20 LDM
+
+ RC_ADDITIONAL_STOP : RT_ADDITIONAL_ADDRESS_OUTPUT ( RATE TABLE ) = 50.00 EUR
+ 	NR_OF_CONSIGNMENTS ( ) = 1.0
+
+ RC_RELEASE_DATE : RP_RELEASE_DATE ( STARTDATE ) = 2014-05-09 16:00:00 DATE
+ 	LT_CARRIER_OUTPUT ( RATE TABLE ) = 3 WORKDAY
+ 		CALC_LDM ( ) = 1.20 LDM
+ 		TO COUNTRY ( ) = DE
+ 	RP_START_DATE_AFTER ( STARTDATE ) = 2014-05-14 16:00:00 DATE
+ 		REQ_END_AFTER ( ) = 2014-05-15 16:00:00 DATE
+ 		FreeValue ( ) = 1.00000
+
+ RC_START_BEFORE : RP_START_DATE_BEFORE ( STARTDATE ) = 2014-05-16 17:00:00 DATE
+ 	FreeValue ( ) = 1.00000
+ 	REQ_END_BEFORE ( ) = 2014-05-19 17:00:00 DATE
+
+/ Einde Intermezzo
+
+
+/ Intermezzo
+
+/ rate_function table	,
+
+/ waarom is deze er, naast function_definition table	?
+
+/ we kunnen de input_parameter's van een rate_function vinden door in de input_parameter table op zoek te gaan in de rate_func_systemid col naar de system_id van de gegeven rate_function	,
+
+/ en	,
+mpo=> select*from rate_function where system_id=26631881\g
+ system_id | function_definition_systemid | is_user_defined | user_func_def | rate_table_systemid | unit_systemid 
+-----------+------------------------------+-----------------+---------------+---------------------+---------------
+  26631881 |                      3500007 |               0 |               |                     |       1000532
+(1 row)
+
+mpo=> select*from function_definition where system_id= 3500007\g
+ system_id |                             definition                             |   name   
+-----------+--------------------------------------------------------------------+----------
+   3500007 | com.mpobjects.oms.ratecalc.model.process.function.MultiplyFunction | MULTIPLY
+(1 row)
+
+/ we zien in de rate_function ref naar function_definition	, waardoor Class.forName kan worden gedaan, 
+/ we zien in de rate_function de unit	,
+
+po=> select*from unit\g
+ system_id | symbol  | description  | unit_type | is_deleted 
+-----------+---------+--------------+-----------+------------
+   1000072 | EUR     | Euro         | CURRENCY  |          0
+   1000531 | M3      | Cubic Meter  | NORMAL    |          0
+   1000532 | KG      | Kilogram     | NORMAL    |          0
+   1000536 | DATE    | Datum        | DATE      |          0
+   1000537 | HHMM    | Time         | NORMAL    |          0
+   4348445 | CALDAY  | Calendar day | NORMAL    |          0
+   4348446 | WORKDAY | Working day  | NORMAL    |          0
+  26631725 | LDM     | LDM          | NORMAL    |          0
+  26632357 | PC      | Pieces       | NORMAL    |          0
+(9 rows)
+ 
+
+
+
+/ Einde Intermezzo
+
+
+
+
+
+
+
+
+
+
+/ Einde SAVE SEO
+

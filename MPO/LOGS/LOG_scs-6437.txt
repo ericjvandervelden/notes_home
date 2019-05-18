@@ -1,0 +1,186 @@
+/ 7	. 
+
+$ vi Airport.standard.hbm.xml
+
+<hibernate-mapping>
+	<class name="com.mpobjects.oms.model.entity.Airport" table="AIRPORT">
+		<cache usage="nonstrict-read-write"/>
+		<id name="systemId" type="int" column="SYSTEM_ID" unsaved-value="0">
+			<generator class="com.mpobjects.core.model.HibernateIdGenerator" />
+		</id>
+		<property name="code" column="CODE" />
+		<property name="description" column="DESCRIPTION" />
+		<property name="deleted" column="IS_DELETED" />
+		<property name="visible" column="IS_VISIBLE" />
+		<property name="city" column="CITY" />
+		<property name="country" column="COUNTRY" not-null="true" />
+	</class>
+</hibernate-mapping>
+
+$ vi HibernateGenerator.java
+
+package com.mpobjects.core.model;
+public class HibernateIdGenerator implements IdentifierGenerator {
+	@Override
+	public Serializable generate(SessionImplementor session, Object object) throws HibernateException {
+		return new Integer(DbUtil.getNextId());
+	}
+
+$ vi IdentifierGenerator.java 
+
+package org.hibernate.id;
+public interface IdentifierGenerator {
+   /**
+     * The configuration parameter holding the entity name
+     */
+    public static final String ENTITY_NAME = "entity_name";
+    
+	/**
+	 * Generate a new identifier.
+	 * @param session
+	 * @param object the entity or toplevel collection for which the id is being generated
+	 *
+	 * @return a new identifier
+	 * @throws HibernateException
+	 */
+	public Serializable generate(SessionImplementor session, Object object) throws HibernateException;
+
+}
+
+$ vi DbUtil.java
+package com.mpobjects.util.db;
+@Deprecated
+public final class DbUtil {
+
+
+/ 7	. 
+
+/ we copy de mposcs2 db (voor mposcs-2017.01) to mposcs3 (voor trunk)	, 
+
+[eric@localhost Downloads]$  local-pg_dump.sh mposcs2
+
+scs2=# create database mposcs3 tablespace scs;
+CREATE DATABASE
+
+[eric@localhost Downloads]$ local-pg_restore.sh mposcs3 ~/DB_TAP/Postgres/Backup/mposcs2-local-2017-04-14.dump 
+
+/ 7	. 
+
+[eric@localhost deploy]$ pwd
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/mposcs/deploy
+[eric@localhost deploy]$ ls
+ejb-deployer.xml      jboss-local-jdbc.rar   jboss-xa-jdbc.rar  mpo-management.sar        postgres-ds.xml  tms.war
+jbossjca-service.xml  jbossweb-tomcat55.sar  jmx-console.war    mpo-schedule-service.xml  tms.jar
+
+/ TODO mpo-schedule-service.xml
+
+/ 7	. 
+
+/ DEBUG
+
+/ we maken in master data een nieuwe Airport	, 
+SCH
+Schiphol
+Amsterdam
+NL
+Visible: check
+
+Save
+/ stack
+/s
+	HibernateIdGenerator.generate(SessionImplementor, Object) line: 37	
+	DefaultPersistEventListener(AbstractSaveEventListener).saveWithGeneratedId(Object, String, Object, EventSource, boolean) line: 121	
+	DefaultPersistEventListener.entityIsTransient(PersistEvent, Map) line: 201	
+	DefaultPersistEventListener.onPersist(PersistEvent, Map) line: 147	
+	DefaultPersistEventListener.onPersist(PersistEvent) line: 71	
+	SessionImpl.firePersist(PersistEvent) line: 808	
+	SessionImpl.persist(String, Object) line: 782	
+	SessionImpl.persist(Object) line: 786	
+	HibernateTemplate$21.doInHibernate(Session) line: 797	
+	HibernateTemplate.doExecute(HibernateCallback<T>, boolean, boolean) line: 407	
+	HibernateTemplate.executeWithNativeSession(HibernateCallback<T>) line: 375	
+	HibernateTemplate.persist(Object) line: 794	
+	AirportDAOImpl(GenericHibernateDAO).save(Type) line: 509	
+	GeneratedMethodAccessor1655.invoke(Object, Object[]) line: not available	
+	DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+	Method.invoke(Object, Object...) line: 606	
+	AopUtils.invokeJoinpointUsingReflection(Object, Method, Object[]) line: 317	
+	ReflectiveMethodInvocation.invokeJoinpoint() line: 183	
+	ReflectiveMethodInvocation.proceed() line: 150	
+	MethodInvocationProceedingJoinPoint.proceed() line: 80	
+	PerformanceMeasurementAspect.measurePerformance(ProceedingJoinPoint) line: 63	
+	GeneratedMethodAccessor1222.invoke(Object, Object[]) line: not available	
+	DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+	Method.invoke(Object, Object...) line: 606	
+	AspectJAroundAdvice(AbstractAspectJAdvice).invokeAdviceMethodWithGivenArgs(Object[]) line: 621	
+	AspectJAroundAdvice(AbstractAspectJAdvice).invokeAdviceMethod(JoinPoint, JoinPointMatch, Object, Throwable) line: 610	
+	AspectJAroundAdvice.invoke(MethodInvocation) line: 65	
+	ReflectiveMethodInvocation.proceed() line: 172	
+	MethodBeforeAdviceInterceptor.invoke(MethodInvocation) line: 51	
+	ReflectiveMethodInvocation.proceed() line: 161	
+	TransactionInterceptor$1.proceedWithInvocation() line: 96	
+	TransactionInterceptor(TransactionAspectSupport).invokeWithinTransaction(Method, Class, TransactionAspectSupport$InvocationCallback) line: 260	
+	TransactionInterceptor.invoke(MethodInvocation) line: 94	
+	ReflectiveMethodInvocation.proceed() line: 172	
+	ExposeInvocationInterceptor.invoke(MethodInvocation) line: 91	
+	ReflectiveMethodInvocation.proceed() line: 172	
+	JdkDynamicAopProxy.invoke(Object, Method, Object[]) line: 204	
+	$Proxy133.save(EntityInterface) line: not available	
+	AirportPage$1(EvoEditFormPage).createEvo(T) line: 232	
+	AirportPage$1(EvoEditFormPage).saveOrCreateEvo(T) line: 216	
+	EvoEditFormPage$1.onSubmit(Button, AjaxRequestTarget, IModel<T>) line: 170	
+	EntityActionAjaxButton$1.onSubmit(AjaxRequestTarget, Form<?>) line: 56	
+	AjaxFallbackButton$1.onSubmit(AjaxRequestTarget) line: 74	
+	AjaxFallbackButton$1(AjaxFormSubmitBehavior).onEvent(AjaxRequestTarget) line: 156	
+	AjaxFallbackButton$1(AjaxEventBehavior).respond(AjaxRequestTarget) line: 177	
+	AjaxFallbackButton$1(AbstractDefaultAjaxBehavior).onRequest() line: 312	
+	BehaviorRequestTarget.processEvents(RequestCycle) line: 157	
+	WebRequestCycleProcessor(AbstractRequestCycleProcessor).processEvents(RequestCycle) line: 92	
+	MpoWebRequestCycle(RequestCycle).processEventsAndRespond() line: 1279	
+	MpoWebRequestCycle(RequestCycle).step() line: 1358	
+	MpoWebRequestCycle(RequestCycle).steps() line: 1465	
+	MpoWebRequestCycle(RequestCycle).request() line: 545	
+	WicketFilter.doGet(HttpServletRequest, HttpServletResponse) line: 486	
+	WicketServlet.doPost(HttpServletRequest, HttpServletResponse) line: 160	
+	WicketServlet(HttpServlet).service(HttpServletRequest, HttpServletResponse) line: 717	
+	WicketServlet(HttpServlet).service(ServletRequest, ServletResponse) line: 810	
+/ debug
+/s
+HibernateIdGenerator.generate(SessionImplementor, Object) line: 37	
+		return new Integer(DbUtil.getNextId());
+/s
+DbUtil.getNextId() line: 161	
+		return KeyUtil.getKeyService().getSystemId();
+/s
+KeyGenServiceImpl.getSystemId() line: 186	
+		return generateNewKey(SYSTEM_ID_DISPENSER_NAME);
+SYSTEM_ID_DISPENSER_NAME="SYSTEM_ID"
+/s
+KeyGenServiceImpl.generateNewKey(String) line: 74	
+
+/c
+/ stack
+/s
+Thread [timerFactoryKeygen] (Suspended (breakpoint at line 87 in KeyGenServiceImpl$1))	
+	KeyGenServiceImpl$1.getReference() line: 87	
+	KeyGenDaemon.run() line: 55	
+
+	GeneratedMethodAccessor133.invoke(Object, Object[]) line: not available	
+	DelegatingMethodAccessorImpl.invoke(Object, Object[]) line: not available	
+	Method.invoke(Object, Object...) line: 606	
+	MethodInvokingTimerTaskFactoryBean(MethodInvoker).invoke() line: 269	
+	MethodInvokingTimerTaskFactoryBean(MethodInvokingRunnable).run() line: 65	
+	DelegatingTimerTask.run() line: 70	
+	TimerThread.mainLoop() line: 555	
+	TimerThread.run() line: 505	
+/ debug
+/s
+KeyGenServiceImpl$1.getReference() line: 87	
+					return reference;	/ "SYSTEM_ID"
+
+/ Lees	, 
+https://vladmihalcea.com/2014/07/21/hibernate-hidden-gem-the-pooled-lo-optimizer/
+
+
+
+/ Einde DEBUG

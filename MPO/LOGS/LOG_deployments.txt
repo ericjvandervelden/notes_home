@@ -1,0 +1,2653 @@
+/ See FROM TEST TO ACC
+
+/ 7	. 
+
+/ deploy pnllogistics-26101-2016.12 op pnl-app-a2
+
+/ op laptop	,
+[eric@localhost trunk]$ find -name commons-beanutils-1.9.2.jar -o -name commons-collections-3.2.2.jar -o -name commons-logging-1.2.jar -o -name commons-validator-1.5.1.jar -o -name vt-password-3.1.2.jar | xargs  -I % scp % vanderveldene@pnl-app-a2.intermax.mp-objects.com:Downloads
+
+/ op pnl-app-a2	,
+[jboss@pnl-app-a2 lib]$ find ~vanderveldene/Downloads/ -name "*.jar" | xargs -I % echo cp -a % .
+/ check,
+[jboss@pnl-app-a2 lib]$ find ~vanderveldene/Downloads/ -name "*.jar" | xargs -I % ls %
+/home/vanderveldene/Downloads/commons-collections-3.2.2.jar
+/home/vanderveldene/Downloads/commons-logging-1.2.jar
+/home/vanderveldene/Downloads/commons-validator-1.5.1.jar
+/home/vanderveldene/Downloads/commons-beanutils-1.9.2.jar
+/home/vanderveldene/Downloads/vt-password-3.1.2.jar
+
+2017-01-10 11:34:37,942 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [ratecalc/pat
+ch-069-updatingratefunction.sql]: 
+2017-01-10 11:34:37,942 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) ALTER TABLE RATE_FUNCTION ADD CONSTRAINT RATE_TABLE_SYSTEMID
+_UQ UNIQUE (RATE_TABLE_SYSTEMID)
+2017-01-10 11:34:37,943 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERROR: could not create u
+nique index "rate_table_systemid_uq"
+  Detail: Key (rate_table_systemid)=(26791076) is duplicated.
+2017-01-10 11:34:37,947 ERROR [com.mpobjects.dbpatch.DatabasePatchService] (main:) Error while patching database
+java.lang.Exception: Problem when executing patch, terminating, check log, repair patchfile and run again
+
+system_id     | 450
+entry_date    | 2012-12-17 15:52:33
+module        | ratecalc
+name          | patch-026.sql
+sql_script    | /* Patches for shared rate tables */\r
+              | ALTER TABLE RATE_TABLE ADD IS_SHARED SMALLINT DEFAULT 0;\r
+              | ALTER TABLE RATE_TABLE ADD LINKED_RATE_TABLE_SYSTEMID INTEGER;\r
+              | ALTER TABLE RATE_TABLE ADD CONSTRAINT RATE_TABLE_LINKED_FK FOREIGN KEY (LINKED_RATE_TABLE_SYSTEMID) REFERENCES RATE_TABLE (SYSTEM_ID)\r
+              | \r
+              | 
+status        | APPLIED
+patch_comment | NULL
+-[ RECORD 2 ]-+----------------------------------------------------------------------------------------------------------------------------------------
+system_id     | 536
+entry_date    | 2013-04-12 08:49:58
+module        | ratecalc
+name          | patch-043-remove-is-deleted-ratetable.sql
+sql_script    | /* Rate table is_deleted is no longer used */\r
+              | delete from RTABLE_SEL_CRITERIUM where RATE_TABLE_SYSTEMID in \r
+              | (select system_id from RATE_TABLE where IS_DELETED = 1);\r
+              | \r
+              | delete from DIMENSION where RATE_TABLE_SYSTEMID in \r
+              | (select system_id from RATE_TABLE where IS_DELETED = 1);\r
+              | \r
+              | update RATE_TABLE set LINKED_RATE_TABLE_SYSTEMID = null where LINKED_RATE_TABLE_SYSTEMID in\r
+              | (select system_id from RATE_TABLE where IS_DELETED = 1);\r
+              | \r
+              | /* Only set to null. IP might be used by dimensions */\r
+              | update INPUT_PARAMETER set PARAMETER_SYSTEMID = null where PARAMETER_SYSTEMID in (select rp.system_id from \r
+              | RATE_PARAMETER rp join RATE_FUNCTION rf on rp.OUTPUTFROM_FUNCTION_SYSTEMID = rf.SYSTEM_ID\r
+              | join RATE_TABLE rt on rf.RATE_TABLE_SYSTEMID = rt.SYSTEM_ID \r
+              | where rt.IS_DELETED = 1);\r
+              | \r
+              | /* Remove lingering rate parameters */\r
+              | delete from RATE_PARAMETER where system_id in (\r
+              | select rp.system_id from \r
+              | RATE_PARAMETER rp join RATE_FUNCTION rf on rp.OUTPUTFROM_FUNCTION_SYSTEMID = rf.SYSTEM_ID\r
+              | join RATE_TABLE rt on rf.RATE_TABLE_SYSTEMID = rt.SYSTEM_ID \r
+              | where rt.IS_DELETED = 1);\r
+              | \r
+              | delete FROM INPUT_PARAMETER where RATE_FUNC_SYSTEMID in (\r
+              | select rf.system_id from \r
+              | RATE_FUNCTION rf\r
+              | join RATE_TABLE rt on rf.RATE_TABLE_SYSTEMID = rt.SYSTEM_ID \r
+              | where rt.IS_DELETED = 1);\r
+              | \r
+              | /* Remove associated rate_funcion records */\r
+              | delete from RATE_FUNCTION where system_id in (\r
+              | select rf.system_id from \r
+              | RATE_FUNCTION rf\r
+              | join RATE_TABLE rt on rf.RATE_TABLE_SYSTEMID = rt.SYSTEM_ID \r
+              | where rt.IS_DELETED = 1);\r
+              | \r
+              | delete from RATE_TABLE where IS_DELETED = 1;\r
+              | \r
+              | alter index IDX_RATE_TABLE1 inactive;\r
+              | \r
+              | drop index IDX_RATE_TABLE1;\r
+              | \r
+              | alter table RATE_TABLE drop IS_DELETED;
+status        | APPLIED
+patch_comment | NULL
+-[ RECORD 3 ]-+----------------------------------------------------------------------------------------------------------------------------------------
+system_id     | 1325
+entry_date    | 2017-01-10 11:33:17.259
+module        | ratecalc
+name          | patch-069-updatingratefunction.sql
+sql_script    | ALTER TABLE RATE_FUNCTION ADD CONSTRAINT RATE_TABLE_SYSTEMID_UQ UNIQUE (RATE_TABLE_SYSTEMID);
+status        | FAILED
+patch_comment | org.postgresql.util.PSQLException: ERROR: could not create unique index "rate_table_systemid_uq"
+              |   Detail: Key (rate_table_systemid)=(26791076) is duplicated.
+
+pnllogistics=> 
+
+/ 7	. 
+
+/ SVN
+
+$ svn log --help
+...
+$ svn log -v https://system.mp-objects.com/svn/tms//trunk/module/customerinvoice/src/sql/patch/patch-0001.sql
+/ TODO
+
+[eric@localhost LOGS]$ svn list --depth infinity  https://system.mp-objects.com/svn/tms/ | grep patch-0001.sql
+/ TODO Hoe archive/ uitsluiten?
+
+[eric@localhost LOGS]$ svn info  https://system.mp-objects.com/svn/tms/  patch-0001.sql
+/ TODO
+
+[eric@localhost LOGS]$ svn log --search patch-0001.sql  https://system.mp-objects.com/svn/tms
+------------------------------------------------------------------------
+r18359 | eric | 2015-02-18 15:12:14 +0100 (Wed, 18 Feb 2015) | 3 lines
+
+Merged create-tables.sql in patch-0001.sql. Except four inserts into the business_object table, which are already in the patch-0003-businessobjects.sql.
+Issue: DSVMHC-43
+
+------------------------------------------------------------------------
+
+/ TODO
+
+/ Einde SVN
+
+/ SVN COMMANDLINE DSVCTS
+
+[eric@localhost tmp]$ pwd
+/home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/tmp
+[eric@localhost tmp]$ svn co https://system.mp-objects.com/svn/tms/patches/2015.03/dsvcts
+$ cd ..
+[eric@localhost tmp]$ mv tmp/dsvcts/ 2015.03_patch_dsvcts
+[eric@localhost 2015.03_patch_dsvcts]$ cp -a ~/Downloads/language_en_GB_nikeen.properties base-framework/core/conf
+
+/ Lees	, 
+https://openoffice.apache.org/svn-basics.html
+
+[eric@localhost 2015.03_patch_dsvcts]$  svn add base-framework/core/conf/language_en_GB_nikeen.properties 
+A         base-framework/core/conf/language_en_GB_nikeen.properties
+
+[eric@localhost 2015.03_patch_dsvcts]$  svn commit base-framework/core/conf/language_en_GB_nikeen.properties  -m "DSVNIKEI-43 new language file"
+Adding         base-framework/core/conf/language_en_GB_nikeen.properties
+Transmitting file data .
+Committed revision 26907.
+
+[eric@localhost 2015.03_patch_dsvcts]$ svn update
+Updating '.':
+At revision 26907.
+
+
+
+
+
+/ Einde SVN COMMANDLINE DSVCTS
+
+
+/ SCS MAVEN 
+
+/ lees	, 
+https://system.mp-objects.com/xwiki/bin/view/Technology/Using+Maven+dependency+management+in+TMS
+https://maven.apache.org/guides/mini/guide-encryption.html
+
+http://download.eclipse.org/technology/m2e/releases
+https://eyalgo.com/2015/03/26/fedora-installation/
+
+/ geef in google	,
+eclipse maven installations not embedded
+/ lees	,
+http://stackoverflow.com/questions/289800/where-can-i-find-the-maven-installation-directory-in-eclipse-3-4
+
+[eric@localhost trunk]$ mvn --version
+Maven home: /usr/share/maven
+/ Deze moeten we geven in General, Maven, Installations, Add	,
+/usr/share/maven
+
+[eric@localhost tmp]$ svn co https://system.mp-objects.com/svn/scs/trunk/maven/user
+A    user/settings.xml
+Checked out revision 7792.
+[eric@localhost workspace]$ cp -a trunk/ ~/tmp/
+
+/ Ga naar	, 
+https://system.mp-objects.com/artifactory/webapp/login.html?1
+/ password is domain password=eric987@MPO
+/ click rechtboven eric: User Profile	,
+/ Current password: eric987@MPO
+<server>
+    <id>${server-id}</id>
+    <username>eric</username>
+    <password>AP4J35LmUN1wpwJ2eQBRLSmUALx</password>
+</server>
+
+/ Geef deze in ~/.m2/settings.xml
+  <servers>
+    <server>
+      <id>mpobjects</id>
+      <username>eric</username>
+      <password>AP4J35LmUN1wpwJ2eQBRLSmUALx</password>
+    </server>
+    <server>
+      <id>mpobjects-snapshots</id>
+      <username>eric</username>
+      <password>AP4J35LmUN1wpwJ2eQBRLSmUALx</password>
+    </server>
+ 
+/ we kunnen ook	, 
+https://maven.apache.org/guides/mini/guide-encryption.html
+/ eerst	,
+mvn --encrypt-master-password <password>
+Store this password in the ${user.home}/.m2/settings-security.xml; it should look like
+<settingsSecurity>
+  <master>{jSMOWnoPFgsHVpMvz5VrIt5kRbzGpI8u+9EF1iFQyJQ=}</master>
+</settingsSecurity>
+/ dan	,
+mvn --encrypt-password <password>
+<settings>
+...
+  <servers>
+...
+    <server>
+      <id>my.server</id>
+      <username>foo</username>
+      <password>{COQLCE6DU6GtcS5P=}</password>
+    </server>
+
+/we run	(met mvn van fedora 3.1.1), 
+clean-prepare-and-dev-deploy
+/ we zien	,
+     [java] Exception in thread "main" java.lang.UnsupportedClassVersionError: javax/inject/Provider : Unsupported major.minor version 51.0constituent[0]: file:/usr/share/maven/lib/org.eclipse.sisu.inject.jar
+
+[root@localhost opt]# tar xvzf ~eric/Downloads/apache-maven-3.2.5-bin.tar.gz 
+
+[eric@localhost eclipse-jee]$ export JAVA_HOME=/home/eric/Devel/Java/jdk1.6.0_45/
+[eric@localhost eclipse-jee]$ export M2_HOME=/opt/apache-maven-3.2.5
+[eric@localhost eclipse-jee]$ PATH=$JAVA_HOME/bin:$M2_HOME:$PATH
+[eric@localhost eclipse-jee]$ java -version
+java version "1.6.0_45"
+Java(TM) SE Runtime Environment (build 1.6.0_45-b06)
+Java HotSpot(TM) 64-Bit Server VM (build 20.45-b01, mixed mode)
+[eric@localhost eclipse-jee]$ eclipse/eclipse 
+
+/ we maken een script in ~eric/bin/
+$ vi env-mpo.sh
+#!/usr/bin/bash
+export JAVA_HOME=/home/eric/Devel/Java/jdk1.6.0_45/
+export M2_HOME=/opt/apache-maven-3.2.5
+PATH=$JAVA_HOME/bin:$M2_HOME:$PATH
+
+/ In shell waarin we eclipse/eclipse	, 
+$ . env-mpo.sh 
+$ eclipse/eclipse
+
+
+/ 7	. 
+
+/ lees  ,
+https://system.mp-objects.com/xwiki/bin/view/Technology/JRebel
+/->
+http://docs.oracle.com/cd/E19830-01/819-4712/ablsc/index.html
+
+[eric@localhost jdk1.6.0_45]$ pwd
+/home/eric/Devel/Java/jdk1.6.0_45
+[eric@localhost jdk1.6.0_45]$ cp ~/Downloads/bcprov-jdk15on-1.53.jar jre/lib/ext/
+[eric@localhost jdk1.6.0_45]$ vi jre/lib/security/java.security
+security.provider.1=sun.security.provider.Sun
+security.provider.2=org.bouncycastle.jce.provider.BouncyCastleProvider
+security.provider.3=sun.security.rsa.SunRsaSign
+security.provider.4=com.sun.net.ssl.internal.ssl.Provider
+security.provider.5=com.sun.crypto.provider.SunJCE
+security.provider.6=sun.security.jgss.SunProvider
+security.provider.7=com.sun.security.sasl.Provider
+security.provider.8=org.jcp.xml.dsig.internal.dom.XMLDSigRI
+security.provider.9=sun.security.smartcardio.SunPCSC
+security.provider.10=sun.security.mscapi.SunMSCAPI
+
+/ 7.	 
+
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+/ OK
+
+/ we hadden eerst	, zoals op xwiki	,
+ 
+ <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
+  <accessrules>
+   <accessrule kind="accessible" pattern="sun/misc/BASE64Decoder"/>
+   <accessrule kind="accessible" pattern="sun/misc/CharacterDecoder"/>
+  </accessrules>
+ </classpathentry>
+ <classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+  <attributes>
+   <attribute name="maven.pomderived" value="true"/>
+  </attributes>
+ </classpathentry>
+
+/ Toen zagen we in eclipse in build path, libraries
+JavaSE-1.6
+/ maar dit was wel ~/Devel/Java/jdk1.6.0_45	,  
+
+/ Maar we zagen ERR	,
+Description Resource Path Location Type Access restriction: The constructor XMLSerializer() is not accessible due to restriction on required library jdk1.6.0_45/jre/lib/rt.jar
+/ Lees	,
+http://stackoverflow.com/questions/860187/access-restriction-on-class-due-to-restriction-on-required-library-rt-jar
+/ we moesten de jre entry rm en weer add	,
+/ we kozen de workspace default	, ~/Devel/Java/jdk1.6.0_45	, 
+
+/ nu zien we dus	, 
+    <classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+        <attributes>
+            <attribute name="maven.pomderived" value="true"/>
+        </attributes>
+    </classpathentry>
+    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+/ OK
+
+
+/ Einde SCS MAVEN
+
+/ PNLTMS
+
+
+2017-01-20 13:36:04,764 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)  CHECKSUM_MISMATCH : commons-beanutils-1.9.2.jar
+2017-01-20 13:36:04,764 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)    MUST_BE_REMOVED : commons-collections-3.2.1.jar
+2017-01-20 13:36:04,764 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : commons-collections-3.2.2.jar
+
+2017-01-20 13:36:04,765 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)    MUST_BE_REMOVED : commons-logging-1.1.2.jar
+2017-01-20 13:36:04,765 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : commons-logging-1.2.jar
+2017-01-20 13:36:04,765 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : commons-validator-1.5.1.jar
+2017-01-20 13:36:04,765 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)    MUST_BE_REMOVED : commons-validator.jar
+2
+2017-01-20 13:36:04,776 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : vt-password-3.1.2.jar
+
+[eric@localhost 2016.12]$ pwd
+/home/eric/Devel/Java/Eclipse/eclipse-jee/workspace/2016.12
+[eric@localhost 2016.12]$ find -name commons-beanutils-1.9.2.jar -o -name commons-collections-3.2.2.jar -o -name  commons-logging-1.2.jar -o -name commons-validator-1.5.1.jar -o -name vt-password-3.1.2.jar | xargs -I % ls -ltr % | awk '{print $NF}' | xargs -I % scp % vanderveldene@pnl-app-a.intermax.mp-objects.com:Downloads
+
+/ op pnl-app-a	,
+[jboss@pnl-app-a Downloads]$ find -name "*.jar" | xargs -I % echo cp % /local/apps/jboss-4.0.5.GA/server/pnltms/lib/
+cp ./commons-collections-3.2.2.jar /local/apps/jboss-4.0.5.GA/server/pnltms/lib/
+cp ./commons-logging-1.2.jar /local/apps/jboss-4.0.5.GA/server/pnltms/lib/
+cp ./commons-validator-1.5.1.jar /local/apps/jboss-4.0.5.GA/server/pnltms/lib/
+cp ./commons-beanutils-1.9.2.jar /local/apps/jboss-4.0.5.GA/server/pnltms/lib/
+cp ./vt-password-3.1.2.jar /local/apps/jboss-4.0.5.GA/server/pnltms/lib/
+
+/local/apps/jboss-4.0.5.GA/server/pnltms/lib/
+
+/ 7	. 
+
+/ we cp hele dir over	,
+
+scp -r vanderveldene@pnl-app-t.intermax.mp-objects.com:/local/apps/jboss-4.0.5.GA/server/pnltms/lib .
+/ creates ./lib/	,
+/ en	,
+[eric@localhost tmp]$ scp -r lib/ vanderveldene@pnl-app-a.intermax.mp-objects.com:Downloads
+
+
+
+
+
+
+
+/ Einde PNLTMS
+
+/ XPOMS-201	
+
+[eric@localhost mposcs]$ scp -r lib/ vanderveldene@pnl-app-a2.intermax.mp-objects.com:Downloads
+[jboss@pnl-app-a2 pnllogistics]$ cp -a lib/ lib2
+$ cd lib
+[jboss@pnl-app-a2 lib]$ rm -rf *
+[jboss@pnl-app-a2 lib]$ find ~vanderveldene/Downloads/lib/ -name "*.jar"  | xargs -I % cp -a % .
+
+[jboss@pnl-app-a2 releases]$ curl -u eric -O https://system.mp-objects.com/jenkins/job/SCS-OnDemand/5128/artifact/dist/tms-pnllogistics-26794-trunk_build5128.zip
+[jboss@pnl-app-a2 releases]$ pnllogistics stop
+[jboss@pnl-app-a2 releases]$ deploy-pnllogistics.sh /local/apps/releases/tms-pnllogistics-26794-trunk_build5128.zip /local/apps/jboss-4.0.5.GA/server/pnllogistics/
+
+$ pnllogistics start track
+
+2017-03-08 10:06:43,544 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [invoice/patch-084.sql]: 
+2017-03-08 10:06:43,544 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) ALTER TABLE CUSTOMER_INVOICE_HEADER DROP CONSTRAINT CIH_DOCUMENT_FK
+2017-03-08 10:06:43,544 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERROR: constraint 
+"cih_document_fk" of relation "customer_invoice_header" does not exist
+
+/ Als er spaces in files	,  set -print0 achteraan	, 	
+[eric@localhost trunk]$ find -type f  -name "*.sql" -print0 | xargs -0 grep -i CIH_DOCUMENT_FK
+./module/invoice/src/sql/patch/patch-084.sql:ALTER TABLE CUSTOMER_INVOICE_HEADER DROP CONSTRAINT CIH_DOCUMENT_FK;
+./module/customerinvoice/src/sql/patch/patch-0001.sql:	CONSTRAINT CIH_DOCUMENT_FK FOREIGN KEY (DOCUMENT_SYSTEMID) REFERENCES FILE_META (SYSTEM_ID)
+
+$ vi ./module/customerinvoice/src/sql/patch/patch-0001.sql
+CREATE TABLE CUSTOMER_INVOICE_HEADER
+        CONSTRAINT CIH_DOCUMENT_FK FOREIGN KEY (DOCUMENT_SYSTEMID) REFERENCES FILE_META (SYSTEM_ID)
+
+[eric@localhost LOGS]$ svn log   https://system.mp-objects.com/svn/tms//trunk/module/customerinvoice/src/sql/patch/patch-0001.sql
+------------------------------------------------------------------------
+r18428 | michel | 2015-02-24 09:57:52 +0100 (Tue, 24 Feb 2015) | 1 line
+
+SCS-4674: Merged revision(s) 18311-18418 from branches/2015.01
+------------------------------------------------------------------------
+r8707 | michielh | 2012-07-31 09:42:35 +0200 (Tue, 31 Jul 2012) | 3 lines
+
+moved patch scripts to patch directory
+Issue: SCS-1001
+
+------------------------------------------------------------------------
+r1962 | paul | 2010-08-09 05:09:28 +0200 (Mon, 09 Aug 2010) | 1 line
+
+Customer invoice functionality, not completed yet, minor bugs
+------------------------------------------------------------------------
+
+2017-03-08 16:34:58,989 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [ratecalc/patch-069-updatingratefunction.sql]: 
+2017-03-08 16:34:58,989 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) ALTER TABLE RATE_FUNCTION ADD CONSTRAINT RATE_TABLE_SYSTEMID_UQ UNIQUE (RATE_TABLE_SYSTEMID)
+2017-03-08 16:34:58,989 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERROR: could not create unique index "rate_table_systemid_uq"
+  Detail: Key (rate_table_systemid)=(26791076) is duplicated.
+
+/ HIER HIER HIER
+
+/ MORGENOCHTEND
+https://system.mp-objects.com/jira/browse/SCS-6120?filter=11500
+
+pnllogistics=> select*from rate_function where rate_table_systemid=26791076;
+ system_id | function_definition_systemid | is_user_defined | user_func_def | rate_table_systemid | unit_systemid 
+-----------+------------------------------+-----------------+---------------+---------------------+---------------
+  26791080 |                      3500001 |               0 | NULL          |            26791076 |          NULL
+  26791082 |                      3500001 |               0 | NULL          |            26791076 |          NULL
+(2 rows)
+
+
+
+
+/ Einde XPOMS-201
+
+/ XPOMS-201
+
+/ we hebben op bli-app-t per ongeluk rate table copied	, 
+bakker=> select name from rate_table;
+              name              
+--------------------------------
+ RT_EURO								<- origineel	, 
+ RT_EURO-copy
+ RT_EURO-copy-copy
+ RT_EURO-copy
+ RT_EURO-copy-copy
+
+bakker=> \d+ rate_table
+Referenced by:
+    TABLE "dimension" CONSTRAINT "dim_rate_table_fk" FOREIGN KEY (rate_table_systemid) REFERENCES rate_table(system_id)
+    TABLE "rate_function" CONSTRAINT "fnc_rate_table_fk" FOREIGN KEY (rate_table_systemid) REFERENCES rate_table(system_id)
+    TABLE "rate_table" CONSTRAINT "rate_table_linked_fk" FOREIGN KEY (linked_rate_table_systemid) REFERENCES rate_table(system_id)
+    TABLE "rtable_sel_criterium" CONSTRAINT "rts_rate_table_fk" FOREIGN KEY (rate_table_systemid) REFERENCES rate_table(system_id)
+
+bakker=> select count(*)from dimension d join rate_table rt on d.rate_table_systemid=rt.system_id where rt.name like '%copy%';
+ count 
+-------
+     4
+(1 row)
+/ Toen we de rate_tables copied, hebben we ook 4 dimensions create	, deze moeten we ook rm	, 
+
+bakker=> select count(*)from rate_function rf join rate_table rt on rf.rate_table_systemid=rt.system_id where rt.name like '%copy%';
+ count 
+-------
+     4
+(1 row)
+/ Toen we de rate_tables copied, hebben we ook 4 rate_functions create	, deze moeten we ook rm	, 
+
+bakker=> select count(*)from rate_table rt2 join rate_table rt on rt2.linked_rate_table_systemid=rt.system_id where rt.name like '%copy%';
+ count 
+-------
+     0
+(1 row)
+
+bakker=> select count(*)from rtable_sel_criterium sc join rate_table rt on sc.rate_table_systemid=rt.system_id where rt.name like '%copy%';
+ count 
+-------
+     0
+(1 row)
+
+/ 13	. 
+
+/ de fk's zijn NIET on delete cascade	, dus de rate_tables verwijderen verwijdert niet de dimensions en rate_functions	,
+/ we moeten het zelf doen	, 
+
+bakker=> delete from dimension d using rate_table rt where d.rate_table_systemid=rt.system_id and rt.name like '%copy%'; 
+DELETE 4
+bakker=> commit;
+COMMIT
+
+/ 1313	. 
+
+delete 
+from rate_function rf 
+using rate_table rt 
+where rf.rate_table_systemid=rt.system_id 
+and rt.name like '%copy%'; 
+ERROR:  update or delete on table "rate_function" violates foreign key constraint "inp_function_fk" on table "input_parameter"
+DETAIL:  Key (system_id)=(778801) is still referenced from table "input_parameter".
+
+bakker=> \d+ rate_function
+Referenced by:
+    TABLE "input_parameter" CONSTRAINT "inp_function_fk" FOREIGN KEY (rate_func_systemid) REFERENCES rate_function(system_id)
+    TABLE "rate_parameter" CONSTRAINT "par_function_fk" FOREIGN KEY (outputfrom_function_systemid) REFERENCES rate_function(system_id)
+
+select count(*)
+from input_parameter ip
+join rate_function rf on ip.rate_func_systemid=rf.system_id 
+join rate_table rt on rf.rate_table_systemid=rt.system_id 
+where rt.name like '%copy%';
+ count 
+-------
+     4
+(1 row)
+
+
+select count(*)
+from rate_parameter rp
+join rate_function rf on rp.outputfrom_function_systemid=rf.system_id 
+join rate_table rt on rf.rate_table_systemid=rt.system_id 
+where rt.name like '%copy%';
+ count 
+-------
+     4
+(1 row)
+
+delete
+from input_parameter ip
+using rate_function rf,rate_table rt
+where ip.rate_func_systemid=rf.system_id
+and rf.rate_table_systemid=rt.system_id
+and rt.name like '%copy%';
+DELETE 4
+bakker=> commit;
+COMMIT
+
+delete
+from rate_parameter rp
+using rate_function rf,rate_table rt
+where rp.outputfrom_function_systemid=rf.system_id
+and rf.rate_table_systemid=rt.system_id
+and rt.name like '%copy%';
+DELETE 4
+bakker=> commit;
+COMMIT
+
+bakker=> delete 
+bakker-> from rate_function rf 
+bakker-> using rate_table rt 
+bakker-> where rf.rate_table_systemid=rt.system_id 
+bakker-> and rt.name like '%copy%';
+DELETE 4
+bakker=> commit;
+COMMIT
+/ ERICJ deze query duurde heel lang,  doe explain	,
+/ TODO
+
+delete 
+from rate_table rt
+where rt.name like '%copy%';
+DELETE 4
+bakker=> commit;
+COMMIT
+
+
+
+
+/ Einde XPOMS-201
+
+/ XPOMS-201 RATE AGREEMENTS
+
+https://test-geosco.mp-objects.com/geosco/core/index_frameset
+
+/ 13	. 
+
+/ open ra SA-PREPARATION
+/ we zien 2 rc's RC-PREPARATION	, RC-OOH
+/ als we een sho save, of click 'recalcute rate'	, dan worden deze 2 calc	, click op 'cost/price', we zien bij details wat is calc	, 
+
+/ click edit RC-PREPARATION	, we zien Parameter RP-PREP	. Dan RC-PREPARATION=RP-PREP. Deze laaste wordt uitgerekend	, 
+/ we zien ook objective: cost, entity type:service order, correction type: add	, dus wordt opgeteld in de service order bij ...
+/ we zien ook calculation type: post calculated
+
+/ we gaan terug naar de ra	, en click parameters, we zien RP-PREP	,
+/ open , we zien function MUTEX en bij parameters rechts 4 rt output's	, MUTEX takes one of them	; we zien geen order details rechts	, 
+
+/ Als we een rc open	, zien we zoiets als entity type: service order, correction type: add	,
+
+/ 13	. 
+
+/ test geosco,
+
+/ seo N0009091																			/ search start date: all 
+/ we zien in de detailed log ra  CONSIGNMENT SA	, open	, 
+/ we zien de rc RC_SO FREIGHT, open	, 
+/ we zien parameter: RP_SO_FREIGHT, Objective: cost, entity type: service order, correction type: add	 (add means cost TODO)
+/ we gaan terug naar de ra, click parameters en open RP_SO_FREIGHT	,
+/ we zien afh van RT_COST_OUTPUT
+
+/ seo N0009091
+/ click 'recalculate rate'	, click edit/cost
+
+/ post calculated	, 
+
+Cost 
+freight 440 jpy
+
+Calculation log
+ RC_SO FREIGHT : RP_SO FREIGHT ( SUM ) = 444.00 JPY
+ 	RT_COST_OUTPUT ( RATE TABLE ) = 333.00 JPY
+ 		TO CITY ( ) = 大阪
+ 		ORGANIZATION ( ) = SCO_APAC_JP_SPO_IBM
+ 		FROM CITY ( ) = 東京
+ 	RT_COST_OUTPUT ( RATE TABLE ) = 111.00 JPY
+ 		TO CITY ( ) = 千葉
+ 		ORGANIZATION ( ) = SCO_APAC_JP_SPO_IBM
+ 		FROM CITY ( ) = 東京
+ RC_NEXT STOP CITY : ( ) = 大阪
+ RC_STOP_DURATION : ( ) = 1
+ RC_CONSIGNMENT COST : ( ) = 333.00 JPY
+ CONSIGNMENT EDT : ( ) = GSJ-15
+ RC_STOP_DISTANCE : ( ) = 135 M
+ RC_PREVIOUS CITY : ( ) = 東京
+ RC_DISTANCE : ( ) = 100 M
+ RC_DURATION : ( ) = 1
+ RC_NEXT STOP CITY : ( ) = 大阪
+ RC_STOP_DURATION : ( ) = 1
+ RC_CONSIGNMENT COST : ( ) = 111.00 JPY
+ CONSIGNMENT EDT : ( ) = GSJ-15
+ RC_STOP_DISTANCE : ( ) = 125 M
+ RC_PREVIOUS CITY : ( ) = 大阪
+ RC_DISTANCE : ( ) = 200 M
+ RC_DURATION : ( ) = 1
+
+  Detailed log
+ [14:18:43.670] Calculating rate agreements [CONSIGNMENT SA]
+ [14:18:43.670] Calculating rate agreements, no variables defined
+ [14:18:43.670] STARTING calculation of rate agreement [CONSIGNMENT SA]
+ [14:18:43.670] Starting evaluation of component [RC_SO FREIGHT]
+ [14:18:43.670] FUNCTION TYPE: Sum
+ [14:18:43.670] PARAMETER: RT_COST_OUTPUT start evaluation of parameter
+ [14:18:43.671] Evaluating criteria for rate table [RT_COST]
+ [14:18:43.671] FUNCTION TYPE: RateTable
+ [14:18:43.671] Retrieved value for detail [TO CITY], for entity [N0009091.1/26885592], result: 大阪
+ [14:18:43.671] Order detail [TO CITY] results in:大阪
+ [14:18:43.671] Retrieved value for detail [ORGANIZATION], for entity [N0009091.1/26885592], result: SCO_APAC_JP_SPO_IBM
+ [14:18:43.671] Order detail [ORGANIZATION] results in:SCO_APAC_JP_SPO_IBM
+ [14:18:43.671] Retrieved value for detail [FROM CITY], for entity [N0009091.1/26885592], result: 東京
+ [14:18:43.672] Order detail [FROM CITY] results in:東京
+ [14:18:43.672] LOOKUP in table : RT_COST results in: 333
+ [14:18:43.672] PARAMETER: RT_COST_OUTPUT evaluates to: 333
+ [14:18:43.672] PARAMETER: RT_COST_OUTPUT start evaluation of parameter
+ [14:18:43.672] Evaluating criteria for rate table [RT_COST]
+ [14:18:43.672] FUNCTION TYPE: RateTable
+ [14:18:43.672] Retrieved value for detail [TO CITY], for entity [N0009091.2/26885593], result: 千葉
+ [14:18:43.672] Order detail [TO CITY] results in:千葉
+ [14:18:43.672] Retrieved value for detail [ORGANIZATION], for entity [N0009091.2/26885593], result: SCO_APAC_JP_SPO_IBM
+ [14:18:43.672] Order detail [ORGANIZATION] results in:SCO_APAC_JP_SPO_IBM
+ [14:18:43.672] Retrieved value for detail [FROM CITY], for entity [N0009091.2/26885593], result: 東京
+ [14:18:43.672] Order detail [FROM CITY] results in:東京
+ [14:18:43.672] LOOKUP in table : RT_COST results in: 111
+ [14:18:43.672] PARAMETER: RT_COST_OUTPUT evaluates to: 111
+ [14:18:43.673] COST COMPONENT : Freight with correction type: ADD evaluates to [444]
+ [14:18:43.674] Added to total. New total: 444.00 JPY
+ [14:18:43.674] FUNCTION TYPE: NotEmpty
+ [14:18:43.674] PARAMETER: RT_DISTANCE_OUTPUT start evaluation of parameter
+ [14:18:43.674] Evaluating criteria for rate table [RT_DISTANCE]
+ [14:18:43.674] FUNCTION TYPE: RateTable
+ [14:18:43.675] Retrieved value for detail [ORGANIZATION], for entity [N0009091.1/26885592], result: SCO_APAC_JP_SPO_IBM
+ [14:18:43.675] Order detail [ORGANIZATION] results in:SCO_APAC_JP_SPO_IBM
+ [14:18:43.675] Retrieved value for detail [TO CITY], for entity [N0009091.1/26885592], result: 大阪
+ [14:18:43.675] Order detail [TO CITY] results in:大阪
+ [14:18:43.675] Retrieved value for detail [FROM CITY], for entity [N0009091.1/26885592], result: 東京
+ [14:18:43.675] Order detail [FROM CITY] results in:東京
+ [14:18:43.675] LOOKUP in table : RT_DISTANCE results in: 100
+ [14:18:43.675] PARAMETER: RT_DISTANCE_OUTPUT evaluates to: 100
+ [14:18:43.675] PARAMETER: RT_DISTANCE_OUTPUT start evaluation of parameter
+ [14:18:43.675] Evaluating criteria for rate table [RT_DISTANCE]
+ [14:18:43.675] FUNCTION TYPE: RateTable
+ [14:18:43.675] Retrieved value for detail [ORGANIZATION], for entity [N0009091.2/26885593], result: SCO_APAC_JP_SPO_IBM
+ [14:18:43.675] Order detail [ORGANIZATION] results in:SCO_APAC_JP_SPO_IBM
+ [14:18:43.675] Retrieved value for detail [TO CITY], for entity [N0009091.2/26885593], result: 千葉
+ [14:18:43.675] Order detail [TO CITY] results in:千葉
+ [14:18:43.675] Retrieved value for detail [FROM CITY], for entity [N0009091.2/26885593], result: 東京
+ [14:18:43.675] Order detail [FROM CITY] results in:東京
+ [14:18:43.675] LOOKUP in table : RT_DISTANCE results in: 200
+ [14:18:43.675] PARAMETER: RT_DISTANCE_OUTPUT evaluates to: 200
+ [14:18:43.676] COST COMPONENT : distance with correction type: PLANNED_DISTANCE evaluates to [1]
+ [14:18:43.676] FUNCTION TYPE: NotEmpty
+ [14:18:43.676] PARAMETER: RT_COST_OUTPUT start evaluation of parameter
+ [14:18:43.676] PARAMETER: RT_COST_OUTPUT evaluates to: 333
+ [14:18:43.676] PARAMETER: RT_COST_OUTPUT start evaluation of parameter
+ [14:18:43.676] PARAMETER: RT_COST_OUTPUT evaluates to: 111
+ [14:18:43.676] COST COMPONENT : consignment cost with correction type: REFERENCE1 evaluates to [1]
+ [14:18:43.676] FUNCTION TYPE: NotEmpty
+ [14:18:43.676] PARAMETER: RT_STOP_DISTANCE_OUTPUT start evaluation of parameter
+ [14:18:43.676] Evaluating criteria for rate table [RT_STOP_DISTANCE]
+ [14:18:43.676] FUNCTION TYPE: RateTable
+ [14:18:43.676] Retrieved value for detail [PREVIOUS STOP CITY], for entity [N0009091.1/26885592], result: 東京
+ [14:18:43.676] Order detail [PREVIOUS STOP CITY] results in:東京
+ [14:18:43.676] Retrieved value for detail [TO CITY], for entity [N0009091.1/26885592], result: 大阪
+ [14:18:43.676] Order detail [TO CITY] results in:大阪
+ [14:18:43.676] Retrieved value for detail [ORGANIZATION], for entity [N0009091.1/26885592], result: SCO_APAC_JP_SPO_IBM
+ [14:18:43.676] Order detail [ORGANIZATION] results in:SCO_APAC_JP_SPO_IBM
+ [14:18:43.676] LOOKUP in table : RT_STOP_DISTANCE results in: 135
+ [14:18:43.677] PARAMETER: RT_STOP_DISTANCE_OUTPUT evaluates to: 135
+ [14:18:43.677] PARAMETER: RT_STOP_DISTANCE_OUTPUT start evaluation of parameter
+ [14:18:43.677] Evaluating criteria for rate table [RT_STOP_DISTANCE]
+ [14:18:43.677] FUNCTION TYPE: RateTable
+ [14:18:43.677] Retrieved value for detail [PREVIOUS STOP CITY], for entity [N0009091.2/26885593], result: 大阪
+ [14:18:43.677] Order detail [PREVIOUS STOP CITY] results in:大阪
+ [14:18:43.677] Retrieved value for detail [TO CITY], for entity [N0009091.2/26885593], result: 千葉
+ [14:18:43.677] Order detail [TO CITY] results in:千葉
+ [14:18:43.677] Retrieved value for detail [ORGANIZATION], for entity [N0009091.2/26885593], result: SCO_APAC_JP_SPO_IBM
+ [14:18:43.677] Order detail [ORGANIZATION] results in:SCO_APAC_JP_SPO_IBM
+ [14:18:43.677] LOOKUP in table : RT_STOP_DISTANCE results in: 125
+ [14:18:43.677] PARAMETER: RT_STOP_DISTANCE_OUTPUT evaluates to: 125
+ [14:18:43.677] COST COMPONENT : stop distance with correction type: PLANNED_STOP_DISTANCE evaluates to [1]
+ [14:18:43.677] FUNCTION TYPE: NotEmpty
+ [14:18:43.677] PARAMETER: RT_DURATION_OUTPUT start evaluation of parameter
+ [14:18:43.677] Evaluating criteria for rate table [RT_DURATION]
+ [14:18:43.677] FUNCTION TYPE: RateTable
+ [14:18:43.677] Retrieved value for detail [PREVIOUS STOP CITY], for entity [N0009091.1/26885592], result: 東京
+ [14:18:43.677] Order detail [PREVIOUS STOP CITY] results in:東京
+ [14:18:43.678] Retrieved value for detail [TO CITY], for entity [N0009091.1/26885592], result: 大阪
+ [14:18:43.678] Order detail [TO CITY] results in:大阪
+ [14:18:43.678] Retrieved value for detail [ORGANIZATION], for entity [N0009091.1/26885592], result: SCO_APAC_JP_SPO_IBM
+ [14:18:43.678] Order detail [ORGANIZATION] results in:SCO_APAC_JP_SPO_IBM
+ [14:18:43.678] LOOKUP in table : RT_DURATION results in: 1
+ [14:18:43.678] PARAMETER: RT_DURATION_OUTPUT evaluates to: 1
+ [14:18:43.678] PARAMETER: RT_DURATION_OUTPUT start evaluation of parameter
+ [14:18:43.678] Evaluating criteria for rate table [RT_DURATION]
+ [14:18:43.678] FUNCTION TYPE: RateTable
+ [14:18:43.678] Retrieved value for detail [PREVIOUS STOP CITY], for entity [N0009091.2/26885593], result: 大阪
+ [14:18:43.678] Order detail [PREVIOUS STOP CITY] results in:大阪
+ [14:18:43.678] Retrieved value for detail [TO CITY], for entity [N0009091.2/26885593], result: 千葉
+ [14:18:43.678] Order detail [TO CITY] results in:千葉
+ [14:18:43.678] Retrieved value for detail [ORGANIZATION], for entity [N0009091.2/26885593], result: SCO_APAC_JP_SPO_IBM
+ [14:18:43.678] Order detail [ORGANIZATION] results in:SCO_APAC_JP_SPO_IBM
+ [14:18:43.678] LOOKUP in table : RT_DURATION results in: 1
+ [14:18:43.678] PARAMETER: RT_DURATION_OUTPUT evaluates to: 1
+ [14:18:43.678] COST COMPONENT : stop duration with correction type: PLANNED_STOP_PROCESSING_TIME evaluates to [1]
+ [14:18:43.679] FUNCTION TYPE: String
+ [14:18:43.679] FREE VALUE: GSJ-15
+ [14:18:43.679] FREE VALUE: GSJ-15
+ [14:18:43.679] COST COMPONENT : entity detail with correction type: ENTITY_DETAIL evaluates to [1]
+ [14:18:43.679] FUNCTION TYPE: NotEmpty
+ [14:18:43.679] PARAMETER: RT_DURATION_OUTPUT start evaluation of parameter
+ [14:18:43.679] PARAMETER: RT_DURATION_OUTPUT evaluates to: 1
+ [14:18:43.679] PARAMETER: RT_DURATION_OUTPUT start evaluation of parameter
+ [14:18:43.679] PARAMETER: RT_DURATION_OUTPUT evaluates to: 1
+ [14:18:43.679] COST COMPONENT : Duration time with correction type: PLANNED_PROCESSING_TIME evaluates to [1]
+ [14:18:43.679] FUNCTION TYPE: String
+ [14:18:43.679] Retrieved value for detail [NEXT STOP CITY], for entity [N0009091.1/26885592], result: 大阪
+ [14:18:43.680] Order detail [NEXT STOP CITY] results in:大阪
+ [14:18:43.680] Retrieved value for detail [NEXT STOP CITY], for entity [N0009091.2/26885593], result: 大阪
+ [14:18:43.680] Order detail [NEXT STOP CITY] results in:大阪
+ [14:18:43.680] COST COMPONENT : Next stop city with correction type: REFERENCE3 evaluates to [1]
+ [14:18:43.680] FUNCTION TYPE: String
+ [14:18:43.680] Retrieved value for detail [PREVIOUS STOP CITY], for entity [N0009091.1/26885592], result: 東京
+ [14:18:43.680] Order detail [PREVIOUS STOP CITY] results in:東京
+ [14:18:43.680] Retrieved value for detail [PREVIOUS STOP CITY], for entity [N0009091.2/26885593], result: 大阪
+ [14:18:43.680] Order detail [PREVIOUS STOP CITY] results in:大阪
+ [14:18:43.680] COST COMPONENT : previous stop city with correction type: REFERENCE2 evaluates to [1]
+ [14:18:43.681] Cost component specification RC_SO FREIGHT adds value 444.00 (ADD) to price type FREIGHT
+ [14:18:43.681] Calculated price for FREIGHT is 444.00: 444.00 (ADD)
+ [14:18:43.683] Cost component specification RC_SO FREIGHT adds value 444.00 (ADD) to price type FREIGHT
+ [14:18:43.683] Calculated price for FREIGHT is 444.00: 444.00 (ADD)
+ [14:18:43.684] Cost component specification RC_SO FREIGHT adds value 444.00 (ADD) to price type FREIGHT
+ [14:18:43.684] Calculated price for FREIGHT is 444.00: 444.00 (ADD)
+ [14:18:43.684] Executed on: Thu Mar 09 14:18:43 CET 2017
+
+/ Einde XPOMS-201 RATE AGREEMENTS
+
+/ XPOMS-201 TABLES RATE AGREEMENT  
+
+/ test geosco	,
+
+[eric@localhost bin]$ geosco-psql-t.sh 
+
+
+/ seo N0009091 	/ geef in search bij start date: all
+
+public class RateAgreementVO extends ValueObject implements SoftDeletable {
+	private Set<RateParameterVO> parameterList = new TreeSet<RateParameterVO>();
+	// FIXME should be a Set, but that is not well supported by Cocoon Forms. Revert to set when refactoring screens
+	private List<RAgreementSelCriterion> rateAgreementSelCriterionList = new ArrayList<RAgreementSelCriterion>(0);
+	private Set<RateTableVO> rateTableList = new TreeSet<RateTableVO>();
+	private Set<CostComponentSpecificationVO> theCostComponentSpecificationList = new HashSet<CostComponentSpecificationVO>(0);
+
+public class CostComponentSpecificationVO extends ValueObject implements Cloneable {
+
+public class RAgreementSelCriterion extends AbstractMatchCriterion {
+
+public class RateParameterVO extends ValueObject implements Comparable<RateParameterVO> {
+	private RateFunctionVO theOutputfromFunction;												/ SUM, ...
+/ we zien NIET de parameters en entity details die we zien op het scherm Edit Rate Parameter	,
+/ TODO
+
+public class RateFunctionVO extends ValueObject {
+	private FunctionDefinitionVO theFunctionDefinition;
+	private Set<InputParameterVO> theInputParameterList = new HashSet<InputParameterVO>(0);
+	private RateParameterVO theRateParameter;
+	private RateTableVO theRateTable;
+
+public class RateFunctionVO extends ValueObject {
+	private FunctionDefinitionVO theFunctionDefinition;
+	private Set<InputParameterVO> theInputParameterList = new HashSet<InputParameterVO>(0);
+	private RateParameterVO theRateParameter;
+	private RateTableVO theRateTable;
+
+
+$ vi RateAgreementVO.standard.hbm.xml
+	private Set<CostComponentSpecificationVO> theCostComponentSpecificationList = new HashSet<CostComponentSpecificationVO>(0);
+
+<hibernate-mapping>
+	<class name="com.mpobjects.oms.ratecalc.model.rateagreement.vo.RateAgreementVO" table="RATE_AGREEMENT">
+
+<hibernate-mapping>
+	<class name="com.mpobjects.oms.ratecalc.model.costcomponentspecification.vo.CostComponentSpecificationVO" table="COST_COMPONENT_SPECIFICATION">
+
+RAgreementSelCriterion hbm mapping NIET	, 
+/ TODO
+
+geosco=> \d+ rate_agreement
+                                                      Table "public.rate_agreement"
+        Column         |          Type          |                    Modifiers                    | Storage  | Stats target | Desc
+ription 
+-----------------------+------------------------+-------------------------------------------------+----------+--------------+-----
+--------
+ system_id             | integer                | not null                                        | plain    |              | 
+ name                  | character varying(50)  |                                                 | extended |              | 
+ description           | character varying(100) |                                                 | extended |              | 
+ organization_systemid | integer                |                                                 | plain    |              | 
+ unit_systemid         | integer                |                                                 | plain    |              | 
+ is_deleted            | smallint               | default 0                                       | plain    |              | 
+ rate_type             | character varying(30)  | default 'SERVICE_ORDER_COST'::character varying | extended |              | 
+ is_quotation          | smallint               |                                                 | plain    |              | 
+ is_template           | smallint               |                                                 | plain    |              | 
+ reference1            | character varying(80)  |                                                 | extended |              | 
+ reference2            | character varying(80)  |                                                 | extended |              | 
+ reference3            | character varying(80)  |                                                 | extended |              | 
+ reference4            | character varying(80)  |                                                 | extended |              | 
+ reference5            | character varying(80)  |                                                 | extended |              | 
+ reference6            | character varying(80)  |                                                 | extended |              | 
+ reference7            | character varying(80)  |                                                 | extended |              | 
+ reference8            | character varying(80)  |                                                 | extended |              | 
+ reference9            | character varying(80)  |                                                 | extended |              | 
+ reference10           | character varying(80)  |                                                 | extended |              | 
+ is_last               | smallint               | not null default (0)::smallint                  | plain    |              | 
+ priority              | integer                | not null default 0                              | plain    |              | 
+Indexes:
+    "pk_rate_agreement" PRIMARY KEY, btree (system_id)
+    "idx_rate_agreement1" btree (is_deleted)
+    "rate_agreement_organization_systemid_idx" btree (organization_systemid)
+    "rate_agreement_unit_systemid_idx" btree (unit_systemid)
+Foreign-key constraints:
+    "raa_organization_fk" FOREIGN KEY (organization_systemid) REFERENCES organization(system_id)
+    "raa_unit_fk" FOREIGN KEY (unit_systemid) REFERENCES unit(system_id)
+Referenced by:
+    TABLE "cost_component_specification" CONSTRAINT "cdt_ragreement_systemid" FOREIGN KEY (rate_agreement_systemid) REFERENCES rat
+e_agreement(system_id)
+    TABLE "customer_quotation_rate_agr" CONSTRAINT "cqra_component" FOREIGN KEY (rate_systemid) REFERENCES rate_agreement(system_i
+d)
+    TABLE "rate_parameter" CONSTRAINT "par_rate_agr_fk" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate_agreement(system_id)
+    TABLE "rate_table" CONSTRAINT "rat_rate_agreement_fk" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate_agreement(system_i
+d)
+    TABLE "rate_agreement_test" CONSTRAINT "rte_rate_agreement_fk" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate_agreement
+(system_id)
+    TABLE "rate_variable" CONSTRAINT "rva_rate_agreement_fk" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate_agreement(syste
+m_id)
+    TABLE "ragreement_sel_criterium" CONSTRAINT "sec_rate_agreement_fk" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate_agre
+ement(system_id)
+    TABLE "service_order_cost" CONSTRAINT "soc_rate_agr_fk" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate_agreement(system
+_id)
+    TABLE "sq_quotation_request_template" CONSTRAINT "sq_qrt_rate_agreement" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate
+_agreement(system_id)
+
+geosco=> \d+ cost_component_specification
+                                                   Table "public.cost_component_specification"
+          Column          |          Type          |                      Modifiers                      | Storage  | Stats target
+ | Description 
+--------------------------+------------------------+-----------------------------------------------------+----------+-------------
+-+-------------
+ system_id                | integer                | not null                                            | plain    |             
+ | 
+ name                     | character varying(50)  |                                                     | extended |             
+ | 
+ description              | character varying(100) |                                                     | extended |             
+ | 
+ parameter_systemid       | integer                |                                                     | plain    |             
+ | 
+ order_rate_part_systemid | integer                |                                                     | plain    |             
+ | 
+ sequence_nr              | integer                | default 0                                           | plain    |             
+ | 
+ rate_agreement_systemid  | integer                |                                                     | plain    |             
+ | 
+ rate_plus_mode           | character varying(32)  | not null                                            | extended |             
+ | 
+ correction_type          | character varying(50)  |                                                     | extended |             
+ | 
+ entity_type              | character varying(32)  | not null default 'SERVICE_ORDER'::character varying | extended |             
+ | 
+ evaluation_objective     | character varying(40)  |                                                     | extended |             
+ | 
+ calculation_type         | character varying(40)  |                                                     | extended |             
+ | 
+Indexes:
+    "pk_cost_component_specification" PRIMARY KEY, btree (system_id)
+    "cost_component_specification_order_rate_part_systemid_idx" btree (order_rate_part_systemid)
+    "cost_component_specification_parameter_systemid_idx" btree (parameter_systemid)
+    "cost_component_specification_rate_agreement_systemid_idx" btree (rate_agreement_systemid)
+Foreign-key constraints:
+    "cdt_parameter_systemid" FOREIGN KEY (parameter_systemid) REFERENCES rate_parameter(system_id)
+    "cdt_ragreement_systemid" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate_agreement(system_id)
+    "fk_rate_comp_type_systemid" FOREIGN KEY (order_rate_part_systemid) REFERENCES rate_component_type(system_id)
+Referenced by:
+    TABLE "customer_quotation_serv_rate" CONSTRAINT "cqsr_component" FOREIGN KEY (component_systemid) REFERENCES cost_component_sp
+ecification(system_id)
+    TABLE "shipment_order_price_part" CONSTRAINT "sop_cost_comp_spec_fk" FOREIGN KEY (cost_component_spec_systemid) REFERENCES cos
+t_component_specification(system_id)
+    TABLE "sq_quotation_line" CONSTRAINT "sq_ql_rate_component" FOREIGN KEY (rate_component_systemid) REFERENCES cost_component_sp
+ecification(system_id)
+
+
+
+
+
+bakker20160207_t=# \d+ rate_parameter
+                                       Table "public.rate_parameter"
+            Column            |          Type          | Modifiers | Storage  | Stats target | Description 
+------------------------------+------------------------+-----------+----------+--------------+-------------
+ system_id                    | integer                | not null  | plain    |              | 
+ name                         | character varying(50)  |           | extended |              | 
+ description                  | character varying(100) |           | extended |              | 
+ outputfrom_function_systemid | integer                |           | plain    |              | 
+ rate_agreement_systemid      | integer                |           | plain    |              | 
+ is_persistent                | smallint               | default 0 | plain    |              | 
+ sequence_nr                  | integer                |           | plain    |              | 
+ parameter_type_systemid      | integer                |           | plain    |              | 
+ is_user_editable             | smallint               |           | plain    |              | 
+ iteration_entity             | character varying(40)  |           | extended |              | 
+ iteration_action             | character varying(40)  |           | extended |              | 
+Indexes:
+    "pk_rate_parameter" PRIMARY KEY, btree (system_id)
+    "rate_parameter_outputfrom_function_systemid_idx" btree (outputfrom_function_systemid)
+    "rate_parameter_parameter_type_systemid_idx" btree (parameter_type_systemid)
+    "rate_parameter_rate_agreement_systemid_idx" btree (rate_agreement_systemid)
+Foreign-key constraints:
+    "par_function_fk" FOREIGN KEY (outputfrom_function_systemid) REFERENCES rate_function(system_id)
+    "par_par_type_fk" FOREIGN KEY (parameter_type_systemid) REFERENCES parameter_type(system_id)
+    "par_rate_agr_fk" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate_agreement(system_id)
+Referenced by:
+    TABLE "cost_component_specification" CONSTRAINT "cdt_parameter_systemid" FOREIGN KEY (parameter_systemid) REFERENCES rate_parameter(system_id)
+    TABLE "input_parameter" CONSTRAINT "inp_parameter_fk" FOREIGN KEY (parameter_systemid) REFERENCES rate_parameter(system_id)
+    TABLE "rtable_sel_criterium" CONSTRAINT "rts_parameter_fk" FOREIGN KEY (rate_parameter_systemid) REFERENCES rate_parameter(system_id)
+
+geosco=> \d+ rate_function
+                                       Table "public.rate_function"
+            Column            |          Type          | Modifiers | Storage  | Stats target | Description 
+------------------------------+------------------------+-----------+----------+--------------+-------------
+ system_id                    | integer                | not null  | plain    |              | 
+ function_definition_systemid | integer                |           | plain    |              | 
+ is_user_defined              | smallint               | default 0 | plain    |              | 
+ user_func_def                | character varying(400) |           | extended |              | 
+ rate_table_systemid          | integer                |           | plain    |              | 
+ unit_systemid                | integer                |           | plain    |              | 
+Indexes:
+    "pk_rate_function" PRIMARY KEY, btree (system_id)
+    "rate_table_systemid_uq" UNIQUE CONSTRAINT, btree (rate_table_systemid)
+    "rate_function_function_definition_systemid_idx" btree (function_definition_systemid)
+    "rate_function_rate_table_systemid_idx" btree (rate_table_systemid)
+    "rate_function_unit_systemid_idx" btree (unit_systemid)
+Foreign-key constraints:
+    "fnc_function_definition_fk" FOREIGN KEY (function_definition_systemid) REFERENCES function_definition(system_id)
+    "fnc_rate_table_fk" FOREIGN KEY (rate_table_systemid) REFERENCES rate_table(system_id)
+    "fnc_unit_fk" FOREIGN KEY (unit_systemid) REFERENCES unit(system_id)
+Referenced by:
+    TABLE "input_parameter" CONSTRAINT "inp_function_fk" FOREIGN KEY (rate_func_systemid) REFERENCES rate_function(system_id)
+    TABLE "rate_parameter" CONSTRAINT "par_function_fk" FOREIGN KEY (outputfrom_function_systemid) REFERENCES rate_function(system_id)
+
+
+geosco=> \d+ input_parameter
+                                   Table "public.input_parameter"
+        Column         |          Type           | Modifiers | Storage  | Stats target | Description 
+-----------------------+-------------------------+-----------+----------+--------------+-------------
+ system_id             | integer                 | not null  | plain    |              | 
+ parameter_systemid    | integer                 |           | plain    |              | 
+ func_par_def_systemid | integer                 |           | plain    |              | 
+ rate_func_systemid    | integer                 |           | plain    |              | 
+ dimension_systemid    | integer                 |           | plain    |              | 
+ configuration_value   | character varying(1000) |           | extended |              | 
+ order_detail_systemid | integer                 |           | plain    |              | 
+ free_value            | character varying       |           | extended |              | 
+Indexes:
+    "pk_input_parameter" PRIMARY KEY, btree (system_id)
+    "input_parameter_dimension_systemid_idx" btree (dimension_systemid)
+    "input_parameter_func_par_def_systemid_idx" btree (func_par_def_systemid)
+    "input_parameter_order_detail_systemid_idx" btree (order_detail_systemid)
+    "input_parameter_parameter_systemid_idx" btree (parameter_systemid)
+    "input_parameter_rate_func_systemid_idx" btree (rate_func_systemid)
+Foreign-key constraints:
+    "inp_dim_fk" FOREIGN KEY (dimension_systemid) REFERENCES dimension(system_id)
+    "inp_func_def_par_fk" FOREIGN KEY (func_par_def_systemid) REFERENCES func_parameter_def(system_id)
+    "inp_function_fk" FOREIGN KEY (rate_func_systemid) REFERENCES rate_function(system_id)
+    "inp_order_detail_fk" FOREIGN KEY (order_detail_systemid) REFERENCES order_detail(system_id)
+    "inp_parameter_fk" FOREIGN KEY (parameter_systemid) REFERENCES rate_parameter(system_id)
+Referenced by:
+    TABLE "dimension" CONSTRAINT "dim_parameter_fk" FOREIGN KEY (input_parameter_systemid) REFERENCES input_parameter(system_id)
+
+geosco=> \d+ rate_table
+                                          Table "public.rate_table"
+           Column           |            Type             | Modifiers | Storage  | Stats target | Description 
+----------------------------+-----------------------------+-----------+----------+--------------+-------------
+ rate_agreement_systemid    | integer                     |           | plain    |              | 
+ system_id                  | integer                     | not null  | plain    |              | 
+ name                       | character varying(50)       |           | extended |              | 
+ description                | character varying(100)      |           | extended |              | 
+ unit_systemid              | integer                     |           | plain    |              | 
+ rate_table_xml             | text                        |           | extended |              | 
+ min_charge                 | integer                     | default 0 | plain    |              | 
+ max_charge                 | integer                     |           | plain    |              | 
+ rounding                   | smallint                    | default 0 | plain    |              | 
+ excel_formatted            | smallint                    | default 0 | plain    |              | 
+ default_value              | character varying(50)       |           | extended |              | 
+ rate_table_content         | text                        |           | extended |              | 
+ is_user_editable           | smallint                    |           | plain    |              | 
+ is_shared                  | smallint                    | default 0 | plain    |              | 
+ linked_rate_table_systemid | integer                     |           | plain    |              | 
+ linked_multiplication      | numeric(18,5)               | default 1 | main     |              | 
+ linked_addition            | numeric(18,5)               | default 0 | main     |              | 
+ last_update                | timestamp without time zone |           | plain    |              | 
+Indexes:
+    "pk_rate_table" PRIMARY KEY, btree (system_id)
+    "rate_table_linked_rate_table_systemid_idx" btree (linked_rate_table_systemid)
+    "rate_table_rate_agreement_systemid_idx" btree (rate_agreement_systemid)
+    "rate_table_unit_systemid_idx" btree (unit_systemid)
+    "rt_shared_idx" btree (is_shared)
+Foreign-key constraints:
+    "rat_rate_agreement_fk" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate_agreement(system_id)
+    "rat_unit_systemid" FOREIGN KEY (unit_systemid) REFERENCES unit(system_id)
+    "rate_table_linked_fk" FOREIGN KEY (linked_rate_table_systemid) REFERENCES rate_table(system_id)
+Referenced by:
+    TABLE "dimension" CONSTRAINT "dim_rate_table_fk" FOREIGN KEY (rate_table_systemid) REFERENCES rate_table(system_id)
+    TABLE "rate_function" CONSTRAINT "fnc_rate_table_fk" FOREIGN KEY (rate_table_systemid) REFERENCES rate_table(system_id)
+    TABLE "rate_table" CONSTRAINT "rate_table_linked_fk" FOREIGN KEY (linked_rate_table_systemid) REFERENCES rate_table(system_id)
+    TABLE "rtable_sel_criterium" CONSTRAINT "rts_rate_table_fk" FOREIGN KEY (rate_table_systemid) REFERENCES rate_table(system_id)
+
+geosco=> \d+ dimension
+                                       Table "public.dimension"
+          Column          |         Type          | Modifiers | Storage  | Stats target | Description 
+--------------------------+-----------------------+-----------+----------+--------------+-------------
+ system_id                | integer               | not null  | plain    |              | 
+ name                     | character varying(50) |           | extended |              | 
+ rate_table_systemid      | integer               |           | plain    |              | 
+ unit_systemid            | integer               |           | plain    |              | 
+ rounding                 | smallint              | default 0 | plain    |              | 
+ discrete                 | smallint              | default 0 | plain    |              | 
+ basic_charge_applicable  | smallint              | default 0 | plain    |              | 
+ sequence_nr              | integer               |           | plain    |              | 
+ max_min_mode             | character varying(50) |           | extended |              | 
+ regex_permitted          | smallint              | default 0 | plain    |              | 
+ range_permitted          | smallint              |           | plain    |              | 
+ input_parameter_systemid | integer               |           | plain    |              | 
+Indexes:
+    "pk_dimension" PRIMARY KEY, btree (system_id)
+    "dimension_input_parameter_systemid_idx" btree (input_parameter_systemid)
+    "dimension_rate_table_systemid_idx" btree (rate_table_systemid)
+    "dimension_unit_systemid_idx" btree (unit_systemid)
+Foreign-key constraints:
+    "dim_parameter_fk" FOREIGN KEY (input_parameter_systemid) REFERENCES input_parameter(system_id)
+    "dim_rate_table_fk" FOREIGN KEY (rate_table_systemid) REFERENCES rate_table(system_id)
+    "dim_unit_fk" FOREIGN KEY (unit_systemid) REFERENCES unit(system_id)
+Referenced by:
+    TABLE "input_parameter" CONSTRAINT "inp_dim_fk" FOREIGN KEY (dimension_systemid) REFERENCES dimension(system_id)
+
+
+
+/ ra=RateAgreementVO	, RATE_AGREEMENT
+/ rc=CostComponentSpecificationVO 	, COST_COMPONENT_SPECIFICATION
+
+/ 13	. 
+
+geosco=> select*from rate_agreement where name='CONSIGNMENT SA';
+ system_id |      name      | description | organization_systemid | unit_systemid | is_deleted |   rate_type   | is_quotation | is
+_template | reference1 | reference2 | reference3 | reference4 | reference5 | reference6 | reference7 | reference8 | reference9 | r
+eference10 | is_last | priority 
+-----------+----------------+-------------+-----------------------+---------------+------------+---------------+--------------+---
+----------+------------+------------+------------+------------+------------+------------+------------+------------+------------+--
+-----------+---------+----------
+  27241475 | CONSIGNMENT SA | GSJ-15 TEST |                  5000 |      26879297 |          0 | SERVICE_ORDER |            0 |   
+        0 | NULL       | NULL       | NULL       | NULL       | NULL       | NULL       | NULL       | NULL       | NULL       | N
+ULL        |       0 |        0
+(1 row)
+
+select rc.name  
+from  cost_component_specification rc 
+join rate_agreement ra on rc.rate_agreement_systemid=ra.system_id 
+where ra.name='CONSIGNMENT SA';
+        name         
+---------------------
+ RC_SO FREIGHT
+ RC_DISTANCE
+ RC_CONSIGNMENT COST
+ RC_DURATION
+ RC_PREVIOUS CITY
+ RC_NEXT STOP CITY
+ RC_STOP_DISTANCE
+ RC_STOP_DURATION
+ CONSIGNMENT EDT
+(9 rows)
+/ klopt	,  deze zien we op 'Service Agreement' onder tab 'Rate components'
+
+/ we nemen er een van	,
+/ rc
+geosco=>  select * from cost_component_specification where name ='RC_SO_FREIGHT';
+ system_id |     name      | description | parameter_systemid | order_rate_part_systemid | sequence_nr | rate_agreement_systemid |
+ rate_plus_mode | correction_type |  entity_type  | evaluation_objective | calculation_type 
+-----------+---------------+-------------+--------------------+--------------------------+-------------+-------------------------+
+----------------+-----------------+---------------+----------------------+------------------
+  27241506 | RC_SO FREIGHT | Freight     |           27241505 |                 27043750 |           0 |                27241475 |
+ NONE           | ADD             | SERVICE_ORDER | COST                 | POSTCALCULATED
+(1 row)
+
+/ parameter_systemid is de fk naar de rp	,  
+
+select rp.*
+from cost_component_specification cs
+join rate_parameter rp on cs.parameter_systemid=rp.system_id
+where cs.name='RC_SO FREIGHT'
+;
+ system_id |     name      | description | outputfrom_function_systemid | rate_agreement_systemid | is_persistent | sequence_nr | 
+parameter_type_systemid | is_user_editable | iteration_entity | iteration_action 
+-----------+---------------+-------------+------------------------------+-------------------------+---------------+-------------+-
+------------------------+------------------+------------------+------------------
+  27241505 | RP_SO FREIGHT | NULL        |                     27241494 |                27241475 |             0 |           0 | 
+                   NULL |                0 | CONSIGNMENT      | SUM
+(1 row)
+
+/ de list van alle rp's vinden we in de ra	,
+
+/ Kijk op het scherm 'Edit Rate Paramater'	,
+Rate Parameter Name: RP_SO_FREIGHT
+
+/ deze lijst zien we links op het scherm 'Edit Rate Parameter'	, 
+select rp.name  
+from rate_parameter rp 
+join rate_agreement ra on rp.rate_agreement_systemid=ra.system_id 
+where ra.name='CONSIGNMENT SA';
+          name           
+-------------------------
+ RT_DURATION_OUTPUT
+ RP_STOP_DURATION
+ RP_DURATION
+ RT_COST_OUTPUT								<- we hebben alleen deze geselecteerd, hoe wordt dit geregistreerd? TODO
+ RP_SO FREIGHT							<- we zien hem zelf ook	, 	let op : geen _ maar een space 	,
+ RT_DISTANCE_OUTPUT
+ RP_DISTANCE
+ RP_PREVIOUSSTOP CITY
+ RP_EDT
+ RT_STOP_DISTANCE_OUTPUT
+ RP_STOP_DISTANCE
+ RP_NEXTSTOP CITY
+ RP_CONSIGNMENT COST
+ RT_TIME_OUTPUT
+ RP_PLANNED END
+ RP_PLANNED END TIME
+ PREVIOUS DATE
+ RP_PREVIOUS STOP TIM
+(18 rows)
+
+/ order details
+/ TODO
+bakker20160207_t=# \d order_detail
+Referenced by:
+    TABLE "input_parameter" CONSTRAINT "inp_order_detail_fk" FOREIGN KEY (order_detail_systemid) REFERENCES order_detail(system_id)
+
+select rf.* 
+from rate_parameter rp 
+join rate_function rf on rp.outputfrom_function_systemid=rf.system_id
+where rp.name='RP_SO FREIGHT';
+ system_id | function_definition_systemid | is_user_defined | user_func_def | rate_table_systemid | unit_systemid 
+-----------+------------------------------+-----------------+---------------+---------------------+---------------
+  27241494 |                      3500006 |               0 | NULL          |                NULL |      26879297
+(1 row)
+
+select rp.name,fd.*
+from rate_parameter rp 
+join rate_function rf on rp.outputfrom_function_systemid=rf.system_id
+join function_definition fd on rf.function_definition_systemid=fd.system_id
+where rp.name='RP_SO FREIGHT';
+     name      | system_id |                          definition                           | name 
+---------------+-----------+---------------------------------------------------------------+------
+ RP_SO FREIGHT |   3500006 | com.mpobjects.oms.ratecalc.model.process.function.SumFunction | SUM
+
+
+//////////////////////////////////////////
+select ip.*
+from input_parameter ip
+join rate_function rf on ip.rate_func_systemid=rf.system_id
+join rate_parameter rp on rp.outputfrom_function_systemid=rf.system_id
+where rp.name='RP_SO FREIGHT';
+ system_id | parameter_systemid | func_par_def_systemid | rate_func_systemid | dimension_systemid | configuration_value | order_de
+tail_systemid | free_value 
+-----------+--------------------+-----------------------+--------------------+--------------------+---------------------+---------
+--------------+------------
+  27245042 |           27241503 |                  NULL |           27241494 |               NULL | NULL                |         
+         NULL | NULL
+(1 row)
+geosco=> select*
+geosco-> from rate_parameter 
+geosco-> where system_id=27241503;
+ system_id |      name      | description | outputfrom_function_systemid | rate_agreement_systemid | is_persistent | sequence_nr |
+ parameter_type_systemid | is_user_editable | iteration_entity | iteration_action 
+-----------+----------------+-------------+------------------------------+-------------------------+---------------+-------------+
+-------------------------+------------------+------------------+------------------
+  27241503 | RT_COST_OUTPUT | NULL        |                     27241496 |                27241475 |             0 |           0 |
+                    NULL |                0 | NULL             | NULL
+(1 row)
+///////////////////////////////////
+
+/ 7	. 
+
+/ we zien in 'Edit Rate Parameter' SUM Parameters 'RT_COST_OUTPUT'
+
+/ we kunnen op de ra 'CONSIGNMENT SA' click op tab 'Rate Tables'	, we zien RT_COST
+
+select*
+from rate_parameter 
+where name='RP_SO FREIGHT';
+ system_id |     name      | description | outputfrom_function_systemid | rate_agreement_systemid | is_persistent | sequence_nr | 
+parameter_type_systemid | is_user_editable | iteration_entity | iteration_action 
+-----------+---------------+-------------+------------------------------+-------------------------+---------------+-------------+-
+------------------------+------------------+------------------+------------------
+  27241505 | RP_SO FREIGHT | NULL        |                     27241494 |                27241475 |             0 |           0 | 
+                   NULL |                0 | CONSIGNMENT      | SUM
+(1 row)
+
+geosco=> select*from rate_function where system_id=27241494;
+ system_id | function_definition_systemid | is_user_defined | user_func_def | rate_table_systemid | unit_systemid 
+-----------+------------------------------+-----------------+---------------+---------------------+---------------
+  27241494 |                      3500006 |               0 | NULL          |                NULL |      26879297
+(1 row)
+geosco=> select*from function_definition where system_id=3500006;
+ system_id |                          definition                           | name 
+-----------+---------------------------------------------------------------+------
+   3500006 | com.mpobjects.oms.ratecalc.model.process.function.SumFunction | SUM
+(1 row)
+sco=> select*from unit where system_id=26879297;
+ system_id | symbol | description  | unit_type | is_deleted | is_system 
+-----------+--------+--------------+-----------+------------+-----------
+  26879297 | JPY    | Japanese yen | CURRENCY  |          0 |         0
+(1 row)
+
+
+
+select ip.*
+from input_parameter ip
+join rate_parameter rp on ip.parameter_systemid=rp.system_id
+and rp.name='RP_SO FREIGHT';
+(0 rows)
+
+select ip.*
+from input_parameter ip
+join rate_parameter rp on ip.parameter_systemid=rp.system_id
+and rp.name='RT_COST_OUTPUT';
+ system_id | parameter_systemid | func_par_def_systemid | rate_func_systemid | dimension_systemid | configuration_value | order_de
+tail_systemid | free_value 
+-----------+--------------------+-----------------------+--------------------+--------------------+---------------------+---------
+--------------+------------
+  27265280 |           27241503 |                  NULL |           27241545 |               NULL | NULL                |         
+         NULL | NULL
+  27245042 |           27241503 |                  NULL |           27241494 |               NULL | NULL                |         
+         NULL | NULL
+(2 rows)
+
+select rf.*
+from input_parameter ip
+join rate_parameter rp on ip.parameter_systemid=rp.system_id
+join rate_function rf on ip.rate_func_systemid=rf.system_id
+and rp.name='RT_COST_OUTPUT';
+ystem_id | function_definition_systemid | is_user_defined | user_func_def | rate_table_systemid | unit_systemid
+-----------+------------------------------+-----------------+---------------+---------------------+---------------
+  27241545 |                      3500008 |               0 | NULL          |                NULL |      26879297
+  27241494 |                      3500006 |               0 | NULL          |                NULL |      26879297
+(2 rows)
+
+select fd.*
+from input_parameter ip
+join rate_parameter rp on ip.parameter_systemid=rp.system_id
+join rate_function rf on ip.rate_func_systemid=rf.system_id
+join function_definition fd on rf.function_definition_systemid=fd.system_id
+and rp.name='RT_COST_OUTPUT';
+ system_id |                             definition                             |   name    
+-----------+--------------------------------------------------------------------+-----------
+   3500008 | com.mpobjects.oms.ratecalc.model.process.function.NotEmptyFunction | NOT EMPTY
+   3500006 | com.mpobjects.oms.ratecalc.model.process.function.SumFunction      | SUM
+(2 rows)
+/ Deze ip is input param voor 2 rf's	,  SUM en nog een	,
+/ wisten we al	,
+
+
+
+
+select*
+from rate_parameter 
+where name='RT_COST_OUTPUT';
+ system_id |      name      | description | outputfrom_function_systemid | rate_agreement_systemid | is_persistent | sequence_nr |
+ parameter_type_systemid | is_user_editable | iteration_entity | iteration_action 
+-----------+----------------+-------------+------------------------------+-------------------------+---------------+-------------+
+-------------------------+------------------+------------------+------------------
+  27241503 | RT_COST_OUTPUT | NULL        |                     27241496 |                27241475 |             0 |           0 |
+                    NULL |                0 | NULL             | NULL
+(1 row)
+
+select rf.*
+from rate_parameter rp
+join rate_function rf  on rp.outputfrom_function_systemid=rf.system_id
+where rp.name='RT_COST_OUTPUT';
+ system_id | function_definition_systemid | is_user_defined | user_func_def | rate_table_systemid | unit_systemid 
+-----------+------------------------------+-----------------+---------------+---------------------+---------------
+  27241496 |                      3500001 |               0 | NULL          |            27241495 |          NULL
+(1 row)
+
+
+select fd.*
+from rate_parameter rp
+join rate_function rf  on rp.outputfrom_function_systemid=rf.system_id
+join function_definition fd on rf.function_definition_systemid=fd.system_id
+where rp.name='RT_COST_OUTPUT';
+ system_id |                             definition                              |    name    
+-----------+---------------------------------------------------------------------+------------
+   3500001 | com.mpobjects.oms.ratecalc.model.process.function.RateTableFunction | RATE TABLE
+
+select rt.*
+from rate_parameter rp
+join rate_function rf  on rp.outputfrom_function_systemid=rf.system_id
+join rate_table rt on rf.rate_table_systemid=rt.system_id
+where rp.name='RT_COST_OUTPUT';
+ rate_agreement_systemid | system_id |  name   | description | unit_systemid | rate_table_xml | min_charge | max_charge | rounding
+ | excel_formatted | default_value | rate_table_content  | is_user_editable | is_shared | linked_rate_table_systemid | linked_mult
+iplication | linked_addition |       last_update       
+-------------------------+-----------+---------+-------------+---------------+----------------+------------+------------+---------
+-+-----------------+---------------+---------------------+------------------+-----------+----------------------------+------------
+-----------+-----------------+-------------------------
+                27241475 |  27241495 | RT_COST | NULL        |      26879297 | NULL           |       NULL |       NULL |        0
+ |               0 | NULL          |                 .* +|                0 |         0 |                       NULL |            
+      NULL |            NULL | 2017-02-27 14:34:08.831
+                         |           |         |             |               |                |            |            |         
+ |                 |               | 千葉    名古屋  444+|                  |           |                            |            
+           |                 | 
+                         |           |         |             |               |                |            |            |         
+ |                 |               | 名古屋  大阪    555+|                  |           |                            |            
+           |                 | 
+                         |           |         |             |               |                |            |            |         
+ |                 |               | 東京    千葉    111+|                  |           |                            |            
+           |                 | 
+                         |           |         |             |               |                |            |            |         
+ |                 |               | 東京    名古屋  222+|                  |           |                            |            
+           |                 | 
+                         |           |         |             |               |                |            |            |         
+ |                 |               | 東京    大阪    333 |                  |           |                            |            
+           |                 | 
+(1 row)
+
+select d.*
+from dimension d
+join rate_table rt on d.rate_table_systemid=rt.system_id
+where rt.name='RT_COST';
+ system_id |   name    | rate_table_systemid | unit_systemid | rounding | discrete | basic_charge_applicable | sequence_nr | max_m
+in_mode | regex_permitted | range_permitted | input_parameter_systemid 
+-----------+-----------+---------------------+---------------+----------+----------+-------------------------+-------------+------
+--------+-----------------+-----------------+--------------------------
+  27241502 | TO CITY   |            27241495 |          NULL |        0 |        1 |                       0 |           3 | NULL 
+        |               1 |               0 |                 27241499
+  27241500 | ORG       |            27241495 |          NULL |        0 |        1 |                       0 |           2 | NULL 
+        |               1 |               0 |                 27241498
+  27241501 | FROM CITY |            27241495 |          NULL |        0 |        1 |                       0 |           1 | NULL 
+        |               1 |               0 |                 27241497
+(3 rows)
+
+
+select d.name,ip.*
+from dimension d
+join rate_table rt on d.rate_table_systemid=rt.system_id
+join input_parameter ip on d.input_parameter_systemid=ip.system_id
+where rt.name='RT_COST';
+   name    | system_id | parameter_systemid | func_par_def_systemid | rate_func_systemid | dimension_systemid | configuration_valu
+e | order_detail_systemid | free_value 
+-----------+-----------+--------------------+-----------------------+--------------------+--------------------+-------------------
+--+-----------------------+------------
+ TO CITY   |  27241499 |               NULL |                  NULL |           27241496 |               NULL | NULL              
+  |              27241472 | NULL
+ ORG       |  27241498 |               NULL |                  NULL |           27241496 |               NULL | NULL              
+  |              27241469 | NULL
+ FROM CITY |  27241497 |               NULL |                  NULL |           27241496 |               NULL | NULL              
+  |              27241466 | NULL
+(3 rows)
+/ deze 3 ip's ref naar order details van een sho of seo	, niet naar weer een rp	, dus deze 3 zijn eindstations	,
+/ rate fct 27241496 is RATE TABLE
+
+select d.name,od.*
+from dimension d
+join rate_table rt on d.rate_table_systemid=rt.system_id
+join input_parameter ip on d.input_parameter_systemid=ip.system_id
+join order_detail od on ip.order_detail_systemid=od.system_id
+where rt.name='RT_COST';
+geosco-> where rt.name='RT_COST';
+   name    | system_id |     path_or_class     |     name     | unit_systemid | parameter_type_systemid | entity_type 
+-----------+-----------+-----------------------+--------------+---------------+-------------------------+-------------
+ TO CITY   |  27241472 | ./toPartyVO/city      | TO CITY      |          NULL |                 3700001 | CONSIGNMENT
+ ORG       |  27241469 | ./organizationVO/code | ORGANIZATION |          NULL |                 3700001 | CONSIGNMENT
+ FROM CITY |  27241466 | ./fromPartyVO/city    | FROM CITY    |          NULL |                 3700001 | CONSIGNMENT
+(3 rows)
+
+select*
+from parameter_type
+where system_id=3700001;
+ system_id |  name  | description | is_deleted 
+-----------+--------+-------------+------------
+   3700001 | STRING | NULL        |          0
+(1 row)
+
+/ Dus	, 
+rt-d1-ip1-od1
+  -d2-ip2-od2
+  -d3-ip3-od3
+
+
+select ip.* 
+from dimension d
+join rate_table rt on d.rate_table_systemid=rt.system_id
+join input_parameter ip on ip.dimension_systemid=d.system_id
+where rt.name='RT_COST';
+(0 rows)
+/ TODO
+
+
+
+
+
+
+/ 13	. 
+
+
+select ip.*
+from input_parameter ip
+join rate_parameter rp on ip.parameter_systemid=rp.system_id
+and rp.name='RT_COST_OUTPUT';
+ system_id | parameter_systemid | func_par_def_systemid | rate_func_systemid | dimension_systemid | configuration_value | order_de
+tail_systemid | free_value 
+-----------+--------------------+-----------------------+--------------------+--------------------+---------------------+---------
+--------------+------------
+  27265280 |           27241503 |                  NULL |           27241545 |               NULL | NULL                |         
+         NULL | NULL
+  27245042 |           27241503 |                  NULL |           27241494 |               NULL | NULL                |         
+         NULL | NULL
+(2 rows)
+/ parameter_systemid is pointer back naar de rp 'RT_COST_OUTPUT'	,
+
+select rf.*
+from input_parameter ip
+join rate_parameter rp on ip.parameter_systemid=rp.system_id
+join rate_function rf on ip.rate_func_systemid=rf.system_id
+and rp.name='RT_COST_OUTPUT';
+ system_id | function_definition_systemid | is_user_defined | user_func_def | rate_table_systemid | unit_systemid 
+-----------+------------------------------+-----------------+---------------+---------------------+---------------
+  27241545 |                      3500008 |               0 | NULL          |                NULL |      26879297
+  27241494 |                      3500006 |               0 | NULL          |                NULL |      26879297
+(2 rows)
+
+
+select fd.*
+from input_parameter ip
+join rate_parameter rp on ip.parameter_systemid=rp.system_id
+join rate_function rf on ip.rate_func_systemid=rf.system_id
+join function_definition fd on rf.function_definition_systemid=fd.system_id
+and rp.name='RT_COST_OUTPUT';
+ system_id |                             definition                             |   name    
+-----------+--------------------------------------------------------------------+-----------
+   3500008 | com.mpobjects.oms.ratecalc.model.process.function.NotEmptyFunction | NOT EMPTY
+   3500006 | com.mpobjects.oms.ratecalc.model.process.function.SumFunction      | SUM
+(2 rows)
+
+
+
+
+
+
+select rf.*
+from rate_parameter rp 
+join rate_function rf on rf.system_id=rp.outputfrom_function_systemid
+where name='RT_COST_OUTPUT';
+
+
+
+
+
+
+
+
+
+bakker20160224_t=# \dt *rate*
+                         List of relations
+ Schema |                Name                 | Type  |    Owner    
+--------+-------------------------------------+-------+-------------
+ public | rate_agreement                      | table | mpopostgres
+ public | rate_calculation                    | table | mpopostgres
+ public | rate_component_inv_mapping          | table | mpopostgres
+ public | rate_component_type                 | table | mpopostgres
+ public | rate_function                       | table | mpopostgres
+ public | rate_parameter                      | table | mpopostgres
+ public | rate_table                          | table | mpopostgres
+...
+
+bakker20160224_t=# \d+ rate_agreement
+Referenced by:
+    TABLE "cost_component_specification" CONSTRAINT "cdt_ragreement_systemid" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate_agreement(system_i
+d)
+    TABLE "customer_quotation_rate_agr" CONSTRAINT "cqra_component" FOREIGN KEY (rate_systemid) REFERENCES rate_agreement(system_id)
+    TABLE "rate_parameter" CONSTRAINT "par_rate_agr_fk" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate_agreement(system_id)
+    TABLE "rate_table" CONSTRAINT "rat_rate_agreement_fk" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate_agreement(system_id)
+    TABLE "rate_agreement_test" CONSTRAINT "rte_rate_agreement_fk" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate_agreement(system_id)
+    TABLE "rate_variable" CONSTRAINT "rva_rate_agreement_fk" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate_agreement(system_id)
+    TABLE "ragreement_sel_criterium" CONSTRAINT "sec_rate_agreement_fk" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate_agreement(system_id)
+    TABLE "service_order_cost" CONSTRAINT "soc_rate_agr_fk" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate_agreement(system_id)
+    TABLE "sq_quotation_request_template" CONSTRAINT "sq_qrt_rate_agreement" FOREIGN KEY (rate_agreement_systemid) REFERENCES rate_agreement(system_id
+)
+
+/ SAMENVATTING
+
+/ seo N0009091
+/ ra CONSIGNMENT SA
+/ geosco test
+
+27241494=SUM
+
+f <- ip	: ip in input param van f
+
+/ click 'Recalculate rate'	, click 'cost'	, we zien  CONSIGNMENT SA
+
+			
+				rate_agreement					parameter	
+					1:n
+ra					<-			ccs					->		
+CONSIGNMENT SA					RC_SO FREIGHT		RP_SO FREIGHT
+27241475						27241506			27241505
+
+	outputfrom_function		rate_func		parameter			output_from_function			rate_func	order_detail
+							1:n																	1:n
+rp		->				f	<-  	ip			->  rp				-> 					f		<-  ip1			->			od1	
+RP_SO FREIGHT			SUM							RT_COST_OUTPUT					RATE TABLE								ORGANIZATION
+27241505				27241494	27245042		27241503						27241496		 27241498				27241469	
+																								<- 	ip2			->			od2
+																															TO CITY	
+																									27241499				27241472
+																								<-	ip3			->			od3
+																															FROM CITY	
+																									27241497				27241466
+
+/ Een ccs en een ip hebben beide een parameter (een ip kan ook een order_detail ipv een parameter hebben)	, 
+/ input_parameter heeft altijd een rate_func_sytemid= rf waar hij input param van is	, 
+/ input_parameter heeft of parameter_systemid= 'echte' param	, of order_detail_systemid= 'echte' parameter	, 
+
+geosco=> select*from input_parameter
+where rate_func_systemid=27241494;
+ system_id | parameter_systemid | func_par_def_systemid | rate_func_systemid | dimension_systemid | configuration_value | order_detail_systemid | free_value
+-----------+--------------------+-----------------------+--------------------+--------------------+---------------------+-----------------------+------------
+  27245042 |           27241503 |                  NULL |           27241494 |               NULL | NULL                |                  NULL | NULL
+(1 row)
+geosco=> select*from input_parameter
+where rate_func_systemid=27241496;
+ system_id | parameter_systemid | func_par_def_systemid | rate_func_systemid | dimension_systemid | configuration_value | order_detail_systemid | free_value 
+-----------+--------------------+-----------------------+--------------------+--------------------+---------------------+-----------------------+------------
+  27241498 |               NULL |                  NULL |           27241496 |               NULL | NULL                |              27241469 | NULL
+  27241499 |               NULL |                  NULL |           27241496 |               NULL | NULL                |              27241472 | NULL
+  27241497 |               NULL |                  NULL |           27241496 |               NULL | NULL                |              27241466 | NULL
+(3 rows)
+
+
+
+
+/ Einde SAMENVATTING
+
+/ 13	. 
+
+geosco=> \d rate_function
+                   Table "public.rate_function"
+            Column            |          Type          | Modifiers 
+------------------------------+------------------------+-----------
+ rate_table_systemid          | integer                | 
+Indexes:
+    "rate_table_systemid_uq" UNIQUE CONSTRAINT, btree (rate_table_systemid)
+Foreign-key constraints:
+    "fnc_rate_table_fk" FOREIGN KEY (rate_table_systemid) REFERENCES rate_table(system_id)
+
+/ Dit proberen we ook op pnllogistics	, maar dan ERR	, want	, 
+pnllogistics=> select*from rate_function where rate_table_systemid=26791076;
+ system_id | function_definition_systemid | is_user_defined | user_func_def | rate_table_systemid | unit_systemid 
+-----------+------------------------------+-----------------+---------------+---------------------+---------------
+  26791080 |                      3500001 |               0 | NULL          |            26791076 |          NULL
+  26791082 |                      3500001 |               0 | NULL          |            26791076 |          NULL
+(2 rows)
+/ Er zijn 2 rate functions met dezefde rate table	, 
+
+
+
+
+
+/ SCS-6120
+
+/ lees
+~/tmp/ra.txt
+
+/ Query
+~/tmp/scs-6120.sql
+
+/ Note van Michel	, 
+
+/ het verband tussen rate_function en rate_table is 1-1
+
+/ css, ip,rt points to rf	,  
+/ er zijn 2 rf's die point to rt	, maar het mag er maar 1 zijn	, 
+/ naar de 2de rf points niets	,
+ccs	->
+ip	->	rf	->	 rt
+rt	->
+		rf	->
+	
+
+$ vi SCS-6120
+
+with rfunction as (
+	--Find rate_functions with same rate_table_systemid (duplicates)
+	select system_id
+	from rate_function 
+	where function_definition_systemid = 3500001  -- RATE TABLE	
+	and rate_table_systemid in (
+		select rf.rate_table_systemid
+		from rate_function rf
+		where rf.function_definition_systemid = 3500001
+		group by rf.rate_table_systemid
+		having count(1) > 1
+	)
+)
+SELECT
+	ra.system_id "rate_table.system_id",
+	ra.name "rate_table.name",
+	rp.system_id "rate_parameter.system_id",
+	rp.name "rate_parameter.name",
+	(
+		select count(1)
+		from (
+			--Check if parameter is used somewhere else
+			SELECT system_id FROM cost_component_specification ccs where ccs.parameter_systemid = tbd.system_id
+			union
+			SELECT system_id FROM input_parameter where parameter_systemid = tbd.system_id
+			union
+			SELECT system_id FROM rtable_sel_criterium rsc where rsc.rate_parameter_systemid = tbd.system_id
+			union
+			SELECT system_id FROM input_parameter ip where ip.rate_func_systemid = tbd.system_id
+		) test
+	) "is used",
+	tbd.system_id rate_function_system_id
+FROM rfunction tbd		-- rate functions with rate tables die rate table zijn van meerdere rate functions	,
+left join rate_parameter rp on rp.outputfrom_function_systemid = tbd.system_id
+left join rate_agreement ra on rp.rate_agreement_systemid = ra.system_id;
+
+ rate_table.system_id | rate_table.name  | rate_parameter.system_id |      rate_parameter.name       | is used | rate_function_system_id 
+----------------------+------------------+--------------------------+--------------------------------+---------+-------------------------
+             26683266 | VT-81388-2015    |                 26767512 | null_OUTPUT                    |       0 |                26767511
+             28528903 | IT-Oegema 2 2016 |                 28529085 | RT-VASTE FTL LIJNDIENST_OUTPUT |       0 |                28529084
+             26683266 | VT-81388-2015    |                 26767506 | null_OUTPUT                    |       0 |                26767505
+             26683266 | VT-81388-2015    |                 26767508 | null_OUTPUT                    |       0 |                26767507
+             26683266 | VT-81388-2015    |                 26767510 | null_OUTPUT                    |       0 |                26767509
+             26769929 | VT-9281502-2015  |                 26791081 | test rate table_OUTPUT         |       0 |                26791080
+
+             26769929 | VT-9281502-2015  |                 26791083 | test rate table_OUTPUT         |       1 |                26791082
+             28528903 | IT-Oegema 2 2016 |                 28529087 | RT-VASTE FTL LIJNDIENST_OUTPUT |       1 |                28529086
+(8 rows)
+//////////////////////////////////////
+/ eerst rp's weg	, dan rf's	,
+
+/ 13	. 
+
+/ Script van Michel	, 
+
+select rf.rate_table_systemid
+from rate_function rf
+where rf.function_definition_systemid = 3500001
+group by rf.rate_table_systemid
+having count(1) > 1;
+ rate_table_systemid 
+---------------------
+            26791076
+            26767504
+            28529081
+(3 rows)
+
+select *
+from rate_function
+where rate_table_systemid in (
+	select rf.rate_table_systemid
+	from rate_function rf
+	where rf.function_definition_systemid = 3500001
+	group by rf.rate_table_systemid
+	having count(1) > 1
+);
+ system_id | function_definition_systemid | is_user_defined | user_func_def | rate_table_systemid | unit_systemid 
+-----------+------------------------------+-----------------+---------------+---------------------+---------------
+  26767505 |                      3500001 |               0 | NULL          |            26767504 |          NULL
+  26767507 |                      3500001 |               0 | NULL          |            26767504 |          NULL
+  26767509 |                      3500001 |               0 | NULL          |            26767504 |          NULL
+  26767511 |                      3500001 |               0 | NULL          |            26767504 |          NULL
+  26791080 |                      3500001 |               0 | NULL          |            26791076 |          NULL
+  26791082 |                      3500001 |               0 | NULL          |            26791076 |          NULL
+  28529084 |                      3500001 |               0 | NULL          |            28529081 |          NULL
+  28529086 |                      3500001 |               0 | NULL          |            28529081 |          NULL
+(8 rows)
+
+/ 1313	. 
+
+/ we maken zelf	, 
+
+with rf_sharing_rt as (
+	--Find rate_functions with same rate_table_systemid (duplicates)
+	select system_id
+	from rate_function 
+	where function_definition_systemid = 3500001  -- RATE TABLE	
+	and rate_table_systemid in (
+		select rf.rate_table_systemid
+		from rate_function rf
+		where rf.function_definition_systemid = 3500001
+		group by rf.rate_table_systemid
+		having count(1) > 1
+	)
+)
+SELECT
+	ra.system_id "rate_table.system_id",
+	ra.name "rate_table.name",
+	rp.system_id "rate_parameter.system_id",
+	rp.name "rate_parameter.name",
+	(
+		select count(1)
+		from (
+			--Check if parameter is used somewhere else
+			SELECT system_id FROM cost_component_specification ccs where ccs.parameter_systemid = rf.system_id
+			union
+			SELECT system_id FROM input_parameter where parameter_systemid = rf.system_id
+			union
+			SELECT system_id FROM rtable_sel_criterium rsc where rsc.rate_parameter_systemid = rf.system_id
+			union
+			SELECT system_id FROM input_parameter ip where ip.rate_func_systemid = rf.system_id
+		) test
+	) "is used",
+	tbd.system_id rate_function_system_id
+FROM  rf_sharing_rt rf 
+left join rate_parameter rp on rp.outputfrom_function_systemid = rf.system_id
+left join rate_agreement ra on rp.rate_agreement_systemid = ra.system_id;
+
+/ 1313	.
+
+/ 0 of in dit geval 1 antwoord	, het hadden er ook 2 of meer kunnen zijn	, 
+
+-- wordt de rf used	?
+-- ja	, 
+SELECT system_id FROM cost_component_specification ccs where ccs.parameter_systemid = 28529086 
+union
+SELECT system_id FROM input_parameter where parameter_systemid = 28529086 
+union
+SELECT system_id FROM rtable_sel_criterium rsc where rsc.rate_parameter_systemid = 28529086 
+union
+SELECT system_id FROM input_parameter ip where ip.rate_func_systemid = 28529086 
+ system_id 
+-----------
+  28529083
+(1 row)
+
+-- wordt de rf used	?
+-- nee
+SELECT system_id FROM cost_component_specification ccs where ccs.parameter_systemid = 28529084 
+union
+SELECT system_id FROM input_parameter where parameter_systemid = 28529084 
+union
+SELECT system_id FROM rtable_sel_criterium rsc where rsc.rate_parameter_systemid = 28529084 
+union
+SELECT system_id FROM input_parameter ip where ip.rate_func_systemid =  28529084 
+ system_id 
+-----------
+(0 rows)
+
+
+SELECT system_id FROM cost_component_specification ccs where ccs.parameter_systemid = 28529084 	-- rc=f(ips)
+SELECT system_id FROM input_parameter where parameter_systemid = 28529084 						-- rc=f(ips)
+SELECT system_id FROM rtable_sel_criterium rsc where rsc.rate_parameter_systemid = 28529084		-- TODO 
+SELECT system_id FROM input_parameter ip where ip.rate_func_systemid =  28529084 				-- TODO
+/ TODO
+
+/ 1313	. 
+
+select(
+SELECT system_id FROM cost_component_specification ccs where ccs.parameter_systemid = 28529086 
+union
+SELECT system_id FROM input_parameter where parameter_systemid = 28529086 
+union
+SELECT system_id FROM rtable_sel_criterium rsc where rsc.rate_parameter_systemid = 28529086 
+union
+SELECT system_id FROM input_parameter ip where ip.rate_func_systemid = 28529086 
+)
+ system_id 
+-----------
+  28529083
+(1 row)
+
+
+select count(1)
+from (
+SELECT system_id FROM cost_component_specification ccs where ccs.parameter_systemid = 28529086 
+union
+SELECT system_id FROM input_parameter where parameter_systemid = 28529086 
+union
+SELECT system_id FROM rtable_sel_criterium rsc where rsc.rate_parameter_systemid = 28529086 
+union
+SELECT system_id FROM input_parameter ip where ip.rate_func_systemid = 28529086 
+) cnt;																			-- subquery must have alias	,
+ count 
+-------
+     1
+(1 row)
+
+/ 13	. 
+
+ rate_table.system_id | rate_table.name  | rate_parameter.system_id |      rate_parameter.name       | is used | rate_function_system_id 
+----------------------+------------------+--------------------------+--------------------------------+---------+-------------------------
+             26683266 | VT-81388-2015    |                 26767512 | null_OUTPUT                    |       0 |                26767511
+             28528903 | IT-Oegema 2 2016 |                 28529085 | RT-VASTE FTL LIJNDIENST_OUTPUT |       0 |                28529084
+             26683266 | VT-81388-2015    |                 26767506 | null_OUTPUT                    |       0 |                26767505
+             26683266 | VT-81388-2015    |                 26767508 | null_OUTPUT                    |       0 |                26767507
+             26683266 | VT-81388-2015    |                 26767510 | null_OUTPUT                    |       0 |                26767509
+             26769929 | VT-9281502-2015  |                 26791081 | test rate table_OUTPUT         |       0 |                26791080
+             26769929 | VT-9281502-2015  |                 26791083 | test rate table_OUTPUT         |       1 |                26791082
+             28528903 | IT-Oegema 2 2016 |                 28529087 | RT-VASTE FTL LIJNDIENST_OUTPUT |       1 |                28529086
+(8 rows)
+
+/ Eerst save	, 
+
+/ Intermezzo
+
+/ 1313	. 
+
+/ Eerst de rp's	,
+
+$ cat /tmp/result.txt
+             26683266 | VT-81388-2015    |                 26767512 | null_OUTPUT                    |       0 |                26767511
+             28528903 | IT-Oegema 2 2016 |                 28529085 | RT-VASTE FTL LIJNDIENST_OUTPUT |       0 |                28529084
+             26683266 | VT-81388-2015    |                 26767506 | null_OUTPUT                    |       0 |                26767505
+             26683266 | VT-81388-2015    |                 26767508 | null_OUTPUT                    |       0 |                26767507
+             26683266 | VT-81388-2015    |                 26767510 | null_OUTPUT                    |       0 |                26767509
+             26769929 | VT-9281502-2015  |                 26791081 | test rate table_OUTPUT         |       0 |                26791080
+             26769929 | VT-9281502-2015  |                 26791083 | test rate table_OUTPUT         |       1 |                26791082
+             28528903 | IT-Oegema 2 2016 |                 28529087 | RT-VASTE FTL LIJNDIENST_OUTPUT |       1 |                28529086
+
+[eric@localhost bin]$ awk  'BEGIN{FS="|"}$5 ~ /0/{print $3}' /tmp/result.txt | xargs echo
+26767512 28529085 26767506 26767508 26767510 26791081
+
+/ we willen ,'s ertussen	, 
+
+/ OFS werkt NIET met print $0	, wel met print $1,$2, ...
+[eric@localhost bin]$ awk  'BEGIN{FS="|"}$5 ~ /0/{print $3}' /tmp/result.txt | xargs echo | awk 'BEGIN{OFS=","}{print $0}'
+26767512 28529085 26767506 26767508 26767510 26791081
+[eric@localhost bin]$ awk  'BEGIN{FS="|"}$5 ~ /0/{print $3}' /tmp/result.txt | xargs echo | awk 'BEGIN{OFS=","}{print $1,$2}'
+26767512,28529085
+/ TODO
+
+/ Dan string sub	,
+[eric@localhost bin]$ awk  'BEGIN{FS="|"}$5 ~ /0/{print $3}' /tmp/result.txt | xargs echo | awk 'gsub(/ /,",")'		
+/ of	,
+[eric@localhost bin]$ awk  'BEGIN{FS="|"}$5 ~ /0/{print $3}' /tmp/result.txt | xargs echo | awk '{print gensub(/ /,",","g")}'
+26767512,28529085,26767506,26767508,26767510,26791081
+/ Bij gsub GEEN {...}	, bij {print gensub} WEL	,
+/ TODO
+
+/ (...) erom heen	,
+[eric@localhost bin]$ awk  'BEGIN{FS="|"}$5 ~ /0/{print $3}' /tmp/result.txt | xargs echo | awk '{print "("}gsub(/ /,",")'
+(
+26767512,28529085,26767506,26767508,26767510,26791081
+/ TODO
+/ Afmaken	,
+
+
+
+/ 1313	. 
+
+/ Dan de rt's	,
+
+[eric@localhost bin]$ cat /tmp/result.txt 
+             26683266 | VT-81388-2015    |                 26767512 | null_OUTPUT                    |       0 |                26767511
+             28528903 | IT-Oegema 2 2016 |                 28529085 | RT-VASTE FTL LIJNDIENST_OUTPUT |       0 |                28529084
+             26683266 | VT-81388-2015    |                 26767506 | null_OUTPUT                    |       0 |                26767505
+             26683266 | VT-81388-2015    |                 26767508 | null_OUTPUT                    |       0 |                26767507
+             26683266 | VT-81388-2015    |                 26767510 | null_OUTPUT                    |       0 |                26767509
+             26769929 | VT-9281502-2015  |                 26791081 | test rate table_OUTPUT         |       0 |                26791080
+             26769929 | VT-9281502-2015  |                 26791083 | test rate table_OUTPUT         |       1 |                26791082
+             28528903 | IT-Oegema 2 2016 |                 28529087 | RT-VASTE FTL LIJNDIENST_OUTPUT |       1 |                28529086
+
+
+[eric@localhost bin]$ awk  'BEGIN{FS="|"}$5 ~ /0/{print $6}' /tmp/result.txt | xargs echo
+26767511 28529084 26767505 26767507 26767509 26791080
+
+/ we willen ,'s ertussen	, 
+
+/ string sub	,
+[eric@localhost bin]$ awk  'BEGIN{FS="|"}$5 ~ /0/{print $6}' /tmp/result.txt | xargs echo | awk 'gsub(/ /,",")'		
+/ of	,
+[eric@localhost bin]$ awk  'BEGIN{FS="|"}$5 ~ /0/{print $6}' /tmp/result.txt | xargs echo | awk '{print gensub(/ /,",","g")}'
+26767511,28529084,26767505,26767507,26767509,26791080
+
+/ Einde Intermezzo
+
+/ 13	. 
+
+/ backups	,
+
+select*
+from rate_parameter
+where system_id in (26767512,28529085,26767506,26767508,26767510,26791081)
+;
+ system_id |              name              | description | outputfrom_function_systemid | rate_agreement_systemid | is_persistent | sequence_nr | parameter_type_s
+ystemid | is_user_editable | iteration_entity | iteration_action 
+-----------+--------------------------------+-------------+------------------------------+-------------------------+---------------+-------------+-----------------
+--------+------------------+------------------+------------------
+  26767506 | null_OUTPUT                    | NULL        |                     26767505 |                26683266 |             0 |           0 |                 
+   NULL |                0 | NULL             | NULL
+  26767508 | null_OUTPUT                    | NULL        |                     26767507 |                26683266 |             0 |           0 |                 
+   NULL |                0 | NULL             | NULL
+  26767510 | null_OUTPUT                    | NULL        |                     26767509 |                26683266 |             0 |           0 |                 
+   NULL |                0 | NULL             | NULL
+  26767512 | null_OUTPUT                    | NULL        |                     26767511 |                26683266 |             0 |           0 |                 
+   NULL |                0 | NULL             | NULL
+  26791081 | test rate table_OUTPUT         | NULL        |                     26791080 |                26769929 |             0 |           0 |                 
+   NULL |                0 | NULL             | NULL
+  28529085 | RT-VASTE FTL LIJNDIENST_OUTPUT | NULL        |                     28529084 |                28528903 |             0 |           0 |                 
+   NULL |                0 | NULL             | NULL
+(6 rows)
+
+select*
+from rate_function
+where system_id in (26767511,28529084,26767505,26767507,26767509,26791080)
+;
+ system_id | function_definition_systemid | is_user_defined | user_func_def | rate_table_systemid | unit_systemid 
+-----------+------------------------------+-----------------+---------------+---------------------+---------------
+  26767505 |                      3500001 |               0 | NULL          |            26767504 |          NULL
+  26767507 |                      3500001 |               0 | NULL          |            26767504 |          NULL
+  26767509 |                      3500001 |               0 | NULL          |            26767504 |          NULL
+  26767511 |                      3500001 |               0 | NULL          |            26767504 |          NULL
+  26791080 |                      3500001 |               0 | NULL          |            26791076 |          NULL
+  28529084 |                      3500001 |               0 | NULL          |            28529081 |          NULL
+(6 rows)
+ 
+/ delete	, 
+
+delete
+from rate_parameter
+where system_id in (26767512,28529085,26767506,26767508,26767510,26791081)
+;
+DELETE 6
+
+delete
+from rate_function
+where system_id in (26767511,28529084,26767505,26767507,26767509,26791080)
+;
+DELETE 6
+
+pnllogistics=> commit;
+COMMIT
+
+Einde SCS-6120
+
+[jboss@pnl-app-a2 ~]$ pnllogistics start track
+
+
+
+
+/ Einde XPOMS-201 TABLES RATE AGREEMENT  
+
+/ FROM TEST TO ACC
+
+[eric@localhost bin]$ pnl-ssh-t.sh "ls -ltr /local/apps/releases| grep pnllog | awk 'END{print \$NF}'"
+tms-pnllogistics-26927-2016.01_pnllogistics-patch_build5159.zip
+
+/ met ls -ltr krijgen we alleen de file name	, niet het path erbij	,  met find lukt het	, 
+
+/ geef in google 
+linux find order by date
+/ Lees	,
+https://superuser.com/questions/294161/unix-linux-find-and-sort-by-date-modified
+
+[eric@localhost bin]$ pnl-ssh-t.sh "find  /local/apps/releases -name \"*pnllogistics*\" -printf \"%T@ %Tc %p\n\"| sort -n | awk 'END{print \$NF}'"
+/local/apps/releases/tms-pnllogistics-26927-2016.01_pnllogistics-patch_build5159.zip
+
+[eric@localhost bin]$ pnl-ssh-t.sh "find  /local/apps/releases -name \"*pnllogistics*\" -printf \"%T@ %Tc %p\n\"| sort -n | awk 'END{print \$NF}'| xargs -I % scp % pnl-app-a:Downloads"
+/ ERR Host key verification failed	, 
+/ TODO
+
+/ Lees	,
+http://stackoverflow.com/questions/1346509/automate-scp-file-transfer-using-a-shell-script
+spawn
+scp -i
+/ TODO
+
+/ Ook deze line zou scp moeten kunnen vervangen	,  uit mk_ssh_passwordless_intermax.sh	,  
+cat ~/.ssh/id_rsa.pub  | ssh vanderveldene@"$@".intermax.mp-objects.com "cat >> .ssh/authorized_keys"
+/ TODO
+
+[eric@localhost bin]$ scp vanderveldene@pnl-app-t.intermax.mp-objects.com:
+
+
+
+
+
+
+
+
+
+
+/ Einde FROM TEST TO ACC
+
+/ WKP-1601 
+
+jboss@mposerv11:~/releases$ deploy-rfsdms.sh /local/apps/releases/tms-rfsdms-26874-2016.12_build5138.zip /local/apps/jboss-4.0.5.GA/server/rfsdms/
+
+/ ERR	,
+
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'com.mpobjects.oms.
+model.service.InboundShipmentOrderServiceImpl#42155a2e' defined in class path resource [rfsdms-service.sb.xml]: Canno
+t resolve reference to bean 'foreground_path_assignment' while setting bean property 'pathAssignmentService'; nested 
+exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'com.mpobjects.oms.servic
+e.PathAssignmentService' is defined
+
+/ Het path in de alias was niet goed	,
+
+$ vi rfsdms-service.sb.xml
+
+	<bean id="com.mpobjects.oms.service.pathassignment.PathAssignmentService" parent="transactionRequiredTemplate">
+		<property name="target" ref="-com.mpobjects.optimize.model.service.PathAssignmentPickOptimalService" />
+	</bean>
+	<alias name="com.mpobjects.oms.service.pathassignment.PathAssignmentService" alias="foreground_path_assignment" />
+/ OK
+
+/ Einde WKP-1601 
+
+/ DSVROAD-18
+
+/ bij deployment patch err	,
+
+2017-03-07 11:50:15,460 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement i
+n patch [oms/patch-566-stock-trans-shipitem-idx$postgresql.sql]: 
+2017-03-07 11:50:15,460 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) create index IDX_STOCK_TRANSACTION_SHI 
+on STOCK_TRANSACTION(SHIPMENT_ITEM_SYSTEMID)
+2017-03-07 11:50:15,460 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERRO
+R: relation "stock_transaction" does not exist
+
+$ vi dsvcts-db-t.sh
+#!/bin/bash
+PGPASSWORD=eric987@MPO psql -U eric -h mposerv8 -p 5433 dsvcts 
+
+/ we moeten met de hand eerst	, 
+
+$ vi patch-001-stock_location_type_create.sql
+
+CREATE TABLE STOCK_LOCATION_TYPE(SYSTEM_ID integer PRIMARY KEY NOT NULL,
+NAME varchar(30) NOT NULL,
+DESCRIPTION varchar(100),
+IS_DELETED smallint DEFAULT 0);
+
+$ vi patch-002-stocklocation-create.sql 
+
+CREATE TABLE STOCK_LOCATION(SYSTEM_ID INTEGER PRIMARY KEY NOT NULL,
+NAME VARCHAR(50) NOT NULL,
+IS_DELETED SMALLINT DEFAULT 0,
+STOCK_LOC_TYPE_SYSTEMID INTEGER  NOT NULL,
+PARENT_STOCK_LOC_SYSTEMID INTEGER,
+PARTY_SYSTEMID INTEGER  NOT NULL);
+
+ALTER TABLE STOCK_LOCATION ADD CONSTRAINT SL_STOCK_LOC_TYPE_FK FOREIGN KEY (STOCK_LOC_TYPE_SYSTEMID) REFERENCES STOCK_LOCATION_TYPE(SYSTEM_ID);
+ALTER TABLE STOCK_LOCATION ADD CONSTRAINT SL_PARENT_STOCK_LOC_FK FOREIGN KEY (PARENT_STOCK_LOC_SYSTEMID) REFERENCES STOCK_LOCATION(SYSTEM_ID);
+ALTER TABLE STOCK_LOCATION ADD CONSTRAINT SL_PARTY_FK FOREIGN KEY (PARTY_SYSTEMID) REFERENCES PARTY(SYSTEM_ID);
+
+$ vi patch-003-stock_transaction_create.sql
+
+CREATE TABLE STOCK_TRANSACTION(
+SYSTEM_ID INTEGER PRIMARY KEY NOT NULL,
+QUANTITY DECIMAL (12,5) NOT NULL,
+ABSOLUTE SMALLINT DEFAULT 0,
+SERIAL_NUMBER VARCHAR(50),
+LOT_ID VARCHAR(50),
+TRANSACTION_DATE TIMESTAMP NOT NULL,
+PRODUCT_SYSTEMID INTEGER NOT NULL,
+GOODS_STATUS_SYSTEMID INTEGER, 
+STOCK_LOCATION_SYSTEMID INTEGER NOT NULL,
+PRODUCT_ITEM_SYSTEMID INTEGER,
+EXTERNAL_ID VARCHAR(50),
+ORGANIZATION_SYSTEMID INTEGER NOT NULL);
+
+ALTER TABLE STOCK_TRANSACTION ADD CONSTRAINT ST_PRODUCT_FK FOREIGN KEY (PRODUCT_SYSTEMID) REFERENCES PRODUCT(SYSTEM_ID);
+ALTER TABLE STOCK_TRANSACTION ADD CONSTRAINT ST_GOODS_STATUS_FK FOREIGN KEY (GOODS_STATUS_SYSTEMID) REFERENCES GOODS_STATUS(SYSTEM_ID);
+ALTER TABLE STOCK_TRANSACTION ADD CONSTRAINT ST_STOCK_LOCATION_FK FOREIGN KEY (STOCK_LOCATION_SYSTEMID) REFERENCES STOCK_LOCATION(SYSTEM_ID);
+ALTER TABLE STOCK_TRANSACTION ADD CONSTRAINT ST_PRODUCT_ITEM_FK FOREIGN KEY (PRODUCT_ITEM_SYSTEMID) REFERENCES TMS_PRODUCT_ITEM(SYSTEM_ID);
+ALTER TABLE STOCK_TRANSACTION ADD CONSTRAINT ST_ORGANIZATION_FK FOREIGN KEY (ORGANIZATION_SYSTEMID) REFERENCES ORGANIZATION(SYSTEM_ID);
+
+/ we nemen een 2016.12 instance	,
+[eric@localhost bakker]$ pwd
+/home/eric/Devel/Java/JBoss/jboss-4.0.5.GA/server/bakker
+[eric@localhost bakker]$ scp -r lib/ eric@mposerv11:
+
+jboss@mposerv11:/local/apps/jboss-4.0.5.GA/server/dsvcts/lib$ pwd
+/local/apps/jboss-4.0.5.GA/server/dsvcts/lib
+jboss@mposerv11:/local/apps/jboss-4.0.5.GA/server/dsvcts/lib$ rm -f *
+jboss@mposerv11:/local/apps/jboss-4.0.5.GA/server/dsvcts/lib$ find ~eric/lib -name "*.jar" | xargs -I % cp -a % .
+
+2017-03-07 12:42:40,082 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement i
+n patch [oms/patch-566-stock-trans-shipitem-idx$postgresql.sql]: 
+2017-03-07 12:42:40,083 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) create index IDX_STOCK_TRANSACTION_SHI 
+on STOCK_TRANSACTION(SHIPMENT_ITEM_SYSTEMID)
+2017-03-07 12:42:40,083 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERRO
+R: must be owner of relation stock_transaction
+
+dsvcts=> \dt *stock*
+                    List of relations
+ Schema |              Name              | Type  | Owner 
+--------+--------------------------------+-------+-------
+ public | inv_stock_keeping_unit_trigger | table | mpo
+ public | stock_location                 | table | eric
+ public | stock_location_type            | table | eric
+ public | stock_transaction              | table | eric
+(4 rows)
+
+/ we hadden onder local account moeten login	, 
+
+/ Als we de tables rm, moeten we ook de constraints rm	, 
+
+/ we kijken eerst naar de constraints	, 
+
+dsvcts=> select* from pg_constraint where conrelid='stock_location_type'::regclass;
+         conname          | connamespace | contype | condeferrable | condeferred | convalidated | conrelid | contypid
+ | conindid | confrelid | confupdtype | confdeltype | confmatchtype | conislocal | coninhcount | connoinherit | conke
+y | confkey | conpfeqop | conppeqop | conffeqop | conexclop | conbin | consrc 
+--------------------------+--------------+---------+---------------+-------------+--------------+----------+---------
+-+----------+-----------+-------------+-------------+---------------+------------+-------------+--------------+------
+--+---------+-----------+-----------+-----------+-----------+--------+--------
+ stock_location_type_pkey |     12350974 | p       | f             | f           | t            | 12616343 |        0
+ | 12616347 |         0 |             |             |               | t          |           0 | t            | {1}  
+  | NULL    | NULL      | NULL      | NULL      | NULL      | NULL   | NULL
+(1 row)
+
+dsvcts=> select* from pg_constraint where conrelid='stock_location'::regclass;
+        conname         | connamespace | contype | condeferrable | condeferred | convalidated | conrelid | contypid |
+ conindid | confrelid | confupdtype | confdeltype | confmatchtype | conislocal | coninhcount | connoinherit | conkey 
+| confkey | conpfeqop | conppeqop | conffeqop | conexclop | conbin | consrc 
+------------------------+--------------+---------+---------------+-------------+--------------+----------+----------+
+----------+-----------+-------------+-------------+---------------+------------+-------------+--------------+--------
++---------+-----------+-----------+-----------+-----------+--------+--------
+ stock_location_pkey    |     12350974 | p       | f             | f           | t            | 12616355 |        0 |
+ 12616359 |         0 |             |             |               | t          |           0 | t            | {1}    
+| NULL    | NULL      | NULL      | NULL      | NULL      | NULL   | NULL
+ sl_stock_loc_type_fk   |     12350974 | f       | f             | f           | t            | 12616355 |        0 |
+ 12616347 |  12616343 | a           | a           | s             | t          |           0 | t            | {4}    
+| {1}     | {96}      | {96}      | {96}      | NULL      | NULL   | NULL
+ sl_parent_stock_loc_fk |     12350974 | f       | f             | f           | t            | 12616355 |        0 |
+ 12616359 |  12616355 | a           | a           | s             | t          |           0 | t            | {5}    
+| {1}     | {96}      | {96}      | {96}      | NULL      | NULL   | NULL
+ sl_party_fk            |     12350974 | f       | f             | f           | t            | 12616355 |        0 |
+ 12530775 |  12352615 | a           | a           | s             | t          |           0 | t            | {6}    
+| {1}     | {96}      | {96}      | {96}      | NULL      | NULL   | NULL
+(4 rows)
+
+dsvcts=> select* from pg_constraint where conrelid='stock_transaction'::regclass;
+        conname         | connamespace | contype | condeferrable | condeferred | convalidated | conrelid | contypid |
+ conindid | confrelid | confupdtype | confdeltype | confmatchtype | conislocal | coninhcount | connoinherit | conkey 
+| confkey | conpfeqop | conppeqop | conffeqop | conexclop | conbin | consrc 
+------------------------+--------------+---------+---------------+-------------+--------------+----------+----------+
+----------+-----------+-------------+-------------+---------------+------------+-------------+--------------+--------
++---------+-----------+-----------+-----------+-----------+--------+--------
+ stock_transaction_pkey |     12350974 | p       | f             | f           | t            | 12616326 |        0 |
+ 12616330 |         0 |             |             |               | t          |           0 | t            | {1}    
+| NULL    | NULL      | NULL      | NULL      | NULL      | NULL   | NULL
+ st_product_fk          |     12350974 | f       | f             | f           | t            | 12616326 |        0 |
+ 12530729 |  12352539 | a           | a           | s             | t          |           0 | t            | {7}    
+| {1}     | {96}      | {96}      | {96}      | NULL      | NULL   | NULL
+ st_goods_status_fk     |     12350974 | f       | f             | f           | t            | 12616326 |        0 |
+ 12531014 |  12353125 | a           | a           | s             | t          |           0 | t            | {8}    
+| {1}     | {96}      | {96}      | {96}      | NULL      | NULL   | NULL
+ st_stock_location_fk   |     12350974 | f       | f             | f           | t            | 12616326 |        0 |
+ 12616359 |  12616355 | a           | a           | s             | t          |           0 | t            | {9}    
+| {1}     | {96}      | {96}      | {96}      | NULL      | NULL   | NULL
+ st_product_item_fk     |     12350974 | f       | f             | f           | t            | 12616326 |        0 |
+ 12531233 |  12353560 | a           | a           | s             | t          |           0 | t            | {10}   
+| {1}     | {96}      | {96}      | {96}      | NULL      | NULL   | NULL
+ st_organization_fk     |     12350974 | f       | f             | f           | t            | 12616326 |        0 |
+ 12530737 |  12352555 | a           | a           | s             | t          |           0 | t            | {12}   
+| {1}     | {96}      | {96}      | {96}      | NULL      | NULL   | NULL
+(6 rows)
+
+/ 13	. 
+
+dsvcts=> drop table stock_transaction;
+DROP TABLE
+dsvcts=> commit;
+COMMIT
+dsvcts=> select*from pg_constraint where conname like 'stock_transaction%';
+ conname | connamespace | contype | condeferrable | condeferred | convalidated | conrelid | contypid | conindid | con
+frelid | confupdtype | confdeltype | confmatchtype | conislocal | coninhcount | connoinherit | conkey | confkey | con
+pfeqop | conppeqop | conffeqop | conexclop | conbin | consrc 
+---------+--------------+---------+---------------+-------------+--------------+----------+----------+----------+----
+-------+-------------+-------------+---------------+------------+-------------+--------------+--------+---------+----
+-------+-----------+-----------+-----------+--------+--------
+(0 rows)
+
+dsvcts=> drop table stock_location;
+DROP TABLE
+dsvcts=> commit;
+COMMIT
+dsvcts=> select*from pg_constraint where conname like 'stock_location%';
+         conname          | connamespace | contype | condeferrable | condeferred | convalidated | conrelid | contypid
+ | conindid | confrelid | confupdtype | confdeltype | confmatchtype | conislocal | coninhcount | connoinherit | conke
+y | confkey | conpfeqop | conppeqop | conffeqop | conexclop | conbin | consrc 
+--------------------------+--------------+---------+---------------+-------------+--------------+----------+---------
+-+----------+-----------+-------------+-------------+---------------+------------+-------------+--------------+------
+--+---------+-----------+-----------+-----------+-----------+--------+--------
+ stock_location_type_pkey |     12350974 | p       | f             | f           | t            | 12616343 |        0
+ | 12616347 |         0 |             |             |               | t          |           0 | t            | {1}  
+  | NULL    | NULL      | NULL      | NULL      | NULL      | NULL   | NULL
+(1 row)
+
+dsvcts=> drop table stock_location_type;
+DROP TABLE
+dsvcts=> select*from pg_constraint where conname like 'stock_location%';
+ conname | connamespace | contype | condeferrable | condeferred | convalidated | conrelid | contypid | conindid | con
+frelid | confupdtype | confdeltype | confmatchtype | conislocal | coninhcount | connoinherit | conkey | confkey | con
+pfeqop | conppeqop | conffeqop | conexclop | conbin | consrc 
+---------+--------------+---------+---------------+-------------+--------------+----------+----------+----------+----
+-------+-------------+-------------+---------------+------------+-------------+--------------+--------+---------+----
+-------+-----------+-----------+-----------+--------+--------
+(0 rows)
+
+dsvcts=> commit;
+COMMIT
+
+/ 13	. 
+
+/ eric heeft tables rm	, nu mpo moet ze maken	,
+
+		<xa-datasource-property name="ServerName">192.168.1.8</xa-datasource-property>
+		<xa-datasource-property name="PortNumber">5433</xa-datasource-property>
+		<xa-datasource-property name="DatabaseName">dsvcts</xa-datasource-property>
+		<xa-datasource-property name="User">mpo</xa-datasource-property>
+		<xa-datasource-property name="Password">al5deewaoNgaavie3Oit6cheeWohdaYi</xa-datasource-property>
+
+jboss@mposerv11:/local/apps/jboss-4.0.5.GA/server/dsvcts$ PGPASSWORD=al5deewaoNgaavie3Oit6cheeWohdaYi psql -U mpo -h mposerv8 -p 5433 dsvcts 
+psql (9.1.24, server 9.3.9)
+WARNING: psql version 9.1, server version 9.3.
+         Some psql features might not work.
+SSL connection (cipher: DHE-RSA-AES256-GCM-SHA384, bits: 256)
+Type "help" for help.
+dsvcts=> 
+
+/ we kunnen ook op mposerv8	,
+[eric@localhost bin]$ dsvcts-ssh-db-t.sh 
+eric@mposerv8:~$ PGPASSWORD=al5deewaoNgaavie3Oit6cheeWohdaYi psql -U mpo -h mposerv8 -p 5433 dsvcts
+psql (9.4.4, server 9.3.9)
+SSL connection (protocol: TLSv1.1, cipher: DHE-RSA-AES256-SHA, bits: 256, compression: off)
+Type "help" for help.
+dsvcts=>  
+
+
+/ Dit lukt NIET op laptop	, 
+[eric@localhost bin]$ PGPASSWORD=al5deewaoNgaavie3Oit6cheeWohdaYi psql -U mpo -h mposerv8 -p 5433 dsvcts
+psql: FATAL:  LDAP authentication failed for user "mpo"
+FATAL:  LDAP authentication failed for user "mpo"
+
+/ 13	. 
+
+2017-03-07 14:28:06,879 INFO  [com.mpobjects.dbpatch.DataBasePatcher] (main:) Executing patch [oms/patch-566-stock-tr
+ans-shipitem-idx$postgresql.sql] ...
+2017-03-07 14:28:06,913 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) create index IDX_STOCK_TRANSACTION_SHI 
+on STOCK_TRANSACTION(SHIPMENT_ITEM_SYSTEMID)
+2017-03-07 14:28:06,913 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERRO
+R: column "shipment_item_systemid" does not exist
+
+
+/ 13	. 
+
+/ de stock patches komen uit de inventory module,	 en deze staat niet in dsvcts-build-config.properties	,
+/ oms/patch-566-stock-trans-shipitem-idx$postgresql.sql is ingechecked in oms patch, en die staat wel in dsvcts-build-config.properties	, 
+module.oms.component=module
+/ en die 566 patch had onder inventory moeten zijn ingechecked	, 
+
+/ we moeten de stock tables weer rm, en de patch op skipped set	,
+/ Gedaan	, 
+
+/ 13	. 
+
+$ dsvcts start track
+
+2017-03-07 14:56:37,929 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-584-containerassocseq$postgresql.sql]: 
+2017-03-07 14:56:37,930 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) create sequence sysid_ContainerAssociation increment by 10
+2017-03-07 14:56:37,930 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERROR: relation "sysid_containerassociation" already exists
+/ we doen met de hand	, 
+
+eric@mposerv8:~$ PGPASSWORD=al5deewaoNgaavie3Oit6cheeWohdaYi psql -U mpo -h mposerv8 -p 5433 dsvcts
+dsvcts=> select setval('sysid_ContainerAssociation', (select greatest((select max(SYSTEM_ID) from PARENT_CONTAINER), (select max(SYSTEM_ID) from SERVICE_ORDER_CONTAINER), (select max(SYSTEM_ID) from SHIPMENT_ITEM_CONTAINER))));
+ setval 
+--------
+       
+(1 row)
+/ en MANUALLY_APPLIED deze patch	, 
+
+dsvcts=> update mpo_scs_patch set status='MANUALLY_APPLIED' where name='patch-584-containerassocseq$postgresql.sql';
+UPDATE 1
+
+
+/ 13	. 
+
+/ nieuwe fout	, 
+2017-03-07 15:20:12,146 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-602-navigationmenu$postgresql.sql]: 
+2017-03-07 15:20:12,146 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) insert into properties (system_id, property_name, property_type, description) values (mpo_nextval(
+'sysid'), 'navigation.menu.id', 'STRING', 'Identifier of the nagivation menu to use for the given user.')
+2017-03-07 15:20:12,146 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERROR: function mpo_nextval(unknown) does not exist
+  Hint: No function matches the given name and argument types. You might need to add explicit type casts.
+  Position: 87
+
+$ vi patch-602-navigationmenu$postgresql.sql
+insert into properties (system_id, property_name, property_type, description) values (mpo_nextval('sysid'), 'navigation.menu.id', 'STRING', 'Identifier of the nagivation menu to use for the given user.');
+ 
+
+$ vi patch-402-segno-gen$postgresql.sql
+create function mpo_nextval(seqname varchar) returns integer as $verbatim$
+...
+
+/ bij firebird was niet nodig, maar nu wel	, 
+dsvcts'> update mpo_scs_patch set status='NOT_APPLIED' where name like 'patch-402-segno-gen$postgresql.sql';'
+
+/ 13	. 
+
+--- MBeans waiting for other MBeans ---
+ObjectName: jboss.mq:service=PersistenceManager
+  State: FAILED
+  Reason: org.jboss.mq.SpyJMSException: Could not resolve uncommited transactions.  Message recovery may not be accurate; - nested throwable: (org.postgresql.util.PSQLException
+: ERROR: subquery in FROM must have an alias
+  Hint: For example, FROM (SELECT ...) [AS] foo.
+  Position: 28)
+  I Depend On:
+    jboss.jca:name=tmsdevDS,service=DataSourceBinding
+  Depends On Me:
+    jboss.mq:service=DestinationManager
+
+/ Kijk bij deploy tasks scs-3975
+
+jboss@mposerv11:/local/apps/jboss-4.0.5.GA/server/dsvcts/deploy$ find ../../isbscs/deploy/jms/ -name "hsqldb*" | xargs -I % cp -a % jms 
+
+
+/ 13	. 
+
+
+2017-03-07 16:43:17,587 ERROR [org.apache.catalina.core.ContainerBase.[jboss.web].[localhost].[/dsvcts]] (main:) Exception sending context initialized event to listener instance of class org.springframework.web.context.ContextLoaderListener
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'com.mpobjects.oms.service.pathassignment.PlanningTrafficLightService' defined in class path resource [dsvcts-service.sb.xml]: Cannot resolve reference to bean 'com.mpobjects.core.model.service.LoginService' while setting bean property 'loginService'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'com.mpobjects.core.model.service.LoginService' is defined
+
+/ we zien de loginService used in PlanningTrafficLightService, 	maar deze login service is er niet meer	, 
+/ we zoeken naar PlanningTrafficLightService en kijken af bij geodis	, 
+
+$ less deploy/dsvcts.war/WEB-INF/classes/dsvcts-service.sb.xml 
+		...
+        <!-- daemon process, use as singleton -->
+        <bean id="com.mpobjects.oms.service.pathassignment.PlanningTrafficLightService" class="com.mpobjects.oms.service.pathassignment.PlanningTrafficLightService">
+                <property name="shipmentInformationQueue" ref="ShipmentOrderPlanningMessageQueue" />
+                <property name="runAsService" ref="com.mpobjects.auth.service.RunAsService" />														<-
+                <property name="queueManager" ref="com.mpobjects.oms.service.pathassignment.PlanningTrafficLightQueueManager" />
+                <property name="planningTrafficLightHelper" ref="com.mpobjects.oms.service.pathassignment.PlanningTrafficLightHelper" />
+        </bean>
+ 
+
+
+
+
+
+
+
+/ Einde DSVROAD-18
+
+/ DSVROAD-25
+
+/ Deployment van dsvcts op acc	, 
+/ we zien verschillen met op test	, 
+
+
+[vanderveldene@application-a deploy]$ pwd
+/local/apps/jboss-4.0.5.GA/server/dsvcts/deploy
+[vanderveldene@application-a deploy]$ less postgres-ds.xml 
+...
+                <xa-datasource-class>org.postgresql.xa.PGXADataSource</xa-datasource-class>
+                <xa-datasource-property name="ServerName">192.168.173.20</xa-datasource-property>
+                <xa-datasource-property name="PortNumber">5432</xa-datasource-property>
+                <xa-datasource-property name="DatabaseName">dsvcts</xa-datasource-property>
+                <xa-datasource-property name="User">dsvcts</xa-datasource-property>
+                <xa-datasource-property name="Password">dsvcts@mpo</xa-datasource-property>
+
+/ op laptop	,
+[eric@localhost bin]$ host database-a.intermax.mp-objects.com
+database-a.intermax.mp-objects.com has address 192.168.173.20
+
+/ op laptop	, 
+$ PGPASSWORD=dsvcts@mpo psql -U dsvcts -h database-a.intermax.mp-objects.com 
+dsvcts=> 
+/ OK
+
+/ we kunnen ook	, 
+[eric@localhost bin]$ dsvcts-ssh-db-a.sh 
+[vanderveldene@database-a ~]$ PGPASSWORD=dsvcts@mpo psql -U dsvcts -h localhost
+dsvcts=> 
+/ OK
+
+[jboss@application-a releases]$ deploy-dsvcts.sh /local/apps/releases/tms-dsvcts-27388-2016.12_build5227.zip /local/apps/jboss-4.0.5.GA/server/dsvcts/
+[jboss@application-a releases]$ dsvcts start track
+
+/ we zien missing jars,	
+[eric@localhost bakker]$ scp -r lib/ vanderveldene@application-a.intermax.mp-objects.com:Downloads
+
+[jboss@application-a lib]$ pwd
+/local/apps/jboss-4.0.5.GA/server/dsvcts/lib
+[jboss@application-a lib]$ find ~vanderveldene/Downloads/lib/ -name "*.jar" | xargs -I % cp -a % .
+
+ 
+/ 13	
+
+[jboss@application-a releases]$ dsvcts start track
+
+/ omdat oms/patch-566-stock-trans-shipitem-idx$postgresql.sql is ingechecked onder oms, en niet onder inventory module, die niet in dsvcts-build-config.properties staat	, zien we 	,  
+
+2017-04-06 10:49:39,202 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-566-stock-trans-shipitem-idx$postgresql.sql]: 
+2017-04-06 10:49:39,202 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) create index IDX_STOCK_TRANSACTION_SHI on STOCK_TRANSACTION(SHIPMENT_ITEM_SYSTEMID)
+2017-04-06 10:49:39,202 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERROR: relation "stock_transaction" does not exist
+2017-04-06 10:49:39,205 ERROR [com.mpobjects.dbpatch.DatabasePatchService] (main:) Error while patching database
+
+/ We set deze patch op SKIPPED	,  
+
+dsvcts=> update mpo_scs_patch set status='SKIPPED' where name='patch-566-stock-trans-shipitem-idx$postgresql.sql';
+UPDATE 1
+dsvcts=> commit;
+COMMIT
+
+/ 13	. 
+
+[jboss@application-a lib]$ dsvcts start track
+
+2017-03-07 14:56:37,929 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-584-containerassocseq$postgresql.sql]:
+2017-03-07 14:56:37,930 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) create sequence sysid_ContainerAssociation increment by 10
+2017-03-07 14:56:37,930 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERROR: relation "sysid_containerassociation" already exists
+
+/ we doen met de hand   ,
+dsvcts=> select setval('sysid_ContainerAssociation', (select greatest((select max(SYSTEM_ID) from PARENT_CONTAINER), (select max(SYSTEM_ID) from SERVICE_ORDER_CONTAINER), (select max(SYSTEM_ID) from SHIPMENT_ITEM_CONTAINER))));
+  setval  
+----------
+ 48045531
+(1 row)
+
+dsvcts=> update mpo_scs_patch set status='MANUALLY_APPLIED' where name='patch-584-containerassocseq$postgresql.sql';
+UPDATE 1
+dsvcts=> commit;
+COMMIT
+
+/ 13	. 
+
+[jboss@application-a lib]$ dsvcts start track
+
+/ we zien nu niet 
+2017-03-07 15:20:12,146 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-602-navigationmenu$postgresql.sql]:
+2017-03-07 15:20:12,146 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) insert into properties (system_id, property_name, property_type, description) values (mpo_nextval(
+'sysid'), 'navigation.menu.id', 'STRING', 'Identifier of the nagivation menu to use for the given user.')
+2017-03-07 15:20:12,146 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERROR: function mpo_nextval(unknown) does not exist
+
+/ op postgres op acc  is de fct mpo_nextval er al	, op test was dat niet zo	, 
+/ Deze is create in patch-402-segno-gen$postgresql.sql
+
+dsvcts=> \df mpo_nextval
+                              List of functions
+ Schema |    Name     | Result data type |    Argument data types    |  Type  
+--------+-------------+------------------+---------------------------+--------
+ public | mpo_nextval | integer          | seqname character varying | normal
+(1 row)
+
+dsvcts=> \sf mpo_nextval
+CREATE OR REPLACE FUNCTION public.mpo_nextval(seqname character varying)
+ RETURNS integer
+ LANGUAGE plpgsql
+AS $function$
+declare
+  val integer;
+begin
+  if upper(seqname) = 'SYSID' then
+    seqname := 'SYSTEM_ID';
+  end if;
+  select sequence_number into val from key_generator where key_reference = seqname;
+  if not found then
+    val := 1;
+    insert into key_generator (key_reference, sequence_number) values (seqname, val);
+  else
+    val := val + 1;
+    update key_generator set sequence_number = val where key_reference = seqname;
+  end if;
+  return val;
+end;
+$function$
+
+
+/ Einde DSVROAD-25
+
+/ LOG_DSVNIKEI-107.txt
+
+/ we rm files to ~/tmp/dsvcts/deploy
+
+[eric@localhost deploy]$ mv ejb-deployer.xml bsh-deployer.xml cache-invalidation-service.xml client-deployer-service.xml ear-deployer.xml hsqldb-ds.xml http-invoker.sar/ jboss-aop.deployer/ jboss-bean.deployer/ jboss-ha-local-jdbc.rar jboss-ha-xa-jdbc.rar jbossws14.sar/ jms/ jmx-invoker-service.xml jsr88-service.xml management/ mail-ra.rar mail-service.xml monitoring-service.xml properties-service.xml sqlexception-service.xml uuid-key-generator.sar/ ~/tmp/dsvcts/deploy/
+
+[eric@localhost deploy]$ cp -a ~/Downloads/ejb-deployer.xml .
+
+[eric@localhost deploy]$ ls -1
+dsvcts-schedule-service.xml
+ejb-deployer.xml
+jbossjca-service.xml
+jboss-local-jdbc.rar
+jbossweb-tomcat55.sar
+jboss-xa-jdbc.rar
+jmx-console.war
+mpo-management.sar
+postgres-ds.xml
+tms.jar
+tms.war
+
+$ vi postgres-ds.xml
+
+
+/ Einde LOG_DSVNIKEI-107.txt
+
+/ DSVNIKEI-137
+
+
+[vanderveldene@scs-application-p ~]$ PGPASSWORD=A9lDMS2FoKs6t053ikte psql -U dsvcts -h localhost dsvcts
+/ OK
+[vanderveldene@scs-application-p ~]$ PGPASSWORD=A9lDMS2FoKs6t053ikte pg_dump -Fc -U dsvcts -h localhost dsvcts > dumps/dsvcts-p-$(date +%F).dump
+/ OK
+
+[eric@localhost bin]$ scp vanderveldene@scs-application-p.intermax.mp-objects.com:Dumps/dsvcts-p-2017-05-05.dump /home/eric/DB_TAP/Postgres/Backup/
+[eric@localhost bin]$ scp /home/eric/DB_TAP/Postgres/Backup/dsvcts-p-2017-05-05.dump mposerv8:dumps
+
+
+
+[eric@localhost bin]$ dsvcts-ssh-db-t.sh 
+eric@mposerv8:~$  PGPASSWORD=al5deewaoNgaavie3Oit6cheeWohdaYi psql -U mpo -p 5433 -h localhost dsvcts
+/ OK
+
+dsvcts=> alter schema public rename to public_old;
+dsvcts=> create schema public;
+dsvcts=> grant all on schema public to admin with grant option;
+dsvcts=> grant usage on schema public to reader;
+dsvcts=> grant usage on schema public to writer;
+dsvcts=> \q
+
+eric@mposerv8:~$  PGPASSWORD=al5deewaoNgaavie3Oit6cheeWohdaYi pg_restore -U mpo -p 5433 -h localhost -d dsvcts --no-acl --no-owner dumps/dsvcts-p-2017-05-05.dump
+/ OK
+
+
+eric@mposerv8:~$  PGPASSWORD=al5deewaoNgaavie3Oit6cheeWohdaYi psql -U mpo -p 5433 -h localhost dsvcts
+/ OK
+dsvcts=> \d shipment_order
+/ we zien indexes	,
+
+dsvcts=> drop schema public_old cascade;
+dsvcts=> \q
+
+jboss@mposerv11:~/releases$ deploy-dsvcts.sh /local/apps/releases/tms-dsvcts-27784-2016.12_build5351.zip /local/apps/jboss-4.0.5.GA/server/dsvcts
+
+
+
+/ Einde DSVNIKEI-137
+
+/ BARD-307
+
+2017-05-19 11:20:25,247 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [oms/patch-597-customer-status$postgresql.sql]: 
+2017-05-19 11:20:25,247 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) ALTER TABLE customer_status drop next_step_sat_systemid
+2017-05-19 11:20:25,247 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERROR: column "next_step_sat_systemid" of relation "customer_status" does not exist
+
+/ Wat er in de patch staat	, is allemaal al gedaan	, we set hem op SKIPPED	,
+
+/ 13	. 
+
+/ laptop	,
+[eric@localhost mposcs-2017.01]$ scp -r lib/ vanderveldene@bard-app-t.intermax.mp-objects.com:
+
+/ bard-app-t	,
+[jboss@bard-app-t bard]$ mv lib lib_old
+[jboss@bard-app-t bard]$ cp -a ~vanderveldene/lib/ .
+
+
+/ 13	. 
+
+2017-05-19 12:07:12,788 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [invoice/patch-084.sql]: 
+2017-05-19 12:07:12,788 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) ALTER TABLE INVOICE_HEADER DROP CONSTRAINT SIH_DOCUMENT_FK
+2017-05-19 12:07:12,788 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERROR: constraint "sih_document_fk" of relation "invoice_header" does not exist
+
+$ vi invoice/patch-084.sql
+
+ALTER TABLE CUSTOMER_INVOICE_HEADER DROP CONSTRAINT CIH_DOCUMENT_FK;
+
+ALTER TABLE CUSTOMER_INVOICE_HEADER DROP DOCUMENT_SYSTEMID;
+
+ALTER TABLE INVOICE_HEADER DROP CONSTRAINT SIH_DOCUMENT_FK;	/ is er niet	,
+
+ALTER TABLE INVOICE_HEADER DROP DOCUMENT_SYSTEMID;	 / doen we met de hand	,
+
+bard=> update mpo_scs_patch set status='MANUALLY_APPLIED' where name='patch-084.sql';
+UPDATE 1
+bard=> commit;
+COMMIT
+
+/ 13	. 
+
+2017-05-19 12:13:59,259 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)    MUST_BE_REMOVED : slf4j-simple-1.7.7.jar
+
+/ 13	. 
+
+2017-05-19 12:15:07,323 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) Problem while executing SQL statement in patch [invoice/patch-086.sql]: 
+2017-05-19 12:15:07,323 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) ALTER TABLE SIN_INVOICE_TEMPLATE DROP CONSTRAINT SIN_INV_TEMP_REPORT_FK
+2017-05-19 12:15:07,323 ERROR [com.mpobjects.dbpatch.DataBasePatcher] (main:) org.postgresql.util.PSQLException: ERROR: constraint "sin_inv_temp_report_fk" of relation "sin_invoice_template" does not exist
+
+$ vi patch-086.sql
+
+ALTER TABLE SIN_INVOICE_TEMPLATE DROP CONSTRAINT SIN_INV_TEMP_REPORT_FK;	/ is er niet	, 
+ALTER TABLE SIN_INVOICE_TEMPLATE DROP INVOICE_LAYOUT_SYSTEMID;	/ met de hand	,
+
+bard=> update mpo_scs_patch set status='MANUALLY_APPLIED' where name='patch-086.sql';
+UPDATE 1
+bard=> commit;
+COMMIT
+
+
+
+
+
+/ Einde BARD-307

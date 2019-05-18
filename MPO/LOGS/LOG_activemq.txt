@@ -1,0 +1,2033 @@
+/ See ACTIVEMQ BOOK
+/ See DEBUG ACTIVEMQ BOOK
+/ 	See CLIENT GIVES COMMAND SO QUEUE IS CREATED 
+/ See WICKET
+
+/ 7	. 
+
+/ Lees	,
+/home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace-wicket7_7/io/src/main/java/scs_6323/JmsCommunicator.java
+
+/ 7	. 
+
+[eric@localhost ActiveMQ]$ pwd
+/home/eric/Devel/Java/ActiveMQ
+[eric@localhost ActiveMQ]$ unzip  ~/Downloads/AMQinA-src\ \(1\).zip 
+/ Niet nodig	,
+
+/ 7	. 
+
+/ Omdat het boek met 5.3.2	, download we deze ook	, 	
+
+[eric@localhost ActiveMQ]$ pwd
+/home/eric/Devel/Java/ActiveMQ
+[eric@localhost ActiveMQ]$ tar xvzf ~/Downloads/apache-activemq-5.3.2-bin.tar.gz 
+[eric@localhost apache-activemq-5.3.2]$ bin/activemq
+/ GEEN console arg	, 
+
+/ 13	. 
+
+/ Tijdens debug krijgen we 
+[eric@localhost activemq-core-5.3.2-sources]$ less ./org/apache/activemq/transport/InactivityMonitor.java
+    public void oneway(Object o) throws IOException {
+        synchronized(inSend) {
+            inSend.set(true);
+            try {
+
+                if( failed.get() ) {
+                    throw new InactivityIOException("Channel was inactive for too long: "+next.getRemoteAddress());
+
+/ Lees	,
+http://activemq.apache.org/configuring-transports.html	/ hoe kwamen we hier op ?
+http://activemq.apache.org/activemq-inactivitymonitor.html
+
+$ vi  conf/activemq.xml
+
+        <!-- 
+            The transport connectors expose ActiveMQ over a given protocol to
+            clients and other brokers. For more information, see: 
+            
+            http://activemq.apache.org/configuring-transports.html 
+        -->
+        <transportConnectors>
+            <transportConnector name="openwire" uri="tcp://0.0.0.0:61616?wireFormat.maxInactivityDuration=86400000"/>
+        </transportConnectors>
+    </broker>
+/ dit werkt NIET	, 
+/ TODO
+
+/ we proberen het in de producer	, 
+
+public class Producer {
+    private static String brokerURL = "tcp://localhost:61616?wireFormat.maxInactivityDuration=86400000&wireFormat.maxInactivityDurationInitalDelay=10000";
+/ TODO
+
+
+
+
+
+/ 7	. 
+
+[eric@localhost eclipse-interfacing-testing]$ eclipse/eclipse 
+/ OK
+/ We hadden al in eclipse	, 
+/home/eric/Devel/Java/Eclipse/eclipse-interfacing-testing/workspace-activemq/amq-in-action-example-src
+
+/ ACTIVEMQ BOOK
+
+/ 13	. 
+
+/ Kijk naar voorbeeld in boek	, 
+file:///home/eric/Devel/Java/Eclipse/eclipse-interfacing-testing/workspace-activemq/amq-in-action-example-src/src/main/java/org/apache/activemq/book/ch2/jobs 
+/ Run Producer 	, en daarna Consumer	, 
+
+/ Producer	, 
+...
+Sending: id: 1000981 on queue: queue://JOBS.suspend
+Sending: id: 1000982 on queue: queue://JOBS.suspend
+Sending: id: 1000983 on queue: queue://JOBS.suspend
+Sending: id: 1000984 on queue: queue://JOBS.delete
+Sending: id: 1000985 on queue: queue://JOBS.delete
+Sending: id: 1000986 on queue: queue://JOBS.suspend
+Sending: id: 1000987 on queue: queue://JOBS.delete
+...
+
+/ Consumer	, 
+
+/ we zien op 
+http://localhost:8161/admin/queues.jsp
+
+Name		#pending msgs	#consumers			enqueued 	dequeued
+JOBS.delete		0			1					665			665		Browse Active Consumers
+JOBS.suspend	0			1					335			335		Browse Active Consumers
+
+
+/ 13	. 
+
+/ we hadden create	, 
+/home/eric/Devel/Java/Eclipse/eclipse-interfacing-testing/workspace-activemq/first
+
+/ 7	. 
+
+/ In	,
+file:///home/eric/Devel/Java/Eclipse/eclipse-interfacing-testing/workspace-activemq/amq-in-action-example-src/src/main/java/org/apache/activemq/book/ch2/jobs 
+
+/ run Producer	,
+/ Producer sends 61 msgs to suspend	, 39 to delete	,
+...
+Sending: id: 1000086 on queue: queue://JOBS.delete
+Sending: id: 1000087 on queue: queue://JOBS.delete
+Sending: id: 1000088 on queue: queue://JOBS.suspend
+Sending: id: 1000089 on queue: queue://JOBS.suspend
+Sent '10' of '90' job messages
+Sending: id: 1000090 on queue: queue://JOBS.suspend
+Sending: id: 1000091 on queue: queue://JOBS.delete
+Sending: id: 1000092 on queue: queue://JOBS.delete
+Sending: id: 1000093 on queue: queue://JOBS.delete
+Sending: id: 1000094 on queue: queue://JOBS.delete
+Sending: id: 1000095 on queue: queue://JOBS.delete
+Sending: id: 1000096 on queue: queue://JOBS.delete
+Sending: id: 1000097 on queue: queue://JOBS.suspend
+Sending: id: 1000098 on queue: queue://JOBS.delete
+Sending: id: 1000099 on queue: queue://JOBS.suspend
+Sent '10' of '100' job messages
+
+/ run Consumer	
+amq-in-action-example-src Consumer [Java Application]	
+	org.apache.activemq.book.ch2.jobs.Consumer at localhost:35016	
+		Thread [main] (Suspended (breakpoint at line 25 in Consumer))	
+			Consumer.<init>() line: 25	
+			Consumer.main(String[]) line: 35	
+		Thread [ActiveMQ Transport: tcp://localhost/127.0.0.1:61616] (Running)	
+
+amq-in-action-example-src Consumer [Java Application]	
+	org.apache.activemq.book.ch2.jobs.Consumer at localhost:36097	
+		Thread [main] (Running)	
+		Thread [ActiveMQ Transport: tcp://localhost/127.0.0.1:61616] (Running)	
+		Daemon Thread [ActiveMQ Scheduler] (Running)	
+		Thread [ActiveMQ Session Task] (Suspended (breakpoint at line 18 in Listener))		/ andere thread dus	,
+			owns: Object  (id=46)	
+			Listener.onMessage(Message) line: 18	
+			ActiveMQMessageConsumer.dispatch(MessageDispatch) line: 1204	
+			ActiveMQSessionExecutor.dispatch(MessageDispatch) line: 131	
+			ActiveMQSessionExecutor.iterate() line: 202	
+			PooledTaskRunner.runTask() line: 122	
+			PooledTaskRunner$1.run() line: 43	
+			ThreadPoolExecutor.runWorker(ThreadPoolExecutor$Worker) line: 1145	
+			ThreadPoolExecutor$Worker.run() line: 615	
+			Thread.run() line: 745	
+		Thread [ActiveMQ Session Task] (Running)	
+	/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/bin/java (May 21, 2017, 2:24:16 PM)	
+
+/ Dus als de Consumer met een Listener werkt	, die in een aparte thread runs	, wanneer moeten we de consumer close	?
+
+
+
+/ Einde ACTIVEMQ BOOK
+
+/ 7	. 
+
+/ Lees	,
+/home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace-wicket7_7/io/src/main/java/scs_6323/JmsCommunicator.java
+
+/ 7	. 
+
+[eric@localhost ActiveMQ]$ pwd
+/home/eric/Devel/Java/ActiveMQ
+[eric@localhost ActiveMQ]$ unzip  ~/Downloads/AMQinA-src\ \(1\).zip 
+/ Niet nodig	,
+
+/ 7	. 
+
+[eric@localhost eclipse-interfacing-testing]$ eclipse/eclipse 
+/ OK
+/ We hadden al in eclipse	, 
+/home/eric/Devel/Java/Eclipse/eclipse-interfacing-testing/workspace-activemq/amq-in-action-example-src
+
+/ ACTIVEMQ BOOK
+
+/ 13	. 
+
+/ Kijk naar voorbeeld in boek	, 
+file:///home/eric/Devel/Java/Eclipse/eclipse-interfacing-testing/workspace-activemq/amq-in-action-example-src/src/main/java/org/apache/activemq/book/ch2/jobs 
+/ Run Producer 	, en daarna Consumer	, 
+
+/ Producer	, 
+...
+Sending: id: 1000981 on queue: queue://JOBS.suspend
+Sending: id: 1000982 on queue: queue://JOBS.suspend
+Sending: id: 1000983 on queue: queue://JOBS.suspend
+Sending: id: 1000984 on queue: queue://JOBS.delete
+Sending: id: 1000985 on queue: queue://JOBS.delete
+Sending: id: 1000986 on queue: queue://JOBS.suspend
+Sending: id: 1000987 on queue: queue://JOBS.delete
+...
+
+/ Consumer	, 
+
+/ we zien op 
+http://localhost:8161/admin/queues.jsp
+
+Name		#pending msgs	#consumers			enqueued 	dequeued
+JOBS.delete		0			1					665			665		Browse Active Consumers
+JOBS.suspend	0			1					335			335		Browse Active Consumers
+
+
+/ 13	. 
+
+/ we hadden create	, 
+/home/eric/Devel/Java/Eclipse/eclipse-interfacing-testing/workspace-activemq/first
+
+/ Einde ACTIVEMQ BOOK
+
+/ 7	. 
+
+/ Lees	,
+/home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace-wicket7_7/io/src/main/java/scs_6323/JmsCommunicator.java
+
+/ 7	. 
+
+[eric@localhost ActiveMQ]$ pwd
+/home/eric/Devel/Java/ActiveMQ
+[eric@localhost ActiveMQ]$ unzip  ~/Downloads/AMQinA-src\ \(1\).zip 
+/ Niet nodig	,
+
+/ 7	. 
+
+[eric@localhost eclipse-interfacing-testing]$ eclipse/eclipse 
+/ OK
+/ We hadden al in eclipse	, 
+/home/eric/Devel/Java/Eclipse/eclipse-interfacing-testing/workspace-activemq/amq-in-action-example-src
+
+/ ACTIVEMQ BOOK
+
+/ 13	. 
+
+/ Kijk naar voorbeeld in boek	, 
+file:///home/eric/Devel/Java/Eclipse/eclipse-interfacing-testing/workspace-activemq/amq-in-action-example-src/src/main/java/org/apache/activemq/book/ch2/jobs 
+/ Run Producer 	, en daarna Consumer	, 
+
+/ Producer	, 
+...
+Sending: id: 1000981 on queue: queue://JOBS.suspend
+Sending: id: 1000982 on queue: queue://JOBS.suspend
+Sending: id: 1000983 on queue: queue://JOBS.suspend
+Sending: id: 1000984 on queue: queue://JOBS.delete
+Sending: id: 1000985 on queue: queue://JOBS.delete
+Sending: id: 1000986 on queue: queue://JOBS.suspend
+Sending: id: 1000987 on queue: queue://JOBS.delete
+...
+
+/ Consumer	, 
+
+/ we zien op 
+http://localhost:8161/admin/queues.jsp
+
+Name		#pending msgs	#consumers			enqueued 	dequeued
+JOBS.delete		0			1					665			665		Browse Active Consumers
+JOBS.suspend	0			1					335			335		Browse Active Consumers
+
+
+/ 13	. 
+
+/ we hadden create	, 
+/home/eric/Devel/Java/Eclipse/eclipse-interfacing-testing/workspace-activemq/first
+
+/ 7	. 
+
+/ HOW TO CLOSE THE CONNECTION WHEN ASYNCRONOUS MESSAGELISTENER
+
+/ WH moet de consumer een criterium hebben wanneer hij besluit om de connection te close	, bijv is het aantal messages == 100	?
+/ Hier wachten we een bepaalde tijd	,
+
+   public static void main(String[] args) throws JMSException {
+    	Consumer consumer = new Consumer();
+    
+    	for (String job : consumer.jobs) {
+    		Destination destination = consumer.getSession().createQueue("JOBS." + job);
+    		MessageConsumer messageConsumer = consumer.getSession().createConsumer(destination);
+    		messageConsumer.setMessageListener(new Listener(job));
+    	}
+    	try{Thread.sleep(1000);}catch(InterruptedException e){}		/ OK
+    	consumer.close();
+    }
+
+
+/ een andere mogelijkheid is synchronous receive	,  
+
+   public static void main(String[] args) throws JMSException {
+    	Consumer consumer = new Consumer();
+
+    public void close() throws JMSException {
+        if (connection != null) {
+            connection.close();
+        }
+    }    
+
+    public static void main(String[] args) throws JMSException {
+    	Consumer consumer = new Consumer();
+    
+    	for (String job : consumer.jobs) {
+    		Destination destination = consumer.getSession().createQueue("JOBS." + job);
+    		MessageConsumer messageConsumer = consumer.getSession().createConsumer(destination);
+    		while(true){
+    			Message message=messageConsumer.receive(10);									/ 10 is OK, 	1 is te weinig	,
+    			if(message!=null){
+    				System.out.println("Received message: "+message+" from destination: "+destination);
+    			}else{
+    				break;
+    			}
+    		}
+	    	
+    	}
+    	consumer.close();
+    }
+
+/ Als we we (*)	, en doen consumer.close()	, dan worden er maar 1 message gelezen	, 
+/ de timeout moet niet te laag	, 1 is te laag	, want het duurt langer voordat hij er is WH	, 
+
+/ 7	. 
+
+/ Als we consumer.close() NIET doen	, kunnen we eerst de consumer start	, 
+/ en dan de producer	, de messages worden meteen consumed	, de queues zijn meteen leeg	, 
+/ we kunnen ook meerdere consumers start	, in Debug view in eclipse zien we dan meerdere consumers	,
+/ We hadden het pauzeren van 1 sec tussen de 10 messages die een producer sent out comment , maar als we toch pauseren tussen de 10 messages door in de producers , zien we ook meerdere producers active	,
+
+/ we start 2 consumers	, en daarna 2 producers	, 
+/ we zien in eclipse een V 'Display selected console'	, met 4 consoles	, ( er is ook V 'Open console')	,
+
+/ In de 1ste consumer console:
+suspend id:1000000 in listener: 1548550182
+delete id:1000001 in listener: 1542923582
+delete id:1000003 in listener: 1542923582
+suspend id:1000005 in listener: 1548550182
+suspend id:1000008 in listener: 1548550182
+delete id:1000009 in listener: 1542923582
+delete id:1000002 in listener: 1542923582
+delete id:1000004 in listener: 1542923582
+
+/ In de 2de consumer console	, 
+delete id:1000002 in listener: 1887685159
+suspend id:1000004 in listener: 1565696439
+suspend id:1000006 in listener: 1565696439
+delete id:1000007 in listener: 1887685159
+delete id:1000000 in listener: 1887685159
+suspend id:1000001 in listener: 1565696439
+delete id:1000003 in listener: 1887685159
+
+/ we zien dat de  suspend messages worden verdeeld over de 2 consumers	, en de delete messages ook,	 
+/ per consumer zijn er 2 listeners, 	per queue 1	, 
+
+/ 7	. 
+
+/ In boek is met queues:
+file:///home/eric/Devel/Java/Eclipse/eclipse-interfacing-testing/workspace-activemq/amq-in-action-example-src/src/main/java/org/apache/activemq/book/ch2/jobs 
+/ en met topics:
+file:///home/eric/Devel/Java/Eclipse/eclipse-interfacing-testing/workspace-activemq/amq-in-action-example-src/src/main/java/org/apache/activemq/book/ch2/portfolio 
+
+/ we hebben zelf copied naar	, 
+
+file:///home/eric/Devel/Java/Eclipse/eclipse-interfacing-testing/workspace-activemq/first/src/main/java/org/apache/activemq/book/ch2/jobs 
+/ en 	,
+file:///home/eric/Devel/Java/Eclipse/eclipse-interfacing-testing/workspace-activemq/first/src/main/java/org/apache/activemq/book/ch2/portfolio 
+
+
+/ 7	. 
+
+/ topics
+
+/ in portfolio maken we GEEN durable consumers	, dus de consumer moet eerst zijn gestart	,
+
+/ In de console van activemq bij topics zien we GEEN pending messages	, 
+/ TODO
+
+/ we start 2 consumers en daarna 1 consumer	,
+/ we zien in eclispe 2 consumer consoles, en 1 producer console	,
+
+/ we zien in 1ste consumer console	,
+BAR     99.05   99.15   down in listener: 1837477283
+FOO     79.83   79.91   up in listener: 1174039548
+FOO     79.80   79.88   down in listener: 1174039548
+BAR     98.91   99.01   down in listener: 1837477283
+FOO     79.93   80.01   up in listener: 1174039548
+BAR     98.44   98.54   down in listener: 1837477283
+FOO     80.27   80.35   up in listener: 1174039548
+BAR     98.31   98.41   down in listener: 1837477283
+BAR     97.44   97.54   down in listener: 1837477283
+FOO     79.75   79.83   down in listener: 1174039548
+BAR     97.09   97.18   down in listener: 1837477283
+BAR     97.57   97.67   up in listener: 1837477283
+...
+
+/ we zien in 2de consumer console	,
+BAR     99.05   99.15   down in listener: 1665851521
+FOO     79.83   79.91   up in listener: 1002934600
+FOO     79.80   79.88   down in listener: 1002934600
+BAR     98.91   99.01   down in listener: 1665851521
+FOO     79.93   80.01   up in listener: 1002934600
+BAR     98.44   98.54   down in listener: 1665851521
+FOO     80.27   80.35   up in listener: 1002934600
+BAR     98.31   98.41   down in listener: 1665851521
+BAR     97.44   97.54   down in listener: 1665851521
+FOO     79.75   79.83   down in listener: 1002934600
+BAR     97.09   97.18   down in listener: 1665851521
+BAR     97.57   97.67   up in listener: 1665851521
+BAR     98.14   98.23   up in listener: 1665851521
+FOO     79.19   79.27   down in listener: 1002934600
+FOO     78.52   78.60   down in listener: 1002934600
+
+/ Dus we zien dat de messages naar beide consumers zijn send
+
+
+
+
+
+/ Einde ACTIVEMQ BOOK
+
+/ DEBUG ACTIVEMQ BOOK
+
+/ 7	. 
+
+/ Lees	,
+http://activemq.apache.org/activemq-inactivitymonitor.html
+
+
+
+/ 7	. 
+
+[eric@localhost eclipse-interfacing-testing]$ eclipse/eclipse 
+/ workspace-activemq
+/ proj amq-in-action-example-src/src/main/java/org/apache/activemq/book/ch2/jobs
+
+/ we debug Producer	, 
+
+/ stack
+/s
+org.apache.activemq.book.ch2.jobs.Producer at localhost:50862	
+Thread [main] (Suspended)	
+	TcpTransportFactory.createTransport(URI, WireFormat) line: 143	
+	TcpTransportFactory(TransportFactory).doConnect(URI) line: 141	
+        try {
+            Map<String, String> options = new HashMap<String, String>(URISupport.parseParamters(location));
+            WireFormat wf = createWireFormat(options);
+            Transport transport = createTransport(location, wf);
+/cb
+	TcpTransportFactory(TransportFactory).doConnect(URI, Executor) line: 51	
+        return doConnect(location);
+/cb
+	TransportFactory.connect(URI, Executor) line: 80	
+        TransportFactory tf = findTransportFactory(location);
+        return tf.doConnect(location, ex);
+/cb
+	ActiveMQConnectionFactory.createTransport() line: 243	
+            return TransportFactory.connect(brokerURL, DEFAULT_CONNECTION_EXECUTOR);
+/cb
+	ActiveMQConnectionFactory.createActiveMQConnection(String, String) line: 258	
+            Transport transport = createTransport();
+/cb
+	ActiveMQConnectionFactory.createActiveMQConnection() line: 230	
+        return createActiveMQConnection(userName, password);
+/cb
+	ActiveMQConnectionFactory.createConnection() line: 178	
+        return createActiveMQConnection();
+/cb
+	Producer.<init>() line: 30	
+    	factory = new ActiveMQConnectionFactory(brokerURL);
+    	connection = factory.createConnection();
+/cb
+	Producer.main(String[]) line: 43	
+    	Producer producer = new Producer();
+/ debug	, 
+/s
+TcpTransportFactory.createTransport(URI, WireFormat) line: 143	
+       SocketFactory socketFactory = createSocketFactory();
+       return createTcpTransport(wf, socketFactory, location, localLocation);
+/s
+TcpTransportFactory.createTcpTransport(WireFormat, SocketFactory, URI, URI) line: 160	
+        return new TcpTransport(wf, socketFactory, location, localLocation);
+/s
+TcpTransport.<init>(WireFormat, SocketFactory, URI, URI) line: 134	
+        this.wireFormat = wireFormat;
+        this.socketFactory = socketFactory;
+        try {
+            this.socket = socketFactory.createSocket(); / Socket[unconnected]
+        this.remoteLocation = remoteLocation;	/ tcp://localhost:61616 
+        this.localLocation = localLocation;	/ null
+        setDaemon(false);
+/t
+TcpTransportFactory(TransportFactory).doConnect(URI) line: 142	
+            Transport transport = createTransport(location, wf);
+/d
+transport	TcpTransport  (id=43)	
+	remoteLocation	URI  (id=65)	/ tcp://localhost:61616
+	socket	Socket  (id=112)		/ Socket[unconnected]
+	socketOptions 	null	
+	started	AtomicBoolean  (id=120)	/ 	false
+	wireFormat	OpenWireFormat  (id=44)	
+/= tcp://null:0 
+
+            Transport rc = configure(transport, wf, options);
+/s
+TcpTransportFactory(TransportFactory).configure(Transport, WireFormat, Map) line: 246	
+        transport = compositeConfigure(transport, wf, options);
+/ de TcpTransport transport komt in een WireFormatNegotiator	, 
+/s
+TcpTransportFactory.compositeConfigure(Transport, WireFormat, Map) line: 108	
+            transport = new InactivityMonitor(transport, format);
+        // Only need the WireFormatNegotiator if using openwire
+        if (format instanceof OpenWireFormat) {
+            transport = new WireFormatNegotiator(transport, (OpenWireFormat)format, tcpTransport.getMinmumWireFormatVersion());
+transport	WireFormatNegotiator  (id=63)	
+	next	InactivityMonitor  (id=47)	
+		next	TcpTransport  (id=21)	/ tcp://null:0 
+
+        return super.compositeConfigure(transport, format, options);
+/t
+TcpTransportFactory(TransportFactory).configure(Transport, WireFormat, Map) line: 248	
+        transport = compositeConfigure(transport, wf, options);
+/d
+        transport = new MutexTransport(transport);
+/ we gaan verder inpakken	, WH extra funct	, 
+transport	MutexTransport  (id=118)	
+	writeMutex	Object  (id=120)	
+	next	WireFormatNegotiator  (id=63)	
+		wireFormat	OpenWireFormat  (id=23)	
+		next	InactivityMonitor  (id=47)	
+			... / TODO
+			next	TcpTransport  (id=21)	
+
+        transport = new ResponseCorrelator(transport);
+/s
+ResponseCorrelator.<init>(Transport) line: 48	
+        this(next, new IntSequenceGenerator());
+/t
+TcpTransportFactory(TransportFactory).configure(Transport, WireFormat, Map) line: 248	
+        transport = new ResponseCorrelator(transport);
+/d
+transport	ResponseCorrelator  (id=198)	
+	next	MutexTransport  (id=118)			/ see hierboven	,
+	sequenceGenerator	IntSequenceGenerator  (id=201)	
+            Transport rc = configure(transport, wf, options);
+
+        return transport;
+/t
+TcpTransportFactory(TransportFactory).doConnect(URI) line: 143	
+            Transport rc = configure(transport, wf, options);
+/d
+rc	ResponseCorrelator  (id=198)	
+	sequenceGenerator	IntSequenceGenerator  (id=201)	
+	next	MutexTransport  (id=118)	
+		writeMutex	Object  (id=120)	
+		next	WireFormatNegotiator  (id=63)	
+			wireFormat	OpenWireFormat  (id=23)	
+			next	InactivityMonitor  (id=47)	
+				... / TODO
+				next	TcpTransport  (id=21)	
+
+            return rc;
+/t
+ActiveMQConnectionFactory.createActiveMQConnection(String, String) line: 259	
+            Transport transport = createTransport();
+/d
+transport	ResponseCorrelator  (id=198)	
+            connection = createActiveMQConnection(transport, factoryStats);
+/s
+ActiveMQConnectionFactory.createActiveMQConnection(Transport, JMSStatsImpl) line: 291	
+        ActiveMQConnection connection = new ActiveMQConnection(transport, getClientIdGenerator(), stats);
+/s
+ActiveMQConnection.<clinit>() line: 110	
+    private static final IdGenerator CONNECTION_ID_GENERATOR = new IdGenerator();
+/s
+IdGenerator.<clinit>() line: 39	
+/=
+    static {
+        String stub = "";
+                hostName = InetAddress.getLocalHost().getHostName();
+localhost.localdomain
+/ in bash $ hostname ook  TODO
+                ServerSocket ss = new ServerSocket(0);
+ServerSocket[addr=0.0.0.0/0.0.0.0,localport=52982]
+                stub = "-" + ss.getLocalPort() + "-" + System.currentTimeMillis() + "-";
+-52982-1495097258088-
+                ss.close();
+        UNIQUE_STUB = stub;
+/t
+/s
+IdGenerator.<init>() line: 77	
+        this("ID:" + hostName);
+/s
+IdGenerator.<init>(String) line: 71	
+        synchronized (UNIQUE_STUB) {
+            this.seed = prefix + UNIQUE_STUB + (instanceCount++) + ":";
+this	IdGenerator  (id=56)	
+	seed	"ID:localhost.localdomain-52982-1495097258088-0:" (id=61)	
+	sequence	0	
+/t
+ActiveMQConnectionFactory.createActiveMQConnection(Transport, JMSStatsImpl) line: 291	
+        ActiveMQConnection connection = new ActiveMQConnection(transport, getClientIdGenerator(), stats);
+/pd (class loading is done)
+/s
+ActiveMQConnectionFactory.getClientIdGenerator() line: 815	
+        if (clientIdGenerator == null) {
+            if (clientIDPrefix != null) {
+                clientIdGenerator = new IdGenerator();
+/s
+IdGenerator.<init>() line: 77	
+        this("ID:" + hostName);	/ hostName=locahost.localdomain / TODO
+/s
+IdGenerator.<init>(String) line: 72	
+        synchronized (UNIQUE_STUB) {		/ "-42080-1495096602264-"
+            this.seed = prefix + UNIQUE_STUB + (instanceCount++) + ":";
+this	IdGenerator  (id=87)	
+	seed	"ID:localhost.localdomain-52982-1495097258088-1:" (id=91)	
+	sequence	0	
+/t
+ActiveMQConnectionFactory.createActiveMQConnection(Transport, JMSStatsImpl) line: 291	
+        ActiveMQConnection connection = new ActiveMQConnection(transport, getClientIdGenerator(), stats);
+/pd
+/s
+ActiveMQConnection.<init>(Transport, IdGenerator, JMSStatsImpl) line: 202	
+
+        this.transport = transport;
+        this.clientIdGenerator = clientIdGenerator;
+        this.factoryStats = factoryStats;
+
+        // Configure a single threaded executor who's core thread can timeout if
+        // idle
+        asyncConnectionThread = new ThreadPoolExecutor(1, 1, 5, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactory() {
+            public Thread newThread(Runnable r) {
+                Thread thread = new Thread(r, "ActiveMQ Connection Worker: " + transport);
+                thread.setDaemon(true);
+                return thread;
+            }
+        });
+/ TODO
+        this.info = new ConnectionInfo(new ConnectionId(CONNECTION_ID_GENERATOR.generateId()));
+
+/ Intermezzo
+
+this	ActiveMQConnection  (id=94)	
+	CONNECTION_ID_GENERATOR	IdGenerator  (id=56)		/ static
+		UNIQUE_STUB	"-52982-1495097258088-" (id=37)	
+		seed	"ID:localhost.localdomain-52982-1495097258088-0:" (id=61)	
+		sequence	0	
+	clientIdGenerator	IdGenerator  (id=87)	
+		UNIQUE_STUB	"-52982-1495097258088-" (id=37)	
+		seed	"ID:localhost.localdomain-52982-1495097258088-1:" (id=91)	
+		sequence	0	
+/ TODO
+
+/ Einde Intermezzo
+
+/s
+IdGenerator.generateId() line: 99	
+this.seed="ID:localhost.localdomain-52982-1495097258088-0:"
+this.sequence=0
+        return this.seed + (this.sequence++);
+/t
+/s
+ActiveMQConnection.<init>(Transport, IdGenerator, JMSStatsImpl) line: 217	
+        this.info = new ConnectionInfo(new ConnectionId(CONNECTION_ID_GENERATOR.generateId()));
+/pd
+/s
+ConnectionId.<init>(String) line: 32	
+        this.value = connectionId; / 	ID:localhost.localdomain-52982-1495097258088-0:0
+/t
+ActiveMQConnection.<init>(Transport, IdGenerator, JMSStatsImpl) line: 218	
+        this.info = new ConnectionInfo(new ConnectionId(CONNECTION_ID_GENERATOR.generateId()));
+/d
+this	ActiveMQConnection  (id=94)	
+	info	ConnectionInfo  (id=1328)	
+		connectionId	ConnectionId  (id=1325)		/ ID:localhost.localdomain-52982-1495097258088-0:0
+
+        this.connectionSessionId = new SessionId(info.getConnectionId(), -1);
+this	ActiveMQConnection  (id=94)	
+		connectionId	"ID:localhost.localdomain-52982-1495097258088-0:0" (id=1326)	
+		value	-1	
+
+        this.transport.setTransportListener(this);	/ WH .onConsume	,
+
+        this.stats = new JMSConnectionStatsImpl(sessions, this instanceof XAConnection);
+        this.factoryStats.addConnection(this);
+        this.timeCreated = System.currentTimeMillis();
+        this.connectionAudit.setCheckForDuplicates(transport.isFaultTolerant());
+/t
+ActiveMQConnectionFactory.createActiveMQConnection(String, String) line: 261	
+            connection = createActiveMQConnection(transport, factoryStats);
+/d
+            connection.setUserName(userName);	/ null
+            connection.setPassword(password);	/ null
+
+            configureConnection(connection);
+/s
+ActiveMQConnectionFactory.configureConnection(ActiveMQConnection) line: 296	
+        connection.setPrefetchPolicy(getPrefetchPolicy());
+        connection.setDisableTimeStampsByDefault(isDisableTimeStampsByDefault());
+        connection.setOptimizedMessageDispatch(isOptimizedMessageDispatch());
+        connection.setCopyMessageOnSend(isCopyMessageOnSend());
+        connection.setUseCompression(isUseCompression());
+        connection.setObjectMessageSerializationDefered(isObjectMessageSerializationDefered());
+        connection.setDispatchAsync(isDispatchAsync());
+        connection.setUseAsyncSend(isUseAsyncSend());
+        connection.setAlwaysSyncSend(isAlwaysSyncSend());
+        connection.setAlwaysSessionAsync(isAlwaysSessionAsync());
+        connection.setOptimizeAcknowledge(isOptimizeAcknowledge());
+        connection.setUseRetroactiveConsumer(isUseRetroactiveConsumer());
+        connection.setExclusiveConsumer(isExclusiveConsumer());
+        connection.setRedeliveryPolicy(getRedeliveryPolicy());
+        connection.setTransformer(getTransformer());
+        connection.setBlobTransferPolicy(getBlobTransferPolicy().copy());
+        connection.setWatchTopicAdvisories(isWatchTopicAdvisories());
+        connection.setProducerWindowSize(getProducerWindowSize());
+        connection.setWarnAboutUnstartedConnectionTimeout(getWarnAboutUnstartedConnectionTimeout());
+        connection.setSendTimeout(getSendTimeout());
+        connection.setSendAcksAsync(isSendAcksAsync());
+        connection.setAuditDepth(getAuditDepth());
+        connection.setAuditMaximumProducerNumber(getAuditMaximumProducerNumber());
+        connection.setUseDedicatedTaskRunner(isUseDedicatedTaskRunner());
+        connection.setConsumerFailoverRedeliveryWaitPeriod(getConsumerFailoverRedeliveryWaitPeriod());
+        if (transportListener != null) {
+            connection.addTransportListener(transportListener);
+        }
+        if (exceptionListener != null) {
+        	connection.setExceptionListener(exceptionListener);
+        }
+        if (clientInternalExceptionListener != null) {
+            connection.setClientInternalExceptionListener(clientInternalExceptionListener);
+        }
+/t
+ActiveMQConnectionFactory.createActiveMQConnection(String, String) line: 266	
+            configureConnection(connection);
+/d
+            transport.start();
+/s
+ResponseCorrelator(TransportFilter).start() line: 57	
+        if (transportListener == null) {
+/n
+/= ActiveMQConnection {id=ID:localhost.localdomain-52982-1495097258088-0:0,clientId=null,started=false}
+
+        next.start();
+/s
+MutexTransport(TransportFilter).start() line: 51	
+        next.start();
+/s
+WireFormatNegotiator.start() line: 72	
+        super.start();
+/s
+WireFormatNegotiator(TransportFilter).start() line: 51	
+        next.start();
+/s
+InactivityMonitor(TransportFilter).start() line: 51	
+        next.start();
+/s
+TcpTransport(ServiceSupport).start() line: 50	
+        if (started.compareAndSet(false, true)) {	/ AtomicBoolean false -> true
+                doStart();
+/s
+TcpTransport.doStart() line: 402	
+        connect();
+/s
+TcpTransport.connect() line: 409	
+        if (localLocation != null) {
+/n
+        if (remoteLocation != null) {
+            String host = resolveHostName(remoteLocation.getHost());
+this	TcpTransport  (id=1395)	
+	remoteLocation	URI  (id=1399)	
+		host	"localhost" (id=1418)	
+		port	61616	
+/s
+TcpTransport.resolveHostName(String) line: 370	
+        String localName = InetAddress.getLocalHost().getHostName();	/ localhost.localdomain
+        if (localName != null && isUseLocalHost()) {	/ true
+            if (localName.equals(host)) {	/n
+                return "localhost";
+            }
+        }
+        return host; / "localhost" 		, toch	,
+/t
+TcpTransport.connect() line: 423	
+        if (remoteLocation != null) {
+            String host = resolveHostName(remoteLocation.getHost());
+/d
+            remoteAddress = new InetSocketAddress(host, remoteLocation.getPort());
+localhost/127.0.0.1:61616
+
+        if (socket != null) {
+Socket[unconnected]
+            if (localAddress != null) {
+/n
+                socket.bind(localAddress);
+/n
+
+            // If it's a server accepted socket.. we don't need to connect it
+            // to a remote address.
+            if (remoteAddress != null) {
+                if (connectionTimeout >= 0) {
+                    socket.connect(remoteAddress, connectionTimeout);	/ remoteAddress=localhost/127.0.0.1:61616	, connectionTimeout=30000
+socket=Socket[addr=localhost/127.0.0.1,port=61616,localport=45732]
+
+        initialiseSocket(socket);
+/s
+TcpTransport.initialiseSocket(Socket) line: 381	
+        if (socketOptions != null) {
+            IntrospectionSupport.setProperties(socket, socketOptions);
+{}
+        try {
+            sock.setReceiveBufferSize(socketBufferSize); / 65536
+/s
+        getImpl().setOption(SocketOptions.SO_RCVBUF, new Integer(size));
+
+            sock.setSendBufferSize(socketBufferSize);
+/s
+        getImpl().setOption(SocketOptions.SO_SNDBUF, new Integer(size));
+
+        sock.setSoTimeout(soTimeout);	/ 0
+/t
+TcpTransport.connect() line: 454	
+        initialiseSocket(socket);
+/d
+        initializeStreams();
+/s
+        TcpBufferedInputStream buffIn = new TcpBufferedInputStream(socket.getInputStream(), ioBufferSize) {
+socket.getInputStream()=SocketInputStream	, 
+			...
+		}
+        this.dataIn = new DataInputStream(buffIn);
+        buffOut = new TcpBufferedOutputStream(socket.getOutputStream(), ioBufferSize);
+        this.dataOut = new DataOutputStream(buffOut);
+/t
+TcpTransport.doStart() line: 403	
+        connect();
+/d
+       stoppedLatch.set(new CountDownLatch(1));
+/ TODO 
+		super.doStart();
+/s
+TcpTransport(TransportThreadSupport).doStart() line: 41	
+        runner = new Thread(null, this, "ActiveMQ Transport: " + toString(), stackSize);	/ See TcpTransport.run	, 
+        runner.setDaemon(daemon);	/ false
+        runner.start();
+/t
+WireFormatNegotiator.start() line: 74	
+        super.start();
+/d
+        if (firstStart.compareAndSet(true, false)) {	/ true -> false
+            sendWireFormat();
+/s
+WireFormatNegotiator.sendWireFormat() line: 81	
+        try {
+            WireFormatInfo info = wireFormat.getPreferedWireFormatInfo();
+WireFormatInfo { version=5, properties={CacheSize=1024, CacheEnabled=true, SizePrefixDisabled=false, MaxInactivityDurationInitalDelay=10000, TcpNoDelayEnabled=true, MaxInactivityDuration=30000, TightEncodingEnabled=true, StackTraceEnabled=true}, magic=[A,c,t,i,v,e,M,Q]}
+            if (LOG.isDebugEnabled()) {
+/n
+                LOG.debug("Sending: " + info);
+/n
+            }
+            sendWireFormat(info);
+/s
+WireFormatNegotiator.sendWireFormat(WireFormatInfo) line: 168	
+        next.oneway(info);
+/s
+InactivityMonitor.oneway(Object) line: 230	
+        synchronized(inSend) {				/ AtomicBoolean
+            inSend.set(true);
+                next.oneway(o);
+/s
+TcpTransport.oneway(Object) line: 167	
+        wireFormat.marshal(command, dataOut);	/ TODO (Afmaken) .marshal writes in de stream op de socket	,
+command	WireFormatInfo  (id=1462)	
+	properties	HashMap<K,V>  (id=1464)	
+{CacheSize=1024, CacheEnabled=true, SizePrefixDisabled=false, MaxInactivityDurationInitalDelay=10000, TcpNoDelayEnabled=true, MaxInactivityDuration=30000, TightEncodingEnabled=true, StackTraceEnabled=true}
+
+        dataOut.flush();
+/t
+InactivityMonitor.oneway(Object) line: 245	
+        synchronized(inSend) {
+            inSend.set(true);
+				...
+                next.oneway(o);
+/d
+            } finally {
+                commandSent.set(true);
+                inSend.set(false);
+            }
+/t
+ActiveMQConnectionFactory.createActiveMQConnection(String, String) line: 272	
+            transport.start();
+/d
+            return connection;
+/t
+Producer.<init>() line: 31	
+    	connection = factory.createConnection();
+/d
+        connection.start();
+/c
+/ stack	,
+/s
+Thread [main] (Suspended (breakpoint at line 31 in Producer))	
+	Producer.<init>() line: 31												/ we waren de hele tijd in deze thread	, bij connection.start()	
+	Producer.main(String[]) line: 43	
+Thread [ActiveMQ Transport: tcp://localhost/127.0.0.1:61616] (Suspended (breakpoint at line 182 in TcpTransport))	
+	TcpTransport.run() line: 182											/ nu hier	,
+	Thread.run() line: 745	
+/ debug	, 
+/s
+TcpTransport.run() line: 182	
+        try {
+            while (!isStopped()) {
+                doRun();
+/s
+TcpTransport.doRun() line: 203	
+            Object command = readCommand();
+/ TODO (Afmaken)
+
+/c
+/ of	, 
+/t
+Producer.<init>() line: 32	
+    	factory = new ActiveMQConnectionFactory(brokerURL);
+    	connection = factory.createConnection();
+this	Producer  (id=15)	
+	connection	ActiveMQConnection  (id=29)	
+		transport	ResponseCorrelator  (id=42)	
+			next	MutexTransport  (id=43)	
+				next	WireFormatNegotiator  (id=45)	
+					next	InactivityMonitor  (id=46)	
+						next	TcpTransport  (id=32)	
+							dataIn	DataInputStream  (id=200)	
+								in	TcpTransport$2  (id=484)	
+									in	SocketInputStream  (id=497)	
+										socket	Socket  (id=221)	
+							dataOut	DataOutputStream  (id=204)	
+								out	TcpBufferedOutputStream  (id=192)	
+									out	SocketOutputStream  (id=238)	
+										socket	Socket  (id=221)	
+							socket	Socket  (id=221)	
+
+        connection.start();															/ set op deze line GEEN b TODO
+/ TODO
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+/s
+ActiveMQConnection.createSession(boolean, int) line: 304	
+/=
+    public Session createSession(boolean transacted, int acknowledgeMode) throws JMSException {
+        if(!transacted) {
+/j
+			...
+        return new ActiveMQSession(this, getNextSessionId(), transacted ? Session.SESSION_TRANSACTED : (acknowledgeMode == Session.SESSION_TRANSACTED ? Session.AUTO_ACKNOWLEDGE : acknowledgeMode), isDispatchAsync(), isAlwaysSessionAsync());
+/s
+ActiveMQConnection.getNextSessionId() line: 320	
+        return new SessionId(info.getConnectionId(), sessionIdGenerator.getNextSequenceId());
+/s
+info.getConnectionId()
+	ID:localhost.localdomain-53501-1495110117391-0:0
+/t
+/s
+    public synchronized long getNextSequenceId() {
+        return ++lastSequenceId;							/ was 0	, returns 1	,
+    }
+/t
+/s
+/t
+this	ActiveMQConnection  (id=29)	
+	alwaysSyncSend	false	
+	dispatchAsync	true	
+/t
+/s
+ActiveMQSession.<init>(ActiveMQConnection, SessionId, int, boolean, boolean) line: 241	
+    protected final ActiveMQSessionExecutor executor = new ActiveMQSessionExecutor(this);
+
+/ Intermezzo
+
+/**
+ * A utility class used by the Session for dispatching messages asynchronously
+ * to consumers
+ * 
+ * @version $Revision$
+ * @see javax.jms.Session
+ */
+public class ActiveMQSessionExecutor implements Task {
+
+/ Einde Intermezzo
+
+/s
+ActiveMQSessionExecutor.<init>(ActiveMQSession) line: 43	
+    private MessageDispatchChannel messageQueue = new MessageDispatchChannel();
+/s
+MessageDispatchChannel.<init>() line: 35	
+        this.list = new LinkedList<MessageDispatch>();
+/t
+ActiveMQSessionExecutor.<init>(ActiveMQSession) line: 43	
+    private MessageDispatchChannel messageQueue = new MessageDispatchChannel();
+/d
+        this.session = session;
+/t
+ActiveMQSession.<init>(ActiveMQConnection, SessionId, int, boolean, boolean) line: 210	
+    protected final ActiveMQSessionExecutor executor = new ActiveMQSessionExecutor(this);
+/d
+
+
+    protected final CopyOnWriteArrayList<ActiveMQMessageConsumer> consumers = new CopyOnWriteArrayList<ActiveMQMessageConsumer>();
+    protected final CopyOnWriteArrayList<ActiveMQMessageProducer> producers = new CopyOnWriteArrayList<ActiveMQMessageProducer>();
+
+        this.debug = LOG.isDebugEnabled();
+        this.connection = connection;
+        this.acknowledgementMode = acknowledgeMode;
+        this.asyncDispatch = asyncDispatch;
+true
+        this.sessionAsyncDispatch = sessionAsyncDispatch;
+true
+        this.info = new SessionInfo(connection.getConnectionInfo(), sessionId.getValue());
+SessionInfo {commandId = 0, responseRequired = false, sessionId = ID:localhost.localdomain-53501-1495110117391-0:0:1}
+        setTransactionContext(new TransactionContext(connection));
+
+/ Intermezzo
+
+public class TransactionContext implements XAResource {
+    public boolean isInXATransaction() {
+        return transactionId != null && transactionId.isXATransaction();
+    }
+
+    public boolean isInLocalTransaction() {
+        return transactionId != null && transactionId.isLocalTransaction();
+    }
+
+    public boolean isInTransaction() {
+        return transactionId != null;
+    }
+...
+
+/ Einde Intermezzo
+
+/s
+TransactionContext.<init>(ActiveMQConnection) line: 87	
+        this.connection = connection;
+        this.localTransactionIdGenerator = connection.getLocalTransactionIdGenerator();	/ is er al	,
+        this.connectionId = connection.getConnectionInfo().getConnectionId();	/ ID:localhost.localdomain-53501-1495110117391-0:0 	, was er al	,
+/t
+ActiveMQSession.<init>(ActiveMQConnection, SessionId, int, boolean, boolean) line: 251	
+        setTransactionContext(new TransactionContext(connection));
+/d
+        connection.addSession(this);
+        stats = new JMSSessionStatsImpl(producers, consumers);
+        this.connection.asyncSendPacket(info);
+        setTransformer(connection.getTransformer());
+        setBlobTransferPolicy(connection.getBlobTransferPolicy());
+
+/ Intermezzo
+
+/ Dit zijn de threads nu	, de laatste is er ook bijgekomen	, 
+
+amq-in-action-example-src Producer [Java Application]	
+	org.apache.activemq.book.ch2.jobs.Producer at localhost:60649	
+		Thread [main] (Suspended)	
+			ActiveMQSession.<init>(ActiveMQConnection, SessionId, int, boolean, boolean) line: 251	
+			ActiveMQConnection.createSession(boolean, int) line: 312	
+			Producer.<init>() line: 32	
+			Producer.main(String[]) line: 43	
+		Thread [ActiveMQ Transport: tcp://localhost/127.0.0.1:61616] (Suspended (breakpoint at line 82 in TransportSupport))	
+			TcpTransport(TransportSupport).doConsume(Object) line: 82	
+			TcpTransport.doRun() line: 204	
+			TcpTransport.run() line: 186	
+			Thread.run() line: 745	
+		Daemon Thread [InactivityMonitor Async Task: java.util.concurrent.ThreadPoolExecutor$Worker@26434ff9[State = -1, empty queue]] (Suspended (breakpoint at line 210 in ActiveMQConnection$1))	
+			ActiveMQConnection$1.newThread(Runnable) line: 210	
+			ThreadPoolExecutor$Worker.<init>(ThreadPoolExecutor, Runnable) line: 610	
+			ThreadPoolExecutor.addWorker(Runnable, boolean) line: 924	
+			ThreadPoolExecutor.execute(Runnable) line: 1360	
+			ActiveMQConnection.onException(IOException) line: 1822	
+			ResponseCorrelator(TransportFilter).onException(IOException) line: 99	
+			ResponseCorrelator.onException(IOException) line: 126	
+			MutexTransport(TransportFilter).onException(IOException) line: 99	
+			WireFormatNegotiator(TransportFilter).onException(IOException) line: 99	
+			WireFormatNegotiator.onException(IOException) line: 160	
+			InactivityMonitor.onException(IOException) line: 254	
+			InactivityMonitor$4.run() line: 174	
+			ThreadPoolExecutor.runWorker(ThreadPoolExecutor$Worker) line: 1145	
+			ThreadPoolExecutor$Worker.run() line: 615	
+			Thread.run() line: 745	
+		Daemon Thread [ActiveMQ Scheduler] (Running)	
+	/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/bin/java (May 18, 2017, 2:21:41 PM)	
+
+
+/ Einde Intermezzo
+
+        if (connection.isStarted()) {
+            start();
+/s
+ActiveMQSession.start() line: 1631	
+        started.set(true);
+        for (Iterator<ActiveMQMessageConsumer> iter = consumers.iterator(); iter.hasNext();) {
+/ geen	,
+        executor.start();
+/s
+ActiveMQSessionExecutor.start() line: 138	
+        if (!messageQueue.isRunning()) {
+            messageQueue.start();
+/s
+MessageDispatchChannel.start() line: 107	
+        synchronized (mutex) {
+            running = true;
+            mutex.notifyAll();	/ TODO
+        }
+/t
+Producer.<init>() line: 33	
+        producer = session.createProducer(null);
+/s
+ActiveMQSession.createProducer(Destination) line: 922	
+        if (destination instanceof CustomDestination) {
+/d
+        return new ActiveMQMessageProducer(this, getNextProducerId(), ActiveMQMessageTransformation.transformDestination(destination),timeSendOut);
+destination=null
+/s
+ActiveMQSession.getNextProducerId() line: 1670	
+        return new ProducerId(info.getSessionId(), producerIdGenerator.getNextSequenceId());
+/t
+/s
+ActiveMQMessageTransformation.transformDestination(Destination) line: 72	
+/ doet niets, want destination=null
+/t
+ActiveMQMessageProducer.<init>(ActiveMQSession, ProducerId, ActiveMQDestination, int) line: 83	
+/=
+    protected ActiveMQMessageProducer(ActiveMQSession session, ProducerId producerId, ActiveMQDestination destination, int sendTimeout) throws JMSException {
+session	ActiveMQSession  (id=53)	/ ActiveMQSession {id=ID:localhost.localdomain-45529-1495117657105-0:0:1,started=true}
+producerId	ProducerId  (id=87)		/ ID:localhost.localdomain-45529-1495117657105-0:0:1:1
+destination	null	
+
+        super(session);
+        this.info = new ProducerInfo(producerId);
+        this.info.setWindowSize(session.connection.getProducerWindowSize());
+/t
+Producer.<init>() line: 34	
+        producer = session.createProducer(null);
+/d
+/ we zien nog geen queue in http://localhost:8161/admin/queues.jsp	,. 
+/t
+Producer.main(String[]) line: 44	
+    	Producer producer = new Producer();
+        while (total < 1000) {
+            for (int i = 0; i < count; i++) {
+                producer.sendMessage();
+/s
+Producer.sendMessage() line: 69	
+        String job = jobs[idx];	/ "delete"
+        Destination destination = session.createQueue("JOBS." + job);
+        Message message = session.createObjectMessage(id++);
+/s
+ActiveMQSession.createObjectMessage(Serializable) line: 376	
+        ActiveMQObjectMessage message = new ActiveMQObjectMessage();
+        configureMessage(message);	/ sets message.connection	,
+        message.setObject(object);
+
+/ Intermezzo
+
+public class ActiveMQObjectMessage extends ActiveMQMessage implements ObjectMessage {
+    protected transient Serializable object;
+
+/ Einde Intermezzo
+
+/s
+ActiveMQObjectMessage.setObject(Serializable) line: 152	
+        this.object = newObject;	/ Integer 10000
+        setContent(null);
+/t
+        ActiveMQConnection connection = getConnection();
+        if (connection == null || !connection.isObjectMessageSerializationDefered()) {
+/j
+            storeContent();
+/s
+ActiveMQObjectMessage.storeContent() line: 86	
+        ByteSequence bodyAsBytes = getContent();
+null
+        if (bodyAsBytes == null && object != null) {
+/j
+            try {
+                ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+                OutputStream os = bytesOut;
+                ActiveMQConnection connection = getConnection();
+                if (connection != null && connection.isUseCompression()) {
+/n
+                    compressed = true;
+/n
+                    os = new DeflaterOutputStream(os);
+/n
+                }
+                DataOutputStream dataOut = new DataOutputStream(os);
+                ObjectOutputStream objOut = new ObjectOutputStream(dataOut);
+                objOut.writeObject(object);
+                objOut.flush();
+                objOut.reset();
+                objOut.close();
+                setContent(bytesOut.toByteSequence());
+this	ActiveMQObjectMessage  (id=110)	
+	object	Integer  (id=111)	 10000
+	content	ByteSequence  (id=173)	
+		data	(id=163)	
+/t
+Producer.sendMessage() line: 70	
+        Message message = session.createObjectMessage(id++);
+/d
+        System.out.println("Sending: id: " + ((ObjectMessage)message).getObject() + " on queue: " + destination);
+        producer.send(destination, message);
+/s
+ActiveMQMessageProducer(ActiveMQMessageProducerSupport).send(Destination, Message) line: 300	
+        this.send(destination,
+                  message,
+                  this.defaultDeliveryMode,
+                  this.defaultPriority,
+                  this.defaultTimeToLive);
+this	ActiveMQMessageProducer  (id=57)	
+destination	ActiveMQQueue  (id=61)			queue://JOBS.delete
+message	ActiveMQObjectMessage  (id=79)	
+	content	ByteSequence  (id=114)	
+	object	Integer  (id=128)	
+/s
+ActiveMQMessageProducer.send(Destination, Message, int, int, long) line: 196	
+        if (destination == info.getDestination()) {
+/n
+this	ActiveMQMessageProducer  (id=57)	
+	info	ProducerInfo  (id=248)	
+		destination	null	
+        } else if (info.getDestination() == null) {
+            dest = ActiveMQDestination.transform(destination);
+
+        this.session.send(this, dest, message, deliveryMode, priority, timeToLive, producerWindow,sendTimeout);
+/s
+ActiveMQSession.send(ActiveMQMessageProducer, ActiveMQDestination, Message, int, int, long, MemoryUsage, int) line: 1688	
+        synchronized (sendMutex) {
+            // tell the Broker we are about to start a new transaction
+            doStartTransaction();
+/s
+ActiveMQSession.doStartTransaction() line: 1767	
+        if (getTransacted() && !transactionContext.isInXATransaction()) {
+/s
+ActiveMQSession.getTransacted() line: 518	
+        return isTransacted();
+/s
+ActiveMQSession.isTransacted() line: 1787	
+        return this.acknowledgementMode == Session.SESSION_TRANSACTED || (transactionContext.isInXATransaction());
+/n
+this	ActiveMQSession  (id=54)	
+	acknowledgementMode	1	
+
+/ Intermezzo
+
+public interface Session extends Runnable {
+    static final int AUTO_ACKNOWLEDGE = 1;
+    static final int CLIENT_ACKNOWLEDGE = 2;
+    static final int DUPS_OK_ACKNOWLEDGE = 3;
+    static final int SESSION_TRANSACTED = 0;
+
+/ Einde Intermezzo
+
+/t
+ActiveMQSession.doStartTransaction() line: 1770	
+       if (getTransacted() && !transactionContext.isInXATransaction()) {
+/n
+            transactionContext.begin();
+/n
+/ we hebben autocommit	,
+/t
+ActiveMQSession.send(ActiveMQMessageProducer, ActiveMQDestination, Message, int, int, long, MemoryUsage, int) line: 1695	
+            // tell the Broker we are about to start a new transaction
+            doStartTransaction();
+/d
+            TransactionId txid = transactionContext.getTransactionId();
+null
+            long sequenceNumber = producer.getMessageSequence();
+/s
+ActiveMQMessageProducer.getMessageSequence() line: 259	
+        return messageSequence.incrementAndGet();	/ was 0	, nu 1	,
+/t
+ActiveMQSession.send(ActiveMQMessageProducer, ActiveMQDestination, Message, int, int, long, MemoryUsage, int) line: 1699	
+            long sequenceNumber = producer.getMessageSequence();
+/d
+1
+            //Set the "JMS" header fields on the orriginal message, see 1.1 spec section 3.4.11
+            message.setJMSDestination(destination);	 / queue://JOBS.delete
+            message.setJMSDeliveryMode(deliveryMode);	/ 2=DeliveryMode.PERSISTENT
+
+            if (!producer.getDisableMessageTimestamp()) {
+                long timeStamp = System.currentTimeMillis();
+                message.setJMSTimestamp(timeStamp);
+                if (timeToLive > 0) {
+/n
+            message.setJMSExpiration(expiration);	/ 0
+            message.setJMSPriority(priority);	/ 4
+            message.setJMSRedelivered(false);
+
+/ Intermezzo
+
+public interface Message {
+
+    static final int DEFAULT_DELIVERY_MODE = DeliveryMode.PERSISTENT;	/ 2
+    static final int DEFAULT_PRIORITY = 4;
+    static final long DEFAULT_TIME_TO_LIVE = 0;
+
+/ Einde Intermezzo
+
+           // transform to our own message format here
+            ActiveMQMessage msg = ActiveMQMessageTransformation.transformMessage(message, connection);
+
+            // Set the message id.
+            if (msg == message) {
+                msg.setMessageId(new MessageId(producer.getProducerInfo().getProducerId(), sequenceNumber));
+producer	ActiveMQMessageProducer  (id=57)	
+	info	ProducerInfo  (id=248)	
+		producerId	ProducerId  (id=263)	
+			connectionId	"ID:localhost.localdomain-44509-1495174750275-0:0" (id=333)	
+			key	"ID:localhost.localdomain-44509-1495174750275-0:0:1:1" (id=325)						<-
+
+            //clear the brokerPath in case we are re-sending this message
+            msg.setBrokerPath(null);
+
+            msg.setTransactionId(txid);
+null
+            if (connection.isCopyMessageOnSend()) {
+                msg = (ActiveMQMessage)msg.copy();
+
+            msg.setConnection(connection);
+            msg.onSend();
+/s
+ActiveMQObjectMessage(ActiveMQMessage).onSend() line: 627	
+        setReadOnlyBody(true);
+        setReadOnlyProperties(true);
+/t
+ActiveMQSession.send(ActiveMQMessageProducer, ActiveMQDestination, Message, int, int, long, MemoryUsage, int) line: 1733	
+            msg.onSend();
+/d
+            msg.setProducerId(msg.getMessageId().getProducerId()); / ID:localhost.localdomain-44509-1495174750275-0:0:1:1
+
+            if (sendTimeout <= 0 && !msg.isResponseRequired() && !connection.isAlwaysSyncSend() && (!msg.isPersistent() || connection.isUseAsyncSend() || txid != null)) {
+/n
+            } else {
+                if (sendTimeout > 0) {
+/n
+                    this.connection.syncSendPacket(msg,sendTimeout);
+/n
+                }else {
+                    this.connection.syncSendPacket(msg);
+/s
+ActiveMQConnection.syncSendPacket(Command) line: 1257	
+/=
+    public Response syncSendPacket(Command command) throws JMSException {
+command	ActiveMQObjectMessage  (id=345)	
+
+            try {
+                Response response = (Response)this.transport.request(command);
+/s
+ResponseCorrelator.request(Object) line: 86	
+        FutureResponse response = asyncRequest(command, null);
+/s
+ResponseCorrelator.asyncRequest(Object, ResponseCallback) line: 64	
+        Command command = (Command) o;
+        command.setCommandId(sequenceGenerator.getNextSequenceId());
+/s
+IntSequenceGenerator.getNextSequenceId() line: 24	
+        return ++lastSequenceId;		/ 4 -> 5
+/t
+ResponseCorrelator.asyncRequest(Object, ResponseCallback) line: 64	
+        command.setCommandId(sequenceGenerator.getNextSequenceId());
+/d
+        command.setResponseRequired(true);
+
+        FutureResponse future = new FutureResponse(responseCallback);
+        IOException priorError = null;
+        synchronized (requestMap) {
+            priorError = this.error;
+            if (priorError == null) {
+/j
+                requestMap.put(new Integer(command.getCommandId()), future);
+
+        next.oneway(command);
+/s
+MutexTransport.oneway(Object) line: 39	
+        synchronized (writeMutex) {
+            next.oneway(command);
+/s
+WireFormatNegotiator.oneway(Object) line: 97	
+        try {
+            if (!readyCountDownLatch.await(negotiateTimeout, TimeUnit.MILLISECONDS)) {
+/n
+                throw new IOException("Wire format negotiation timeout: peer did not send his wire format.");
+/n
+        super.oneway(command);
+/s
+WireFormatNegotiator(TransportFilter).oneway(Object) line: 83	
+        next.oneway(command);
+/s
+InactivityMonitor.oneway(Object) line: 230	
+        synchronized(inSend) {
+            inSend.set(true);
+            try {
+
+                if( failed.get() ) {
+/n
+                    throw new InactivityIOException("Channel was inactive for too long: "+next.getRemoteAddress());
+/n
+                }
+                next.oneway(o);
+/s
+TcpTransport.oneway(Object) line: 166		 
+        checkStarted();
+        wireFormat.marshal(command, dataOut);
+/ we zien nog geen queues in http://localhost:8161/admin/queues.jsp
+        dataOut.flush();
+/ CLIENT GIVES COMMAND SO QUEUE IS CREATED 
+/ Nu is er een queue in  http://localhost:8161/admin/queues.jsp	, 
+
+/t
+ResponseCorrelator.request(Object) line: 86	
+        FutureResponse response = asyncRequest(command, null);
+/d
+
+/ Einde DEBUG ACTIVEMQ BOOK
+
+/ DEBUG ACTIVEMQ BOOK
+
+/ receive	, receiveNoWait	, receive(timeout)
+
+/ stack	,
+/s
+org.apache.activemq.book.ch2.jobs.Consumer at localhost:51822	
+Thread [main] (Suspended)	
+	ActiveMQMessageConsumer.receiveNoWait() line: 678	
+
+/cb
+	Consumer.main(String[]) line: 44	
+    	for (String job : consumer.jobs) {
+    		Destination destination = consumer.getSession().createQueue("JOBS." + job);
+    		MessageConsumer messageConsumer = consumer.getSession().createConsumer(destination);
+    		while(true){
+    			Message message=messageConsumer.receiveNoWait();
+
+
+/ Einde DEBUG ACTIVEMQ BOOK
+
+/ SEND NAAR TBA
+
+/ eclipse-interfacing-testing
+/ ws workspace-activemq
+/ proj tbacommandline
+
+/ trusted types ,
+[java.lang, javax.security, java.util, org.apache.activemq, org.fusesource.hawtbuf, com.thoughtworks.xstream.mapper]
+/ onze Direction enum is geen trusted type	, 
+/ TODO
+
+/ in eclipse	, 
+maven clean
+export, General , archive file
+/ /tmp/tbacommandline.zip
+
+
+/ Einde SEND NAAR TBA
+
+/ WICKET 
+
+
+/ 13	. 
+
+/ eclipse-interfacing-testing
+/ ws workspace-activemq
+/ proj tbaweb
+
+$ vi pom.xml
+
+<project ...> 
+  <groupId>my.own.activemq</groupId>
+  <artifactId>tba</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>						<-
+
+/ Geef	, 
+http://localhost:9090/tba/vehicles/first
+
+/ Als we niet <packaging>	, dan wordt tba niet deployed	, hij verschijnt helemaal niet in tomcat	,
+
+/ 13	. 
+
+/ google: wicket html file not in deployment
+/ Lees	, 
+https://stackoverflow.com/questions/2689198/wicket-war-in-jetty-html-files-not-on-classpath
+
+/ Dit moeten we doen	, anders verschijnt VehiclesPage.html niet in de webapp/ in tomcat	,
+tba/WEB-INF/classes/tba/queue/web/VehiclesPage.html
+
+$ vi pom.xml
+
+	<build>
+		<resources>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**</include>
+				</includes>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
+		</resources>
+
+/ 13	. 
+
+$ vi web.xml
+
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+		 http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+
+  <filter>
+    <filter-name>TbaApplication</filter-name>
+    <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
+    <init-param>
+      <param-name>applicationClassName</param-name>
+      <param-value>tba.queue.web.TbaApplication</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>TbaApplication</filter-name>
+    <url-pattern>/vehicles/*</url-pattern>
+  </filter-mapping>
+  
+</web-app>
+
+$ vi TbaApplication.java
+
+public class TbaApplication extends WebApplication{
+	@Override
+	protected void init() {
+		mountPage("first", VehiclesPage.class);
+	}
+
+	@Override
+	public Class<? extends Page> getHomePage() {
+		return null;
+	} 
+}
+
+/ geef	, 
+http://localhost:9090/tba/vehicles/first
+
+/ 13	. 
+
+/ Lees	, 
+http://www.concretepage.com/java-ee/jsp-servlet/how-to-use-filter-in-servlet-3-with-webfilter-annotation
+
+/ Er is WicketFilter	, 
+/ Kunnen we web.xml vermijden waar we in XML WicketFilter  configure	?
+/ WH WicketFilter extend	, en @
+
+/ Lees	, 
+https://dzone.com/articles/tips-wicket-and-jee-6
+
+/ Als we zelf	, 
+public class TbaWicketFilter extends WicketFilter {
+}
+/ dan omdat WicketFilter extends javax.servlet.Filter	, moeten we 	,
+
+$ vi pom.xml
+
+	<dependency>
+	    <groupId>javax.servlet</groupId>
+	    <artifactId>javax.servlet-api</artifactId>
+	    <version>3.1.0</version>
+	</dependency>
+
+/ we hebben	, 
+$ vi TbaWicketFilter.java
+
+package tba.queue.web;
+
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.annotation.WebInitParam;
+
+import org.apache.wicket.protocol.http.WicketFilter;
+
+@WebFilter(value="/vehicles/*",initParams={@WebInitParam(name="applicationClassName",value="tba.queue.web.TbaApplication")})
+public class TbaWicketFilter extends WicketFilter {
+
+}
+/ en we hadden web.xml renamed	, 
+/ maar dan ERR dat hij toch web.xml nodig heeft	,
+
+/ 13	. 
+
+/ we zien AjaxFormSubmitBehavior	, 
+[eric@localhost wicket]$ find -path "./wicket-core/src/main/java/*" -type f | xargs grep AjaxFormSubmitBehavior
+./wicket-core/src/main/java/org/apache/wicket/ajax/markup/html/form/AjaxSubmitLink.java:import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
+./wicket-core/src/main/java/org/apache/wicket/ajax/markup/html/form/AjaxFallbackButton.java:		add(new AjaxFormSubmitBehavior(form, "click")
+./wicket-core/src/main/java/org/apache/wicket/ajax/markup/html/form/AjaxButton.java:		add(newAjaxFormSubmitBehavior("click"));
+./wicket-core/src/main/java/org/apache/wicket/util/tester/BaseWicketTester.java:		AjaxFormSubmitBehavior behavior)
+
+[eric@localhost wicket]$ find -path "./wicket-core/src/main/java/*" -type f | xargs grep AjaxFormComponentUpdatingBehavior
+./wicket-core/src/main/java/org/apache/wicket/markup/html/form/DropDownChoice.java:import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+./wicket-core/src/main/java/org/apache/wicket/ajax/markup/html/form/AjaxCheckBox.java:import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+./wicket-core/src/main/java/org/apache/wicket/ajax/markup/html/form/AjaxCheckBox.java:		add(new AjaxFormComponentUpdatingBehavior("click")
+./wicket-core/src/main/java/org/apache/wicket/ajax/form/OnChangeAjaxBehavior.java: * @see org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior#onUpdate(org.apache.wicket.ajax.AjaxRequestTarget)
+./wicket-core/src/main/java/org/apache/wicket/ajax/form/AjaxFormComponentUpdatingBehavior.java:public abstract class AjaxFormComponentUpdatingBehavior extends AjaxEventBehavior
+./wicket-core/src/main/java/org/apache/wicket/ajax/form/AjaxFormChoiceComponentUpdatingBehavior.java: * Use the normal {@link AjaxFormComponentUpdatingBehavior} for the normal single component fields
+./wicket-core/src/main/java/org/apache/wicket/ajax/form/AjaxFormChoiceComponentUpdatingBehavior.java:	AjaxFormComponentUpdatingBehavior
+
+/ 13	. 
+
+/ Geef	,
+http://localhost:9090/wicket-examples-step-by-step/repeater/links?5
+/ we zien een gewone link	, en een ajax link	, 
+
+/ Als we de gewone link click zien we in chrome's devtools 
+http://localhost:9090/wicket-examples-step-by-step/repeater/links?5-2.ILinkListener-normal				/ get
+http://localhost:9090/wicket-examples-step-by-step/repeater/links?5										/ response	, een hele page	, 
+
+
+/ als we de ajax link click 	, zien we alleen	 ,
+http://localhost:9090/wicket-examples-step-by-step/repeater/links?5-3.IBehaviorListener.0-ajax&_=1495534594996	/ get , en reponse	,
+/ hier zien we de response	, alleen de <span> 
+
+/ 13	. 
+
+http://localhost:9090/wicket-examples-step-by-step/repeater/frm?7
+
+/ we zien een form met een gewone button 	, en een ajax button	, 
+
+/ Fill in de 2 textfields: foo bar
+
+/ click gewone button	, 
+/ we zien net als bij de link	,
+http://localhost:9090/wicket-examples-step-by-step/repeater/frm?7-2.IFormSubmitListener-form			/ post
+http://localhost:9090/wicket-examples-step-by-step/repeater/frm?8										/ response	 , een hele page	,
+
+/ click ajax button	, 
+http://localhost:9090/wicket-examples-step-by-step/repeater/frm?8-3.IBehaviorListener.0-form-ajx	/ post	, ook response	,
+
+/ 13	. 
+
+public class DataTable
+	private class DefaultDataGridView extends DataGridView<T>
+		protected Item newCellItem(final String id, final int index, final IModel model)	 /= AbstractDataGridView.newCellItem + styling	, 
+		protected Item<T> newRowItem(final String id, final int index, final IModel<T> model)	/= AbstractDataGridView.netRowItem	,
+/e
+public class DataGridView<T> extends AbstractDataGridView<T>
+/e
+public abstract class AbstractDataGridView<T> extends DataViewBase<T>
+	protected final void populateItem(final Item<T> item)
+	{
+		RepeatingView cells = new RepeatingView(CELL_REPEATER_ID);
+		item.add(cells);
+
+		int populatorsNumber = populators.size();
+		for (int i = 0; i < populatorsNumber; i++)
+		{
+			ICellPopulator<T> populator = populators.get(i);
+			IModel<ICellPopulator<T>> populatorModel = new Model<>(populator);
+			Item<ICellPopulator<T>> cellItem = newCellItem(cells.newChildId(), i, populatorModel);
+			cells.add(cellItem);
+
+			populator.populateItem(cellItem, CELL_ITEM_ID, item.getModel());	/ See (*) onder	, 
+	}
+	protected Item<ICellPopulator<T>> newCellItem(final String id, final int index,
+	protected Item<T> newRowItem(final String id, final int index, final IModel<T> model)
+/e
+public abstract class DataViewBase<T> extends AbstractPageableView<T>
+	private final IDataProvider<T> dataProvider;
+	private static final class ModelIterator<T> implements Iterator<IModel<T>>
+	protected final Iterator<IModel<T>> getItemModels(long offset, long count)
+	{
+		return new ModelIterator<T>(internalGetDataProvider(), offset, count);
+
+/e
+public abstract class AbstractPageableView<T> extends RefreshingView<T> implements IPageableItems
+	protected Iterator<IModel<T>> getItemModels()
+/ calls	,
+	protected abstract Iterator<IModel<T>> getItemModels(long offset, long size);
+/e
+public abstract class RefreshingView<T> extends RepeatingView
+	protected final void onPopulate()
+		Iterator<IModel<T>> models = getItemModels();
+		Iterator<Item<T>> items = getItemReuseStrategy().getItems(newItemFactory(), models,
+			getItems());
+		removeAll();
+		addItems(items);
+	}
+	protected IItemFactory<T> newItemFactory()
+	{
+		return new IItemFactory<T>()
+		{
+			@Override
+			public Item<T> newItem(int index, IModel<T> model)
+			{
+				String id = RefreshingView.this.newChildId();
+				Item<T> item = RefreshingView.this.newItem(id, index, model);
+				RefreshingView.this.populateItem(item);
+				return item;
+			}
+		};
+	}
+	protected abstract Iterator<IModel<T>> getItemModels();										/ Item's Models iterator	,
+	protected abstract void populateItem(final Item<T> item);
+	protected Item<T> newItem(final String id, int index, final IModel<T> model)
+	{
+		return new Item<>(id, index, model);
+	}
+	protected void addItems(Iterator<Item<T>> items)
+	{
+		int index = 0;
+		while (items.hasNext())
+		{
+			Item<T> item = items.next();	 			/=  wordt hier beneden create	, door eerst het Model te nemen, en dan een Item met dat Model 
+																		/ te create	,	
+			item.setIndex(index);
+			add(item);
+			++index;
+		}
+	}
+	public IItemReuseStrategy getItemReuseStrategy()
+
+public class DefaultItemReuseStrategy implements IItemReuseStrategy
+@Override
+	public <T> Iterator<Item<T>> getItems(final IItemFactory<T> factory,						/ Items iterator	, 
+		final Iterator<IModel<T>> newModels, Iterator<Item<T>> existingItems)
+	{
+		return new Iterator<Item<T>>()
+		{
+			...
+			@Override
+			public Item<T> next()
+			{																			/////////////////////////////////////
+				IModel<T> model = newModels.next();										/ pakt eerst de Model	,
+				Item<T> item = factory.newItem(index, model);							/ en gaat dan de Item create	,
+				index++;
+				return item;
+			}
+
+/ 1313	. 
+
+/ Bij (*)
+
+public class DataGridPage_my1 extends BasePage
+{
+	// [ERICJ] PropertyColumns op een DataGridView alleen is zinloos, want de headers ( en dus sort) komen er niet, PropertyPopulator is genoeg
+
+	public DataGridPage_my1()
+	{
+		
+		List<ICellPopulator<Contact>>populators = new ArrayList<>();
+		populators.add(new PropertyPopulator<Contact>("id"));
+		populators.add(new PropertyPopulator<Contact>("firstName"));
+		populators.add(new PropertyPopulator<Contact>("lastName"));
+		populators.add(new PropertyPopulator<Contact>("homePhone"));
+		populators.add(new PropertyPopulator<Contact>("cellPhone"));
+		
+		IDataProvider<Contact>provider=new ContactDataProvider();
+		
+		add(new DataGridView<Contact>("view", populators, provider));
+		
+	}
+	
+	public DataGridPage_my1(String id,List<ICellPopulator<Contact>>populators,IDataProvider<Contact> provider){
+		add(new DataGridView<Contact>(id, populators, provider));
+		
+	}
+}
+public class ContactDataProvider implements IDataProvider<Contact>
+	@Override
+	public Iterator<Contact> iterator(long first, long count)
+	{
+		return getContactsDB().find(first, count, new SortParam<String>("firstName", true)) .iterator();
+	}
+
+	@Override
+	public long size()
+	{
+		return getContactsDB().getCount();
+	}
+
+	/**
+	 * wraps retrieved contact pojo with a wicket model
+	 * 
+	 * @see org.apache.wicket.markup.repeater.data.IDataProvider#model(java.lang.Object)
+	 */
+	@Override
+	public IModel<Contact> model(Contact object)
+	{
+		return new DetachableContactModel(object);
+	}
+
+/ PropertyPopulators -> cell items krijgen PropertyModel (op de row item's Model)
+
+/ stack
+/s
+	PropertyPopulator<T>.populateItem(Item<ICellPopulator<T>>, String, IModel<T>) line: 75	
+		cellItem.add(new Label(componentId, new PropertyModel<>(rowModel, property)));
+/cb
+	DataGridView<T>(AbstractDataGridView<T>).populateItem(Item<T>) line: 156	
+		RepeatingView cells = new RepeatingView(CELL_REPEATER_ID);
+		item.add(cells);
+
+		int populatorsNumber = populators.size();
+		for (int i = 0; i < populatorsNumber; i++)
+		{
+			ICellPopulator<T> populator = populators.get(i);
+			IModel<ICellPopulator<T>> populatorModel = new Model<>(populator);
+			Item<ICellPopulator<T>> cellItem = newCellItem(cells.newChildId(), i, populatorModel);
+			cells.add(cellItem);
+
+			populator.populateItem(cellItem, CELL_ITEM_ID, item.getModel());			<-
+/cb
+	RefreshingView$1.newItem(int, IModel<T>) line: 114	
+				String id = RefreshingView.this.newChildId();
+				Item<T> item = RefreshingView.this.newItem(id, index, model);
+				RefreshingView.this.populateItem(item);								<-
+				return item;
+/cb
+	DefaultItemReuseStrategy$1.next() line: 75	
+	DefaultItemReuseStrategy$1.next() line: 56	
+	DataGridView<T>(RefreshingView<T>).addItems(Iterator<Item<T>>) line: 189	
+	DataGridView<T>(RefreshingView<T>).onPopulate() line: 97	
+	DataGridView<T>(AbstractRepeater).onBeforeRender() line: 124	
+	DataGridView<T>(AbstractPageableView<T>).onBeforeRender() line: 115	
+	DataGridView<T>(Component).internalBeforeRender() line: 949	
+	DataGridView<T>(Component).beforeRender() line: 1017	
+	DataGridPage_my1(MarkupContainer).onBeforeRenderChildren() line: 1866	
+	DataGridPage_my1(Component).onBeforeRender() line: 3877	
+	DataGridPage_my1(Page).onBeforeRender() line: 801	
+	DataGridPage_my1(Component).internalBeforeRender() line: 949	
+	DataGridPage_my1(Component).beforeRender() line: 1017	
+	DataGridPage_my1(Component).internalPrepareForRender(boolean) line: 2215	
+	DataGridPage_my1(Page).internalPrepareForRender(boolean) line: 242	
+	DataGridPage_my1(Component).render() line: 2304	
+	DataGridPage_my1(Page).renderPage() line: 1018	
+	WebPageRenderer.renderPage(Url, RequestCycle) line: 124	
+	WebPageRenderer.respond(RequestCycle) line: 236	
+	RenderPageRequestHandler.respond(IRequestCycle) line: 175	
+	RequestCycle$HandlerExecutor.respond(IRequestHandler) line: 895	
+	RequestCycle$HandlerExecutor(RequestHandlerStack).execute(IRequestHandler) line: 64	
+	RequestCycle.execute(IRequestHandler) line: 265	
+	RequestCycle.processRequest() line: 222	
+	RequestCycle.processRequestAndDetach() line: 293	
+	WicketFilter.processRequestCycle(RequestCycle, WebResponse, HttpServletRequest, HttpServletResponse, FilterChain) line: 261	
+	WicketFilter.processRequest(ServletRequest, ServletResponse, FilterChain) line: 203	
+	WicketFilter.doFilter(ServletRequest, ServletResponse, FilterChain) line: 284	
+	ApplicationFilterChain.internalDoFilter(ServletRequest, ServletResponse) line: 239	
+	ApplicationFilterChain.doFilter(ServletRequest, ServletResponse) line: 206	
+	StandardWrapperValve.invoke(Request, Response) line: 217	
+	StandardContextValve.invoke(Request, Response) line: 106	
+	NonLoginAuthenticator(AuthenticatorBase).invoke(Request, Response) line: 502	
+	StandardHostValve.invoke(Request, Response) line: 142	
+	ErrorReportValve.invoke(Request, Response) line: 79	
+	AccessLogValve(AbstractAccessLogValve).invoke(Request, Response) line: 616	
+	StandardEngineValve.invoke(Request, Response) line: 88	
+	CoyoteAdapter.service(Request, Response) line: 518	
+	Http11NioProcessor(AbstractHttp11Processor<S>).process(SocketWrapper<S>) line: 1091	
+	Http11NioProtocol$Http11ConnectionHandler(AbstractProtocol$AbstractConnectionHandler<S,P>).process(SocketWrapper<S>, SocketStatus) line: 673	
+	NioEndpoint$SocketProcessor.doRun() line: 1500	
+	NioEndpoint$SocketProcessor.run() line: 1456	
+	ThreadPoolExecutor(ThreadPoolExecutor).runWorker(ThreadPoolExecutor$Worker) line: 1145	
+	ThreadPoolExecutor$Worker.run() line: 615	
+	TaskThread$WrappingRunnable.run() line: 61	
+	TaskThread(Thread).run() line: 745	
+
+
+
+
+/ 13	. 
+
+/ In tbaweb moet User uit tbacommandline UserPage worden	, 
+
+/ 13	. 
+
+/ Om NIET @Override op interface method error te krijgen	, 
+
+/ we moeten in eclipse	, 
+project, build path, configure build path, libraries
+Add library
+JRE system library
+check Execution environment	 	, en kies onder V
+JavaSE-1.7
+
+/ Er is ook maven-compiler-plugin	, moet ook 1.7	. 
+/ Moet dit ook voor eclipse	?
+/ TODO
+
+/ 13	. 
+
+/ ws workspace-wicket7_8
+/ proj wicket-examples-step-by-step
+/ prog DataTableFilterToolbarMy3bPage
+
+/ Kunnen we een link in een column set	?  
+/ in DataTableFilterToolbarMy3aPage staat er een panel in de column	, met daarop de link 	
+
+$ vi DataTable.html
+
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+<caption wicket:id="caption"></caption>
+<colgroup wicket:id="colGroup"></colgroup>
+<thead wicket:id="topToolbars">
+	<wicket:container wicket:id="toolbars"></wicket:container>
+</thead>
+<tfoot wicket:id="bottomToolbars">
+	<wicket:container wicket:id="toolbars"></wicket:container>
+</tfoot>
+<tbody wicket:id="body">
+	<tr wicket:id="rows">
+		<td wicket:id="cells">
+			<div wicket:id="cell">[cell]</div>			<- staat vast
+		</td>
+	</tr>
+</tbody>
+</wicket:panel>
+
+/ je kunt	, 
+
+public class DataTableFilterToolbarMy3bPage extends BaseMy3aPage
+{
+	public DataTableFilterToolbarMy3bPage()
+	{
+		List<IColumn<Contact, String>> columns = new ArrayList<>();
+		
+		columns.add(new AbstractColumn<Contact, String>(new Model<>("Actions"))
+		{
+			@Override
+			public void populateItem(Item<ICellPopulator<Contact>> cellItem, String componentId,
+				IModel<Contact> m)
+			{
+				
+				AjaxLink<Void>link=new AjaxLink<Void>(componentId) {
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+					}
+				};
+				cellItem.add(link);
+				
+			}
+		});
+/ OK	, maar het is geen link	, omdat het een div is	,
+/ TODO Kun je een behavior toevoegen? 
+
+/ of	, 
+			@Override
+			public void populateItem(Item<ICellPopulator<Contact>> cellItem, String componentId,
+				IModel<Contact> m)
+			{
+				
+				WebMarkupContainer container=new WebMarkupContainer(componentId);
+				cellItem.add(container);
+				
+				AjaxLink<Void>link=new AjaxLink<Void>(componentId) {
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						
+						
+					}
+				};
+				container.add(link);
+			}
+/ Maar nu missen we de markup  voor de link	, 
+/ We moeten dus een panel maken (of fragment TODO)
+/ TODO
+
+/ of we use DataTable niet	, en maken zelf een RefreshingView	,
+/ TODO
+
+/ proj tbaweb
+/ prog User3Page
+
+24-May-2017 08:54:16.389 INFO [ActiveMQ Transport: tcp://localhost/127.0.0.1:61616@50115] org.apache.catalina.loader.WebappClassLoaderBase.checkStateForResourceLoading Illegal access: this web application instance has been stopped already. Could not load [org.apache.activemq.command.MessageDispatch]. The following stack trace is thrown for debugging purposes as well as to attempt to terminate the thread which caused the illegal access.
+
+ java.lang.IllegalStateException: Illegal access: this web application instance has been stopped already. Could not load [org.apache.activemq.command.MessageDispatch]. The following stack trace is thrown for debugging purposes as well as to attempt to terminate the thread which caused the illegal access.
+	at org.apache.catalina.loader.WebappClassLoaderBase.checkStateForResourceLoading(WebappClassLoaderBase.java:1355)
+	at org.apache.catalina.loader.WebappClassLoaderBase.checkStateForClassLoading(WebappClassLoaderBase.java:1341)
+	at org.apache.catalina.loader.WebappClassLoaderBase.loadClass(WebappClassLoaderBase.java:1206)
+	at org.apache.catalina.loader.WebappClassLoaderBase.loadClass(WebappClassLoaderBase.java:1167)
+	at org.apache.activemq.openwire.v12.MessageDispatchMarshaller.createObject(MessageDispatchMarshaller.java:55)
+	at org.apache.activemq.openwire.OpenWireFormat.doUnmarshal(OpenWireFormat.java:361)
+	at org.apache.activemq.openwire.OpenWireFormat.unmarshal(OpenWireFormat.java:278)
+	at org.apache.activemq.transport.tcp.TcpTransport.readCommand(TcpTransport.java:240)
+	at org.apache.activemq.transport.tcp.TcpTransport.doRun(TcpTransport.java:232)
+	at org.apache.activemq.transport.tcp.TcpTransport.run(TcpTransport.java:215)
+	at java.lang.Thread.run(Thread.java:745)
+
+/ 7	. 
+
+/ tbaweb doet het	, 
+
+/ start tomcat	, 
+/ start activemq	,
+
+/ Ik zie in tomcat geef ERRs meer	, 
+/ bij tbaweb2 WH wel	,
+
+/*
+ * Klik een aantal keren de Create button (het is een link, want er wordt geen user data meegestuurd). 
+ * 
+ * Er verschijnen Vehicles, met hun positie, en links van elke vehicle verschijnen North, East, South, West buttons (dit zijn wel buttons, 
+ * in een form).
+ * 
+ * Klik op een van de buttons. 
+ * 
+ */
+
+/ geef	, 
+http://localhost:9090/tbaweb/user
+
+/ Als we 
+http://localhost:9090/tbaweb/user?0
+/ hebben met zeg 8 vehicles	, 
+/ en we geven opnieuw
+http://localhost:9090/tbaweb/user
+/ dan krijgen we 
+http://localhost:9090/tbaweb/user?1
+/ en deze heeft nog 0 vehicles	, 
+/ echt een andere page	,
+
+/ Einde WICKET 

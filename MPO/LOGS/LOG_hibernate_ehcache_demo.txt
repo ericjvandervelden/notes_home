@@ -1,0 +1,2491 @@
+
+/ 7	. 
+
+/ for H. collections are like entities	,
+/ an entity's entry in 1c has a persister 	, een collection's entry in 1c heeft ook loadedPersister (role), loadedKey keyOfOwner), en currentPersister	, currentKey	,
+/ als we new Address, en dus ook new PersistentSet	, dan is loadedPersister=null, loadedKey=null	, en currentPersister=Address.employees-perister	, currentKey=12l	, de keyOfOwner,	
+/als loaded- != current-	, dan -> CollectionRecreateAction	, deze calls,
+       public void afterAction(PersistentCollection collection) {
+                loadedKey = getCurrentKey();
+                setLoadedPersister( getCurrentPersister() );
+
+/ .get(address#12l) calls	,
+                this.loadedKey = loadedKey;
+                setLoadedPersister(loadedPersister);
+
+/ we shall also see	, when we change collections over 2 Address's	, 
+
+                        final boolean ownerChanged = loadedPersister != currentPersister
+                                        || !currentPersister.getKeyType().isEqual( entry.getLoadedKey(), entry.getCurrentKey(), factory );
+true
+/ the persisters (role) are equal	, but the key has changed	, 
+
+                                if ( currentPersister != null ) {
+/ JA
+                                        entry.setDorecreate( true );
+
+                                if ( loadedPersister != null ) {
+/ JA
+                                        entry.setDoremove( true );
+
+                                        if ( entry.isDorecreate() ) {
+/ JA
+                                                collection.forceInitialization();
+
+/ 7	. 
+
+/ EntityUpdateAction: 2c wipes out the current entity, sets new entity in it	,
+
+
+
+
+
+
+
+/ 7	.
+/  relational database
+/ . I have not used lazy=false, in second talk	,
+/ . I have Use join tables iso fk in entity table,
+/ . Ask me I you do not understand an H. exc	, or something else
+
+/ relation is math word for table: a ~ b if 3 | a-b	, you can create a table, which is symmetric, reflexive, transistive
+1 1
+1 4
+4 1
+4 4
+4 7
+7 4
+1 7
+7 1
+...
+
+/ 7	.
+
+/ in 1c inst=key, H props = value	,
+
+Appl obj - H state=1c	: getters/setters
+H state - db		: dehydrate/ hydrate
+H state - 2c		: disassemble/ assemble
+
+/ a set dehydrates to nothing , but disassembles to keyOfOwner (in the entity),
+
+/ 7	.
+
+/  could keep in db relations and entities separate	, queries are also clear: join entities and relations	,
+/ collection/fk = relation	,  also in 2c	, in 2c key:value, key contains keyOfOwner, entries in value are the items which are in relation with owner of the collection	., or fk in entity	,
+
+/ .save(entity with coll): getters -> H. props, -> 1c,  schedules entity insert action, coll recreate action	,
+
+/ .commit:
+/ entities insert action:  dehydrates H props , inserts the entity in db;  disassembles H props -> 2c after db commit	,
+/ entities update action:  2c entry rm , db update are before db commit, the new entry -> 2c after	, 
+/ colls recreate, update , remove action: rm 2c-entry, db insert, update, delete  are before db commit	, after db commit nothing
+/ coll iteration, size compute: initialize , -> 2c   (if lazy, if not lazy TODO)
+
+/ in our example entities -> 2c from app (afterInsert, afterUpdate)	, coll ->2c from db (putFromLoad)
+
+/ 7	. 
+
+/ The order of executions is
+	orphanRemovals
+	insertions
+	updates
+	collectionQueuedOps
+	collectionRemovals
+	collectionUpdates
+	collectionCreations
+	deletions
+	
+
+/ 7	.
+
+/ 1_N_ehcache
+
+/ fk	,
+
+/ Because of <set inverse=false><key ...><one-to-many class="Employee">  there will be a column address_ in the employee table	, 
+
+/ we want to impose a not-null constraint on the fk column	,
+
+/ Address	,
+ 	<set
+ 		name="employees"
+ 		inverse="false"
+ 	>
+ 		<cache usage="read-write"/>	
+ 		<key
+ 			column="address_"
+ 			not-null="true"
+ 			update="true"
+ 		/>
+ 		
+		<one-to-many class="Employee"/>
+ 	
+ 	</set>
+
+/ we see	,
+
+
+foo=> \d+ employee
+                                Table "public.employee"
+  Column  |          Type          | Modifiers | Storage  | Stats target | Description 
+----------+------------------------+-----------+----------+--------------+-------------
+ id_      | bigint                 | not null  | plain    |              | 
+ name_    | character varying(255) |           | extended |              | 
+ salary_  | double precision       |           | plain    |              | 
+ address_ | bigint                 | not null  | plain    |              | 
+Indexes:
+    "employee_pkey" PRIMARY KEY, btree (id_)
+Foreign-key constraints:
+    "fk_lcwyx1va36145pv0w7f8dxqc8" FOREIGN KEY (address_) REFERENCES address(id__)
+Has OIDs: no
+
+
+/ 13	. 
+/ first session	,
+
+
+			Address address=new Address(12l,"foostreet", "12 foo", "FooCity12");
+			Employee employee=new Employee(1l,"Foo1",1.00);
+			address.getEmployees().add(employee);
+			Employee employee2=new Employee(2l,"Foo2",2.00);
+			address.getEmployees().add(employee2);
+
+			session.save(address);
+			session.save(employee);
+			session.save(employee2);
+
+			tx.commit();
+
+/ 3 EntityInsertAction	: before db commit inserts in entity tables, after db commit -> 2c
+/ 1 CollectionRecreateAction: before db commit updates entity table (employee)	, after db commit NOTHING -> 2c	,
+
+/ .save(address) must be before .save(employee)	, because the fk is not-null	, 
+/ (anders null or transient in 1c)	,
+
+/ the last two are from the CollectionRecreateAction	, these are OK	,
+/ the inserts are from EntityInsertAction	, and sets address_ reduntantly	, only because of the constraint fk !=null, that's the reason this column is there	,
+
+/ we see	,
+
+Hibernate: insert into address (address_line1__, zipcode__, city_, id__) values (?, ?, ?, ?)
+HibernateLog --> 20:21:20 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [foostreet]
+HibernateLog --> 20:21:20 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [12 foo]
+HibernateLog --> 20:21:20 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [VARCHAR] - [FooCity12]
+HibernateLog --> 20:21:20 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [12]
+
+Hibernate: insert into employee (name_, salary_, address_, id_) values (?, ?, ?, ?)
+HibernateLog --> 20:21:20 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo1]
+HibernateLog --> 20:21:20 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [1.0]
+HibernateLog --> 20:21:20 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [12]
+HibernateLog --> 20:21:20 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [1]
+
+Hibernate: insert into employee (name_, salary_, address_, id_) values (?, ?, ?, ?)
+HibernateLog --> 20:21:20 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo2]
+HibernateLog --> 20:21:20 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [2.0]
+HibernateLog --> 20:21:20 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [12]
+HibernateLog --> 20:21:20 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [2]
+
+Hibernate: update employee set address_=? where id_=?
+HibernateLog --> 20:21:20 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 20:21:20 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [2]
+
+Hibernate: update employee set address_=? where id_=?
+HibernateLog --> 20:21:20 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 20:21:20 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [1]
+
+
+
+foo=> select*from address;
+ id__ | address_line1__ | zipcode__ |   city_   
+------+-----------------+-----------+-----------
+   12 | foostreet       | 12 foo    | FooCity12
+(1 row)
+
+foo=> select*from employee;
+ id_ | name_ | salary_ | address_ 
+-----+-------+---------+----------
+   2 | Foo2  |       2 |       12
+   1 | Foo1  |       1 |       12
+(2 rows)
+
+/ 13	.
+/ fourth session	.
+
+		  	
+		  	Employee employee4=new Employee(4l, "Foo4", 4.0);
+		  	address.getEmployees().add(employee4);
+		  	session.save(employee4);
+
+		  	employee2=(Employee)session.get(Employee.class, 2l);
+		  	address.getEmployees().remove(employee2);
+		  	 
+	        	tx.commit();
+
+/ 1 EntityInsertAction	, before db commit insert entity, after db commit -> 2c 
+/ 1 CollectionUpdateAction	,  before db commit rm coll from 2c, update entity table (fk), after db commit NO -> 2c
+
+/ we see	,
+
+Hibernate: insert into employee (name_, salary_, address_, id_) values (?, ?, ?, ?)
+HibernateLog --> 20:25:45 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo4]
+HibernateLog --> 20:25:45 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [4.0]
+HibernateLog --> 20:25:45 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [12]
+HibernateLog --> 20:25:45 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [4]
+
+Hibernate: update employee set address_=? where id_=?
+HibernateLog --> 20:25:45 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 20:25:45 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [4]
+
+foo=> select*from employee;
+ id_ | name_ | salary_ | address_ 
+-----+-------+---------+----------
+   2 | Foo2  |       2 |       12
+   1 | Foo1A |       1 |       12
+   4 | Foo4  |       4 |       12
+(3 rows)
+
+/ So the removal of employee#2 from the set is not done!
+
+/ if we want to make the relation bidr	, 
+
+/ Employee	,
+	<many-to-one 
+		name="address"
+		column="address_"
+		not-null="true"
+		insert="false"
+		update="false"
+	/>
+
+/ 77	.
+
+/ we remove the constraint	,
+
+/ Address
+ 	<set
+ 		name="employees"
+ 		inverse="false"
+ 	>
+ 		<cache usage="read-write"/>	
+ 		<key
+ 			column="address_"
+ 			not-null="false"
+ 			update="true"
+ 		/>
+ 		
+		<one-to-many class="Employee"/>
+ 	
+ 
+ 	</set>
+
+/ we see	,
+
+/ no constraint on fk column, no address_ in insert statement	, but is in schema, so null is insert	,  
+
+foo=> \d+ employee
+                                Table "public.employee"
+  Column  |          Type          | Modifiers | Storage  | Stats target | Description 
+----------+------------------------+-----------+----------+--------------+-------------
+ id_      | bigint                 | not null  | plain    |              | 
+ name_    | character varying(255) |           | extended |              | 
+ salary_  | double precision       |           | plain    |              | 
+ address_ | bigint                 | 	       | plain    |              | 
+Indexes:
+    "employee_pkey" PRIMARY KEY, btree (id_)
+Foreign-key constraints:
+    "fk_lcwyx1va36145pv0w7f8dxqc8" FOREIGN KEY (address_) REFERENCES address(id__)
+Has OIDs: no
+
+
+/ 13	. 
+/ first session	,
+
+			Address address=new Address(12l,"foostreet", "12 foo", "FooCity12");
+			Employee employee=new Employee(1l,"Foo1",1.00);
+			address.getEmployees().add(employee);
+			Employee employee2=new Employee(2l,"Foo2",2.00);
+			address.getEmployees().add(employee2);
+
+			session.save(address);
+			session.save(employee);
+			session.save(employee2);
+			tx.commit();
+
+
+/ .save(address) must be before .save(employee)	,
+/ TODO (anders null or transient in 1c)	,
+
+/ 3 EntityInsertAction	: before db commit inserts in entity tables, after db commit -> 2c
+/ 1 CollectionRecreateAction: before db commit updates entity table (fk in employee)	, after db commit NOTHING -> 2c	,
+
+
+/ we see	,
+
+Hibernate: insert into address (address_line1__, zipcode__, city_, id__) values (?, ?, ?, ?)
+HibernateLog --> 20:35:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [foostreet]
+HibernateLog --> 20:35:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [12 foo]
+HibernateLog --> 20:35:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [VARCHAR] - [FooCity12]
+HibernateLog --> 20:35:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [12]
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 20:35:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo1]
+HibernateLog --> 20:35:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [1.0]
+HibernateLog --> 20:35:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 20:35:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo2]
+HibernateLog --> 20:35:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [2.0]
+HibernateLog --> 20:35:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [2]
+
+Hibernate: update employee set address_=? where id_=?
+HibernateLog --> 20:35:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 20:35:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [2]
+
+Hibernate: update employee set address_=? where id_=?
+HibernateLog --> 20:35:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 20:35:24 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [1]
+
+
+/ the last two are from the CollectionRecreateAction	, these are OK	,
+/ in the inserts are from EntityInsertAction	, the column address_ is not there, but the column is there in the schema, so null is inserted and after that overwrite bij the collection recreate queries	, 
+
+
+foo=> select*from address;
+ id__ | address_line1__ | zipcode__ |   city_   
+------+-----------------+-----------+-----------
+   12 | foostreet       | 12 foo    | FooCity12
+(1 row)
+
+foo=> select*from employee;
+ id_ | name_ | salary_ | address_ 
+-----+-------+---------+----------
+   2 | Foo2  |       2 |       12
+   1 | Foo1  |       1 |       12
+(2 rows)
+
+/13	.
+/ fourth session	.
+
+		  	
+		  	Employee employee4=new Employee(4l, "Foo4", 4.0);
+		  	address.getEmployees().add(employee4);
+		  	session.save(employee4);
+
+		  	employee2=(Employee)session.get(Employee.class, 2l);
+		  	address.getEmployees().remove(employee2);
+		  	 
+	        	tx.commit();
+
+/ we see	,
+
+/ 1 EntityInsertAction	,
+/ 1 CollectionUpdateAction	,
+
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 20:38:55 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo4]
+HibernateLog --> 20:38:55 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [4.0]
+HibernateLog --> 20:38:55 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [4]
+
+Hibernate: update employee set address_=null where address_=? and id_=?
+HibernateLog --> 20:38:55 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 20:38:55 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [2]
+
+Hibernate: update employee set address_=? where id_=?
+HibernateLog --> 20:38:55 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 20:38:55 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [4]
+
+foo=> select*from employee;
+ id_ | name_ | salary_ | address_ 
+-----+-------+---------+----------
+   1 | Foo1A |       1 |       12
+   2 | Foo2  |       2 |         
+   4 | Foo4  |       4 |       12
+(3 rows)
+
+/ if we want to make the relation bidir	,
+
+/ Employee
+	<many-to-one 
+		name="address"
+		column="address_"
+		not-null="false"
+		insert="true"
+		update="true"
+	/>
+
+/ 7	.
+
+/ 1_N_bidir_ehcache
+
+/ 77	.
+
+/ Address	,
+ 	<set
+ 		name="employees"
+ 		inverse="false"
+ 	>
+ <!-- 		<cache usage="read-write"/>	
+  -->		
+ 		<key
+ 			column="address_"
+ 			not-null="true"
+ 			update="true"
+ 		/>
+ 		
+ 		<one-to-many class="Employee"/>
+ 		
+ 	</set>
+
+/ Employee
+	<many-to-one 
+		name="address"
+		column="address_"
+		not-null="true"
+		insert="false"
+		update="false"
+		lazy="proxy"
+	/>
+
+/ if we want the fk column not-null	, we have to <many-to-one not-null="true">	, but then we have to do <set ...><key not-null="true"> because a value has to be sent over	,
+/ we have to <many-to-one insert="false"> because H has to skip the Address prop in the Employee	, H has to take the value from the other side	, the keyOfOwner of the collection	,
+/ also <many-to-one update="false">	, probably to prevent this side to alter the value	, the keyOfOwner	, 
+
+/ we see	,
+Hibernate: insert into address (address_line1__, zipcode__, city_, id__) values (?, ?, ?, ?)
+HibernateLog --> 08:28:13 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [foostreet]
+HibernateLog --> 08:28:13 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [12 foo]
+HibernateLog --> 08:28:13 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [VARCHAR] - [FooCity12]
+HibernateLog --> 08:28:13 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [12]
+Hiberna
+Hibernate: insert into employee (name_, salary_, address_, id_) values (?, ?, ?, ?)
+HibernateLog --> 08:28:13 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo1]
+HibernateLog --> 08:28:13 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [1.0]
+HibernateLog --> 08:28:13 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [12]
+HibernateLog --> 08:28:13 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [1]
+Hibern
+Hibernate: insert into employee (name_, salary_, address_, id_) values (?, ?, ?, ?)
+HibernateLog --> 08:28:13 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo2]
+HibernateLog --> 08:28:13 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [2.0]
+HibernateLog --> 08:28:13 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [12]
+HibernateLog --> 08:28:13 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [2]
+Hiber
+Hibernate: update employee set address_=? where id_=?
+HibernateLog --> 08:28:13 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 08:28:13 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [1]
+Hibe
+Hibernate: update employee set address_=? where id_=?
+HibernateLog --> 08:28:13 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 08:28:13 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [2]
+
+/ 77	.
+
+/ Do not send the collection's keyOfOwner over	,  
+
+/ Address	,
+ 	<set
+ 		name="employees"
+ 		inverse="false"
+ 	>
+ <!-- 		<cache usage="read-write"/>	
+  -->		
+ 		<key
+ 			column="address_"
+ 			not-null="false"		/ !
+ 			update="true"
+ 		/>
+ 		
+ 		<one-to-many class="Employee"/>
+ 		
+ 	</set>
+
+/ Employee	,
+	<many-to-one 
+		name="address"
+		column="address_"
+		not-null="true/false"
+		insert="true/false"	
+		update="true/false"
+		lazy="proxy"
+	/>
+
+/ not-null="true" -> insert="true"	, because the address_ value comes from this side	,
+/ not-null="false"	, insert ="true/false", because the collection actions always gives the value later	,
+
+/ if <many-to-one insert="true" we see the address_ column in the inserts	,
+
+/  777	,
+	<many-to-one 
+		name="address"
+		column="address_"
+		not-null="true"
+		insert="true"	
+		update="true"
+		lazy="proxy"
+	/>
+
+Hibernate: insert into address (address_line1__, zipcode__, city_, id__) values (?, ?, ?, ?)
+HibernateLog --> 08:42:01 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [foostreet]
+HibernateLog --> 08:42:01 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [12 foo]
+HibernateLog --> 08:42:01 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [VARCHAR] - [FooCity12]
+HibernateLog --> 08:42:01 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [12]
+
+Hibernate: insert into employee (name_, salary_, address_, id_) values (?, ?, ?, ?)
+HibernateLog --> 08:42:01 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo1]
+HibernateLog --> 08:42:01 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [1.0]
+HibernateLog --> 08:42:01 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [12]
+HibernateLog --> 08:42:01 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [1]
+
+Hibernate: insert into employee (name_, salary_, address_, id_) values (?, ?, ?, ?)
+HibernateLog --> 08:42:01 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo2]
+HibernateLog --> 08:42:01 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [2.0]
+HibernateLog --> 08:42:01 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [12]
+HibernateLog --> 08:42:01 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [2]
+
+Hibernate: update employee set address_=? where id_=?
+HibernateLog --> 08:42:01 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 08:42:01 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [2]
+
+Hibernate: update employee set address_=? where id_=?
+HibernateLog --> 08:42:01 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 08:42:01 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [1]
+
+/ 777	.
+	<many-to-one 
+		name="address"
+		column="address_"
+		not-null="false"
+		insert="false"	
+		update="false"
+		lazy="proxy"
+	/>
+
+Hibernate: insert into address (address_line1__, zipcode__, city_, id__) values (?, ?, ?, ?)
+HibernateLog --> 09:10:48 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [foostreet]
+HibernateLog --> 09:10:48 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [12 foo]
+HibernateLog --> 09:10:48 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [VARCHAR] - [FooCity12]
+HibernateLog --> 09:10:48 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [12]
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 09:10:48 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo1]
+HibernateLog --> 09:10:48 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [1.0]
+HibernateLog --> 09:10:48 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 09:10:48 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo2]
+HibernateLog --> 09:10:48 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [2.0]
+HibernateLog --> 09:10:48 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [2]
+
+Hibernate: update employee set address_=? where id_=?
+HibernateLog --> 09:10:48 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 09:10:48 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [2]
+
+Hibernate: update employee set address_=? where id_=?
+HibernateLog --> 09:10:48 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 09:10:48 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [1]
+
+/ we do not see address_ in the insert queries	, so first null is inserted	, but then the coll action will update the keyOfOwner,
+
+
+/ 7	.
+
+/ 1_N_ehcache_join
+
+/ Address	,
+  	<set
+ 		name="employees"
+ 		inverse="false"
+ 	>
+ 		<cache usage="read-write"/>	
+ 		<key
+ 			column="address_"
+ 			not-null="true/false"
+ 			update="true"
+ 		/>
+ 		<many-to-many 
+ 			column="employee_"
+ 			unique="true"	
+ 			class="Employee"
+ 		/>	
+ 
+ 	</set>
+
+/ we see	,
+
+foo=> \d+ employee
+                               Table "public.employee"
+ Column  |          Type          | Modifiers | Storage  | Stats target | Description 
+---------+------------------------+-----------+----------+--------------+-------------
+ id_     | bigint                 | not null  | plain    |              | 
+ name_   | character varying(255) |           | extended |              | 
+ salary_ | double precision       |           | plain    |              | 
+Indexes:
+    "employee_pkey" PRIMARY KEY, btree (id_)
+Referenced by:
+    TABLE "address_employees" CONSTRAINT "fk_pfjhypr3roqawxjipeash0vtn" FOREIGN KEY (employee_) REFERENCES employee(id_)
+Has OIDs: no
+
+foo=> \d+ address_employees
+                   Table "public.address_employees"
+  Column   |  Type  | Modifiers | Storage | Stats target | Description 
+-----------+--------+-----------+---------+--------------+-------------
+ address_  | bigint | not null  | plain   |              | 
+ employee_ | bigint | not null  | plain   |              | 
+Indexes:
+    "address_employees_pkey" PRIMARY KEY, btree (address_, employee_)
+    "uk_pfjhypr3roqawxjipeash0vtn" UNIQUE CONSTRAINT, btree (employee_)
+Foreign-key constraints:
+    "fk_7uqxbshgfhi9okm1yot3bqsbs" FOREIGN KEY (address_) REFERENCES address(id__)
+    "fk_pfjhypr3roqawxjipeash0vtn" FOREIGN KEY (employee_) REFERENCES employee(id_)
+Has OIDs: no
+
+/ For our app it does not matter	,
+
+
+/ 13
+/ first session	,
+
+			Address address=new Address(12l,"foostreet", "12 foo", "FooCity12");
+
+			Employee employee=new Employee(1l,"Foo1",1.00);
+			address.getEmployees().add(employee);
+
+			Employee employee2=new Employee(2l,"Foo2",2.00);
+			address.getEmployees().add(employee2);
+
+			session.save(employee);
+			session.save(address);
+			session.save(employee2);
+			
+			tx.commit();
+
+
+/ 3 entityinsertaction:  before db commit inserts in entity table, after db commit insert in 2c
+/ 1 collectionrecreateaction ,  before db commit inserts in relation table, no -> 2c
+
+/ we will see	,
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 10:31:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo1]
+HibernateLog --> 10:31:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [1.0]
+HibernateLog --> 10:31:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+
+Hibernate: insert into address (address_line1__, zipcode__, city_, id__) values (?, ?, ?, ?)
+HibernateLog --> 10:31:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [foostreet]
+HibernateLog --> 10:31:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [12 foo]
+HibernateLog --> 10:31:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [VARCHAR] - [FooCity12]
+HibernateLog --> 10:31:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [12]
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 10:31:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo2]
+HibernateLog --> 10:31:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [2.0]
+HibernateLog --> 10:31:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [2]
+
+Hibernate: insert into address_employees (address_, employee_) values (?, ?)
+HibernateLog --> 10:31:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 10:31:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [2]
+
+Hibernate: insert into address_employees (address_, employee_) values (?, ?)
+HibernateLog --> 10:31:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 10:31:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [1]
+
+
+foo=> select*from address;
+ id__ | address_line1__ | zipcode__ |   city_   
+------+-----------------+-----------+-----------
+   12 | foostreet       | 12 foo    | FooCity12
+(1 row)
+
+foo=> select*from employee;
+ id_ | name_ | salary_ 
+-----+-------+---------
+   1 | Foo1  |       1
+   2 | Foo2  |       2
+(2 rows)
+
+foo=> select*from address_employees;
+ address_ | employee_ 
+----------+-----------
+       12 |         1
+       12 |         2
+(2 rows)
+/ this says: employee#1l/2l are in the collection Address.employees	,
+
+/ .save creates 1c-entry, schedules entityinsertaction: persist insert, 2c-insert	,
+/ .commit 
+	flush: schedules entityupdateaction	(not now): rm 2c-entry	, persist update, 2c-update	,
+		schedule collectionrecreateaction: persist update fk, NO 2c-inserts	,	
+
+
+/ we save entities, but the collection in address gives an entry in 1c,	like an entity gives	, equal for 1c,
+
+/ .save(employee)
+		Object[] values = persister.getPropertyValuesToInsert( entity, getMergeMap( anything ), source );
+/ -> 1c
+/ schedules EnttiyInsertAction
+
+/ .save(address)
+		Object[] values = persister.getPropertyValuesToInsert( entity, getMergeMap( anything ), source );
+/ -> 1c
+/ schedules EnttiyInsertAction
+
+/ . commit
+
+/ flush
+/ no schedule EntityUpdateAction	,
+/ schedules CollectionRecreateAction	, want	,
+FlushVisitor.processCollection(Object, CollectionType) line: 59	
+			Collections.processReachableCollection( coll, type, owner, getSession() );
+/s
+		final CollectionEntry ce = session.getPersistenceContext().getCollectionEntry( collection );
+		ce.setReached( true );
+		final SessionFactoryImplementor factory = session.getFactory();
+		final CollectionPersister persister = factory.getCollectionPersister( type.getRole() );
+		ce.setCurrentPersister( persister );
+		ce.setCurrentKey( type.getKeyOfOwner( entity, session ) );
+		prepareCollectionForUpdate( collection, ce, factory );
+/s
+		final CollectionPersister loadedPersister = entry.getLoadedPersister();
+		final CollectionPersister currentPersister = entry.getCurrentPersister();
+		if ( loadedPersister != null || currentPersister != null ) {
+			final boolean ownerChanged = loadedPersister != currentPersister
+					|| !currentPersister.getKeyType().isEqual( entry.getLoadedKey(), entry.getCurrentKey(), factory );
+			if(ownerChanged!=null){
+				if ( currentPersister != null ) {
+					entry.setDorecreate( true );
+
+
+ 
+
+/ handles EntityInsertAction  employee	,
+
+			persister.insert( id, getState(), instance, session );
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 08:11:44 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo1]
+HibernateLog --> 08:11:44 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [1.0]
+HibernateLog --> 08:11:44 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+
+			final CacheEntry ce = persister.buildCacheEntry(
+					instance,
+					getState(),
+					version,
+					session
+			);
+ce	StandardCacheEntryImpl  (id=3247)	
+	disassembledState	Serializable[2]  (id=3251)	
+		[0]	"Foo1" (id=3185)	
+		[1]	Double  (id=3187)	
+
+					afterTransactionProcesses.register( e.getAfterTransactionCompletionProcess() );
+/ schedules 2c-insert	,
+
+/ handles EntityInsertAction address	,
+			persister.insert( id, getState(), instance, session );
+
+Hibernate: insert into address (address_line1__, zipcode__, city_, id__) values (?, ?, ?, ?)
+HibernateLog --> 08:15:47 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [foostreet]
+HibernateLog --> 08:15:47 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [12 foo]
+HibernateLog --> 08:15:47 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [VARCHAR] - [FooCity12]
+HibernateLog --> 08:15:47 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [12]		/ keyOfOwner	,
+
+			final CacheEntry ce = persister.buildCacheEntry(
+					instance,
+					getState(),
+					version,
+					session
+			);
+persister	SingleTableEntityPersister  (id=3152)	
+ce	StandardCacheEntryImpl  (id=3282)	
+	disassembledState	Serializable[4]  (id=3283)	
+		[0]	"foostreet" (id=3167)	
+		[1]	"12 foo" (id=3168)	
+		[2]	"FooCity12" (id=3169)	
+		[3]	Long  (id=3166)			12			/ keyOfOwner	,	
+
+					afterTransactionProcesses.register( e.getAfterTransactionCompletionProcess() );
+/ schedules 2c insert	,
+
+/ handles CollectionRecreateAction
+
+		if ( !isInverse && isRowInsertEnabled() ) {
+/= keyIsUpdateable
+				Iterator entries = collection.entries( this );
+				if ( entries.hasNext() ) {
+							String sql = getSQLInsertRowString();
+								st = session.getTransactionCoordinator()
+										.getJdbcCoordinator()
+										.getBatch( recreateBatchKey )
+										.getBatchStatement( sql, callable );
+								int loc = writeKey( st, id, offset, session );
+								loc = writeElement( st, collection.getElement( entry ), loc, session );
+
+Hibernate: insert into address_employees (address_, employee_) values (?, ?)
+HibernateLog --> 08:29:33 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 08:30:09 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [1]
+
+Hibernate: insert into address_employees (address_, employee_) values (?, ?)
+HibernateLog --> 08:29:33 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 08:30:09 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [1]
+
+/ schedules -> 2c
+					afterTransactionProcesses.register( e.getAfterTransactionCompletionProcess() );
+
+/ = cleanup	, dus coll [1l,2l] -> NIET 2c	, 
+
+/ db commit	,
+			doCommit();
+
+/ -> 2c
+			afterTransactionCompletion( Status.STATUS_COMMITTED );
+
+		public void afterTransactionCompletion(boolean success) {
+			while ( !processes.isEmpty() ) {
+					processes.poll().doAfterTransactionCompletion( success, session );
+
+[EntityInsertAction[my.test.own.hibernate_xml_1_N_ehcache.Employee#1], 
+EntityInsertAction[my.test.own.hibernate_xml_1_N_ehcache.Address#12], 
+EntityInsertAction[my.test.own.hibernate_xml_1_N_ehcache.Employee#2], 
+org.hibernate.action.internal.CollectionAction$CacheCleanupProcess@41577f32]
+
+/ we see that the entities go into 2c, but not the collection	,
+/ Why not the collection? Probably because in the db there could be more employees with fk 12	, this .commit can now know that	,
+
+/s
+EntityInsertAction.doAfterTransactionCompletion(boolean, SessionImplementor) line: 228	
+			final boolean put = cacheAfterInsert( persister, ck );
+/s
+ReadWriteEhcacheEntityRegionAccessStrategy.afterInsert(Object, Object, Object) line: 75	
+			final Lockable item = (Lockable) region().get( key );
+			if ( item == null ) {
+				region().put( key, new Item( value, version, region().nextTimestamp() ) );
+
+/ later we will see .afterUpdate	,
+
+/ 13
+/ second session	,
+
+	        employee = (Employee) session.get(Employee.class, 1l); 	// for .iterator	,
+	        address=(Address)session.get(Address.class, 12l);
+	        
+	        Set<Employee>employees=address.getEmployees();
+	        Iterator<Employee>iterator=employees.iterator();
+
+		tx.commit();
+
+/ .iterator:	coll -> 2c
+
+
+/ no actions !	
+
+/ we will see	,
+
+select employees0_.address_ as address_1_0_0_, employees0_.employee_ as employee2_1_0_, 
+	employee1_.id_ as id_1_2_1_, employee1_.name_ as name_2_2_1_, employee1_.salary_ as salary_3_2_1_ 
+from address_employees employees0_ 
+inner join employee employee1_ on employees0_.employee_=employee1_.id_ 
+where employees0_.address_=?
+HibernateLog --> 10:33:21 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 10:33:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id_1_2_1_] : [BIGINT]) - [1]
+HibernateLog --> 10:33:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([address_1_0_0_] : [BIGINT]) - [12]
+HibernateLog --> 10:33:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([employee2_1_0_] : [BIGINT]) - [1]
+HibernateLog --> 10:33:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id_1_2_1_] : [BIGINT]) - [2]
+HibernateLog --> 10:33:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name_2_2_1_] : [VARCHAR]) - [Foo2]
+HibernateLog --> 10:33:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([salary_3_2_1_] : [DOUBLE]) - [2.0]
+HibernateLog --> 10:33:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([address_1_0_0_] : [BIGINT]) - [12]
+HibernateLog --> 10:33:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([employee2_1_0_] : [BIGINT]) - [2]
+
+
+/ H. does a "collection query", WH to see which Employees are in the  coll	, if entity in 1c, ready, else  new Employee	, hydrates H props from resultset , getters put H props in entity	, puts entity: H props in 1c	,
+/ H. does not consult 2c	,
+
+/ H. does a "collection query", WH to see which Employees are in the  coll	, 
+/ Because employee#1 is in 1c, H. will not hydrate the resultSet , because H. already assembled in .get from 2c   
+/ Hij checks niet 2c    , H does that when the coll is in 2c, // want assemble is even veel werk als hydrate   ,
+/ If an Employee is not in 1c, H. does not checks out 2c    , because assemble the 2c-entry is as costly as hydrate the resultset   ,
+/ .get: 2c -> 1c (our case)
+/ .iterator: "collection query" in first instance to get id's , puts Employee's in 1c if not already	, first hydrates them, not from 2c , because assemble as costly as hydrate	, and puts id's -> 2c 
+/ .get(address) calls new PersistentSet	, en sets in it's 1c-entry the role als Address.employees (loadedPersister) and set it's keyOfOwner (loadedKey)	, (afterAction in Collection...Action doet dat ook)	, 
+/ if the coll is in 2c, the coll query is not done, and H assembles the H props	.
+
+
+	.get(employee#1l)		/ to show difference when loading collection	, 
+
+	.get(address#12)	 -> new Address with primitive properties and new PersistentSet(key=12l), empty 	
+/c
+		Object entity = loadFromSessionCache( event, keyToLoad, options );
+null
+		entity = loadFromSecondLevelCache( event, persister, options );
+/s
+		final Object ce = CacheHelper.fromSharedCache( source, ck, persister.getCacheAccessStrategy() );
+ce	StandardCacheEntryImpl  (id=3353)	
+	disassembledState	Serializable[4]  (id=3354)	
+		[0]	"foostreet" (id=3356)	
+		[1]	"12 foo" (id=3357)	
+		[2]	"FooCity12" (id=3358)	
+		[3]	Long  (id=3359)		12	/ keyOfOwner
+
+		Object entity = convertCacheEntryToEntity( entry, event.getEntityId(), persister, event );
+/s
+			entity = optionalObject == null
+					? session.instantiate( subclassPersister, entityId )
+/ new Address(12l)
+			values = ( (StandardCacheEntryImpl) entry ).assemble(
+					entity, entityId, subclassPersister, session.getInterceptor(), session
+			);
+/ 2c entry -> H state (assemble)
+/s
+SetType(CollectionType).assemble(Serializable, SessionImplementor, Object) line: 296	
+			return resolveKey( key, session, owner );
+/s
+				collection = instantiate( session, persister, key );
+/ new PersistentSet	
+				persistenceContext.addUninitializedCollection( persister, collection, key );
+/ -> 1c
+/ sets Address.employees-persister as loadedPersister in de PersistentSet (role)	,  sets loadedKey=keyOfOwner
+
+
+		persister.setPropertyValues( instance, assembledProps );
+
+/ -> 1c / address
+
+
+
+
+ 	        Iterator<Employee>iterator=employees.iterator();
+/s
+		read();
+		return new IteratorProxy( set.iterator() );
+/s
+			final boolean foundInCache = initializeCollectionFromCache(
+					ce.getLoadedKey(),
+					ce.getLoadedPersister(),
+					collection,
+					source
+			);
+false
+				ce.getLoadedPersister().initialize( ce.getLoadedKey(), source );
+/s
+				wrapper = executeQueryStatement( sql, queryParameters, false, afterLoadActions, session );
+
+select employees0_.address_ as address_1_0_0_, employees0_.employee_ as employee2_1_0_, 				/ relation
+	employee1_.id_ as id_1_2_1_, employee1_.name_ as name_2_2_1_, employee1_.salary_ as salary_3_2_1_ 		/ entity
+from address_employees employees0_											/ relation 
+inner join employee employee1_ on employees0_.employee_=employee1_.id_ 							/ entity
+where employees0_.address_=?												/ use relation	,
+
+HibernateLog --> 09:09:59 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+
+				results = loadQueryDetails.getResultSetProcessor().extractResults(
+						wrapper.getResultSet(),
+						session,
+						queryParameters,
+						new NamedParameterContext() {
+							@Override
+							public int[] getNamedParameterLocations(String name) {
+								return AbstractLoadPlanBasedLoader.this.getNamedParameterLocs( name );
+							}
+						},
+						returnProxies,
+						queryParameters.isReadOnly(),
+						forcedResultTransformer,
+						afterLoadActions
+				);
+/s
+
+/ hydrates db -> H props
+
+		for ( count = 0; count < maxRows && resultSet.next(); count++ ) {
+			Object logicalRow = rowReader.readRow( resultSet, context );
+/s
+/ OR	,
+		// see if we have an existing entry in the session for this EntityKey
+		final Object existing = context.getSession().getEntityUsingInterceptor( entityKey );
+/ 1l
+/ is er al in 1c	, 
+...
+/ OR
+/ 2l
+
+		final Object entityInstance = optionalEntityInstance != null
+				: context.getSession().instantiate( concreteEntityTypeName, entityKey.getIdentifier() );
+/ new , our case: new Employee(2l)
+/ -> 1c
+			values = concreteEntityPersister.hydrate(
+					resultSet,
+					id,
+					entityInstance,
+					(Loadable) entityReference.getEntityPersister(),
+					concreteEntityPersister == rootEntityPersister
+							? entityReferenceAliases.getColumnAliases().getSuffixedPropertyAliases()
+							: entityReferenceAliases.getColumnAliases().getSuffixedPropertyAliases( concreteEntityPersister ),
+					context.getLoadPlan().areLazyAttributesForceFetched(),
+					context.getSession()
+			);
+			context.getProcessingState( entityReference ).registerHydratedState( values );
+/ register H props	,
+		context.registerHydratedEntity( entityReference, entityKey, entityInstance );
+/ register instance 
+
+/ H. properties (A) 
+
+
+		collectionReferenceInitializer.finishUpRow( resultSet, context );
+/s
+		final Object element = persister.readElement( rs, owner, descriptor.getSuffixedElementAliases(), getSession() );
+/s
+		return getElementType().nullSafeGet( rs, aliases, session, owner );
+/s
+ManyToOneType(EntityType).nullSafeGet(ResultSet, String[], SessionImplementor, Object) line: 308	
+		return resolve( hydrate(rs, names, session, owner), session, owner );
+/s
+				return resolveIdentifier( (Serializable) value, session );
+/ value=1l/2l
+/s
+		Object entity = loadFromSessionCache( event, keyToLoad, options );
+/ OR
+		entity = loadFromSecondLevelCache( event, persister, options );
+/ OR
+		entity = loadFromDatasource( event, persister, keyToLoad, options );
+/ as we are in here now	,
+
+/ ifvalue=1l/2l	, then	,
+		Object entity = loadFromSessionCache( event, keyToLoad, options );
+/ but H. finds that is already in 1c	, so does nothing	,
+/ entities (B)
+
+		rowReader.finishUp( context, afterLoadActionList );
+/s
+		// now finish loading the entities (2-phase load)
+		performTwoPhaseLoad( preLoadEvent, context, hydratedEntityRegistrations );
+/s
+		persister.setPropertyValues( entity, hydratedState );
+/ sets H. properties (A) in entities (Employee's) (B)
+
+			final CacheEntry entry = persister.buildCacheEntry( entity, hydratedState, version, session );
+					final boolean put = persister.getCacheAccessStrategy().putFromLoad(
+							cacheKey,
+							persister.getCacheEntryStructure().structure( entry ),
+							session.getTimestamp(),
+							version,
+							useMinimalPuts( session, entityEntry )
+					);
+/s
+ReadWriteEhcacheEntityRegionAccessStrategy(AbstractReadWriteEhcacheAccessStrategy<T>).putFromLoad(Object, Object, long, Object, boolean) line: 111	
+/ false	
+/ the Employee is already in 2c	, and is not updated	,
+/ because	,	
+			final boolean writeable = item == null || item.isWriteable( txTimestamp, version, versionComparator );
+/s
+			return version != null && versionComparator.compare( version, newVersion ) < 0;
+false
+/ in the third session there will be a .cacheUpdate call	, after an managed entity has been updated	,
+
+		finishLoadingCollections( context );
+/s
+			addCollectionToCache( lce, persister );
+/s
+		final CollectionCacheEntry entry = new CollectionCacheEntry( lce.getCollection(), persister );
+entry	CollectionCacheEntry  (id=3444)	
+	state	Serializable[2]  (id=3446)	
+		[0]	Long  (id=3413)		1
+		[1]	Long  (id=3427)		2
+				session.getEventListenerManager().cachePutStart();
+				final boolean put = persister.getCacheAccessStrategy().putFromLoad(
+						cacheKey,
+						persister.getCacheEntryStructure().structure( entry ),
+						session.getTimestamp(),
+						version,
+						factory.getSettings().isMinimalPutsEnabled() && session.getCacheMode()!= CacheMode.REFRESH
+				);
+/s
+ReadWriteEhcacheCollectionRegionAccessStrategy(AbstractReadWriteEhcacheAccessStrategy<T>).putFromLoad(Object, Object, long, Object, boolean) line: 109	
+			final Lockable item = (Lockable) region().get( key );
+item	AbstractReadWriteEhcacheAccessStrategy$Lock  (id=3595)	
+
+			final boolean writeable = item == null || item.isWriteable( txTimestamp, version, versionComparator );
+/ JA
+			if ( writeable ) {
+				region().put( key, new Item( value, version, region().nextTimestamp() ) );
+
+
+	.commit
+/ No actions	,
+
+/ 13
+/ third session	,
+
+	  	employee = (Employee) session.get(Employee.class, 1l);		// again, for .iterator	,
+	  	employee.setName(employee.getName()+"A");
+	        address=(Address)session.get(Address.class, 12l);
+
+	        employees=address.getEmployees();
+	        iterator=employees.iterator();
+/ from 2c	, 
+
+/ 1 action	,
+/ entityupdateaction	, before db commit rm entry in 2c, update entity table, after db commmit -> new entry in 2cc	,
+
+/we will see	,
+
+Hibernate: update employee set name_=?, salary_=? where id_=?
+HibernateLog --> 10:37:35 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo1A]
+HibernateLog --> 10:37:35 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [1.0]
+HibernateLog --> 10:37:35 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+
+
+
+
+foo=> select*from employee;
+ id_ | name_ | salary_ 
+-----+-------+---------
+   2 | Foo2  |       2
+   1 | Foo1A |       1
+(2 rows)
+
+
+/ What does it mean, that collection [1l,2l] is already in 2c	?  
+
+/ .iterator finds employee#1 in 1c, so ready: not H props from 2c, and assemble	, so find {name="Foo1A", ...}
+
+
+/s
+			final boolean foundInCache = initializeCollectionFromCache(
+					ce.getLoadedKey(),
+					ce.getLoadedPersister(),
+					collection,
+					source
+			);
+/s
+		final Object ce = CacheHelper.fromSharedCache( source, ck, persister.getCacheAccessStrategy() );
+ce	CollectionCacheEntry  (id=3444)	
+	state	Serializable[2]  (id=3446)	
+		[0]	Long  (id=3413)		1	
+		[1]	Long  (id=3427)		2
+
+/ So no "collection query"; to load the Employee's it first try load from 1c, 2c, and then from db	,
+
+
+		cacheEntry.assemble( collection, persister, persistenceContext.getCollectionOwner( id, persister ) );
+/s
+		collection.initializeFromCache( persister, state, owner );
+/s
+		for ( Serializable arrayElement : array ) {
+			final Object assembledArrayElement = persister.getElementType().assemble( arrayElement, getSession(), owner );
+			set.add( assembledArrayElement );
+/s
+ManyToOneType.assemble(Serializable, SessionImplementor, Object) line: 282	
+			return resolveIdentifier( id, session );
+/s
+		Object entity = loadFromSessionCache( event, keyToLoad, options );
+null
+		entity = loadFromSecondLevelCache( event, persister, options );
+/s
+		final Object ce = CacheHelper.fromSharedCache( source, ck, persister.getCacheAccessStrategy() );
+ce	StandardCacheEntryImpl  (id=3375)	
+	disassembledState	Serializable[2]  (id=3376)	
+		[0]	"Foo1" (id=3378)	
+		[1]	Double  (id=3379)	
+		Object entity = convertCacheEntryToEntity( entry, event.getEntityId(), persister, event );
+/s
+			entity = optionalObject == null
+					? session.instantiate( subclassPersister, entityId )
+/ -> 1c
+			// initializes the entity by (desired) side-effect
+			values = ( (StandardCacheEntryImpl) entry ).assemble(
+					entity, entityId, subclassPersister, session.getInterceptor(), session
+			);
+/s
+		persister.setPropertyValues( instance, assembledProps );
+
+	.commit
+/ flush
+/ schedules EntityUpdateAction	,
+	performExecutions
+/s
+	public void prepareActions() throws HibernateException {
+		prepareActions( collectionRemovals );
+		prepareActions( collectionUpdates );
+		prepareActions( collectionCreations );
+		prepareActions( collectionQueuedOps );
+/ Each clears in de coll region
+/ But now we do NOT have a collection...action	,
+
+/ handles EntityUpdateAction	,
+			lock = persister.getCacheAccessStrategy().lockItem( ck, previousVersion );
+/ rm old entity from 2c	,
+disassembledState	Serializable[2]  (id=3420)	
+	[0]	"Foo1" (id=3422)	
+	[1]	Double  (id=3423)	
+
+			persister.update( 
+					id, 
+					state, 
+					dirtyFields, 
+					hasDirtyCollection, 
+					previousState, 
+					previousVersion, 
+					instance, 
+					rowId, 
+					session 
+			);
+Hibernate: update employee set name_=?, salary_=? where id_=?
+HibernateLog --> 15:55:07 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo1A]
+HibernateLog --> 15:55:07 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [1.0]
+HibernateLog --> 15:55:07 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+
+				final CacheEntry ce = persister.buildCacheEntry( instance,state, nextVersion, getSession() );
+ce	StandardCacheEntryImpl  (id=3449)	
+	disassembledState	Serializable[2]  (id=3450)	
+		[0]	"Foo1A" (id=3451)	
+		[1]	Double  (id=3452)	
+				cacheEntry = persister.getCacheEntryStructure().structure( ce );
+/ saved for after tx	,
+					afterTransactionProcesses.register( e.getAfterTransactionCompletionProcess() );
+
+			doCommit();
+/ db commit	,
+			afterTransactionCompletion( Status.STATUS_COMMITTED );
+/s
+ActionQueue$AfterTransactionCompletionProcessQueue.afterTransactionCompletion(boolean) line: 742	
+			while ( !processes.isEmpty() ) {
+[EntityUpdateAction[my.test.own.hibernate_xml_1_N_join_ehcache.Employee#1]]
+					processes.poll().doAfterTransactionCompletion( success, session );
+/s
+				final boolean put = cacheAfterUpdate( persister, ck );
+/s
+ReadWriteEhcacheEntityRegionAccessStrategy.afterUpdate(Object, Object, Object, Object, SoftLock) line: 113	
+		final Lockable item = (Lockable) region().get( key );
+			if ( item != null && item.isUnlockable( lock ) ) {
+				final Lock lockItem = (Lock) item;
+					region().put( key, new Item( value, currentVersion, region().nextTimestamp() ) );
+
+/ 13
+/ fourth session	,
+
+		  	Employee employee4=new Employee(4l, "Foo4", 4.0);
+		  	address.getEmployees().add(employee4);
+/ coll in 2c	,
+		  	session.save(employee4);
+
+		  	employee2=(Employee)session.get(Employee.class, 2l);
+		  	address.getEmployees().remove(employee2);
+		  	 
+	        	tx.commit();
+
+/ 1 EntityInsertAction	, before db commit inserts in entity table, after db commit disassembles H prop to 2c	,
+/ 1 CollectionUpdateAction	, before db commit rm coll entry [1l,2l] from 2c	,  deletes & inserts in relation table	, 
+
+
+
+/ we zien	,
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 10:39:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo4]
+HibernateLog --> 10:39:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [4.0]
+HibernateLog --> 10:39:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [4]
+
+Hibernate: delete from address_employees where address_=? and employee_=?
+HibernateLog --> 10:39:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 10:39:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [2]
+
+Hibernate: insert into address_employees (address_, employee_) values (?, ?)
+HibernateLog --> 10:39:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 10:39:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [4]
+
+foo=> select*from employee;
+ id_ | name_ | salary_ 
+-----+-------+---------
+   2 | Foo2  |       2
+   1 | Foo1A |       1
+   4 | Foo4  |       4
+
+foo=> select*from address_employees;
+ address_ | employee_ 
+----------+-----------
+       12 |         1
+       12 |         4
+(2 rows)
+
+
+
+/ De coll exists now of employee#1l/4l	,
+
+/ concerns 1 EntityInsertAction	, 1 CollectionUpdateAction	,
+/ the CollectionUpdateAction wipes out the current [1l,2l] in 2c, en leaves it empty	, the current session does not need it	, the collection is in the appl	, it is saved to the db though	,
+
+/ before .execute wipes out current coll in 2c,	just as an updated entity	,
+
+
+		  	address.getEmployees().add(employee4);
+/ .add initializes the coll	, finds in 2c	, 
+		  	session.save(employee4);
+/ schedules EntityInsertAction	,
+		  	address.getEmployees().remove(employee2);
+
+	        	tx.commit();
+/ flush entities
+/s
+FlushVisitor.processCollection(Object, CollectionType) line: 46	
+/s
+Collections.processReachableCollection(PersistentCollection, CollectionType, Object, SessionImplementor) line: 165	
+			final boolean ownerChanged = loadedPersister != currentPersister
+					|| !currentPersister.getKeyType().isEqual( entry.getLoadedKey(), entry.getCurrentKey(), factory );
+			if ( ownerChanged ) {
+/ NEE
+			else if ( collection.isDirty() ) {
+/ JA
+				entry.setDoupdate( true );
+
+/ flush collections	,
+			if ( ce.isDoupdate() ) {
+				session.getInterceptor().onCollectionUpdate( coll, ce.getLoadedKey() );
+				actionQueue.addAction(
+						new CollectionUpdateAction(
+								coll,
+								ce.getLoadedPersister(),
+								ce.getLoadedKey(),
+								ce.isSnapshotEmpty(coll),
+								session
+							)
+					);
+			}
+/ schedules CollectionUpdateAction	,
+
+
+/ performExecutions	,
+			session.getActionQueue().prepareActions();
+/s
+		prepareActions( collectionRemovals );
+		prepareActions( collectionCreations );
+		prepareActions( collectionQueuedOps );
+		prepareActions( collectionUpdates );
+CollectionUpdateAction(CollectionAction).beforeExecutions() line: 95	
+			final SoftLock lock = persister.getCacheAccessStrategy().lockItem( ck, null );
+/s
+			final Lockable item = (Lockable) region().get( key );
+item	AbstractReadWriteEhcacheAccessStrategy$Item  (id=3405)	
+	value	CollectionCacheEntry  (id=3407)	
+		state	Serializable[2]  (id=3408)	
+			[0]	Long  (id=3395)	
+			[1]	Long  (id=3409)	
+...
+			region().put( key, lock );
+/ coll is GONE from 2c	,
+
+/t
+			session.getActionQueue().executeActions();
+/s
+	EntityInsertAction.execute	
+/s
+			persister.insert( id, getState(), instance, session );
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 17:10:45 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo4]
+HibernateLog --> 17:10:45 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [4.0]
+HibernateLog --> 17:10:45 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [4]
+
+			final CacheEntry ce = persister.buildCacheEntry(
+					instance,
+					getState(),
+					version,
+					session
+			);
+			cacheEntry = persister.getCacheEntryStructure().structure( ce );
+ce	StandardCacheEntryImpl  (id=3468)	
+	disassembledState	Serializable[2]  (id=3469)	
+		[0]	"Foo4" (id=3471)	
+		[1]	Double  (id=3472)	
+
+					afterTransactionProcesses.register( e.getAfterTransactionCompletionProcess() );
+/ schedules 2c	,
+
+/t
+CollectionUpdateAction.execute() line: 68	
+		else {
+			persister.deleteRows( collection, id, session );
+/s
+		if ( !isInverse && isRowDeleteEnabled() ) {
+							st = session.getTransactionCoordinator()
+									.getJdbcCoordinator()
+									.getBatch( deleteBatchKey )
+									.getBatchStatement( sql, callable );
+								loc = writeKey( st, id, loc, session );
+									writeElementToWhere( st, entry, loc, session );
+/ we see	,
+Hibernate: delete from address_employees where address_=? and employee_=?
+HibernateLog --> 17:15:34 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 17:16:04 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [2]
+
+			persister.updateRows( collection, id, session );
+			persister.insertRows( collection, id, session );
+/s
+		if ( !isInverse && isRowInsertEnabled() ) {
+								st = session.getTransactionCoordinator()
+										.getJdbcCoordinator()
+										.getBatch( insertBatchKey )
+										.getBatchStatement( sql, callable );
+							}
+							offset = writeKey( st, id, offset, session );
+							writeElement( st, collection.getElement( entry ), offset, session );
+/ we zien	,
+Hibernate: insert into address_employees (address_, employee_) values (?, ?)
+HibernateLog --> 17:18:39 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 17:19:06 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [4]
+
+/t
+		getSession().getPersistenceContext().getCollectionEntry( collection ).afterAction( collection );
+/s
+		loadedKey = getCurrentKey();
+		setLoadedPersister( getCurrentPersister() );
+
+					afterTransactionProcesses.register( e.getAfterTransactionCompletionProcess() );
+/ schedules org.hibernate.action.internal.CollectionAction$CacheCleanupProcess@46ffa7e7
+/ unlocks 2c entry	,
+
+/ 13	.
+/ fifth session	,
+
+		  	address=(Address)session.get(Address.class, 12l);
+		  	address.getEmployees().clear();
+/ from db	,
+			tx.commmit();
+
+/ 1 CollectionUpdateAction	,
+
+/ we zien	,
+
+/ .clear() -> initialize	,
+select employees0_.address_ as address_1_0_0_, employees0_.employee_ as employee2_1_0_, 
+	employee1_.id_ as id_1_2_1_, employee1_.name_ as name_2_2_1_, employee1_.salary_ as salary_3_2_1_ 
+from address_employees employees0_ 
+inner join employee employee1_ on employees0_.employee_=employee1_.id_ 
+where employees0_.address_=?
+HibernateLog --> 10:46:21 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 10:46:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id_1_2_1_] : [BIGINT]) - [1]
+HibernateLog --> 10:46:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name_2_2_1_] : [VARCHAR]) - [Foo1A]
+HibernateLog --> 10:46:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([salary_3_2_1_] : [DOUBLE]) - [1.0]
+HibernateLog --> 10:46:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([address_1_0_0_] : [BIGINT]) - [12]
+HibernateLog --> 10:46:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([employee2_1_0_] : [BIGINT]) - [1]
+HibernateLog --> 10:46:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id_1_2_1_] : [BIGINT]) - [4]
+HibernateLog --> 10:46:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name_2_2_1_] : [VARCHAR]) - [Foo4]
+HibernateLog --> 10:46:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([salary_3_2_1_] : [DOUBLE]) - [4.0]
+HibernateLog --> 10:46:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([address_1_0_0_] : [BIGINT]) - [12]
+HibernateLog --> 10:46:21 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([employee2_1_0_] : [BIGINT]) - [4]
+
+/ .commit
+HibernateLog --> 10:47:25 DEBUG org.hibernate.SQL - delete from address_employees where address_=?
+Hibernate: delete from address_employees where address_=?
+HibernateLog --> 10:47:25 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+
+
+
+foo=> select*from employee;
+ id_ | name_ | salary_ 
+-----+-------+---------
+   2 | Foo2  |       2
+   1 | Foo1A |       1
+   4 | Foo4  |       4
+(3 rows)
+
+foo=> select*from address_employees;
+ address_ | employee_ 
+----------+-----------
+(0 rows)
+
+
+		  	address.getEmployees().clear();
+/s
+		initialize( true );
+			if ( !set.isEmpty() ) {
+				set.clear();
+				dirty();
+/ we zien (initialize)	,
+
+select employees0_.address_ as address_1_0_0_, employees0_.employee_ as employee2_1_0_, 			/ relation	,
+	employee1_.id_ as id_1_2_1_, employee1_.name_ as name_2_2_1_, employee1_.salary_ as salary_3_2_1_ 	/ entity	,
+
+from address_employees employees0_ 						/ relation	,
+inner join employee employee1_ 	on employees0_.employee_=employee1_.id_ 	/ entity	, 		
+where employees0_.address_=?							/ relation	,
+
+/ we zien join tussen entity & relation	,
+
+HibernateLog --> 17:41:53 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 17:41:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id_1_2_1_] : [BIGINT]) - [1]
+HibernateLog --> 17:41:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name_2_2_1_] : [VARCHAR]) - [Foo1A]
+HibernateLog --> 17:41:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([salary_3_2_1_] : [DOUBLE]) - [1.0]
+HibernateLog --> 17:41:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([address_1_0_0_] : [BIGINT]) - [12]
+HibernateLog --> 17:41:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([employee2_1_0_] : [BIGINT]) - [1]
+HibernateLog --> 17:41:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id_1_2_1_] : [BIGINT]) - [4]
+HibernateLog --> 17:41:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name_2_2_1_] : [VARCHAR]) - [Foo4]
+HibernateLog --> 17:41:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([salary_3_2_1_] : [DOUBLE]) - [4.0]
+HibernateLog --> 17:41:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([address_1_0_0_] : [BIGINT]) - [12]
+HibernateLog --> 17:41:53 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([employee2_1_0_] : [BIGINT]) - [4]
+
+			tx.commit();
+/ flush entities	,
+/s
+Collections.processReachableCollection(PersistentCollection, CollectionType, Object, SessionImplementor) line: 178	
+		ce.setReached( true );
+		ce.setCurrentPersister( persister );
+		ce.setCurrentKey( type.getKeyOfOwner( entity, session ) );
+		prepareCollectionForUpdate( collection, ce, factory );
+/s
+			else if ( collection.isDirty() ) {
+				entry.setDoupdate( true );
+
+/ flush collections	,
+			if ( ce.isDoupdate() ) {
+				session.getInterceptor().onCollectionUpdate( coll, ce.getLoadedKey() );
+				actionQueue.addAction(
+						new CollectionUpdateAction(
+								coll,
+								ce.getLoadedPersister(),
+								ce.getLoadedKey(),
+								ce.isSnapshotEmpty(coll),
+								session
+							)
+					);
+
+/ performExecutions	,
+	public void prepareActions() throws HibernateException {
+		prepareActions( collectionUpdates );
+...
+
+CollectionUpdateAction.execute() line: 68	
+		else if ( !affectedByFilters && collection.empty() ) {
+/ JA
+				persister.remove( id, session );
+	public void remove(Serializable id, SessionImplementor session) throws HibernateException {
+		if ( !isInverse && isRowDeleteEnabled() ) {
+...
+
+/ we zien	,
+HibernateLog --> 17:51:23 DEBUG org.hibernate.SQL - delete from address_employees where address_=?
+Hibernate: delete from address_employees where address_=?
+HibernateLog --> 17:51:25 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+
+/t
+		getSession().getPersistenceContext().getCollectionEntry( collection ).afterAction( collection );
+		loadedKey = getCurrentKey();
+		setLoadedPersister( getCurrentPersister() );
+
+/ 13	.
+/ alternative fifth session	,
+
+
+		  	address=(Address)session.get(Address.class, 12l);
+		  	address.setEmployees(null);
+	        	tx.commit();
+
+/ 1 CollectionRemoveAction: before db commit delete row in db 	,
+
+/ we see	,
+
+/ .commit
+HibernateLog --> 10:54:46 DEBUG org.hibernate.SQL - delete from address_employees where address_=?
+Hibernate: delete from address_employees where address_=?
+HibernateLog --> 10:54:46 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+
+/ flush entities	,
+/s
+FlushVisitor.processCollection(Object, CollectionType) line: 62	
+		if (collection!=null) {
+/ NEE
+/ NOTHING
+
+/ flush collections	,
+			if ( !ce.isReached() && !ce.isIgnore() ) {
+				Collections.processUnreachableCollection( me.getKey(), session );
+/s
+			processDereferencedCollection( coll, session );
+/s
+		entry.setCurrentPersister( null );
+		entry.setCurrentKey( null );
+		prepareCollectionForUpdate( coll, entry, session.getFactory() );
+/s
+/ This is where we normally come	,
+
+		final CollectionPersister loadedPersister = entry.getLoadedPersister();
+		final CollectionPersister currentPersister = entry.getCurrentPersister();
+		if ( loadedPersister != null || currentPersister != null ) {
+			final boolean ownerChanged = loadedPersister != currentPersister
+					|| !currentPersister.getKeyType().isEqual( entry.getLoadedKey(), entry.getCurrentKey(), factory );
+
+			if ( ownerChanged ) {
+				if ( currentPersister != null ) {
+/ NEE
+					entry.setDorecreate( true );
+				}
+				if ( loadedPersister != null ) {
+/ JA
+					entry.setDoremove( true );
+					if ( entry.isDorecreate() ) {
+/ NEE
+						collection.forceInitialization();
+/ NOT
+
+/t
+			if ( ce.isDoremove() ) {
+				session.getInterceptor().onCollectionRemove( coll, ce.getLoadedKey() );
+				actionQueue.addAction(
+						new CollectionRemoveAction(
+								coll,
+								ce.getLoadedPersister(),
+								ce.getLoadedKey(),
+								ce.isSnapshotEmpty(coll),
+								session
+							)
+					);
+			}
+
+/ t
+	performExecutions();
+/s
+	public void prepareActions() throws HibernateException {
+		prepareActions( collectionRemovals );
+/s
+			lock = persister.getCacheAccessStrategy().lockItem( ck, previousVersion );
+
+/t
+/s
+CollectionRemoveAction.execute() line: 106	
+			getPersister().remove( getKey(), getSession() );
+...
+/ we zien	,
+HibernateLog --> 18:32:56 DEBUG org.hibernate.SQL - delete from address_employees where address_=?
+Hibernate: delete from address_employees where address_=?
+HibernateLog --> 18:32:56 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+
+/t
+			getSession().getPersistenceContext().getCollectionEntry( collection ).afterAction( collection );
+/s
+ 		loadedKey = getCurrentKey();
+/ WAS 12	, NOW null
+		setLoadedPersister( getCurrentPersister() );
+/ WAS Address.employees-persister, NOW null
+
+/ 7	.
+
+/ Address
+
+  	<set
+ 		name="employees"
+ 		inverse="false"
+ 	>
+ 		<cache usage="read-write"/>	
+ 		<key
+ 			column="address_"
+ 			not-null="false"
+ 			update="true"
+ 		/>
+ 		<many-to-many 
+ 			column="employee_"
+ 			unique="true"	
+ 			class="Employee"
+ 		/>	
+ 
+ 	</set>
+
+
+
+/ Main2	,
+
+/ 13	.
+/ first session	,
+
+			Employee employee=new Employee(1l,"Foo1",1.00);
+			Employee employee2=new Employee(2l,"Foo2",2.00);
+			Employee employee3=new Employee(3l,"Foo3",3.00);
+			Employee employee4=new Employee(4l,"Foo4",4.00);
+			Address address=new Address(12l,"foostreet", "12 foo", "FooCity12");
+			Address address3=new Address(34l,"foostreet", "34 foo", "FooCity34");
+			
+			address.getEmployees().add(employee);
+			address.getEmployees().add(employee2);
+			address3.getEmployees().add(employee3);
+			address3.getEmployees().add(employee4);
+
+			session.save(employee);
+			session.save(employee2);
+			session.save(employee3);
+			session.save(employee4);
+
+			session.save(address); 
+			session.save(address3);
+			
+			tx.commit();
+
+/ we see	,
+
+Hibernate: insert into address (address_line1__, zipcode__, city_, id__) values (?, ?, ?, ?)
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [foostreet]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [12 foo]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [VARCHAR] - [FooCity12]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [12]
+
+Hibernate: insert into address (address_line1__, zipcode__, city_, id__) values (?, ?, ?, ?)
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [foostreet]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [34 foo]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [VARCHAR] - [FooCity34]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [34]
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo1]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [1.0]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo2]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [2.0]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [2]
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo3]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [3.0]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [3]
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo4]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [4.0]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [4]
+
+Hibernate: insert into address_employees (address_, employee_) values (?, ?)
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [2]
+
+Hibernate: insert into address_employees (address_, employee_) values (?, ?)
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [1]
+
+Hibernate: insert into address_employees (address_, employee_) values (?, ?)
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [34]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [3]
+
+Hibernate: insert into address_employees (address_, employee_) values (?, ?)
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [34]
+HibernateLog --> 18:58:54 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [4]
+
+foo=> select*from address;
+ id__ | address_line1__ | zipcode__ |   city_   
+------+-----------------+-----------+-----------
+   12 | foostreet       | 12 foo    | FooCity12
+   34 | foostreet       | 34 foo    | FooCity34
+(2 rows)
+
+foo=> select*from employee;
+ id_ | name_ | salary_ 
+-----+-------+---------
+   1 | Foo1  |       1
+   2 | Foo2  |       2
+   3 | Foo3  |       3
+   4 | Foo4  |       4
+(4 rows)
+
+foo=> select*from address_employees;
+ address_ | employee_ 
+----------+-----------
+       12 |         2
+       12 |         1
+       34 |         3
+       34 |         4
+(4 rows)
+
+
+/ 13	.
+/ second session	,
+		  	
+		  	address=(Address)session.get(Address.class, 12l);
+		  	address3=(Address)session.get(Address.class, 34l);
+		  	Set<Employee>employees=address.getEmployees();
+		  	Set<Employee>employees3=address3.getEmployees();
+		  	address.setEmployees(employees3);
+		  	address3.setEmployees(employees);
+
+		    	tx.commit();       
+
+                       address=(Address)session.get(Address.class, 12l);
+/ from 2c, 	new PersistentSet	, sets loadedKey=keyOfOwner, loadedPersister=Address.employees-persister	,
+                        address3=(Address)session.get(Address.class, 34l);
+/ from 2c, 	new PersistentSet	, sets loadedKey=keyOfOwner, loadedPersister=Address.employees-persister	,
+
+		  	Set<Employee>employees=address.getEmployees();
+/ empty
+		  	Set<Employee>employees3=address3.getEmployees();
+/ empty
+		  	address.setEmployees(employees3);
+		  	address3.setEmployees(employees);
+
+			tx.commit()
+/s
+/flush entities
+/s
+DefaultFlushEntityEventListener.onFlushEntity(FlushEntityEvent) line: 172	
+entity=address#12l	,
+/s
+FlushVisitor.processCollection(Object, CollectionType) line: 59	
+		if (collection!=null) {
+/ coll#34l	, collection's key=keyOfOwner,  and was set 34l	,
+			Collections.processReachableCollection( coll, type, owner, getSession() );
+/s
+	final CollectionEntry ce = session.getPersistenceContext().getCollectionEntry( collection );
+		ce.setReached( true );
+		final SessionFactoryImplementor factory = session.getFactory();
+		final CollectionPersister persister = factory.getCollectionPersister( type.getRole() );
+		ce.setCurrentPersister( persister );
+		ce.setCurrentKey( type.getKeyOfOwner( entity, session ) );
+/ 12l	, because entity=address#12
+
+/ But .get has put ce.loadedKey=34l	, because that was then the keyOfOwner	,
+
+		prepareCollectionForUpdate( collection, ce, factory );
+/s
+		final CollectionPersister loadedPersister = entry.getLoadedPersister();
+		final CollectionPersister currentPersister = entry.getCurrentPersister();
+		if ( loadedPersister != null || currentPersister != null ) {
+			final boolean ownerChanged = loadedPersister != currentPersister
+					|| !currentPersister.getKeyType().isEqual( entry.getLoadedKey(), entry.getCurrentKey(), factory );
+
+/ entry = coll entry	, loadedKey=34l	, currentKey=12l	,
+
+			if ( ownerChanged ) {
+/ JA
+				if ( currentPersister != null ) {
+/ JA
+					entry.setDorecreate( true );
+				}
+				if ( loadedPersister != null ) {
+/ JA
+					entry.setDoremove( true );
+					if ( entry.isDorecreate() ) {
+/ JA
+						collection.forceInitialization();
+/s
+DefaultInitializeCollectionEventListener.onInitializeCollection(InitializeCollectionEvent) line: 76	
+			final boolean foundInCache = initializeCollectionFromCache(
+					ce.getLoadedKey(),
+					ce.getLoadedPersister(),
+					collection,
+					source
+			);
+false
+/ Indeed, loadedKey
+				ce.getLoadedPersister().initialize( ce.getLoadedKey(), source );
+/ we see	,
+Hibernate: select employees0_.address_ as address_1_0_0_, employees0_.employee_ as employee2_1_0_, employee1_.id_ as id_1_2_1_, employee1_.name_ as name_2_2_1_, employee1_.salary_ as salary_3_2_1_ from address_employees employees0_ inner join employee employee1_ on employees0_.employee_=employee1_.id_ where employees0_.address_=?
+HibernateLog --> 19:26:00 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [34]
+HibernateLog --> 19:26:00 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id_1_2_1_] : [BIGINT]) - [3]
+HibernateLog --> 19:26:00 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name_2_2_1_] : [VARCHAR]) - [Foo3]
+HibernateLog --> 19:26:00 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([salary_3_2_1_] : [DOUBLE]) - [3.0]
+HibernateLog --> 19:26:00 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([address_1_0_0_] : [BIGINT]) - [34]
+HibernateLog --> 19:26:00 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([employee2_1_0_] : [BIGINT]) - [3]
+HibernateLog --> 19:26:00 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id_1_2_1_] : [BIGINT]) - [4]
+HibernateLog --> 19:26:00 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name_2_2_1_] : [VARCHAR]) - [Foo4]
+HibernateLog --> 19:26:00 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([salary_3_2_1_] : [DOUBLE]) - [4.0]
+HibernateLog --> 19:26:00 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([address_1_0_0_] : [BIGINT]) - [34]
+HibernateLog --> 19:26:00 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([employee2_1_0_] : [BIGINT]) - [4]
+/we see 34	 as key	,
+
+/ as so for address#34	, which has coll#12	,  coll entry's loadedKey=12l	, currentKey=34l	,
+
+				if ( currentPersister != null ) {
+/ JA
+					entry.setDorecreate( true );
+				}
+				if ( loadedPersister != null ) {
+/ JA
+					if ( entry.isDorecreate() ) {
+/ JA
+						collection.forceInitialization();
+
+/ we zien	,
+HibernateLog --> 19:32:14 DEBUG org.hibernate.SQL - select employees0_.address_ as address_1_0_0_, employees0_.employee_ as employee2_1_0_, employee1_.id_ as id_1_2_1_, employee1_.name_ as name_2_2_1_, employee1_.salary_ as salary_3_2_1_ from address_employees employees0_ inner join employee employee1_ on employees0_.employee_=employee1_.id_ where employees0_.address_=?
+Hibernate: select employees0_.address_ as address_1_0_0_, employees0_.employee_ as employee2_1_0_, employee1_.id_ as id_1_2_1_, employee1_.name_ as name_2_2_1_, employee1_.salary_ as salary_3_2_1_ from address_employees employees0_ inner join employee employee1_ on employees0_.employee_=employee1_.id_ where employees0_.address_=?
+HibernateLog --> 19:32:14 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 19:32:14 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id_1_2_1_] : [BIGINT]) - [1]
+HibernateLog --> 19:32:14 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name_2_2_1_] : [VARCHAR]) - [Foo1]
+HibernateLog --> 19:32:14 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([salary_3_2_1_] : [DOUBLE]) - [1.0]
+HibernateLog --> 19:32:14 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([address_1_0_0_] : [BIGINT]) - [12]
+HibernateLog --> 19:32:14 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([employee2_1_0_] : [BIGINT]) - [1]
+HibernateLog --> 19:32:15 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([id_1_2_1_] : [BIGINT]) - [2]
+HibernateLog --> 19:32:15 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([name_2_2_1_] : [VARCHAR]) - [Foo2]
+HibernateLog --> 19:32:15 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([salary_3_2_1_] : [DOUBLE]) - [2.0]
+HibernateLog --> 19:32:15 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([address_1_0_0_] : [BIGINT]) - [12]
+HibernateLog --> 19:32:15 TRACE org.hibernate.type.descriptor.sql.BasicExtractor - extracted value ([employee2_1_0_] : [BIGINT]) - [2]
+
+	flushCollections();
+/s
+	for ( Map.Entry<PersistentCollection,CollectionEntry> me :
+			IdentityMap.concurrentEntries( (Map<PersistentCollection,CollectionEntry>) persistenceContext.getCollectionEntries() )) {
+			PersistentCollection coll = me.getKey();
+			CollectionEntry ce = me.getValue();
+
+			if ( ce.isDorecreate() ) {
+				actionQueue.addAction(
+						new CollectionRecreateAction(
+								coll,
+								ce.getCurrentPersister(),
+								ce.getCurrentKey(),
+								session
+							)
+					);
+			}
+			if ( ce.isDoremove() ) {
+				actionQueue.addAction(
+						new CollectionRemoveAction(
+								coll,
+								ce.getLoadedPersister(),
+								ce.getLoadedKey(),
+								ce.isSnapshotEmpty(coll),
+								session
+							)
+					);
+			}
+/ Same for other coll entry	,
+/ Look at current at recreate	, loaded at remove	,
+
+	performExecutions	,
+ 			session.getActionQueue().prepareActions();
+/s
+		prepareActions( collectionRemovals );
+		prepareActions( collectionCreations );
+/s 
+CollectionRemoveAction(CollectionAction).beforeExecutions() line: 95	
+/ In the remove action is the loaded key, loaded persister	, so this collection will be rm from 2c	,
+			final CacheKey ck = session.generateCacheKey(
+					key,
+					persister.getKeyType(),
+					persister.getRole()
+			);
+			final SoftLock lock = persister.getCacheAccessStrategy().lockItem( ck, null );
+
+/ In total 4 calls 	, 
+/ That was it form the 2c side	, 
+
+/t
+			session.getActionQueue().executeActions();
+/ we known the coll removals are first processed	, then the insertions	,
+
+/ first	,
+[CollectionRemoveAction[my.test.own.hibernate_xml_1_N_join_ehcache.Address.employees#12], CollectionRemoveAction[my.test.own.hibernate_xml_1_N_join_ehcache.Address.employees#34]]
+
+CollectionRemoveAction.execute() line: 106	
+			getPersister().remove( getKey(), getSession() );
+/ key=12l
+/ we see	,
+HibernateLog --> 19:49:41 DEBUG org.hibernate.SQL - delete from address_employees where address_=?
+Hibernate: delete from address_employees where address_=?
+HibernateLog --> 19:49:41 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+
+/t
+		final PersistentCollection collection = getCollection();
+/ coll#12l
+			getSession().getPersistenceContext().getCollectionEntry( collection ).afterAction( collection );
+/s
+/ in the coll entry	,
+		loadedKey = getCurrentKey();
+34l	, WAS 12l	, 
+		setLoadedPersister( getCurrentPersister() );
+
+/ NOTE: the coll still has the old key	, we are going to use that	,
+
+/ next	, 
+CollectionRemoveAction.execute() line: 106	
+			getPersister().remove( getKey(), getSession() );
+/ we see	,
+/ getKey()=34l
+/ we see	,
+HibernateLog --> 19:56:42 DEBUG org.hibernate.SQL - delete from address_employees where address_=?
+Hibernate: delete from address_employees where address_=?
+HibernateLog --> 19:56:42 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [34]
+
+		final PersistentCollection collection = getCollection();
+/ coll#34l
+			getSession().getPersistenceContext().getCollectionEntry( collection ).afterAction( collection );
+/s
+/ in the coll entry	,
+		loadedKey = getCurrentKey();
+12l	, WAS 34l	, 
+		setLoadedPersister( getCurrentPersister() );
+
+/ NOTE: the coll still has the old key	,
+
+/ next	,
+CollectionRecreateAction.execute() line: 64	
+		final PersistentCollection collection = getCollection();
+
+/ this.key=34l	, remember: is current key	,
+/ OK , we know the coll has the old key still: 12l	,
+
+		getPersister().recreate( collection, getKey(), getSession() );
+/s
+	public void recreate(PersistentCollection collection, Serializable id, SessionImplementor session)
+/ id=action.key=current key	, 34l	,
+		if ( !isInverse && isRowInsertEnabled() ) {
+/ JA
+								st = session.getTransactionCoordinator()
+										.getJdbcCoordinator()
+										.getBatch( recreateBatchKey )
+										.getBatchStatement( sql, callable );
+								int loc = writeKey( st, id, offset, session );
+								loc = writeElement( st, collection.getElement( entry ), loc, session );
+/ we see	,
+Hibernate: insert into address_employees (address_, employee_) values (?, ?)
+HibernateLog --> 20:03:02 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [34]
+HibernateLog --> 20:03:07 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [1]
+/ OK, coll#12 has Employee#1l/2l	,
+
+Hibernate: insert into address_employees (address_, employee_) values (?, ?)
+HibernateLog --> 20:05:33 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [34]
+HibernateLog --> 20:05:35 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [2]
+/ OK, coll#12 has Employee#1l/2l	,
+
+/t
+		getSession().getPersistenceContext().getCollectionEntry( collection ).afterAction( collection );
+		loadedKey = getCurrentKey();
+/ WAS OK already	, 34l
+		setLoadedPersister( getCurrentPersister() );
+
+/ 7	.
+
+/ N_1_join_ehcache
+
+/ Employee
+		<join 
+			table="jointable"
+			optional="true"
+		>
+			<key 
+				column="employee_"		/ self
+				unique="true"	
+			/>
+			<many-to-one 
+				name="address"			/ fk
+				column="address_"
+				not-null="true"
+			/>
+		</join>
+
+foo=> \d+ jointable
+                       Table "public.jointable"
+  Column   |  Type  | Modifiers | Storage | Stats target | Description 
+-----------+--------+-----------+---------+--------------+-------------
+ employee_ | bigint | not null  | plain   |              | 
+ address_  | bigint | not null  | plain   |              | 
+Indexes:
+    "jointable_pkey" PRIMARY KEY, btree (employee_)
+Foreign-key constraints:
+    "fk_djdh9lqlojcfienpryjvly8kh" FOREIGN KEY (employee_) REFERENCES employee(id_)
+    "fk_j9rqgyxlxuxivhfsey5s93ro" FOREIGN KEY (address_) REFERENCES address(id__)
+Has OIDs: no
+
+
+/ 13. 
+/ first session
+
+			Address address=new Address(12l,"foostreet", "12 foo", "FooCity12");
+			Employee employee=new Employee(1l,"Foo1",1.00);
+			employee.setAddress(address);
+			Employee employee2=new Employee(2l,"Foo2",2.00);
+			employee2.setAddress(address);
+
+			session.save(address);
+			session.save(employee);
+			session.save(employee2);
+
+			tx.commit();
+
+/ we zien	,
+
+Hibernate: insert into address (address_line1__, zipcode__, city__, id__) values (?, ?, ?, ?)
+HibernateLog --> 09:07:08 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [foostreet]
+HibernateLog --> 09:07:08 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [12 foo]
+HibernateLog --> 09:07:08 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [VARCHAR] - [FooCity12]
+HibernateLog --> 09:07:08 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [12]
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 09:07:08 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo1]
+HibernateLog --> 09:07:08 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [1.0]
+HibernateLog --> 09:07:08 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+
+Hibernate: insert into jointable (address_, employee_) values (?, ?)
+HibernateLog --> 09:07:08 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 09:07:08 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [1]
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 09:07:08 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo2]
+HibernateLog --> 09:07:08 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [2.0]
+HibernateLog --> 09:07:08 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [2]
+
+Hibernate: insert into jointable (address_, employee_) values (?, ?)
+HibernateLog --> 09:07:08 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 09:07:08 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [2]
+
+foo=> select*from jointable;
+ employee_ | address_ 
+-----------+----------
+         1 |       12
+         2 |       12
+
+/ 13	.
+/ fourth session	,
+
+		  	address=(Address)session.get(Address.class, 12l);
+		  	
+		  	Employee employee4=new Employee(4l, "Foo4", 4.0);
+		  	employee4.setAddress(address);
+		  	session.save(employee4);
+
+		  	employee2=(Employee)session.get(Employee.class, 2l);
+		  	employee2.setAddress(null);
+
+	        	tx.commit();
+
+/ we zien	,
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 09:09:25 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo4]
+HibernateLog --> 09:09:25 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [4.0]
+HibernateLog --> 09:09:25 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [4]
+
+Hibernate: insert into jointable (address_, employee_) values (?, ?)
+HibernateLog --> 09:09:25 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 09:09:25 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [4]
+
+Hibernate: delete from jointable where employee_=?
+HibernateLog --> 09:09:25 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [2]
+
+foo=> select*from jointable;
+ employee_ | address_ 
+-----------+----------
+         1 |       12
+         4 |       12
+(2 rows)
+
+/ 7	.
+
+/ N_1_ehcache
+
+/ Address
+	<many-to-one 
+		name="address"
+		column="address_"
+		not-null="false"
+	/>
+
+foo=> \d+ employee
+                                Table "public.employee"
+  Column  |          Type          | Modifiers | Storage  | Stats target | Description 
+----------+------------------------+-----------+----------+--------------+-------------
+ id_      | bigint                 | not null  | plain    |              | 
+ name_    | character varying(255) |           | extended |              | 
+ salary_  | double precision       |           | plain    |              | 
+ address_ | bigint                 |           | plain    |              | 
+Indexes:
+    "employee_pkey" PRIMARY KEY, btree (id_)
+Foreign-key constraints:
+    "fk_lcwyx1va36145pv0w7f8dxqc8" FOREIGN KEY (address_) REFERENCES address(id__)
+Has OIDs: no
+
+/ 13
+/ first session
+
+			Address address=new Address(12l,"foostreet", "12 foo", "FooCity12");
+			Employee employee=new Employee(1l,"Foo1",1.00);
+			employee.setAddress(address);
+			Employee employee2=new Employee(2l,"Foo2",2.00);
+			employee2.setAddress(address);
+
+			session.save(address);
+			session.save(employee);
+			session.save(employee2);
+
+			tx.commit();
+
+/ concerns 3 EnttiyInsertActions	,
+
+/ we zien	,
+
+Hibernate: insert into address (address_line1__, zipcode__, city__, id__) values (?, ?, ?, ?)
+HibernateLog --> 09:19:42 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [foostreet]
+HibernateLog --> 09:19:42 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [12 foo]
+HibernateLog --> 09:19:42 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [VARCHAR] - [FooCity12]
+HibernateLog --> 09:19:42 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [12]
+
+Hibernate: insert into employee (name_, salary_, address_, id_) values (?, ?, ?, ?)
+HibernateLog --> 09:19:42 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo1]
+HibernateLog --> 09:19:42 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [1.0]
+HibernateLog --> 09:19:42 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [12]
+HibernateLog --> 09:19:42 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [1]
+
+Hibernate: insert into employee (name_, salary_, address_, id_) values (?, ?, ?, ?)
+HibernateLog --> 09:19:42 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo2]
+HibernateLog --> 09:19:42 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [2.0]
+HibernateLog --> 09:19:42 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [12]
+HibernateLog --> 09:19:42 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [2]
+
+foo=> select*from employee;
+ id_ | name_ | salary_ | address_ 
+-----+-------+---------+----------
+   1 | Foo1  |       1 |       12
+   2 | Foo2  |       2 |       12
+(2 rows)
+
+/ 13
+/ fourth session
+
+
+		  	address=(Address)session.get(Address.class, 12l);
+		  	
+		  	Employee employee4=new Employee(4l, "Foo4", 4.0);
+		  	employee4.setAddress(address);
+		  	session.save(employee4);
+
+		  	employee2=(Employee)session.get(Employee.class, 2l);
+		  	employee2.setAddress(null);
+		  	 
+	        	tx.commit();
+
+/ concerns 1 EntityInsertAction, 1 EntityUpdateAction	,
+
+/ we see	,
+
+Hibernate: insert into employee (name_, salary_, address_, id_) values (?, ?, ?, ?)
+HibernateLog --> 11:12:44 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo4]
+HibernateLog --> 11:12:44 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [4.0]
+HibernateLog --> 11:12:44 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [12]
+HibernateLog --> 11:12:44 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [4]
+
+Hibernate: update employee set name_=?, salary_=?, address_=? where id_=?
+HibernateLog --> 11:12:44 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo2]
+HibernateLog --> 11:12:44 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [2.0]
+HibernateLog --> 11:12:44 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [null]
+HibernateLog --> 11:12:44 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [2]
+
+/s
+EntityUpdateAction.execute() line: 152	
+			lock = persister.getCacheAccessStrategy().lockItem( ck, previousVersion );
+/s
+ReadWriteEhcacheEntityRegionAccessStrategy(AbstractReadWriteEhcacheAccessStrategy<T>).lockItem(Object, Object) line: 136	
+			final Lockable item = (Lockable) region().get( key );
+item	AbstractReadWriteEhcacheAccessStrategy$Item  (id=3477)	
+	value	StandardCacheEntryImpl  (id=3478)	
+		disassembledState	Serializable[3]  (id=3479)	
+			[0]	"Foo2" (id=3481)	
+			[1]	Double  (id=3482)	
+			[2]	Long  (id=3483)	
+
+			final long timeout = region().nextTimestamp() + region().getTimeout();
+			final Lock lock = (item == null) ? new Lock( timeout, uuid, nextLockId(), version ) : item.lock( timeout, uuid, nextLockId());
+			region().put( key, lock );
+
+/t
+			persister.update( 
+					id, 
+					state, 
+					dirtyFields, 
+					hasDirtyCollection, 
+					previousState, 
+					previousVersion, 
+					instance, 
+					rowId, 
+					session 
+			);
+			else {
+				//TODO: inefficient if that cache is just going to ignore the updated state!
+				final CacheEntry ce = persister.buildCacheEntry( instance,state, nextVersion, getSession() );
+				cacheEntry = persister.getCacheEntryStructure().structure( ce );
+ce	StandardCacheEntryImpl  (id=3540)	
+	disassembledState	Serializable[3]  (id=3541)	
+		[0]	"Foo2" (id=3481)	
+		[1]	Double  (id=3542)	
+
+					afterTransactionProcesses.register( e.getAfterTransactionCompletionProcess() );
+/ schedules	,
+
+/t
+ActionQueue$AfterTransactionCompletionProcessQueue.afterTransactionCompletion(boolean) line: 742	
+			while ( !processes.isEmpty() ) {
+
+[EntityInsertAction[my.test.own.hibernate_xml_N_1_ehcache.Employee#4], EntityUpdateAction[my.test.own.hibernate_xml_N_1_ehcache.Employee#2]]
+					processes.poll().doAfterTransactionCompletion( success, session );
+/s
+EntityInsertAction.doAfterTransactionCompletion(boolean, SessionImplementor) line: 228	
+			final boolean put = cacheAfterInsert( persister, ck );
+/s
+ReadWriteEhcacheEntityRegionAccessStrategy.afterInsert(Object, Object, Object) line: 79	
+			final Lockable item = (Lockable) region().get( key );
+			if ( item == null ) {
+				region().put( key, new Item( value, version, region().nextTimestamp() ) );
+value	StandardCacheEntryImpl  (id=3462)	
+	disassembledState	Serializable[3]  (id=3463)	
+		[0]	"Foo4" (id=3464)	
+		[1]	Double  (id=3465)	
+		[2]	Long  (id=3466)	
+/t
+/s
+EntityUpdateAction.doAfterTransactionCompletion(boolean, SessionImplementor) line: 335	
+				final boolean put = cacheAfterUpdate( persister, ck );
+/ puts
+	disassembledState	Serializable[3]  (id=3541)	
+		[0]	"Foo2" (id=3481)	
+		[1]	Double  (id=3542)	
+
+
+/ 7	.
+
+/ 1_N_bidir_join_ehcache
+
+/ Address
+ 	<set
+ 		name="employees"
+ 		inverse="false"
+ 	>
+ <!-- 		<cache usage="read-write"/>	
+ --> 		
+ 		<key
+ 			column="address_"
+ 			not-null="false"
+ 			update="true"
+ 		/>
+ 		<many-to-many 
+ 			column="employee_"
+ 			unique="true"	
+ 			class="Employee"
+ 		/>	
+ 	</set>
+
+/ Employee
+
+		<join 
+			table="employee_address"
+			optional="true"
+			inverse="true"
+		>
+			<key 
+				column="employee_"
+				unique="true"	
+			/>
+			<many-to-one 
+				name="address"
+				column="address_"
+				not-null="true"
+			/>
+		</join>
+
+/ Main	, 
+
+			Address address=new Address(12l,"foostreet", "12 foo", "FooCity12");
+			Employee employee=new Employee(1l,"Foo1",1.00);
+			Employee employee2=new Employee(2l,"Foo2",2.00);
+
+			address.getEmployees().add(employee);
+//			employee.setAddress(address);
+			
+			address.getEmployees().add(employee2);
+//			employee2.setAddress(address);
+			
+			session.save(address);
+			session.save(employee);
+			session.save(employee2);
+			
+			tx.commit();
+
+/ we deliberately forget to set the other relation	,
+ 
+
+
+/ TMP
+
+/ bidir_join
+
+/ set: inverse=false
+
+/ 3 entityinsertaction	,
+/ 1 collectionrecreateaction	,
+
+
+Hibernate: insert into address (address_line1__, zipcode__, city_, id__) values (?, ?, ?, ?)
+HibernateLog --> 10:10:14 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [foostreet]
+HibernateLog --> 10:10:14 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [12 foo]
+HibernateLog --> 10:10:14 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [VARCHAR] - [FooCity12]
+HibernateLog --> 10:10:14 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [12]
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 10:10:14 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo1]
+HibernateLog --> 10:10:14 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [1.0]
+HibernateLog --> 10:10:14 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 10:10:14 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo2]
+HibernateLog --> 10:10:14 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [2.0]
+HibernateLog --> 10:10:14 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [2]
+
+Hibernate: insert into address_employees (address_, employee_) values (?, ?)
+HibernateLog --> 10:10:14 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 10:10:14 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [1]
+
+Hibernate: insert into address_employees (address_, employee_) values (?, ?)
+HibernateLog --> 10:10:14 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 10:10:14 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [2]
+
+select employees0_.address_ as address_2_0_0_, employees0_.employee_ as employee1_1_0_, employee1_.id_ as id_1_2_1_, employee1_.name_ as name_2_2_1_, employee1_.salary_ as salary_3_2_1_, employee1_1_.address_ as address_2_1_1_ 
+from address_employees employees0_ 
+inner join employee employee1_ on employees0_.employee_=employee1_.id_ left 
+outer join address_employees employee1_1_ on employee1_.id_=employee1_1_.employee_ 
+where employees0_.address_=?
+
+
+
+
+/ join:inverse=false
+
+/ 3 entityinsertaction	,
+
+Hibernate: insert into address (address_line1__, zipcode__, city_, id__) values (?, ?, ?, ?)
+HibernateLog --> 09:55:46 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [foostreet]
+HibernateLog --> 09:55:46 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [12 foo]
+HibernateLog --> 09:55:46 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [VARCHAR] - [FooCity12]
+HibernateLog --> 09:55:46 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [4] as [BIGINT] - [12]
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 09:55:46 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo1]
+HibernateLog --> 09:55:46 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [1.0]
+HibernateLog --> 09:55:46 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [1]
+H
+Hibernate: insert into jointable (address_, employee_) values (?, ?)
+HibernateLog --> 09:55:46 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 09:55:46 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [1]
+
+Hibernate: insert into employee (name_, salary_, id_) values (?, ?, ?)
+HibernateLog --> 09:55:46 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [Foo2]
+HibernateLog --> 09:55:46 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [DOUBLE] - [2.0]
+HibernateLog --> 09:55:46 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [3] as [BIGINT] - [2]
+
+Hibernate: insert into jointable (address_, employee_) values (?, ?)
+HibernateLog --> 09:55:46 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [12]
+HibernateLog --> 09:55:46 TRACE org.hibernate.type.descriptor.sql.BasicBinder - binding parameter [2] as [BIGINT] - [2]
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+

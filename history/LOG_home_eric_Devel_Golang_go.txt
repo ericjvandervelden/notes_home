@@ -1,0 +1,1000 @@
+ 1643  ls -l ~/tmp/
+ 1644  ls -l ~/tmp/myvolume/
+ 1645  docker run  --name fd -ti -v myvolume:/myvolume my/fedora-locale bash
+ 1646  docker volume ls -f dangling=true
+ 1647  docker run  --name fd -ti -v myvolume:/myvolume my/fedora-locale bash
+ 1648  docker start --help
+ 1649  docker start -i fd
+ 1650  rm-exited-containers.sh 
+ 1651  docker run  --name fd -ti -v /myvolume my/fedora-locale bash
+ 1652  docker volume ls
+ 1653  rm-exited-containers.sh 
+ 1654  rm-dangling-
+ 1655  rm-dangling-volumes.sh 
+ 1656  docker volume ls
+ 1657  docker run  --name fd -ti -v /myvolume my/fedora-locale bash
+ 1658  docker volume ls -f dangling=true
+ 1659  docker  start -i fd
+ 1660  docker volume ls
+ 1661  rm-exited-containers.sh 
+ 1662  docker  start -i fd
+ 1663  docker run  --name fd -ti -v /myvolume my/fedora-locale bash
+ 1664  docker volume ls
+ 1665  docker volume ls -f dangling=true 
+ 1666  rm-exited-containers.sh 
+ 1667  rm-dangling-volumes.sh 
+ 1668  docker run  --name fd -ti -v myvolume:/myvolume my/fedora-locale bash
+ 1669  docker ps a-
+ 1670  docker ps -a
+ 1671  docker start -i fd
+ 1672  docker volume ls -f dangling=true
+ 1673  rm-exited-containers.sh 
+ 1674  docker volume ls -f dangling=true
+ 1675  docker run  --name fd -ti -v myvolume:/myvolume my/fedora-locale bash
+ 1676  docker volume ls 
+ 1677  docker volume ls  -f dangling=true 
+ 1678  docker volume ls -f dangling=true
+ 1679  rm-exited-containers.sh 
+ 1680  rm-dangling-volumes.sh 
+ 1681  ls -l ~/tmp/pgdata3
+ 1682  ls -ld ~/tmp/pgdata3
+ 1683  docker run  --name fd -ti -v ~/tmp/pgdata3:/myvolume my/fedora-locale bash
+ 1684  rm-exited-containers.sh 
+ 1685  docker run  --name fd -ti -v ~/tmp/pgdata3:/myvolume my/fedora-locale bash
+ 1686  rm-exited-containers.sh 
+ 1687  docker volume ls
+ 1688  ls
+ 1689  docker run --rm -it --name fd_pg my/fedora_postgres bash
+ 1690  psql -U postgres
+ 1691  psql -U eric
+ 1692  psql -U postgres
+ 1693  psql -U eric
+ 1694  hostname 
+ 1695  host almond.nuts.org
+ 1696  ping almond.nuts.org
+ 1697  postgres -U eric -h almond.nuts.org
+ 1698  psql-U eric -h almond.nuts.org
+ 1699  psql -U eric -h almond.nuts.org
+ 1700  psql -U eric
+ 1701  psql -U eric -h almond.nuts.org
+ 1702  psql -U eric 
+ 1703  psql -U eric -h fe80::2e44:fdff:fe68:82d4)
+ 1704  psql -U eric -h fe80::2e44:fdff:fe68:82d4
+ 1705  ifconfig
+ 1706  psql -U eric -h fe80::2e44:fdff:fe68:82d4
+ 1707  psql -U eric -h almond.nuts.org
+ 1708  psql -U eric -h localhost
+ 1709  psql -U eric -h almond.nuts.org
+ 1710  psql -U eric -h almond
+ 1711  hostname
+ 1712  psql -U eric -h 192.168.123.182
+ 1713  docker ps -a
+ 1714  ps ajx 
+ 1715  ps ajx  | grep postgr
+ 1716  ifconfig 
+ 1717  cat /etc/host
+ 1718  cat /etc/hosts
+ 1719  ping almond
+ 1720  psql -U eric -h 192.168.123.182
+ 1721  psql -U postgres -h 192.168.123.182
+ 1722  psql -U postgres 
+ 1723  psql -U postgres -h almond
+ 1724  ifconfig
+ 1725  psql -U postgres -h 192.168.122.1
+ 1726  psql -U postgres -h 192.168.123.182
+ 1727  docker exec -it pg bash
+ 1728  psql -U postgres -h 192.168.123.182
+ 1729  psql -U postgres -h almond
+ 1730  pa ajx | grep postgres
+ 1731  ps ajx | grep postgres
+ 1732  psql -U postgres -h almond
+ 1733  psql -U eric -h almond
+ 1734  psql -U postgres -h 192.168.123.182
+ 1735  psql -U eric -h 192.168.123.182
+ 1736  psql -U eric -h ::1
+ 1737  psql -U eric -h fe80::2e44:fdff:fe68:82d4
+ 1738  psql -U eric -h ::1
+ 1739  psql -U eric -h fe80::2e44:fdff:fe68:82d4
+ 1740  ping almond
+ 1741  cat /etc/hosts
+ 1742  psql -U eric -h fe80::2e44:fdff:fe68:82d4
+ 1743  ping fe80::2e44:fdff:fe68:82d4
+ 1744  ping6 fe80::2e44:fdff:fe68:82d4
+ 1745  ping6 --help
+ 1746  ifconfig
+ 1747  ping6 localhost
+ 1748  ping6 ::1
+ 1749  ping6 ipv6.google.com
+ 1750  host www.google.com
+ 1751  ping6 2a00:1450:400e:803::2004
+ 1752  ping6 -c 4 2a00:1450:400e:803::2004
+ 1753  ping 216.58.212.164
+ 1754  ping6 -c 4 2a00:1450:400e:803::2004
+ 1755  man ip
+ 1756  ip --help
+ 1757  ip -6
+ 1758  ip -6 2a00:1450:400e:803::2004
+ 1759  ip -6 fe80::2e44:fdff:fe68:82d4
+ 1760  ip help
+ 1761  ip route
+ 1762  ip -6 route
+ 1763  ip -6 fe80::2e44:fdff:fe68:82d4
+ 1764  host ipv6.google.com
+ 1765  host www.google.com
+ 1766  ip -6 fe80::2e44:fdff:fe68:82d4
+ 1767  ip -6 route
+ 1768  netstat -r
+ 1769  netstat --help
+ 1770  netstat -r -6
+ 1771  ip -6 route
+ 1772* traceroute -6 ipv6.google.com 
+ 1773  lsmod
+ 1774  lsmod  | grep ipv
+ 1775  cat /etc/sysconfig/network-scripts/ifcfg-enp0s25 
+ 1776  docker exec -ti pg bash
+ 1777  pwd
+ 1778  cd ../
+ 1779  ls
+ 1780  cd dockerfile/
+ 1781  ls
+ 1782  vi Dockerfile 
+ 1783  mv Dockerfile Dockerfile1
+ 1784  pwd
+ 1785  cp Dockerfile1 Dockerfile
+ 1786  vi Dockerfile
+ 1787  ls
+ 1788  vi script.sh
+ 1789  vi Dockerfile
+ 1790  docker build -t my/fedora-dockerfile .
+ 1791  cat Dockerfile
+ 1792  docker ps -a
+ 1793  docker run --rm --name fd -it my/fedora-dockerfile bash
+ 1794  ls
+ 1795  vi script.sh 
+ 1796  vi Dockerfile
+ 1797  vi script.sh 
+ 1798  docker build -t my/fedora-dockerfile .
+ 1799  less ../locale/Dockerfile 
+ 1800  env | grep LANG
+ 1801  less ~/.bash_profile
+ 1802  less ~/.bashrc
+ 1803  less /etc/bashrc 
+ 1804  cat /etc/locale.conf 
+ 1805  ls
+ 1806  less ../postgres/Dockerfile 
+ 1807  vi Dockerfile
+ 1808  docker build -t my/fedora-dockerfile .
+ 1809  docker run --rm --name fd  my/fedora-dockerfile
+ 1810  docker run --rm --name fd -v $(pwd)/script.sh:/script.sh  my/fedora-dockerfile
+ 1811  chmod u+x script.sh 
+ 1812  ./script.sh 
+ 1813  ./script.sh foo
+ 1814  docker run --rm --name fd -v $(pwd)/script.sh:/script.sh  my/fedora-dockerfile
+ 1815  docker run --rm --name fd -v $(pwd)/script.sh:/script.sh  my/fedora-dockerfile bash
+ 1816  ls
+ 1817  ls $(pwd)/script.sh
+ 1818  ls
+ 1819  ls -l
+ 1820  vi Dockerfile
+ 1821  docker build -t my/fedora-dockerfile .
+ 1822  docker run --rm --name fd  my/fedora-dockerfile bash
+ 1823  vi Dockerfile
+ 1824  ls
+ 1825  docker build -t my/fedora-dockerfile .
+ 1826  docker run --rm --name fd  my/fedora-dockerfile bash
+ 1827   vi Dockerfile
+ 1828  docker build -t my/fedora-dockerfile .
+ 1829  docker run --rm --name fd  my/fedora-dockerfile bash
+ 1830  cat Dockerfile
+ 1831  vi Dockerfile
+ 1832  docker build -t my/fedora-dockerfile .
+ 1833  cat Dockerfile
+ 1834  docker run --rm --name fd  -ti  my/fedora-dockerfile bash
+ 1835  docker run --rm --name fd    my/fedora-dockerfile
+ 1836  vi script.sh 
+ 1837   vi script.sh 
+ 1838  cat >/tmp/res
+ 1839  vi script.sh 
+ 1840  ./script.sh 
+ 1841  ./script.sh  foo
+ 1842  docker build -t my/fedora-dockerfile .
+ 1843  docker run --rm --name fd    my/fedora-dockerfile
+ 1844  docker run --rm --name fd    my/fedora-dockerfile bash
+ 1845  docker run --rm --name fd  -ti  my/fedora-dockerfile bash
+ 1846  vi Dockerfile
+ 1847  docker build -t my/fedora-dockerfile .
+ 1848  docker run --rm --name fd  -ti  my/fedora-dockerfile bash
+ 1849  vi Dockerfile
+ 1850  docker build -t my/fedora-dockerfile .
+ 1851  docker run --rm --name fd  -ti  my/fedora-dockerfile bash
+ 1852  vi script.sh 
+ 1853  vi Dockerfile
+ 1854  docker build -t my/fedora-dockerfile .
+ 1855  vi script.sh 
+ 1856  docker build -t my/fedora-dockerfile .
+ 1857  docker run --rm --name fd  - my/fedora-dockerfile 
+ 1858  docker run --rm --name fd  my/fedora-dockerfile 
+ 1859  docker run --rm --name fd -ti  my/fedora-dockerfile  bash
+ 1860  cat Dockerfile
+ 1861  vi script.sh 
+ 1862  docker build -t my/fedora-dockerfile .
+ 1863  docker run --rm --name fd -ti  my/fedora-dockerfile
+ 1864   vi script.sh 
+ 1865  docker run --rm --name fd -ti  my/fedora-dockerfile
+ 1866  docker build -t my/fedora-dockerfile .
+ 1867  docker run --rm --name fd -ti  my/fedora-dockerfile
+ 1868  docker run --rm --name fd -ti  my/fedora-dockerfile bash
+ 1869  vi Dockerfile
+ 1870  docker build -t my/fedora-dockerfile .
+ 1871  docker run --rm --name fd -ti  my/fedora-dockerfile
+ 1872  cat script.sh 
+ 1873  docker run --rm --name fd   my/fedora-dockerfile
+ 1874  vi Dockerfile
+ 1875  docker build -t my/fedora-dockerfile .
+ 1876  docker run --rm --name fd   my/fedora-dockerfile
+ 1877  docker run --rm --name fd   my/fedora-dockerfile bash
+ 1878  docker run --rm --name fd  -ti  my/fedora-dockerfile bash
+ 1879  vi Dockerfile
+ 1880  docker build -t my/fedora-dockerfile .
+ 1881  docker run --rm --name fd  -v $(pwd)/script.sh:/script.sh  my/fedora-dockerfile
+ 1882  docker run --rm --name fd  -v $(pwd)/script.sh:/script.sh -ti  my/fedora-dockerfile bash
+ 1883  pwd
+ 1884   ls
+ 1885  cat Dockerfile
+ 1886  cd ../sshd/
+ 1887  ls
+ 1888  vi Dockerfile 
+ 1889  cd ../locale/
+ 1890  ls
+ 1891  vi Dockerfile 
+ 1892  docker build -t my/fedora-locale .
+ 1893  vi Dockerfile 
+ 1894  docker build -t my/fedora-locale .
+ 1895   pwd
+ 1896  cat Dockerfile 
+ 1897  ls
+ 1898  vi Dockerfile 
+ 1899  docker build -t my/fedora-locale2 .
+ 1900  docker run --rm --name loc -ti my/fedora-locale bash
+ 1901  docker run --rm --name loc -ti my/fedora-locale2 bash
+ 1902  vi Dockerfile 
+ 1903  docker build -t my/fedora-locale2 .
+ 1904  docker run --rm --name loc -ti my/fedora-locale2 bash
+ 1905  cat Dockerfile 
+ 1906  cd ../postgres/
+ 1907  ls
+ 1908  vi Dockerfile 
+ 1909  cd ../locale/
+ 1910  ls
+ 1911  vi Dockerfile 
+ 1912  docker build -t my/fedora-locale .
+ 1913  docker images
+ 1914  docker images -f dangling=true
+ 1915  cat ~/bin/rm-dangling-images.sh 
+ 1916  docker rmi my/fedora-locale2
+ 1917  cd ..
+ 1918  ls
+ 1919  cd dockerfile/
+ 1920  ls
+ 1921  vi Dockerfile
+ 1922  mkdir 1
+ 1923  mv Dockerfile1 1/Dockerfile
+ 1924  mkdir 2
+ 1925  mv Dockerfile script.sh  2
+ 1926  ls
+ 1927  cp 2/Dockerfile  .
+ 1928  vi Dockerfile 
+ 1929  docker images 
+ 1930  docker build -t my/fedora-dockerfile .
+ 1931  pwd
+ 1932  cat Dockerfile 
+ 1933   vi Dockerfile 
+ 1934  docker build -t my/fedora-dockerfile .
+ 1935  docker run --rm --name df my/fedora-dockerfile bash
+ 1936   vi Dockerfile 
+ 1937  docker build -t my/fedora-dockerfile .
+ 1938  docker run --rm --name df -ti my/fedora-dockerfile bash
+ 1939   vi Dockerfile 
+ 1940  docker build -t my/fedora-dockerfile .
+ 1941  docker run --rm --name df -ti my/fedora-dockerfile bash
+ 1942  cat Dockerfile 
+ 1943   vi Dockerfile 
+ 1944  docker build -t my/fedora-dockerfile .
+ 1945  vi Dockerfile 
+ 1946  docker build -t my/fedora-dockerfile .
+ 1947  docker run --rm --name df -ti my/fedora-dockerfile bash
+ 1948  ls
+ 1949  mkdir 3
+ 1950  cp Dockerfile  3
+ 1951  pwd
+ 1952  ls
+ 1953  docker run --name pg --rm -ti my/fedora-locale bash
+ 1954  cd ../sshd/
+ 1955  ls
+ 1956  vi Dockerfile 
+ 1957  docker images
+ 1958  rm-dangling-images.sh 
+ 1959  docker images
+ 1960  vi Dockerfile 
+ 1961  less ../postgres/Dockerfile 
+ 1962  less Dockerfile 
+ 1963  man sshd
+ 1964  which hostname
+ 1965  dnf provides /usr/bin/hostname
+ 1966  pwd
+ 1967  vi Dockerfile 
+ 1968  docker build -t my/fedora-sshd .
+ 1969  docker run --name fd-sshd  --rm my/fedora-sshd
+ 1970  vi Dockerfile 
+ 1971  docker build -t my/fedora-sshd .
+ 1972  docker run --name fd-sshd  --rm my/fedora-sshd
+ 1973  ls
+ 1974  vi script.sh
+ 1975  chmod u+x script.sh 
+ 1976  ./script.sh 
+ 1977  ./script.sh 1 2 3
+ 1978  ./script.sh 3 2 4
+ 1979  vi script.sh 
+ 1980  vi Dockerfile 
+ 1981  docker build -t my/fedora-sshd .
+ 1982  docker run --name fd-sshd  --rm my/fedora-sshd
+ 1983  docker run --name fd-sshd  --rm --net my-bridge-2 my/fedora-sshd
+ 1984  ls
+ 1985  pwd
+ 1986  vi script.sh 
+ 1987  vi Dockerfile 
+ 1988  docker build -t my/fedora-sshd .
+ 1989  pwd
+ 1990  ls
+ 1991  cat Dockerfile 
+ 1992   cat script.sh 
+ 1993  docker run --name fd-sshd  --rm --net bridge my/fedora-sshd
+ 1994  docker run --name fd-sshd  --rm --net my-bridge-2 my/fedora-sshd
+ 1995  docker run --name fd-sshd  --rm --net my-bridge my/fedora-sshd
+ 1996  ls
+ 1997  ls ..
+ 1998  cd ../../
+ 1999  ls
+ 2000  cd ../Docker
+ 2001  ls
+ 2002  cd ../Docker2
+ 2003  ls
+ 2004  ls fedora/
+ 2005  cd ..
+ 2006  ls
+ 2007  find Docker -name "*cockroach*"
+ 2008  find Docker2 -name "*cockroach*"
+ 2009  ls Cockroach/
+ 2010  docker images 
+ 2011  man sshd
+ 2012  docker stop sshd 
+ 2013  docker exec -ti pg bash
+ 2014  docker stop pg
+ 2015  docker run --rm --name cli --net my-bridge my/fedora-postgres bash
+ 2016  docker run --rm --name cli --net my-bridge -ti my/fedora-postgres bash
+ 2017  docker images
+ 2018  docker exec -ti pg bash
+ 2019  docker stop pg
+ 2020  docker exec -ti pg bash
+ 2021  docker stop pg
+ 2022  docker exec -ti pg bash
+ 2023  ls
+ 2024  cd Golang/
+ 2025  ls
+ 2026  dnf list installed *golang*
+ 2027  which go
+ 2028  echo $PATH
+ 2029  vi ~/.bash_profile
+ 2030  ps ajx | grep vi | grep profile
+ 2031  vi ~/.bash_profile
+ 2032  ./ ~/.bash_profile
+ 2033  . ~/.bash_profile
+ 2034  echo $PATH
+ 2035  env | grep GO
+ 2036  unset GOBIN
+ 2037  ls
+ 2038  cd work2
+ 2039  ls
+ 2040  vi src/my/my_hello/main.go  
+ 2041  which go
+ 2042  go --help
+ 2043   go install my/my_hello
+ 2044  tar tvzf ~/Downloads/go1.6.3.linux-amd64.tar.gz 
+ 2045   dnf provides golang
+ 2046   dnf provides -l golang
+ 2047   dnf repquery -l golang
+ 2048   dnf repoquery -l golang
+ 2049  ls -l /usr/bin/go
+ 2050  ls -l /etc/alternatives/go
+ 2051  . ~/.bash_profile
+ 2052  env | grep GO
+ 2053  echo $PATH
+ 2054  which go
+ 2055  ls
+ 2056  cd 
+ 2057  cd Devel/Docker2/
+ 2058  ls
+ 2059  cd fedora/
+ 2060  ls
+ 2061  mkdir go
+ 2062  cd 
+ 2063  cd Devel/Golang/work2
+ 2064  ls
+ 2065  which go
+ 2066  . ~/.bash_profile
+ 2067  echo $PATH
+ 2068  PATH=/home/eric/Devel/Cloud/Google/google-cloud-sdk/bin:/home/eric/Devel/Cloud/Google/google-cloud-sdk/bin:/home/eric/Devel/Cloud/Google/google-cloud-sdk/bin:/home/eric/Devel/Cloud/Google/google-cloud-sdk/bin:/home/eric/Devel/Cloud/Google/google-cloud-sdk/bin:/usr/lib64/qt-3.3/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/home/eric/.local/bin:/home/eric/bin:/home/eric/Devel/Gradle/Java/gradle-2.4/bin:/home/eric/Devel/Cloud/Google/appengine-java-sdk-1.9.30/bin:/home/eric/Devel/Cloud/Google/go_appengine:/home/eric/.local/bin:/home/eric/bin:/home/eric/Devel/Cloud/Google/appengine-java-sdk-1.9.30/bin:/home/eric/Devel/Gradle/Java/gradle-2.13/bin:/home/eric/.local/bin:/home/eric/bin:/home/eric/Devel/Cloud/Google/appengine-java-sdk-1.9.30/bin:/home/eric/Devel/Gradle/Java/gradle-2.13/bin:/home/eric/.local/bin:/home/eric/bin:/home/eric/Devel/Cloud/Google/appengine-java-sdk-1.9.30/bin:/home/eric/Devel/Gradle/Java/gradle-2.13/bin
+ 2069  which go
+ 2070  env | grep GO
+ 2071  unset GOROOT
+ 2072  env | grep GO
+ 2073  ls
+ 2074  ls src
+ 2075  ls src/my/
+ 2076  go install my/my_hello
+ 2077  ls -l bin
+ 2078  bin/my_hello 
+ 2079   pwd
+ 2080  ls src/my/my_hello
+ 2081  cat src/my/my_hello/main.go 
+ 2082  bin/my_hello 
+ 2083  ls
+ 2084  ls src/
+ 2085  ls src/my/
+ 2086  cp -a src/my/my_hello my/welcome
+ 2087  cp -a src/my/my_hello src/welcome
+ 2088  vi src/welcome/main.go 
+ 2089  go install welcome
+ 2090  bin/welcome 
+ 2091  pwd
+ 2092  cat src/welcome/main.go 
+ 2093  echo $PATH
+ 2094  PATH=$PATH:$GOPATH/bin
+ 2095  welcome 
+ 2096  echo $PATH
+ 2097  welcome 
+ 2098  ls
+ 2099  cp -a src/welcome/ src/basics
+ 2100  vi src/basics/main.go 
+ 2101  go install basics
+ 2102  basics 
+ 2103  cat src/basics/main.go 
+ 2104  vi src/basics/main.go 
+ 2105  go install basics
+ 2106  basics 
+ 2107  go install basics
+ 2108  basics 
+ 2109  go install basics
+ 2110  basics 
+ 2111  go install basics
+ 2112  basics 
+ 2113  cat src/basics/main.go 
+ 2114  go install basics
+ 2115  basics 
+ 2116  go install basics
+ 2117  basics 
+ 2118  cat src/basics/main.go 
+ 2119  go install basics
+ 2120  basics 
+ 2121  go install basics
+ 2122  basics 
+ 2123  cat src/basics/main.go 
+ 2124  go install basics
+ 2125  basics 
+ 2126  go install basics
+ 2127  basics 
+ 2128  go install basics
+ 2129  basics 
+ 2130  go install basics
+ 2131  basics 
+ 2132  go install basics
+ 2133  basics 
+ 2134  go install basics
+ 2135  basics 
+ 2136  cat src/basics/main.go 
+ 2137  go install basics
+ 2138  basics 
+ 2139  go install basics
+ 2140  basics 
+ 2141  cp src/basics/main.go src/basics/main2.go
+ 2142  rm src/basics/main2.go 
+ 2143  go install basics
+ 2144  basics 
+ 2145  cat src/basics/main.go 
+ 2146  go install basics
+ 2147  basics 
+ 2148  go install basics
+ 2149  basics 
+ 2150  go install basics
+ 2151  basics 
+ 2152  cat src/basics/main.go 
+ 2153  go install basics
+ 2154  basics 
+ 2155  go install basics
+ 2156  basics 
+ 2157  cat src/basics/main.go 
+ 2158  basics 
+ 2159  cat src/basics/main.go 
+ 2160  go install basics
+ 2161  basics 
+ 2162  go install basics
+ 2163  basics 
+ 2164  go install basics
+ 2165  basics 
+ 2166  head bin/basics 
+ 2167  basics 
+ 2168  go install basics
+ 2169  basics 
+ 2170  go install basics
+ 2171  basics 
+ 2172  go install basics
+ 2173  basics 
+ 2174  go install basics
+ 2175  basics 
+ 2176  go install basics
+ 2177  basics 
+ 2178  go install basics
+ 2179  basics 
+ 2180  go install basics
+ 2181  basics 
+ 2182  go install basics
+ 2183  basics 
+ 2184  go install basics
+ 2185  basics 
+ 2186  go install basics
+ 2187  basics 
+ 2188  go install basics
+ 2189  basics 
+ 2190  go install basics
+ 2191  basics 
+ 2192  go install basics
+ 2193  basics 
+ 2194  go install basics
+ 2195  basics 
+ 2196  go install basics
+ 2197  basics 
+ 2198  go install basics
+ 2199  basics 
+ 2200  go install basics
+ 2201  basics 
+ 2202  go install basics
+ 2203  basics 
+ 2204  go install basics
+ 2205  basics 
+ 2206  go install basics
+ 2207  basics 
+ 2208  go install basics
+ 2209  basics 
+ 2210  go install basics
+ 2211  basics 
+ 2212  mkdir src/flow
+ 2213  go install flow
+ 2214  flow
+ 2215  cat src/flow/main.go 
+ 2216  go install flow
+ 2217  flow
+ 2218  cat src/flow/main.go 
+ 2219  go install flow
+ 2220  flow
+ 2221  go install flow
+ 2222  flow
+ 2223  go install flow
+ 2224  flow
+ 2225  cat src/flow/main.go 
+ 2226  flow
+ 2227  cat src/flow/main.go 
+ 2228  go install flow
+ 2229  flow
+ 2230  go install flow
+ 2231  flow
+ 2232  go install flow
+ 2233  flow
+ 2234  go install flow
+ 2235  flow
+ 2236  go install flow
+ 2237  flow
+ 2238  go install flow
+ 2239  flow
+ 2240  go install flow
+ 2241  flow
+ 2242  go install flow
+ 2243  flow
+ 2244  go install flow
+ 2245  flow
+ 2246  go install flow
+ 2247  flow
+ 2248  go install flow
+ 2249  flow
+ 2250  go install flow
+ 2251  flow
+ 2252  go install flow
+ 2253  flow
+ 2254  go install flow
+ 2255  flow
+ 2256  go install flow
+ 2257  flow
+ 2258  go install flow
+ 2259  flow
+ 2260  go install flow
+ 2261  flow
+ 2262  go install flow
+ 2263  flow
+ 2264  go install flow
+ 2265  flow
+ 2266  go install flow
+ 2267  flow
+ 2268  go install flow
+ 2269  flow
+ 2270  go install flow
+ 2271  flow
+ 2272  mkdir src/moretypes
+ 2273  vi src/moretypes/main.go
+ 2274  go install moretypes
+ 2275  moretypes 
+ 2276  cat src/moretypes/main.go 
+ 2277  go install moretypes
+ 2278  moretypes 
+ 2279  go install moretypes
+ 2280  moretypes 
+ 2281  go install moretypes
+ 2282  moretypes 
+ 2283  go install moretypes
+ 2284  moretypes 
+ 2285  go install moretypes
+ 2286  moretypes 
+ 2287  go install moretypes
+ 2288  moretypes 
+ 2289  go install moretypes
+ 2290  moretypes 
+ 2291  go install moretypes
+ 2292  moretypes 
+ 2293  go install moretypes
+ 2294  moretypes 
+ 2295  go install moretypes
+ 2296  moretypes 
+ 2297  go install moretypes
+ 2298  moretypes 
+ 2299  go install moretypes;go
+ 2300  go install moretypes
+ 2301  moretypes 
+ 2302  go install moretypes
+ 2303  moretypes 
+ 2304  go install moretypes
+ 2305  moretypes 
+ 2306  go install moretypes
+ 2307  moretypes 
+ 2308  go install moretypes
+ 2309  moretypes 
+ 2310  go install moretypes
+ 2311  moretypes 
+ 2312  go install moretypes
+ 2313  moretypes 
+ 2314  go install moretypes
+ 2315  moretypes 
+ 2316  go install moretypes
+ 2317  moretypes 
+ 2318  go install moretypes
+ 2319  moretypes 
+ 2320  go install moretypes
+ 2321  moretypes 
+ 2322  go install moretypes
+ 2323  moretypes 
+ 2324  ls
+ 2325  vi src/basics/main.go 
+ 2326  vi src/flow/main.go 
+ 2327  grep struct -r src/
+ 2328  vi src/my/my_stringutil/reverse_test.go 
+ 2329  go install moretypes
+ 2330  moretypes 
+ 2331  go install moretypes
+ 2332  moretypes 
+ 2333  go install moretypes
+ 2334  moretypes 
+ 2335  go install moretypes
+ 2336  moretypes 
+ 2337  go install moretypes
+ 2338  moretypes 
+ 2339  go install moretypes
+ 2340  moretypes 
+ 2341  go install moretypes
+ 2342  moretypes 
+ 2343  go install moretypes
+ 2344  moretypes 
+ 2345  go install moretypes
+ 2346  moretypes 
+ 2347  go install moretypes
+ 2348  moretypes 
+ 2349  go install moretypes
+ 2350  moretypes 
+ 2351  go install moretypes
+ 2352  moretypes 
+ 2353  go install moretypes
+ 2354  moretypes 
+ 2355  go install moretypes
+ 2356  moretypes 
+ 2357  go install moretypes
+ 2358  ls
+ 2359  ls src/
+ 2360  less src/flow/main.go 
+ 2361  less src/basics/main.go 
+ 2362  go install moretypes
+ 2363  moretypes 
+ 2364  go install moretypes
+ 2365  moretypes 
+ 2366  go install moretypes
+ 2367  moretypes 
+ 2368  go install moretypes
+ 2369  moretypes 
+ 2370  go install moretypes
+ 2371  moretypes 
+ 2372  go install moretypes
+ 2373  moretypes 
+ 2374  go install moretypes
+ 2375  moretypes 
+ 2376  go install moretypes
+ 2377  moretypes 
+ 2378  go install moretypes
+ 2379  moretypes 
+ 2380  go install moretypes
+ 2381  moretypes 
+ 2382  go install moretypes
+ 2383  moretypes 
+ 2384  go install moretypes
+ 2385  moretypes 
+ 2386  go install moretypes
+ 2387  moretypes 
+ 2388  go install moretypes
+ 2389  moretypes 
+ 2390  go install moretypes
+ 2391  moretypes 
+ 2392  go install moretypes
+ 2393  moretypes 
+ 2394  go install moretypes
+ 2395  moretypes 
+ 2396  go install moretypes
+ 2397  moretypes 
+ 2398  go install moretypes
+ 2399  moretypes 
+ 2400  go install moretypes
+ 2401  moretypes 
+ 2402  go install moretypes
+ 2403  moretypes 
+ 2404  go install moretypes
+ 2405  moretypes 
+ 2406  go install moretypes
+ 2407  moretypes 
+ 2408  go install moretypes
+ 2409  moretypes 
+ 2410  go install moretypes
+ 2411  moretypes 
+ 2412  mkdir src/methods
+ 2413  less src/flow/main.go 
+ 2414  go install methods
+ 2415  methods
+ 2416  go install methods
+ 2417  methods
+ 2418  go install methods
+ 2419  methods
+ 2420  go install methods
+ 2421  methods
+ 2422  go install methods
+ 2423  methods
+ 2424  go install methods
+ 2425  methods
+ 2426  go install methods
+ 2427  methods
+ 2428  go install methods
+ 2429  methods
+ 2430  go install methods
+ 2431  methods
+ 2432  go install methods
+ 2433  methods
+ 2434  go install methods
+ 2435  methods
+ 2436  go install methods
+ 2437  methods
+ 2438  go install methods
+ 2439  methods
+ 2440  go install methods
+ 2441  methods
+ 2442  go install methods
+ 2443  methods
+ 2444  top
+ 2445  methods
+ 2446  go install methods
+ 2447  grep z -r *
+ 2448  vi src/flow/main.go 
+ 2449  go install methods
+ 2450  methods
+ 2451  go install methods
+ 2452  methods
+ 2453  go install methods
+ 2454  methods
+ 2455  go install methods
+ 2456  methods
+ 2457  go install methods
+ 2458  methods
+ 2459  go install methods
+ 2460  methods
+ 2461  go install methods
+ 2462  methods
+ 2463  go install methods
+ 2464  methods
+ 2465  go install methods
+ 2466  methods
+ 2467  go install methods
+ 2468  methods
+ 2469  go install methods
+ 2470  methods
+ 2471  go install methods
+ 2472  methods
+ 2473  echo "π, ε!" 
+ 2474  echo "π, ε!"  | oc -t x1 -t c
+ 2475  echo "π, ε!"  | od -t x1 -t c
+ 2476  man od
+ 2477  od --help
+ 2478  echo "π, ε!"  | od -t d1 -t c
+ 2479  methods
+ 2480  go install methods
+ 2481  methods
+ 2482  go install methods
+ 2483  methods
+ 2484  go install methods
+ 2485  methods
+ 2486  go install methods
+ 2487  methods
+ 2488  echo "π, ε!"  | od -t d1 -t c
+ 2489  echo "π, ε!"  | od -t x1 -t c
+ 2490  echo "π, ε!"  | od -t u1 -t c
+ 2491  go install methods
+ 2492  methods
+ 2493  echo "π, ε!"  | od -t u1 -t c
+ 2494  echo "π, ε!"  | od -t x1 -t c
+ 2495  go install methods
+ 2496  ls -ltr ~/Downloads/ | grep -i go
+ 2497  pwd
+ 2498  cd ..
+ 2499  ls
+ 2500  ls -ltr ~/Downloads/
+ 2501  tar tvzf ~/Downloads/go1.7.src.tar.gz 
+ 2502  tar tvzf ~/Downloads/go1.7.src.tar.gz  | grep tour
+ 2503  ls -ltr ~/Downloads/
+ 2504  tar tvzf ~/Downloads/go1.6.3.linux-amd64.tar.gz 
+ 2505  tar tvzf ~/Downloads/go1.6.3.linux-amd64.tar.gz  | grep tour
+ 2506  tar tvzf ~/Downloads/go1.6.3.linux-amd64.tar.gz  | less
+ 2507  dnf list available *golang*
+ 2508  dnf list available *golang* | grep tour
+ 2509   dnf provides -l golang-godoc
+ 2510  dnf provides --help
+ 2511   dnf repoquery -l golang-godoc
+ 2512  dnf list available *golang* | grep tour
+ 2513  tar tvzf ~/Downloads/go1.6.3.linux-amd64.tar.gz  | grep tour
+ 2514  ls
+ 2515  cd work
+ 2516  cd ../work2
+ 2517  ls
+ 2518  go install methods
+ 2519  methods 
+ 2520  go install methods
+ 2521  methods 
+ 2522  go install methods
+ 2523  methods 
+ 2524  go install methods
+ 2525  methods 
+ 2526  go install methods
+ 2527  methods 
+ 2528  go install methods
+ 2529  methods 
+ 2530  go install methods
+ 2531  methods 
+ 2532  go install methods
+ 2533  methods 
+ 2534  go install methods
+ 2535  methods 
+ 2536  go install methods
+ 2537  methods 
+ 2538  go install methods
+ 2539  methods 
+ 2540  go install methods
+ 2541  methods 
+ 2542  go install methods
+ 2543  methods 
+ 2544  go install methods
+ 2545  methods 
+ 2546  go install methods
+ 2547  methods 
+ 2548  go install methods
+ 2549  methods 
+ 2550  go install methods
+ 2551  methods 
+ 2552  go install methods
+ 2553  methods 
+ 2554  go install methods
+ 2555  methods 
+ 2556  go install methods
+ 2557  methods 
+ 2558  go install methods
+ 2559  methods 
+ 2560  go install methods
+ 2561  methods 
+ 2562  go install methods
+ 2563  methods 
+ 2564  go install methods
+ 2565  methods 
+ 2566  go install methods
+ 2567  methods 
+ 2568  go install methods
+ 2569  methods 
+ 2570  go install methods
+ 2571  methods 
+ 2572  go install methods
+ 2573  methods 
+ 2574  go install methods
+ 2575  methods 
+ 2576  go install methods
+ 2577  methods 
+ 2578  go install methods
+ 2579  methods 
+ 2580  go install methods
+ 2581  methods 
+ 2582   echo "πεa" | od -t d1 -t c
+ 2583   echo "πεa" | od -t u1 -t c
+ 2584  go install methods
+ 2585  methods 
+ 2586  go install methods
+ 2587  methods 
+ 2588  go install methods
+ 2589  methods 
+ 2590  go install methods
+ 2591  methods 
+ 2592  go install methods
+ 2593  methods 
+ 2594  go install methods
+ 2595  methods 
+ 2596  go install methods
+ 2597  methods 
+ 2598  go install methods
+ 2599  methods
+ 2600  go install methods
+ 2601  methods
+ 2602  go install methods
+ 2603  methods
+ 2604  go install methods
+ 2605  methods
+ 2606  go install methods
+ 2607  methods
+ 2608  go install methods
+ 2609  methods
+ 2610  go install methods
+ 2611  methods
+ 2612  go install methods
+ 2613  methods
+ 2614  go install methods
+ 2615  methods
+ 2616  go install methods
+ 2617  methods
+ 2618  go install methods
+ 2619  methods
+ 2620  go install methods
+ 2621  methods
+ 2622  go install methods
+ 2623  methods
+ 2624  cd ..
+ 2625  ls
+ 2626  ls -ltr ~/Downloads
+ 2627  tar tvzf ~/Downloads/go1.7.linux-amd64.tar.gz 
+ 2628  tar xvzf ~/Downloads/go1.7.linux-amd64.tar.gz 
+ 2629  cd go
+ 2630  ls
+ 2631   find -name tour
+ 2632  less misc/tour/solutions/rot13.go 
+ 2633  pwd
+ 2634  cd ..
+ 2635  pwd
+ 2636  cd go/
+ 2637  less misc/tour/solutions/rot13.go 
+ 2638  pwd
+ 2639  ls
+ 2640  pwd
+ 2641  pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+ 2642  history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Golang_go.txt

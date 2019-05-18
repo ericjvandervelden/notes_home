@@ -1,0 +1,82 @@
+/ 13	. 
+
+[eric@almond postgres3a]$ docker build --rm -t my/fedora-postgres3a .
+
+/ 13	. 
+
+/ master	,
+
+[eric@almond postgres3a]$ pwd
+/home/eric/Devel/Docker2/fedora/postgres3a
+
+[eric@almond postgres3a]$ docker run --rm -ti my/fedora-postgres3a bash
+bash-4.3$ pwd
+/												/ TODO
+bash-4.3$ pg_ctl start
+server starting
+bash-4.3$ LOG:  redirecting log output to logging collector process
+HINT:  Future log output will appear in directory "pg_log".
+/ geef Enter	,
+bash-4.3$
+/ nu in ~ van postgres: /var/lib/pgsql
+/ met user postgres in Dockerfile komt je niet meteen in de home dir van deze user	, je moet WH workdir use	, 
+/ TODO
+bash-4.3$ psql 
+postgres=# create user replicator replication login encrypted password 'replicator' ;
+CREATE ROLE
+postgres=# \q
+bash-4.3$ vi data/pg_hba.conf
+...
+host    replication     replicator       172.17.0.2/24  md5
+bash-4.3$ pg_ctl reload
+
+/ we kunnen ook in data/pg_hba.conf,
+
+host all postgres 172.17.0.2/24 trust
+host all all 172.17.0.2/24 md5
+/ let op dat je niet /32 doet, want je moet ook langs de gateway, die je ziet als je $ netstat -rn doet	,
+
+$ vi data/postgresql.conf
+# CONNECTIONS AND AUTHENTICATION
+listen_addresses = '*'        # what IP address(es) to listen on;
+# WRITE AHEAD LOG
+wal_level = hot_standby                 # minimal, archive, hot_standby, or logical
+# - Archiving -
+archive_mode = on               # enables archiving; off, on, or always
+archive_command = 'cp -i %p /var/lib/pgsql/data/archive/%f'     # command to use to archive a logfile segment
+# REPLICATION
+max_wal_senders = 3             # max number of walsender processes
+wal_keep_segments = 8           # in logfile segments, 16MB each; 0 disables
+
+bash-4.3$ pg_ctl restart
+
+-bash-4.3$ mkdir data/archive
+
+/ slave	,
+
+[eric@almond postgres3a]$ docker run --rm -ti my/fedora-postgres3a bash
+-bash-4.3$ pg_basebackup -h 172.17.0.2 -D data/ -U replicator -v -P
+
+$ less postgres.conf
+
+# Add settings for extensions here
+# - Standby Servers -
+hot_standby = on	# als niet, dan kun je geen psql, msg: de server is nog aan het opstarten
+
+$ less data/recovery.conf
+
+standby_mode='on'
+primary_conninfo='host=172.17.0.2 port=5432 user=replicator password=replicator' 
+restore_command='cp /var/lib/pgsql/data/archive/%f %p'
+trigger_file='/tmp/postgresql.trigger.5432'
+ 
+bash-4.3$ pg_ctl -D data start
+
+
+
+
+
+
+
+
+

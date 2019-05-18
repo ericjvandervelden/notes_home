@@ -1,0 +1,22 @@
+/ login
+ericjvandervelden@gmail.com
+viLange27
+
+/ ga naar,
+https://www.microsoft.com/en-us/quantum/development-kit
+->
+https://docs.microsoft.com/en-us/quantum/index?view=qsharp-preview
+
+/ ga in menu,
+Q# library reference
+	Prelude
+		Microsoft.Quantum.Primitive
+			H
+https://docs.microsoft.com/en-us/qsharp/api/prelude/microsoft.quantum.primitive.h?view=qsharp-preview
+			CNOT
+https://docs.microsoft.com/en-us/qsharp/api/prelude/microsoft.quantum.primitive.cnot?view=qsharp-preview
+
+/ lees	,
+https://en.wikipedia.org/wiki/Hadamard_transform
+https://en.wikipedia.org/wiki/Unitary_operator
+https://en.wikipedia.org/wiki/Fourier_transform

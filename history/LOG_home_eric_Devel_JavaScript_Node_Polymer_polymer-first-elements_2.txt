@@ -1,0 +1,1000 @@
+   11  pwd
+   12  cat p168_2.js 
+   13  node debug p168_2.js 
+   14  pwd
+   15  cd ../Node/React/jesse/
+   16  less index.js
+   17  vi index.
+   18  vi index.js
+   19  cd ../levelup/
+   20  less index0.js 
+   21  vi contactlist.js
+   22  ls
+   23  ls node_modules/
+   24  vi package.json 
+   25  ls node_modules/node-fetch/
+   26  mkdir node_modules/contactlist
+   27  mv contactlist.js node_modules/contactlist/index.js
+   28  cd node_modules/contactlist/
+   29  npm init
+   30  ls
+   31  cd ..
+   32  vi index.js
+   33  vi node_modules/node-fetch/index.js 
+   34  vi node_modules/contactlist/index.js 
+   35  mv node_modules/contactlist/index.js contactlist.js
+   36  vi contactlist.js 
+   37  ls
+   38  vi index4.js 
+   39  vi contactlist4.js 
+   40  pwd
+   41  cd ../../CodeSchool/Express/
+   42  curl http:localhost:3000
+   43  curl http://localhost:3000
+   44  man curl
+   45  curl -i http://localhost:3000
+   46  curl -i -X GET http://localhost:3000
+   47  curl -i -X POST http://localhost:3000
+   48  curl -i -X PUT http://localhost:3000
+   49  vi index.js 
+   50  curl -i http://localhost:8080/blocks
+   51  curl -i http://localhost:3000/blocks
+   52  curl -i http://localhost:3000/parts
+   53  curl -i http://localhost:3000/blocks
+   54  curl -i http://localhost:3000/parts
+   55  curl -i http://localhost:3000/blocks
+   56  curl -i -L  http://localhost:3000/blocks
+   57  curl -i   http://localhost:3000/blocks
+   58  curl -i -L  http://localhost:3000/blocks
+   59  curl -i   http://localhost:3000/blocks
+   60  curl -i -L  http://localhost:3000/blocks
+   61  ls
+   62  mkdir level1
+   63  cp index.js level1/
+   64  vi index.html
+   65  mkdir public 
+   66  mv index.html public/
+   67  curl -i -L  http://localhost:3000
+   68  grep -i serveStatic -r node_modules/express/
+   69  ls ~/Pictures/
+   70  ls
+   71  cp ~/Pictures/gerbra.jpg public/
+   72  vi public/index.html 
+   73  curl -i -L  http://localhost:3000
+   74  curl --help
+   75  curl --help | grep img
+   76  curl --help | xargs grep img
+   77  curl --help | grep verbose
+   78  curl -i -L  http://localhost:3000/blocks
+   79  vi level2partII/index.js 
+   80  vi level2partII/logger.js 
+   81  vi level2partII/index.js 
+   82  ls
+   83  vi level2partII/public/client.js 
+   84  vi level2partII/public/index.html 
+   85  ls
+   86  curl -i -L  http://localhost:3000/blocks?limit=1
+   87  curl -i -L  http://localhost:3000/blocks?limit=2
+   88  curl -i -L  http://localhost:3000/blocks/Fixed
+   89  curl -i -L  http://localhost:3000/blocks/Movable
+   90  curl -i -L  http://localhost:3000/blocks/Orange
+   91  curl -i -L  http://localhost:3000/blocks/FIxed
+   92  curl -i -L  http://localhost:3000/blocks/Fixed
+   93  curl -i -L  http://localhost:3000/blocks/fixed
+   94  curl -i -L  http://localhost:3000/blocks/fIxed
+   95  curl -i -L  http://localhost:3000/locations/fIxed
+   96  vi level2partII/index.js 
+   97  curl -i -L  http://localhost:3000/blocks
+   98  curl -i -L  http://localhost:3000/blocks/fIxed
+   99  pwd
+  100  vi public/client.js 
+  101  vi index.js 
+  102  vi public/index.html 
+  103  vi package.json 
+  104  vi level2partI/index.js 
+  105  vi level2partI/public/client.js 
+  106  vi public/client.js 
+  107  vi level3partII/public/client.js 
+  108  cp public/client.js level3partII/public/
+  109  vi public/index.html 
+  110  vi public/client.js 
+  111  vi level3partII/public/client.js 
+  112  vi level3partI/public/client.js 
+  113  vi level2partII/public/client.js 
+  114  vi level2partI/public/client.js 
+  115  diff level2partI/public/client.js  /tmp/client.js 
+  116  ls -al level2partI/public/
+  117  rm level2partI/public/.client.js.swp 
+  118  vi level2partI/public/client.js 
+  119  vi public/client.js 
+  120  vi ~/tmp/urlencode.txt 
+  121  set
+  122  set | grep LANG
+  123  set | grep VC
+  124  ls
+  125  cp mkdir level4part**
+  126  mkdir level4part**
+  127  ls
+  128  mv level4part\*\*/ level4partII
+  129  cp -a index.js public/ level4partII/
+  130  vi index.js 
+  131  vi public/client.js 
+  132  vi public/index.html 
+  133  vi public/client.js 
+  134  ls public/
+  135  man tcpdump
+  136  ifconfig 
+  137  tcpdump -A -i lo
+  138  sudo tcpdump -A -i lo
+  139  man tcpdum
+  140  man tcpdump
+  141   man tcpdump
+  142  sudo tcpdump  -i lo
+  143  sudo tcpdump -vv -i lo
+  144  tcpdump --help
+  145  man tcpdump
+  146  vi public/client.js 
+  147  vi public/index.html 
+  148  vi public/client.js 
+  149  ls
+  150  ls level3partI/index.js 
+  151  less level3partI/index.js 
+  152  less level3partI/public/index.html 
+  153  less level3partI/public/client.js 
+  154  less level3partI/index.js 
+  155  less level3partII/index.js 
+  156  ls
+  157  mv level1/index.js level1/server.js
+  158  diff level5partII/server.js server.js 
+  159  mv level1/server.js .
+  160  npm run run
+  161  ps ajx | grep node
+  162  npm run run
+  163  vi server.js 
+  164  man diff
+  165  diff -r public/ level5partII/public/
+  166  ls public/
+  167  ls
+  168  less level2partI/public/index.html 
+  169  less level2partI/public/client.js 
+  170  less level2partI/index.js 
+  171  ls
+  172  ls level2partI/public/
+  173  rm -rf public/
+  174  cp -a  level2partI/public/ .
+  175  cp -a  level2partI/index.js server.js
+  176  vi public/index.html 
+  177  vi server.js 
+  178  vi public/index.html 
+  179  less public/client.js 
+  180  vi server.js 
+  181  vi public/client.js 
+  182  cp server.js level2partI
+  183  rm level2partI/index.js 
+  184  cp -a public/ level2partI
+  185  less level2partII/index.js 
+  186  vi 
+  187  cp level4partII/index.js server.js 
+  188  cp -a level4partII/public/ .
+  189  less public/client.js 
+  190  less public/index.html 
+  191  less public/client.js 
+  192  pwd
+  193  ls
+  194  less level2partI/public/index.html 
+  195  less level2partI/public/client.js 
+  196  vi level2partI/server.js 
+  197  pwd
+  198  cd ../
+  199  cd React/Manual/tutorial_with_express/
+  200  node server.js 
+  201  cd ..
+  202  ls
+  203  cd ./
+  204  cd ..
+  205  cd Manual/package-management/express_/
+  206  ls
+  207  npm start
+  208  ls
+  209  ls node_modules/
+  210  npm i express --save
+  211  less package.json 
+  212  npm start
+  213  ls
+  214  cp node_modules/jquery/dist/jquery.js public/
+  215  cp node_modules/react/dist/react.js public/
+  216  cp node_modules/react-dom/dist/react-dom.js  public/
+  217  cp node_modules/babel-core/lib/api/browser.js public/
+  218  vi public/index.html 
+  219  npm start
+  220  ls .babelrc 
+  221  cat .babelrc 
+  222  cd ../webpack/
+  223  ls
+  224  vi package.json 
+  225  cd ../express_/
+  226  vi public/index.html 
+  227  npm start
+  228  vi public/index.html 
+  229  npm start
+  230  vi server.js 
+  231  vi public/index.html 
+  232  vi server.js 
+  233  npm start
+  234  vi public/index.html 
+  235  mv .babelrc my
+  236  vi public/index.html 
+  237  cp public/index.html public/index.html.OK 
+  238  vi server.js 
+  239  vi public/index.html
+  240  ls
+  241  cd ../webpack/
+  242  ls
+  243  vi package.json 
+  244  vi index.js
+  245  vi index.html 
+  246  pwd
+  247  cd ..
+  248  ls
+  249  exit
+  250  pwd
+  251  ls
+  252  cd express_/
+  253  ls
+  254  vi package.json 
+  255  ls
+  256  ls src/
+  257  vi src/main.js 
+  258  less package.json 
+  259  ls node_modules/
+  260  less package.json 
+  261  less webpack.config.js 
+  262  exit
+  263  cd ..
+  264  pwd
+  265  cd ../../
+  266  cd ../
+  267  ls
+  268  mkdir JQuery
+  269  pwd
+  270  cd JQuery/
+  271  ls
+  272  mkdir Xss
+  273  cd Xss/
+  274  pwd
+  275  ls
+  276  cd express_/
+  277  nvm use v5.5.0
+  278  npm run run
+  279  vi src/main.js 
+  280  npm run webpack
+  281  npm run run
+  282  ls
+  283  vi server.js 
+  284  npm run run
+  285  vi server.js 
+  286  npm run webpack
+  287  npm run run
+  288  vi server.js 
+  289  vi src/main.js 
+  290  npm run webpack
+  291  npm run run
+  292  vi src/main.js 
+  293  npm run webpack
+  294  npm run run
+  295  ls
+  296  vi server.js 
+  297  vi src/cli
+  298  rm src/main0.js 
+  299  vi src/main.js 
+  300  npm run webpack
+  301  npm run run
+  302  pwd
+  303  cat server.js 
+  304  cat src/main.js 
+  305  vi server.js 
+  306  vi src/main.js 
+  307  npm run webpack
+  308  npm run run
+  309  npm run webpack
+  310  vi src/main.js 
+  311  npm run webpack
+  312  npm run run
+  313  vi src/main.js 
+  314  pwd
+  315  exit
+  316  less public/index.html 
+  317  vi server.js 
+  318  vi public/client.js 
+  319  vi server.js 
+  320  vi public/client.js 
+  321  vi server.js 
+  322  vi public/client.js 
+  323  pwd
+  324  exit
+  325  cd ../
+  326  ls
+  327  cd CodeSchool/Express/
+  328  ls
+  329  less level4partII/server.js 
+  330  cd ..
+  331  ls
+  332  cd ..
+  333  l
+  334  ls
+  335  cd Webpack/video3/
+  336  less src/bear.css 
+  337  ls
+  338  less package.json 
+  339  less webpack.config.js 
+  340  ls
+  341  vi server.js 
+  342  vi src/main.js 
+  343  vi src/bear.js
+  344  vi src/bear.css 
+  345  vi src/main.js 
+  346  vi src/bear.css 
+  347  vi src/base.css 
+  348  vi src/bear.js
+  349  npm run webpack
+  350  nvm use v5.5.0
+  351  npm run webpack
+  352  vi package.json 
+  353  npm start
+  354  node bin/app.bundle.js 
+  355  vi src/main.js 
+  356  npm start
+  357  node server
+  358  vi webpack.config.js 
+  359  vi server.js 
+  360  vi src/main.js 
+  361  vi src/bear.js
+  362  vi bin/app.bundle.js 
+  363  vi webpack.config.js 
+  364  cat package.json 
+  365  ls node_modules/webpack/LICENSE 
+  366  less node_modules/webpack/LICENSE 
+  367  vi package.json 
+  368  cat .babelrc 
+  369  exit
+  370  cd ..
+  371  cd 
+  372  ls
+  373  cd Devel/Docker2/
+  374  ls
+  375  sudo docker info
+  376  sudo docker images
+  377   ls
+  378  ls ubuntu/
+  379  ls ubuntu/sinatra/Dockerfile 
+  380  less ubuntu/sinatra/Dockerfile 
+  381  sudo docker run -it ubuntu /bin/bash
+  382  sudo docker images
+  383  sudo docker ps -a
+  384  sudo docker ps -a  | awk 'NR>1{print $1}'
+  385  sudo docker ps -a  | awk 'NR>1{print $1}'  | xargs sudo docker rm -f
+  386  sudo docker ps -a  | awk 'NR>1{print $1}'
+  387  sudo docker images  | awk 'NR>1{print $1}'
+  388  sudo docker images  | xargs awk 'NR>1{print $1}'
+  389  awk 'NR>1' 
+  390  sudo docker images
+  391  awk 'NR>1'  <(sudo docker images)
+  392  awk 'NR>1'  < <(sudo docker images)
+  393  awk 'NR>1{print $1]'  < <(sudo docker images)
+  394  awk 'NR>1{print $1}'  < <(sudo docker images)
+  395  awk 'NR>1{print $1}'  <(sudo docker images)
+  396  echo <(sudo docker images)
+  397  sudo docker images >/tmp/images
+  398  awk 'NR>1{print $1}'  /tmp/images
+  399  awk 'NR>1{print $1}' < /tmp/images
+  400  echo <(sudo docker images)
+  401  ls
+  402  sudo docker run --help
+  403   sudo docker --rm ubuntu /bin/sh
+  404   sudo docker run  -ti --rm ubuntu /bin/sh
+  405   sudo docker imaggs
+  406   sudo docker images
+  407   sudo docker ps -a
+  408  sudo docker run --rm ubuntu /bin/sh -c 'while true;do echo Hello, world!;sleep 1;done'
+  409   sudo docker ps -a
+  410  sudo docker run -d --rm ubuntu /bin/sh -c 'while true;do echo Hello, world!;sleep 1;done'
+  411  JOB=$(sudo docker run -d  ubuntu /bin/sh -c 'while true;do echo Hello, world!;sleep 1;done')
+  412  top
+  413  ps ajx | grep docker
+  414  echo $JOB
+  415  sudo docker ps -a
+  416  sudo docker log $JOBS
+  417  sudo docker logs $JOBS
+  418  sudo docker logs $JOB
+  419   sudo docker help
+  420   sudo docker kill --help
+  421   sudo docker stop $JOB
+  422  sudo docker ps -a
+  423   sudo docker rm $JOB
+  424  sudo docker ps -a
+  425  JOB=$(sudo docker run -d  ubuntu /bin/sh -c 'while true;do echo Hello, world!;sleep 1;done')
+  426   sudo docker kill $JOB
+  427  sudo docker ps -a
+  428   sudo docker rm $JOB
+  429  sudo docker run --rm -p 4444 ubuntu /bin/nc -l 4444
+  430  sudo docker ps -a
+  431  JOB=$(sudo docker run -d -p 4444 ubuntu /bin/nc -l 4444)
+  432  sudo docker ps -a
+  433  sudo docker port "$JOB" 4444
+  434  sudo docker stop $JOB
+  435  sudo docker rm  $JOB
+  436  JOB=$(sudo docker run -d  ubuntu /bin/sh -c 'while true;do echo Hello, world!;sleep 1;done')
+  437  sudo docker logs $JOB
+  438  sudo docker stop $JOB
+  439  sudo docker rm $JOB
+  440  sudo docker images
+  441  sudo docker run --rm -P training/webapp python app.py
+  442  sudo iptables --help
+  443  sudo iptables -L
+  444  sudo iptables --help
+  445  sudo iptables -F
+  446  sudo iptables -L
+  447  sudo docker run --rm -P training/webapp python app.py
+  448  ps ajx | grep firewall
+  449  sudo systemctl restart docker
+  450  sudo docker run --rm -P training/webapp python app.py
+  451  sudo docker run --rm -it busybox
+  452  sudo docker ps -a
+  453  sudo docker search wildfly
+  454  sudo docker search openshift
+  455   ls
+  456  cd misc/
+  457  ls
+  458  vi Dockerfile 
+  459  sudo docker build -t misc .
+  460  sudo docker ps -a
+  461  sudo docker images
+  462  sudo docker run --rm misc
+  463  ls
+  464  cat Dockerfile 
+  465  vi Dockerfile 
+  466  sudo docker build -t misc .
+  467  sudo docker run --rm misc
+  468  sudo docker ps -a
+  469  vi Dockerfile 
+  470  sudo docker build -t misc .
+  471  sudo docker run --rm misc
+  472  which stop-all-containers 
+  473  vi ~/bin/stop-all-containers 
+  474  vi Dockerfile 
+  475  sudo docker build -t misc .
+  476  sudo docker run --rm misc
+  477  vi Dockerfile 
+  478  sudo docker build -t misc .
+  479  sudo docker run --rm misc
+  480  vi Dockerfile 
+  481  sudo docker build -t misc .
+  482  sudo docker run --rm misc
+  483  vi Dockerfile 
+  484  sudo docker build -t misc .
+  485  sudo docker run --rm misc
+  486  top -c
+  487  top -c -b
+  488  top -c -b | grep top
+  489  vi Dockerfile 
+  490  sudo docker build -t misc .
+  491  sudo docker run --rm misc
+  492  vi Dockerfile 
+  493  sudo docker build -t misc .
+  494  sudo docker run --rm misc
+  495  vi Dockerfile 
+  496  sudo docker build -t misc .
+  497  vi do
+  498  vi Dockerfile 
+  499  sudo docker build -t misc .
+  500  sudo docker run --rm misc
+  501  vi Dockerfile 
+  502  man top
+  503  top
+  504  top -c
+  505  man top
+  506  vi Dockerfile 
+  507  sudo docker build -t misc .
+  508  sudo docker run --rm misc
+  509  vi Dockerfile 
+  510  sudo docker build -t misc .
+  511  sudo docker run --rm misc
+  512  vi Dockerfile 
+  513  sudo docker build -t misc .
+  514  vi Dockerfile 
+  515  sudo docker build -t misc .
+  516  vi Dockerfile 
+  517  sudo docker build -t misc .
+  518  sudo docker run --rm misc
+  519  vi Dockerfile 
+  520  sudo docker build -t misc .
+  521  sudo docker run --rm misc
+  522  vi Dockerfile 
+  523  sudo docker build -t misc .
+  524  vi Dockerfile 
+  525  sudo docker build -t misc .
+  526  sudo docker run --rm --name misc misc
+  527  man top
+  528  top -S
+  529  ps ajx
+  530  sudo docker exec --help
+  531  vi Dockerfile 
+  532  sudo docker run --rm --name misc misc
+  533  pwd
+  534  cat Dockerfile 
+  535  sudo docker build -t misc .
+  536  sudo docker run --rm --name misc misc
+  537  sudo docker network ls
+  538  sudo docker run  --help
+  539  sudo docker run -it --name test ubuntu
+  540  sudo docker ps -a
+  541  sudo docker run -it --name test2 ubuntu
+  542  sudo docker ps -a
+  543  sudo docker run -it --name test3 centos
+  544  sudo docker ps -a
+  545  cat rm-all-containers 
+  546  cat ~/bin/rm-all-containers 
+  547  vi ~/bin/rm-all-containers 
+  548  sudo docker ps -a
+  549  sudo docker ps -a | awk 'NR>1{print $1}'
+  550  sudo docker ps -a | awk 'NR>1{print $1}' | xargs sudo docker rm 
+  551  vi ~/bin/rm-all-containers 
+  552  sudo docker run -d --name test misc
+  553  sudo docker logs test
+  554  sudo docker ps -a
+  555  sudo docker run -d --name test2 misc
+  556  sudo docker run -itd --name test3 centos
+  557  sudo docker exec -it test3
+  558  sudo docker exec -it test3 /bin/bash
+  559  sudo docker rm test3
+  560  sudo docker ps -a
+  561  sudo docker stop test3
+  562  sudo docker rm test3
+  563  sudo docker run -d --name test3 centos
+  564  sudo docker exec  test3 
+  565  sudo docker ps -a
+  566  sudo docker rm test3
+  567  sudo docker run  --name test3 centos
+  568  sudo docker ps -a
+  569  sudo docker rm test3
+  570  sudo docker run -i  --name test3 centos
+  571  sudo docker run  -t  --name test3 centos
+  572  sudo docker run  -it  --name test3 centos
+  573  sudo docker run  -i  --name test3 centos
+  574  sudo docker network inspect
+  575  sudo docker network inspect bridge
+  576   sudo docker network disconnect bridge test
+  577   sudo docker network inspect
+  578   sudo docker network inspect bridge
+  579   sudo docker network connect bridge test
+  580   sudo docker network inspect bridge
+  581    pwd
+  582  sudo docker attach test
+  583  sudo docker ps -a
+  584  sudo docker attach test
+  585  sudo docker attach --help
+  586  sudo docker attach --no-stdin
+  587  sudo docker attach --no-stdin test
+  588  sudo docker attach test
+  589  sudo docker ps
+  590  sudo docker ps -a
+  591  sudo docker ps -l
+  592  sudo docker --help
+  593  sudo docker port --help
+  594  sudo docker port test
+  595  stop-all-containers 
+  596  rm-all-containers 
+  597  sudo docker port test
+  598   sudo docker post test
+  599   sudo docker port test
+  600  sudo docker top test
+  601  sudo docker logs -f test
+  602  sudo docker port test
+  603  sudo docker logs -f test
+  604  sudo docker exec ps ajx
+  605  sudo docker exec misc ps ajx
+  606  sudo docker exec -it misc
+  607  sudo docker exec -it misc /bin/bash
+  608  sudo docker attach -it misc /bin/bash
+  609  sudo docker attach misc /bin/bash
+  610  sudo docker attach misc
+  611  sudo docker attach -it misc /bin/bash
+  612  sudo docker exec -it misc /bin/bash
+  613  sudo docker exec -it misc 
+  614  sudo docker exec -it misc bash
+  615  sudo docker exec -it misc ps ajx
+  616  sudo docker exec -it misc bash
+  617  sudo docker attach misc
+  618  which gcloud
+  619  gcloud compute --project "web-server-project-1148" ssh --zone "europe-west1-c" "instance-1"
+  620  kubectl
+  621  gcloud components update
+  622  . ~/.bash_profile
+  623  echo $PATH
+  624  pwd
+  625  exit
+  626  grep -i failed * | grep -i bus
+  627  exit
+  628  vi src/main.js
+  629  vi src/main.css
+  630  vi public/index.html 
+  631  vi webpack.config.js
+  632  vi public/index.html 
+  633  exit
+  634  cd ../../
+  635  ls
+  636  cd CodeSchool
+  637  mkdir Bootstrap
+  638  ls
+  639  cd Bootstrap/
+  640  ls
+  641  ls getting_started/
+  642  mv getting_started/* .
+  643  ls
+  644  ls getting_started/ -al
+  645  mv getting_started/.babelrc .
+  646  rmdir getting_started/
+  647  pwd
+  648  exit
+  649  cd /var/lib/pgsql/
+  650  sudo su -
+  651  exit
+  652  sudo su -
+  653  pwd
+  654  exit
+  655  docker ps 
+  656  docker commit -m "added: dnf repoquery" -a "Eric J." 4513a34660b8        my/fedora_postgres
+  657  exit
+  658  sudo su -
+  659  exit
+  660  docker ps 
+  661  docker commit -m "installed sudo passwd less vim" -a "Eric J." 847bb912ba10        my/fedora_postgres
+  662  exit
+  663  echo $PATH
+  664  PATH=/home/eric/Devel/Cloud/Google/google-cloud-sdk/bin:/home/eric/Devel/Cloud/Google/google-cloud-sdk/bin:/usr/lib64/qt-3.3/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/home/eric/.local/bin:/home/eric/bin:/home/eric/Devel/Gradle/Java/gradle-2.4/bin:/home/eric/Devel/Cloud/Google/appengine-java-sdk-1.9.30/bin:/home/eric/Devel/Golang/work/bin
+  665  gcloud components update
+  666  gcloud components install kubectl
+  667   sudo docker network ls
+  668  man usermod
+  669  groups eric
+  670  docker network 
+  671  docker network ls
+  672  docker images
+  673  docker network inspect bridge 
+  674  docker network disconnect bridge test 
+  675  docker network inspect bridge 
+  676  docker network connect bridge test 
+  677  docker network inspect bridge 
+  678  docker network create my-bridge-2
+  679  docker network ls
+  680  docker network inspect my-bridge-2
+  681  docker network disconnect bridge tst
+  682  docker network disconnect bridge test
+  683  docker network connect my-bridge-2 test
+  684  docker stop test 
+  685  docker rm test
+  686  docker network inspect my-bridge-2
+  687  docker network disconnect my-bridge-2 test 
+  688  docker network connect bridge test 
+  689  docker stop test
+  690  docker images
+  691  docker info 
+  692  docker images
+  693  docker images --help
+  694  docker images
+  695  docker images ubuntu 
+  696  docker pull ubuntu
+  697  docker images ubuntu 
+  698  docker pull training/postgres
+  699  vi Dockerfile 
+  700  docker build --help
+  701  docker build --rm -t misc .
+  702  pwd
+  703  cat Dockerfile 
+  704  docker image --help
+  705  docker images --help
+  706  docker images --format
+  707  docker history misc
+  708  docker run --rm --name test misc
+  709  docker history misc
+  710  docker history misc --no-trunc
+  711  docker history --no-trunc misc 
+  712  docker exec -it db
+  713  docker exec --help
+  714  docker exec -it db bash
+  715  docker exec -it db basg
+  716  docker exec -it db bash
+  717  docker images
+  718  docker ps 
+  719  docker commit -a
+  720  docker commit -h
+  721  docker commit -m "added postgres" -a "Eric J." 9d61e486652a my/fedora_postgres
+  722  docker images
+  723  docker run --rm --name db2 -it training/postgres 
+  724  pwd
+  725  ls
+  726  cat Dockerfile 
+  727  docker images
+  728  docker run --rm --name misc misc
+  729  docker run --rm --name fd -ti fedora  bash
+  730  cd ..
+  731  cd fedora/postgres/
+  732  vi Dockerfile 
+  733  pwd
+  734  cat Dockerfile 
+  735  vi Dockerfile 
+  736  cd ../locale/
+  737  ls
+  738  vi Dockerfile 
+  739  pwd
+  740  cat Dockerfile 
+  741  man su
+  742  vi Dockerfile 
+  743  locate pg_hba.conf
+  744  less Dockerfile 
+  745  which ps
+  746  dnf provides /usr/bin/ps
+  747  docker exec -it pg bash
+  748  docker exec -i pg bash
+  749  docker exec -it pg bash
+  750  exit
+  751  grep GOLANG -r *
+  752  vi LOG_2_nov_2015.txt 
+  753  docker exec -ti pg bash
+  754  exit
+  755  docker run --rm --name pg -t --net=my-bridge-2 my/fedora_postgres
+  756  docker run --rm --name pg2 -t --net=my-bridge-2 my/fedora_postgres
+  757  exit
+  758  cat Dockerfile 
+  759  cd ../
+  760  ls
+  761  docker exec -it training/postgres bash
+  762  docker exec -it db  bash
+  763  docker exec -it db2 bash
+  764  ls
+  765  less mytraining/postgres/Dockerfile 
+  766  docker exec -it db2 bash
+  767  docker ps -a
+  768  docker stop training/postgres
+  769  docker stop db2
+  770  docker rm db2
+  771  docker ps -a
+  772  docker images --filter dangling=true
+  773  docker images
+  774  docker rmi my/postgres
+  775  cd fedora/postgres/
+  776  ls
+  777  vi Dockerfile 
+  778  docker images
+  779  docker images --help
+  780  docker images --filter --help
+  781  docker images --filter postgres
+  782  docker images --filter name=postgres
+  783  docker images --filter repository=postgres
+  784  docker images --filter=repository=postgres
+  785  docker images | awk '/postgres/'
+  786  docker rmi my/fedora_postgres
+  787  docker images | awk '/postgres/'
+  788  docker tag my/postgres my/fedora_postgres
+  789  docker images | awk '/postgres/'
+  790  docker rmi my/postgres
+  791  docker images | awk '/postgres/'
+  792  ls
+  793  vi Dockerfile 
+  794  docker build -t my/fedora_postgres .
+  795  vi Dockerfile 
+  796  docker build -t my/fedora_postgres .
+  797  cat Dockerfile 
+  798  vi Dockerfile 
+  799  docker build -t my/fedora_postgres .
+  800  vi Dockerfile 
+  801  docker build -t my/fedora_postgres .
+  802  vi Dockerfile 
+  803  docker build -t my/fedora_postgres .
+  804  vi Dockerfile 
+  805  docker build -t my/fedora_postgres .
+  806  vi Dockerfile 
+  807  docker build -t my/fedora_postgres .
+  808  vi Dockerfile 
+  809  which xargs
+  810  dnf provides /usr/bin/xargs
+  811  vi Dockerfile 
+  812  docker build -t my/fedora_postgres .
+  813  vi Dockerfile 
+  814  docker build -t my/fedora_postgres .
+  815  vi Dockerfile 
+  816  docker build -t my/fedora_postgres .
+  817  vi Dockerfile 
+  818  docker build -t my/fedora_postgres .
+  819  vi Dockerfile 
+  820  whchcat Dockerfile 
+  821  cat Dockerfile 
+  822   which top
+  823  dnf provides /usr/bin/top
+  824  cd ../dockerfile/
+  825  vi Dockerfile 
+  826  docker exec -it dock bash
+  827  pwd
+  828  cat Dockerfile 
+  829  docker exec -it misc
+  830  docker exec -it misc bash
+  831  docker exec -it dock bash
+  832  docker exec dock bash
+  833  docker exec -i dock bash
+  834  docker exec -it dock bash
+  835  docker logs dock
+  836  cat do
+  837  cat Dockerfile 
+  838  cd ../postgres/
+  839  docker ps -a
+  840  stop-all-containers 
+  841  rm-all-containers 
+  842  docker run --rm --name pg -it my/fedora_postgres bash
+  843  cat ../locale/
+  844  cat ../locale/Dockerfile 
+  845  docker run --rm --name pg -it my/fedora_postgres bash
+  846  docker run --rm --name loc -it my/fedora-locale bash
+  847  docker build -t my/fedora_postgres .
+  848  docker run --rm --name pg -it my/fedora_postgres bash
+  849  docker build -t my/fedora_postgres .
+  850  docker run --rm --name pg -it my/fedora_postgres bash 
+  851  docker build -t my/fedora_postgres .
+  852  docker history my/fedora_postgres
+  853  docker build -t my/fedora_postgres .  
+  854  docker run --rm --name pg -it my/fedora_postgres bash 
+  855  docker build -t my/fedora_postgres .   
+  856  docker run --rm --name pg -it my/fedora_postgres bash 
+  857  docker build -t my/fedora_postgres .   
+  858  docker run --rm --name pg -it my/fedora_postgres bash 
+  859  docker build -t my/fedora_postgres .   
+  860  docker ps -a
+  861  docker run --rm --name pg my/fedora_postgres
+  862  docker build -t my/fedora_postgres .   
+  863  docker run --rm --name pg my/fedora_postgres
+  864  docker build -t my/fedora_postgres .   
+  865  docker run --rm --name pg my/fedora_postgres
+  866  docker run --rm --name pg -t my/fedora_postgres
+  867  docker run --rm --name pg -d my/fedora_postgres
+  868  docker run  --name pg -d my/fedora_postgres
+  869  stop-all-containers 
+  870  rm-all-containers 
+  871  docker build -t my/fedora_postgres .   
+  872  docker run  --name pg  my/fedora_postgres
+  873  docker ps -a
+  874  rm-all-containers 
+  875  docker run  --name pg -it my/fedora_postgres bash
+  876  docker build -t my/fedora_postgres .   
+  877  docker run  --name pg my/fedora_postgres
+  878  docker run --rm --name pg my/fedora_postgres
+  879  rm-all-containers 
+  880  docker run --rm --name pg my/fedora_postgres
+  881  docker build -t my/fedora_postgres .   
+  882  docker run --rm --name pg my/fedora_postgres
+  883  docker build -t my/fedora_postgres .   
+  884  docker run --rm --name pg my/fedora_postgres
+  885  docker build -t my/fedora_postgres .   
+  886  docker run --rm --name pg my/fedora_postgres
+  887  docker run --rm --name pg -t my/fedora_postgres
+  888  ls
+  889  ls ..
+  890  ls ../../
+  891  docker inspect web
+  892   docker network inspect bridge 
+  893  docker network disconnect bridge fd
+  894  docker network connect bridge fd
+  895   docker network inspect bridge 
+  896   docker network inspect my-bridge-2 
+  897  docker run --rm --name pg -t my/fedora_postgres
+  898  docker images
+  899  docker run --rm --name pg -t my/fedora_postgres
+  900  docker ps -a
+  901  stop-all-containers 
+  902  rm-all-containers 
+  903  top
+  904  docker run --rm --name pg -t my/fedora_postgres
+  905  docker run --rm --name fd -v /fd  -ti my/fedora-locale
+  906  docker run --rm --name fd -v /fd  -ti my/fedora-locale bash
+  907  docker run --rm --name fd   -ti my/fedora-locale bash
+  908  docker run --rm --name fd -v /fd  -ti my/fedora-locale bash
+  909  docker run --rm --name fd -v /fd:/tmp/fd  -ti my/fedora-locale bash
+  910  ls ~/tmp/
+  911  docker run --rm --name fd -v /fd:/tmp/fd  -ti my/fedora-locale bash
+  912  docker run --rm --name fd -v /fd  -ti my/fedora-locale bash
+  913  docker run --rm --name fd -v /fd:/home/eric/tmp/fd  -ti my/fedora-locale bash
+  914  ls /
+  915  ls /fd
+  916  ls -ld /fd
+  917  rmdir /fd
+  918  sudo rmdir /fd
+  919  docker run --rm --name fd -v /home/eric/tmp/fd:/fd  -ti my/fedora-locale bash
+  920  docker volume ls -f dangling=true 
+  921  docker volume ls -f dangling=true | awk 'NR>1{print $2}'
+  922  docker volume ls -f dangling=true | awk 'NR>1{print $2}' | xargs -I % echo docker rm %
+  923  docker rm --help
+  924  docker volume ls -f dangling=true | awk 'NR>1{print $2}' | xargs -I % docker rm %
+  925  docker volume ls -f dangling=true | awk 'NR>1{print $2}' | xargs -I % docker rm -v %
+  926  docker run --rm --name fd -v /home/eric/tmp/fd:/fd  -ti my/fedora-locale bash
+  927  docker run --rm --name fd -v my-fd:/fd  -ti my/fedora-locale bash
+  928  docker ps -a
+  929  docker volume ls -f dangling=true 
+  930  docker run --rm --name fd -v my-fd:/fd  -ti my/fedora-locale bash
+  931  docker create --rm --name fd -v my-fd:/fd  -ti my/fedora-locale bash
+  932  docker create  --name fd  -ti my/fedora-locale bash
+  933  docker start --help
+  934  docker start -a -i fd
+  935  docker create  --name fd  -t my/fedora-locale bash
+  936  docker start -ai --rm fd
+  937  docker start -ai  fd
+  938  exit
+  939  vi webpack.config.js 
+  940  ls
+  941  vi public/index.html 
+  942  vi src/index.js 
+  943  vi bootstrap.config.js
+  944  find -maxdepth 2 
+  945  find -maxdepth 2 | xarg grep bootstrap | grep css
+  946  find -maxdepth 2 | xargs grep bootstrap | grep css
+  947   vi webpack.config.js 
+  948  exit
+  949  vi server.js 
+  950  ls
+  951  vi public/index.html 
+  952  vi webpack.config.js
+  953  cd ..
+  954  ls
+  955  cd ..
+  956  ls
+  957  cd ..
+  958  ls
+  959  exit
+  960  cd ../
+  961  cd ..
+  962  pwd
+  963  cd ../../
+  964  ls
+  965  cd CodeSchool/Bootstrap/
+  966  ls src/
+  967  vi main.js
+  968  ls
+  969  ls src/
+  970  vi src/main.css 
+  971  vi src/main.js
+  972  vi public/index.html 
+  973  node server
+  974  nvm use v5.5.0
+  975  node server
+  976  pwd
+  977  vi public/index.html 
+  978  pwd
+  979  exit
+  980  node server
+  981  nvm use v5.5.0
+  982  node server
+  983  pwd
+  984  exit
+  985  cd ..
+  986  cd /home/eric/Devel/JavaScript/Node/Webpack/bootstrap-webpack-example
+  987  node server
+  988  nvm use v5.5.0
+  989  node server
+  990  exit
+  991  ls
+  992  pwd
+  993  ls
+  994  vi index.html 
+  995  cd ../
+  996  ls
+  997  pwd
+  998  exit
+  999  cd /home/eric/Devel/JavaScript/Node/Polymer/polymer-first-elements
+ 1000  polymer serve
+ 1001  vi icon-toggle-my-third/icon-toggle.html 
+ 1002  vi icon-toggle-my-third/demo/icon-toggle-demo.html 
+ 1003  diff icon-toggle-my-third/demo/icon-toggle-demo.html  /tmp/third 
+ 1004  rm icon-toggle-my-third/demo/.icon-toggle-demo.html.swp 
+ 1005  cp -a icon-toggle-my-third/demo/ .
+ 1006  cp -a icon-toggle-my-third/icon-toggle.html .
+ 1007  polymer serve
+ 1008  ls
+ 1009  pwd
+ 1010  history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Polymer_polymer-first-elements_2.txt

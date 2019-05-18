@@ -1,0 +1,60 @@
+/ 7	. 
+
+/ 7 .
+
+/ In een Gradle project gaat run tests via de Gradle Task view
+JavaLang
+    verification
+        test
+/ OK
+/ Maar als je op de GenericTest gaat staan  , en right click 'Run as JUnit Test'    , dan gaat WH NIET OK
+
+/ we maken een maven proj JavaLangWithMaven ,
+/ right click project, Build Path   , Libraries ,
+/ we zien JRE System Library [J2SE-1.5]
+/ click Edit    , en kies
+Execution environment: JavaSE-1.7
+/ TODO Is dit echt nodig    ?
+
+/ wat wel MOET  ,
+$ vi pom.xml
+  <dependencies>
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>          <-
+        <version>3.6.1</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+/ Anders krijgen we ERR -source 1.5 , met de <> ,
+
+$ vi GenericTest.java
+
+    @Test
+    public void test17(){
+        B<I2<R>>b=new B(new N2Impl<R>());
+221:    B<? extends N2<R>>b2=(B<? extends N2<R>>)b;
+    }
+
+[ERROR] /home/eric/Devel/Java/Eclipse/eclipse-jee-test/workspace-wicket7_5/JavaLangWithMaven/src/test/java/generics/GenericsTest.java:[221,58] inconvertible types
+  required: generics.B<? extends generics.N2<generics.R>>
+  found:    generics.B<generics.I2<generics.R>>
+[INFO] 1 error
+
+/ NB.
+/ compilatie errors hebben niets met @Ignore te maken   ,
+/ we moeten de test echt comment out    ,
+

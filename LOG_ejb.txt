@@ -1,0 +1,62 @@
+/ bookmarks in Java->JSF
+
+/ geef in google	, 
+stateless stateful bean
+/ Lees	, 
+http://stackoverflow.com/questions/2351220/stateless-and-stateful-enterprise-java-beans
+/->
+https://stackoverflow.com/questions/8887140/jsf-request-scoped-bean-keeps-recreating-new-stateful-session-beans-on-every-req
+/ Deze zochten we : sfsb slsb scope,	
+->
+https://stackoverflow.com/questions/18369356/when-is-it-necessary-or-convenient-to-use-spring-or-ejb3-or-all-of-them-together/18379228#18379228
+->
+https://stackoverflow.com/questions/30639785/jsf-controller-service-and-dao/
+
+http://stackoverflow.com/questions/6025998/difference-between-view-and-request-scope-in-managed-beans
+
+/ 6 jun 2017
+
+/ google
+managed bean stateless session bean
+https://stackoverflow.com/questions/6025998/difference-between-view-and-request-scope-in-managed-beans
+->
+https://stackoverflow.com/questions/7031885/how-to-choose-the-right-bean-scope/
+->
+https://stackoverflow.com/questions/3106452/how-do-servlets-work-instantiation-sessions-shared-variables-and-multithreadi
+https://stackoverflow.com/questions/28240734/advantages-of-using-jsf-faces-flow-instead-of-the-normal-navigation-system/
+http://balusc.omnifaces.org/2011/09/communication-in-jsf-20.html#ManagedBeanScopes
+
+https://stackoverflow.com/questions/4713483/difference-between-managed-bean-and-backing-bean
+https://coderanch.com/t/555892/java/managed-bean-MVC
+
+/ balusc : use view scope with ajax forms, request scope with normal forms,
+/ google: view scope request scope ajax
+https://stackoverflow.com/questions/13565589/request-scope-and-view-scope
+/ duplicate van 
+https://stackoverflow.com/questions/7031885/how-to-choose-the-right-bean-scope
+
+/ google: view scope ajax
+https://stackoverflow.com/questions/30115046/viewscoped-postcontruct-is-called-upon-every-ajax-request
+
+/ 13	. 
+
+/ WH zo: stel op een page component A en component B, met models A en B. 
+/ jsf: backing bean=model
+/ Doe AJAX call op A , een request is started, dan als model B is request scoped, dan gaat model B WH verloren	, en model A wordt update	 in zijn geheel	,
+/ TODO probeer in Wicket: kijk of model B verloren gaat bij AJAX call op A,	 omdat er een nieuw request wordt start,
+/ Als model B session scoped is, en dat zal zo zijn, dan OK
+/ in jsf: maak model B (backed bean) view scoped. 
+
+/ 7. 
+
+/ jndi
+
+/ google
+weld jndi
+/ lees	,
+https://docs.jboss.org/weld/reference/2.2.0.Alpha1/en-US/html/environments.html
+
+/ google,
+jboss jndi
+/ lees	,
+https://docs.jboss.org/jbossweb/3.0.x/jndi-resources-howto.html

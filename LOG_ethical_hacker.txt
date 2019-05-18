@@ -1,0 +1,26 @@
+/ 7	. 
+
+/ google: online ethical hacker
+
+https://www.globalknowledge.nl/cursussen/ec-council/security/ceh.html?gclid=Cj0KEQjwp83KBRC2kev0tZzExLkBEiQAYxYXOuQ0iG771xKYK1jhxvj72bRL3fUqM_ezyZ5ddSXirjIaAsF58P8HAQ
+
+https://www.quora.com/Which-websites-offer-free-ethical-hacking-courses
+
+The who course content of CEH v8 of EC Council is available in torrent which includes the PDFs of theory, PDF for Practical Guide and the complete toolkit of 6 CDs.
+I have gone through several books also. But the Best book is “Ethical Hacking and Penetration Testing Guide” by Rafay Baloch. You can download the PDF from Internet.
+For Video tutorial: CBB Nugget Videos are pretty good and In youtube you can watchCertified Ethical hacker Course byPluralsight IT - Training Archive for basic concepts.
+
+/ 13	. 
+
+/ google: how to write virus ethical hacker
+https://www.udemy.com/learn-ethical-hacking-from-scratch/?matchtype=b&gclid=CjwKCAjw7dfKBRAdEiwAch0egaUlre92Crs6iiChGfdFkqhVOg26x9LIssDApfJlC9KpZmcIsrWLWBoCltoQAvD_BwE&utm_term=_._pl__._pd__._ti_kwd-299875076382_._kw_%2Bethical%20%2Bhacking%20%2Bhow%20%2Bto_._&k_clickid=a75c0d57-0930-4b3e-85e7-7a2d73741211_426_GOOGLE_NEW-AW-PROS-ROW-TECH-IT-Ethical-Hacking1-EN-EURO_._ci_857010_._sl_ENG_._vi_TECH_._sd_All_._la_EN_.__how%20to_%2Bethical%20%2Bhacking%20%2Bhow%20%2Bto_b_194138679347_c&utm_source=adwords-row&utm_campaign=NEW-AW-PROS-ROW-TECH-IT-Ethical-Hacking1-EN-EURO_._ci_857010_._sl_ENG_._vi_TECH_._sd_All_._la_EN_._&utm_content=_._ag_how%20to_._ad_194138679347_._de_c_._dm__._lo_9064062_._&utm_medium=udemyads
+
+https://www.security-kennis.nl/trainingen/certified-ethical-hacker-examen/?gclid=Cj0KEQjw7dfKBRCdkKrvmfKtyeoBEiQAch0egcLkkPwWIoUC6hvv57RzmlpBVnugjXHMQMmxlqZFRo0aAqzK8P8HAQ
+
+https://www.nrc.nl/nieuws/2016/09/13/al-hun-vrije-tijd-gaat-op-aan-ethisch-hacken-4268592-a1521184
+ Ze versloegen de andere kanshebbers: makers van bank-app BunQ en XtraEye, digitale veiligheidsmaatregelen voor ouderen in huis.
+
+/ google: Vincent Toms (46) en Victor Gevers (40) GDI Foundation, en lanceerden Project 366
+http://www.gdi.foundation/news
+http://www.gdi.foundation/single-post/2017/01/03/Het-resultaat-na-366-dagen-ethisch-hacken-%E2%80%9CSecurity-zo-lek-als-een-mandje%E2%80%9D
+

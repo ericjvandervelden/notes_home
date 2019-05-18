@@ -1,0 +1,21 @@
+/ SVN
+
+https://system.mp-objects.com/svn/tms/
+
+/ 7	. 
+
+/ ga op file staan	, 
+/ right click, Team, Show Annotation...
+/ we zien wie welke regel heeft veranderd	,
+
+/ Voeg History view to aan Team Synchronizing perspective	,
+/ select file in editor	, dan zien we in de history view de history van deze file	,
+
+/ als we de history van het project willen weten (wat svn log doet)	, right click project	,  Team, show history	,
+/ we zien dan ook de history tab in maar dan met de hele history	,
+/ als we de history tab eenmaal hebben , kunnen we ook gewoon click op het project, een module	, file, ... en we zien de history daarvan in de history tab	,
+
+
+
+
+/ Einde SVN

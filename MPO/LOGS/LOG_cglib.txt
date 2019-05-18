@@ -1,0 +1,301 @@
+/ 7	. 
+
+[eric@localhost cglib]$ pwd
+/home/eric/Devel/Java/cglib
+[eric@localhost cglib]$ tar xvzf  ~/Downloads/cglib-study.tgz 
+
+$ vi SampleTest.java
+	@Test
+	public void testCallbackFilter(){
+		Enhancer enhancer=new Enhancer();
+		CallbackHelper helper=new CallbackHelper(Sample.class, new Class[0]) {
+			
+			@Override
+			protected Object getCallback(Method method) {			/ called multiple times in CallbackHelper.<init>	, 
+				if(method.getDeclaringClass()!=Object.class 
+						&& method.getReturnType()==String.class){
+					return new FixedValue() {
+						
+						@Override
+						public Object loadObject() throws Exception {
+							return testHello;
+						}
+					};
+				}
+				else{
+					return NoOp.INSTANCE;
+				}
+
+			}
+		};
+		enhancer.setSuperclass(Sample.class);
+		enhancer.setCallbackFilter(helper);
+		enhancer.setCallbacks(helper.getCallbacks());
+		Sample sample=(Sample)enhancer.create();			<-
+		String result=sample.fct("foo");
+		Assert.assertEquals(testHello, result);
+		result=sample.fct2("foo");
+		Assert.assertEquals(testHello, result);
+		result=sample.toString();
+		Assert.assertNotEquals(testHello, result);
+		int hash=sample.hashCode();
+
+	}
+}
+
+/ op <-	, 
+
+this	SampleTest  (id=36)	
+enhancer	Enhancer  (id=37)	
+helper	SampleTest$5  (id=39)	
+	callbacks	ArrayList<E>  (id=50)	
+		[0]	SampleTest$5$1  (id=66)		Sample.fct 				<- volgorde TODO	
+		[1]	SampleTest$5$1  (id=67)		Sample.fct2
+		[2]	NoOp$1  (id=68)				Object.equals
+		[3]	NoOp$1  (id=68)				Object.clone	
+		[4]	NoOp$1  (id=68)				Object.hashCode
+		[5]	NoOp$1  (id=68)				Object.toString	
+	methodMap	HashMap<K,V>  (id=57)	
+		[0]	HashMap$Entry<K,V>  (id=88)	
+			key	Method  (id=97)				public boolean java.lang.Object.equals(java.lang.Object)	
+			value	Integer  (id=98)	
+		[1]	HashMap$Entry<K,V>  (id=89)	
+			key	Method  (id=107)			public java.lang.String first.Sample.fct(java.lang.String)	
+			value	Integer  (id=108)	
+		[2]	HashMap$Entry<K,V>  (id=90)	
+			key	Method  (id=111)			protected native java.lang.Object java.lang.Object.clone() throws java.lang.CloneNotSupportedException	
+			value	Integer  (id=98)	
+		[3]	HashMap$Entry<K,V>  (id=91)	
+			key	Method  (id=114)			public java.lang.String first.Sample.fct2(java.lang.String)	
+			value	Integer  (id=115)	
+		[4]	HashMap$Entry<K,V>  (id=92)	
+			key	Method  (id=119)			public native int java.lang.Object.hashCode()	
+			value	Integer  (id=98)	
+		[5]	HashMap$Entry<K,V>  (id=93)	
+			key	Method  (id=123)			public java.lang.String java.lang.Object.toString()	
+			value	Integer  (id=98)	
+	this$0	SampleTest  (id=36)	
+
+/ 7	. 
+
+/ we start opnieuw cglib-study/src/main/java/first/SampleTest.class	, 
+
+/s
+SampleTest.testMethodInterceptor() line: 79	
+		Enhancer enhancer=new Enhancer();
+/s
+Enhancer.<clinit>() line: 73	
+    private static final EnhancerKey KEY_FACTORY =
+      (EnhancerKey)KeyFactory.create(EnhancerKey.class, KeyFactory.HASH_ASM_TYPE, null);
+/s
+KeyFactory.create(Class, KeyFactoryCustomizer, List<KeyFactoryCustomizer>) line: 153	
+        return create(keyInterface.getClassLoader(), keyInterface, first, next);
+/ keyInterface= interface net.sf.cglib.proxy.Enhancer$EnhancerKey	/ is een interface
+/s
+KeyFactory.create(ClassLoader, Class, KeyFactoryCustomizer, List<KeyFactoryCustomizer>) line: 162	
+        Generator gen = new Generator();
+/s
+KeyFactory$Generator.<init>() line: 188	
+            super(SOURCE);
+/s
+KeyFactory$Generator(AbstractClassGenerator<T>).<init>(AbstractClassGenerator$Source) line: 137	
+
+    private GeneratorStrategy strategy = DefaultGeneratorStrategy.INSTANCE;
+/=
+   		public static final DefaultGeneratorStrategy INSTANCE = new DefaultGeneratorStrategy();
+
+    private NamingPolicy namingPolicy = DefaultNamingPolicy.INSTANCE;
+/=
+    	public static final DefaultNamingPolicy INSTANCE = new DefaultNamingPolicy();
+
+        this.source = source;
+source	AbstractClassGenerator$Source  (id=80)	
+	name	"net.sf.cglib.core.KeyFactory" (id=83)	
+/t
+KeyFactory.create(ClassLoader, Class, KeyFactoryCustomizer, List<KeyFactoryCustomizer>) line: 163	
+        Generator gen = new Generator();
+/d
+        gen.setInterface(keyInterface);
+keyInterface	Class<T> (net.sf.cglib.proxy.Enhancer$EnhancerKey) (id=43)	
+
+        if (customizer != null) {
+            gen.addCustomizer(customizer);
+
+        if (next != null && !next.isEmpty()) {
+/n
+        gen.setClassLoader(loader);
+        return gen.create();
+/s
+KeyFactory$Generator.create() line: 220	
+            setNamePrefix(keyInterface.getName());
+/s
+KeyFactory$Generator(AbstractClassGenerator<T>).setNamePrefix(String) line: 142	
+namePrefix	"net.sf.cglib.proxy.Enhancer$EnhancerKey" (id=120)	
+/t
+KeyFactory$Generator.create() line: 220
+            setNamePrefix(keyInterface.getName());
+/d
+            return (KeyFactory)super.create(keyInterface.getName());
+/s
+KeyFactory$Generator(AbstractClassGenerator<T>).create(Object) line: 275	
+/=
+    protected Object create(Object key) {
+key	"net.sf.cglib.proxy.Enhancer$EnhancerKey" (id=120)	
+
+            Map<ClassLoader, ClassLoaderData> cache = CACHE;
+
+/ intermezzo
+
+abstract public class AbstractClassGenerator<T>
+    private static volatile Map<ClassLoader, ClassLoaderData> CACHE = new WeakHashMap<ClassLoader, ClassLoaderData>();
+
+/ Einde intermezzo
+
+            ClassLoaderData data = cache.get(loader);
+null
+            if (data == null) {
+                synchronized (AbstractClassGenerator.class) {
+                    cache = CACHE;
+                    data = cache.get(loader);
+null
+                    if (data == null) {
+                        Map<ClassLoader, ClassLoaderData> newCache = new WeakHashMap<ClassLoader, ClassLoaderData>(cache);
+                        data = new ClassLoaderData(loader);
+/s
+AbstractClassGenerator$ClassLoaderData.<init>(ClassLoader) line: 73	
+            Function<AbstractClassGenerator, Object> load =
+                    new Function<AbstractClassGenerator, Object>() {
+                        public Object apply(AbstractClassGenerator gen) {
+                            Class klass = gen.generate(ClassLoaderData.this);
+                            return gen.wrapCachedClass(klass);
+                        }
+                    };
+            generatedClasses = new LoadingCache<AbstractClassGenerator, Object, Object>(GET_KEY, load);
+
+/ intermezzo
+
+        private static final Function<AbstractClassGenerator, Object> GET_KEY = new Function<AbstractClassGenerator, Object>() {
+            public Object apply(AbstractClassGenerator gen) {
+                return gen.key;
+            }
+        };
+
+/ Einde intermezzo
+
+/s
+LoadingCache<K,KK,V>.<init>(Function<K,KK>, Function<K,V>) line: 19	
+        this.keyMapper = keyMapper;
+        this.loader = loader;
+        this.map = new ConcurrentHashMap<KK, Object>();
+keyMapper	AbstractClassGenerator$ClassLoaderData$2  (id=846)		/ GET_KEY hierboven
+loader	AbstractClassGenerator$ClassLoaderData$3  (id=845)			/ load hierboven	,
+
+/t
+KeyFactory$Generator(AbstractClassGenerator<T>).create(Object) line: 285	
+                        data = new ClassLoaderData(loader);
+/d
+this	KeyFactory$Generator  (id=79)	
+data	AbstractClassGenerator$ClassLoaderData  (id=139)	
+	classLoader	WeakReference<T>  (id=850)	
+		discovered	null	
+		next	null	
+		queue	ReferenceQueue$Null  (id=874)	
+		referent	Launcher$AppClassLoader  (id=45)	
+	generatedClasses	LoadingCache<K,KK,V>  (id=857)	
+		keyMapper	AbstractClassGenerator$ClassLoaderData$2  (id=846)	
+		loader	AbstractClassGenerator$ClassLoaderData$3  (id=845)	
+		map	ConcurrentHashMap<K,V>  (id=881)	
+	reservedClassNames	HashSet<E>  (id=839)	
+	uniqueNamePredicate	AbstractClassGenerator$ClassLoaderData$1  (id=872)	
+
+                        newCache.put(loader, data);
+                        CACHE = newCache;
+            this.key = key;
+key	"net.sf.cglib.proxy.Enhancer$EnhancerKey" (id=120)	
+
+            Object obj = data.get(this, getUseCache());
+/s
+AbstractClassGenerator$ClassLoaderData.get(AbstractClassGenerator, boolean) line: 116	
+useCache=true
+            } else {
+              Object cachedValue = generatedClasses.get(gen);
+/s
+LoadingCache<K,KK,V>.get(K) line: 28	
+this
+	keyMapper	AbstractClassGenerator$ClassLoaderData$2  (id=846)	
+	loader	AbstractClassGenerator$ClassLoaderData$3  (id=845)	
+	map	ConcurrentHashMap<K,V>  (id=881)	
+key	KeyFactory$Generator  (id=79)	
+	key	"net.sf.cglib.proxy.Enhancer$EnhancerKey" (id=120)	
+
+        final KK cacheKey = keyMapper.apply(key);
+/s
+AbstractClassGenerator$ClassLoaderData$2.apply(AbstractClassGenerator) line: 81	
+/=
+            public Object apply(AbstractClassGenerator gen) {
+                return gen.key;
+gen	KeyFactory$Generator  (id=79)	
+	key	"net.sf.cglib.proxy.Enhancer$EnhancerKey" (id=120)	
+/t
+LoadingCache<K,KK,V>.get(K) line: 29	
+        final KK cacheKey = keyMapper.apply(key);
+/d
+cacheKey	"net.sf.cglib.proxy.Enhancer$EnhancerKey" (id=120)	
+        Object v = map.get(cacheKey);
+null
+        return createEntry(key, cacheKey, v);
+/s
+LoadingCache<K,KK,V>.createEntry(K, KK, Object) line: 52	
+
+this	LoadingCache<K,KK,V>  (id=857)	
+	keyMapper	AbstractClassGenerator$ClassLoaderData$2  (id=846)	
+	loader	AbstractClassGenerator$ClassLoaderData$3  (id=845)	
+	map	ConcurrentHashMap<K,V>  (id=881)	
+
+       FutureTask<V> task;
+        boolean creator = false;
+        if (v != null) {
+/n
+        } else {
+            task = new FutureTask<V>(new Callable<V>() {
+                public V call() throws Exception {
+                    return loader.apply(key);
+                }
+            });
+
+/ Intermezzo
+
+/ uit LOG_java.txt
+
+/ geef in google    ,
+weak reference tutorial
+/ Lees  ,
+http://javapapers.com/core-java/java-weak-reference/
+https://community.oracle.com/blogs/enicholas/2006/05/04/understanding-weak-references
+https://www.tutorialspoint.com/java/java_weakhashmap_class.htm
+
+
+$ vi Runtime.class
+    /**
+     * Runs the garbage collector.
+     * Calling this method suggests that the Java virtual machine expend
+     * effort toward recycling unused objects in order to make the memory
+     * they currently occupy available for quick reuse. When control
+     * returns from the method call, the virtual machine has made
+     * its best effort to recycle all discarded objects.
+     * <p>
+     * The name <code>gc</code> stands for "garbage
+     * collector". The virtual machine performs this recycling
+     * process automatically as needed, in a separate thread, even if the					<-
+     * <code>gc</code> method is not invoked explicitly.
+     * <p>
+     * The method {@link System#gc()} is the conventional and convenient
+     * means of invoking this method.
+     */
+    public native void gc();
+
+/ Lees	, 
+http://stackoverflow.com/questions/30453551/garbage-collector-doesnt-immediately-collect-finished-thread
+
+/ Einde intermezzo
+

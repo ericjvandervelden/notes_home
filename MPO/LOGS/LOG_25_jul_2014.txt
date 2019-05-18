@@ -1,0 +1,153 @@
+/ APPLICATIE
+
+/ 7	.
+
+/ we zien steeds dezelfde query	log	,
+
+select  this_.SYSTEM_ID as SYSTEM1_143_0_, 
+        this_.INTERFACE_ID as INTERFACE2_143_0_, 
+        this_.STATUS as STATUS143_0_, 
+        this_.EVENT_DATE as EVENT4_143_0_, 
+        this_.OBJECT_REFERENCE1 as OBJECT5_143_0_, 
+        this_.OBJECT_REFERENCE2 as OBJECT6_143_0_, 
+        this_.OBJECT_REFERENCE3 as OBJECT7_143_0_, 
+        this_.OBJECT_REFERENCE4 as OBJECT8_143_0_, 
+        this_.OBJECT_REFERENCE5 as OBJECT9_143_0_, 
+        this_.START_DTM as START10_143_0_, 
+        this_.END_DTM as END11_143_0_,
+        this_.ERROR_STRING as ERROR12_143_0_ 
+from INTERFACE_TRIGGER_EVENT this_ 
+where this_.INTERFACE_ID=? 
+and this_.STATUS=? 
+and this_.EVENT_DATE between ? and ? 
+order by this_.EVENT_DATE asc limit ?
+
+(interfaceTriggerEventTimerFactory:) binding parameter [1] as [VARCHAR] - DEFERRED_EVENT
+(interfaceTriggerEventTimerFactory:) binding parameter [2] as [INTEGER] - 1
+(interfaceTriggerEventTimerFactory:) binding parameter [3] as [TIMESTAMP] - Sat Apr 26 12:26:51 CEST 2014
+(interfaceTriggerEventTimerFactory:) binding parameter [4] as [TIMESTAMP] - Fri Jul 25 12:26:51 CEST 2014
+
+/ 7	.
+
+
+{
+OUTBOUND=EntityEntry[com.mpobjects.oms.model.entity.orderprocess.OrderProcess#26594670](MANAGED)
+ com.mpobjects.oms.model.entity.shipmenttype.ShipmentType@302d7895[STANDARD
+STANDARD]=EntityEntry[com.mpobjects.oms.model.entity.shipmenttype.ShipmentType#26631688](MANAGED)
+ SystemId:3150	Id:MPO	Description:MP Objects=EntityEntry[com.mpobjects.oms.model.entity.organization.Organization#3150](MANAGED)
+ SystemId:26631687	isDeleted:false	Level:STANDARD	Description:STANDARD	HierarchyLevel:0	=EntityEntry[com.mpobjects.oms.model.entity.ShipmentServiceLevelVO#26631687](MANAGED)
+ SystemId:9772224	isDeleted:false	Code:DAP	Description:Delivered at placeVersion:2000=EntityEntry[com.mpobjects.oms.model.incoterm.vo.IncoTermVO#9772224](MANAGED)
+ SystemId:4153	isDeleted:false	Code:NL	Description:NETHERLANDS (EU)=EntityEntry[com.mpobjects.oms.model.entity.country.Country#4153](MANAGED)
+ SystemId:4052	isDeleted:false	Code:DE	Description:GERMANY (EU)=EntityEntry[com.mpobjects.oms.model.entity.country.Country#4052](MANAGED)
+ ShipmentOrder: SH000000105(SystemId:26632024)=EntityEntry[com.mpobjects.oms.model.shipmentorder.vo.ShipmentOrderVO#26632024](MANAGED)
+ SystemId:4000	Id:HAAL-ZW	Description:HAAL=EntityEntry[com.mpobjects.oms.model.entity.organization.Organization#4000](MANAGED)
+ com.mpobjects.oms.model.propertiesvalue.vo.PropertiesValueVO@42d93acf[systemId=26632060
+property=module.optimize.ratingrequest.servicelevel.default - null/true
+value=STANDARD]=EntityEntry[com.mpobjects.oms.model.propertiesvalue.vo.PropertiesValueVO#26632060](MANAGED)
+ com.mpobjects.oms.model.propertiesvalue.vo.PropertiesValueVO@43a40e52[systemId=26632061
+property=module.optimize.ratingrequest.shipmenttype.default - null/true
+value=STANDARD]=EntityEntry[com.mpobjects.oms.model.propertiesvalue.vo.PropertiesValueVO#26632061](MANAGED)
+ com.mpobjects.oms.model.propertiesvalue.vo.PropertiesValueVO@47a84c2f[systemId=26632347
+property=module.ratecalc.serviceordercost.default.currency.code - default currency cost/false
+value=EUR]=EntityEntry[com.mpobjects.oms.model.propertiesvalue.vo.PropertiesValueVO#26632347](MANAGED)
+ module.optimize.ratingrequest.shipmenttype.default - null/true=EntityEntry[com.mpobjects.oms.model.entity.property.Property#554285](MANAGED)
+ module.optimize.ratingrequest.servicelevel.default - null/true=EntityEntry[com.mpobjects.oms.model.entity.property.Property#554202](MANAGED)
+ module.ratecalc.serviceordercost.default.currency.code - default currency cost/false=EntityEntry[com.mpobjects.oms.model.entity.property.Property#26632346](MANAGED)
+ Resource:all-admin(systemId:10100)=EntityEntry[com.mpobjects.oms.model.user.Resource#10100](MANAGED)}
+
+/ 7	.
+
+detailMessage	"No CurrentSessionContext configured!" (id=72)	
+
+/ 7	.
+
+/ Als we in een dao method zijn , bijv. 
+ShipmentOrderDaoImpl(GenericHibernateDAO<Type>).getBySystemId(int) line: 276	
+
+/ dan kunnen we 	,
+this.getHibernateTemplate().getSessionFactory().getCurrentSession()	
+	persistenceContext	StatefulPersistenceContext  (id=16917)	
+
+		PersistenceContext
+
+entitiesByKey	HashMap<K,V>  (id=16935)	
+	table	HashMap$Entry<K,V>[16]  (id=17051)	
+		[1]	HashMap$Entry<K,V>  (id=17055)	
+			key	EntityKey  (id=17063)	
+EntityKey[com.mpobjects.oms.model.entity.organization.Organization#3150]
+			value	Organization  (id=17064)	
+SystemId:3150	Id:MPO	Description:MP Objects
+		[2]	HashMap$Entry<K,V>  (id=17056)	
+			key	EntityKey  (id=17238)	
+EntityKey[com.mpobjects.oms.model.entity.shipmenttype.ShipmentType#26631688]
+			value	ShipmentType  (id=17141)	
+com.mpobjects.oms.model.entity.shipmenttype.ShipmentType@f88db10[STANDARD,STANDARD]
+		[5]	HashMap$Entry<K,V>  (id=17058)	
+			key	EntityKey  (id=17265)	
+EntityKey[com.mpobjects.oms.model.entity.ShipmentServiceLevelVO#26631687]
+			value	ShipmentServiceLevelVO  (id=17151)	
+SystemId:26631687	isDeleted:false	Level:STANDARD	Description:STANDARD	HierarchyLevel:0	
+		[7]	HashMap$Entry<K,V>  (id=17060)	
+			key	EntityKey  (id=17287)	
+EntityKey[com.mpobjects.oms.model.entity.orderprocess.OrderProcess#26594670]
+			value	OrderProcess  (id=17134)	
+OUTBOUND
+		[8]	HashMap$Entry<K,V>  (id=17061)	
+			key	EntityKey  (id=17323)	
+EntityKey[com.mpobjects.oms.model.entity.country.Country#4153]
+			value	Country  (id=17194)	
+SystemId:4153	isDeleted:false	Code:NL	Description:NETHERLANDS (EU)
+		[10]	HashMap$Entry<K,V>  (id=17087)	
+			key	EntityKey  (id=17372)	
+EntityKey[com.mpobjects.oms.model.entity.country.Country#4052]
+			value	Country  (id=17396)	
+SystemId:4052	isDeleted:false	Code:DE	Description:GERMANY (EU)
+		[12]	HashMap$Entry<K,V>  (id=17088)	
+			key	EntityKey  (id=17435)	
+EntityKey[com.mpobjects.oms.model.incoterm.vo.IncoTermVO#9772224]
+			value	IncoTermVO  (id=17462)	
+SystemId:9772224	isDeleted:false	Code:DAP	Description:Delivered at placeVersion:2000
+
+collectionsByKey	HashMap<K,V>  (id=16932)	
+	table	HashMap$Entry<K,V>[8]  (id=17172)	
+		[1]	HashMap$Entry<K,V>  (id=17176)	
+			key	CollectionKey  (id=17180)	
+CollectionKey[com.mpobjects.oms.model.entity.country.Country.countryGroupList#4153]
+			value	PersistentSet  (id=17183)	
+		[2]	HashMap$Entry<K,V>  (id=17177)	
+			key	CollectionKey  (id=18058)	
+CollectionKey[com.mpobjects.oms.model.entity.country.Country.countryGroupList#4052]
+			value	PersistentSet  (id=18059)	
+		[3]	HashMap$Entry<K,V>  (id=17178)	
+			key	CollectionKey  (id=18063)	
+CollectionKey[com.mpobjects.oms.model.entity.organization.Organization.propertiesValues#3150]
+			value	PersistentSet  (id=18065)	
+
+
+
+		entityEntries
+/ links zien we dus entities (string rep)	, 
+{
+ SystemId:3150	Id:MPO	Description:MP Objects = EntityEntry[com.mpobjects.oms.model.entity.organization.Organization#3150](MANAGED)
+
+ com.mpobjects.oms.model.entity.shipmenttype.ShipmentType@f88db10[STANDARD,STANDARD] = EntityEntry[com.mpobjects.oms.model.entity.shipmenttype.ShipmentType#26631688](MANAGED)
+
+ SystemId:26631687	isDeleted:false	Level:STANDARD	Description:STANDARD	HierarchyLevel:0 = EntityEntry[com.mpobjects.oms.model.entity.ShipmentServiceLevelVO#26631687](MANAGED)
+
+ OUTBOUND = EntityEntry[com.mpobjects.oms.model.entity.orderprocess.OrderProcess#26594670](MANAGED)
+
+SystemId:4153	isDeleted:false	Code:NL	Description:NETHERLANDS (EU) = EntityEntry[com.mpobjects.oms.model.entity.country.Country#4153](MANAGED)
+
+ SystemId:4052	isDeleted:false	Code:DE	Description:GERMANY (EU) = EntityEntry[com.mpobjects.oms.model.entity.country.Country#4052](MANAGED)
+
+ SystemId:9772224	isDeleted:false	Code:DAP	Description:Delivered at placeVersion:2000 = EntityEntry[com.mpobjects.oms.model.incoterm.vo.IncoTermVO#9772224](MANAGED)
+
+}
+
+/ 7	.
+
+
+
+
+
+/ Einde APPLICATIE

@@ -1,0 +1,4246 @@
+/ See EGIT
+
+/ 7	. 
+
+/ Lees	,
+https://www.atlassian.com/git/tutorials/
+/ bovenin kun je Search
+branches
+https://www.atlassian.com/git/tutorials/using-branches/git-checkout
+
+A tag represents a version of a particular branch at a moment in time. A branch represents a separate thread of development that may run concurrently with other development efforts on the same code base. Changes to a branch may eventually be merged back into another branch to unify them.
+
+/ geef in google,
+git branch tag
+/ Lees	,
+http://stackoverflow.com/questions/1457103/how-is-a-tag-different-from-a-branch-which-should-i-use-here
+Usually you'll tag a particular version so that you can recreate it, e.g., this is the version we shipped to XYZ Corp. A branch is more of a strategy to provide on-going updates on a particular version of the code while continuing to do development on it. You'll make a branch of the delivered version, continue development on the main line, but make bug fixes to the branch that represents the delivered version. Eventually, you'll merge these bug fixes back into the main line. Often you'll use both branching and tagging together. You'll have various tags that may apply both to the main line and its branches marking particular versions (those delivered to customers, for instance) along each branch that you may want to recreate -- for delivery, bug diagnosis, etc.
+
+It's actually more complicated than this -- or as complicated as you want to make it -- but these examples should give you an idea of the differences.
+
+/ git 
+untracked add-> staging area commit-> repository
+
+/ 7	. 
+
+/ Doe	,
+https://try.github.io/levels/1/challenges/1
+
+$ git init
+
+$ git status
+nothing to commit (create/copy files and use "git add" to track)
+Success!
+
+/ create een file, octocat.txt
+
+$ git status
+octocat.txt
+thing added to commit but untracked files present (use "git add" to track)
+
+$ git add octocat.txt
+Nice job, you've added octocat.txt to the Staging Area
+
+$ git status
+
+# On branch master
+#
+# Initial commit
+#
+# Changes to be committed:
+#   (use "git rm --cached <file>..." to unstage)
+#
+#	
+
+/ we hebben octocat.txt staged=tracked	, 
+
+$ git commit -m "Add cute octocat story"
+
+[master (root-commit) 20b5ccd] Add cute octocat story
+ 1 file changed, 1 insertion(+)
+ create mode 100644 octocat.txt
+
+Success!
+/ we hebben octocat.txt in repo	, 
+/ is octocat.txt unstaged	? 
+/ TODO
+
+Success!
+
+$ git remote add origin https://github.com/try-git/try_git.git
+
+The push command tells Git where to put our commits when we're ready, and boy we're ready. So let's push our local changes to our origin repo (on GitHub).
+
+The name of our remote is origin and the default local branch name is master. The -u tells Git to remember the parameters, so that next time we can simply run git push and Git will know what to do. Go ahead and push it!
+
+
+$ git push -u origin master
+
+Branch master set up to track remote branch master from origin.
+Success!
+
+/ later, 
+
+$ git pull origin master
+
+Updating 3852b4d..3e70b0f
+Fast-forward
+ yellow_octocat.txt |    anged, 1 insertion(+)
+create mode 100644 yellow_octocat.txt
+
+In this case we want the diff of our most recent commit, which we can refer to using the HEAD pointer.
+$ git diff HEAD
+
+diff --git a/octocat.txt b/octocat.txt? 
+index 7d8d808..e725ef6 100644? 
+--- a/octocat.txt? 
++++ b/octocat.txt? ?
+@@ -1 +1 @@? ?-
+A Tale of Two Octocats?
+A Tale of Two Octocats and an Octodog? Success!
+
+nother great use for diff is looking at changes within files that have already been staged. Remember, staged files are files we have told git that are ready to be committed.  
+Let's use git add to stage octofamily/octodog.txt, which I just added to the family for you.
+
+$ git add octofamily/octodog.txt
+$ git diff -staged
+diff --git a/octofamily/octodog.txt b/octo family/octodog.txt? 
+new file mode 100644? index 0000000..cfbc74a? 
+--- /dev/null? 
++++ b/octofamily/octodog.txt?
+
+$ git diff HEAD
+/ geeft ze nu allebei	, octocat.txt en octofamily/octodog.txt	,
+
+$ git reset octofamily/octodog.txt
+$ git diff --staged
+/ niets meer	, 
+
+Files can be changed back to how they were at the last commit by using the command: git checkout -- <target>. Go ahead and get rid of all the changes since the last commit for octocat.txt
+$ git checkout -- octocat.txt
+$ git diff HEAD
+/ niets meer,
+
+When developers are working on a feature or bug they'll often create a copy (aka. branch) of their code they can make separate commits to. Then when they're done they can merge this branch back into their main master branch.
+We want to remove all these pesky octocats, so let's create a branch called clean_up, where we'll do all the work:
+$ git branch clean_up
+/ dus nu is clean_up een copy van master	,
+
+Ok, so you're in the clean_up branch. You can finally remove all those pesky octocats by using the git rm command which will not only remove the actual files from disk, but will also stage the removal of the files for us.
+You're going to want to use a wildcard again to get all the octocats in one sweep, go ahead and run:
+$ git rm '*.txt'
+
+rm 'blue_octocat.txt'
+rm 'octocat.txt'
+rm 'octofamily/baby_octocat.txt'
+rm 'octofamily/momma_octocat.txt'
+rm 'red_octocat.txt'
+
+$ git status
+Changes to be committed: 
+# 	(use "git reset HEAD <file>..." to unstage) # 
+# ?deleted: blue_octocat.txt? 
+# ?deleted: octocat.txt? 
+# ?deleted: octofamily/baby_octocat.txt? 
+# ?deleted: octofamily/momma_octocat.txt? 
+# ?deleted: red_octocat.txt? 
+# 
+# Untracked files: 
+	# (use "git add <file>..." to include in what will be committed) 
+# 
+# ?octofamily/? 
+
+Did not use git commit
+Suggest an edit
+
+$ git commit -m "Remove all the cats"
+/ deletes de *.txt files	,
+$ git status
+/ nog steeds de untracked octofamily/	, 
+
+$ ls 
+octofamily
+
+Great, you're almost finished with the cat... er the bug fix, you just need to switch back to the master branch so you can copy (or merge) your changes from the clean_up branch back into the master branch.
+Go ahead and checkout the master branch:
+$ git checkout master
+$ ls
+blue_octocat.txt
+octocat.txt
+octofamily/
+red_octocat.txt
+
+Use 'git merge' to merge the clean_up branch with master
+
+We're already on the master branch, so we just need to tell Git to merge the clean_up branch into it:
+
+$ git merge cleanup
+...
+ delete mode 100644 blue_octocat.txt
+ delete mode 100644 octocat.txt
+ delete mode 100644 octofamily/baby_octocat.txt
+ delete mode 100644 octofamily/momma_octocat.txt
+ delete mode 100644 red_octocat.txt
+
+Success!   
+
+$ ls 
+octofamily/
+
+You can use git branch -d <branch name> to delete a branch. Go ahead and delete the clean_up branch now:
+$ git branch clean_up
+$ git push
+
+/ Video
+http://gitreal.codeschool.com/levels/1
+
+/ 7	.
+
+/ in google
+git tag branch
+/ lees	,
+http://stackoverflow.com/questions/14613540/git-tag-in-branches
+
+[eric@almond first]$ pwd
+/home/eric/Devel/Git/first
+
+[eric@almond first]$ git init
+Initialized empty Git repository in /home/eric/Devel/Git/first/.git/
+
+/ of	,
+[eric@almond my-first-repo]$ git clone https://github.com/ericjvandervelden/my-first-repo.git
+
+[eric@almond first]$ cat >foo.txt 
+Foo
+[eric@almond first]$ cat >bar.txt
+Bar
+[eric@almond first]$ mkdir baz
+[eric@almond first]$ cat >baz/baz.txt
+baz
+
+
+
+[eric@almond first]$ git status
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	bar.txt
+	baz/
+	foo.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+[eric@almond my-first-repo]$ git diff HEAD
+[eric@almond my-first-repo]$ git diff --staged
+/ niets	,
+/ TODO
+
+[eric@almond first]$ git add *.txt
+
+[eric@almond first]$ git status
+On branch master
+
+Initial commit
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+	new file:   bar.txt
+	new file:   foo.txt
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	baz/
+
+/ we zien dat baz/baz.txt niet is staged	, 
+
+[eric@almond first]$ git add *.txt **/*.txt 
+
+[eric@almond first]$ git status
+On branch master
+
+Initial commit
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+	new file:   bar.txt
+	new file:   baz/baz.txt
+	new file:   foo.txt
+
+[eric@almond first]$ git diff 
+/ TODO
+[eric@almond first]$ git diff  --staged
+diff --git a/bar.txt b/bar.txt
+new file mode 100644
+index 0000000..ebd7525
+--- /dev/null
++++ b/bar.txt
+@@ -0,0 +1 @@
++Bar
+diff --git a/baz/baz.txt b/baz/baz.txt
+new file mode 100644
+index 0000000..7601807
+--- /dev/null
++++ b/baz/baz.txt
+@@ -0,0 +1 @@
++baz
+diff --git a/foo.txt b/foo.txt
+new file mode 100644
+index 0000000..bc56c4d
+--- /dev/null
++++ b/foo.txt
+@@ -0,0 +1 @@
++Foo
+
+/ in de clone	,
+[eric@almond my-first-repo]$ git diff 
+/ TODO
+[eric@almond my-first-repo]$ git diff  HEAD
+diff --git a/bar.txt b/bar.txt
+new file mode 100644
+index 0000000..5716ca5
+--- /dev/null
++++ b/bar.txt
+@@ -0,0 +1 @@
++bar
+diff --git a/baz/baz.txt b/baz/baz.txt
+new file mode 100644
+index 0000000..7601807
+--- /dev/null
++++ b/baz/baz.txt
+@@ -0,0 +1 @@
++baz
+diff --git a/foo.txt b/foo.txt
+new file mode 100644
+index 0000000..257cc56
+--- /dev/null
++++ b/foo.txt
+@@ -0,0 +1 @@
++foo
+[eric@almond my-first-repo]$ git diff --staged
+diff --git a/bar.txt b/bar.txt
+new file mode 100644
+index 0000000..5716ca5
+--- /dev/null
++++ b/bar.txt
+@@ -0,0 +1 @@
++bar
+diff --git a/baz/baz.txt b/baz/baz.txt
+new file mode 100644
+index 0000000..7601807
+--- /dev/null
++++ b/baz/baz.txt
+@@ -0,0 +1 @@
++baz
+diff --git a/foo.txt b/foo.txt
+new file mode 100644
+index 0000000..257cc56
+--- /dev/null
++++ b/foo.txt
+@@ -0,0 +1 @@
++foo
+
+[eric@almond my-first-repo]$ git commit -m "foo bar baz"
+
+/ Pas na commit kunnen we HEAD use	in first/,  in de clone vanaf begin al	,
+/ TODO
+
+[eric@almond first]$ git diff 
+eric@almond first]$ git diff --staged
+[eric@almond first]$  git status
+On branch master
+nothing to commit, working directory clean
+
+/ Lees	,
+https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes
+
+/ er is ook	,
+https://git-scm.com/docs/gittutorial
+/ we zien 
+	Reference
+	Book
+	Videos
+	External links
+
+/ in clone	,
+[eric@almond my-first-repo]$ git remote -v
+origin	https://github.com/ericjvandervelden/my-first-repo.git (fetch)
+origin	https://github.com/ericjvandervelden/my-first-repo.git (push)
+
+/ in clone	,
+[eric@almond my-first-repo]$ git push
+Username for 'https://github.com': ericjvandervelden@gmail.com
+Password for 'https://ericjvandervelden@gmail.com@github.com': vl$Walnoot27
+Counting objects: 6, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (6/6), 417 bytes | 0 bytes/s, done.
+Total 6 (delta 0), reused 0 (delta 0)
+To https://github.com/ericjvandervelden/my-first-repo.git
+   3fddf4e..0f0f816  master -> master
+
+[eric@almond my-first-repo]$ git remote show origin 
+* remote origin
+  Fetch URL: https://github.com/ericjvandervelden/my-first-repo.git
+  Push  URL: https://github.com/ericjvandervelden/my-first-repo.git
+  HEAD branch: master
+  Remote branch:
+    master tracked
+  Local branch configured for 'git pull':
+    master merges with remote master
+  Local ref configured for 'git push':
+    master pushes to master (up to date)
+/ TODO
+
+/ Lees	, 
+http://stackoverflow.com/questions/6565357/git-push-requires-username-and-password
+
+/ vergl local remote branch	,
+/ lees	,
+http://stackoverflow.com/questions/1800783/compare-local-git-branch-with-remote-branch
+git diff <local branch> <remote>/<remote branch>
+For example git diff master origin/master, or git diff featureA origin/next
+
+/ Lees	,
+http://blog.codonomics.com/2011/04/how-to-disable-gnome-ssh-askpass.html
+/ git push calls gnome-ask-pass
+eric@almond my-first-repo]$  env | grep ASK
+SSH_ASKPASS=/usr/libexec/openssh/gnome-ssh-askpass
+$ unset SSH_ASKPASS
+/ TODO: in ~/.bash_profile
+
+[eric@almond my-first-repo]$ git diff master origin/master
+diff --git a/gee.txt b/gee.txt
+deleted file mode 100644
+index c06e3fc..0000000
+--- a/gee.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-Gee
+
+/ Nu we SSH_ASKPASS hebben unset	, krijgen we nu direct in de console,
+[eric@almond my-first-repo]$ git push
+Username for 'https://github.com': ericjvandervelden@gmail.com
+Password for 'https://ericjvandervelden@gmail.com@github.com': vlWalnoot27
+/ OK
+
+/ 7	.  
+
+http://stackoverflow.com/questions/6565357/git-push-requires-username-and-password
+
+/ herinner	,
+[eric@almond my-first-repo]$ git remote show  origin 
+* remote origin
+  Fetch URL: https://github.com/ericjvandervelden/my-first-repo.git
+  Push  URL: https://github.com/ericjvandervelden/my-first-repo.git
+  HEAD branch: master
+  Remote branch:
+    master tracked
+  Local branch configured for 'git pull':
+    master merges with remote master
+  Local ref configured for 'git push':
+    master pushes to master (up to date)
+
+[eric@almond my-first-repo]$ git remote set-url origin git@github.com:ericjvandervelden/my-first-repo.git
+eric@almond my-first-repo]$ git remote show  origin 
+The authenticity of host 'github.com (192.30.253.113)' can't be established.
+RSA key fingerprint is SHA256:nThbg6kXUpJWGl7E1IGOCspRomTxdCARLviKw6E5SY8.
+RSA key fingerprint is MD5:16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'github.com,192.30.253.113' (RSA) to the list of known hosts.
+Permission denied (publickey).
+/ TODO
+
+[eric@almond my-first-repo]$ git remote set-url origin https://github.com/ericjvandervelden/my-first-repo.git
+/ we set weer terug	, 
+
+/ 7	. 
+
+[eric@almond my-first-repo]$ git branch my
+[eric@almond my-first-repo]$ git checkout my
+Switched to branch 'my'
+[eric@almond my-first-repo]$ ls
+bar.txt  baz  foo.txt  gee.txt  README.md
+/ copy	,
+
+[eric@almond my-first-repo]$ cat >hee.txt
+Hee
+
+[eric@almond my-first-repo]$ git checkout master 
+Switched to branch 'master'
+Your branch is up-to-date with 'origin/master'.
+[eric@almond my-first-repo]$ ls
+bar.txt  baz  foo.txt  gee.txt  hee.txt  README.md
+/ we zien ook hier hee.txt
+/ dat komt omdat we hee.txt nog niet hebben commit in my	,
+[eric@almond my-first-repo]$ git checkout  my
+[eric@almond my-first-repo]$ git commit -m "hee"
+[eric@almond my-first-repo]$ git checkout master 
+[eric@almond my-first-repo]$ ls
+bar.txt  baz  foo.txt  gee.txt  README.md
+/ geen hee.txt
+
+/ Lees	,
+http://stackoverflow.com/questions/2765421/how-to-push-a-new-local-branch-to-a-remote-git-repository-and-track-it-too
+
+/ 7	. 
+
+/ we willen een nieuwe branch create	, en push naar github	, 
+
+/ doe WH NIET
+[eric@almond my-first-repo]$ git branch my
+[eric@almond my-first-repo]$ git checkout my
+/ TODO
+
+/ maar	,
+[eric@almond my-first-repo]$ git checkout -b me
+Switched to a new branch 'me'
+[eric@almond my-first-repo]$ git branch
+  master
+* me
+  my
+
+[eric@almond my-first-repo]$ vi tee.txt
+[eric@almond my-first-repo]$ git add tee.txt 
+[eric@almond my-first-repo]$ git commit -m "tee"
+
+[eric@almond my-first-repo]$ git push -u origin me
+Username for 'https://github.com': ericjvandervelden@gmail.com
+Password for 'https://ericjvandervelden@gmail.com@github.com': vlWalnoot27 
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 279 bytes | 0 bytes/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local objects.
+To https://github.com/ericjvandervelden/my-first-repo.git
+ * [new branch]      me -> me
+Branch me set up to track remote branch me from origin.
+
+/ klopt	, op github hebben we nu 2 branches	,
+
+/ 7	. 
+
+/ tags
+
+/ Lees	,
+http://stackoverflow.com/questions/14613540/git-tag-in-branches
+
+[eric@almond my-first-repo]$ git tag
+/ NIETS, er zijn geen tags	,
+
+[eric@almond my-first-repo]$ git checkout master 
+Switched to branch 'master'
+Your branch is up-to-date with 'origin/master'.
+
+[eric@almond my-first-repo]$ git log
+commit f6b393fee129d17fe645afc4e19b13c03c5a337d
+Author: Eric J. Van der Velden <eric@almond.nuts.org>
+Date:   Sun Oct 2 19:39:49 2016 +0200
+
+    gee
+
+commit 0f0f8160daff4ad82f4db3063b9589308ac3e012
+Author: Eric J. Van der Velden <eric@almond.nuts.org>
+Date:   Sun Oct 2 17:21:22 2016 +0200
+
+    foo bar baz
+
+commit 3fddf4ef3b6276e3bbc38d821cc4da556914a154
+Author: ericjvandervelden <ericjvandervelden@gmail.com>
+Date:   Sat Jan 2 17:40:24 2016 +0100
+
+    Initial commit
+
+
+[eric@almond my-first-repo]$ git checkout me
+Switched to branch 'me'
+Your branch is up-to-date with 'origin/me'.
+
+eric@almond my-first-repo]$ git log
+commit 5c3e92f2e4bd679d264d4e46c0f90264551a426e
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+Date:   Sun Oct 2 20:36:41 2016 +0200
+
+    tee
+
+commit f6b393fee129d17fe645afc4e19b13c03c5a337d
+Author: Eric J. Van der Velden <eric@almond.nuts.org>
+Date:   Sun Oct 2 19:39:49 2016 +0200
+
+    gee
+
+commit 0f0f8160daff4ad82f4db3063b9589308ac3e012
+Author: Eric J. Van der Velden <eric@almond.nuts.org>
+Date:   Sun Oct 2 17:21:22 2016 +0200
+
+    foo bar baz
+
+commit 3fddf4ef3b6276e3bbc38d821cc4da556914a154
+Author: ericjvandervelden <ericjvandervelden@gmail.com>
+Date:   Sat Jan 2 17:40:24 2016 +0100
+
+    Initial commit
+
+/ omdat me een oopy is van master, en er tee.txt is aan commit, is de log 1 entry groter	,
+
+[eric@almond my-first-repo]$ git tag 1.0
+[eric@almond my-first-repo]$ git status 
+On branch me
+Your branch is up-to-date with 'origin/me'.
+nothing to commit, working directory clean
+
+[eric@almond my-first-repo]$ git checkout 1.0
+[eric@almond my-first-repo]$ git status
+HEAD detached at 1.0
+nothing to commit, working directory clean
+[eric@almond my-first-repo]$ git branch 
+* (HEAD detached at 1.0)
+  master
+  me
+  my
+/ Moeten we dit niet doen	?
+/ TODO
+
+[eric@almond my-first-repo]$ git show 1.0
+commit 5c3e92f2e4bd679d264d4e46c0f90264551a426e
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+Date:   Sun Oct 2 20:36:41 2016 +0200
+
+    tee
+
+diff --git a/tee.txt b/tee.txt
+new file mode 100644
+index 0000000..b8975c6
+--- /dev/null
++++ b/tee.txt
+@@ -0,0 +1 @@
++Tee
+
+
+/ Lees,
+http://stackoverflow.com/questions/5480258/how-to-delete-a-remote-tag
+
+[eric@almond my-first-repo]$ git tag --delete 1.0
+Deleted tag '1.0' (was 5c3e92f)
+
+/ Lees	,
+http://stackoverflow.com/questions/18216991/create-a-tag-in-github-repository
+
+/ 7	. 
+
+/ tags are versions	, 
+/ youtuble: git tag
+/ kijk naar 
+https://www.youtube.com/watch?v=MAHKV1LkGm4
+https://www.youtube.com/watch?v=gvexHKwVz4Y
+
+/ google: git head
+/ lees	,
+http://stackoverflow.com/questions/2304087/what-is-head-in-git
+
+[eric@almond my-first-repo]$  git checkout me
+Switched to branch 'me'
+Your branch is up-to-date with 'origin/me'.
+[eric@almond my-first-repo]$ cat .git/HEAD 
+ref: refs/heads/me
+
+[eric@almond my-first-repo]$ git log --pretty=short
+commit 5c3e92f2e4bd679d264d4e46c0f90264551a426e
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+
+    tee
+
+commit f6b393fee129d17fe645afc4e19b13c03c5a337d
+Author: Eric J. Van der Velden <eric@almond.nuts.org>
+
+    gee
+
+commit 0f0f8160daff4ad82f4db3063b9589308ac3e012
+Author: Eric J. Van der Velden <eric@almond.nuts.org>
+
+    foo bar baz
+
+commit 3fddf4ef3b6276e3bbc38d821cc4da556914a154
+Author: ericjvandervelden <ericjvandervelden@gmail.com>
+
+    Initial commit
+
+[eric@almond my-first-repo]$ git checkout 1.0
+Note: checking out '1.0'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by performing another checkout.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -b with the checkout command again. Example:
+
+  git checkout -b <new-branch-name>
+
+HEAD is now at 5c3e92f... tee
+
+/ Dit is de laatste commit	, 
+/ TODO
+
+/ 7	. 
+
+/ google
+git log
+/ Lees	,
+https://coderwall.com/p/euwpig/a-better-git-log
+
+[eric@almond my-first-repo]$  git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+* 5c3e92f - (HEAD, tag: 1.0, origin/me, me) tee (25 hours ago) <Eric J. Van der Velden>
+* f6b393f - (origin/master, origin/HEAD, master) gee (26 hours ago) <Eric J. Van der Velden>
+* 0f0f816 - foo bar baz (29 hours ago) <Eric J. Van der Velden>
+* 3fddf4e - Initial commit (9 months ago) <ericjvandervelden>
+
+[eric@almond my-first-repo]$ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+
+
+
+/ 7	. 
+
+/ Lees	,
+http://stackoverflow.com/questions/1161869/how-to-get-sha-of-the-latest-commit-from-remote-git-repository
+/ TODO
+
+[eric@almond mastering_git]$ pwd
+/home/eric/Devel/Git/mastering_git
+
+$ git config --global user.name "Eric J. Van der Velden"
+$ git config --global user.email "ericjvandervelden@gmail.com"
+$ git config --global color.ui "auto"
+
+$ less ~/.gitconfig
+
+ This is Git's per-user configuration file.
+[user]
+        name = Eric J. Van der Velden
+        email = ericjvandervelden@gmail.com
+[alias]
+        lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+
+[color]
+        ui = auto
+
+$ ssh-keygen -C"ericjvandervelden@gmail.com"
+/ -t rsa : is de default	,
+[eric@almond mastering_git]$ ssh-keygen -C"ericjvandervelden@gmail.com"
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/eric/.ssh/id_rsa): 
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/eric/.ssh/id_rsa.
+Your public key has been saved in /home/eric/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:1xwv1UXedvByK9Qa85pjwpx0SAW3N6Y9oKsWv5fLIs0 ericjvandervelden@gmail.com
+The key's randomart image is:
++---[RSA 2048]----+
+|           ..o..o|
+|            o o=o|
+|           ..*o=O|
+|          .o++@++|
+|        S .++=.= |
+|         o+ +.+ .|
+|          =* =.  |
+|         o.E+o.  |
+|        ....+o.  |
++----[SHA256]-----+
+
+[eric@almond mastering_git]$ ls ~/.ssh/
+authorized_keys            id_dsa.pub
+google_compute_engine      id_rsa
+google_compute_engine.pub  id_rsa.pub
+id_dsa                     known_hosts
+
+/ Wat doet -C, comment	? 
+/ TODO
+
+/ video 2	,
+
+Working			Staging 		Repo
+   ---------->   -------->
+		add						commit
+<---------------------------
+		checkout
+
+/ vergl met db tx	, add is als in tx inserts, deletes, ...	 en commit is commit	, 
+/ Staging: je kunt ook rollback	,
+/ staging area=shopping cart	,
+
+[eric@almond mastering_git]$ git init ourfirstrepo
+Initialized empty Git repository in /home/eric/Devel/Git/mastering_git/ourfirstrepo/.git/
+[eric@almond mastering_git]$ cd ourfirstrepo/
+
+/ 13
+
+eric@almond ourfirstrepo]$ git status
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	index.html
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+/ means: git has not been told yet to pay attention to this file	,
+
+/ 13	 .
+
+[eric@almond ourfirstrepo]$ git add index.html 
+eric@almond ourfirstrepo]$ git status
+On branch master
+
+Initial commit
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+	new file:   index.html
+
+[master (root-commit) c65e1fe] My first commit
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 index.html
+/ er verscheen een vi editor	,
+
+/ 13	. 
+
+[eric@almond ourfirstrepo]$ mkdir subfolder
+[eric@almond ourfirstrepo]$ cd subfolder/
+[eric@almond subfolder]$ touch index-two.html
+[eric@almond subfolder]$ git add .
+[eric@almond subfolder]$ git status
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   index-two.html
+
+/ 13	 .
+
+[eric@almond subfolder]$ cd ..
+[eric@almond ourfirstrepo]$ tree
+.
+├── index.html
+└── subfolder
+    └── index-two.html
+
+1 directory, 2 files
+[eric@almond ourfirstrepo]$ git status
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   subfolder/index-two.html
+
+/ git status is overal hetzelfde	, in root dir, of in sub dirs	, 
+
+/ git saves geen lege dirs	,
+
+/ maar git add . adds alleen files in dir en subdirs	, niet in parent dirs WH	, 
+/ TODO
+
+/ 13	 .
+
+/ we touch index.html, en gaan in subdir	, dan geeft git status niets over index.html, maar dat klopt, omdat hij niet veranderd is	,
+
+[eric@almond ourfirstrepo]$ touch index.html 
+[eric@almond ourfirstrepo]$ cd subfolder/
+[eric@almond subfolder]$ git status 
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   index-two.html
+
+/ git is a content tracking system	,
+ 
+
+/ 13	. 
+
+[eric@almond ourfirstrepo]$ echo HELLO >>index.html 
+[eric@almond ourfirstrepo]$ cd subfolder/
+[eric@almond subfolder]$ git status 
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   index-two.html
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   ../index.html
+
+/ modified hebben we nog niet eerder gezien	, 
+
+/ git add is voor new and modified files	,
+
+[eric@almond subfolder]$ git add ../index.html 
+[eric@almond subfolder]$ git status
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	modified:   ../index.html
+	new file:   index-two.html
+
+
+[eric@almond subfolder]$ cd ..
+[eric@almond ourfirstrepo]$ git status 
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	modified:   index.html
+	new file:   subfolder/index-two.html
+
+/ 13	 
+
+$ cd subfolder
+[eric@almond subfolder]$ git commit -m"Added second file and modified the first one"
+[master bfaa61d] Added second file and modified the first one
+ 2 files changed, 1 insertion(+)
+ create mode 100644 subfolder/index-two.html
+
+[eric@almond subfolder]$ ls -al
+total 8
+drwxrwxr-x. 2 eric eric 4096 Dec 23 15:24 .
+drwxrwxr-x. 4 eric eric 4096 Dec 23 15:24 ..
+-rw-rw-r--. 1 eric eric    0 Dec 23 15:24 index-two.html
+
+/ er is geen .git in subfolder/	, alleen in de root dir	, 
+/ dus je kunt deze subfolder/ zip, en sturen over email naar iemand anders, die hem modifies en terug stuurt	,
+/ doe daarna git add .
+
+/ 13	 
+
+/ je kunt ook in een al bestaande dir gaan	, en 
+$ git init
+$ git status
+$ git add . 
+$ git commit 
+
+/ 13	 
+
+/ verander editor
+$ export EDITOR ...
+/ TODO
+
+/ 13	 
+
+/ rename	, 
+
+[eric@almond ourfirstrepo]$ mv index.html index.php
+[eric@almond ourfirstrepo]$ git status 
+On branch master
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	deleted:    index.html
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	index.php
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+/ Na een rename	, delete , add in fs	, moeten we git add .	,
+[eric@almond ourfirstrepo]$ git add .
+[eric@almond ourfirstrepo]$ git status 
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	renamed:    index.html -> index.php
+
+/ vlg video: git add . doet alleen modified files	, geen new files	,  
+/ TODO
+
+[eric@almond ourfirstrepo]$ git commit -m"renamed"
+[master 7cbf9a4] renamed
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename index.html => index.php (100%)
+
+/ 13	 
+
+/ fs changes, zoals mv, commit deze apart, van file changes, zoals een edit,	 
+
+/ 13	 
+
+/ lees 	,
+https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository
+
+Remember that each file in your working directory can be in one of two states: tracked or untracked. Tracked files are files that were in the last snapshot; they can be unmodified, modified, or staged. Untracked files are everything else – any files in your working directory that were not in your last snapshot and are not in your staging area. When you first clone a repository, all of your files will be tracked and unmodified because Git just checked them out and you haven’t edited anything.
+
+As you edit files, Git sees them as modified, because you’ve changed them since your last commit. You stage these modified files and then commit all your staged changes, and the cycle repeats.
+
+untracked			unmodified		modified 		staged
+
+----------------------------------------->
+add
+							     <-----------------------
+																		commit
+							---------------->
+								fs edit
+															------------>
+																add
+<----------------
+						fs rm
+
+/ fs rm maakt de file untracked	, maar daarna moeten we nog add/rm (git rm) & commit	, dus
+<----------------
+						fs rm
+----------------------------------------->
+add/rm																							/ rm is git rm	,
+							     <----------------------
+																		commit
+
+/ 1313	. 
+
+/ een file is in unmodified, 
+/ we kunnen git rm	, dan wordt ook file rm	,
+
+[eric@almond ourfirstrepo]$ touch myapp.log
+[eric@almond ourfirstrepo]$ touch myapp2.log
+[eric@almond ourfirstrepo]$ touch myapp3.log
+[eric@almond ourfirstrepo]$ touch myapp1978.log
+
+[eric@almond ourfirstrepo]$ git status 
+On branch master
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	myapp.log
+	myapp1978.log
+	myapp2.log
+	myapp3.log
+
+[eric@almond ourfirstrepo]$ git add myapp.log 
+[eric@almond ourfirstrepo]$ git commit -m"Some good work"
+[master 7d2dd08] Some good work
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 myapp.log
+
+[eric@almond ourfirstrepo]$ git status 
+On branch master
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	myapp1978.log
+	myapp2.log
+	myapp3.log
+
+/ we zien myapp.log niet meer in git status, hij is unmodified	,
+
+[eric@almond ourfirstrepo]$ git rm myapp.log 				/ git rm gaat naar staged	,
+rm 'myapp.log'
+[eric@almond ourfirstrepo]$ git status
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	deleted:    myapp.log
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	myapp1978.log
+	myapp2.log
+	myapp3.log
+
+/ we moeten de delete dus nog commit	,
+
+[eric@almond ourfirstrepo]$ ls
+index.php  myapp1978.log  myapp2.log  myapp3.log  subfolder
+/ ook in fs is rm	,
+
+eric@almond ourfirstrepo]$ git commit -m"Cleaned log file"
+[master 159565e] Cleaned log file
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ delete mode 100644 myapp.log
+[eric@almond ourfirstrepo]$ git status
+On branch master
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	myapp1978.log
+	myapp2.log
+	myapp3.log
+
+/ 1313	.
+
+/ file rm	,
+/ daarna git add of git rm	,
+
+[eric@almond ourfirstrepo]$ git add myapp2.log 
+[eric@almond ourfirstrepo]$ git commit -m"Another good work"
+[master e2d4270] Another good work
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 myapp2.log
+
+[eric@almond ourfirstrepo]$ rm myapp2.log 
+[eric@almond ourfirstrepo]$ git status 
+On branch master
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	deleted:    myapp2.log
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	myapp1978.log
+	myapp3.log
+
+[eric@almond ourfirstrepo]$ git add myapp2.log 
+[eric@almond ourfirstrepo]$ git status 
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	deleted:    myapp2.log
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	myapp1978.log
+	myapp3.log
+
+eric@almond ourfirstrepo]$ git commit -m"Another clear"
+[master 7deb4ff] Another clear
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ delete mode 100644 myapp2.log
+[eric@almond ourfirstrepo]$ git status
+On branch master
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	myapp1978.log
+	myapp3.log
+
+/ 13	. 
+
+/ .gitignore	,
+
+[eric@almond ourfirstrepo]$ vi .gitignore 
+*.log
+**/*.log
+target
+
+[eric@almond ourfirstrepo]$ git status
+On branch master
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	.gitignore
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+/ we zien geen log files meer	, wat de bedoeling is	,
+
+[eric@almond ourfirstrepo]$ git add .gitignore 
+[eric@almond ourfirstrepo]$ git commit -m"Ignore"
+[master c2f458b] Ignore
+ 1 file changed, 3 insertions(+)
+ create mode 100644 .gitignore
+
+[eric@almond ourfirstrepo]$ touch myapp4.log
+[eric@almond ourfirstrepo]$ git status 
+On branch master
+nothing to commit, working directory clean
+
+/ geen untracked log files	, 
+
+[eric@almond ourfirstrepo]$ git add .
+[eric@almond ourfirstrepo]$ git status 
+On branch master
+nothing to commit, working directory clean
+
+/ geen log files zijn staged		, 
+
+/ 7	 
+
+/ video 3
+
+/ Mastering Git - Remotes
+
+/ clone
+ssh
+http
+git
+file
+
+$ git clone ssh://user@server:project.git
+/ of	,
+$ git clone user@server:project.git
+/ uses git protocol hieronder,	
+
+$ git clone http://server:project.git
+
+$ git clone git://server:project.git
+/ daemon	
+/ TODO
+/ port 9418	,
+/ not through firewall, but point-to-point OK
+/ TODO
+
+$ git clone file://myrepos/project
+/ of	,
+$ git clone myrepos/project
+/ Mag ook met .git erachter	? 
+/ TODO
+/ hard links	, 
+/ TODO
+
+/ Ga bijv naar	,
+https://github.com/matthewmccullough/hadoop-intro
+/ we zien 2 clone or download	,
+/ use https	,
+https://github.com/matthewmccullough/hadoop-intro.git
+/ of	use ssh,
+git@github.com:matthewmccullough/hadoop-intro.git
+
+[eric@almond mastering_git]$ pwd
+/home/eric/Devel/Git/mastering_git
+
+/ Clone with ssh	,
+[eric@almond mastering_git]$ git clone git@github.com:matthewmccullough/hadoop-intro.git
+Cloning into 'hadoop-intro'...
+Permission denied (publickey).
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+/ clone with https	,
+[eric@almond mastering_git]$ git clone https://github.com/matthewmccullough/hadoop-intro.git
+Cloning into 'hadoop-intro'...
+/ OK
+
+/ Nu proberen we eigen repo	,
+[eric@almond mastering_git]$ git clone git@github.com:ericjvandervelden/hello-world.git
+Cloning into 'hello-world'...
+Permission denied (publickey).
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+/ We hebben dan ook in mijn github account geen ssh keys 	,
+
+
+/ 13	. 
+
+/ put ssh key op github.com	,
+
+/ lees	,
+https://help.github.com/articles/generating-an-ssh-key/
+
+/ lees	, 
+https://help.github.com/articles/checking-for-existing-ssh-keys/
+
+If you see an existing public and private key pair listed (for example id_rsa.pub and id_rsa) that you would like to use to connect to GitHub, you can add your SSH key to the ssh-agent.
+
+/ we komen op	,
+https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#adding-your-ssh-key-to-the-ssh-agent
+
+[eric@almond mastering_git]$ eval "$(ssh-agent -s)"
+Agent pid 22677
+[eric@almond mastering_git]$ ps ajx | grep ssh
+    1 22677 22677 22677 ?           -1 Ss    1000   0:00 ssh-agent -s
+
+[eric@almond mastering_git]$ ssh-add ~/.ssh/id_rsa
+Identity added: /home/eric/.ssh/id_rsa (/home/eric/.ssh/id_rsa)
+
+/ click 'Add the key to your github account'	,
+
+/ lees	,
+https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/
+
+[eric@almond mastering_git]$ sudo dnf install xclip
+/ OK
+
+[eric@almond mastering_git]$ xclip -sel clip < ~/.ssh/id_rsa.pub 
+
+/ ga naar	,
+https://github.com/settings/keys
+/ click 'new ssh key'
+Title: almond
+/ in text area, right click , kies Paste	,
+/ click Add ssh key	,
+/ geef password	,
+/ we zien 
+SSH keys	,
+almond
+Fingerprint: bb:bb:22:f2:ec:a0:72:0e:e9:a3:85:e6:65:f4:c9:96
+Added on Dec 28, 2016 — Never used
+
+/ Nu werkt dit wel	,
+[eric@almond mastering_git]$ git clone git@github.com:ericjvandervelden/hello-world.git
+Cloning into 'hello-world'...
+remote: Counting objects: 7, done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 7 (delta 1), reused 0 (delta 0), pack-reused 0
+Receiving objects: 100% (7/7), done.
+Resolving deltas: 100% (1/1), done.
+Checking connectivity... done.
+
+[eric@almond mastering_git]$ cd hello-world/
+[eric@almond hello-world]$ git pull
+Already up-to-date.
+
+/ 13	. 
+
+[eric@almond hello-world]$ vi first.sh
+#!/usr/bin/bash
+echo "foo bar"
+[eric@almond hello-world]$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	first.sh
+
+[eric@almond hello-world]$ git add .
+[eric@almond hello-world]$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   first.sh
+
+[eric@almond hello-world]$ git commit -m "first new shell script"
+[master 23a0477] first new shell script
+ 1 file changed, 2 insertions(+)
+ create mode 100644 first.sh
+
+[eric@almond hello-world]$ git push
+
+warning: push.default is unset; its implicit value has changed in
+Git 2.0 from 'matching' to 'simple'. To squelch this message
+and maintain the traditional behavior, use:
+
+  git config --global push.default matching
+
+To squelch this message and adopt the new behavior now, use:
+
+  git config --global push.default simple
+
+When push.default is set to 'matching', git will push local branches
+to the remote branches that already exist with the same name.
+
+Since Git 2.0, Git defaults to the more conservative 'simple'
+behavior, which only pushes the current branch to the corresponding
+remote branch that 'git pull' uses to update the current branch.
+
+See 'git help config' and search for 'push.default' for further information.
+(the 'simple' mode was introduced in Git 1.7.11. Use the similar mode
+'current' instead of 'simple' if you sometimes use older versions of Git)
+
+Warning: Permanently added the RSA host key for IP address '192.30.253.112' to the list of known hosts.
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 330 bytes | 0 bytes/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To git@github.com:ericjvandervelden/hello-world.git
+   41851c3..23a0477  master -> master
+
+
+/ reload github repo	, inderdaad, first.bash is er	,
+
+[eric@almond hello-world]$ git config --global push.default simple
+[eric@almond hello-world]$ cat ~/.gitconfig 
+# This is Git's per-user configuration file.
+[user]
+	name = Eric J. Van der Velden
+	email = ericjvandervelden@gmail.com
+[alias]
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+[color]
+	ui = auto
+[push]
+	default = simple
+
+/ 7	. 
+
+/ video 4	, 
+
+/ 1313	. 
+
+/ we add een 2de script	,
+
+[eric@almond hello-world]$ vi second.sh
+...
+[eric@almond hello-world]$ git add .
+[eric@almond hello-world]$ git commit -m "second script"
+[master 6ec3416] second script
+ 1 file changed, 2 insertions(+)
+ create mode 100644 second.sh
+[eric@almond hello-world]$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 1 commit.			<-
+  (use "git push" to publish your local commits)
+nothing to commit, working directory clean
+
+[eric@almond hello-world]$ git push
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 348 bytes | 0 bytes/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To git@github.com:ericjvandervelden/hello-world.git
+   23a0477..6ec3416  master -> master
+
+[eric@almond hello-world]$ git status 
+On branch master
+Your branch is up-to-date with 'origin/master'.
+nothing to commit, working directory clean
+
+/ 1313	.
+
+/ we edit second.sh
+
+[eric@almond hello-world]$ vi second.sh 
+...
+[eric@almond hello-world]$ git add .
+[eric@almond hello-world]$ git commit -m "edited second script"
+[master 7371d2f] edited second script				<- 1ste 8 bytes van de hash van de commit	,
+ 1 file changed, 1 insertion(+)
+
+[eric@almond hello-world]$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 1 commit.
+  (use "git push" to publish your local commits)
+nothing to commit, working directory clean
+
+[eric@almond hello-world]$ git push
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 300 bytes | 0 bytes/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local objects.
+To git@github.com:ericjvandervelden/hello-world.git
+   6ec3416..7371d2f  master -> master			<- 1st 8 bytes van de commit (die vervangen gaat worden) , en van de nieuwe	, 
+
+/ 1313	.
+
+/ git show shows the last commit	,  en ook wat ik heb gedaan	,
+
+[eric@almond hello-world]$ git show
+commit 7371d2f8bf3c0a41fedc7a5e9708bfca15080855
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+Date:   Sat Jan 7 21:42:27 2017 +0100
+
+    edited second script
+
+diff --git a/second.sh b/second.sh
+index 3a9e29f..ce95535 100644
+--- a/second.sh
++++ b/second.sh
+@@ -1,2 +1,3 @@
+ #!/usr/bin/bash
+ echo "Bar"	
++echo											<-
+
+/ 1313	. 
+
+/ git log shows alle commits	, met de meest recent bovenaan	,
+
+[eric@almond hello-world]$ git log
+
+commit 7371d2f8bf3c0a41fedc7a5e9708bfca15080855
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+Date:   Sat Jan 7 21:42:27 2017 +0100
+
+    edited second script
+
+commit 6ec34162494faccf61f540fc7627718ca354c8ef
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+Date:   Sat Jan 7 21:38:47 2017 +0100
+
+    second script
+...
+commit 23a047774c735e76d7e85f648fc50af01c75569f
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+Date:   Thu Dec 29 22:33:21 2016 +0100
+
+    first new shell script
+
+commit 41851c33e10bc57d8c0b46b4f31e5b63e5af615d
+Merge: 352d8d2 c3a7faf
+Author: ericjvandervelden <ericjvandervelden@gmail.com>
+Date:   Wed Dec 28 21:56:37 2016 +0100
+
+/ 1313	. 
+
+/ maar nu wil ik de 2 meest recente zien	, 
+
+[eric@almond hello-world]$ git log HEAD^^..HEAD 
+commit 7371d2f8bf3c0a41fedc7a5e9708bfca15080855
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+Date:   Sat Jan 7 21:42:27 2017 +0100
+
+    edited second script
+
+commit 6ec34162494faccf61f540fc7627718ca354c8ef
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+Date:   Sat Jan 7 21:38:47 2017 +0100
+
+    second script
+
+/ 1313. 	
+
+/ met git log de 2 meest recent, 	en net als show wat er is gebeurd, 	geef ook -p	, 
+
+[eric@almond hello-world]$ git log HEAD^^..HEAD  -p
+commit 7371d2f8bf3c0a41fedc7a5e9708bfca15080855
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+Date:   Sat Jan 7 21:42:27 2017 +0100
+
+    edited second script
+
+diff --git a/second.sh b/second.sh
+index 3a9e29f..ce95535 100644
+--- a/second.sh
++++ b/second.sh
+@@ -1,2 +1,3 @@
+ #!/usr/bin/bash
+ echo "Bar"
++echo
+
+commit 6ec34162494faccf61f540fc7627718ca354c8ef
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+Date:   Sat Jan 7 21:38:47 2017 +0100
+
+    second script
+
+diff --git a/second.sh b/second.sh
+new file mode 100644
+index 0000000..3a9e29f
+--- /dev/null
++++ b/second.sh
+@@ -0,0 +1,2 @@
++#!/usr/bin/bash
++echo "Bar"
+
+/ 1313. 
+
+/ Maar we kunnen ipv ^^ ook ~2	, 
+
+[eric@almond hello-world]$ git log HEAD~2..HEAD 
+commit 7371d2f8bf3c0a41fedc7a5e9708bfca15080855
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+Date:   Sat Jan 7 21:42:27 2017 +0100
+
+    edited second script
+
+commit 6ec34162494faccf61f540fc7627718ca354c8ef
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+Date:   Sat Jan 7 21:38:47 2017 +0100
+
+    second script
+
+
+/ 1313
+
+/ directed acyclic graph: DAG
+
+v1							v2							v3
+c67db						9bd21						1c2d7
+tree:...				tree:...				tree:...
+parent:nil			parent:c67db		parent: 9bd21
+
+/ hash is global unique idendifier	,
+
+/ 1313	. 
+
+[eric@almond hello-world]$ git show
+commit 7371d2f8bf3c0a41fedc7a5e9708bfca15080855
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+Date:   Sat Jan 7 21:42:27 2017 +0100
+
+    edited second script
+
+diff --git a/second.sh b/second.sh
+index 3a9e29f..ce95535 100644
+--- a/second.sh
++++ b/second.sh
+@@ -1,2 +1,3 @@
+ #!/usr/bin/bash
+ echo "Bar"
++echo
+
+[eric@almond hello-world]$ cat .git/HEAD 
+ref: refs/heads/master
+[eric@almond hello-world]$ cat .git/refs/heads/master 
+7371d2f8bf3c0a41fedc7a5e9708bfca15080855
+
+commit	-> commit -> commit -> commit(HEAD)
+\															
+	\
+		commit -> commit
+
+/ by changing .git/HEAD	, komen we op een andere branch	 ,
+/ TODO
+
+/ copy .git/	, sets ergens in lege dir en doe	, 
+$ git checkout master
+/ deze zou dan alles download	, 
+/ TODO
+
+/ 7	. 
+
+/ video5 branches	,
+
+[eric@almond hello-world]$ pwd
+/home/eric/Devel/Git/mastering_git/hello-world
+
+[eric@almond video5]$ pwd
+/home/eric/Devel/Git/mastering_git/video5
+[eric@almond video5]$ git clone git@github.com:ericjvandervelden/hello-world.git hello-world-3
+Cloning into 'hello-world-3'...
+
+[eric@almond video5]$ cd hello-world-3/
+[eric@almond hello-world-2]$ git pull
+Already up-to-date.
+
+/ show origin	,  'n address	,
+[eric@almond hello-world]$ git remote -v
+origin	git@github.com:ericjvandervelden/hello-world.git (fetch)
+origin	git@github.com:ericjvandervelden/hello-world.git (push)
+
+[eric@almond hello-world]$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+nothing to commit, working directory clean
+
+[eric@almond hello-world]$ git branch ericsidea
+[eric@almond hello-world]$ git checkout ericsidea 
+Switched to branch 'ericsidea'
+/ of in  1 keer	, 
+[eric@almond hello-world-3]$ git checkout -b hansidea
+Switched to a new branch 'hansidea'
+
+[eric@almond hello-world]$ git branch 
+* ericsidea
+  master
+[eric@almond hello-world]$ ls
+first.sh  README.md  second.sh
+/ TODO je krijgt WH in ericsidea de files die er zijn in de branch waarin je de $ git checkout -b doet	, 
+
+[eric@almond hello-world-3]$ git branch 
+* hansidea
+  master
+[eric@almond hello-world-3]$ ls
+first.sh  README.md  second.sh
+
+
+[eric@almond hello-world]$ vi second.sh 
+...
+eric@almond hello-world-3]$ vi first.sh 
+...
+
+[eric@almond hello-world]$ git status 
+On branch ericsidea
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   second.sh
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+[eric@almond hello-world-3]$ git status 
+On branch hansidea
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   first.sh
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+[eric@almond hello-world]$ git add .
+[eric@almond hello-world-3]$ git add .
+
+[eric@almond hello-world]$  git status
+On branch ericsidea
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	modified:   second.sh
+
+[eric@almond hello-world-3]$ git status 
+On branch hansidea
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	modified:   first.sh
+
+[eric@almond hello-world]$ git commit -m "edited second.sh on ericsidea"
+[ericsidea fdc8ff1] edited second.sh on ericsidea
+[eric@almond hello-world-3]$ git commit -m "edited first.sh on hansidea"
+[hansidea 0059eeb] edited first.sh on hansidea
+
+/ met $ git log zien we alleen verschil in de jongste 	,
+
+[eric@almond hello-world]$ git log
+commit fdc8ff1642e5163f7c2d7f60212be0a0b716c9ed
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+Date:   Mon Jan 9 22:08:41 2017 +0100
+
+    edited second.sh on ericsidea
+
+commit 7371d2f8bf3c0a41fedc7a5e9708bfca15080855
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+Date:   Sat Jan 7 21:42:27 2017 +0100
+
+    edited second script
+...
+
+[eric@almond hello-world-3]$ git log
+commit 0059eeb09490425a7be3dbfbb2320914b8969179
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+Date:   Mon Jan 9 22:09:15 2017 +0100
+
+    edited first.sh on hansidea
+
+commit 7371d2f8bf3c0a41fedc7a5e9708bfca15080855
+Author: Eric J. Van der Velden <ericjvandervelden@gmail.com>
+Date:   Sat Jan 7 21:42:27 2017 +0100
+
+    edited second script
+
+/ 1313	. 
+
+[eric@almond hello-world]$ git push
+fatal: The current branch ericsidea has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin ericsidea
+
+[eric@almond hello-world-3]$ git push
+fatal: The current branch hansidea has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin hansidea
+
+/ geef in google	,
+git set the remote as upstream
+/ Lees	,
+http://stackoverflow.com/questions/6089294/why-do-i-need-to-do-set-upstream-all-the-time
+git branch --set-upstream my_branch origin/my_branch
+/ Wat is origin/my_branch	? TODO
+/
+/ Lees	,
+http://stackoverflow.com/questions/520650/make-an-existing-git-branch-track-a-remote-branch
+http://stackoverflow.com/questions/37770467/why-do-i-have-to-git-push-set-upstream-origin-branch
+
+[eric@almond hello-world]$ git push --set-upstream origin 
+ericsidea       HEAD            ORIG_HEAD       origin/master   
+FETCH_HEAD      master          origin/HEAD     
+
+/ geef in google	,
+git master origin/master
+/ Lees	,
+http://stackoverflow.com/questions/18137175/in-git-what-is-the-difference-between-origin-master-vs-origin-master
+http://stackoverflow.com/questions/10588291/git-branching-master-vs-origin-master-vs-remotes-origin-master
+
+[eric@almond hello-world]$ git push --set-upstream origin ericsidea 
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 311 bytes | 0 bytes/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local objects.
+To git@github.com:ericjvandervelden/hello-world.git
+ * [new branch]      ericsidea -> ericsidea
+Branch ericsidea set up to track remote branch ericsidea from origin.
+
+[eric@almond hello-world-3]$ git push --set-upstream origin hansidea 
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 365 bytes | 0 bytes/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To git@github.com:ericjvandervelden/hello-world.git
+ * [new branch]      hansidea -> hansidea
+Branch hansidea set up to track remote branch hansidea from origin.
+
+[eric@almond hello-world]$ git branch  -a
+* ericsidea
+  master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/ericsidea
+  remotes/origin/master
+
+[eric@almond hello-world]$ git diff origin/master..master
+/ TODO
+
+[eric@almond hello-world]$ git pull
+remote: Counting objects: 3, done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 3 (delta 0), reused 3 (delta 0), pack-reused 0
+Unpacking objects: 100% (3/3), done.
+From github.com:ericjvandervelden/hello-world
+ * [new branch]      hansidea   -> origin/hansidea
+Already up-to-date.
+
+[eric@almond hello-world-3]$ git pull
+remote: Counting objects: 3, done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 3 (delta 1), reused 3 (delta 1), pack-reused 0
+Unpacking objects: 100% (3/3), done.
+From github.com:ericjvandervelden/hello-world
+ * [new branch]      ericsidea  -> origin/ericsidea
+Already up-to-date.
+
+[eric@almond hello-world]$ git branch -a
+* ericsidea
+  master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/ericsidea
+  remotes/origin/hansidea
+  remotes/origin/master
+
+eric@almond hello-world-3]$ git branch  -a
+* hansidea
+  master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/ericsidea
+  remotes/origin/hansidea
+  remotes/origin/master
+
+/ De remote branches are read only	, 
+/ maar hoe kun je die files er in lezen	?
+/ TODO
+
+/ shadow branch of remote	,
+[eric@almond hello-world]$ git checkout hansidea
+Switched to branch 'hansidea'
+Your branch is up-to-date with 'origin/hansidea'.
+[eric@almond hello-world]$ git branch 
+  ericsidea
+* hansidea
+  master
+
+/ shadow branch of remote	,
+[eric@almond hello-world-3]$ git checkout ericsidea 
+Branch ericsidea set up to track remote branch ericsidea from origin.
+Switched to a new branch 'ericsidea'
+[eric@almond hello-world-3]$ git branch
+* ericsidea
+  hansidea
+  master
+
+/ * means: This is the branch where the HEAD is	,
+/ git status zegt hetzelfde,	
+[eric@almond hello-world]$ git status
+On branch hansidea
+Your branch is up-to-date with 'origin/hansidea'.
+nothing to commit, working directory clean
+
+/ 13	. 
+
+/ in hello-world/ verander second.txt en push	, en in hello-world3/ pulls	,
+[eric@almond hello-world]$ git checkout ericsidea 
+Switched to branch 'ericsidea'
+Your branch is up-to-date with 'origin/ericsidea'.
+[eric@almond hello-world]$ cat second.sh 
+#!/usr/bin/bash
+echo "Bar"
+echo
+echo "Foo"
+echo "In hello-world"			<-
+
+[eric@almond hello-world]$ git commit -a -m "Added In hello-world to second.txt"
+[ericsidea d777ff6] Added In hello-world to second.txt
+ 1 file changed, 1 insertion(+)
+
+[eric@almond hello-world]$ git push
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 335 bytes | 0 bytes/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local objects.
+To git@github.com:ericjvandervelden/hello-world.git
+   fdc8ff1..d777ff6  ericsidea -> ericsidea
+
+/ in github, branch ericidea	, second.txt kun je rechts click
+	history
+/ je zit de -m regel "Added In hello-world to second.txt"	, 
+
+[eric@almond hello-world-3]$ git pull
+remote: Counting objects: 3, done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 3 (delta 1), reused 3 (delta 1), pack-reused 0
+Unpacking objects: 100% (3/3), done.
+From github.com:ericjvandervelden/hello-world
+   fdc8ff1..d777ff6  ericsidea  -> origin/ericsidea
+Updating fdc8ff1..d777ff6
+Fast-forward
+ second.sh | 1 +
+ 1 file changed, 1 insertion(+)
+
+[eric@almond hello-world-3]$ git branch 
+* ericsidea
+  hansidea
+  master
+[eric@almond hello-world-3]$ cat second.sh 
+#!/usr/bin/bash
+echo "Bar"
+echo
+echo "Foo"
+echo "In hello-world"
+
+/ 13	. 
+
+/ edit file in pulled branch	, 
+/ we hadden al gedaan	,
+[eric@almond hello-world]$ git push --set-upstream origin hansidea 
+[eric@almond hello-world-3]$ git push --set-upstream origin hansidea 
+
+[eric@almond hello-world-3]$ git branch 
+* ericsidea
+  hansidea
+  master
+[eric@almond hello-world-3]$ vi first.sh 
+#!/usr/bin/bash
+echo "foo bar"
+echo "from hello-world3" 	<-
+
+[eric@almond hello-world-3]$ git commit -a -m "In hello-world3/ edited first.sh"
+[ericsidea a4a8713] In hello-world3/ edited first.sh
+ 1 file changed, 1 insertion(+)
+
+[eric@almond hello-world-3]$ git push
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 390 bytes | 0 bytes/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To git@github.com:ericjvandervelden/hello-world.git
+   d777ff6..a4a8713  ericsidea -> ericsidea
+
+/ a merge	,
+[eric@almond hello-world]$ git pull
+remote: Counting objects: 3, done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 3 (delta 0), reused 3 (delta 0), pack-reused 0
+Unpacking objects: 100% (3/3), done.
+From github.com:ericjvandervelden/hello-world
+   d777ff6..a4a8713  ericsidea  -> origin/ericsidea
+Updating d777ff6..a4a8713
+Fast-forward
+ first.sh | 1 +
+ 1 file changed, 1 insertion(+)
+[eric@almond hello-world]$ cat first.sh 
+#!/usr/bin/bash
+echo "foo bar"
+echo "from hello-world3"
+
+/ 13	. 
+
+/ lees	,
+http://stackoverflow.com/questions/2003505/how-to-delete-a-git-branch-both-locally-and-remotely
+
+[eric@almond hello-world-3]$ git push  --delete origin hansidea2
+To git@github.com:ericjvandervelden/hello-world.git
+ - [deleted]         hansidea2
+[eric@almond hello-world]$  git push --delete origin ericsidea2
+To git@github.com:ericjvandervelden/hello-world.git
+ - [deleted]         ericsidea2
+
+[eric@almond hello-world]$ git branch -d ericsidea2
+error: Cannot delete the branch 'ericsidea2' which you are currently on.
+[eric@almond hello-world]$ git checkout master
+Switched to branch 'master'
+Your branch is up-to-date with 'origin/master'.
+[eric@almond hello-world]$ git branch -d ericsidea2
+error: The branch 'ericsidea2' is not fully merged.
+If you are sure you want to delete it, run 'git branch -D ericsidea2'.
+[eric@almond hello-world]$ git branch -D ericsidea2
+Deleted branch ericsidea2 (was 0f98ced).
+
+[eric@almond hello-world-3]$ git checkout master 
+Previous HEAD position was a4a8713... In hello-world3/ edited first.sh
+Switched to branch 'master'
+Your branch is up-to-date with 'origin/master'.
+[eric@almond hello-world-3]$ git branch -D hansidea2
+Deleted branch hansidea2 (was 288c2cc).
+
+/ Maar we zien ze nog	,
+[eric@almond hello-world]$ git branch -a
+	...
+  remotes/origin/hansidea2
+
+[eric@almond hello-world-3]$ git branch -a
+  remotes/origin/ericsidea2
+
+
+[eric@almond hello-world]$ git remote prune origin .
+Pruning origin
+URL: git@github.com:ericjvandervelden/hello-world.git
+ * [pruned] origin/hansidea2
+
+[eric@almond hello-world-3]$ git remote prune origin .
+Pruning origin
+URL: git@github.com:ericjvandervelden/hello-world.git
+ * [pruned] origin/ericsidea2
+
+[eric@almond hello-world]$ git branch -a
+  ericsidea
+  hansidea
+* master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/ericsidea
+  remotes/origin/hansidea
+  remotes/origin/master
+
+[eric@almond hello-world-3]$ git branch -a
+  ericsidea
+  hansidea
+* master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/ericsidea
+  remotes/origin/hansidea
+  remotes/origin/master
+
+
+
+
+
+/ 13	. 
+
+/ push origin zonder --set-upstream	,
+
+/ in hello-world/	,
+
+[eric@almond hello-world]$ git checkout -b ericsidea2
+[eric@almond hello-world]$ vi third.sh
+#!/usr/bin/bash
+echo "from hello-world/"
+[eric@almond hello-world]$ git commit -a -m "Added In hello-world to third.sh"
+On branch ericsidea2
+Untracked files:
+	third.sh
+
+nothing added to commit but untracked files present
+/ TODO
+
+[eric@almond hello-world]$ git add .
+[eric@almond hello-world]$ git commit -m "Added In hello-world to third.sh"
+
+[eric@almond hello-world]$ git branch -a
+  ericsidea
+* ericsidea2
+  hansidea
+  master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/ericsidea
+  remotes/origin/hansidea
+  remotes/origin/master
+
+
+[eric@almond hello-world]$ git push origin ericsidea2
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 337 bytes | 0 bytes/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local objects.
+To git@github.com:ericjvandervelden/hello-world.git
+ * [new branch]      ericsidea2 -> ericsidea2
+
+[eric@almond hello-world]$ git branch -a
+  ericsidea
+* ericsidea2
+  hansidea
+  master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/ericsidea
+  remotes/origin/ericsidea2						<-
+  remotes/origin/hansidea
+  remotes/origin/master
+
+/ Geen hansidea2	,  logisch	, moeten nog pull	,
+
+/ in hello-world3/	, 
+
+[eric@almond hello-world-3]$ git checkout -b hansidea2
+Switched to a new branch 'hansidea2'
+
+[eric@almond hello-world-3]$ git status
+On branch hansidea2
+nothing to commit, working directory clean
+[eric@almond hello-world-3]$ vi third.sh
+#!/usr/bin/bash
+echo "from hello-world-3/"
+[eric@almond hello-world-3]$ git add .
+[eric@almond hello-world-3]$ git commit -m "In hello-world-3/ edited third.sh"
+[hansidea2 288c2cc] In hello-world3/ edited third.sh
+ 1 file changed, 2 insertions(+)
+ create mode 100644 third.sh
+
+[eric@almond hello-world-3]$ git push
+fatal: The current branch hansidea2 has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin hansidea2
+
+[eric@almond hello-world-3]$ git branch -a
+  ericsidea
+  hansidea
+* hansidea2
+  master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/ericsidea
+  remotes/origin/hansidea
+  remotes/origin/master
+
+[eric@almond hello-world-3]$ git push origin hansidea2
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 336 bytes | 0 bytes/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local objects.
+To git@github.com:ericjvandervelden/hello-world.git
+ * [new branch]      hansidea2 -> hansidea2
+
+[eric@almond hello-world-3]$ git branch  -a
+  ericsidea
+  hansidea
+* hansidea2
+  master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/ericsidea
+  remotes/origin/hansidea
+  remotes/origin/hansidea2							<-
+  remotes/origin/master
+
+/ Geen ericsidea2	,  logisch	, moeten nog pull	,
+
+/ 1313	. 
+
+/ pulls	,
+
+[eric@almond hello-world]$ git pull
+remote: Counting objects: 3, done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 3 (delta 1), reused 3 (delta 1), pack-reused 0
+Unpacking objects: 100% (3/3), done.
+From github.com:ericjvandervelden/hello-world
+ * [new branch]      hansidea2  -> origin/hansidea2
+There is no tracking information for the current branch.
+Please specify which branch you want to merge with.
+See git-pull(1) for details
+
+    git pull <remote> <branch>
+
+If you wish to set tracking information for this branch you can do so with:
+
+    git branch --set-upstream-to=origin/<branch> ericsidea2
+
+/ we hadden ook direct	kunnen doen	,, 
+[eric@almond hello-world]$ git push --set-upstream ericsidea2  
+
+
+/ we hebben niet gezegd dat ericsidea2 upstream is op origin	, dus de remote hansidea2 is niet tracked door de local hansidea2 
+/ wel voor hansidea2	, want die halen we binnen	,
+
+[eric@almond hello-world]$ git branch -a
+  ericsidea
+* ericsidea2
+  hansidea
+  master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/ericsidea
+  remotes/origin/ericsidea2					
+  remotes/origin/hansidea
+  remotes/origin/hansidea2						<-
+  remotes/origin/master
+
+[eric@almond hello-world-3]$ git pull
+remote: Counting objects: 3, done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 3 (delta 1), reused 3 (delta 1), pack-reused 0
+Unpacking objects: 100% (3/3), done.
+From github.com:ericjvandervelden/hello-world
+ * [new branch]      ericsidea2 -> origin/ericsidea2
+There is no tracking information for the current branch.
+Please specify which branch you want to merge with.
+See git-pull(1) for details
+
+    git pull <remote> <branch>
+
+If you wish to set tracking information for this branch you can do so with:
+
+    git branch --set-upstream-to=origin/<branch> hansidea2
+
+/ we hadden ook direct	, 
+[eric@almond hello-world-3]$ git push --set-upstream hansidea2  
+
+
+[eric@almond hello-world-3]$ git branch -a
+  ericsidea
+  hansidea
+* hansidea2
+  master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/ericsidea
+  remotes/origin/ericsidea2						<-
+  remotes/origin/hansidea
+  remotes/origin/hansidea2
+  remotes/origin/master
+
+/ 1313	. 
+
+/ shadow copies	,
+
+[eric@almond hello-world]$ git checkout hansidea2
+Branch hansidea2 set up to track remote branch hansidea2 from origin.
+Switched to a new branch 'hansidea2'
+
+/ tracking dus	, itt eigen ericsidea2	,
+
+[eric@almond hello-world]$ git branch -a
+  ericsidea
+  ericsidea2
+  hansidea
+* hansidea2													<-
+  master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/ericsidea
+  remotes/origin/ericsidea2
+  remotes/origin/hansidea
+  remotes/origin/hansidea2
+  remotes/origin/master
+
+[eric@almond hello-world-3]$ git checkout ericsidea2
+Branch ericsidea2 set up to track remote branch ericsidea2 from origin.
+Switched to a new branch 'ericsidea2'
+
+/ tracking dus, itt. hansidea2	,
+
+[eric@almond hello-world-3]$ git branch -a
+  ericsidea
+* ericsidea2
+  hansidea
+  hansidea2
+  master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/ericsidea
+  remotes/origin/ericsidea2
+  remotes/origin/hansidea
+  remotes/origin/hansidea2
+  remotes/origin/master
+
+/ 1313	. 
+
+[eric@almond hello-world-3]$ vi third.sh 
+[eric@almond hello-world-3]$ git add .
+[eric@almond hello-world-3]$ git commit -m "edit third.sh in hello-world-3"
+[ericsidea2 eaff606] edit third.sh in hello-world-3
+ 1 file changed, 1 insertion(+)
+
+[eric@almond hello-world-3]$ git push
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 328 bytes | 0 bytes/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local objects.
+To git@github.com:ericjvandervelden/hello-world.git
+   8298634..eaff606  ericsidea2 -> ericsidea2
+
+
+[eric@almond hello-world]$ git pull
+There is no tracking information for the current branch.
+Please specify which branch you want to merge with.
+See git-pull(1) for details
+
+    git pull <remote> <branch>
+
+If you wish to set tracking information for this branch you can do so with:
+
+    git branch --set-upstream-to=origin/<branch> ericsidea2
+
+[eric@almond hello-world]$ git branch --set-upstream-to=origin/ericsidea2 ericsidea2
+
+[eric@almond hello-world]$ git pull
+remote: Counting objects: 3, done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 3 (delta 1), reused 3 (delta 1), pack-reused 0
+Unpacking objects: 100% (3/3), done.
+From github.com:ericjvandervelden/hello-world
+   8298634..eaff606  ericsidea2 -> origin/ericsidea2
+Auto-merging third.sh
+CONFLICT (content): Merge conflict in third.sh
+Automatic merge failed; fix conflicts and then commit the result.
+
+[eric@almond hello-world]$ vi third.sh 
+#!/usr/bin/bash
+echo "from hello-world/"
+<<<<<<< HEAD
+echo "another from hello-world/"
+=======
+echo "from hello-world-3/"
+>>>>>>> eaff606391308960d0d62743097899ac08d4a3be
+
+/ we maken	,
+[eric@almond hello-world]$ vi third.sh 
+#!/usr/bin/bash
+echo "from hello-world/"
+echo "from hello-world-3/"
+
+[eric@almond hello-world]$ git push
+Counting objects: 4, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (4/4), 536 bytes | 0 bytes/s, done.
+Total 4 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local objects.
+To git@github.com:ericjvandervelden/hello-world.git
+   eaff606..f4687e2  ericsidea2 -> ericsidea2
+
+/ 1313	.
+
+git pull <remote> <branch> 
+/ ipv
+git branch --set-upstream-to=origin/ericsidea2 ericsidea2
+
+
+[eric@almond hello-world]$ git branch --unset-upstream ericsidea2
+
+[eric@almond hello-world-3]$ vi third.sh 
+[eric@almond hello-world-3]$ git commit -a -m "edit third.sh in hello-world-3"
+[ericsidea2 9ba2d2b] edit third.sh in hello-world-3
+ 1 file changed, 1 insertion(+)
+
+[eric@almond hello-world-3]$ git push
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 307 bytes | 0 bytes/s, done.
+Total 3 (delta 2), reused 0 (delta 0)
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To git@github.com:ericjvandervelden/hello-world.git
+   65130f1..9ba2d2b  ericsidea2 -> ericsidea2
+
+[eric@almond hello-world]$ git branch --unset-upstream ericsidea2
+[eric@almond hello-world]$ git pull
+remote: Counting objects: 3, done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 3 (delta 2), reused 3 (delta 2), pack-reused 0
+Unpacking objects: 100% (3/3), done.
+From github.com:ericjvandervelden/hello-world
+   65130f1..9ba2d2b  ericsidea2 -> origin/ericsidea2
+There is no tracking information for the current branch.
+Please specify which branch you want to merge with.
+See git-pull(1) for details
+
+    git pull <remote> <branch>
+
+If you wish to set tracking information for this branch you can do so with:
+
+    git branch --set-upstream-to=origin/<branch> ericsidea2
+
+[eric@almond hello-world]$ git pull origin ericsidea2
+From github.com:ericjvandervelden/hello-world
+ * branch            ericsidea2 -> FETCH_HEAD
+Updating 65130f1..9ba2d2b
+Fast-forward
+ third.sh | 1 +
+ 1 file changed, 1 insertion(+)
+
+/ we hebben nu NIET --set-upstream-to	,
+
+/ we kunnen het nog een keer doen	,
+
+[eric@almond hello-world-3]$ vi third.sh 
+[eric@almond hello-world-3]$ git commit -a -m "edit third.sh in hello-world-3"
+[ericsidea2 414a5c2] edit third.sh in hello-world-3
+ 1 file changed, 1 insertion(+)
+[eric@almond hello-world-3]$ git push
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 309 bytes | 0 bytes/s, done.
+Total 3 (delta 2), reused 0 (delta 0)
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To git@github.com:ericjvandervelden/hello-world.git
+   9ba2d2b..414a5c2  ericsidea2 -> ericsidea2
+
+[eric@almond hello-world]$ git pull
+remote: Counting objects: 3, done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 3 (delta 2), reused 3 (delta 2), pack-reused 0
+Unpacking objects: 100% (3/3), done.
+From github.com:ericjvandervelden/hello-world
+   9ba2d2b..414a5c2  ericsidea2 -> origin/ericsidea2
+There is no tracking information for the current branch.
+Please specify which branch you want to merge with.
+See git-pull(1) for details
+
+    git pull <remote> <branch>
+
+If you wish to set tracking information for this branch you can do so with:
+
+    git branch --set-upstream-to=origin/<branch> ericsidea2
+
+/ nog steeds!
+
+[eric@almond hello-world]$ git pull origin ericsidea2
+From github.com:ericjvandervelden/hello-world
+ * branch            ericsidea2 -> FETCH_HEAD
+Updating 9ba2d2b..414a5c2
+Fast-forward
+ third.sh | 1 +
+ 1 file changed, 1 insertion(+)
+
+/ 1313	 .
+
+/ Afmaken	, create branch yesterday	,
+
+/ 7	. video remotes	,
+
+[eric@almond hello-world]$ git remote -v
+origin	git@github.com:ericjvandervelden/hello-world.git (fetch)
+origin	git@github.com:ericjvandervelden/hello-world.git (push)
+
+[eric@almond hello-world]$ git remote add origin-https https://github.com/ericjvandervelden/hello-world.git
+[eric@almond hello-world]$ git remote -v
+origin	git@github.com:ericjvandervelden/hello-world.git (fetch)
+origin	git@github.com:ericjvandervelden/hello-world.git (push)
+origin-https	https://github.com/ericjvandervelden/hello-world.git (fetch)
+origin-https	https://github.com/ericjvandervelden/hello-world.git (push)
+
+[eric@almond hello-world]$ git checkout -b ericsidea3
+[eric@almond hello-world]$ vi fourth.sh
+[eric@almond hello-world]$ git add .
+[eric@almond hello-world]$ git commit -m "created fourth.sh"
+
+[eric@almond hello-world]$ git remote set-url  origin-https https://ericjvandervelden:vlWalnoot27@github.com/ericjvandervelden/hello-world.git
+[eric@almond hello-world]$ git push --set-upstream origin-https ericsidea3
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 328 bytes | 0 bytes/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local objects.
+To https://ericjvandervelden:vlWalnoot27@github.com/ericjvandervelden/hello-world.git
+ * [new branch]      ericsidea3 -> ericsidea3
+Branch ericsidea3 set up to track remote branch ericsidea3 from origin-https.
+
+[eric@almond hello-world]$ cat .git/config 
+[remote "origin-https"]
+	url = https://ericjvandervelden:vlWalnoot27@github.com/ericjvandervelden/hello-world.git
+	fetch = +refs/heads/*:refs/remotes/origin-https/*
+[branch "ericsidea3"]
+	remote = origin-https
+	merge = refs/heads/ericsidea3
+
+
+/ Let op dat we de clone url van github edit	, door username:password in voor te set	,
+https://github.com/ericjvandervelden/hello-world.git
+->
+https://ericjvandervelden:vlWalnoot27@github.com/ericjvandervelden/hello-world.git
+
+/ we moeten $ git remote add <name> <url> 	, en als we de <url> willen veranderen	, doen we $ git remote set-url <name> <new-url>
+/ als we een nieuwe file hebben create	, moeten 	we $ git add . en $ git commit -m "..." 	, als we een bestaande file edit,	 kunnen we $ git -a -m "..."
+
+
+/ Intermezzo
+
+/ Anders,	
+[eric@almond hello-world]$ git push --set-upstream origin-https ericsidea3
+remote: Invalid username or password.
+fatal: Authentication failed for 'https://github.com/ericjvandervelden/hello-world.git/'
+/ geef in google,	
+git push https password
+/ lees	,
+http://stackoverflow.com/questions/5343068/is-there-a-way-to-skip-password-typing-when-using-https-on-github
+http://stackoverflow.com/questions/6565357/git-push-requires-username-and-password
+http://stackoverflow.com/questions/8588768/git-push-username-password-how-to-avoid
+http://stackoverflow.com/questions/29776439/username-and-password-in-command-for-git-push
+https://help.github.com/articles/which-remote-url-should-i-use/
+https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes
+
+/ Einde Intermezzo
+
+/ 13
+
+[eric@almond hello-world]$ cat .git/refs/remotes/origin-https/ericsidea3 
+6153583fc629c660c7b2cbfcf84968f80dc97427
+
+[eric@almond hello-world]$ git fetch origin-https 
+From https://github.com/ericjvandervelden/hello-world
+ * [new branch]      ericsidea  -> origin-https/ericsidea
+ * [new branch]      ericsidea2 -> origin-https/ericsidea2
+ * [new branch]      hansidea   -> origin-https/hansidea
+ * [new branch]      hansidea2  -> origin-https/hansidea2
+ * [new branch]      master     -> origin-https/master
+/ TODO
+
+/ Lees	,
+http://stackoverflow.com/questions/292357/difference-between-git-pull-and-git-fetch
+In the simplest terms, git pull does a git fetch followed by a git merge.
+You can do a git fetch at any time to update your remote-tracking branches under refs/remotes/<remote>/.
+This operation never changes any of your own local branches under refs/heads, and is safe to do without changing your working copy. 
+
+/ Afmaken TODO
+
+/ 7		. video tagging	
+
+/ geef in google	,
+git tag master or branch
+/ lees	,
+http://stackoverflow.com/questions/14613540/git-tag-in-branches
+
+http://stackoverflow.com/questions/18088183/do-git-tags-apply-to-all-branches
+Note: when checking out tags, you end up with "detached HEAD" mode. Your changes will be lost unless you create another branch starting from the tag checked out.
+
+http://stackoverflow.com/questions/18088183/do-git-tags-apply-to-all-branches
+/ MORGENOCHTEND
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/ 7	. 
+
+[eric@almond 1]$ pwd
+/home/eric/Devel/Git/wicket/1
+[eric@almond 1]$ git clone git://git.apache.org/wicket.git
+
+[eric@almond 2]$ pwd
+/home/eric/Devel/Git/wicket/2
+[eric@almond 2]$ git clone git@github.com:apache/wicket.git
+/ of	,
+[eric@almond 2]$ git clone git@github.com:ericjvandervelden/wicket.git
+/ TODO
+
+[eric@almond wicket]$ git checkout -b v-7.6.0 rel/wicket-7.6.0 
+[eric@almond wicket]$  git checkout -b v-6.26.0 rel/wicket-6.26.0
+[eric@almond wicket]$ git branch 
+  master
+* v-6.26.0
+  v-7.6.0
+
+/ Lees	,
+http://stackoverflow.com/questions/18088183/do-git-tags-apply-to-all-branches
+
+[eric@almond wicket]$ cat .git/HEAD 
+ref: refs/heads/v-6.26.0
+[eric@almond wicket]$ cat .git/refs/heads/v-6.26.0 
+d1336a8ea4eb4483195324077abead10ae10ce5a
+
+[eric@almond wicket]$ git checkout v-7.6.0 
+Switched to branch 'v-7.6.0'
+[eric@almond wicket]$ cat .git/HEAD 
+ref: refs/heads/v-7.6.0
+[eric@almond wicket]$ cat .git/refs/heads/v-7.6.0 
+b5563daadd27323882e243ba7403731a097fe1af
+
+[eric@almond wicket]$ git tag -l  | grep 7.6.0 | xargs -I % git checkout %
+Note: checking out 'rel/wicket-7.6.0'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by performing another checkout.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -b with the checkout command again. Example:
+
+  git checkout -b <new-branch-name>
+
+HEAD is now at b5563da... [maven-release-plugin] prepare release rel/wicket-7.6.0
+[eric@almond wicket]$ cat .git/HEAD 
+b5563daadd27323882e243ba7403731a097fe1af
+/ Inderdaad	, nog de oude	,
+
+
+
+
+
+
+
+
+
+
+
+/ 7	. 
+
+/ github.com
+
+/ 13	. 
+
+/ hoe delete eigen repo op github.com	?
+
+/ click 'view profile and more', en kies Settings,
+/ link in het verticale menu: Repositories
+/ click op een repo	, bijv	,
+https://github.com/ericjvandervelden/my-first-repo
+/ op deze repo page zien we rechtsboven in het horizontale menu Settings, click	,
+/ beneden op deze page zien we Danger Zone	, en daarin 'Delete this repo'	, 
+
+
+/ 13	. 
+
+/ github.com, pull requests	,
+
+https://github.com/
+/ we zien 'Read the guide'
+https://guides.github.com/activities/hello-world/
+
+/ click + v naast identicon	,
+/ repo name: hello-world
+/ check : create README
+/ click 'Create'	,
+
+/ we zien alleen branch master	,
+/ click V naast Branch: master,
+/ fill in text field: readme-edits
+/ click blue button below it: Create branch 'readme-edits' from master	,
+
+/ in branch 'readme edits'	, click de link 'README.md'	, en click rechts op het pencil icon	,
+/ we edit 
+# hello-world
+foo bar
+/ click 'Commit changes'	,
+
+/ als we deze README.md vergl met die uit master, dan zijn ze anders,	
+/ click in horizontal menu 'pull requests'
+/ we zien 2 keer branch master, maar de rechter bijv kunnen we branch readme-edits kiezen	, 
+/ we zien inderdaad een diff	, helemaal beneden	,
+ # hello-world
+-tutorial
++foo bar
+
+/ als je deze changes OK vindt, click 'create pull request'	, 
+/ er staat al: update README.md
+/ click 'Create pull request'
+Update README.md #1
+/ click 'Merge pull request'	,
+Merge pull request #1 from ericjvandervelden/readme-edits
+Confirm merge
+Pull request successfully merged and closed
+You’re all set—the readme-edits branch can be safely deleted.
+/ click 'Delete branch' button er naast	,
+
+/ ga in horizontale menu naar Code (naast Pull requests)	,
+
+/ 7	. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$ git remote add origin https://github.com/ericjvandervelden/my-first-repo.git
+$ git push -u origin master
+
+/  GIT AGAIN
+
+/ 7	. 
+
+/ Stel we hebben een local git repo	, .git	, en een afile.txt er in	, 
+/ als we deze edit,	is hij weer unstaged	, dus moeten we hem eerst weer add aan de index	(stage)	, en daarna commit, zodat hij in de repo komt	, 
+
+[eric@almond tmp]$ pwd
+/home/eric/Devel/Git/tmp
+$ mkdir hello-again & cd hello-again
+[eric@almond hello-again]$ git init
+[eric@almond hello-again]$ echo "foo bar">afile.txt
+[eric@almond hello-again]$ git add afile.txt 
+[eric@almond hello-again]$ git commit -m "first"
+[eric@almond hello-again]$ vi afile.txt 
+[eric@almond hello-again]$ git add afile.txt 
+[eric@almond hello-again]$ git commit -m "second"
+
+/ 7	. 
+
+/ google: git set upstream
+/ lees	,
+https://stackoverflow.com/questions/18031946/what-does-set-upstream-do
+/ ->
+https://stackoverflow.com/questions/10002239/difference-between-git-checkout-track-origin-branch-and-git-checkout-b-branch/10002469#10002469
+/ lees,	
+https://stackoverflow.com/questions/520650/make-an-existing-git-branch-track-a-remote-branch
+
+/ remote is een (remote) repo	,
+
+/ als je een clone doet	, wordt origin als remote set	,
+[eric@almond wildfly]$ pwd
+/home/eric/Devel/Java/jboss/wildfly
+[eric@almond wildfly]$ git remote -v
+origin	https://github.com/wildfly/wildfly.git (fetch)
+origin	https://github.com/wildfly/wildfly.git (push)
+[eric@almond wildfly]$ cat .git/config 
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = https://github.com/wildfly/wildfly.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
+
+/ 13	. 
+
+[eric@almond hello-again]$ pwd
+/home/eric/Devel/Git/tmp
+[eric@almond hello-again]$ git remote add origin https://ericjvandervelden:vlWalnoot27@github.com/ericjvandervelden/hello-again.git
+[eric@almond hello-again]$ cat .git/config 
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = https://ericjvandervelden:vlWalnoot27@github.com/ericjvandervelden/hello-again.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+
+/ we deden altijd	, maar dan moet je bij git push username, password steeds geven	,
+[eric@almond hello-again]$ git remote add origin https://github.com/ericjvandervelden/hello-again.git
+/ als we dan de gnome-ssh popups niet willen, moeten we	,
+[eric@almond hello-again]$ unset SSH_ASKPASS
+/ maar als username:password in de remote url staan, hoeft dit niet	, want wordt helemaal niet gevraagd	,
+
+/ lees,	
+https://stackoverflow.com/questions/520650/make-an-existing-git-branch-track-a-remote-branch
+
+[eric@almond hello-again]$ git branch 
+* master
+[eric@almond hello-again]$ git branch -u origin/master
+error: the requested upstream branch 'origin/master' does not exist
+hint: If you are planning to push out a new local branch that
+hint: will track its remote counterpart, you may want to use
+hint: "git push -u" to set the upstream config as you push.
+
+/ 13	. 
+
+/ google: git how to create remote branch
+/ Lees	,
+https://stackoverflow.com/questions/1519006/how-do-you-create-a-remote-git-branch
+
+
+/ 13	. 
+
+/ we zijn op https://github.com/ericjvandervelden	, 
+/ en click repositories,	 
+https://github.com/ericjvandervelden?tab=repositories
+/ click New
+Repository name:hello-again
+/ click Create repository	,
+/ we komen op	,
+https://github.com/ericjvandervelden/hello-again
+
+...or create a new repository on the command line
+echo "# hello-again" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://ericjvandervelden:vlWalnoot27@github.com/ericjvandervelden/hello-again.git
+git push -u origin master
+/ TODO
+
+...or push an existing repository from the command line
+git remote add origin https://github.com/ericjvandervelden/hello-again.git
+git push -u origin master
+/ TODO
+
+/ op laptop	,
+[eric@almond hello-again]$ git push origin master
+Username for 'https://github.com': ericjvandervelden
+Password for 'https://ericjvandervelden@github.com': vlWalnoot27
+Counting objects: 6, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (6/6), 421 bytes | 0 bytes/s, done.
+Total 6 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), done.
+To https://github.com/ericjvandervelden/hello-again.git
+ * [new branch]      master -> master
+/ en dan nog een file erbij	,
+[eric@almond hello-again]$ vi bfile.txt
+[eric@almond hello-again]$ git add bfile.txt 
+[eric@almond hello-again]$ git commit -m third
+[eric@almond hello-again]$ git push origin master
+/ OK	,
+
+[eric@almond hello-again]$ git branch -a
+* master
+  remotes/origin/master
+
+/ 13	. 
+
+/ we maken een nieuwe branch	, 
+
+[eric@almond hello-again]$ git checkout -b alt
+Switched to a new branch 'alt'
+[eric@almond hello-again]$ git branch -a
+* alt
+  master
+  remotes/origin/master
+[eric@almond hello-again]$ ls
+afile.txt  bfile.txt
+[eric@almond hello-again]$ vi cfile.txt
+[eric@almond hello-again]$ git add cfile.txt 
+[eric@almond hello-again]$ git commit -m "first in alt"
+[alt b0fe350] first in alt
+ 1 file changed, 1 insertion(+)
+ create mode 100644 cfile.txt
+
+/ cfile.txt zit niet in master	,
+[eric@almond hello-again]$ git checkout master 
+Switched to branch 'master'
+[eric@almond hello-again]$ ls
+afile.txt  bfile.txt
+
+[eric@almond hello-again]$ git checkout alt
+Switched to branch 'alt'
+[eric@almond hello-again]$ ls
+afile.txt  bfile.txt  cfile.txt
+
+[eric@almond hello-again]$ git push origin alt
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 323 bytes | 0 bytes/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To https://ericjvandervelden:vlWalnoot27@github.com/ericjvandervelden/hello-again.git
+ * [new branch]      alt -> alt
+
+/ we zien deze branch ook op github	, 
+https://github.com/ericjvandervelden/hello-again/tree/alt
+
+[eric@almond hello-again]$ cd ..
+[eric@almond Git]$ mkdir tmp2
+[eric@almond Git]$ cd tmp2
+[eric@almond hello-again2]$ git clone https://github.com/ericjvandervelden/hello-again.git
+Cloning into 'hello-again'...
+remote: Counting objects: 12, done.
+remote: Compressing objects: 100% (5/5), done.
+remote: Total 12 (delta 2), reused 11 (delta 1), pack-reused 0
+Unpacking objects: 100% (12/12), done.
+Checking connectivity... done.
+[eric@almond hello-again2]$ cd hello-again/
+[eric@almond hello-again]$ git branch -a
+* master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/alt
+  remotes/origin/master
+
+/ 13	. 
+
+[eric@almond hello-again]$ vi dfile.txt
+[eric@almond hello-again]$ git add dfile.txt 
+[eric@almond hello-again]$ git commit -m "second in alt"
+[eric@almond hello-again]$ git push
+fatal: The current branch alt has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin alt
+
+[eric@almond hello-again]$ git push --set-upstream origin alt
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 294 bytes | 0 bytes/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://ericjvandervelden:vlWalnoot27@github.com/ericjvandervelden/hello-again.git
+   b0fe350..671ef82  alt -> alt
+Branch alt set up to track remote branch alt from origin.
+
+/ we zien dfile.txt in de remote alt branch op github.com	, 
+
+/ 13	. 
+
+/ Omdat we git push --set-upstream hebben gedaan in local alt branch, hoeven we van nu af aan alleen maar git push te doen	, als we in local alt branch zijn	, 
+/ -u of --set-upstream 
+
+[eric@almond hello-again]$ cp dfile.txt efile.txt
+[eric@almond hello-again]$ git add efile.txt 
+[eric@almond hello-again]$ git commit -m "third in alt"
+[alt 2f431ae] third in alt
+ 1 file changed, 1 insertion(+)
+ create mode 100644 efile.txt
+[eric@almond hello-again]$ git push
+Counting objects: 2, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (2/2), 245 bytes | 0 bytes/s, done.
+Total 2 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://ericjvandervelden:vlWalnoot27@github.com/ericjvandervelden/hello-again.git
+   671ef82..2f431ae  alt -> alt
+
+/ 13	. 
+
+/ we gaan terug naar master branch	, 
+
+[eric@almond hello-again]$ git checkout master 
+Switched to branch 'master'
+[eric@almond hello-again]$ ls
+afile.txt  bfile.txt
+/ klopt	, 
+
+[eric@almond hello-again]$ cp afile.txt ffile.txt
+[eric@almond hello-again]$ git add ffile.txt 
+[eric@almond hello-again]$ git commit -m "ffile in master"
+[master 3b6d645] ffile in master
+ 1 file changed, 2 insertions(+)
+ create mode 100644 ffile.txt
+
+[eric@almond hello-again]$ git commit -m "ffile in master"
+[master 3b6d645] ffile in master
+ 1 file changed, 2 insertions(+)
+ create mode 100644 ffile.txt
+[eric@almond hello-again]$ git push
+fatal: The current branch master has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin master
+
+[eric@almond hello-again]$ git push -u origin master
+Counting objects: 2, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (2/2), 283 bytes | 0 bytes/s, done.
+Total 2 (delta 0), reused 0 (delta 0)
+To https://ericjvandervelden:vlWalnoot27@github.com/ericjvandervelden/hello-again.git
+   0db2316..3b6d645  master -> master
+Branch master set up to track remote branch master from origin.
+
+/ van af nu hoeven we alleen: git push , als we in master local branch zijn	,
+
+[eric@almond hello-again]$ cp afile.txt gfile.txt
+[eric@almond hello-again]$ git add gfile.txt 
+[eric@almond hello-again]$ git commit -m "gfile in master"
+[eric@almond hello-again]$ git push
+Counting objects: 2, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (2/2), 248 bytes | 0 bytes/s, done.
+Total 2 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://ericjvandervelden:vlWalnoot27@github.com/ericjvandervelden/hello-again.git
+   3b6d645..26f4da5  master -> master
+
+/ 13	 .
+
+
+/ merge alt naar master	, 
+
+/ op github.com en local hebben we master branch: 
+afile.txt
+bfile.txt
+ffile.txt
+gfile.txt
+/ op github.com en local hebben we alt branch: 
+afile.txt
+bfile.txt
+cfile.txt
+dfile.txt
+efile.txt
+
+/ google
+git merge branch to master
+/ lees	 ,
+https://stackoverflow.com/questions/5601931/best-and-safest-way-to-merge-a-git-branch-into-master
+
+[eric@almond hello-again]$ git branch -a
+  alt
+* master
+  remotes/origin/alt
+  remotes/origin/master
+
+[eric@almond hello-again]$ git merge alt
+Merge made by the 'recursive' strategy.
+ cfile.txt | 1 +												/ deze files komen uit de alt branch	,
+ dfile.txt | 1 +
+ efile.txt | 1 +
+ 3 files changed, 3 insertions(+)
+ create mode 100644 cfile.txt
+ create mode 100644 dfile.txt
+ create mode 100644 efile.txt
+[eric@almond hello-again]$ ls
+afile.txt  bfile.txt  cfile.txt  dfile.txt  efile.txt  ffile.txt  gfile.txt
+
+/ check	, 
+[eric@almond hello-again]$ git checkout alt 
+Switched to branch 'alt'
+Your branch is up-to-date with 'origin/alt'.
+[eric@almond hello-again]$ ls
+afile.txt  bfile.txt  cfile.txt  dfile.txt  efile.txt
+/ nog steeds zoals hij was	,
+
+[eric@almond hello-again]$ git checkout master
+[eric@almond hello-again]$ git push
+Counting objects: 2, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (2/2), 286 bytes | 0 bytes/s, done.
+Total 2 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://ericjvandervelden:vlWalnoot27@github.com/ericjvandervelden/hello-again.git
+   26f4da5..672e2e7  master -> master
+/ OK
+
+/ 13	 .
+
+/ Nu een team mate	,
+
+/ deze had eerder een clone gedaan	,
+
+/ hij kan git pull doen	, werkt meteen	, 
+
+[eric@almond hello-again]$ cd ../../tmp2/hello-again/
+[eric@almond hello-again]$ git branch -a
+  alt
+* master
+  remotes/origin/alt
+  remotes/origin/master
+
+[eric@almond hello-again]$ ls
+afile.txt  bfile.txt
+[eric@almond hello-again]$ git checkout alt
+Branch alt set up to track remote branch alt from origin.
+Switched to a new branch 'alt'
+[eric@almond hello-again]$ ls
+afile.txt  bfile.txt  cfile.txt
+
+[eric@almond hello-again]$ git pull
+remote: Counting objects: 11, done.
+remote: Compressing objects: 100% (7/7), done.
+remote: Total 11 (delta 4), reused 10 (delta 3), pack-reused 0
+Unpacking objects: 100% (11/11), done.
+From https://github.com/ericjvandervelden/hello-again
+   b0fe350..2f431ae  alt        -> origin/alt
+   0db2316..672e2e7  master     -> origin/master
+Updating b0fe350..2f431ae
+Fast-forward
+ dfile.txt | 1 +
+ efile.txt | 1 +
+ 2 files changed, 2 insertions(+)
+ create mode 100644 dfile.txt
+ create mode 100644 efile.txt
+[eric@almond hello-again]$ ls
+afile.txt  bfile.txt  cfile.txt  dfile.txt  efile.txt
+/ klopt	, 
+
+[eric@almond hello-again]$ git checkout master
+Switched to branch 'master'
+Your branch is behind 'origin/master' by 6 commits, and can be fast-forwarded.
+  (use "git pull" to update your local branch)
+[eric@almond hello-again]$ ls
+afile.txt  bfile.txt
+[eric@almond hello-again]$ git pull
+Updating 0db2316..672e2e7
+Fast-forward
+ cfile.txt | 1 +
+ dfile.txt | 1 +
+ efile.txt | 1 +
+ ffile.txt | 2 ++
+ gfile.txt | 2 ++
+ 5 files changed, 7 insertions(+)
+ create mode 100644 cfile.txt
+ create mode 100644 dfile.txt
+ create mode 100644 efile.txt
+ create mode 100644 ffile.txt
+ create mode 100644 gfile.txt
+/ OK
+
+
+/ 7	. 
+
+/ 13	. 
+
+/ met git checkout -b gaan alle files mee, want je branches master bijvoorbeeld, en dan ga je met de alt branch verder	, later kun je dan de alt branche's files merge in master	,
+
+[eric@almond tmp3]$ git init
+Initialized empty Git repository in /home/eric/Devel/Git/tmp3/.git/
+[eric@almond tmp3]$ git add afile.txt 
+[eric@almond tmp3]$ git commit -m "afile in master"
+[master (root-commit) 853b1e9] afile in master
+ 1 file changed, 2 insertions(+)
+ create mode 100644 afile.txt
+[eric@almond tmp3]$ git branch -a
+* master
+[eric@almond tmp3]$ ls
+afile.txt
+[eric@almond tmp3]$ git checkout -b alt
+Switched to a new branch 'alt'
+[eric@almond tmp3]$ ls
+afile.txt
+/ OK	,
+
+/ 13	. 
+
+/ Na de 1ste commit is de master branch er	,
+
+[eric@almond tmp3]$ git init
+Initialized empty Git repository in /home/eric/Devel/Git/tmp3/.git/
+[eric@almond tmp3]$ git branch -a
+/ niets,	
+[eric@almond tmp3]$ echo foo >afile.txt
+[eric@almond tmp3]$ git branch -a 							/ niets	,
+[eric@almond tmp3]$ git status								
+On branch master																/ is branch master er nu of niet	?
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	afile.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+[eric@almond tmp3]$ git add afile.txt 
+[eric@almond tmp3]$ git branch -a 			/ niets	, 
+[eric@almond tmp3]$ git status
+On branch master												/  is master branch er nou of niet	? TODO
+
+Initial commit
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+	new file:   afile.txt
+
+[eric@almond tmp3]$ git commit -m "first"
+[master (root-commit) e7b2c94] first
+ 1 file changed, 1 insertion(+)
+ create mode 100644 afile.txt
+[eric@almond tmp3]$ git branch -a
+* master
+
+/ 13	.  
+
+/ git checkout -b alt voordat master er is	,
+
+[eric@almond tmp3]$ git init
+Initialized empty Git repository in /home/eric/Devel/Git/tmp3/.git/
+[eric@almond tmp3]$ git branch -a
+[eric@almond tmp3]$ echo foo >afile.txt
+[eric@almond tmp3]$ git branch -a
+[eric@almond tmp3]$ git status
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	afile.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+[eric@almond tmp3]$ git add afile.txt 
+[eric@almond tmp3]$ git status
+On branch master
+
+Initial commit
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+	new file:   afile.txt
+
+[eric@almond tmp3]$ git checkout -b alt
+Switched to a new branch 'alt'
+[eric@almond tmp3]$ ls
+afile.txt													/ als je branches	, dan neem je de files mee	, dat is altijd, see boven	,
+eric@almond tmp3]$ git status			/ WH copy je ook de repo	, met z'n status 	, TODO
+On branch alt
+
+Initial commit
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+	new file:   afile.txt
+
+[eric@almond tmp3]$ git branch -a
+[eric@almond tmp3]$ git checkout master
+error: pathspec 'master' did not match any file(s) known to git.			/ er is geen branch master	,
+
+[eric@almond tmp3]$ git commit -m "first"
+[eric@almond tmp3]$ git branch -a
+* alt
+
+[eric@almond tmp3]$ git checkout -b master
+Switched to a new branch 'master'
+[eric@almond tmp3]$ git status
+On branch master
+nothing to commit, working directory clean
+[eric@almond tmp3]$ ls
+afile.txt
+
+/ 13	. 
+
+[eric@almond tmp3]$ git init
+Initialized empty Git repository in /home/eric/Devel/Git/tmp3/.git/
+[eric@almond tmp3]$ git add afile.txt 
+$ cat afile.txt
+foo
+bar
+[eric@almond tmp3]$ git commit -m "afile in master"
+[master (root-commit) 0660e97] afile in master
+ 1 file changed, 2 insertions(+)
+ create mode 100644 afile.txt
+[eric@almond tmp3]$ git branch -a
+* master
+[eric@almond tmp3]$ git checkout -b alt
+Switched to a new branch 'alt'
+[eric@almond tmp3]$ ls
+afile.txt
+[eric@almond tmp3]$ vi afile.txt 
+foo
+bar
+baz
+[eric@almond tmp3]$ git add afile.txt 
+[eric@almond tmp3]$ git commit -m "afile in alt"
+[alt 5f9f521] afile in alt
+ 1 file changed, 1 insertion(+)
+[eric@almond tmp3]$ ls
+afile.txt
+[eric@almond tmp3]$ git checkout master 
+Switched to branch 'master'
+[eric@almond tmp3]$ cat afile.txt 
+foo
+bar																				/ oude	,
+[eric@almond tmp3]$ git merge alt 
+Updating 0660e97..5f9f521
+Fast-forward
+ afile.txt | 1 +
+ 1 file changed, 1 insertion(+)
+[eric@almond tmp3]$ cat afile.txt 			/ nieuwe	,
+foo
+bar
+baz
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+/  Einde GIT AGAIN
+
+
+
+/ EGIT
+
+/ Lees	,
+https://eclipsesource.com/blogs/tutorials/egit-tutorial/
+
+/ we gaan oef	, 
+
+[eric@almond java]$ pwd
+/home/eric/Devel/Eclipse/Neon/java
+
+/ ws Devel/Java/jboss/workspace-wildfly-src	
+/ waar we straks git willen use, om een andere branch te kiezen	,  en dan wildfly build	,
+
+/ we  maken ws Devel/Eclipse/Neon/java/workspace-egit	, 
+
+/ we kunnen een File import from Git en from Maven	, 
+/ Wat is het verschil	,
+/ TODO
+
+/ window, preferences, team, git  ,configuration	, 
+/ we zien ~/.gitconfig
+
+/ we maken een maven project zoals altijd	, 
+/ right click project, Team, Share project
+/ check: Use or create repository in parent folder of project
+
+/ click 'Create repository'	,
+/home/eric/Devel/Eclipse/Neon/java/workspace-egit/egitstudy		.git
+/ click Finish
+
+/ we zien	, 
+> egitstudy[egitstudy NO-HEAD]
+? > .settings/
+	? org.eclipse.jdt.core.prefs
+	? org.eclipse.m2e.core.prefs
+? .classpath
+? .gitignore
+? .project
+? .pom
+
+/ WH verschijnt > alleen bij dirs	,
+
+/ Add junit:junit:4.12 to the pom	,
+
+/ we create egitstudy.ATest in src/test/java	, en we zien	, 
+? > src/test/java
+	? > egitstudy
+		? ATest.java
+	
+/ In het fs zien we egitstudy/.git/	, dat is de repository	,
+
+[eric@almond egitstudy]$ git branch
+/ NIETS
+
+/ we kunnen V click in package explorer	, click Filters... en uncheck .* resources, 	
+/ dan zien we .gitconfig	, .settings/	, maar NIET .git	, 
+/ TODO
+/ we zien wel .git in de Git Repositories view	,
+
+/ we zien 	, 
+> .gitignore
+...
+
+/ Lees	, 
+https://stackoverflow.com/questions/24412783/eclipse-egit-not-showing-project-i-just-cloned-in-package-explorer
+/ add Git repositories view	,
+/ TODO
+
+/ we moeten nog add	, 
+/ right click project, Team, add to index	,
+/ alle > verdwijnen	,
+/ de ? worden * bij het project en de dirs en + bij files zoals ATest.java	,  (+ staat voor added, (to the index)
+
+* egitstudy [ egitstudy HEAD]
+	* src/test/java
+		* egitstudy
+				+ ATest.java
+
+/ ook * bij .settings/	, right click .settings/ en Team, Ignore, 
+/ target/ stond als in .gitignore, maar nu .settings/ ook	,
+/ ook .project en .classpath	,
+
+[eric@almond egitstudy2]$ git branch 
+/ leeg	, 
+/ maar,	
+[eric@almond egitstudy2]$ git status 
+On branch master
+
+Initial commit
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+	new file:   .classpath
+	new file:   .gitignore
+	new file:   .project
+	new file:   .settings/org.eclipse.jdt.core.prefs
+	new file:   .settings/org.eclipse.m2e.core.prefs
+	new file:   pom.xml
+	new file:   src/test/java/egitstudy2/ATest.java
+/ TODO
+
+/ right click project	, Team, commit	,			
+/ we zien een view 'Git staging'	, 
+
+Staged changes
+.classpath
+.ignore
+.project
+ATest.java
+
+Commit message
+First commit
+
+/ click Commit button (NIET Commit and push)
+/ alle fields Unstaged changes, Staged changes, Commit message worden leeg	,
+/ de * worden repository icon (|)	, een cilinder	, dus  op project, dirs en ATest.java	, en de + op ATest.java verdwijnt	,
+
+| egitstudy [ egitstudy master]
+	| src/test/java
+		| egitstudy
+				| ATest.java
+
+
+/ na de commit is de branch er 	, master in dit geval 	,	
+/ we zien	, 
+egitstudy [egitstudy master]
+...
+
+
+/ we maken src/main/java B.java	,
+/ we zien > ? bij 
+> egitstudy2
+	> ? src/main/java
+		> ? egitstudy
+				? B.java
+
+/ In Project explorer kunnen we V en Customize...
+/ uncheck .* resources
+/ uncheck Java output folders
+/ we zien .gitconfig en target/classes/	, 
+
+/ een new file, B.java moeten we eerst add	, 
+/ right click, Team, add to index : ? wordt + ( + van added) bij B.java	, de > verdwijnen en de ? worden * in het project en in de dirs	, 
+
+* egitstudy2
+	* src/main/java
+		* egitstudy
+				+ B.java
+
+/ in git staging view: geef message, en click Commit	, 
+/ B.java heeft repository icon, cilindertje	, 
+
+/ We edit B.java
+/ we zien nog steeds repository icon	, maar met een > ervoor	, > betekent niet added to index	, 
+/ doe Team, Add to index	, 
+/ doe Team, Commit	, 
+
+/ * en + worden | (repository icon)
+
+| egitstudy2
+	| src/main/java
+		| egitstudy
+				| B.java
+
+/ Add to index = stage	, een stap voor de repository	, 
+
+/ B.java zit als in de repo	,  als we B.java edit, moeten we hem opnieuw add to index, stage dus	, anders blijft hij unstaged	, en die kunnen we niet commit	, 
+/ TODO
+
+/ we edit B.java	,
+/ we zien GEEN ?	, maar in de Git staging view zien we hem in de unstaged changes	,
+
+/ we maken A.java
+
+| > egitstudy2
+	| > src/main/java
+		| > egitstudy
+				? A.java
+				| B.java
+
+/ we add A.java to index,	
+
+* egitstudy2
+	* src/main/java
+		* egitstudy
+				+ A.java
+				| B.java
+
+/ we commit	,
+ 
+| egitstudy2
+	| src/main/java
+		| egitstudy
+				| A.java
+				| B.java
+
+/ 13	. 
+
+/ we edit B.java
+
+| > egitstudy2
+	| > src/main/java
+		| > egitstudy
+				| A.java
+				| > B.java
+
+/ add to index	, 
+
+* egitstudy2
+	* src/main/java
+		* egitstudy
+				| A.java
+				* B.java
+
+/ we commit	,
+
+| egitstudy2
+	| src/main/java
+		| egitstudy
+				| A.java
+				| B.java
+
+/ 13	. 
+
+/ added=staged= tracked by git	,
+/ een * verschijnt	,
+
+/ 7	. 
+
+/ revert	 ,
+/ TODO
+
+/ 7	. 
+
+/ cloning repositories	,
+
+/ op github zijn mijn repos op mijn profile	,
+
+File, import, Git , projects from git, clone URI
+URI: https://github.com/ericjvandervelden/hello-again.git 	/ fill in	,
+Host: github.com																							/ doet eclipse	,
+Repository path: /ericjvandervelden/hello-again.git					/ doet eclipse	,
+Next
+alt 
+master
+Next
+
+Destination
+Directory: /home/eric/Devel/Eclipse/Neon/java/workspace-egit/hello-again
+Initial branch: master
+Remote name: origin
+Next
+
+Import existing Eclipse projects
+/ we hebben zojuist een git project cloned	, nu nog import in eclipse zoals we altijd doen,
+/ hello-git is geen maven of gradle project, dus we import hem nu niet in eclipse	, we click cancel	,
+/ we zien met command line git ,
+[eric@almond hello-again]$ git branch -a
+* master
+  remotes/origin/alt
+  remotes/origin/master
+
+/ we hebben dus niet de alt branch ingechecked	,
+
+
+/ 13	. 
+
+/ maak een gradle project , commit en push, rm hem , en clone hem en import in eclipse,
+/ TODO
+
+/ 7	. 
+
+/ branch maken	,
+
+/ we gaan verder met egitstudy	,
+
+/ we doen even op de command line	,
+[eric@almond egitstudy]$ git branch -a
+* master
+
+To create a new branch in your repository, right click a shared project and navigate to Team => Switch to => New Branch… from the context menu. Select the branch you want to create a new branch from, hit New branch and enter a name for the new branch.
+
+/ Team, Switch to, new branch
+/ source=branch from which to create a new branch: alt
+/ checkout new branch	: check
+Finish
+
+/ op de command line zien we 	,
+[eric@almond egitstudy]$ git branch -a
+* alt
+  master
+/ In eclipse zien we op de project regel	,
+egitstudy [egitstudy alt]
+
+/ in eclipse kun je switch van branch	,
+right click project, team, switch to, 
+/ en kies daar master of alt	,
+
+/ we maken in alt BTest.java, rm C.java en maken A.java	,
+/ we zien BTest.java en A.java bij 'Unstaged changes', en C.java bij 'Staged changes'
+/ blijkbaar moesten we de C.java nog commit in branch alt	,
+/ TODO
+/ we moeten BTest.java en A.java add to index	,
+/ right click project, Team, add to index	,
+/ we zien BTest.java , A.java en C.java bij 'Staged changes'
+/ maak de commit message: "+BTest.java +A.java -C.java" we click Commit rechts onder	, 
+
+/ HIER HIER HIER
+
+/ 7	. 
+
+/ merge master in alt	,
+
+/ checkout alt	,
+/ Team, switch to : alt
+/ we zien B.java, C.java en ATest.java
+/ Team, merge, 
+/ select:
+Local
+	master +BTest.java +A.java -C.java
+Merge options: commit
+Fast forward options: If a fast-forward, only update the branch pointer
+/ ...
+Result: Fast forward
+new head: +BTest.java +A.java -C.java [12b96f1]
+merge input
+C.java created, 2017-08-06
++BTest.java +A.java -C.java [12b96f1], 2017-08-12
+
+/ we zien bji alt nu ook : A.java, B.java , ATest.java , BTest.java
+
+/ 7	. 
+
+/ conflict	, 
+
+/ change to master,
+
+$ vi A.java
+public class A {
+
+	public static void main(String[] args) {
+		Arrays.asList(args).forEach(System.out::println);
+	}
+}
+
+/ add to index	, / commit met message: +line in main
+
+/ change to alt	,
+
+/ we zien	, 
+$ vi A.java
+public class A {
+
+	public static void main(String[] args) {
+	 	// TODO ...	
+	}
+}
+
+/ we voegen een andere line to	, 
+$ vi A.java
+public class A {
+
+	public static void main(String[] args) {
+	  	System.out.println("Foo");	
+	}
+}
+
+/ add to index	, commit	,
+
+/ als we deze laatste line in main save , of ook add to index,	en we gaan dan pas naar alt	, dan:
+/ als we checkout alt	, dan message: checkout conflicts	, 
+the file (A.java) heeft uncommitted changed, and would be lost by checking out 'alt'
+either commit the changes, stash the changes,	or discard the changes by resetting the current branch	,
+/ TODO
+
+/ checkout master	, en merge alt in	,
+Team, merge
+Select a branch or tag to merge into the 'master' branch	,
+	alt ...
+
+/ we zien 	,
+Conflicting
++line in main
++changed line in main
+/ click OK
+
+/ we komen in A.java in master, logisch want we merged A.java uit alt in	,
+
+public class A {
+
+	public static void main(String[] args) {
+<<<<<<< HEAD
+		Arrays.asList(args).forEach(System.out::println);
+=======
+		System.out.println("foo");
+
+>>>>>>> refs/heads/alt
+	}
+
+}
+/ Deze A.java is unstaged	,
+
+/ we maken A.java zoals hij was	,
+/ we vergeten A.java uit alt 	,
+public class A {
+
+	public static void main(String[] args) {
+		Arrays.asList(args).forEach(System.out::println);
+	}
+
+}
+
+/ we add to index	, 
+/ we zien dat de commit message al in write:
+
+Merge branch 'alt'
+
+Conflicts:
+	src/main/java/egitstudy/A.java
+/ click commit	, 
+
+/ als we nog een keer merge	, dan krijgen we weer Conflicting window	, maar hij laat A.java onveranderd	, we zien NIET <<<<<<<<<<<< in A.java
+/ Als we A.java in master edit, en we merge opnieuw A.java uit alt in	, dan ook weer NIETS, GEEN <<<<<<<<<<<<	, 
+/ Maar als we A.java in alt veranderen, we terug gaan naar master, en we merge alt in, dat weer Confict en zien we <<<<<<<<<<<< in A.java
+
+/ pas A.java in master aan, add to index, commit	, 
+
+/ 7	.  
+
+/ Lees	, 
+https://stackoverflow.com/questions/67699/how-to-clone-all-remote-branches-in-git
+
+/ workspace-wildfly-src  
+
+/ HIER HIER HIER
+
+/ we zien maar 1 branch, master	,  met Team, Switch to	,
+/ maar in 'Git repositories' view zien we onder Branches , Remote tracking alle branches	, en onder Tags alle tags	, 
+
+/ we gaan een nieuwe branch create	, 
+Team, Switch to, new branch
+/ in Create Branch window, 
+Source: staat op master, maar click Select, en kies Tag 10.1.0.Final	 
+/ Nu zien we 
+Source: 10.1.0.Final
+Branch name: 10.1.0.Final-branch
+Check out new branch: check	,
+Ok
+/ Hij gaat workspace opnieuw build	, 
+/ Daarna moeten we 
+right click wildfly-parent, Maven, update project
+
+/ we houden 2 fouten over	, 
+$ vi wildfly-batch-jberet_1_0.xsd
+            <xs:element name="thread-factory" type="threads:thread-factory" minOccurs="0" maxOccurs="unbounded"/>
+$ vi wildfly-batch_1_0.xsd
+            <xs:element name="thread-factory" type="threads:thread-factory" minOccurs="0" maxOccurs="unbounded"/>
+
+
+/	7	. 
+
+/ 2018-03-21
+
+/ Als je nieuw maven proj 'bar' hebt create, right click project, team, share project , en kies het project als waar de repository komt , de .git file en ... TODO
+/ click 'Create repository' /home/eric/Devel/Eclipse/oxygen-2/workspace-maven2/bar/.git
+/ we zien 
+bar[bar NO-HEAD]
+
+project right click , add to index -> naar staging in Git staging view,
+
+/ als we in het build path J2SE[1.5] edit,  en in drop-down list J2SE[1.8] kiezen , en als we vervolgens in Staging View onder Unstaged Changes op .classpath click, zien we compare window  en zien we verschil  ,
+
+local: .classpath
+...
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+    <attributes>
+      <attribute name="maven.pomderived" value="true"/>
+    </attributes>
+  </classpathentry>
+
+index .classpath
+...
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5">
+    <attributes>
+      <attribute name="maven.pomderived" value="true"/>
+    </attributes>
+  </classpathentry>
+
+/ click Add to index op het project, dan alles in 1 keer  ,
+
+/ in package explorer, click ^  , Filters... en uncheck .* resources  , we zien ook .classpath, .settings
+/ .settings wil je niet version control , deze blijft * behouden als je Add to index project  ,
+
+/ in Git staging view zien we ook +, waarmee we kunnen stage  ,
+/ project, right click Commit , TODO doet dat iets?
+/ in Git staging view, Commit message ... en click commit button  , we zien [<project> master]  , eerst stond er [<project> NO-HEAD]
+
+/ 13	. 
+
+/ right click project	, Team, Switch to, New branch
+Branch name: edit_pom_files
+Configure upstream push and pull : uncheck	, 
+Check out new branch: check
+Finish
+/ we zien nu 
+<project> [<project> edit_pom_files]
+
+/ 13	 . 
+
+/ we hebben 2 maven proj onder version control, foo en bar	,
+/ in foo en bar hebben we een nieuwe branch gemaakt,	 en in bar hebben 
+Configure upstream push and pull	,
+
+/ right click project	, Team, Switch to, New branch
+Branch name: edit_pom_files
+Configure upstream push and pull : check	, 
+	Merge
+Check out new branch: check
+Finish
+/ we zien nu 
+<project> [<project> edit_pom_files]
+
+ 
+/ 7	. 
+
+[eric@almond Git]$ pwd
+/home/eric/Devel/Git
+[eric@almond Git]$ git clone git@github.com:ericjvandervelden/hello-world.git
+[eric@almond Git]$ cd hello-world/
+[eric@almond hello-world]$ vi third.sh 
+...
+[eric@almond hello-world]$ git add .
+[eric@almond hello-world]$ git commit -m "Create third.sh"
+[eric@almond hello-world]$ git push
+/ OK
+/ we maken op dezelfde manier fourth.sh aan op
+https://github.com/ericjvandervelden/hello-world
+/ ook hier moeten we commit	,
+[eric@almond hello-world]$ pwd
+/home/eric/Devel/Git/hello-world
+[eric@almond hello-world]$ git pull
+/ OK
+/ we maken nieuwe fifth.sh, add, en commit,	
+[eric@almond hello-world]$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 1 commit.
+  (use "git push" to publish your local commits)
+nothing to commit, working tree clean
+[eric@almond hello-world]$ git push
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 290 bytes | 290.00 KiB/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To github.com:ericjvandervelden/hello-world.git
+   e2c4a1b..eec3abf  master -> master
+
+/ 7	 
+
+/ lees	,
+http://dont-be-afraid-to-commit.readthedocs.io/en/latest/git/commandlinegit.html
+
+/ 7	. 
+
+/ nieuwe git repo, naar github	,
+
+/ In eclipse hebben we maven projects foo en bar create in 
+/home/eric/Devel/Eclipse/oxygen-2/workspace-maven2/
+
+[eric@almond foo]$ pwd
+/home/eric/Devel/Eclipse/oxygen-2/workspace-maven2/foo
+
+/ Hoe copy naar github?
+
+[eric@almond foo]$ git remote show origin
+fatal: 'origin' does not appear to be a git repository
+...
+/ is er niet	,
+
+/ op https://github.com/ericjvandervelden, click +, New repository	,
+/ omdat we een bestaande local repo willen import, moeten we 'Initialize this repository with a README' NIET check	,
+/ we komen op https://github.com/ericjvandervelden/foo en we lezen wat we moeten doen	,
+/ of lees,
+/ lees	,
+https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/
+
+[eric@almond foo]$ git remote add origin git@github.com:ericjvandervelden/foo.git
+/ evt eerst	, als er al is,	
+[eric@almond foo]$ git remote remove origin 
+
+[eric@almond foo]$ git help push
+/ voor -u TODO
+[eric@almond foo]$ git remote
+origin
+[eric@almond foo]$ git push -u origin master
+Counting objects: 9, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (8/8), done.
+Writing objects: 100% (9/9), 1.47 KiB | 1.47 MiB/s, done.
+Total 9 (delta 0), reused 0 (delta 0)
+To github.com:ericjvandervelden/foo.git
+ * [new branch]      master -> master
+Branch master set up to track remote branch master from origin
+/ vanwege -u zien we deze line	, 
+
+/ we doen hetzelfde met maven project 'bar'	, maar dan zonder -u:
+
+[eric@almond foo]$ cd ../bar
+[eric@almond bar]$ git remote add origin git@github.com:ericjvandervelden/bar.git
+[eric@almond bar]$ git push origin master
+Counting objects: 14, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (13/13), done.
+Writing objects: 100% (14/14), 1.97 KiB | 671.00 KiB/s, done.
+Total 14 (delta 2), reused 0 (delta 0)
+remote: Resolving deltas: 100% (2/2), done.
+To github.com:ericjvandervelden/bar.git
+ * [new branch]      master -> master
+/ we zien de track regel nu niet	,
+
+/ lees	,
+https://www.git-tower.com/learn/git/faq/track-remote-upstream-branch
+
+/ 20180427
+
+/ 13	. 
+
+/ lees	,
+https://git-scm.com/book/id/v2/Git-Branching-Remote-Branches
+
+(or sometimes an “upstream branch”). Tracking branches are local branches that have a direct relationship to a remote branch. If you’re on a tracking branch and type git pull, Git automatically knows which server to fetch from and branch to merge into.
+
+
+When you clone a repository, it generally automatically creates a master branch that tracks origin/master. However, you can set up other tracking branches if you wish – ones that track branches on other remotes, or don’t track the master branch. The simple case is the example you just saw, running git checkout -b [branch] [remotename]/[branch]. This is a common enough operation that git provides the --track shorthand:
+
+$ git checkout --track origin/serverfix
+Branch serverfix set up to track remote branch serverfix from origin.
+Switched to a new branch 'serverfix'
+
+/ 13	. 
+
+[eric@almond tmp3]$ pwd
+/home/eric/Devel/Git/tmp3
+
+[eric@almond tmp3]$ git clone git@github.com:ericjvandervelden/hello-world.git
+/ we use SSH 
+
+$ cd hello-world
+[eric@almond hello-world]$ git branch -a
+* master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/ericsidea
+  remotes/origin/ericsidea2
+  remotes/origin/ericsidea3
+  remotes/origin/hansidea
+  remotes/origin/hansidea2
+  remotes/origin/master
+/ we hebben 1 branch	, master	, en die is tracking origin/master	,
+/ er zijn ook andere branches	, origin/ericsidea bijv	,
+
+[eric@almond hello-world]$ vi sixth.sh
+[eric@almond hello-world]$ git add sixth.sh 
+[eric@almond hello-world]$ git commit -m "added sixth.sh" 
+[eric@almond hello-world]$ git push
+...
+/ we zien op github sixth.sh	, we zien dus dat master inderdaad tracking origin/master is	, 
+
+/ Intermezzo
+
+/ git checkout remote branch	,
+
+/ 13	. 
+
+https://gist.github.com/brev/b65565df93e9acbc9ed1
+
+# Checkout remote branch and track (without renaming needs)
+git fetch origin
+git checkout --track origin/branchname
+
+/ 13	. 
+
+https://stackoverflow.com/questions/1783405/how-do-i-check-out-a-remote-git-branch
+
+/ 13	 .
+
+https://stackify.com/git-checkout-remote-branch/
+
+/ 13	. 
+
+[eric@almond quickstart]$ pwd
+/home/eric/Devel/Java/jboss/narayana/quickstart
+
+/ zo maak je een nieuwe branch	, en met --track kun je voortaan git pull	,
+[eric@almond quickstart]$ git checkout --track origin/5.5
+
+[eric@almond quickstart]$ cd jta-1_2-standalone/
+
+$ vi pom.xml
+<!--
+        <version.narayana>5.5.32.Final-SNAPSHOT</version.narayana>
+-->
+        <version.narayana>5.5.31.Final</version.narayana>
+    <repositories>
+        <repository>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Maven Repository Group</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+ 
+/ nu is  OK	,
+$ mvn clean test 
+/ want ga in chrome naar,	
+https://repository.jboss.org/nexus/content/groups/public/org/jboss/narayana/jta/narayana-jta/
+
+/ dan zie je 5.5.31	, maar NIET 5.5.32.Final-SNAPSHOT	, 
+/ op master branch ipv 5.5 is er ook zoiets	,
+/ TODO 
+
+
+
+/ Einde Intermezzo
+
+/ 13	. 
+
+[eric@almond hello-world]$ git checkout -b ericsidea origin/ericsidea
+Branch ericsidea set up to track remote branch ericsidea from origin.
+Switched to a new branch 'ericsidea'
+
+/ deze manier is ericsidea meteen tracking origin/ericsidea	,
+
+/ 13	. 
+
+/ we edit sixth.sh op github	, en commit	,  
+
+[eric@almond hello-world]$  git checkout  master
+Switched to branch 'master'
+Your branch is up-to-date with 'origin/master'.	
+/ TODO Dat is toch NIET zo	?
+
+[eric@almond hello-world]$ cat sixth.sh 
+echo "sixth"
+/ de oude	,
+
+[eric@almond hello-world]$ git pull
+remote: Counting objects: 3, done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
+Unpacking objects: 100% (3/3), done.
+From github.com:ericjvandervelden/hello-world
+   52623f7..a93a56b  master     -> origin/master
+Updating 52623f7..a93a56b
+Fast-forward
+ sixth.sh | 1 +
+ 1 file changed, 1 insertion(+)
+
+[eric@almond hello-world]$ cat sixth.sh 
+echo "sixth"
+echo "foo" 
+/ de nieuwe	,
+
+/ inderdaad tracking origin/master	,
+
+/ 13	. 
+
+[eric@almond hello-world]$ git checkout ericsidea
+Switched to branch 'ericsidea'
+Your branch is up-to-date with 'origin/ericsidea'.
+[eric@almond hello-world]$ ls
+first.sh  README.md  second.sh
+[eric@almond hello-world]$ vi third.sh
+[eric@almond hello-world]$ git add third.sh 
+[eric@almond hello-world]$ git commit -m "added third.sh"
+[ericsidea 9b5c749] added third.sh
+ 1 file changed, 1 insertion(+)
+ create mode 100644 third.sh
+[eric@almond hello-world]$ git push
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 298 bytes | 298.00 KiB/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To github.com:ericjvandervelden/hello-world.git
+   a4a8713..9b5c749  ericsidea -> ericsidea
+
+/ we zien third.sh in origin/ericsidea	, inderdaad tracking	,
+
+/ 13	. 
+
+/ zo kan ook tracking branch naar remote branch	,
+
+[eric@almond hello-world]$ git checkout --track origin/ericsidea2
+Branch ericsidea2 set up to track remote branch ericsidea2 from origin.
+Switched to a new branch 'ericsidea2'
+
+/ is andere manier dan 
+[eric@almond hello-world]$ git checkout -b ericsidea origin/ericsidea
+
+[eric@almond hello-world]$ ls
+first.sh  README.md  second.sh  third.sh
+[eric@almond hello-world]$ vi fourth.sh
+[eric@almond hello-world]$ git add fourth.sh 
+[eric@almond hello-world]$ git commit -m " added fourth.sh" 
+[ericsidea2 db176c0]  added fourth.sh
+ 1 file changed, 1 insertion(+)
+ create mode 100644 fourth.sh
+[eric@almond hello-world]$ git push
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 297 bytes | 297.00 KiB/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To github.com:ericjvandervelden/hello-world.git
+   ba64f03..db176c0  ericsidea2 -> ericsidea2
+
+/ 13	. 
+
+If you already have a local branch and want to set it to a remote branch you just pulled down, or want to change the upstream branch you’re tracking, you can use the -u or --set-upstream-to option to git branch to explicitly set it at any time.
+
+$ git branch -u origin/serverfix
+Branch serverfix set up to track remote branch serverfix from origin.
+
+/ TODO
+
+/ 13	. 
+
+/ maak nieuwe branch	,
+
+/ Lees	,
+http://dont-be-afraid-to-commit.readthedocs.io/en/latest/git/commandlinegit.html
+
+[eric@almond hello-world]$ git checkout -b eric4
+Switched to a new branch 'eric4'
+
+[eric@almond hello-world]$ git branch -a
+* eric4
+  ericsidea
+  ericsidea2
+  master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/ericsidea
+  remotes/origin/ericsidea2
+  remotes/origin/ericsidea3
+  remotes/origin/hansidea
+  remotes/origin/hansidea2
+  remotes/origin/master
+
+[eric@almond hello-world]$ vi fifth.sh
+[eric@almond hello-world]$ git add fifth.sh 
+[eric@almond hello-world]$ git commit -m "added fifth"
+
+[eric@almond hello-world]$ git push
+fatal: The current branch eric4 has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin eric4
+
+[eric@almond hello-world]$ git push -u origin eric4
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 287 bytes | 287.00 KiB/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To github.com:ericjvandervelden/hello-world.git
+ * [new branch]      eric4 -> eric4
+Branch eric4 set up to track remote branch eric4 from origin.
+
+
+
+
+
+
+/ Einde 20180427
+
+/ 7	. 
+
+/ lees	,
+https://help.github.com/categories/importing-your-projects-to-github/
+
+
+/ 7	. 
+
+/ Hoe delete een repo op github? Ga naar de repo, click radertje icon Settings, ga naar 'Danger zone', en delete	,
+
+echo "# foo2" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin git@github.com:ericjvandervelden/foo2.git
+git push -u origin master
+
+
+
+
+/ hp pavilion 17-ab200nd 
+/ hp pavilion 17-ab240nd 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+/ Einde EGIT
+
+/ GIT
+
+/ lees	,
+https://feeding.cloud.geek.nz/posts/setting-up-centralied-git-repository/
+
+
+/ Einde GIT

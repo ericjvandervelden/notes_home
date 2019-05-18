@@ -1,0 +1,255 @@
+/ 7	. 
+
+/ ga naar	, 
+http://kubernetes.io/
+/ click Try Kubernetes
+http://kubernetes.io/docs/hellonode/
+
+/ of click hamburger icon	, kies Getting started	,
+/ kies 
+Hello World on Google Container Engine
+
+/ geef	,
+https://console.cloud.google.com/
+/ we komen op	,
+https://console.cloud.google.com/home/dashboard?project=web-server-project-1148
+/ in de blauwe balk zien we 
+Google Cloud Platform 			Web server project v
+/ click: Web server project v  
+Create project
+project name: my-kubernetes-codelab
+Your project ID will be my-kubernetes-codelab-150420
+/ we zien een nieuw dashboard	,
+
+[eric@almond kubernetes]$ pwd
+/home/eric/Devel/kubernetes
+[eric@almond kubernetes]$ export PROJECT_ID="my-kubernetes-codelab-150420"
+
+[eric@almond kubernetes]$ gcloud components list
+
+Your current Cloud SDK version is: 118.0.0
+The latest available version is: 135.0.0
+To update your SDK installation to the latest version [135.0.0], run:
+  $ gcloud components update
+
+[eric@almond kubernetes]$ gcloud components update
+our current Cloud SDK version is: 118.0.0
+You will be upgraded to version: 135.0.0
+
+┌──────────────────────────────────────────────────────────────────────┐
+│                  These components will be updated.                   │
+├──────────────────────────────────────────────┬────────────┬──────────┤
+│                     Name                     │  Version   │   Size   │
+├──────────────────────────────────────────────┼────────────┼──────────┤
+│ BigQuery Command Line Tool                   │     2.0.24 │  < 1 MiB │
+│ Cloud SDK Core Libraries                     │ 2016.11.11 │  5.1 MiB │
+│ Cloud SDK Core Libraries (Platform Specific) │ 2016.11.07 │  < 1 MiB │
+│ Cloud Storage Command Line Tool              │       4.22 │  2.8 MiB │
+│ kubectl (Linux, x86_64)                      │      1.4.4 │ 15.9 MiB │
+
+A lot has changed since your last upgrade.  For the latest full release notes,
+please visit:
+  https://cloud.google.com/sdk/release_notes
+
+Do you want to continue (Y/n)?  Enter
+
+╔════════════════════════════════════════════════════════════╗
+╠═ Creating update staging area                             ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Uninstalling: BigQuery Command Line Tool                 ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Uninstalling: Cloud SDK Core Libraries                   ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Uninstalling: Cloud SDK Core Libraries (Platform Spec... ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Uninstalling: Cloud Storage Command Line Tool            ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Uninstalling: kubectl (Linux, x86_64)                    ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Installing: BigQuery Command Line Tool                   ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Installing: Cloud SDK Core Libraries                     ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Installing: Cloud SDK Core Libraries (Platform Specific) ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Installing: Cloud Storage Command Line Tool              ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Installing: kubectl (Linux, x86_64)                      ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Creating backup and activating new installation          ═╣
+╚════════════════════════════════════════════════════════════╝
+
+Performing post processing steps...done.
+
+Start a new shell for the changes to take effect.
+
+
+Update done!
+
+To revert your SDK to the previously installed version, you may run:
+  $ gcloud components update --version 118.0.0
+
+WARNING: There are older versions of Google Cloud Platform tools on your system PATH.
+Please remove the following to avoid accidentally invoking these old tools:
+
+/home/eric/Devel/Cloud/Google/go_appengine/endpointscfg.py
+/home/eric/Devel/Cloud/Google/go_appengine/dev_appserver.py
+
+[eric@almond kubernetes]$ rm /home/eric/Devel/Cloud/Google/go_appengine/endpointscfg.py /home/eric/Devel/Cloud/Google/go_appengine/dev_appserver.py 
+
+[eric@almond kubernetes]$ mkdir hellonode
+[eric@almond kubernetes]$ cd hellonode/
+[eric@almond hellonode]$ vi server.js
+
+var http = require('http');
+var handleRequest = function(request, response) {
+  console.log('Received request for URL: ' + request.url);
+  response.writeHead(200);
+  response.end('Hello World!');
+};
+var www = http.createServer(handleRequest);
+www.listen(8080);
+
+/ doe 
+$ nvm use 5.5
+$ node server.js
+/ geef in chrome
+localhost:8080
+
+$ vi Dockerfile
+from node:latest
+expose 8080
+copy server.js .
+cmd node server.js
+
+[eric@almond hellonode]$ docker build -t gcr.io/$PROJECT_ID/hello-node:v1 .
+[eric@almond hellonode]$ docker run  -p 8080:8080 --name hello-tutorial gcr.io/$PROJECT_ID/hello-node:v1
+/ geef in chrome localhost:8080
+[eric@almond Mars]$ docker stop hello-tutorial
+
+/ we zien in 
+$ docker ps 
+/ deze container niet meer,  terwijl we geen --rm hebben gegeven	, 
+/ TODO
+/ ctrl+c deed niets op de container	, 
+/ TODO
+
+
+/ we zien	, 
+https://hub.docker.com/_/node/
+/ ->
+https://github.com/nodejs/docker-node/blob/718102a587e7f02748402551b51407332384c1b3/7.2/Dockerfile
+
+FROM buildpack-deps:jessie
+...
+
+/ zoek in docker hub naar buildpack-deps	,
+https://hub.docker.com/_/buildpack-deps/
+jessie = latest
+
+/ 13	. 
+
+[eric@almond hellonode]$ pwd
+/home/eric/Devel/kubernetes/hellonode
+[eric@almond hellonode]$ ls
+Dockerfile  server.js
+[eric@almond hellonode]$ echo $PROJECT_ID
+my-kubernetes-codelab-150420
+
+/ history	,
+ 1057  nvm use 5.5
+ 1064  docker build -t gcr.io/$PROJECT_ID/hello-node:v1 .
+ 1070  docker run --rm -p 8080:8080 --name hello-tutorial gcr.io/$PROJECT_ID/hello-node:v1
+
+[eric@almond hellonode]$ docker ps --no-trunc -a
+CONTAINER ID                                                       IMAGE                                                                     COMMAND                                                CREATED             STATUS                    PORTS               NAMES
+a0634ce1c754a3489146f88cbb1a2b36fc855b9e82afd8014dc74c3e80c87a55   gcr.io/my-kubernetes-codelab-150420/hello-node:v1                         "/bin/sh -c 'node server.js'"                          6 days ago          Exited (137) 6 days 
+
+[eric@almond hellonode]$ cat Dockerfile 
+from node:latest
+expose 8080
+copy server.js .
+cmd node server.js
+
+/ hoe zat dat ook alweer met cmd  en sh -c 
+/ TODO
+$ docker run --rm -p 8080:8080 --name hello-tutorial gcr.io/$PROJECT_ID/hello-node:v1
+ctrl+c
+/ werkt NIET	,
+
+/ als je -d doet, en daarna $ docker stop	, is hij dan rm	?
+/ TODO
+
+
+[eric@almond hellonode]$ gcloud components list
+
+Your current Cloud SDK version is: 135.0.0
+The latest available version is: 136.0.0
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                   Components                                                   │
+├──────────────────┬──────────────────────────────────────────────────────┬──────────────────────────┬───────────┤
+│      Status      │                         Name                         │            ID            │    Size   │
+├──────────────────┼──────────────────────────────────────────────────────┼──────────────────────────┼───────────┤
+│ Update Available │ BigQuery Command Line Tool                           │ bq                       │   < 1 MiB │
+│ Update Available │ Cloud SDK Core Libraries                             │ core                     │   5.1 MiB │
+│ Not Installed    │ App Engine Go Extensions                             │ app-engine-go            │  47.9 MiB │
+│ Not Installed    │ Cloud Datastore Emulator                             │ cloud-datastore-emulator │  15.4 MiB │
+│ Not Installed    │ Cloud Datastore Emulator (Legacy)                    │ gcd-emulator             │  38.1 MiB │
+│ Not Installed    │ Cloud Pub/Sub Emulator                               │ pubsub-emulator          │  16.3 MiB │
+│ Not Installed    │ Google Container Registry's Docker credential helper │ docker-credential-gcr    │   2.2 MiB │
+│ Not Installed    │ gcloud Alpha Commands                                │ alpha                    │   < 1 MiB │
+│ Not Installed    │ gcloud Beta Commands                                 │ beta                     │   < 1 MiB │
+│ Not Installed    │ gcloud app Java Extensions                           │ app-engine-java          │ 124.4 MiB │
+│ Not Installed    │ gcloud app Python Extensions                         │ app-engine-python        │   7.2 MiB │
+│ Installed        │ Cloud Storage Command Line Tool                      │ gsutil                   │   2.8 MiB │
+│ Installed        │ Default set of gcloud commands                       │ gcloud                   │           │
+│ Installed        │ kubectl                                              │ kubectl                  │  15.2 MiB │
+└──────────────────┴──────────────────────────────────────────────────────┴──────────────────────────┴───────────┘
+To install or remove components at your current SDK version [135.0.0], run:
+  $ gcloud components install COMPONENT_ID
+  $ gcloud components remove COMPONENT_ID
+
+To update your SDK installation to the latest version [136.0.0], run:
+  $ gcloud components update
+
+
+
+/ 7	. 
+
+
+/ Daily development with Docker, Kubernetes, and OpenShift 
+
+https://vts.inxpo.com/scripts/Server.nxp?LASCmd=AI:1;F:US!100&PreviousLoginCount=0&ForceProfileToBeFilledOut=0&DisplayItem=NULL&ShowKey=35254&ShowFrameFormatOverride=NULL&RandomValue=1480618594591
+
+@shipley
+github.com/gshipley
+
+/ from tomcat	: war
+
+/ ha, load balancing	,
+
+openshift origin on laptop	,
+
+/ kubernetes-guestbook
+
+/ er is ook op youtube	, zoek op openshift shipley	,
+https://www.youtube.com/watch?v=51vPOWILiIg
+https://www.youtube.com/watch?v=wvsoUqZR8IE
+
+/ openshift for developers	,
+
+/ 7	. 
+
+/ Kijk	,
+https://www.youtube.com/watch?v=qiB4RxCDC8o	 / and Go	,
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,13 @@
+/ google,
+asynchronous java  postgres
+/ lees	,
+https://github.com/reactiverse/reactive-pg-client
+->
+https://reactiverse.io/reactive-pg-client/guide/java/index.html
+
+/ google
+rxjava thorntail
+/ lees	,
+https://developers.redhat.com/blog/2017/06/30/5-things-to-know-about-reactive-programming/
+->
+https://developers.redhat.com/promotions/building-reactive-microservices-in-java/

@@ -1,0 +1,94 @@
+/ 7	 . 
+
+/ ING
+
+Vakgebied
+Informatie Technologie
+Ervaring
+Ervaren
+Minimale educatie 
+Master
+Dienstverband
+Medewerker
+Vacaturenummer
+REQ-10001330
+Vacature geplaatst op 
+2017-07-24
+
+NG is looking for a Dev Engineer Wholesale Bank Channels
+
+ 
+
+Think Forward! Our purpose is to empower people to stay a step ahead in life and in business. We are an industry recognized strong brand with positive recognition from customers in many countries, strong financial position, omni-channel distribution strategy and international network. If you want to work at a place where we believe that you can live by the Agile manifesto without jeopardizing the necessary continuity, compliance and QA measures, where we are committed to deliver stable and secure services to end users, and where we have a 'no nonsense' getting-things done mentality, please read on and check out this video:
+https://www.youtube.com/watch?v=NcB0ZKWAPA0
+
+
+
+What department? 
+You will work in the dynamic and challenging environment of the IT organization of ING Global Digital Channels.
+
+We operate according to a Scrum Agile development process and strongly believe in the DevOps approach to delivering high-quality mission-critical software. We work with the latest technologies, tools and frameworks, which means that our Engineers work in a dynamic environment in which they are, as part of their day to day job, also continuously researching, training and learning. If you have bright ideas, they will be valued and supported by both your pears and your management.
+
+ 
+
+Job Description 
+As a Dev Engineer you work on developing and testing high quality applications, at a bank that is known for its IT innovations. Working according to the newest methods within complex IT projects. At ING we work in a DevOps manner, where the Scrum/Agile methodology and Continuous integration/Continuous Delivery practices are very important.
+
+You will become part of the Teams working on our main Internet-facing Wholesale Banking system, Inside Business Portal. The Portal covers the entire range of ING’s Wholesale Banking products: payments & cash management, FM, Lending, etc. The Portal is accessible via web as well as mobile and tablet devices (with native apps for iOS and Android).
+
+
+Our Stack 
+Within Wholesale Bank Channels we predominantly use the following technologies and frameworks: Java, Angular, Polymer, etc. But also Scala is at your disposal. All based on a Tomcat/Linux/Oracle stack on which we deliver in sprints of 2 weeks fully automated new features into production. We take Continuous Integration and Continuous Delivery seriously; it is part of our genes. We have Jira, GitLab, Jenkins, Maven and Artifactory at our fingertips. We never compromise on Security. And we love people who come up with great ideas to make our systems even more secure, reliable and resilient than they currently already are!
+
+
+You recognize yourself in this profile:
+
+You have trained yourself to let go of everything you fear to lose (Master Yoda)
+You are able to develop efficient and maintainable code with the right balance between solving the problem at hand and not over-engineering your solution.
+You have real world OO design experience and knowledge of design patterns, combined with an ability to succinctly convey design information using suitable tools (e.g. the UML, BPMN).
+Good knowledge OS fundamentals with the ability to apply it in the context of modern operating systems (e.g. Linux, Windows 2008/2012).
+You have sound knowledge of relational databases (e.g. Oracle, MS SQL Server, MySQL, PostgreSQL, etc). Knowledge of NoSQL datastores, while not mandatory, is a strong nice-to-have.
+Excellent knowledge of Java 7/8 including the Spring framework 3.x/4.x and Spring Boot 1.x
+Knowledge of Scala and Akka is an important nice-to-have.
+Experience with at least one modern scripting language (e.g. Python, Ruby, etc.)
+A working knowledge of JavaScript, AngularJS and modern WEB 2.0 development, where it would be awesome if you have working experience with Polymer, but if not, at least the ability to learn fast
+Great English communication skills, verbal as well as written.
+You value a multi-cultured environment where English is the working language and you easily get on with people from different cultural backgrounds.
+If you lack knowledge of or experience on one of the above; then your desire to learn awesome new things and your ability to master them fast and furious make the ferocious King of the Jungle look like a new born kitten.
+You are always pro- active, when you take a risk, it is calculated.
+You have passion for IT! A natural hunger to be the best at IT and deliver the best output.
+You are always trying to improve your skills, to continuously learn and get better at what you do to be able to deliver the highest quality.
+You are a Team player, it is about the team, you trust others and can be trusted. You are committed to team goals and always have the right spirit.
+You know how to communicate at different levels with stakeholders and you are persuasive
+ 
+
+What do we offer? 
+Working at ING means working in a dynamic and international setting. Very important is individual development of our employees and that is why ING offers excellent courses and programs. In addition we offer:
+
+·                    fun!
+
+·                    an excellent salary 60K – 100K
+
+·                    a thirteenth month
+
+·                    life-course savings scheme
+
+·                    extensive trainings and education
+
+·                    public transport season ticket (NS Business Card)
+
+·                    great career possibilities
+
+·                    full time position 
+
+ 
+
+Are you keen to know more or apply?
+For further inquiries, please contact Stanley Waccary, Global IT Recruiter a.i., Stanley.Waccary@ing.nl.
+
+We are looking forward to getting to know you!
+
+
+/ 7	. 
+
+

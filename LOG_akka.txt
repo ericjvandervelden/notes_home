@@ -1,0 +1,10 @@
+/ 7	 
+
+/ sbt	,
+
+/ lees	,
+http://www.scala-sbt.org/
+http://www.scala-sbt.org/0.13/docs/index.html
+http://www.scala-sbt.org/0.13/docs/Manual-Installation.html
+
+

@@ -1,0 +1,43 @@
+/ 7	. 
+
+/ geef in google
+jsp implementation
+/ ga naar	,
+https://jsp.java.net/download.html
+The group ID and the artifact ID are javax.servlet.jsp and javax.servlet.jsp-api for the api, and org.glassfish.web and javax.servlet.jsp for the implementation. They all have versions 2.2.x.
+
+/ Maar tomcat heeft jsp-api.jar	 en jasper.jar en jasper-el.jar	,
+[eric@localhost apache-tomcat-8.0.28]$ ls lib 
+annotations-api.jar       jasper-el.jar       tomcat-i18n-fr.jar
+catalina-ant.jar          jasper.jar          tomcat-i18n-ja.jar
+catalina-ha.jar           jsp-api.jar         tomcat-jdbc.jar
+catalina.jar              servlet-api.jar     tomcat-jni.jar
+
+<dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>javax.servlet-api</artifactId>
+    <version>3.0.1</version>
+    <scope>provided</scope>
+</dependency>
+<dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>jsp-api</artifactId>
+    <version>2.0</version>
+    <scope>provided</scope>
+</dependency>
+
+/ geef in google	,
+pom.xml provided jsp
+
+https://tomcat.apache.org/tomcat-7.0-doc/jspapi/
+javax.servlet.jsp
+javax.servlet.jsp.el
+javax.servlet.jsp.tagext
+
+https://tomcat.apache.org/tomcat-8.0-doc/servletapi/
+javax.servlet
+javax.servlet.annotation
+javax.servlet.descriptor
+javax.servlet.http
+
+

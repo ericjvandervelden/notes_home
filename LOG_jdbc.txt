@@ -1,0 +1,967 @@
+
+/ See H2
+/ See PG
+
+/ H2 
+
+/ 13	 .
+
+[eric@almond h2]$ pwd
+/home/eric/Devel/Java/h2
+[eric@almond h2]$ unzip  ~/Downloads/h2-2017-06-10.zip 
+[eric@almond h2]$ java -cp h2/bin/h2-1.4.196.jar org.h2.tools.Server
+TCP server running at tcp://192.168.123.182:9092 (only local connections)
+PG server running at pg://192.168.123.182:5435 (only local connections)
+Web Console server running at http://192.168.123.182:8082 (only local connections)
+
+/ we zien in chrome	, maar chrome crashed	, 
+http://192.168.123.182:8082/login.do?jsessionid=fd314bcf0569a40efe50dd307109c0c2
+/ we kunnen connectie met h2 server maken	, en in browser krijgen we net zoals postgres gui	, 
+
+/ 13	. 
+
+[eric@almond h2]$ java -cp h2/bin/h2-1.4.196.jar org.h2.tools.Server -?
+When running without options, -tcp, -web, -browser and -pg are started.
+Options are case sensitive. Supported options are:
+[-help] or [-?]         Print the list of options
+[-web]                  Start the web server with the H2 Console
+[-webAllowOthers]       Allow other computers to connect - see below
+[-webDaemon]            Use a daemon thread
+[-webPort <port>]       The port (default: 8082)
+[-webSSL]               Use encrypted (HTTPS) connections
+[-browser]              Start a browser connecting to the web server
+[-tcp]                  Start the TCP server
+[-tcpAllowOthers]       Allow other computers to connect - see below
+[-tcpDaemon]            Use a daemon thread
+[-tcpPort <port>]       The port (default: 9092)
+[-tcpSSL]               Use encrypted (SSL) connections
+[-tcpPassword <pwd>]    The password for shutting down a TCP server
+[-tcpShutdown "<url>"]  Stop the TCP server; example: tcp://localhost
+[-tcpShutdownForce]     Do not wait until all connections are closed
+[-pg]                   Start the PG server
+[-pgAllowOthers]        Allow other computers to connect - see below
+[-pgDaemon]             Use a daemon thread
+[-pgPort <port>]        The port (default: 5435)
+[-properties "<dir>"]   Server properties (default: ~, disable: null)
+[-baseDir <dir>]        The base directory for H2 databases (all servers)
+[-ifExists]             Only existing databases may be opened (all servers)
+[-trace]                Print additional trace information (all servers)
+[-key <from> <to>]      Allows to map a database name to another (all servers)
+The options -xAllowOthers are potentially risky.
+For details, see Advanced Topics / Protection against Remote Access.
+See also http://h2database.com/javadoc/org/h2/tools/Server.html
+
+[eric@almond h2]$ java -cp h2/bin/h2-1.4.196.jar org.h2.tools.Server -tcp
+TCP server running at tcp://192.168.123.182:9092 (only local connections)
+
+/ 13	. 
+
+[eric@almond h2]$ java -cp h2/bin/h2-1.4.196.jar org.h2.tools.Shell -?
+Interactive command line tool to access a database using JDBC.
+Usage: java org.h2.tools.Shell <options>
+Options are case sensitive. Supported options are:
+[-help] or [-?]        Print the list of options
+[-url "<url>"]         The database URL (jdbc:h2:...)
+[-user <user>]         The user name
+[-password <pwd>]      The password
+[-driver <class>]      The JDBC driver class to use (not required in most cases)
+[-sql "<statements>"]  Execute the SQL statements and exit
+[-properties "<dir>"]  Load the server properties from this directory
+If special characters don't work as expected, you may need to use
+ -Dfile.encoding=UTF-8 (Mac OS X) or CP850 (Windows).
+See also http://h2database.com/javadoc/org/h2/tools/Shell.html
+
+[eric@almond h2]$ java -cp h2/bin/h2-1.4.196.jar org.h2.tools.Shell -url jdbc:h2:tcp://localhost/./h2test
+/ creates h2test.mv.db in current dir 	,
+
+sql> CREATE TABLE if not exists my(id integer auto_increment,name text);                         
+sql> insert into my(name)values('foo');
+sql> insert into my values(default,'bar');
+sql> select*from my;
+ID | NAME
+1  | foo
+2  | bar
+(2 rows, 2 ms)
+
+sql> help set;
+ID  | SECTION            | TOPIC                            | SYNTAX                                                                                               | TEXT
+72  | Commands (Other)   | SET AUTOCOMMIT                   | SET AUTOCOMMIT { TRUE | ON | FALSE | OFF }                                                           | Switches auto commit on or off.
+sql> exit
+
+[eric@almond h2]$ ls
+h2  h2test.mv.db
+/ h2 is de zip	, 
+
+
+[eric@almond h2]$ git clone https://github.com/h2database/h2database.git
+
+/ Lees	, 
+http://www.h2database.com/javadoc/org/h2/jdbcx/JdbcDataSource.html
+
+/ 7	.  
+
+/ jdbc
+
+/ scala eclipse
+/ workspace-jdbc
+/ proj jdbc
+
+/ 13	.  
+
+/ we oefenen urls	, met de h2 client Shell,
+
+[eric@almond bin]$ java -cp h2-1.4.196.jar org.h2.tools.Server -tcp
+/ eerder	,
+
+[eric@almond h2]$ java -cp h2/bin/h2-1.4.196.jar org.h2.tools.Shell -url jdbc:h2:$(pwd)/test
+sql> autocommit false
+Autocommit is now false
+
+/ Met deze line def ook user en password, dus beide "" in dit geval	,
+
+[eric@almond h2]$ ls
+h2  h2database  test.mv.db
+
+/ 13	. 
+
+/ als er een fout is opgetreden	, dan verschijnt er ook test.trace.db	, 
+
+[eric@almond h2]$ java -cp h2/bin/h2-1.4.196.jar org.h2.tools.Shell -url jdbc:h2:$(pwd)/test -user sa
+Exception in thread "main" org.h2.jdbc.JdbcSQLException: Wrong user name or password [28000-196]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.get(DbException.java:144)
+	at org.h2.engine.Engine.validateUserAndPassword(Engine.java:336)
+	at org.h2.engine.Engine.createSessionAndValidate(Engine.java:162)
+	at org.h2.engine.Engine.createSession(Engine.java:137)
+	at org.h2.engine.Engine.createSession(Engine.java:27)
+	at org.h2.engine.SessionRemote.connectEmbeddedOrServer(SessionRemote.java:354)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:116)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:100)
+	at org.h2.Driver.connect(Driver.java:69)
+	at java.sql.DriverManager.getConnection(DriverManager.java:664)
+	at java.sql.DriverManager.getConnection(DriverManager.java:247)
+	at org.h2.tools.Shell.runTool(Shell.java:148)
+	at org.h2.tools.Shell.main(Shell.java:81)
+[eric@almond h2]$ ls
+h2  h2database  test.mv.db  test.trace.db
+
+/ we kunnen dus ook	,
+[eric@almond h2]$ java -cp h2/bin/h2-1.4.196.jar org.h2.tools.Shell -url jdbc:h2:~/Devel/Java/h2/test -user sa
+/ of	,
+[eric@almond h2]$ java -cp h2/bin/h2-1.4.196.jar org.h2.tools.Shell -url jdbc:h2:~/Devel/Java/h2/test -user sa -password foo
+
+
+sql> insert into my values('π');
+sql> commit;
+
+[eric@almond h2]$ ls -ltr
+-rw-rw-r--. 1 eric eric 266240 Jun 20 21:37 test.mv.db
+
+/ als we 	,
+[eric@almond h2]$ java -cp h2/bin/h2-1.4.196.jar org.h2.tools.Shell -url jdbc:h2:./test
+/ dan komt test.mv.db in h2/bin	, want dat is de current dir	,
+
+/ 13	. 
+
+/ Nu jdbc	,
+
+public class FirstH2Test {
+	 
+	private Connection connection;
+
+	@BeforeClass
+	public void setUp()throws ClassNotFoundException,SQLException{
+		Class.forName("org.h2.Driver");		// registers driver TODO
+		connection=DriverManager.getConnection("jdbc:h2:~/Devel/Java/h2/test","sa","");  // creates test.mv.db	,
+	}
+
+	@Test
+	public void test(){
+		Assert.assertTrue(true);
+	}
+}
+
+/ see	,
+		connection=DriverManager.getConnection("jdbc:h2:~/Devel/Java/h2/test","sa","");  // creates test.mv.db	,
+/ de eerste run bepaalt user, password, dus als je in de 2de test "sa", "foo" zou doen, dan ERR	, 
+/ we zien dan ook test.trace.db, net als toen we Shell used	,
+[eric@almond h2]$ ls
+h2  h2database  test.mv.db  test.trace.db
+
+/ 13	. 
+
+/ we maken hier een embedded database	, omdat de url is	,
+		jdbc:h2:~/Devel/Java/h2/test
+/ Als je dit in de jdbc appl doet, en in Shell, dan krijgen we ERR	,
+
+[eric@almond h2]$ java -cp h2/bin/h2-1.4.196.jar org.h2.tools.Shell -url jdbc:h2:~/Devel/Java/h2/test -user sa 
+/ en we run de test	, dan zien we	, 
+
+org.h2.jdbc.JdbcSQLException: Database may be already in use: null. Possible solutions: close all other connection(s); use the server mode [90020-196]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:168)
+	at org.h2.mvstore.db.MVTableEngine$Store.convertIllegalStateException(MVTableEngine.java:188)
+	at org.h2.mvstore.db.MVTableEngine$Store.open(MVTableEngine.java:168)
+	at org.h2.mvstore.db.MVTableEngine.init(MVTableEngine.java:100)
+	at org.h2.engine.Database.getPageStore(Database.java:2476)
+	at org.h2.engine.Database.open(Database.java:697)
+	at org.h2.engine.Database.openDatabase(Database.java:276)
+	at org.h2.engine.Database.<init>(Database.java:270)
+	at org.h2.engine.Engine.openSession(Engine.java:64)
+	at org.h2.engine.Engine.openSession(Engine.java:176)
+	at org.h2.engine.Engine.createSessionAndValidate(Engine.java:154)
+	at org.h2.engine.Engine.createSession(Engine.java:137)
+	at org.h2.engine.Engine.createSession(Engine.java:27)
+	at org.h2.engine.SessionRemote.connectEmbeddedOrServer(SessionRemote.java:354)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:116)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:100)
+	at org.h2.Driver.connect(Driver.java:69)
+	at java.sql.DriverManager.getConnection(DriverManager.java:664)
+	at java.sql.DriverManager.getConnection(DriverManager.java:247)
+	at h2.FirstTest.setUp(FirstTest.java:20)
+...
+Caused by: java.lang.IllegalStateException: The file is locked: nio:/home/eric/Devel/Java/h2/test.mv.db [1.4.196/7]
+	at org.h2.mvstore.DataUtils.newIllegalStateException(DataUtils.java:765)
+	at org.h2.mvstore.FileStore.open(FileStore.java:173)
+	at org.h2.mvstore.MVStore.<init>(MVStore.java:347)
+	at org.h2.mvstore.MVStore$Builder.open(MVStore.java:2930)
+	at org.h2.mvstore.db.MVTableEngine$Store.open(MVTableEngine.java:155)
+	... 40 more
+/ We zien nio in nio:/home/eric/Devel/Java/h2/test.mv.db
+
+/ het zijn embedded databases	, en in fs is het test.mv.db	, 
+/ als we eerst de maar dan probeert hij 
+
+/ 13	. 
+
+/ lees	,
+http://www.h2database.com/html/features.html
+
+/ we maken geen embedded db, maar een remote connection over tcp	, 
+
+public class FirstH2Test {
+	 
+	private Connection connection;
+	private Statement statement;
+
+	@BeforeClass
+	public void setUp()throws ClassNotFoundException,SQLException{
+		Class.forName("org.h2.Driver");
+		connection=DriverManager.getConnection("jdbc:h2:tcp://localhost/~/Devel/Java/h2/test","sa","");
+		connection.setAutoCommit(false);
+		
+	}
+
+	@Test
+	public void testCreate()throws SQLException{
+		statement=connection.createStatement();
+		String q="create table if not exists my(id int auto_increment primary key,s text)";
+		statement.executeUpdate(q);
+	}
+}
+
+
+[eric@almond h2]$ java -cp h2/bin/h2-1.4.196.jar org.h2.tools.Shell -url jdbc:h2:tcp://localhost/~/Devel/Java/h2/test -user sa 
+/ en vervolgens run test	, OK
+
+/ 13	. 
+
+public class FirstH2Test {
+	 
+	private static Connection connection;
+	private Statement statement;
+
+	@BeforeClass
+	public static void setUp()throws ClassNotFoundException,SQLException{
+		Class.forName("org.h2.Driver");
+		connection=DriverManager.getConnection("jdbc:h2:tcp://localhost/~/Devel/Java/h2/test","sa","");
+		connection.setAutoCommit(false);
+		
+	}
+
+	@Test
+	public void testCreate()throws SQLException{
+		statement=connection.createStatement();
+		String q="create table if not exists my(id int auto_increment primary key,s text)";
+		statement.executeUpdate(q);
+
+
+	}
+	@Test
+	public void testInsert()throws SQLException{
+		statement=connection.createStatement();
+		String i="insert into my values(default,'foo')";
+		statement.executeUpdate(i);
+
+		statement.executeUpdate("commit");
+// of	,
+		connection.commit();
+	}
+}
+
+/ OK	, 
+/ we kunnen 
+		statement.executeUpdate("commit");
+// of	,
+		connection.commit();
+
+/ 13	. 
+
+/ select
+
+	@Test
+	public void testSelect()throws SQLException{
+		statement=connection.createStatement();
+		String q="select*from my";
+		ResultSet resultSet=statement.executeQuery(q);
+		while(resultSet.next()){
+			Integer id=resultSet.getInt("id");
+			String s=resultSet.getString("s");
+			logger.info("id: "+id);
+			logger.info("s: "+s);
+			
+		}
+	}
+
+/ we zien	, 
+π 21:45:43.709 [main] INFO  h2.FirstH2Test - id: 3
+π 21:45:43.711 [main] INFO  h2.FirstH2Test - s: foo
+π 21:45:43.711 [main] INFO  h2.FirstH2Test - id: 4
+π 21:45:43.711 [main] INFO  h2.FirstH2Test - s: foo
+π 21:45:43.711 [main] INFO  h2.FirstH2Test - id: 5
+π 21:45:43.711 [main] INFO  h2.FirstH2Test - s: foo
+π 21:45:43.711 [main] INFO  h2.FirstH2Test - id: 6
+π 21:45:43.711 [main] INFO  h2.FirstH2Test - s: foo
+π 21:45:43.711 [main] INFO  h2.FirstH2Test - id: 7
+π 21:45:43.711 [main] INFO  h2.FirstH2Test - s: foo
+π 21:45:43.711 [main] INFO  h2.FirstH2Test - id: 8
+π 21:45:43.711 [main] INFO  h2.FirstH2Test - s: foo
+
+/ 7	. 
+
+/ in mem db	, 
+
+/ Lees	, 
+http://www.h2database.com/html/features.html#in_memory_databases
+
+In some cases, only one connection to a in-memory database is required. This means the database to be opened is private. In this case, the database URL is jdbc:h2:mem: Opening two connections within the same virtual machine means opening two different (private) databases.
+
+Sometimes multiple connections to the same in-memory database are required. In this case, the database URL must include a name. Example: jdbc:h2:mem:db1. Accessing the same database using this URL only works within the same virtual machine and class loader environment.
+
+By default, closing the last connection to a database closes the database. For an in-memory database, this means the content is lost. To keep the database open, add ;DB_CLOSE_DELAY=-1 to the database URL. To keep the content of an in-memory database as long as the virtual machine is alive, use jdbc:h2:mem:test;DB_CLOSE_DELAY=-1.
+
+/ Klopt	, 
+
+$ vi MemH2Test.java
+
+public class MemH2Test {
+	 
+	private Connection connection;
+	private Statement statement;
+	private Logger logger=LogManager.getLogger(MemH2Test.class);
+
+	@Test
+	public void test()throws ClassNotFoundException,SQLException{
+		Class.forName("org.h2.Driver");
+		String url="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
+
+		connection=DriverManager.getConnection(url,"sa","");
+		connection.setAutoCommit(false);
+		statement=connection.createStatement();
+		
+		String q="create table if not exists my(id int auto_increment primary key,s text)";
+		statement.executeUpdate(q);
+		connection.commit();
+
+		q="insert into my values(default,'foo')";
+		statement.executeUpdate(q);
+		connection.commit();
+		
+		q="select*from my";
+		ResultSet resultSet=statement.executeQuery(q);
+		while(resultSet.next()){
+			Integer id=resultSet.getInt("id");
+			String s=resultSet.getString("s");
+			logger.info("id: "+id);
+			logger.info("s: "+s);
+			
+		}
+		connection.close();
+		
+		connection=DriverManager.getConnection(url,"sa","");
+		connection.setAutoCommit(false);
+		statement=connection.createStatement();
+
+		
+		q="select*from my";
+		resultSet=statement.executeQuery(q);
+		while(resultSet.next()){
+			Integer id=resultSet.getInt("id");
+			String s=resultSet.getString("s");
+			logger.info("id: "+id);
+			logger.info("s: "+s);
+			
+		}
+		connection.close();
+
+
+	}
+}
+
+/ we zien	, 
+π 21:14:45.063 [main] INFO  h2.MemH2Test - id: 1
+π 21:14:45.065 [main] INFO  h2.MemH2Test - s: foo
+π 21:14:45.067 [main] INFO  h2.MemH2Test - id: 1
+π 21:14:45.067 [main] INFO  h2.MemH2Test - s: foo
+
+/ Als we alleen	,  
+		String url="jdbc:h2:mem:test";
+/ en dus NIET	, 
+		String url="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
+/ dan zien we alleen	, 
+π 21:14:45.063 [main] INFO  h2.MemH2Test - id: 1
+π 21:14:45.065 [main] INFO  h2.MemH2Test - s: foo
+/ en krijgen we een ERR bij de  2de	, 
+		q="select*from my";
+		resultSet=statement.executeQuery(q);
+/ dat table MY niet bestaat	, 
+
+/ als we maar 1 connectie create	, dan hoeven we de database geen naam te geven	, 
+		String url="jdbc:h2:mem:";
+/ Einde H2
+
+/ PG
+
+/ Lees	,
+https://jdbc.postgresql.org/documentation/94/load.html
+https://jdbc.postgresql.org/documentation/94/connect.html
+
+public class FirstPGTest {
+	 
+	private static Connection connection;
+	private Statement statement;
+
+	@BeforeClass
+	public static void setUp()throws ClassNotFoundException,SQLException{
+		Class.forName("org.postgresql.Driver");
+		connection=DriverManager.getConnection("jdbc:postgresql://localhost/eric?password=eric");
+		connection.setAutoCommit(false);
+	}
+/ We hoeven geen user= te geven	, 
+
+/ 13	. 
+
+/ In pg moeten we de create table commit	,
+
+	@Test
+	public void testCreate()throws SQLException{
+		Assert.assertTrue(true);
+		statement=connection.createStatement();
+		String q="create table if not exists my(id serial primary key,s text)";
+		statement.executeUpdate(q);
+		connection.commit();
+	}
+
+eric=> \d my
+                         Table "public.my"
+ Column |  Type   |                    Modifiers                    
+--------+---------+-------------------------------------------------
+ id     | integer | not null default nextval('my_id_seq'::regclass)
+ s      | text    | 
+Indexes:
+    "my_pkey" PRIMARY KEY, btree (id)
+
+/ 13	. 
+
+	@Test
+	public void testInsert()throws SQLException{
+		statement=connection.createStatement();
+		String i="insert into my values(default,'foo')";
+		statement.executeUpdate(i);
+//		statement.executeUpdate("commit");
+		// of	, het kan allebei	,
+		connection.commit();
+	}
+
+/ OK
+
+
+
+/ Einde PG
+
+/ DEBUG PG
+
+/ Voor pg's Driver moesten we dependency:sources run	, en click op Attach source button	, 
+/ TODO
+/ Voor DriverManager hoefde dat niet	, 
+
+/ 13	. 
+
+/ logging	, 
+
+/ Lees	, 
+https://jdbc.postgresql.org/documentation/head/logging.html
+
+/ Ze werken met java.util.Logging, bijv in Driver 
+
+/ we maken url	,
+		String url="jdbc:postgresql://localhost/eric?password=eric&loggerLevel=TRACE";
+
+/ in org.postgresql.Driver zien we 
+  private static final Logger LOGGER = Logger.getLogger("org.postgresql.Driver");
+/ in class PgConnection zien we	, 
+  private static final Logger LOGGER = Logger.getLogger(PgConnection.class.getName());
+/ Maar in PgStatement bijvoorbeeld zien we geen logging	, 
+/ TODO
+
+/ er zijn 
+interface org.postgresql.PgConnection 
+class org.postgresql.jdbc.PgConnection 
+
+/ In DriverManager moeten we 	, maar is dit JDK, niet 
+	DriverManager.setLogWriter(new PrintWriter(System.out))
+
+/ 13	. 
+
+$ vi FirstPGTest.java 
+
+public class FirstPGTest {
+	 
+	private static Connection connection;
+	private Statement statement;
+	private Logger logger=LogManager.getLogger(FirstPGTest.class);		// log4j	,
+
+
+	@BeforeClass
+	public static void setUp()throws ClassNotFoundException,SQLException{
+		Class.forName("org.postgresql.Driver");
+		String url="jdbc:postgresql://localhost/eric?password=eric&loggerLevel=TRACE";
+		connection=DriverManager.getConnection(url);
+		connection.setAutoCommit(false);
+		DriverManager.setLogWriter(new PrintWriter(System.out));
+		
+	}
+
+	@Test
+	public void testCreate()throws SQLException{
+		Assert.assertTrue(true);
+		statement=connection.createStatement();
+		String q="create table if not exists my(id serial primary key,s text)";
+		statement.executeUpdate(q);
+		connection.commit();
+
+
+	}
+	@Test
+	public void testInsert()throws SQLException{
+		statement=connection.createStatement();
+		String i="insert into my values(default,'foo')";
+		statement.executeUpdate(i);
+//		statement.executeUpdate("commit");
+		// of	, het kan allebei	,
+		connection.commit();
+	}
+}
+
+Jun 22, 2017 7:48:52 PM org.postgresql.Driver connect
+FINE: Connecting with URL: jdbc:postgresql://localhost/eric?password=eric&loggerLevel=TRACE
+Jun 22, 2017 7:48:52 PM org.postgresql.jdbc.PgConnection <init>
+FINE: PostgreSQL JDBC Driver 42.1.1
+Jun 22, 2017 7:48:52 PM org.postgresql.jdbc.PgConnection setDefaultFetchSize
+FINE:   setDefaultFetchSize = 0
+Jun 22, 2017 7:48:52 PM org.postgresql.jdbc.PgConnection setPrepareThreshold
+FINE:   setPrepareThreshold = 5
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.ConnectionFactoryImpl openConnectionImpl
+FINE: Trying to establish a protocol version 3 connection to localhost:5432
+Jun 22, 2017 7:48:52 PM org.postgresql.core.Encoding <init>
+FINEST: Creating new Encoding UTF-8 with fastASCIINumbers true
+Jun 22, 2017 7:48:52 PM org.postgresql.core.Encoding <init>
+FINEST: Creating new Encoding UTF-8 with fastASCIINumbers true
+Jun 22, 2017 7:48:52 PM org.postgresql.core.Encoding <init>
+FINEST: Creating new Encoding UTF-8 with fastASCIINumbers true
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.ConnectionFactoryImpl openConnectionImpl
+FINE: Receive Buffer Size is 530,904
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.ConnectionFactoryImpl openConnectionImpl
+FINE: Send Buffer Size is 1,313,280
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.ConnectionFactoryImpl sendStartupPacket
+FINEST:  FE=> StartupPacket(user=eric, database=eric, client_encoding=UTF8, DateStyle=ISO, TimeZone=Europe/Amsterdam, extra_float_digits=2)
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.ConnectionFactoryImpl doAuthentication
+FINEST:  <=BE AuthenticationReqMD5(salt=e59d1b8b)
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.ConnectionFactoryImpl doAuthentication
+FINEST:  FE=> Password(md5digest=md55492fbfd0f94548d5c5bf738ad30545b)
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.ConnectionFactoryImpl doAuthentication
+FINEST:  <=BE AuthenticationOk
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.QueryExecutorImpl readStartupMessages
+FINEST:  <=BE ParameterStatus(application_name = )
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.QueryExecutorImpl readStartupMessages
+FINEST:  <=BE ParameterStatus(client_encoding = UTF8)
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.QueryExecutorImpl readStartupMessages
+FINEST:  <=BE ParameterStatus(DateStyle = ISO, MDY)
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.QueryExecutorImpl readStartupMessages
+FINEST:  <=BE ParameterStatus(integer_datetimes = on)
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.QueryExecutorImpl readStartupMessages
+FINEST:  <=BE ParameterStatus(IntervalStyle = postgres)
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.QueryExecutorImpl readStartupMessages
+FINEST:  <=BE ParameterStatus(is_superuser = off)
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.QueryExecutorImpl readStartupMessages
+FINEST:  <=BE ParameterStatus(server_encoding = UTF8)
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.QueryExecutorImpl readStartupMessages
+FINEST:  <=BE ParameterStatus(server_version = 9.4.9)
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.QueryExecutorImpl readStartupMessages
+FINEST:  <=BE ParameterStatus(session_authorization = eric)
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.QueryExecutorImpl readStartupMessages
+FINEST:  <=BE ParameterStatus(standard_conforming_strings = on)
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.QueryExecutorImpl readStartupMessages
+FINEST:  <=BE ParameterStatus(TimeZone = Europe/Amsterdam)
+Jun 22, 2017 7:48:52 PM org.postgresql.core.v3.QueryExecutorImpl readStartupMessages
+FINEST:  <=BE BackendKeyData(pid=16,713,ckey=789,020,587)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(I)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.core.SetupQueryRunner$SimpleResultHandler@77468bd9, maxRows=0, fetchSize=0, flags=1,047
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="SET extra_float_digits = 3",oids={})
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=null,portal=null)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=1)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(SET)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(I)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.core.SetupQueryRunner$SimpleResultHandler@71bc1ae4, maxRows=0, fetchSize=0, flags=1,047
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="SET application_name = 'PostgreSQL JDBC Driver'",oids={})
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=null,portal=null)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=1)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParameterStatus(application_name = PostgreSQL JDBC Driver)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(SET)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(I)
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgConnection <init>
+FINEST:     types using binary send = TIMESTAMPTZ,UUID,INT2_ARRAY,INT4_ARRAY,BYTEA,TEXT_ARRAY,TIMETZ,INT8,INT2,INT4,VARCHAR_ARRAY,INT8_ARRAY,POINT,TIMESTAMP,TIME,BOX,FLOAT4,FLOAT8,FLOAT4_ARRAY,FLOAT8_ARRAY
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgConnection <init>
+FINEST:     types using binary receive = TIMESTAMPTZ,UUID,INT2_ARRAY,INT4_ARRAY,BYTEA,TEXT_ARRAY,TIMETZ,INT8,INT2,INT4,VARCHAR_ARRAY,INT8_ARRAY,POINT,DATE,TIMESTAMP,TIME,BOX,FLOAT4,FLOAT8,FLOAT4_ARRAY,FLOAT8_ARRAY
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgConnection <init>
+FINEST:     integer date/time = true
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgConnection setAutoCommit
+FINE:   setAutoCommit = false
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.jdbc.PgStatement$StatementResultHandler@5d20e46, maxRows=0, fetchSize=0, flags=5
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="BEGIN",oids={})
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=null,portal=null)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=0)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="create table if not exists my(id serial primary key,s text)",oids={})
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=null,portal=null)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendDescribePortal
+FINEST:  FE=> Describe(portal=null)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=1)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseCompSQLWarning: reason(NOTICE: relation "my" already exists, skipping
+  Location: File: parse_utilcmd.c, Routine: transformCreateStmt, Line: 178
+  Server SQLState: 42P07) SQLState(42P07)
+lete [null]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(BEGIN)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE NoData
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveNoticeResponse
+FINEST:  <=BE NoticeResponse(NOTICE: relation "my" already exists, skipping
+  Location: File: parse_utilcmd.c, Routine: transformCreateStmt, Line: 178
+  Server SQLState: 42P07)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(CREATE TABLE)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(T)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.jdbc.PgConnection$TransactionCommandHandler@f0f2775, maxRows=0, fetchSize=0, flags=22
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=S_1,query="COMMIT",oids={})
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=S_1,portal=null)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=1)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [S_1]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(COMMIT)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(I)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.jdbc.PgStatement$StatementResultHandler@429bd883, maxRows=0, fetchSize=0, flags=5
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="BEGIN",oids={})
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=null,portal=null)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=0)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="insert into my values(default,'foo')",oids={})
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=null,portal=null)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendDescribePortal
+FINEST:  FE=> Describe(portal=null)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=1)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(BEGIN)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE NoData
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(INSERT 0 1)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(T)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.jdbc.PgConnection$TransactionCommandHandler@4d49af10, maxRows=0, fetchSize=0, flags=22
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=S_1,portal=null)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=1)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(COMMIT)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(I)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.jdbc.PgStatement$StatementResultHandler@279ad2e3, maxRows=0, fetchSize=0, flags=1
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="BEGIN",oids={})
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=null,portal=null)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=0)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="select*from my",oids={})
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=null,portal=null)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendDescribePortal
+FINEST:  FE=> Describe(portal=null)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=0)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(BEGIN)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:  <=BE RowDescription(2)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(id,INT4,4,T)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(s,TEXT,65535,T)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=4)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=4)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=4)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=4)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=4)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=4)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=4)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=4)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExeπ 19:48:53.515 [main] INFO  pg.FirstPGTest - id: 1
+π 19:48:53.518 [main] INFO  pg.FirstPGTest - s: foo
+π 19:48:53.518 [main] INFO  pg.FirstPGTest - id: 2
+π 19:48:53.518 [main] INFO  pg.FirstPGTest - s: foo
+π 19:48:53.519 [main] INFO  pg.FirstPGTest - id: 3
+π 19:48:53.519 [main] INFO  pg.FirstPGTest - s: foo
+π 19:48:53.519 [main] INFO  pg.FirstPGTest - id: 4
+π 19:48:53.519 [main] INFO  pg.FirstPGTest - s: foo
+π 19:48:53.520 [main] INFO  pg.FirstPGTest - id: 5
+π 19:48:53.520 [main] INFO  pg.FirstPGTest - s: foo
+π 19:48:53.520 [main] INFO  pg.FirstPGTest - id: 6
+π 19:48:53.521 [main] INFO  pg.FirstPGTest - s: foo
+π 19:48:53.521 [main] INFO  pg.FirstPGTest - id: 7
+π 19:48:53.521 [main] INFO  pg.FirstPGTest - s: foo
+π 19:48:53.522 [main] INFO  pg.FirstPGTest - id: 8
+π 19:48:53.522 [main] INFO  pg.FirstPGTest - s: foo
+π 19:48:53.523 [main] INFO  pg.FirstPGTest - id: 9
+π 19:48:53.523 [main] INFO  pg.FirstPGTest - s: foo
+π 19:48:53.523 [main] INFO  pg.FirstPGTest - id: 10
+π 19:48:53.524 [main] INFO  pg.FirstPGTest - s: foo
+π 19:48:53.524 [main] INFO  pg.FirstPGTest - id: 11
+π 19:48:53.524 [main] INFO  pg.FirstPGTest - s: foo
+π 19:48:53.525 [main] INFO  pg.FirstPGTest - id: 12
+π 19:48:53.525 [main] INFO  pg.FirstPGTest - s: foo
+π 19:48:53.526 [main] INFO  pg.FirstPGTest - id: 13
+π 19:48:53.526 [main] INFO  pg.FirstPGTest - s: foo
+π 19:48:53.527 [main] INFO  pg.FirstPGTest - id: 14
+π 19:48:53.527 [main] INFO  pg.FirstPGTest - s: foo
+π 19:48:53.528 [main] INFO  pg.FirstPGTest - id: 15
+π 19:48:53.528 [main] INFO  pg.FirstPGTest - s: foo
+π 19:48:53.529 [main] INFO  pg.FirstPGTest - id: 16
+π 19:48:53.529 [main] INFO  pg.FirstPGTest - s: foo
+cutorImpl processResults
+FINEST:  <=BE DataRow(len=4)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=5)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=5)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=5)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=5)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=5)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=5)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=5)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(SELECT 16)
+Jun 22, 2017 7:48:53 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(T)
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Jun 22, 2017 7:48:53 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+
+
+
+
+/ Einde DEBUG PG
+
+/ H2 PG
+
+/ we vergl H2 en PG jdbc	, 
+
+/ H2	, 
+
+		Class.forName("org.h2.Driver");
+		connection=DriverManager.getConnection("jdbc:h2:tcp://localhost/~/Devel/Java/h2/test","sa","");
+
+		String q="create table if not exists my(id int auto_increment primary key,s text)";
+
+/ PG	, 
+
+		Class.forName("org.postgresql.Driver");
+		connection=DriverManager.getConnection("jdbc:postgresql://localhost/eric?password=eric");
+
+		String q="create table if not exists my(id serial primary key,s text)";
+
+/ Einde H2 PG
+
+

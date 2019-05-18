@@ -1,0 +1,938 @@
+[eric@almond first]$ pwd
+/home/eric/Devel/Java/jboss/previous-builds/first
+[eric@almond first]$ git clone https://github.com/wildfly/wildfly.git
+[eric@almond first]$ cd wildfly/
+eric@almond wildfly]$ git tag
+10.0.0.Alpha1
+10.0.0.Alpha2
+10.0.0.Alpha3
+10.0.0.Alpha4
+10.0.0.Alpha5
+10.0.0.Alpha6
+10.0.0.Beta1
+10.0.0.Beta2
+10.0.0.CR1
+10.0.0.CR2
+10.0.0.CR3
+10.0.0.CR4
+10.0.0.CR5
+10.0.0.Final
+10.1.0.CR1
+10.1.0.Final
+7.0.0.Alpha1
+7.0.0.Alpha1-final
+7.0.0.Beta1
+7.0.0.Beta1-prerelease
+7.0.0.Beta2
+7.0.0.Beta2-prerelease
+7.0.0.Beta3
+7.0.0.CR1
+7.0.0.Final
+7.0.0.Final-prerelease
+7.0.0.Final-prerelease2
+7.0.0.Final-prerelease3
+7.0.1.Final
+7.0.2.Final
+7.0.2.Final-prerelease
+7.0.2.SP1-prerelease
+7.1.0.Alpha1
+7.1.0.Beta1
+7.1.0.Beta1b
+7.1.0.Beta1b-prerelease
+7.1.0.CR1
+7.1.0.CR1b
+7.1.0.Final
+7.1.0.Final-prerelease
+7.1.0.Final-prerelease2
+7.1.1.Final
+7.1.2-prerelease
+7.1.2.Final
+7.1.3.Beta1
+7.1.3.CR1
+7.1.3.Final
+7.2.0.Final
+7.2.0.Final-prerelease1
+7.2.0.Final-testsuite-fix
+8.0.0.Alpha1
+8.0.0.Alpha2
+8.0.0.Alpha3
+8.0.0.Alpha4
+8.0.0.Beta1
+8.0.0.CR1
+8.0.0.Final
+8.1.0.CR1
+8.1.0.CR2
+8.1.0.CR3
+8.1.0.CR4
+8.1.0.CR5
+8.1.0.Final
+8.2.0.Final
+8.2.1.Final
+9.0.0.Alpha1
+9.0.0.Beta1
+9.0.0.Beta2
+9.0.0.CR1
+9.0.0.CR2
+9.0.0.Final
+9.0.1.Final
+9.0.2.Final
+web-jboss-metadata
+
+[eric@almond wildfly]$ git checkout 10.1.0.Final -b branch_10.1.0.Final
+Switched to a new branch 'branch_10.1.0.Final'
+[eric@almond wildfly]$ git branch 
+* branch_10.1.0.Final
+  master
+
+[eric@almond wildfly]$ git checkout 8.2.0.Final -b branch_8.2.0.Final
+Switched to a new branch 'branch_8.2.0.Final'
+[eric@almond wildfly]$ git branch 
+  branch_10.1.0.Final
+* branch_8.2.0.Final
+  master
+
+/ 13	. 
+
+[INFO] WildFly Test Suite: Integration - Web .............. FAILURE [ 25.292 s]
+
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.jboss.as.test.integration.deployment.deploymentoverlay.DeploymentOverlayTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.202 sec <<< FAILURE! - in org.jboss.as.test.integration.deployment.deploymentoverlay.DeploymentOverlayTestCase
+org.jboss.as.test.integration.deployment.deploymentoverlay.DeploymentOverlayTestCase  Time elapsed: 0.007 sec  <<< ERROR!
+java.lang.NullPointerException: null
+  at org.jboss.as.arquillian.container.ManagementClient.getProtocolMetaData(ManagementClient.java:187)
+  at org.jboss.as.arquillian.container.CommonDeployableContainer.deploy(CommonDeployableContainer.java:145)
+  at org.jboss.arquillian.container.impl.client.container.ContainerDeployController$3.call(ContainerDeployController.java:161)
+
+[eric@almond wildfly]$ find -name DeploymentOverlayTestCase.java
+./testsuite/integration/basic/src/test/java/org/jboss/as/test/integration/deployment/deploymentoverlay/DeploymentOverlayTestCase.java
+./testsuite/integration/web/src/test/java/org/jboss/as/test/integration/deployment/deploymentoverlay/DeploymentOverlayTestCase.java
+./testsuite/domain/src/test/java/org/jboss/as/test/integration/domain/suites/DeploymentOverlayTestCase.java
+[eric@almond wildfly]$ find -name DeploymentOverlayTestCase.java | awk 'END{print}'
+./testsuite/domain/src/test/java/org/jboss/as/test/integration/domain/suites/DeploymentOverlayTestCase.java
+[eric@almond wildfly]$ find -name DeploymentOverlayTestCase.java | awk 'END{print}' | xargs -I %  mv % %_
+[eric@almond wildfly]$ find -name DeploymentOverlayTestCase.java_
+./testsuite/domain/src/test/java/org/jboss/as/test/integration/domain/suites/DeploymentOverlayTestCase.java_
+
+/ Dan 	, 
+
+[INFO] WildFly Test Suite: Integration - Web .............. FAILURE [ 18.937 s]
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.jboss.as.test.integration.deployment.deploymentoverlay.DeploymentOverlayTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.179 sec <<< FAILURE! - in org.jboss.as.test.integration.deployment.deploymentoverlay.DeploymentOverlayTestCase
+org.jboss.as.test.integration.deployment.deploymentoverlay.DeploymentOverlayTestCase  Time elapsed: 0.011 sec  <<< ERROR!
+java.lang.NullPointerException: null
+        at org.jboss.as.arquillian.container.ManagementClient.getProtocolMetaData(ManagementClient.java:187)
+        at org.jboss.as.arquillian.container.CommonDeployableContainer.deploy(CommonDeployableContainer.java:145)
+        at org.jboss.arquillian.container.impl.client.container.ContainerDeployController$3.call(ContainerDeployController.java:161)
+        at org.jboss.arquillian.container.impl.client.container.ContainerDeployController$3.call(ContainerDeployController.java:128)
+...
+
+./tools/maven/bin/mvn -s tools/maven/conf/settings.xml install
+
+/ 13	. 
+
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.18:test (default-test) on project wildfly-ts-integ-web: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /home/eric/Devel/Java/JBoss/wildfly/testsuite/integration/web/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <goals> -rf :wildfly-ts-integ-web
+////////////////////////////////////////////////////////////
+
+[eric@almond wildfly]$ pwd
+/home/eric/Devel/Java/jboss/previous-builds/second/wildfly
+/ master, 10.1.0.Final builds OK
+$ mvn install	,
+/ OK 
+/ 
+
+/ 13	. 
+
+https://ci.wildfly.org/viewType.html?buildTypeId=WF_MasterLinux
+
+/ we zien dat daar de tests wel OK	,
+
+/ ga naar	, 
+https://ci.wildfly.org/viewLog.html?buildId=28261&buildTypeId=WF_MasterLinux&tab=testsInfo
+/ search voor  DeploymentOverlayTestCase
+/ we zien de 2 tests  passed	,
+TestAddingNewFile
+TestContentOverridden
+
+
+[INFO] ------------------------------------------------------------------------
+[INFO] Building WildFly Test Suite: Integration - Web 11.0.0.Alpha1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.163 sec <<< FAILURE! - in org.jboss.as.test.integration.deployment.deploymentoverlay.DeploymentOverlayTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.102 sec <<< FAILURE! - in org.jboss.as.test.integration.deployment.resourcelisting.WarResourceListingTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.109 sec <<< FAILURE! - in org.jboss.as.test.integration.deployment.classloading.war.WarClassLoadingTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.115 sec <<< FAILURE! - in org.jboss.as.test.integration.jsp.JspTagTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.114 sec <<< FAILURE! - in org.jboss.as.test.integration.web.multipart.defaultservlet.DefaultServletMultipartConfigTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.153 sec <<< FAILURE! - in org.jboss.as.test.integration.web.rootcontext.RootContextWarUnitTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.109 sec <<< FAILURE! - in org.jboss.as.test.integration.web.rootcontext.RootContextEarUnitTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.195 sec <<< FAILURE! - in org.jboss.as.test.integration.web.servlet.overlays.ServletResourceOverlaysTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.096 sec <<< FAILURE! - in org.jboss.as.test.integration.web.servlet.lifecycle.ServletLifecycleMethodDescriptorTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.082 sec <<< FAILURE! - in org.jboss.as.test.integration.web.servlet.enc.empty.EmptyCompEnvTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.07 sec <<< FAILURE! - in org.jboss.as.test.integration.web.webfragment.WebFragmentAbsoluteOrderingTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.2 sec <<< FAILURE! - in org.jboss.as.test.integration.web.jsp.JspSecurityManagerTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.064 sec <<< FAILURE! - in org.jboss.as.test.integration.web.jsp.taglib.external.ExternalTagLibTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.101 sec <<< FAILURE! - in org.jboss.as.test.integration.web.jsp.JspMappingTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 2.552 sec <<< FAILURE! - in org.jboss.as.test.integration.web.threads.ServletThreadPoolSelectionTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.168 sec <<< FAILURE! - in org.jboss.as.test.integration.web.handlers.RequestDumpingHandlerTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.001 sec <<< FAILURE! - in org.jboss.as.test.integration.web.handlers.UndertowHandlersConfigTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.134 sec <<< FAILURE! - in org.jboss.as.test.integration.web.security.jaspi.WebSecurityJaspiWithFailingAuthModuleTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.161 sec <<< FAILURE! - in org.jboss.as.test.integration.web.security.jaspi.WebSecurityJaspiTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.091 sec <<< FAILURE! - in org.jboss.as.test.integration.web.security.digest.WebSecurityDIGESTTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.12 sec <<< FAILURE! - in org.jboss.as.test.integration.web.security.basic.WebSecurityBASICTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.122 sec <<< FAILURE! - in org.jboss.as.test.integration.web.security.servlet3.WebSecurityProgrammaticLoginTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 1.052 sec <<< FAILURE! - in org.jboss.as.test.integration.web.security.external.WebSecurityExternalAuthTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 1.244 sec <<< FAILURE! - in org.jboss.as.test.integration.web.security.cert.WebSecurityCERTTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.053 sec <<< FAILURE! - in org.jboss.as.test.integration.web.security.tg.TransportGuaranteeTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.088 sec <<< FAILURE! - in org.jboss.as.test.integration.web.security.websocket.WebSocketSecurityTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.001 sec <<< FAILURE! - in org.jboss.as.test.integration.web.security.form.WebSecurityFORMTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.115 sec <<< FAILURE! - in org.jboss.as.test.integration.web.security.form.WebSecurityJBossSimpleRoleMappingTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.065 sec <<< FAILURE! - in org.jboss.as.test.integration.web.annotationsmodule.WebModuleDeploymentTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0 sec <<< FAILURE! - in org.jboss.as.test.integration.web.customerrors.CustomErrorsUnitTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.076 sec <<< FAILURE! - in org.jboss.as.test.integration.web.extension.UndertowNonBlockingHandlerTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.08 sec <<< FAILURE! - in org.jboss.as.test.integration.web.formauth.FormAuthUnitTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.071 sec <<< FAILURE! - in org.jboss.as.test.integration.web.websocket.WebSocketTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.114 sec <<< FAILURE! - in org.jboss.as.test.integration.web.cookie.CookieUnitTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.048 sec <<< FAILURE! - in org.jboss.as.test.integration.web.sharedsession.SharedSessionTestCase
+Tests run: 2, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 0.072 sec <<< FAILURE! - in org.jboss.as.test.integration.web.reverseproxy.ReverseProxyTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.124 sec <<< FAILURE! - in org.jboss.as.test.integration.ee.naming.defaultbindings.concurrency.DefaultConcurrencyServletTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.06 sec <<< FAILURE! - in org.jboss.as.test.integration.ee.concurrent.DefaultContextServiceServletTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.071 sec <<< FAILURE! - in org.jboss.as.test.smoke.web.WarTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0 sec <<< FAILURE! - in org.jboss.as.test.smoke.web.WarNotAsClientTest
+[INFO] WildFly Test Suite: Integration - Web .............. FAILURE [ 19.707 s]
+
+/ we zien steeds dezelfde melding	, 
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.jboss.as.test.integration.deployment.deploymentoverlay.DeploymentOverlayTestCase
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.163 sec <<< FAILURE! - in org.jboss.as.test.integration.deployment.deploymentoverlay.DeploymentOverlayTestCase
+org.jboss.as.test.integration.deployment.deploymentoverlay.DeploymentOverlayTestCase  Time elapsed: 0.008 sec  <<< ERROR!
+java.lang.NullPointerException: null
+	at org.jboss.as.arquillian.container.ManagementClient.getProtocolMetaData(ManagementClient.java:216)
+	at org.jboss.as.arquillian.container.CommonDeployableContainer.deploy(CommonDeployableContainer.java:237)
+	at org.jboss.arquillian.container.impl.client.container.ContainerDeployController$3.call(ContainerDeployController.java:161)
+	at org.jboss.arquillian.container.impl.client.container.ContainerDeployController$3.call(ContainerDeployController.java:128)
+	at org.jboss.arquillian.container.impl.client.container.ContainerDeployController.executeOperation(ContainerDeployController.java:271)
+	at org.jboss.arquillian.container.impl.client.container.ContainerDeployController.deploy(ContainerDeployController.java:127)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.jboss.arquillian.core.impl.ObserverImpl.invoke(ObserverImpl.java:94)
+	at org.jboss.arquillian.core.impl.EventContextImpl.invokeObservers(EventContextImpl.java:99)
+	at org.jboss.arquillian.core.impl.EventContextImpl.proceed(EventContextImpl.java:81)
+	at org.jboss.arquillian.container.impl.client.ContainerDeploymentContextHandler.createDeploymentContext(ContainerDeploymentContextHandler.java:78)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.jboss.arquillian.core.impl.ObserverImpl.invoke(ObserverImpl.java:94)
+	at org.jboss.arquillian.core.impl.EventContextImpl.proceed(EventContextImpl.java:88)
+	at org.jboss.arquillian.container.impl.client.ContainerDeploymentContextHandler.createContainerContext(ContainerDeploymentContextHandler.java:57)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.jboss.arquillian.core.impl.ObserverImpl.invoke(ObserverImpl.java:94)
+	at org.jboss.arquillian.core.impl.EventContextImpl.proceed(EventContextImpl.java:88)
+	at org.jboss.arquillian.container.impl.client.container.DeploymentExceptionHandler.verifyExpectedExceptionDuringDeploy(DeploymentExceptionHandler.java:50)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.jboss.arquillian.core.impl.ObserverImpl.invoke(ObserverImpl.java:94)
+	at org.jboss.arquillian.core.impl.EventContextImpl.proceed(EventContextImpl.java:88)
+	at org.jboss.arquillian.core.impl.ManagerImpl.fire(ManagerImpl.java:145)
+	at org.jboss.arquillian.core.impl.ManagerImpl.fire(ManagerImpl.java:116)
+	at org.jboss.arquillian.core.impl.EventImpl.fire(EventImpl.java:67)
+	at org.jboss.arquillian.container.impl.client.container.ContainerDeployController$1.perform(ContainerDeployController.java:95)
+	at org.jboss.arquillian.container.impl.client.container.ContainerDeployController$1.perform(ContainerDeployController.java:80)
+	at org.jboss.arquillian.container.impl.client.container.ContainerDeployController.forEachDeployment(ContainerDeployController.java:263)
+	at org.jboss.arquillian.container.impl.client.container.ContainerDeployController.forEachManagedDeployment(ContainerDeployController.java:239)
+	at org.jboss.arquillian.container.impl.client.container.ContainerDeployController.deployManaged(ContainerDeployController.java:79)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.jboss.arquillian.core.impl.ObserverImpl.invoke(ObserverImpl.java:94)
+	at org.jboss.arquillian.core.impl.EventContextImpl.invokeObservers(EventContextImpl.java:99)
+	at org.jboss.arquillian.core.impl.EventContextImpl.proceed(EventContextImpl.java:81)
+	at org.jboss.arquillian.core.impl.ManagerImpl.fire(ManagerImpl.java:145)
+	at org.jboss.arquillian.core.impl.ManagerImpl.fire(ManagerImpl.java:116)
+	at org.jboss.arquillian.core.impl.EventImpl.fire(EventImpl.java:67)
+	at org.jboss.arquillian.container.test.impl.client.ContainerEventController.execute(ContainerEventController.java:101)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.jboss.arquillian.core.impl.ObserverImpl.invoke(ObserverImpl.java:94)
+	at org.jboss.arquillian.core.impl.EventContextImpl.invokeObservers(EventContextImpl.java:99)
+	at org.jboss.arquillian.core.impl.EventContextImpl.proceed(EventContextImpl.java:81)
+	at org.jboss.arquillian.test.impl.TestContextHandler.createClassContext(TestContextHandler.java:92)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.jboss.arquillian.core.impl.ObserverImpl.invoke(ObserverImpl.java:94)
+	at org.jboss.arquillian.core.impl.EventContextImpl.proceed(EventContextImpl.java:88)
+	at org.jboss.arquillian.test.impl.TestContextHandler.createSuiteContext(TestContextHandler.java:73)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.jboss.arquillian.core.impl.ObserverImpl.invoke(ObserverImpl.java:94)
+	at org.jboss.arquillian.core.impl.EventContextImpl.proceed(EventContextImpl.java:88)
+	at org.jboss.arquillian.core.impl.ManagerImpl.fire(ManagerImpl.java:145)
+	at org.jboss.arquillian.core.impl.ManagerImpl.fire(ManagerImpl.java:116)
+	at org.jboss.arquillian.test.impl.EventTestRunnerAdaptor.beforeClass(EventTestRunnerAdaptor.java:87)
+	at org.jboss.arquillian.junit.Arquillian$2.evaluate(Arquillian.java:201)
+	at org.jboss.arquillian.junit.Arquillian.multiExecute(Arquillian.java:422)
+	at org.jboss.arquillian.junit.Arquillian.access$200(Arquillian.java:54)
+	at org.jboss.arquillian.junit.Arquillian$3.evaluate(Arquillian.java:218)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.jboss.arquillian.junit.Arquillian.run(Arquillian.java:166)
+	at org.junit.runners.Suite.runChild(Suite.java:128)
+	at org.junit.runners.Suite.runChild(Suite.java:27)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.junit.runner.JUnitCore.run(JUnitCore.java:137)
+	at org.junit.runner.JUnitCore.run(JUnitCore.java:115)
+	at org.apache.maven.surefire.junitcore.JUnitCoreWrapper.createRequestAndRun(JUnitCoreWrapper.java:107)
+	at org.apache.maven.surefire.junitcore.JUnitCoreWrapper.executeEager(JUnitCoreWrapper.java:77)
+	at org.apache.maven.surefire.junitcore.JUnitCoreWrapper.execute(JUnitCoreWrapper.java:53)
+	at org.apache.maven.surefire.junitcore.JUnitCoreProvider.invoke(JUnitCoreProvider.java:144)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:203)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:155)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+
+/ 7	. 
+
+[eric@almond JBoss]$ find -name pom.xml | xargs grep -i skiptest
+./wildfly/testsuite/mixed-domain/pom.xml:                    <skipTests>false</skipTests>
+./wildfly/testsuite/integration/pom.xml:        <ts.skipTests>${skipTests}</ts.skipTests>
+./wildfly/testsuite/integration/pom.xml:                    <skipTests>${ts.skipTests}</skipTests>
+./wildfly/testsuite/integration/basic/pom.xml:                                    <skipTests>${ts.skipTests}</skipTests>
+
+/ 7	. 
+
+/ we download	, 
+-rw-rw-r--. 1 eric eric   314338763 Oct  3 21:57 eclipse-jee-neon-1-linux-gtk-x86_64.tar.gz
+-rw-rw-r--. 1 eric eric    46307946 Oct  4 19:29 eclipse-inst-linux64.tar.gz
+-rw-rw-r--. 1 eric eric   167997880 Oct  4 19:36 eclipse-java-neon-1-linux-gtk-x86_64.tar.gz
+
+[eric@almond Neon]$ pwd
+/home/eric/Devel/Eclipse/Neon
+[eric@almond Neon]$ ls
+inst  java  jee
+
+/ voor wildfly we nemen java eclipse	,
+
+$ cd java
+[eric@almond java]$ tar xvzf ~/Downloads/eclipse-java-neon-1-linux-gtk-x86_64.tar.gz 
+
+$ vi eclipse/eclipse.ini
+-Xmx2048m
+
+/  we maken een ws	, 
+/home/eric/Devel/Java/jboss/workspace-wildfly-src
+
+Java, Compiler, Errors/Warnings 	, Deprecated and restricted API, 
+	Forbidden reference -> Warning
+
+/ 7	. 
+
+/ we hebben in eclipse import existing maven project	, 
+/home/eric/Devel/Java/jboss/wildfly
+
+/ we zien ertussen	, 
+> wildfly-parent
+		pom.xml
+/ Dit is de main pom	,  de pom in /home/eric/Devel/Java/jboss/wildfly	, 
+/ right click daarop	, 
+maven clean
+maven install
+
+/ in /home/eric/Devel/Java/jboss	,
+LOG_install_in_eclipse.txt 	/ build in eclipse, laatste stuk	, 
+LOG_install_skipTests.txt  /build op command line	,
+
+/ workspace in java eclipse Neon	,
+Devel/Java/jboss/workspace-wildfly-src
+/ TODO
+
+/ 7	 . 
+
+/ we install	,
+[eric@almond Tmp]$ pwd
+/home/eric/Devel/Java/jboss/Tmp
+[eric@almond Tmp]$ tar xvzf ~/Downloads/wildfly-8.2.0.Final.tar.gz 
+[eric@almond Tmp]$ cd wildfly-8.2.0.Final/bin
+$ ./standalone.sh
+/ Kon niet start	, want kon niet vinden	,
+JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.72-9.b16.fc23.x86_64
+/ TODO
+$ unset JAVA_HOME
+$ ./standalone.sh
+/ OK
+/ Maar Undertow kan niet start	, Tomcat draait nog en address is in use	,
+
+/ Dit was	, 
+[eric@almond apache-tomcat-8.5.11]$ bin/catalina.sh jpda run
+
+/ 7	. 
+
+/ build wildfly	,
+
+[eric@almond wildfly]$ date
+Sun Mar 18 10:27:25 CET 2018
+
+[eric@almond wildfly]$ pwd
+/home/eric/Devel/Java/jboss/wildfly
+[eric@almond wildfly]$ git branch
+* 10.1.0.Final-branch
+  master
+[eric@almond wildfly]$ mvn install
+/ OK	,
+eric@almond wildfly]$ ls dist/target/wildfly-10.1.0.Final/
+appclient      docs               LICENSE.txt  standalone
+bin            domain             modules      welcome-content
+copyright.txt  jboss-modules.jar  README.txt
+[eric@almond wildfly]$ ls dist/target/wildfly-10.1.0.Final/bin
+add-user.bat         domain.ps1                    standalone.conf
+add-user.properties  domain.sh                     standalone.conf.bat
+add-user.ps1         jboss-cli.bat                 standalone.conf.ps1
+add-user.sh          jboss-cli-logging.properties  standalone.ps1
+appclient.bat        jboss-cli.ps1                 standalone.sh
+appclient.conf       jboss-cli.sh                  vault.bat
+appclient.conf.bat   jboss-cli.xml                 vault.ps1
+appclient.conf.ps1   jconsole.bat                  vault.sh
+appclient.ps1        jconsole.ps1                  wsconsume.bat
+appclient.sh         jconsole.sh                   wsconsume.ps1
+client               jdr.bat                       wsconsume.sh
+common.ps1           jdr.ps1                       wsprovide.bat
+domain.bat           jdr.sh                        wsprovide.ps1
+domain.conf          launcher.jar                  wsprovide.sh
+domain.conf.bat      product.conf
+domain.conf.ps1      standalone.bat
+
+/ ECLIPSE
+
+[eric@almond oxygen-2]$ pwd
+/home/eric/Devel/Eclipse/oxygen-2
+[eric@almond oxygen-2]$ tar xvzf ~/Downloads/eclipse-jee-oxygen-2-linux-gtk-x86_64.tar.gz 
+[eric@almond oxygen-2]$ ls
+eclipse  workspace-wildfly
+
+/ we hebben in eclipse hier onze ws gemaakt,	
+
+/ we install jboss tools	,
+/ we zien melding:
+The software you installed requires the following OS packages to be installed: vagrant null
+You can install those by executing the following command: pkcon install vagrant
+
+/ Preferences, Validation
+Allow projects to override these preference settings: uncheck (WAS checked)
+Suspend all validators : check (WAS unchecked)	,
+
+/ 7	 
+
+[eric@almond eclipse]$ pwd
+/home/eric/Devel/Eclipse/oxygen-2/eclipse
+/ workspace	,
+/home/eric/Devel/Eclipse/oxygen-2/workspace-wildfly
+
+export GDK_BACKEND=x11
+./eclipse
+
+An internal error occurred during: "Periodic workspace save.".
+Provider __redirected.__DocumentBuilderFactory not found
+
+An internal error has occurred.
+Provider __redirected.__DocumentBuilderFactory not found
+
+
+/ Einde ECLIPSE
+
+/ JAVA
+
+/ klik op se	, we zien link naar	,
+http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html
+
+/ we download de jdk	, 
+/ installed in /home/eric/bin/jdk1.8.0_161
+
+/ Einde JAVA
+
+/ GNOME
+
+[eric@almond bin]$ echo $XDG_SESSION_TYPE
+wayland
+
+/ we zitten dus op wayland	,
+
+$ loginctl show-session $(loginctl | grep $(whoami) | awk '{print $1}') -p Type
+Type=wayland
+
+
+/ Einde GNOME
+
+/ GIT
+
+/ 7	. 
+
+/ google
+git show origin
+/ lees	,
+https://stackoverflow.com/questions/4089430/how-can-i-determine-the-url-that-a-local-git-repository-was-originally-cloned-fr
+
+[eric@almond wildfly]$ git remote show origin 
+/ of	,
+[eric@almond wildfly]$ git config --get remote.origin.url
+
+[eric@almond wildfly]$ git remote show origin 
+* remote origin
+  Fetch URL: https://github.com/wildfly/wildfly.git
+  Push  URL: https://github.com/wildfly/wildfly.git
+  HEAD branch: master
+  Remote branches:
+    10.x                                                 tracked
+    11.x                                                 new (next fetch will store in remotes/origin)
+    7.1                                                  tracked
+    7.1-ignore                                           tracked
+    8.x                                                  tracked
+    8.x-ignore                                           tracked
+    9.x                                                  tracked
+    9.x-ignore                                           tracked
+    ee-ignore                                            new (next fetch will store in remotes/origin)
+    master                                               tracked
+    master-ignore                                        tracked
+    refs/remotes/origin/revert-8953-undertow-default-web stale (use 'git remote prune' to remove)
+    revert-10746-infinispan-9.1                          new (next fetch will store in remotes/origin)
+    revert-10912-metadata-split-package                  new (next fetch will store in remotes/origin)
+    tck-test-this                                        new (next fetch will store in remotes/origin)
+  Local branch configured for 'git pull':
+    master merges with remote master
+  Local ref configured for 'git push':
+    master pushes to master (local out of date)
+
+/ google
+git update
+/ lees	,
+https://stackoverflow.com/questions/1443210/updating-a-local-repository-with-changes-from-a-github-repository
+
+/ google	,
+git pull all branches
+/ lees	,
+https://stackoverflow.com/questions/10312521/how-to-fetch-all-git-branches
+
+/ google	,
+git get new branch from remote
+/ lees	,
+https://stackoverflow.com/questions/1783405/how-do-i-check-out-a-remote-git-branch
+
+/ google	,
+git checkout remote branch and track
+/ lees	,
+https://stackoverflow.com/questions/10002239/difference-between-git-checkout-track-origin-branch-and-git-checkout-b-branch
+
+/ we copy onze local git repo van wildfly 	,
+
+/ orig	,
+[eric@almond wildfly]$ pwd
+/home/eric/Devel/Java/jboss/wildfly
+[eric@almond jboss]$ cp -r wildfly wildfly-try-git-things
+
+
+/ Einde GIT
+
+/ DOMAINS
+
+/ google,
+jboss server group
+/ lees	,
+https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html/configuration_guide/domain_management
+
+/ google, 
+jboss wildfly domain
+/ lees	,
+https://docs.jboss.org/author/display/WFLY10/Clustering+and+Domain+Setup+Walkthrough
+
+/ lees	,
+https://hub.docker.com/r/jboss/wildfly
+
+$ docker pull jboss/wildfly
+
+/ we click Dockerfile	,
+$ vi Dockerfile
+
+# Use latest jboss/base-jdk:11 image as the base
+FROM jboss/base-jdk:11
+
+/ Intermezzo
+
+/ bash	,
+
+/ 7	. 
+
+/ (( )) is zoals let	,
+
+/ 0 is true	, voor if	, 
+[eric@almond ping]$ n=1
+[eric@almond ping]$ let n
+[eric@almond ping]$ echo $?
+0
+[eric@almond ping]$ let --n
+[eric@almond ping]$ echo $?
+1
+
+[eric@almond ping]$ n=7
+[eric@almond ping]$ [ $n -eq 0 ]
+[eric@almond ping]$ echo $?
+1
+[eric@almond ping]$ n=0
+[eric@almond ping]$ [ $n -eq 0 ]
+[eric@almond ping]$ echo $?
+0
+
+/ 7	. 
+
+[eric@almond ping]$ n=7
+[eric@almond ping]$ let --n
+[eric@almond ping]$ echo $n
+6
+[eric@almond ping]$ (( --n ))
+[eric@almond ping]$ echo $n
+5
+
+/ 7	. 
+
+[eric@almond ping]$ n=2 
+[eric@almond ping]$ let --n && echo foo
+foo
+[eric@almond ping]$ echo $n
+1
+[eric@almond ping]$ let --n && echo foo
+[eric@almond ping]$ 
+
+/ 7	. 
+
+/ gelijk	,
+[ $n -eq 0 ]  &&
+if [ $n -eq 0 ]; then 
+
+[eric@almond ping]$ n=7
+[eric@almond ping]$ if [ $n -eq 0 ];then echo foo;fi
+[eric@almond ping]$ [ $n -eq 0 ] && echo foo
+[eric@almond ping]$ n=0
+[eric@almond ping]$ [ $n -eq 0 ] && echo foo
+foo
+
+/ Einde Intermezzo
+
+/ 7	. 
+
+[eric@almond ping]$  docker run --rm -it -p 8080:8080 -p 9990:9990 docker.io/jboss/wildfly bash
+
+/ geef	,
+http://localhost:9990/console
+/ TODO
+
+/ 13	. 
+
+/ lees	,
+https://nickjanetakis.com/blog/docker-tip-35-connect-to-a-database-running-on-your-docker-host
+docker network create -d bridge --subnet 192.168.0.0/24 --gateway 192.168.0.1 mynet
+/ TODO
+
+/ 7	. 
+
+/ we doen in wilfly op de host	, dus NIET in container	,
+
+/ bovenin	,
+
+[eric@almond wildfly-10.1.0.Final]$ pwd
+/home/eric/Devel/Java/jboss/wildfly/build/target/wildfly-10.1.0.Final
+[eric@almond wildfly-10.1.0.Final]$ bin/standalone.sh 
+/ geef	,
+http://localhost:9990/console
+/ we zien	,
+http://localhost:9990/error/index.html
+/ We moeten eerst:
+
+[eric@almond wildfly-10.1.0.Final]$ bin/add-user.sh 
+
+What type of user do you wish to add? 
+ a) Management User (mgmt-users.properties) 
+ b) Application User (application-users.properties)
+(a): 
+
+Enter the details of the new user to add.
+Using realm 'ManagementRealm' as discovered from the existing property files.
+Username : admin
+The username 'admin' is easy to guess
+Are you sure you want to add user 'admin' yes/no? yes
+Password recommendations are listed below. To modify these restrictions edit the add-user.properties configuration file.
+ - The password should be different from the username
+ - The password should not be one of the following restricted values {root, admin, administrator}
+ - The password should contain at least 8 characters, 1 alphabetic character(s), 1 digit(s), 1 non-alphanumeric symbol(s)
+Password : 
+WFLYDM0098: The password should be different from the username
+Are you sure you want to use the password entered yes/no? yes
+Re-enter Password : 
+What groups do you want this user to belong to? (Please enter a comma separated list, or leave blank for none)[  ]: 
+About to add user 'admin' for realm 'ManagementRealm'
+Is this correct yes/no? yes
+Added user 'admin' to file '/home/eric/Devel/Java/jboss/wildfly/build/target/wildfly-10.1.0.Final/standalone/configuration/mgmt-users.properties'
+Added user 'admin' to file '/home/eric/Devel/Java/jboss/wildfly/build/target/wildfly-10.1.0.Final/domain/configuration/mgmt-users.properties'
+Added user 'admin' with groups  to file '/home/eric/Devel/Java/jboss/wildfly/build/target/wildfly-10.1.0.Final/standalone/configuration/mgmt-groups.properties'
+Added user 'admin' with groups  to file '/home/eric/Devel/Java/jboss/wildfly/build/target/wildfly-10.1.0.Final/domain/configuration/mgmt-groups.properties'
+Is this new user going to be used for one AS process to connect to another AS process? 
+e.g. for a slave host controller connecting to the master or for a Remoting connection for server to server EJB calls.
+yes/no? no
+
+/ nog een keer	,
+http://localhost:9990/console 
+->
+http://localhost:9990/console/App.html#home
+/ OK	,
+
+172.17.0.2      07674635f466
+
+/ 7	. 
+
+[eric@almond ping]$ docker pull jboss/wildfly:10.1.0.Final
+
+
+[eric@almond ping]$  docker run --rm -it -p 8080:8080 -p 9990:9990  docker.io/jboss/wildfly:10.1.0.Final bash
+[jboss@465bc1a083bc ~]$ cd wildfly/
+[jboss@465bc1a083bc wildfly]$ bin/standalone.sh 
+...
+[eric@almond ping]$ docker exec -it -u root inspiring_keller bash
+
+/ lees	,
+http://tools.jboss.org/blog/2015-03-02-getting-started-with-docker-and-wildfly.html
+
+/ 7	. 
+
+/ we moeten de container zo starten:
+
+[eric@almond ping]$  docker run --rm -it -p 8080:8080 -p 9990:9990  docker.io/jboss/wildfly:10.1.0.Final /opt/jboss/wildfly/bin/standalone.sh -bmanagement 0.0.0.0
+
+/ geef in browser:
+http://localhost:9990/management
+{
+outcome: "failed",
+failure-description: "WFLYDMHTTP0006: The security realm is not ready to process requests, see http://localhost:9990/error",
+rolled-back: "true"
+}
+
+/ of	,
+
+[eric@almond ping]$  docker run --rm -it -p 8080:8080 -p 9990:9990  docker.io/jboss/wildfly:10.1.0.Final bash
+jboss@3c366e36fefb ~]$ cd wildfly/
+[jboss@3c366e36fefb wildfly]$ bin/standalone.sh -bmanagement 0.0.0.0
+...
+/ geef	, 
+http://localhost:9990/management
+/ OK,
+/ maar we moeten	,
+
+[jboss@3c366e36fefb wildfly]$ bin/add-user.sh 
+
+What type of user do you wish to add? 
+ a) Management User (mgmt-users.properties) 
+ b) Application User (application-users.properties)
+(a): 
+
+Enter the details of the new user to add.
+Using realm 'ManagementRealm' as discovered from the existing property files.
+Username : admin
+The username 'admin' is easy to guess
+Are you sure you want to add user 'admin' yes/no? yes
+Password recommendations are listed below. To modify these restrictions edit the add-user.properties configuration file.
+ - The password should be different from the username
+ - The password should not be one of the following restricted values {root, admin, administrator}
+ - The password should contain at least 8 characters, 1 alphabetic character(s), 1 digit(s), 1 non-alphanumeric symbol(s)
+Password : 
+WFLYDM0099: Password should have at least 8 characters!
+Are you sure you want to use the password entered yes/no? yes
+Re-enter Password : 
+
+ * Error * 
+WFLYDM0026: The passwords do not match.
+
+Password recommendations are listed below. To modify these restrictions edit the add-user.properties configuration file.
+ - The password should be different from the username
+ - The password should not be one of the following restricted values {root, admin, administrator}
+ - The password should contain at least 8 characters, 1 alphabetic character(s), 1 digit(s), 1 non-alphanumeric symbol(s)
+Password : 
+WFLYDM0098: The password should be different from the username
+Are you sure you want to use the password entered yes/no? yes
+Re-enter Password : 
+What groups do you want this user to belong to? (Please enter a comma separated list, or leave blank for none)[  ]: 
+About to add user 'admin' for realm 'ManagementRealm'
+Is this correct yes/no? yes
+Added user 'admin' to file '/opt/jboss/wildfly/standalone/configuration/mgmt-users.properties'
+Added user 'admin' to file '/opt/jboss/wildfly/domain/configuration/mgmt-users.properties'
+Added user 'admin' with groups  to file '/opt/jboss/wildfly/standalone/configuration/mgmt-groups.properties'
+Added user 'admin' with groups  to file '/opt/jboss/wildfly/domain/configuration/mgmt-groups.properties'
+Is this new user going to be used for one AS process to connect to another AS process? 
+e.g. for a slave host controller connecting to the master or for a Remoting connection for server to server EJB calls.
+yes/no? no
+
+[jboss@3c366e36fefb wildfly]$ bin/standalone.sh -bmanagement 0.0.0.0
+
+/ geef	,
+http://localhost:9990/management
+/ OK	,
+http://localhost:9990/console
+->
+http://localhost:9990/console/App.html#home
+
+/ 7	. 
+
+/ we deden boven	,
+
+[eric@almond ping]$  docker run --rm -it -p 8080:8080 -p 9990:9990  docker.io/jboss/wildfly:10.1.0.Final bash
+/ en dan in de container	,
+[jboss@3c366e36fefb wildfly]$ bin/add-user.sh
+...
+[jboss@3c366e36fefb wildfly]$ bin/standalone.sh -bmanagement 0.0.0.0
+
+/ 13	. 
+
+/ lees	,
+https://hub.docker.com/r/jboss/wildfly
+Application deployment
+/ klik 'which mode' 	,
+/ lees	,
+https://docs.jboss.org/author/display/WFLY8/Operating+modes
+/ en,
+https://docs.jboss.org/author/display/WFLY8/Domain+Setup
+->
+https://docs.jboss.org/author/display/WFLY10/Management+Clients#ManagementClients-ConfigurationFiles
+
+/ lees	,
+https://docs.jboss.org/author/display/WFLY10/Class+Loading+in+WildFly		/ over modules	,
+->
+https://jboss-modules.github.io/jboss-modules/manual/
+/ via https://docs.jboss.org/author/display/MODULES/Defining+a+module
+
+/ op	,
+https://docs.jboss.org/author/display/WFLY10/Class+Loading+in+WildFly		/ over modules	,
+Deployments in WildFly are also modules, 
+/ TODO
+
+/ lees	,
+https://docs.jboss.org/author/display/WFLY10/Implicit+module+dependencies+for+deployments
+
+/ 13	. 
+
+/ jdbc driver + datasource 
+
+/ lees,
+https://docs.jboss.org/author/display/WFLY10/DataSource+configuration
+->
+https://docs.jboss.org/author/display/WFLY10/Application+deployment
+
+/ google,
+wildfly jdbc driver with jboss-cli
+/ lees,
+http://www.adam-bien.com/roller/abien/entry/installing_oracle_jdbc_driver_on
+/ in de comments,
+module add --name=com.oracle --resources=[path-to-driver]/ojdbc6.jar --dependencies=javax.api,javax.transaction.api
+...
+
+/ google,
+wildfly module-add
+/ lees,
+http://www.mastertheboss.com/jboss-server/jboss-script/installing-a-jboss-as-7-module-using-the-cli
+
+module add --name=org.mysql --resources=mysql-connector-java-5.1.18-bin.jar --dependencies=javax.api,javax.transaction.api
+/subsystem=datasources/jdbc-driver=mysql:add(driver-module-name=org.mysql,driver-name=mysql,driver-class-name=com.mysql.jdbc.Driver)
+/subsystem=datasources/data-source=MySQLDS:add(jndi-name=java:jboss/datasources/MySQLDS, driver-name=mysql, connection-url=jdbc:mysql://localhost:3306/as7development,user-name=root,password=admin)
+
+
+/ 13	. 
+
+/ maar kan het ook met de Dockerfile?
+
+
+
+
+
+/ Einde DOMAINS
+
+/ JBOSS-CLI
+
+++ java -Djboss.modules.system.pkgs=com.sun.java.swing -Dlogging.configuration=file:/home/eric/Devel/Java/jboss/wildfly/build/target/wildfly-10.1.0.Final/bin/jboss-cli-logging.properties -jar /home/eric/Devel/Java/jboss/wildfly/build/target/wildfly-10.1.0.Final/jboss-modules.jar -mp /home/eric/Devel/Java/jboss/wildfly/build/target/wildfly-10.1.0.Final/modules org.jboss.as.cli
+You are disconnected at the moment. Type 'connect' to connect to the server or 'help' for the list of supported commands.
+
+/ 13	. 
+
+/ we geven in jboss-cli	,
+xa-data-source 
+/ dan kunnen we	,
+list-get
+test-connection-in-pool
+
+[eric@almond wildfly]$ less connector/src/main/java/org/jboss/as/connector/subsystems/resourceadapters/Constants.java
+    public static final String TEST_CONNECTION_IN_POOL = "test-connection-in-pool";
+
+/ maar we vinden geen list-get	, of xa-data-source	,
+
+/ list-get vinden we niet	, maar misschien wordt de string opgebouwd	,
+
+/ 13	. 
+
+/ xa-data-source	,
+/ komt op verschillende manieren voor:
+xa-data-source add ...
+/subsystem=datasources/xa-data-source
+./connector/src/main/java/org/jboss/as/connector/subsystems/datasources/XADataSourceConfigService.java:    public static final ServiceName SERVICE_NAME_BASE = ServiceName.JBOSS.append("xa-data-source-config");
+./connector/src/main/java/org/jboss/as/connector/subsystems/datasources/Constants.java:    static final String XA_DATASOURCE = "xa-data-source";
+./connector/src/main/java/org/jboss/as/connector/subsystems/datasources/XaDataSourcePropertyDefinition.java:                DataSourcesExtension.getResourceDescriptionResolver("xa-data-source", "xa-datasource-properties"),
+./connector/src/main/java/org/jboss/as/connector/subsystems/datasources/AbstractXMLDataSourceRuntimeHandler.java:    protected static final String XA_DATA_SOURCE = "xa-data-source";
+./connector/src/main/java/org/jboss/as/connector/deployers/ds/processors/DsXmlDeploymentInstallProcessor.java:    private static final String XA_DATA_SOURCE = "xa-data-source";
+./connector/src/test/java/org/jboss/as/connector/subsystems/complextestcases/ComplexDatasourceSubsystemTestCase.java:        ModelNode modelXaDs=model.get("subsystem", "datasources","xa-data-source",complexXaDs+"_Pool");
+
+/ 13	. 
+
+/ zoek op read-resource	,
+[eric@almond wildfly]$  less ./testsuite/integration/basic/src/test/java/org/jboss/as/test/integration/management/cli/DataSourceTestCase.java
+
+@RunWith(Arquillian.class)
+@RunAsClient
+public class DataSourceTestCase extends AbstractCliTestBase {
+    @ArquillianResource URL url;
+...
+        cli.sendLine("/subsystem=datasources/data-source=TestDS:read-resource(recursive=true)");
+
+
+
+/ Einde JBOSS-CLI

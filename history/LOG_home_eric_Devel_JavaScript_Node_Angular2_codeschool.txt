@@ -1,0 +1,1000 @@
+  571  mixvm for7a
+  572  mixasm for7a
+  573  mixvm -r for7a
+  574  mixvm for7a
+  575  mixasm for9
+  576  mixvm for9
+  577  mixasm for9
+  578  mixvm for9
+  579  mixasm for9;mixvm for9
+  580  cd ..
+  581  cd Manual/
+  582  mixasm for9;mixvm for9
+  583  mixasm for9a;mixvm -r for9a
+  584  mixasm for9a
+  585  mixvm -r for9a
+  586  mixasm for9a
+  587  mixvm -r for9a
+  588  mixvm  for9a
+  589  mixvm -r for9a
+  590  mixvm  for9a
+  591  mixasm for9a
+  592  mixvm  for9a
+  593  exit
+  594  gdb
+  595  cd ..
+  596  ls
+  597  cd ..
+  598  ls
+  599  cd Asm/
+  600  ls
+  601  vi add.c
+  602  exit
+  603  vi add.s
+  604  ls
+  605  man gcc
+  606  cp add.c foo.c
+  607  gcc -S foo.c 
+  608  ls -ltr
+  609  rm foo.s
+  610  gcc -S foo.c -o bar.s
+  611  ls -ltr
+  612  vi bar.s
+  613  vi fun2.c
+  614  vi fun.c
+  615  exit
+  616  gcc -g bar.s
+  617  gdb a.out
+  618  gcc -S fun.c
+  619  gcc -g fun.s
+  620  less fun.s
+  621  ls
+  622  cat add.c 
+  623  cp add.c square.c
+  624  vi square.c 
+  625  gcc -S square.c 
+  626  vi square.
+  627  vi square.s
+  628  exit
+  629  gdb a.out
+  630  exit
+  631  cd 
+  632  cd Devel/
+  633  ls
+  634  cd MIX/
+  635  ls
+  636  cd Manual/
+  637  ls
+  638  locate *.mixal
+  639  less /home/eric/Devel/MIX/Manual/for7a.mixal
+  640  vi hello.mix
+  641  vi hello.mixal
+  642  vi for3.mix
+  643  vi for3.mixal
+  644  ls
+  645  less for2.mixal
+  646  cp for3.mixal for3a.mixal
+  647  vi for3a.mixal 
+  648  mixasm for3a.mixal 
+  649  vi for3a.mixal 
+  650  ls
+  651  less add.mix
+  652  less add.mixal
+  653  vi add.mixal
+  654  rm .add.mixal.swp 
+  655  vi add.mixal
+  656  mixvm -h
+  657  mixvm hello
+  658  cat for5.mixal
+  659  ls
+  660  vi for5.mixal
+  661  vi pr_with_sub.mixal 
+  662  vi max.mixal
+  663  vi max2.mixal
+  664  rm .max2.mixal.swp 
+  665  vi max2.mix
+  666  vi max2.mixal
+  667  grep CHAR -r *
+  668  vi for6.mix
+  669  vi for6.mixal
+  670  vi for6a.mixal
+  671  vi arr.mixal 
+  672  ls
+  673  cp arr.mixal arr2.mixal
+  674  vi arr2.mixal 
+  675  mixasm arr
+  676  mixvm -r arr
+  677  vi arr2.mixal 
+  678  cat for6.mixal
+  679  mixvm for6
+  680  mixvm -r for6
+  681  vi for6a.mixal
+  682  mixvm -r for6a
+  683  vi for6a.mixal
+  684  rm .for7a.mixal.swp 
+  685  vi for7a.mixal
+  686  vi for7c.mixal 
+  687  rm .for7c.mixal.swp 
+  688  ls
+  689  vi for7c.mixal 
+  690  vi for7a.mixal
+  691  vi for9.mixal
+  692  cp -a for9.mixal for9a.mixal
+  693  vi for9a.mixal 
+  694  exit
+  695  ls -ltr
+  696  vi LOG_2_nov_2015.txt 
+  697  exit
+  698  cd Devel/Logs/
+  699  ls -ltr
+  700  vi LOG_7_aug_2015.txt
+  701  exit
+  702  cd ../MIX/
+  703  ls
+  704  cd Manual/
+  705  ls
+  706  ls -ltr
+  707  vi for9.mixal
+  708  vi for9a.mix
+  709  cp for9a.mixal  for9a_2.mixal
+  710  vi for9a_2.mixal 
+  711  mv for9a_2.mixal for9_2.mixal
+  712  cp for9a.mixal  for9a_2.mixal
+  713  vi for9a_2.mixal 
+  714  ls -ltr
+  715  vi for9a.mixal
+  716  cp for9a.mixal  for9a_2.mixal
+  717  vi for9a_2.mixal 
+  718  less for9_2.mixal 
+  719  vi for9.mixal
+  720  vi for9_2.mixal 
+  721  vi for9a.mixal 
+  722  vi for9a_2.mixal 
+  723  vi for9_2.mixal 
+  724  mv for9_2.mixal for9a_2.mixal
+  725  cp for9.mixal for9_2.mixal
+  726  mixasm for9a_2.mixal 
+  727  mixvm -r for9a_2.mixal 
+  728  mixvm -r for9a_2
+  729  mixvm for9a_2
+  730  mixasm for9a_2.mixal 
+  731  mixvm -r for9a_2.mixal 
+  732  mixvm -r for9a_2
+  733  mixvm  for9a_2
+  734  vi for9a_2.mix
+  735  vi for9a_2.mixal
+  736  mixasm for9a_2.mixal 
+  737  mixvm  -r for9a_2
+  738   mixasm jump
+  739  mixvm jump
+  740   mixasm jump
+  741  mixvm jump
+  742   mixasm jump
+  743  mixvm jump
+  744   mixasm jump
+  745  mixvm jump
+  746   mixasm jump
+  747  mixvm jump
+  748   mixasm jump
+  749  mixvm jump
+  750   mixasm jump
+  751  mixvm jump
+  752  vi for9a_2.mix
+  753  vi for9a_2.mixal
+  754  ls
+  755  vi pr_with_sub.mixal 
+  756  vi reg_to_reg.mixal
+  757  vi in.mixal
+  758  vi literallist.mixal
+  759  vi in.mix
+  760  vi in.mixal
+  761  mixasm pr_with_sub_2.mix
+  762  ls
+  763  mixasm pr_with_sub_2
+  764  mixvm -r pr_with_sub_2
+  765  mixasm pr_with_sub_2
+  766  mixvm -r pr_with_sub_2
+  767  w
+  768  exit
+  769  mixasm pr_with_sub_2.mixal 
+  770  mixvm pr_with_sub_2.mixal 
+  771  mixvm pr_with_sub_2
+  772  grep PRINTER -r *
+  773  exit
+  774  java -version
+  775  which java
+  776  ls -l /usr/bin/java
+  777  ls -l /etc/alternatives/java
+  778  ls /usr/lib/jvm
+  779  ls -l /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.65-3.b17.fc21.x86_64
+  780  ls -l /usr/lib/jvm/jre
+  781    exit
+  782  less for9a_2.mixal
+  783  vi  for9a_2.mixal
+  784  ls
+  785  vi jump.mixal
+  786  vi jump.mixal 
+  787  cp jump.mixal loop.mixal
+  788  vi loop.mixal 
+  789  cp loop.mixal loop_2.mixal
+  790  vi loop2
+  791  vi loop_2.mixal 
+  792  vi jump.mixal
+  793  cp jump.mixal jump_2.mixal
+  794  vi jump_2.mixal 
+  795  vi for9a_2.mixal
+  796  less loop.mixal
+  797  mixasm reg_to_reg.mixal 
+  798  mixvm reg_to_reg
+  799  mixasm reg_to_reg.mixal 
+  800  mixvm reg_to_reg
+  801  mixasm reg_to_reg.mixal 
+  802  mixvm reg_to_reg
+  803  mixasm reg_to_reg.mixal 
+  804  mixvm reg_to_reg
+  805  mixasm reg_to_reg.mixal 
+  806  mixvm reg_to_reg
+  807  mixasm in.mixal 
+  808  mixvm -r in
+  809  mixvm in
+  810  mixasm in.mixal 
+  811  mixvm in
+  812  mixasm in
+  813  mixvm in
+  814  mixasm pr_with_sub_2.mixal
+  815  mixasm tmp
+  816  mixvm tmp
+  817  mixasm tmp
+  818  mixvm tmp
+  819  mixasm tmp
+  820  mixvm tmp
+  821  mixasm tmp
+  822  mixvm tmp
+  823  vi pr_with_sub_2.mix
+  824  vi pr_with_sub_2.mixal 
+  825  exit
+  826  mixasm for9a_2
+  827  mixvm -r for9a_2
+  828  mixasm loop.mixal 
+  829  mixvm loop
+  830  mixasm loop_2
+  831  mvxvm loop_2
+  832  mixvm loop_2
+  833  mixasm loop_2
+  834  mixasm -r loop_2
+  835  mixvm -r loop_2
+  836  mixasm loop9a_2
+  837  mixasm for9a_2
+  838  mixvm -r for9a_2
+  839  mixvm for9a_2
+  840  mixvm -r for9a_2
+  841  mixasm for9a_2
+  842  mixvm -r for9a_2
+  843  ls
+  844  vi pr_with_sub_2.mixal 
+  845  vi tmp.mixal 
+  846  exit
+  847  gcc arr.c 
+  848  gdb a.out
+  849  gcc arr.c 
+  850  gcc -g arr.c 
+  851  gcc arr.c 
+  852  gcc -g arr.c 
+  853  gdb a.out
+  854  gcc -S arr.c 
+  855  vi arr.s
+  856  exit
+  857  cd 
+  858  cd Devel/
+  859  ls
+  860  cd Asm/
+  861  ls
+  862  vi arr.c
+  863  grep malloc -r *
+  864  vi arr.c
+  865  gcc arr.c 
+  866  vi arr.c
+  867  gcc arr.c 
+  868  vi arr.c
+  869  exit
+  870  cd ../MIX/Manual/
+  871  ls
+  872  vi pr_with_sub_2.mix
+  873  vi pr_with_sub_2.mixal
+  874  pwd
+  875  ls
+  876  exit
+  877  cd 
+  878  cd Devel/Golang/
+  879  ls
+  880  cd work/
+  881  ls
+  882  cd src/
+  883  ls
+  884  go install my/my_hello
+  885  head ../bin/my_hello
+  886  ls
+  887  ls my/
+  888  mkdir my/basics1
+  889  ../bin/my_hello
+  890  mv my/my_hello/hello.go my/my_hello/main.go
+  891  go install my/my_hello
+  892  ../bin/my_hello
+  893  my_hello
+  894  go tool compile -S my/my_hello
+  895  go tool compile -S my/my_hello/main.go 
+  896  ls ..
+  897  ls ../ibn
+  898  ls ../bin
+  899  ls
+  900  cd ../
+  901  cd ..
+  902  ls
+  903  mkdir work2
+  904  mkdir work2/src
+  905  mv work/src/my/ work2/src/
+  906  vi ~/.bash_profile 
+  907  . ~/.bash_profile 
+  908  echo $GOPATH
+  909  rm work/bin/my_hello*
+  910  mr work/bin/hello 
+  911  rm work/bin/hello 
+  912  cd work2/src/
+  913  go install my/my_hello
+  914  ls ..
+  915  ls ../../work2/bin
+  916  pwd
+  917  ls ../../work/bin
+  918  ls ../bin/
+  919  pd
+  920  pwd
+  921  . ~/.bash_profile
+  922  wpd
+  923  cat package.json 
+  924  exit
+  925  vi ks2.R 
+  926  exit
+  927  cd 
+  928  ls
+  929  cd Devel/
+  930  ls
+  931  cd Gradle/
+  932  ls
+  933  ls Java/
+  934  ls -ltr ~/Downloads/
+  935  ls -ltr ~/Downloads/ | grep gradle
+  936  unzip -l ~/Downloads/gradle-2.13-bin.zip 
+  937  echo $GRADLE_HOME
+  938  vi ~/.bash_profile 
+  939  unzip  ~/Downloads/gradle-2.13-bin.zip 
+  940  vi ~/.bash_profile 
+  941  wpd
+  942  pwd
+  943  ls
+  944  mv gradle-2.13/ Java/
+  945  cd Java/
+  946  ls
+  947  cd gradle-2.13/
+  948  ls
+  949  pwd
+  950  vi ~/.bash_profile 
+  951  . ~/.bash_profile 
+  952  which gradle
+  953  cd ..
+  954  cat ~/.bash_profile 
+  955  gradle
+  956  ls
+  957  gradle
+  958  ls
+  959  cd my
+  960  ls
+  961  gradlew
+  962  gradle wrapper
+  963  ls
+  964  ./gradlew 
+  965  ls
+  966  ls -ltr
+  967  rm -rf gradle gradlew gradlew.bat 
+  968  ls
+  969  ls ch6.6
+  970  vi ch6.6/build.gradle 
+  971  mkdir ch5
+  972  cd ch5
+  973  pwd
+  974  gradle wrapper
+  975  ls
+  976  vi build.properties
+  977  find
+  978  gradle --help
+  979  gradle -v
+  980  which gradle
+  981  vi ~/.bash_profile 
+  982  echo $PATH
+  983  vi ~/.bashrc
+  984  vi ~/.bash_profile 
+  985  gradle -v
+  986  . ~/.bash_profile 
+  987  gradle -v
+  988  echo $PATJH
+  989  echo $PATH
+  990  vi ~/.bash_profile 
+  991  PATH=
+  992  echo $PATH
+  993  vi ~/.bash_profile 
+  994  exit
+  995  cd 
+  996  cd Devel/Gradle/Java/my
+  997  echo $PATH
+  998  . ~/.bash_profile 
+  999  less chisq2a.R 
+ 1000  exit
+ 1001  pwd
+ 1002  ls
+ 1003  cd ../video2
+ 1004  npm start
+ 1005  nvm use v5.5.0
+ 1006  npm start
+ 1007  vi index.js
+ 1008  npm i --save-dev webpack-dev-server
+ 1009  ls
+ 1010  vi package.json 
+ 1011  rm index.html 
+ 1012  npm start
+ 1013  cp ../video/index.html .
+ 1014  npm start
+ 1015  cat index.html 
+ 1016  cat index.js
+ 1017  cat bear.js 
+ 1018  cat package.json 
+ 1019  vi index.html 
+ 1020  npm start
+ 1021  pwd
+ 1022  vi bear2.js
+ 1023  npm i --save jquery
+ 1024  cp index.js index2.js
+ 1025  vi index2.js
+ 1026  cat bear2.js
+ 1027  vi index2.js 
+ 1028  npm start
+ 1029  vi package.json 
+ 1030  npm start
+ 1031  vi package.json 
+ 1032  npm start
+ 1033  vi package.json 
+ 1034  npm start
+ 1035  cat package.json 
+ 1036  pwd
+ 1037  cd ..
+ 1038  ls
+ 1039  cd ../../
+ 1040  cd Node/CodeSchool/Express
+ 1041  ls
+ 1042  vi package.json 
+ 1043  npm start
+ 1044  vi package.json 
+ 1045  node run
+ 1046  vi package.json 
+ 1047  node debug
+ 1048  npm run
+ 1049  vi package.json 
+ 1050  npm run
+ 1051  npm debug
+ 1052  vi package.json 
+ 1053  npm start
+ 1054  vi package.json 
+ 1055  npm start 
+ 1056  vi package.json 
+ 1057  npm start 
+ 1058  npm run start 
+ 1059  npm run
+ 1060  npm start 
+ 1061  npm start -- --debug
+ 1062  vi package.json 
+ 1063  npm start
+ 1064  node debug index.js
+ 1065  vi package.json 
+ 1066  npm start
+ 1067  vi package.json 
+ 1068  npm start
+ 1069  npm dev
+ 1070  npm run dev
+ 1071  vi package.json 
+ 1072  npm run run
+ 1073  [A
+ 1074  npm run run
+ 1075  ls
+ 1076  mkdir level2partI
+ 1077  cp -a index.js public/ level2partI/
+ 1078  ls
+ 1079  vi logger.js
+ 1080  vi index.js 
+ 1081  npm run run
+ 1082  npm run debug
+ 1083  cat package.json 
+ 1084  vi package.json 
+ 1085  npm run debug
+ 1086  npm run run
+ 1087  vi index.js 
+ 1088  npm run run
+ 1089  mount
+ 1090  ls /run/media/eric/WD/
+ 1091  mount
+ 1092  ls /run/media/eric/WD/
+ 1093  ls /run/media/eric/WD/almond2
+ 1094  ls /run/media/eric/WD/almond2/home/eric/
+ 1095  ls /run/media/eric/WD/almond2/home/eric/Downloads/
+ 1096  ls /run/media/eric/WD/almond2/home/eric -l
+ 1097  ls -l ~/
+ 1098  mount
+ 1099  (cd /run/media/eric/WD/almond2/home/eric/Downloads/;ls)
+ 1100  pwd
+ 1101  cd 
+ 1102  ls
+ 1103  mkdir tmp
+ 1104  cd tmp/
+ 1105  (cd /run/media/eric/WD/almond2/home/eric/Downloads/;ls )
+ 1106  (cd /run/media/eric/WD/almond2/home/eric/Downloads/;rm *)
+ 1107  (cd /run/media/eric/WD/almond2/home/eric/Downloads/;ls; )
+ 1108  (cd /run/media/eric/WD/almond2/home/eric/Downloads/;ls)
+ 1109  sudo su -
+ 1110  cd /home/eric/Devel/JavaScript/Node/CodeSchool/Express
+ 1111  ls
+ 1112  sudo su -
+ 1113  ls
+ 1114  cp -a index.js public/ level3partII
+ 1115  vi public/index.html 
+ 1116  vi level2partI/public/client.js 
+ 1117  vi public/client.js 
+ 1118  npm run run
+ 1119  vi ~/tmp/urlencode.txt
+ 1120  od -t x1 -t c~/tmp/urlencode.txt
+ 1121  od -t x1 -t c~ /tmp/urlencode.txt
+ 1122  od -t x1 -t c ~/tmp/urlencode.txt
+ 1123  vi ~/tmp/urlencode.txt
+ 1124  od -t x1 -t c ~/tmp/urlencode.txt
+ 1125  vi ~/tmp/urlencode.txt
+ 1126  od -t x1 -t c ~/tmp/urlencode.txt
+ 1127  vi ~/tmp/urlencode.txt
+ 1128  ls
+ 1129  vi index.js 
+ 1130  npm run debug
+ 1131  npm run run
+ 1132  npm run debug
+ 1133  npm run run
+ 1134  ls
+ 1135  vi public/jquery.js 
+ 1136  man cn
+ 1137  man nc
+ 1138  pwd
+ 1139  less package.json 
+ 1140  less server.js 
+ 1141  less package.json 
+ 1142  nc 127.0.0.1 1234
+ 1143  man bash
+ 1144  bash
+ 1145  bash -i
+ 1146  nc --help
+ 1147   ls
+ 1148  cp server.js public/ level4partII/
+ 1149  cp -a server.js public/ level4partII/
+ 1150  npm run run
+ 1151  cp -a server.js public/ level4partII/
+ 1152  vi level4partII/server.js 
+ 1153  vi level4partII/public/client.js 
+ 1154  rm level4partII/public/.client.js.swp 
+ 1155  vi level4partII/public/client.js 
+ 1156  npm run debug
+ 1157  npm run run
+ 1158  cd ../../
+ 1159  cd ../
+ 1160  cd Polymer/
+ 1161  npm
+ 1162  ls
+ 1163  cd polymer-first-elements/
+ 1164  ls
+ 1165  polymer serve
+ 1166  ls
+ 1167  less icon-toggle.html 
+ 1168  less demo/index.html 
+ 1169  ls
+ 1170  less icon-toggle.html 
+ 1171  ls demo/
+ 1172  less demo/index.html 
+ 1173  less demo/icon-toggle-demo.html 
+ 1174  vi icon-toggle.html 
+ 1175  less demo/index.html 
+ 1176  less demo/icon-toggle-demo.html 
+ 1177  cd ..
+ 1178  polymer serve
+ 1179  cd ..
+ 1180  ls
+ 1181  mv Polymer/ Node/
+ 1182  cd Node/Polymer/
+ 1183  ls
+ 1184  cd polymer-first-elements/
+ 1185  ls
+ 1186  less bower.json 
+ 1187  less README.md 
+ 1188  less bower.json 
+ 1189  ls
+ 1190  ls demo/index.html 
+ 1191  less demo/index.html 
+ 1192  ls
+ 1193  cp -a demo/ demo_orig
+ 1194  vi demo/icon-toggle-demo.html 
+ 1195  ls
+ 1196  mv demo_orig/ my
+ 1197  cp icon-toggle.html  my
+ 1198  rm my/icon-toggle-demo.html 
+ 1199  cd my
+ 1200  cd ../
+ 1201  cd demo
+ 1202  ls
+ 1203  vi icon-toggle.html 
+ 1204  vi index.html 
+ 1205  vi icon-toggle.html 
+ 1206  vi index.html 
+ 1207  vi icon-toggle.html 
+ 1208  less ../demo_orig/index.html 
+ 1209  less ../demo_orig/icon-toggle-demo.html 
+ 1210  vi icon-toggle.html 
+ 1211  pwd
+ 1212  ls
+ 1213  cd ..
+ 1214  ls
+ 1215  less demo_orig/icon-toggle-demo.html 
+ 1216  vi demo/icon-toggle.html 
+ 1217  less bower_components/iron-icon/demo/async.html 
+ 1218  cp bower_components/iron-icon/demo/location.png demo
+ 1219  vi demo/icon-toggle.html 
+ 1220  less bower_components/iron-icon/demo/async.html 
+ 1221  vi demo/icon-toggle.html 
+ 1222  find -name "*.svg"
+ 1223  ls
+ 1224  cd demo
+ 1225  ls
+ 1226  vi icon-toggle.html 
+ 1227  ls
+ 1228  pwd
+ 1229  ls
+ 1230  less ../bower_components/iron-icons/iron-icons.html 
+ 1231  rm location.png 
+ 1232  vi icon-toggle.html 
+ 1233  vi index.html 
+ 1234  ls
+ 1235  vi icon-toggle.html 
+ 1236  ls
+ 1237  ls ../icon-toggle-finished/icon-toggle.html 
+ 1238  less../icon-toggle-finished/icon-toggle.html 
+ 1239  less ../icon-toggle-finished/icon-toggle.html 
+ 1240  less ../icon-toggle-finished/demo/index.html 
+ 1241  less ../icon-toggle-finished/demo/icon-toggle-demo.html 
+ 1242  ls
+ 1243  vi icon-toggle.html 
+ 1244  vi index.html 
+ 1245  vi icon-toggle.html 
+ 1246  cd ..
+ 1247  ls
+ 1248  cp -a demo demo_my_first
+ 1249  ls
+ 1250  vi icon-toggle.html 
+ 1251  ls demo_orig/
+ 1252  ls
+ 1253  ls demo_my_first/
+ 1254  ls demo_orig/
+ 1255  mv icon-toggle.html icon-toggle.html_orig
+ 1256  ls
+ 1257  ls demo_orig/
+ 1258  mv demo/icon-toggle.html demo/demo-icon-toggle.html
+ 1259  cp icon-toggle.html_orig demo/icon-toggle.html
+ 1260  ls demo_orig/
+ 1261  ls
+ 1262  ls demo_my_first/
+ 1263  ls
+ 1264  ls demo
+ 1265  mv demo/icon-toggle.html .
+ 1266  ls
+ 1267  cd demo
+ 1268  vi index.html 
+ 1269  vi ../demo_orig/index.html 
+ 1270  mv demo-icon-toggle.html icon-toggle-demo.html
+ 1271  vi index.html 
+ 1272  ls
+ 1273  vi icon-toggle-demo.html 
+ 1274  vi ../icon-toggle.html
+ 1275  mkdir icon-toggle-orig
+ 1276  cd ..
+ 1277  ls
+ 1278  mv demo/icon-toggle-orig/ .
+ 1279  ls
+ 1280  mv icon-toggle.html_orig  icon-toggle-orig/icon-toggle.html
+ 1281  ls demo_orig/
+ 1282  mv demo_orig/ icon-toggle-orig/demo
+ 1283  ls icon-toggle-orig/
+ 1284  cp bower.json icon-toggle-orig/
+ 1285  ls icon-toggle-orig/
+ 1286  ls icon-toggle-finished/
+ 1287  mkdir icon-toggle-my-first
+ 1288  mv demo_my_first/ icon-toggle-my-first/demo
+ 1289  cp bower.json icon-toggle-my-first/
+ 1290  ls icon-toggle-my-first/
+ 1291  ls
+ 1292  vi demo/index.html 
+ 1293  vi icon-toggle.html 
+ 1294  cp icon-toggle-my-first/demo/icon-toggle.html .
+ 1295  vi icon-toggle.html 
+ 1296  vi demo/icon-toggle-demo.html 
+ 1297  ls
+ 1298  mkdir icon-toggle-my-second
+ 1299  cp -a bower.json icon-toggle.html demo/ icon-toggle-my-second/
+ 1300  cat icon-toggle-my-second/demo/index.html 
+ 1301  cat icon-toggle-my-second/demo/icon-toggle-demo.html 
+ 1302  cat icon-toggle-my-second/icon-toggle.html 
+ 1303  vi demo/index.html 
+ 1304  vi demo/icon-toggle-demo.html 
+ 1305  vi icon-toggle.html 
+ 1306  vi demo/icon-toggle-demo.html 
+ 1307  vi demo/index.html 
+ 1308  vi icon-toggle.html 
+ 1309  vi demo/icon-toggle-demo.html 
+ 1310  vi demo/index.html 
+ 1311  vi icon-toggle.html 
+ 1312  vi demo/icon-toggle-demo.html 
+ 1313  cp -a bower.json icon-toggle.html demo/ icon-toggle-my-second/
+ 1314  less icon-toggle-finished/icon-toggle.html 
+ 1315  less icon-toggle-finished/demo/icon-toggle-demo.html 
+ 1316  less icon-toggle-finished/icon-toggle.html 
+ 1317  less icon-toggle-finished/demo/icon-toggle-demo.html 
+ 1318  less icon-toggle-finished/icon-toggle.html 
+ 1319  vi demo/index.html 
+ 1320  vi demo/icon-toggle-demo.html 
+ 1321  vi icon-toggle.html 
+ 1322  vi demo/icon-toggle-demo.html 
+ 1323  vi icon-toggle.html 
+ 1324  ls
+ 1325  mkdir icon-toggle-my-third
+ 1326  cp -a bower.json icon-toggle.html demo/ icon-toggle-my-third/
+ 1327  ls demo/
+ 1328  ls
+ 1329  vi icon-toggle.html 
+ 1330  vi demo/icon-toggle-demo.html 
+ 1331  vi icon-toggle
+ 1332  vi icon-toggle.html 
+ 1333  ls
+ 1334  mkdir icon-toggle-my-fourth
+ 1335  cp -a bower.json icon-toggle.html demo/ icon-toggle-my-fourth/
+ 1336  vi icon-toggle.html 
+ 1337  vi demo/icon-toggle-demo.html 
+ 1338  ls
+ 1339  mkdir icon-toggle-my-fifth
+ 1340  cp bower.json icon-toggle.html demo/ icon-toggle-my-fifth/
+ 1341  cp -a bower.json icon-toggle.html demo/ icon-toggle-my-fifth/
+ 1342  ls
+ 1343  ls icon-toggle-my-fifth/
+ 1344  cd ..
+ 1345  tar cvzf polymer-first-elements.tgz polymer-first-elements/
+ 1346  cd polymer-first-elements/
+ 1347  ls
+ 1348  cp icon-toggle-finished/icon-toggle.html .
+ 1349  cp -a icon-toggle-finished/demo/ .
+ 1350  ls
+ 1351  vi icon-toggle
+ 1352  vi icon-toggle.html 
+ 1353  vi demo/index.html 
+ 1354  vi demo/icon-toggle-demo.html 
+ 1355  ls
+ 1356  ls icon-toggle-finished/
+ 1357  ls icon-toggle-finished/demo/
+ 1358  ls
+ 1359  ls icon-toggle-finished/demo/
+ 1360  cp icon-toggle-my-fifth/icon-toggle.html .
+ 1361  cp -a icon-toggle-my-fifth/demo/ .
+ 1362  vi demo/icon-toggle-demo.html 
+ 1363  vi icon-toggle
+ 1364  vi icon-toggle.html 
+ 1365  vi demo/icon-toggle-demo.html 
+ 1366  vi icon-toggle.html 
+ 1367  vi demo/icon-toggle-demo.html 
+ 1368  vi icon-toggle.html 
+ 1369  vi icon-toggle
+ 1370  vi icon-toggle.html 
+ 1371  vi demo/icon-toggle-demo.html 
+ 1372  diff icon-toggle.html icon-toggle-finished/icon-toggle.html 
+ 1373  diff demo/icon-toggle-demo.html icon-toggle-finished/demo/icon-toggle-demo.html 
+ 1374  diff demo/index.html icon-toggle-finished/demo/index.html 
+ 1375  mkdir icon-toggle-my-fifth-a
+ 1376  cp -a bower.json icon-toggle.html demo/ icon-toggle-my-fifth-a
+ 1377  ls icon-toggle-my-fifth-a/
+ 1378  ls icon-toggle-my-fifth-a//demo/
+ 1379  cp icon-toggle-finished/icon-toggle.html .
+ 1380  cp icon-toggle-finished/demo/icon-toggle-demo.html .
+ 1381  diff bower.json icon-toggle-finished/bower.json 
+ 1382  mv icon-toggle-demo.html demo/
+ 1383  cp icon-toggle-finished/demo/index.html demo/
+ 1384  ls icon-toggle-finished/demo/
+ 1385  diff icon-toggle-finished/icon-toggle.html icon-toggle.html 
+ 1386  diff icon-toggle-finished/demo/icon-toggle-demo.html demo/icon-toggle-demo.html 
+ 1387  diff icon-toggle-finished/demo/index.html demo/index.html 
+ 1388  diff icon-toggle-finished/bower.json bower.json 
+ 1389  ls -al icon-toggle-finished/
+ 1390  ls -al icon-toggle-finished/demo/
+ 1391  cp -a icon-toggle-finished/icon-toggle.html .
+ 1392  cp -a icon-toggle-finished/demo/ .
+ 1393  pwd
+ 1394  vi icon-toggle.html 
+ 1395  ls
+ 1396  ls bower_components/
+ 1397  cd ../my-el/
+ 1398  ls
+ 1399  vi index.html 
+ 1400  vi demo/index.html 
+ 1401  vi my-el.html 
+ 1402  vi demo/index.html 
+ 1403  cd ../app
+ 1404  ls
+ 1405  vi index.html 
+ 1406  vi src/my-app/my-app.html 
+ 1407  cd ../my-el/
+ 1408  polymer serve
+ 1409  vi my-el.html 
+ 1410  vi demo/index.html 
+ 1411  cd ../my-app/
+ 1412  ls
+ 1413  vi index.html 
+ 1414  vi src/my-app.html 
+ 1415  vi src/my-view1.html 
+ 1416  vi my-i
+ 1417  vi src/my-icons.html 
+ 1418  grep my-icons -r src/
+ 1419  vi src/my-app.html 
+ 1420  vi src/my-new-view.html
+ 1421  vi src/my-app.html 
+ 1422  less ../my-el/my-el.html 
+ 1423  less ../polymer-first-elements/icon-toggle.html 
+ 1424  less ../polymer-first-elements/demo/icon-toggle-demo.html 
+ 1425  less ../polymer-first-elements/icon-toggle.html 
+ 1426  less ../polymer-first-elements/demo/icon-toggle-demo.html 
+ 1427  vi src/my-app.html 
+ 1428  less src/my-app.html 
+ 1429   i src/my-app.html 
+ 1430  vi src/my-app.html 
+ 1431  ls src/
+ 1432  cat src/my-new-view.html 
+ 1433  pwd
+ 1434  cat src/my-app.html
+ 1435  vi src/my-app.html 
+ 1436  vi index.html 
+ 1437  vi src/my-app.html 
+ 1438  vi polymer.json 
+ 1439  ls service-worker.js 
+ 1440  ls src/
+ 1441  vi polymer.json 
+ 1442  vi src/my-app.html 
+ 1443  bower install --save PolymerElements/paper-slider
+ 1444  vi src/my-new-view.html 
+ 1445  polymer build
+ 1446  ls 
+ 1447  ls build/
+ 1448  ls build/bundled/
+ 1449  vi index.html 
+ 1450  vi src/my-app.html 
+ 1451  cat ~/.bash_profile 
+ 1452  which appcfg.sh 
+ 1453  ls
+ 1454  vi app.yaml
+ 1455  cd ../../
+ 1456  ls
+ 1457  mkdir Angular2
+ 1458  cd Angular2/
+ 1459  pd
+ 1460  pwd
+ 1461  mkdir quickstart
+ 1462  cd quickstart/
+ 1463  npm init
+ 1464  cd ..
+ 1465  mv quickstart/ angular2-quickstart/
+ 1466  cd angular2-quickstart/
+ 1467  npm init
+ 1468  npm i --save @angular/common
+ 1469* npm i --save \@angular/comm
+ 1470  vi package.json 
+ 1471  npm i --save @angular/core
+ 1472  npm i --save rxjs
+ 1473  npm i --save zone.js
+ 1474  cat package.json 
+ 1475  ls node_modules/
+ 1476  rm -rf node_modules/
+ 1477  vi package.json 
+ 1478  npm i --save zone.js
+ 1479  npm i --save rxjs
+ 1480  npm i --save @angular/core
+ 1481  cat package.json 
+ 1482  vi package.json 
+ 1483  rm node_modules/@angular/ -rf
+ 1484  npm i --save @angular/core
+ 1485  rm node_modules/ -rf 
+ 1486  vi package.json 
+ 1487  npm i --save zone.js
+ 1488  npm i --save rxjs@5.0.0-beta.6
+ 1489  npm i --save @angular/core
+ 1490  npm i --save @angular/common
+ 1491  rm -rf node_modules/
+ 1492  vi package.json 
+ 1493  npm i --save @angular/core
+ 1494  npm i --save rxjs@5.0.0-beta.6
+ 1495  npm i --save zone.js
+ 1496  npm i --save @angular/compiler
+ 1497  npm i --save @angular/forms
+ 1498  vi package.json 
+ 1499  npm i --save @angular/common
+ 1500  npm i --save @angular/http
+ 1501  npm i --save @angular/browser
+ 1502  npm i --save @angular/platform-browser
+ 1503  npm i --save @angular/platform-browser-dynamic
+ 1504  npm i --save @angular/router
+ 1505  npm i --save @angular/router-deprecated
+ 1506  npm i --save @angular/upgrade
+ 1507  npm i --save systemjs
+ 1508  npm i --save core-js
+ 1509  npm i --save reflect-metadata
+ 1510  npm i --save rxjs
+ 1511* rm  node_modules/rxjs -r
+ 1512  vi package.json 
+ 1513  npm i --save rxjs@5.0.0-beta.6
+ 1514  npm i --save angular2-in-memory-web-api
+ 1515  npm i --save bootstrap
+ 1516  npm i --save-dev concurrently
+ 1517  npm i --save-dev lite-server
+ 1518  npm i --save-dev typescript
+ 1519  npm i --save-dev typings
+ 1520  vi package.json 
+ 1521  mkdir app
+ 1522  vi app/app.component.ts
+ 1523  vi app/main.ts
+ 1524  vi index.html
+ 1525  less index.html 
+ 1526  vi style.css
+ 1527  npm start
+ 1528  ls
+ 1529  npm run typings -- install
+ 1530  ls
+ 1531  cd ..
+ 1532  ls
+ 1533  git clone  https://github.com/angular/quickstart  my-proj
+ 1534  cd my-proj/
+ 1535  rm -rf .git
+ 1536  git init
+ 1537  git add .
+ 1538  git commit -m 'Initial commit'
+ 1539  rm -rf .git
+ 1540  npm install
+ 1541  ls
+ 1542  npm start
+ 1543  npm test
+ 1544  ls
+ 1545  ls ../ap
+ 1546  ls ../angular2-quickstart/
+ 1547   ls
+ 1548  npm start
+ 1549  vi package.json 
+ 1550  find -maxdepth 1 
+ 1551  find -maxdepth 1  | xargs grep app
+ 1552  vi index.html 
+ 1553  npm start
+ 1554  cd ../codeschool/
+ 1555  npm start
+ 1556  pwd
+ 1557  curl -X GET localhost:3000
+ 1558  curl -X GET localhost:3000/blocks
+ 1559  curl -X -L GET localhost:3000/blocks
+ 1560  curl -X GET  -L localhost:3000/blocks
+ 1561  curl -X GET   localhost:3000/blocks
+ 1562  curl -X GET -i   localhost:3000/blocks
+ 1563  vi 
+ 1564  echo ü | od -t x1
+ 1565  echo -n ü | od -t x1
+ 1566  ls
+ 1567  vi index.html 
+ 1568  pwd
+ 1569  pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+ 1570  history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_JavaScript_Node_Angular2_codeschool.txt

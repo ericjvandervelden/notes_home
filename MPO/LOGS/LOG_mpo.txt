@@ -1,0 +1,94 @@
+/ 7	. 
+
+/ click op Groups
+/ browse all, 
+MPO SCS mails
+https://groups.google.com/a/mp-objects.com/forum/?hl=en-GB#!forum/mposcs
+/ joined, 	en added to favourites	,
+
+/ hoe met versleuteld wachtwoord	?
+/ zoek in group op 'scstest'	, 
+/ ga naar scstest site	, en vul username in, en click 'forgotten password'	, 
+https://test-scs.mp-objects.com/scstest/wicket/authentication/password/forgotpassword
+/ we moeten opnieuw user name geven	, 
+[mposcs] [TEST] Reset password request
+/ er komt een email in de group , daar staat reset code in	,
+bG9wZXptCjEwNjFmODlhLTZlZTEtNGRmYi04NzFkLWJkZGY0ODI1NzkxYg==
+/ we zien de link 'reset password page'	, 
+https://test-scs.mp-objects.com/scstest/wicket/authentication/password/forgotpassword/wicket:interface/:4:resetPage:resetPageLink::ILinkListener::
+
+
+/ 7	. 
+
+/ we kunnen login 
+$ ssh jboss@vs-test-2
+jboss@mpo
+/ Dit is de machine test-scs.mp-objects.com,	 waar scstest is	, 
+https://test-scs.mp-objects.com/scstest/core/index_frameset
+
+
+/ ga naar	, 
+https://system.mp-objects.com/jenkins/
+/ we zien SCS en SCS-TEST
+/ SCS builds ... om het 1/2 uur, maar deploys niet	, ant target: all
+https://system.mp-objects.com/svn/tms/trunk
+/ SCS-TEST deploys ant target: all-dev-deploy, deployes naar scstest	, 
+
+/ 7	. 
+
+/ install jdk6	, 
+
+http://www.oracle.com/technetwork/java/javase/install-linux-64-self-extracting-142068.html
+
+[eric@localhost Java]$ pwd
+/home/eric/Devel/Java
+[eric@localhost Java]$ cp -a ~/Downloads/jdk-6u45-linux-x64.bin .
+[eric@localhost Java]$ chmod u+x jdk-6u45-linux-x64.bin 
+[eric@localhost Java]$ ./jdk-6u45-linux-x64.bin 
+[eric@localhost Java]$ ls jdk1.6.0_45/
+bin  COPYRIGHT  db  include  jre  lib  LICENSE  man  README.html  src.zip  THIRDPARTYLICENSEREADME.txt
+[eric@localhost Java]$ rm jdk-6u45-linux-x64.bin 
+
+/ 7	. 
+
+/ deploy isbscs
+
+2016-12-15 07:33:26,369 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)    MUST_BE_REMOVED : commons-beanutils-1.9.1.jar
+2016-12-15 07:33:26,369 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : commons-beanutils-1.9.2.jar
+2016-12-15 07:33:26,369 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)    MUST_BE_REMOVED : commons-collections-3.2.1.jar
+2016-12-15 07:33:26,369 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : commons-collections-3.2.2.jar
+2016-12-15 07:33:26,370 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)    MUST_BE_REMOVED : commons-logging-1.1.2.jar
+2016-12-15 07:33:26,370 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : commons-logging-1.2.jar
+2016-12-15 07:33:26,370 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : commons-validator-1.5.1.jar
+2016-12-15 07:33:26,371 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)    MUST_BE_REMOVED : commons-validator.jar
+2016-12-15 07:33:26,381 ERROR [com.mpobjects.libcheck.LibCheckService] (main:)            MISSING : vt-password-3.1.2.jar
+
+/ we tonen nu met echo	, maar doe later zonder echo	,
+[eric@localhost workspace]$ find 2016.09 -name commons-beanutils-1.9.2.jar -o -name commons-collections-3.2.2.jar -o -name commons-logging-1.2.jar -o -name commons-validator-1.5.1.jar -o -name vt-password-3.1.2.jar | xargs -I % echo scp % vanderveldene@isb-app-p.intermax.mp-objects.com:Downloads
+scp 2016.09/base-framework/core/lib/jar/commons-collections-3.2.2.jar vanderveldene@isb-app-p.intermax.mp-objects.com:Downloads
+scp 2016.09/base-framework/core/lib/jar/commons-beanutils-1.9.2.jar vanderveldene@isb-app-p.intermax.mp-objects.com:Downloads
+scp 2016.09/base-framework/core/lib/jar/vt-password-3.1.2.jar vanderveldene@isb-app-p.intermax.mp-objects.com:Downloads
+scp 2016.09/base-framework/core/lib/jar/commons-validator-1.5.1.jar vanderveldene@isb-app-p.intermax.mp-objects.com:Downloads
+scp 2016.09/base-framework/core/lib/jar/commons-logging-1.2.jar vanderveldene@isb-app-p.intermax.mp-objects.com:Downloads
+/ Waarom een voor een	?
+/ TODO
+
+[jboss@isb-app-p isbscs]$ rm lib/commons-beanutils-1.9.1.jar lib/commons-collections-3.2.1.jar lib/commons-logging-1.1.2.jar lib/commons-validator.jar
+
+/ we tonen nu met echo	, maar doe later zonder echo	,
+[jboss@isb-app-p isbscs]$ find ~vanderveldene/Downloads/ -name "*.jar" | xargs -I %  echo cp -a % lib
+cp -a /home/vanderveldene/Downloads/commons-collections-3.2.2.jar lib
+cp -a /home/vanderveldene/Downloads/commons-logging-1.2.jar lib
+cp -a /home/vanderveldene/Downloads/commons-validator-1.5.1.jar lib
+cp -a /home/vanderveldene/Downloads/commons-beanutils-1.9.2.jar lib
+cp -a /home/vanderveldene/Downloads/vt-password-3.1.2.jar lib
+/ Waarom een voor een	?
+/ TODO
+
+/ 7	. 
+
+
+
+
+
+

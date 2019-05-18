@@ -1,0 +1,5 @@
+google: emulate command line in html
+http://terminal.jcubic.pl/
+
+http://dailyjs.com/post/terminaljs
+https://vtortola.github.io/ng-terminal-emulator/

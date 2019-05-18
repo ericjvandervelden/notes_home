@@ -1,0 +1,1849 @@
+/ Lees	, 
+https://fedoraproject.org/wiki/Apache_HTTP_Server
+
+/ 13	. 
+
+/ Lees	, 
+
+
+[eric@almond openshift]$ sudo systemctl enable httpd.service 
+Created symlink from /etc/systemd/system/multi-user.target.wants/httpd.service to /usr/lib/systemd/system/httpd.service.
+[eric@almond openshift]$ sudo systemctl start httpd.service 
+[eric@almond openshift]$ sudo systemctl status httpd.service 
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; vendor preset: disabled)
+   Active: active (running) since Sat 2016-12-24 12:31:54 CET; 13s ago
+ Main PID: 24933 (httpd)
+   Status: "Total requests: 0; Idle/Busy workers 100/0;Requests/sec: 0; Bytes served/sec:   0 B/sec"
+   CGroup: /system.slice/httpd.service
+           ├─24933 /usr/sbin/httpd -DFOREGROUND
+           ├─24979 /usr/sbin/httpd -DFOREGROUND
+           ├─24980 /usr/sbin/httpd -DFOREGROUND
+           ├─24981 /usr/sbin/httpd -DFOREGROUND
+           ├─24983 /usr/sbin/httpd -DFOREGROUND
+           └─24984 /usr/sbin/httpd -DFOREGROUND
+
+Dec 24 12:31:53 almond.nuts.org systemd[1]: Starting The Apache HTTP Server...
+Dec 24 12:31:54 almond.nuts.org systemd[1]: Started The Apache HTTP Server.
+
+/ Geef in chrome	,
+localhost
+localhost:80
+/ OK
+
+/ 13	. 
+
+/ httpd.conf
+
+/ 1313	 .
+
+$ ls /var/www/html
+/ leeg	,
+$ ls /var/www/cg-bin
+/ leeg	,
+
+/ Dit is de page die we zien	,  als we localhost geven	,
+$ vi /etc/httpd/conf.d/welcome.conf
+
+# 
+# This configuration file enables the default "Welcome" page if there
+# is no default index page present for the root URL.  To disable the
+# Welcome page, comment out all the lines below. 
+#
+# NOTE: if this file is removed, it will be restored on upgrades.
+#
+<LocationMatch "^/+$">
+    Options -Indexes
+    ErrorDocument 403 /.noindex.html
+</LocationMatch>
+
+<Directory /usr/share/httpd/noindex>
+    AllowOverride None
+    Require all granted
+</Directory>
+
+Alias /.noindex.html /usr/share/httpd/noindex/index.html
+
+[eric@almond httpd]$ less /usr/share/httpd/noindex/index.html 
+...
+       <body>
+                <h1>Fedora <strong>Test Page</strong></h1>
+
+/ 1313	. 
+
+    # AllowOverride controls what directives may be placed in .htaccess files.
+/ TODO
+
+/ 1313	. 
+
+# Load config files in the "/etc/httpd/conf.d" directory, if any.
+IncludeOptional conf.d/*.conf
+
+
+/ 13	. 
+
+/ Lees	,
+https://fedoraproject.org/wiki/Apache_HTTP_Server
+
+/etc/httpd/conf/httpd.conf is the main Apache configuration file. It includes /etc/httpd/conf.d/*.conf:
+/ klopt	, 
+if the same setting is specified in both /etc/httpd/conf/httpd.conf and a .conf file in /etc/httpd/conf.d/, the setting from the /etc/httpd/conf.d/ file will win. 
+Files in /etc/httpd/conf.d/ are read in alphabetical order: a setting from /etc/httpd/conf.d/z-foo.conf will win over a setting from /etc/httpd/conf.d/foo.conf, which will win over a setting from /etc/httpd/conf.d/99-foo.conf, which will win over a setting from /etc/httpd/conf.d/00-foo.conf.
+/ TODO
+
+
+
+
+/ 13	. 
+
+/ Lees	, 
+https://docs.fedoraproject.org/en-US/Fedora/24/html/System_Administrators_Guide/s1-email-mta.html#s2-email-mta-postfix
+
+[eric@almond httpd]$ sudo dnf install postfix
+Last metadata expiration check: 0:50:09 ago on Sat Dec 24 11:56:04 2016.
+Dependencies resolved.
+================================================================================
+ Package         Arch           Version                   Repository       Size
+================================================================================
+Installing:
+ postfix         x86_64         2:3.0.7-1.fc23            updates         1.4 M
+
+[eric@almond httpd]$  sudo systemctl enable postfix.service 
+Created symlink from /etc/systemd/system/multi-user.target.wants/postfix.service to /usr/lib/systemd/system/postfix.service.
+
+[eric@almond httpd]$  sudo systemctl status postfix.service 
+● postfix.service - Postfix Mail Transport Agent
+   Loaded: loaded (/usr/lib/systemd/system/postfix.service; enabled; vendor preset: disabled)
+   Active: active (running) since Sat 2016-12-24 12:48:01 CET; 9s ago
+  Process: 21774 ExecStart=/usr/sbin/postfix start (code=exited, status=0/SUCCESS)
+  Process: 21771 ExecStartPre=/usr/libexec/postfix/chroot-update (code=exited, status=0/SUCCESS)
+  Process: 21755 ExecStartPre=/usr/libexec/postfix/aliasesdb (code=exited, status=1/FAILURE)
+ Main PID: 21957 (master)
+   CGroup: /system.slice/postfix.service
+           ├─21957 /usr/libexec/postfix/master -w
+           ├─21958 pickup -l -t unix -u
+           └─21959 qmgr -l -t unix -u
+
+Dec 24 12:48:00 almond.nuts.org systemd[1]: Starting Postfix Mail Transport ....
+Dec 24 12:48:00 almond.nuts.org aliasesdb[21755]: newaliases: In sSMTP aliase...
+Dec 24 12:48:00 almond.nuts.org aliasesdb[21755]: touch: failed to get attrib…ry
+Dec 24 12:48:01 almond.nuts.org postfix/master[21957]: daemon started -- vers...
+Dec 24 12:48:01 almond.nuts.org systemd[1]: Started Postfix Mail Transport A....
+Hint: Some lines were ellipsized, use -l to show in full.
+
+/ we zien	, 
+  Process: 21755 ExecStartPre=/usr/libexec/postfix/aliasesdb (code=exited, status=1/FAILURE)
+/ TODO
+
+[eric@almond httpd]$ netstat -anp | grep :25
+
+/ 13	. 
+
+/ Lees	, 
+https://fedoraproject.org/wiki/MariaDB
+/ TODO
+
+/ 7	.  
+
+/ Manual	,
+
+http://httpd.apache.org/docs/2.4/vhosts/name-based.html
+
+
+$ vi httpd.conf
+
+Listen 80
+
+<VirtualHost *:80>
+    # This first-listed virtual host is also the default for *:80
+    ServerName www.example.com
+    ServerAlias example.com 
+    DocumentRoot "/www/domain"
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName other.example.com
+    DocumentRoot "/www/otherdomain"
+</VirtualHost>
+
+
+/ geef in google	,
+apache cgi php
+/ lees	,
+http://www.bobulous.org.uk/coding/apache-php-cgi.html
+The PHP documentation helpfully describes how to install Apache 2 and PHP 5 using the shared module mode, but I needed to run PHP in CGI mode so that it matched the setup on someone else's system. The PHP manual 
+
+/ geef	,
+apache cgi php shared module
+/ lees	,
+http://serverfault.com/questions/36867/php-as-cgi-or-apache-module
+
+/ Geef in google	,
+apache c shared module
+/ Lees	,
+http://docstore.mik.ua/orelly/apache_mod/18.htm
+
+/ lees	,
+https://httpd.apache.org/docs/2.4/dso.html
+
+/ 7	. 
+
+[eric@almond 3rd]$ pwd
+/home/eric/Devel/Apache/3rd
+[eric@almond 3ed]$ tar xvzf ~/Downloads/apache3.tgz 
+
+[eric@almond 2ed]$ tar xvzf ~/Downloads/install.tar.gz 
+drwxrwxr-x 561/users         0 1998-12-05 17:37 mnt/cdrom/install/
+-rw-rw-r-- 561/users       705 1998-11-29 14:26 mnt/cdrom/install/install.conf
+-rwxrwxr-x 561/users      3210 1998-12-18 19:18 mnt/cdrom/install/install
+-rw-rw-r-- 561/users       723 1998-11-29 15:51 mnt/cdrom/install/installwin.conf
+
+
+/ 7	. 
+
+/ src
+
+/ Ga naar	, 
+http://httpd.apache.org/
+
+[eric@almond httpd-2.4.25]$ pwd
+/home/eric/Devel/Apache/httpd-2.4.25
+
+/ Lees	, 
+http://stackoverflow.com/questions/4210042/exclude-directory-from-find-command
+
+[eric@almond httpd-2.4.25]$ find -not -path "./docs/*" -type f | xargs grep IfModule
+/ OK
+
+$ less INSTALL
+
+  For a short impression of what possibilities you have, here is a
+  typical example which configures Apache for the installation tree
+  /sw/pkg/apache with a particular compiler and flags plus the two
+  additional modules mod_rewrite and mod_speling for later loading
+  through the DSO mechanism:
+
+     $ CC="pgcc" CFLAGS="-O2" \
+     ./configure --prefix=/sw/pkg/apache \
+     --enable-rewrite=shared \
+     --enable-speling=shared
+
+  The easiest way to find all of the configuration flags for Apache 2.4
+  is to run ./configure --help.
+
+
+/ Lees	, 
+https://httpd.apache.org/docs/2.4/platform/rpm.html
+https://fedoraproject.org/wiki/Apache_HTTP_Server
+http://httpd.apache.org/docs/current/install.html
+
+/ Geef
+# httpd -h
+/ doe	,
+# httpd -l
+# httpd -M
+# httpd -S
+# httpd -L
+
+/ Lees	, inderdaad	, een cgi	,
+http://httpd.apache.org/download.cgi#apache24
+
+/ Geef 
+$ ./configure --help
+
+/ 13	. 
+
+/ we download apache 1.3	, 
+/ ga naar	, 
+http://archive.apache.org/dist/httpd/
+
+[eric@almond apache_1.3.42]$ pwd
+/home/eric/Devel/Apache/apache_1.3.42
+[eric@almond apache_1.3.42]$ find -name "Confi*"
+./src/Configuration
+./src/Configure
+./src/Configuration.tmpl
+[eric@almond apache_1.3.42]$ find ../httpd-2.4.25/ -name "Confi*"
+/ niets	,
+
+[eric@almond apache_1.3.42]$ ./configure -h
+Configuring for Apache, Version 1.3.42
+ + using installation path layout: Apache (config.layout)
+Usage: configure [options]
+Options: [defaults in brackets after descriptions]
+General options:
+ --quiet, --silent      do not print messages
+ --verbose, -v          print even more messages
+ --shadow[=DIR]         switch to a shadow tree (under DIR) for building
+
+Stand-alone options:
+ --help, -h             print this message
+ --show-layout          print installation path layout (check and debug)
+
+Installation layout options:
+ --with-layout=[F:]ID   use installation path layout ID (from file F)
+ --target=TARGET        install name-associated files using basename TARGET
+ --prefix=PREFIX        install architecture-independent files in PREFIX
+ --exec-prefix=EPREFIX  install architecture-dependent files in EPREFIX
+ --bindir=DIR           install user     executables in DIR
+ --sbindir=DIR          install sysadmin executables in DIR
+ --libexecdir=DIR       install program  executables in DIR
+ --mandir=DIR           install manual pages in DIR
+ --sysconfdir=DIR       install configuration files in DIR
+ --datadir=DIR          install read-only data files in DIR
+ --iconsdir=DIR         install read-only icon files in DIR
+ --htdocsdir=DIR        install read-only welcome pages in DIR
+ --manualdir=DIR        install read-only on-line documentation in DIR
+ --cgidir=DIR           install read-only cgi files in DIR
+ --includedir=DIR       install includes files in DIR
+ --localstatedir=DIR    install modifiable data files in DIR
+ --runtimedir=DIR       install runtime data in DIR
+ --logfiledir=DIR       install logfile data in DIR
+ --proxycachedir=DIR    install proxy cache data in DIR
+
+Configuration options:
+ --enable-rule=NAME     enable  a particular Rule named 'NAME'
+ --disable-rule=NAME    disable a particular Rule named 'NAME'
+                        [CYGWIN_WINSOCK=no DEV_RANDOM=default EXPAT=defa]
+                        [IRIXN32=yes     IRIXNIS=no      PARANOID=no    ]
+                        [SHARED_CHAIN=default SHARED_CORE=default SOCKS4]
+                        [SOCKS5=no       WANTHSREGEX=default            ]
+ --add-module=FILE      on-the-fly copy & activate a 3rd-party Module
+ --activate-module=FILE on-the-fly activate existing 3rd-party Module
+ --permute-module=N1:N2 on-the-fly permute module 'N1' with module 'N2'
+ --enable-module=NAME   enable  a particular Module named 'NAME'
+ --disable-module=NAME  disable a particular Module named 'NAME'
+                        [access=yes      actions=yes     alias=yes      ]
+                        [asis=yes        auth_anon=no    auth_dbm=no    ]
+                        [auth_db=no      auth_digest=no  auth=yes       ]
+                        [autoindex=yes   cern_meta=no    cgi=yes        ]
+                        [digest=no       dir=yes         env=yes        ]
+                        [example=no      expires=no      headers=no     ]
+                        [imap=yes        include=yes     info=no        ]
+                        [log_agent=no    log_config=yes  log_forensic=no]
+                        [log_referer=no  mime_magic=no   mime=yes       ]
+                        [mmap_static=no  negotiation=yes proxy=no       ]
+                        [rewrite=no      setenvif=yes    so=no          ]
+                        [speling=no      status=yes      unique_id=no   ]
+                        [userdir=yes     usertrack=no    vhost_alias=no ]
+ --enable-shared=NAME   enable  build of Module named 'NAME' as a DSO
+ --disable-shared=NAME  disable build of Module named 'NAME' as a DSO
+ --with-perl=FILE       path to the optional Perl interpreter
+ --with-port=PORT       set the port number for httpd.conf
+ --without-support      disable the build and installation of support tools
+ --without-confadjust   disable the user/situation adjustments in config
+ --without-execstrip    disable the stripping of executables on installation
+ --server-uid=UID       set the user ID the web server should run as [nobody]
+ --server-gid=GID       set the group ID the web server UID is a memeber of [#-1]
+
+suEXEC options:
+ --enable-suexec        enable the suEXEC feature
+ --suexec-caller=NAME   set the suEXEC username of the allowed caller [www]
+ --suexec-docroot=DIR   set the suEXEC root directory [PREFIX/share/htdocs]
+ --suexec-logfile=FILE  set the suEXEC logfile [PREFIX/var/log/suexec_log]
+ --suexec-userdir=DIR   set the suEXEC user subdirectory [public_html]
+ --suexec-uidmin=UID    set the suEXEC minimal allowed UID [100]
+ --suexec-gidmin=GID    set the suEXEC minimal allowed GID [100]
+ --suexec-safepath=PATH set the suEXEC safe PATH [/usr/local/bin:/usr/bin:/bin]
+ --suexec-umask=UMASK   set the umask for the suEXEC'd script [server's umask]
+
+Deprecated options:
+ --layout               backward compat only: use --show-layout
+ --compat               backward compat only: use --with-layout=Apache
+
+[eric@almond apache_1.3.42]$ ../httpd-2.4.25/configure -h
+`configure' configures this package to adapt to many kinds of systems.
+
+Usage: ../httpd-2.4.25/configure [OPTION]... [VAR=VALUE]...
+
+To assign environment variables (e.g., CC, CFLAGS...), specify them as
+VAR=VALUE.  See below for descriptions of some of the useful variables.
+
+Defaults for the options are specified in brackets.
+
+Configuration:
+  -h, --help              display this help and exit
+      --help=short        display options specific to this package
+      --help=recursive    display the short help of all the included packages
+  -V, --version           display version information and exit
+  -q, --quiet, --silent   do not print `checking ...' messages
+      --cache-file=FILE   cache test results in FILE [disabled]
+  -C, --config-cache      alias for `--cache-file=config.cache'
+  -n, --no-create         do not create output files
+      --srcdir=DIR        find the sources in DIR [configure dir or `..']
+
+Installation directories:
+  --prefix=PREFIX         install architecture-independent files in PREFIX
+                          [/usr/local/apache2]
+  --exec-prefix=EPREFIX   install architecture-dependent files in EPREFIX
+                          [PREFIX]
+
+By default, `make install' will install all the files in
+`/usr/local/apache2/bin', `/usr/local/apache2/lib' etc.  You can specify
+an installation prefix other than `/usr/local/apache2' using `--prefix',
+for instance `--prefix=$HOME'.
+
+For better control, use the options below.
+
+Fine tuning of the installation directories:
+  --bindir=DIR            user executables [EPREFIX/bin]
+  --sbindir=DIR           system admin executables [EPREFIX/sbin]
+  --libexecdir=DIR        program executables [EPREFIX/libexec]
+  --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
+  --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
+  --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
+  --libdir=DIR            object code libraries [EPREFIX/lib]
+  --includedir=DIR        C header files [PREFIX/include]
+  --oldincludedir=DIR     C header files for non-gcc [/usr/include]
+  --datarootdir=DIR       read-only arch.-independent data root [PREFIX/share]
+  --datadir=DIR           read-only architecture-independent data [DATAROOTDIR]
+  --infodir=DIR           info documentation [DATAROOTDIR/info]
+  --localedir=DIR         locale-dependent data [DATAROOTDIR/locale]
+  --mandir=DIR            man documentation [DATAROOTDIR/man]
+  --docdir=DIR            documentation root [DATAROOTDIR/doc/PACKAGE]
+  --htmldir=DIR           html documentation [DOCDIR]
+  --dvidir=DIR            dvi documentation [DOCDIR]
+  --pdfdir=DIR            pdf documentation [DOCDIR]
+  --psdir=DIR             ps documentation [DOCDIR]
+
+System types:
+  --build=BUILD     configure for building on BUILD [guessed]
+  --host=HOST       cross-compile to build programs to run on HOST [BUILD]
+  --target=TARGET   configure for building compilers for TARGET [HOST]
+
+Optional Features:
+  --disable-option-checking  ignore unrecognized --enable/--with options
+  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-layout=LAYOUT
+  --enable-dtrace         Enable DTrace probes
+  --enable-hook-probes    Enable APR hook probes
+  --enable-exception-hook Enable fatal exception hook
+  --enable-load-all-modules
+                          Load all modules
+  --enable-maintainer-mode
+                          Turn on debugging and compile time warnings and load
+                          all compiled modules
+  --enable-debugger-mode  Turn on debugging and compile time warnings and turn
+                          off optimization
+  --enable-pie            Build httpd as a Position Independent Executable
+  --enable-modules=MODULE-LIST
+                          Space-separated list of modules to enable | "all" |
+                          "most" | "few" | "none" | "reallyall"
+  --enable-mods-shared=MODULE-LIST
+                          Space-separated list of shared modules to enable |
+                          "all" | "most" | "few" | "reallyall"
+  --enable-mods-static=MODULE-LIST
+                          Space-separated list of static modules to enable |
+                          "all" | "most" | "few" | "reallyall"
+  --disable-authn-file    file-based authentication control
+  --enable-authn-dbm      DBM-based authentication control
+  --enable-authn-anon     anonymous user authentication control
+  --enable-authn-dbd      SQL-based authentication control
+  --enable-authn-socache  Cached authentication control
+  --disable-authn-core    core authentication module
+  --disable-authz-host    host-based authorization control
+  --disable-authz-groupfile
+                          'require group' authorization control
+  --disable-authz-user    'require user' authorization control
+  --enable-authz-dbm      DBM-based authorization control
+  --enable-authz-owner    'require file-owner' authorization control
+  --enable-authz-dbd      SQL based authorization and Login/Session support
+  --disable-authz-core    core authorization provider vector module
+  --enable-authnz-ldap    LDAP based authentication
+  --enable-authnz-fcgi    FastCGI authorizer-based authentication and
+                          authorization
+  --disable-access-compat mod_access compatibility
+  --disable-auth-basic    basic authentication
+  --enable-auth-form      form authentication
+  --enable-auth-digest    RFC2617 Digest authentication
+  --enable-allowmethods   restrict allowed HTTP methods
+  --enable-isapi          isapi extension support
+  --enable-file-cache     File cache
+  --enable-cache          dynamic file caching. At least one storage
+                          management module (e.g. mod_cache_disk) is also
+                          necessary.
+  --enable-cache-disk     disk caching module
+  --enable-cache-socache  shared object caching module
+  --enable-socache-shmcb  shmcb small object cache provider
+  --enable-socache-dbm    dbm small object cache provider
+  --enable-socache-memcache
+                          memcache small object cache provider
+  --enable-socache-dc     distcache small object cache provider
+  --enable-so             DSO capability. This module will be automatically
+                          enabled unless you build all modules statically.
+  --enable-watchdog       Watchdog module
+  --enable-macro          Define and use macros in configuration files
+  --enable-dbd            Apache DBD Framework
+  --enable-bucketeer      buckets manipulation filter. Useful only for
+                          developers and testing purposes.
+  --enable-dumpio         I/O dump filter
+  --enable-echo           ECHO server
+  --enable-example-hooks  Example hook callback handler module
+  --enable-case-filter    Example uppercase conversion filter
+  --enable-case-filter-in Example uppercase conversion input filter
+  --enable-example-ipc    Example of shared memory and mutex usage
+  --enable-buffer         Filter Buffering
+  --enable-data           RFC2397 data encoder
+  --enable-ratelimit      Output Bandwidth Limiting
+  --disable-reqtimeout    Limit time waiting for request from client
+  --enable-ext-filter     external filter module
+  --enable-request        Request Body Filtering
+  --enable-include        Server Side Includes
+  --disable-filter        Smart Filtering
+  --enable-reflector      Reflect request through the output filter stack
+  --enable-substitute     response content rewrite-like filtering
+  --enable-sed            filter request and/or response bodies through sed
+  --disable-charset-lite  character set translation. Enabled by default only
+                          on EBCDIC systems.
+  --enable-charset-lite   character set translation. Enabled by default only
+                          on EBCDIC systems.
+  --enable-deflate        Deflate transfer encoding support
+  --enable-xml2enc        i18n support for markup filters
+  --enable-proxy-html     Fix HTML Links in a Reverse Proxy
+  --enable-http           HTTP protocol handling. The http module is a basic
+                          one that enables the server to function as an HTTP
+                          server. It is only useful to disable it if you want
+                          to use another protocol module instead. Don't
+                          disable this module unless you are really sure what
+                          you are doing. Note: This module will always be
+                          linked statically.
+  --disable-mime          mapping of file-extension to MIME. Disabling this
+                          module is normally not recommended.
+  --enable-ldap           LDAP caching and connection pooling services
+  --disable-log-config    logging configuration. You won't be able to log
+                          requests to the server without this module.
+  --enable-log-debug      configurable debug logging
+  --enable-log-forensic   forensic logging
+  --enable-logio          input and output logging
+  --enable-lua            Apache Lua Framework
+  --enable-luajit         Enable LuaJit Support
+  --disable-env           clearing/setting of ENV vars
+  --enable-mime-magic     automagically determining MIME type
+  --enable-cern-meta      CERN-type meta files
+  --enable-expires        Expires header control
+  --disable-headers       HTTP header control
+  --enable-ident          RFC 1413 identity check
+  --enable-usertrack      user-session tracking
+  --enable-unique-id      per-request unique ids
+  --disable-setenvif      basing ENV vars on headers
+  --disable-version       determining httpd version in config files
+  --enable-remoteip       translate header contents to an apparent client
+                          remote_ip
+  --enable-proxy          Apache proxy module
+  --enable-proxy-connect  Apache proxy CONNECT module. Requires
+                          --enable-proxy.
+  --enable-proxy-ftp      Apache proxy FTP module. Requires --enable-proxy.
+  --enable-proxy-http     Apache proxy HTTP module. Requires --enable-proxy.
+  --enable-proxy-fcgi     Apache proxy FastCGI module. Requires
+                          --enable-proxy.
+  --enable-proxy-scgi     Apache proxy SCGI module. Requires --enable-proxy.
+  --enable-proxy-fdpass   Apache proxy to Unix Daemon Socket module. Requires
+                          --enable-proxy.
+  --enable-proxy-wstunnel Apache proxy Websocket Tunnel module. Requires
+                          --enable-proxy.
+  --enable-proxy-ajp      Apache proxy AJP module. Requires --enable-proxy.
+  --enable-proxy-balancer Apache proxy BALANCER module. Requires
+                          --enable-proxy.
+  --enable-proxy-express  mass reverse-proxy module. Requires --enable-proxy.
+  --enable-proxy-hcheck   reverse-proxy health-check module. Requires
+                          --enable-proxy and --enable-watchdog.
+  --enable-session        session module
+  --enable-session-cookie session cookie module
+  --enable-session-crypto session crypto module
+  --enable-session-dbd    session dbd module
+  --enable-slotmem-shm    slotmem provider that uses shared memory
+  --enable-slotmem-plain  slotmem provider that uses plain memory
+  --enable-ssl            SSL/TLS support (mod_ssl)
+  --enable-ssl-staticlib-deps
+                          link mod_ssl with dependencies of OpenSSL's static
+                          libraries (as indicated by "pkg-config --static").
+                          Must be specified in addition to --enable-ssl.
+  --enable-optional-hook-export
+                          example optional hook exporter
+  --enable-optional-hook-import
+                          example optional hook importer
+  --enable-optional-fn-import
+                          example optional function importer
+  --enable-optional-fn-export
+                          example optional function exporter
+  --enable-dialup         rate limits static files to dialup modem speeds
+  --enable-static-support Build a statically linked version of the support
+                          binaries
+  --enable-static-htpasswd
+                          Build a statically linked version of htpasswd
+  --enable-static-htdigest
+                          Build a statically linked version of htdigest
+  --enable-static-rotatelogs
+                          Build a statically linked version of rotatelogs
+  --enable-static-logresolve
+                          Build a statically linked version of logresolve
+  --enable-static-htdbm   Build a statically linked version of htdbm
+  --enable-static-ab      Build a statically linked version of ab
+  --enable-static-checkgid
+                          Build a statically linked version of checkgid
+  --enable-static-htcacheclean
+                          Build a statically linked version of htcacheclean
+  --enable-static-httxt2dbm
+                          Build a statically linked version of httxt2dbm
+  --enable-static-fcgistarter
+                          Build a statically linked version of fcgistarter
+  --enable-http2          HTTP/2 protocol handling in addition to HTTP
+                          protocol handling. Implemented by mod_http2. This
+                          module requires a libnghttp2 installation. See
+                          --with-nghttp2 on how to manage non-standard
+                          locations. This module is usually linked shared and
+                          requires loading.
+  --enable-nghttp2-staticlib-deps
+                          link mod_http2 with dependencies of libnghttp2's
+                          static libraries (as indicated by "pkg-config
+                          --static"). Must be specified in addition to
+                          --enable-http2.
+  --enable-proxy-http2    HTTP/2 proxy module. This module requires a
+                          libnghttp2 installation. See --with-nghttp2 on how
+                          to manage non-standard locations. Also requires
+                          --enable-proxy.
+  --enable-lbmethod-byrequests
+                          Apache proxy Load balancing by request counting
+  --enable-lbmethod-bytraffic
+                          Apache proxy Load balancing by traffic counting
+  --enable-lbmethod-bybusyness
+                          Apache proxy Load balancing by busyness
+  --enable-lbmethod-heartbeat
+                          Apache proxy Load balancing from Heartbeats
+  --enable-mpms-shared=MPM-LIST
+                          Space-separated list of MPM modules to enable for
+                          dynamic loading. MPM-LIST=list | "all"
+  --enable-unixd          unix specific support
+  --enable-privileges     Per-virtualhost Unix UserIDs and enhanced security
+                          for Solaris
+  --enable-heartbeat      Generates Heartbeats
+  --enable-heartmonitor   Collects Heartbeats
+  --enable-dav            WebDAV protocol handling. --enable-dav also enables
+                          mod_dav_fs
+  --disable-status        process/thread monitoring
+  --disable-autoindex     directory listing
+  --enable-asis           as-is filetypes
+  --enable-info           server information
+  --enable-suexec         set uid and gid for spawned processes
+  --enable-cgid           CGI scripts. Enabled by default with threaded MPMs
+  --enable-cgi            CGI scripts. Enabled by default with non-threaded
+                          MPMs
+  --enable-dav-fs         DAV provider for the filesystem. --enable-dav also
+                          enables mod_dav_fs.
+  --enable-dav-lock       DAV provider for generic locking
+  --enable-vhost-alias    mass virtual hosting module
+  --enable-negotiation    content negotiation
+  --disable-dir           directory request handling
+  --enable-imagemap       server-side imagemaps
+  --enable-actions        Action triggering on requests
+  --enable-speling        correct common URL misspellings
+  --enable-userdir        mapping of requests to user-specific directories
+  --disable-alias         mapping of requests to different filesystem parts
+  --enable-rewrite        rule based URL manipulation
+  --enable-v4-mapped      Allow IPv6 sockets to handle IPv4 connections
+
+Optional Packages:
+  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-included-apr     Use bundled copies of APR/APR-Util
+  --with-apr=PATH         prefix for installed APR or the full path to
+                             apr-config
+  --with-apr-util=PATH    prefix for installed APU or the full path to
+                             apu-config
+  --with-pcre=PATH        Use external PCRE library
+  --with-port=PORT        Port on which to listen (default is 80)
+  --with-sslport=SSLPORT  Port on which to securelisten (default is 443)
+  --with-distcache=PATH   Distcache installation directory
+  --with-z=PATH           use a specific zlib library
+  --with-libxml2=PATH     location for libxml2
+  --with-lua=PATH         Path to the Lua 5.2/5.1 prefix
+  --with-ssl=PATH         OpenSSL installation directory
+  --with-nghttp2=PATH     nghttp2 installation directory
+  --with-mpm=MPM          Choose the process model for Apache to use by
+                          default. MPM={event|worker|prefork|winnt} This will
+                          be statically linked as the only available MPM
+                          unless --enable-mpms-shared is also specified.
+  --with-module=module-type:module-file
+                          Enable module-file in the modules/<module-type>
+                          directory.
+  --with-program-name     alternate executable name
+  --with-suexec-bin       Path to suexec binary
+  --with-suexec-caller    User allowed to call SuExec
+  --with-suexec-userdir   User subdirectory
+  --with-suexec-docroot   SuExec root directory
+  --with-suexec-uidmin    Minimal allowed UID
+  --with-suexec-gidmin    Minimal allowed GID
+  --with-suexec-logfile   Set the logfile
+  --with-suexec-safepath  Set the safepath
+  --with-suexec-umask     umask for suexec'd process
+
+Some influential environment variables:
+  CC          C compiler command
+  CFLAGS      C compiler flags
+  LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+              nonstandard directory <lib dir>
+  LIBS        libraries to pass to the linker, e.g. -l<library>
+  CPPFLAGS    (Objective) C/C++ preprocessor flags, e.g. -I<include dir> if
+              you have headers in a nonstandard directory <include dir>
+  CPP         C preprocessor
+
+Use these variables to override the choices made by `configure' or to help
+it to find libraries and programs with nonstandard names/locations.
+
+Report bugs to the package provider.
+
+[eric@almond httpd-2.4.25]$ ./configure 
+checking for chosen layout... Apache
+checking for working mkdir -p... yes
+checking for grep that handles long lines and -e... /usr/bin/grep
+checking for egrep... /usr/bin/grep -E
+checking build system type... x86_64-unknown-linux-gnu
+checking host system type... x86_64-unknown-linux-gnu
+checking target system type... x86_64-unknown-linux-gnu
+configure: 
+configure: Configuring Apache Portable Runtime library...
+configure: 
+checking for APR... no
+configure: error: APR not found.  Please read the documentation.
+
+/ Lees	,
+http://stackoverflow.com/questions/9436860/apache-httpd-setup-and-installation
+
+/ Lees	, 
+http://httpd.apache.org/docs/2.4/install.html
+
+[eric@almond httpd-2.4.25]$ sudo dnf install apr apr-util
+Last metadata expiration check: 0:21:34 ago on Sat Dec 31 09:18:20 2016.
+Package apr-1.5.2-2.fc23.x86_64 is already installed, skipping.
+Package apr-util-1.5.4-2.fc23.x86_64 is already installed, skipping.
+Dependencies resolved.
+Nothing to do.
+Complete!
+
+/ lees	, 
+https://wikisree.com/2015/03/28/apache-httpd-apr-not-found-error-while-installation/
+http://www.linuxpathfinder.com/install-apache-24-from-source-on-centos-6-rhel-6
+http://www.thegeekstuff.com/2012/05/install-apache-2-on-centos-6/?utm_source=feedburner
+
+/ 13	. 
+
+/ we proberen fedora's httpd op een site van ons boek	,
+
+/ maar de httpd.conf uit  site.toddle/ mist 
+Include conf.modules.d/*.conf
+/ waardoor niet wordt gelezen, TODO (dynamically)
+00-mpm.conf
+/ waarin staat	,
+LoadModule mpm_prefork_module modules/mod_mpm_prefork.so
+
+
+
+$ sudo systemctl stop httpd
+[eric@almond Apache]$ sudo httpd -d 3ed/APACHE3/site.toddle/
+AH00534: httpd: Configuration error: No MPM loaded.
+
+/ lees	, 
+http://unix.stackexchange.com/questions/209548/ah00534-httpd-configuration-error-no-mpm-loaded
+
+[eric@almond Apache]$ less /etc/httpd/conf/httpd.conf 
+#
+# Dynamic Shared Object (DSO) Support
+#
+# To be able to use the functionality of a module which was built as a DSO you
+# have to place corresponding `LoadModule' lines at this location so the
+# directives contained in it are actually available _before_ they are used.
+# Statically compiled modules (those listed by `httpd -l') do not need
+# to be loaded here.
+#
+# Example:
+# LoadModule foo_module modules/mod_foo.so
+#
+Include conf.modules.d/*.conf
+
+# Supplemental configuration
+#
+# Load config files in the "/etc/httpd/conf.d" directory, if any.
+IncludeOptional conf.d/*.conf
+
+[eric@almond Apache]$ less /etc/httpd/conf.modules.d/
+00-base.conf       00-mpm.conf        00-systemd.conf    README
+00-dav.conf        00-optional.conf   01-cgi.conf        
+00-lua.conf        00-proxy.conf      10-mod_dnssd.conf 
+
+[eric@almond Apache]$ less /etc/httpd/conf.d/
+autoindex.conf  README          welcome.conf    
+mod_dnssd.conf  userdir.conf    
+
+/ intermezzo
+
+[eric@almond Apache]$ less /etc/httpd/conf.modules.d/00-base.conf 
+#
+# This file loads most of the modules included with the Apache HTTP
+# Server itself.
+#
+
+LoadModule access_compat_module modules/mod_access_compat.so
+LoadModule actions_module modules/mod_actions.so
+LoadModule alias_module modules/mod_alias.so
+LoadModule allowmethods_module modules/mod_allowmethods.so
+...
+/ De hele lange lijst	,
+
+/ Einde intermezzo
+
+/ 13	. 
+
+/ WH is /etc/httpd de site	, 
+[eric@almond httpd]$ ls
+conf  conf.d  conf.modules.d  logs  modules  run
+
+/ klopt	, 
+$ less conf/httpd.conf
+ServerRoot "/etc/httpd"
+#ServerName www.example.com:80
+/ TODO
+
+
+[eric@almond httpd]$ less conf.d/welcome.conf 
+# 
+# This configuration file enables the default "Welcome" page if there
+# is no default index page present for the root URL.  To disable the
+# Welcome page, comment out all the lines below. 
+#
+# NOTE: if this file is removed, it will be restored on upgrades.
+#
+<LocationMatch "^/+$">
+    Options -Indexes
+    ErrorDocument 403 /.noindex.html
+</LocationMatch>
+
+<Directory /usr/share/httpd/noindex>
+    AllowOverride None
+    Require all granted
+</Directory>
+
+Alias /.noindex.html /usr/share/httpd/noindex/index.html
+
+/ inderdaad	,
+[eric@almond httpd]$ less /usr/share/httpd/noindex/index.html 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+...
+
+/ wat is een default index page	?
+/ TODO
+
+/ geef in google	,
+fedora httpd create website
+/ lees	, 
+http://www.techotopia.com/index.php/Configuring_a_Fedora_Linux_Based_Web_Server
+https://www.server-world.info/en/note?os=Fedora_20&p=httpd
+http://www.labtestproject.com/create_user_web_directory_on_fedora_using_apache_web_server
+https://linuxconfig.org/configure-apache-virtualhost-on-fedora
+http://www.2daygeek.com/setup-apache-virtual-hosts-on-centos-rhel-fedora/#
+
+/ 13	. 
+
+/ we maken een site	, 
+
+/ we houden dezelfde config	, die van fedora dus,	 maar we maken meerdere sites	,
+
+/ we edit eerst conf/httpd.conf	, is OK, maar is niet de bedoeling	, 
+/ we moeten maken in conf.d/ een my-virtual-host.conf	, 
+
+/ lees	,
+http://httpd.apache.org/docs/2.4/vhosts/name-based.html
+http://httpd.apache.org/docs/2.4/vhosts/examples.html
+
+[eric@almond httpd]$ sudo vi conf/httpd.conf 
+...
+<VirtualHost *:80>
+    # This first-listed virtual host is also the default for *:80
+    ServerName www.example.com
+    ServerAlias example.com
+    DocumentRoot "/var/www/html"
+</VirtualHost>
+
+/ Dit is niet handig,	 want we use de document root van default host	,
+$ vi conf/httpd.conf
+DocumentRoot "/var/www/html"
+
+
+[eric@almond Apache]$ cat /etc/hosts
+127.0.0.1		localhost.localdomain localhost
+::1		localhost6.localdomain6 localhost6
+
+192.168.123.182 almond.nuts.org almond  www.example.com
+fe80::2e44:fdff:fe68:82d4 almond.nuts.org almond  www.example.com
+
+[eric@almond Apache]$ cat /var/www/html/index.html 
+Foo Bar
+
+# apachectl graceful
+/ Geef in chrome	,
+http://www.example.com/
+Foo Bar
+/ Geef in chrome	,
+localhost
+Foo Bar
+/ Kll
+
+/ OK	,
+
+/ we herstellen httpd.conf weer	, en
+
+[eric@almond httpd]$ sudo vi /etc/httpd/conf.d/my-virtual-hosts.conf
+<VirtualHost *:80>
+    # This first-listed virtual host is also the default for *:80
+    ServerName www.example.com
+    ServerAlias example.com
+    DocumentRoot "/var/www/html"
+</VirtualHost>
+
+# apachectl graceful
+
+# apachectl graceful
+/ Geef in chrome	,
+http://www.example.com/
+Foo Bar
+/ OK
+
+/ Geef in chrome	,
+localhost
+Foo Bar
+/ Klopt, we hadden de documentroot van de default used	,
+/ Nu geeft localhost geen welcome meer, want er is een default index document	,
+
+/ De log files zijn in logs/
+
+[eric@almond httpd]$ sudo less logs/access_log
+...
+192.168.123.182 - - [31/Dec/2016:13:55:16 +0100] "GET / HTTP/1.1" 304 - "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36"
+
+/ Deze laatste entry is van de laatste keer dat ik www.example.com gaf	,
+
+/ 13	. 
+
+/ document root in mijn home dir	,
+
+[eric@almond html]$ pwd
+/home/eric/Devel/Apache/site.first/html
+[eric@almond html]$ cat index.html 
+Site First
+
+[eric@almond html]$ cat /etc/hosts
+...
+192.168.123.182 almond.nuts.org almond  www.example.com www.first.com
+fe80::2e44:fdff:fe68:82d4 almond.nuts.org almond  www.example.com www.first.com
+
+[eric@almond html]$ sudo apachectl graceful
+
+/ Geef	,
+http://www.first.com/
+/ we zien de welcome page	, 
+/ omdat,
+[eric@almond httpd]$ sudo less logs/error_log
+...
+[Sat Dec 31 14:04:08.519363 2016] [authz_core:error] [pid 6335] [client 192.168.123.182:43656] AH01630: client denied by server configuration: /home/eric/Devel/Apache/site.first/html/
+
+/ we moeten	, 
+
+/ of	,
+
+<Directory /home/eric/Devel/Apache/site.first/html>
+        Require all granted
+</Directory>
+
+<VirtualHost *:80>
+    # This first-listed virtual host is also the default for *:80
+    ServerName www.first.com
+    ServerAlias first.com
+    DocumentRoot "/home/eric/Devel/Apache/site.first/html"
+</VirtualHost>
+
+/ of	,
+
+<VirtualHost *:80>
+    # This first-listed virtual host is also the default for *:80
+    ServerName www.first.com
+    ServerAlias first.com
+    DocumentRoot "/home/eric/Devel/Apache/site.first/html"
+		<Directory /home/eric/Devel/Apache/site.first/html>
+        Require all granted
+		</Directory>
+</VirtualHost>
+
+[eric@almond html]$ sudo apachectl graceful
+
+/ we zien dat 
+
+www.first.com
+First Site
+
+www.example.com
+Foo Bar
+
+localhost
+Foo Bar
+/ TODO
+
+/ 13	. 
+
+/ Later	, 
+
+/ we rm www.example.com	, 
+
+/ 13	. 
+
+/ cgi
+
+[eric@almond Apache]$ pwd
+/home/eric/Devel/Apache
+[eric@almond Apache]$ vi site.cgi/html/index.html
+
+<!doctype html>
+<body>
+<form method="post" action="/cgi-bin/mycgi.cgi">
+  <input name="2315_order">
+  <br>
+  <input name="2316_order">
+  <br>
+  <input name="2317_order">
+  <br>
+  <ul>
+    <li><input name="card_type" type="checkbox" value="Access"></li>
+    <li><input name="card_type" type="checkbox" value="Amex"></li>
+    <li><input name="card_type" type="checkbox" value="Mastercard"></li>
+  </ul>
+  <br>
+  <input name="card_num">
+  <button name="submit">
+  <button type="reset" name="reset">
+</form>
+</body>
+
+[eric@almond Apache]$ vi site.cgi/cgi/mycgi.cgi
+#!/usr/bin/bash
+echo "content-type: text/plain"
+echo
+echo "Have a nice day!"
+
+[eric@almond Apache]$ chmod a+x site.cgi/cgi/mycgi.cgi 
+/ check	, 
+[eric@almond Apache]$ site.cgi/cgi/mycgi.cgi 
+content-type: text/plain
+
+Have a nice day!
+
+[eric@almond Apache]$ sudo vi /etc/httpd/conf.d/my-virtual-hosts.conf
+
+<Directory /home/eric/Devel/Apache/site.cgi/html>
+        AllowOverride none
+        Require all granted
+</Directory>
+<Directory /home/eric/Devel/Apache/site.cgi/cgi>
+        AllowOverride none
+        Options ExecCGI
+        Require all granted
+</Directory>
+<VirtualHost *:80>
+        ServerName www.cgi.com
+        ServerAlias cgi.com
+        DocumentRoot /home/eric/Devel/Apache/site.cgi/html
+        ScriptAlias /cgi-bin /home/eric/Devel/Apache/site.cgi/cgi
+</VirtualHost>
+
+/ NB. 
+        ScriptAlias /cgi-bin /home/eric/Devel/Apache/site.cgi/cgi
+/ en NIET 
+        ScriptAlias /cgi-bin/ /home/eric/Devel/Apache/site.cgi/cgi
+
+/ TODO
+/ probeer het een en ander	,
+
+
+[eric@almond Apache]$ sudo vi /etc/hosts
+192.168.123.182 almond.nuts.org almond  www.example.com www.first.com www.cgi.co
+m
+fe80::2e44:fdff:fe68:82d4 almond.nuts.org almond  www.example.com www.first.com
+www.cgi.com
+
+[eric@almond Apache]$ sudo apachectl graceful
+
+/ we geven 	, 
+http://www.cgi.com
+Have a nice day!
+
+/ 13	. 
+
+[eric@almond site.cgi]$ pwd
+/home/eric/Devel/Apache/site.cgi
+[eric@almond site.cgi]$ vi cgi/mycgi.cgi 
+
+#!/usr/bin/bash
+echo "content-type: text/plain"
+echo
+env
+
+/ De echo voor env MOET, anders INTERNAL SERVER ERROR,
+
+[eric@almond site.cgi]$ sudo apachectl graceful
+
+/ geef localhost	,
+
+SERVER_SIGNATURE=
+UNIQUE_ID=WGqtU2bZ4GXPI@EaOstz6wAAAAE
+HTTP_USER_AGENT=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36
+SERVER_PORT=80
+HTTP_ORIGIN=http://www.cgi.com
+HTTP_HOST=www.cgi.com
+DOCUMENT_ROOT=/home/eric/Devel/Apache/site.cgi/html
+SCRIPT_FILENAME=/home/eric/Devel/Apache/site.cgi/cgi/mycgi.cgi
+REQUEST_URI=/cgi-bin/mycgi.cgi
+SCRIPT_NAME=/cgi-bin/mycgi.cgi
+HTTP_CONNECTION=keep-alive
+REMOTE_PORT=48620
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+CONTEXT_PREFIX=/cgi-bin
+PWD=/home/eric/Devel/Apache/site.cgi/cgi
+SERVER_ADMIN=root@localhost
+REQUEST_SCHEME=http
+HTTP_ACCEPT_LANGUAGE=en-US,en;q=0.8
+HTTP_REFERER=http://www.cgi.com/
+HTTP_ACCEPT=text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+REMOTE_ADDR=192.168.123.182
+SHLVL=1
+SERVER_NAME=www.cgi.com
+CONTENT_LENGTH=53
+SERVER_SOFTWARE=Apache/2.4.18 (Fedora)
+QUERY_STRING=
+SERVER_ADDR=192.168.123.182
+GATEWAY_INTERFACE=CGI/1.1
+HTTP_UPGRADE_INSECURE_REQUESTS=1
+SERVER_PROTOCOL=HTTP/1.1
+HTTP_ACCEPT_ENCODING=gzip, deflate
+HTTP_CACHE_CONTROL=max-age=0
+CONTENT_TYPE=application/x-www-form-urlencoded
+REQUEST_METHOD=POST
+CONTEXT_DOCUMENT_ROOT=/home/eric/Devel/Apache/site.cgi/cgi
+_=/usr/bin/env
+
+
+/ we zien inderdaad	,
+UNIQUE_ID=WGqtU2bZ4GXPI@EaOstz6wAAAAE
+
+/ als we geven	,
+http://www.cgi.com
+/ zien we het form	, en als we submit, komen we op 
+http://www.cgi.com/cgi-bin/mycgi.cgi
+/ Dat komt omdat de browser de action attr van het form tot url maakt,	
+
+/we kunnen ook 
+http://www.cgi.com/cgi-bin/mycgi.cgi
+/ geven	,
+
+/ 13	. 
+
+/ redirect	,
+
+$ vi cgi/mycgi.cgi
+#!/usr/bin/bash
+echo "content-type: text/plain"
+echo "location: http://www.cgi.com"
+echo
+
+/ geef
+http://www.cgi.com
+/ we zien het form	, zoals altijd	, een GET	 
+
+/ submit het form	, we zien	,
+mycgi.cgi	POST
+www.cgi.com GET
+/ en we zien het form weer	,
+
+/ we kunnen ook in een keer
+http://www.cgi.com/cgi-bin/mycgi.cgi
+/ we zien	, 
+mycgi.cgi	POST
+www.cgi.com GET
+/ en we zien het form weer	,
+
+/ 13	. 
+
+[eric@almond site.cgi]$ pwd
+/home/eric/Devel/Apache/site.cgi
+
+[eric@almond Apache]$ cp  ./2ed/mnt/cdrom/sites/cgi-bin/echo.c site.cgi/cgi/
+[eric@almond Apache]$ cp  ./2ed/mnt/cdrom/sites/cgi-bin/echo2.c site.cgi/cgi/
+[eric@almond Apache]$ cd site.cgi/cgi/
+[eric@almond cgi]$ gcc -Wall echo.c echo2.c 
+
+/ Dit is NIET de bedoeling	, 
+[eric@almond cgi]$ cat mycgi.cgi 
+#!/usr/bin/bash
+echo "content-type: text/html"				<- NB html
+
+#echo
+#env
+
+#echo "location: http://www.cgi.com"
+#echo
+
+echo
+./a.out																<- NB ./
+
+[eric@almond cgi]$ sudo apachectl graceful
+
+http://www.cgi.com
+/ fill in het form	, submit	,
+/ we zien in chrome	,
+
+Content-type: text/html
+Query Results
+
+You submitted the following name/value pairs:
+2315_order = eric
+2316_order = hans
+2317_order = 13
+card_type = Access
+card_num = foo
+submit =
+
+/ Dit is WEL de bedoeling	,  mycgi2.bin is a.out zelf	,
+
+[eric@almond site.cgi]$ mv cgi/a.out cgi/mycgi2.bin
+
+[eric@almond site.cgi]$ vi html/index.html 
+<form method="post" action="/cgi-bin/mycgi2.cgi">
+
+[eric@almond site.cgi]$ sudo apachectl graceful
+
+/ 13	 
+
+/ we willen debug	,
+
+/ We moeten doen	, anders ERR bij debug	, 504 Gateway Time-out 
+[root@almond httpd]# less conf/httpd.conf 
+Timeout 86400
+
+[root@almond httpd]# apachectl graceful
+
+/ Als we echo.cgi opnieuw compile, 	hoeven we NIET apachectl graceful	, want we veranderen niet iets in apache	,
+
+
+[eric@almond cgi]$ vi echo.c
+
+int main(int argc, char *argv[])
+{
+    entry entries[MAX_ENTRIES];
+    register int x,m=0;
+    int cl;
+
+/* [ERICJ] */
+  sleep(30);
+
+  printf("Content-type: text/html\n\n");			/ line 29
+
+/ we use sleep	, want het program werkt met stdin	, 
+/ TODO
+
+[eric@almond cgi]$ gcc -Wall -g echo.c echo2.c -o echo.cgi
+
+/ Geef in browser	,
+www.cgi.com
+/ fill in form , submit	, 
+/ we zien Waiting... 	, en we zien ook	, 
+/ TODO post met curl	,
+/ we zien in de devtools	,	
+Form Data:
+2315_order=eric&2316_order=hans&2317_order=13&card_type=Access&card_num=foo&submit=
+
+[eric@almond cgi]$ ps ajx | grep cgi
+ 5161  6272  1233  1233 ?           -1 S       48   0:00 /home/eric/Devel/Apache/site.cgi/cgi/echo.cgi
+
+/ we moeten $ sudo gdb	, want echo.cgi runs onder 48=apache	, niet eric	,
+
+[eric@almond cgi]$ sudo gdb echo.cgi 6272
+(gdb) b 29
+(gdb) c
+Continuing.
+
+Breakpoint 1, main (argc=1, argv=0x7ffd12b0c0f8) at echo.c:29
+29		printf("Content-type: text/html\n\n");
+47	    for(x=0;cl && (!feof(stdin));x++) 
+48		{
+49	        m=x;
+50	        entries[x].val = fmakeword(stdin,'&',&cl);
+
+/ '&' is het stop teken	, 
+
+(gdb) p entries[0]
+$19 = {
+  name = 0x0, 
+  val = 0x189c050 "2315_order=eric"
+}
+
+51	        plustospace(entries[x].val);
+52	        unescape_url(entries[x].val);
+
+(gdb) p entries[0].val
+$21 = 0x189c050 "2315_order=eric"
+
+53	        entries[x].name = makeword(entries[x].val,'=');
+(gdb) p entries[0]
+$22 = {
+  name = 0x18b5060 "2315_order", 
+  val = 0x189c050 "eric"
+}
+/ Sets voor '=' in name	, en rm dit van val	,
+
+47	    for(x=0;cl && (!feof(stdin));x++) 
+...
+(gdb) p entries
+$23 = {{
+    name = 0x18b5060 "2315_order", 
+    val = 0x189c050 "eric"
+  }, {
+    name = 0x18ce090 "2316_order", 
+    val = 0x18b5080 "hans"
+  }, {
+    name = 0x18e70c0 "2317_order", 
+    val = 0x18ce0b0 "13"
+  }, {
+    name = 0x19000f0 "card_type", 
+    val = 0x18e70e0 "Access"
+  }, {
+    name = 0x1919120 "card_num", 
+    val = 0x1900110 "foo"
+  }, {
+    name = 0x1932150 "submit", 
+    val = 0x1919140 ""
+  }, {
+...
+
+    printf("<H1>Query Results</H1>");
+    printf("You submitted the following name/value pairs:<p>%c",10);
+    printf("<ul>%c",10);
+
+    for(x=0; x <= m; x++)
+        printf("<li> <code>%s = %s</code>%c",entries[x].name,
+               entries[x].val,10);
+
+    printf("</ul>%c",10);
+
+/ Gewoon print naar stdout	, 
+/ Wat is stdout	?
+/ TODO
+
+(gdb) c
+Continuing.
+[Inferior 1 (process 7572) exited normally]
+
+/ we zien result in browser	, 
+
+/ 13	. 
+
+[eric@almond site.cgi]$ pwd
+/home/eric/Devel/Apache/site.cgi
+[eric@almond site.cgi]$ ls html/
+echo_ajax.html   jquery-3.1.1.js  
+[eric@almond site.cgi]$ vi html/echo_ajax.html 
+<script src="jquery-3.1.1.js"></script>
+
+[eric@almond cgi]$ gcc -Wall -g echo_ajax.c echo2.c -o echo_ajax.cgi
+Internal Server Error
+
+/ we simulate 	, en gaan debug	, 
+[eric@almond cgi]$ export REQUEST_METHOD=POST
+[eric@almond cgi]$ export CONTENT_TYPE=application/x-www-form-urlencoded
+[eric@almond cgi]$ export CONTENT_LENGTH=1024
+/ TODO
+
+
+/ 13	. 
+
+/ we geven 	,
+http://www.cgi.com/echo_ajax.html
+
+[eric@almond Express]$ ps ajhx | grep cgi
+31575  1034  1233  1233 ?           -1 S       48   0:00 /home/eric/Devel/Apache/site.cgi/cgi/echo_ajax.cgi
+[eric@almond cgi]$ sudo gdb echo_ajax.cgi 1034 
+(gdb) b 29
+Breakpoint 1 at 0x400911: file echo_ajax.c, line 29.
+(gdb) c
+Continuing.
+
+Breakpoint 1, main (argc=1, argv=0x7fff42828118) at echo_ajax.c:31
+
+/ In devtools	,
+
+Request URL:http://www.cgi.com/cgi-bin/echo_ajax.cgi
+
+Request Headers
+Provisional headers are shown
+Accept:*/*
+Content-Type:application/x-www-form-urlencoded; charset=UTF-8			<-
+Origin:http://www.cgi.com
+Referer:http://www.cgi.com/echo_ajax.html
+User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36
+X-Requested-With:XMLHttpRequest
+
+Form Data
+order:eric
+card_type:Access
+card_num:7
+/ We hebben een # apachectl graceful gedaan	, en toen	 erbij	, 
+/ TODO
+ 
+/ 13	. 
+
+/ Lees	,
+http://stackoverflow.com/questions/2085302/printing-all-environment-variables-in-c-c
+
+$ vi echo_ajax_my.c
+...
+[eric@almond cgi]$ gcc -Wall -g echo_ajax_my.c echo2.c -o echo_ajax_my.cgi[eric@almond cgi]$ 
+
+[eric@almond html]$ vi echo_ajax_my.html 
+...
+
+/ Waar verschijnt printf in echo_ajax_my.c?
+/ TODO
+
+[eric@almond cgi]$ sudo gdb echo_ajax_my.cgi 2479
+32		for(env=envp;*env!=0;env++){
+(gdb)  n
+33			char*this_env=*env;
+(gdb) 
+34			printf("%s\n",this_env);
+(gdb) p this_env
+$1 = 0x7ffeb37b8b56 "UNIQUE_ID=WJj45IN2DctXmk7ylnscfQAAAAI"
+$2 = 0x7ffe346ffb7c "HTTP_HOST=www.cgi.com"
+$3 = 0x7ffe346ffb92 "HTTP_CONNECTION=keep-alive"
+$4 = 0x7ffe346ffbad "CONTENT_LENGTH=38"
+5 = 0x7ffe346ffbbf "HTTP_ACCEPT=*/*"
+$6 = 0x7ffe346ffbcf "HTTP_ORIGIN=http://www.cgi.com"
+$7 = 0x7ffe346ffbee "HTTP_X_REQUESTED_WITH=XMLHttpRequest"
+$8 = 0x7ffe346ffc13 "HTTP_USER_AGENT=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36"
+$9 = 0x7ffe346ffc8c "CONTENT_TYPE=application/x-www-form-urlencoded; charset=UTF-8"
+$10 = 0x7ffe346ffcca "HTTP_REFERER=http://www.cgi.com/echo_ajax_my.html"
+$11 = 0x7ffe346ffcfc "HTTP_ACCEPT_ENCODING=gzip, deflate"
+$12 = 0x7ffe346ffd1f "HTTP_ACCEPT_LANGUAGE=en-US,en;q=0.8"
+$13 = 0x7ffe346ffd43 "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
+$14 = 0x7ffe346ffd7a "SERVER_SIGNATURE="
+$15 = 0x7ffe346ffd8c "SERVER_SOFTWARE=Apache/2.4.18 (Fedora)"
+$16 = 0x7ffe346ffdb3 "SERVER_NAME=www.cgi.com"
+$17 = 0x7ffe346ffdcb "SERVER_ADDR=192.168.123.182"
+$18 = 0x7ffe346ffde7 "SERVER_PORT=80"
+$19 = 0x7ffe346ffdf6 "REMOTE_ADDR=192.168.123.182"
+$20 = 0x7ffe346ffe12 "DOCUMENT_ROOT=/home/eric/Devel/Apache/site.cgi/html"
+21 = 0x7ffe346ffe46 "REQUEST_SCHEME=http"
+$22 = 0x7ffe346ffe5a "CONTEXT_PREFIX=/cgi-bin"
+$23 = 0x7ffe346ffe72 "CONTEXT_DOCUMENT_ROOT=/home/eric/Devel/Apache/site.cgi/cgi"
+$24 = 0x7ffe346ffead "SERVER_ADMIN=root@localhost"
+$25 = 0x7ffe346ffec9 "SCRIPT_FILENAME=/home/eric/Devel/Apache/site.cgi/cgi/echo_ajax_my.cgi"
+$26 = 0x7ffe346fff0f "REMOTE_PORT=36506"
+$27 = 0x7ffe346fff21 "GATEWAY_INTERFACE=CGI/1.1"
+$28 = 0x7ffe346fff3b "SERVER_PROTOCOL=HTTP/1.1"
+$29 = 0x7ffe346fff54 "REQUEST_METHOD=POST"
+$30 = 0x7ffe346fff68 "QUERY_STRING="
+$31 = 0x7ffe346fff76 "REQUEST_URI=/cgi-bin/echo_ajax_my.cgi"
+$32 = 0x7ffe346fff9c "SCRIPT_NAME=/cgi-bin/echo_ajax_my.cgi"
+
+(gdb) p getenv("REQUEST_METHOD")
+$33 = 879755107
+(gdb) p getenv("CONTENT_TYPE")
+$34 = 879754393
+/ TODO
+
+/ 13	. 
+
+/ Lees	,
+https://www.cs.tut.fi/~jkorpela/forms/cgic.html
+
+/ 1ste cgi script	,
+
+$ vi hello.c
+[eric@almond cgi]$ cat hello.c
+#include<stdio.h>
+int main(){
+	printf("content-type:text/plain;charset=utf-8\n\n");			< \n\n
+	printf("Hello world\n");
+	return 0;
+}
+[eric@almond cgi]$ gcc -Wall hello.c -o hello.cgi
+
+/ printf gaat naar de response	, output stream	,
+
+/ Geef	,
+http://www.cgi.com/cgi-bin/hello.cgi
+
+/ we zien in devtools	,
+
+Headers
+
+General
+Request URL:http://www.cgi.com/cgi-bin/hello.cgi
+Request Method:GET
+Status Code:200 OK
+Remote Address:192.168.123.182:80
+
+Response Headers
+Connection:Keep-Alive
+Content-Type:text/plain;charset=utf-8			<- printf
+Date:Tue, 07 Feb 2017 20:14:01 GMT
+Keep-Alive:timeout=5, max=100
+Server:Apache/2.4.18 (Fedora)
+Transfer-Encoding:chunked
+
+Request Headers
+Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Encoding:gzip, deflate, sdch
+Accept-Language:en-US,en;q=0.8
+Cache-Control:max-age=0
+Connection:keep-alive
+Host:www.cgi.com
+Upgrade-Insecure-Requests:1
+User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36
+
+Responses
+Hello world
+
+/ 13	. 
+
+$ vi hello1.c
+
+#include<stdio.h>
+int main(){
+	printf("content-type:text/html;charset=utf-8\n\n");		<- text/html
+	printf("<h3>Hello world</h3>");
+	return 0;
+}
+
+[eric@almond cgi]$ gcc -Wall hello1.c -o hello1.cgi
+
+/ Geef 	,
+http://www.cgi.com/cgi-bin/hello1.cgi
+
+<body><h3>Hello world</h3></body>
+
+/ Maar als we 
+
+$ vi hello1.c
+
+#include<stdio.h>
+int main(){
+	printf("content-type:text/plain;charset=utf-8\n\n");		<- text/plain
+	printf("<h3>Hello world</h3>");
+	return 0;
+}
+
+
+<body>
+	<pre style="word-wrap: break-word; white-space: pre-wrap;">&lt;h3&gt;Hello world&lt;/h3&gt;</pre>
+</body>
+
+/ 13	 .
+
+[eric@almond cgi]$ vi hello2.c 
+#include<stdio.h>
+int main(int argc,char*arv[],char*envp[]){
+  printf("content-type:text/plain;charset=utf-8\n\n");
+  char**env;
+  for(env=envp;*env!=0;env++){
+    char*this_env=*env;
+    printf("%s\n",this_env);
+  }
+  return 0;
+}
+
+[eric@almond cgi]$ gcc -Wall hello2.c -o hello2.cgi
+
+/ Als we in de shell	,
+[eric@almond cgi]$ ./hello2.cgi 
+content-type:text/plain;charset=utf-8
+
+XDG_VTNR=2
+NVM_RC_VERSION=
+MANPATH=/home/eric/.nvm/versions/node/v5.5.0/share/man:/usr/local/share/man:/usr/share/man
+XDG_SESSION_ID=1
+HOSTNAME=almond.nuts.org
+NVM_CD_FLAGS=
+TERM=xterm-256color
+VTE_VERSION=4203
+XDG_MENU_PREFIX=gnome-
+...
+
+/ Maar als we geef	,
+http://www.cgi.com/cgi-bin/hello2.cgi
+
+UNIQUE_ID=WJo1S@kL-3LCPNTV7KckhQAAAAI
+HTTP_HOST=www.cgi.com
+HTTP_CONNECTION=keep-alive
+HTTP_ACCEPT=text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+HTTP_UPGRADE_INSECURE_REQUESTS=1
+HTTP_USER_AGENT=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36
+HTTP_ACCEPT_ENCODING=gzip, deflate, sdch
+HTTP_ACCEPT_LANGUAGE=en-US,en;q=0.8
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+SERVER_SIGNATURE=
+SERVER_SOFTWARE=Apache/2.4.18 (Fedora)
+SERVER_NAME=www.cgi.com
+SERVER_ADDR=192.168.123.182
+SERVER_PORT=80
+REMOTE_ADDR=192.168.123.182
+DOCUMENT_ROOT=/home/eric/Devel/Apache/site.cgi/html
+REQUEST_SCHEME=http
+CONTEXT_PREFIX=/cgi-bin
+CONTEXT_DOCUMENT_ROOT=/home/eric/Devel/Apache/site.cgi/cgi
+SERVER_ADMIN=root@localhost
+SCRIPT_FILENAME=/home/eric/Devel/Apache/site.cgi/cgi/hello2.cgi
+REMOTE_PORT=37518
+GATEWAY_INTERFACE=CGI/1.1
+SERVER_PROTOCOL=HTTP/1.1
+REQUEST_METHOD=GET
+QUERY_STRING=
+REQUEST_URI=/cgi-bin/hello2.cgi
+SCRIPT_NAME=/cgi-bin/hello2.cgi
+
+/ 13	. 
+
+[eric@almond cgi]$ cat hello2a.c
+#include<stdio.h>
+#include<stdlib.h>																		<-
+int main(int argc,char*arv[],char*envp[]){
+	printf("content-type:text/plain;charset=utf-8\n\n");
+	char*s;
+	if( (s=getenv("REQUEST_METHOD"))!=NULL){
+		printf("%s\n",s);
+	}
+	if( (s=getenv("CONTENT_TYPE"))!=NULL){
+		printf("%s\n",s);
+	}
+	return 0;
+}
+
+/ Geef	,
+http://www.cgi.com/cgi-bin/hello2a.cgi
+/ we zien 
+GET 
+/ Dat komt omdat we geen form post	,
+
+/ 13	. 
+
+/ we maken een gewoon form,	 geen ajax form	,
+
+$ vi hello2a.html
+
+<!doctype html>
+<body>
+<form method="post" action="/cgi-bin/hello2a.cgi">
+  <input name="order">
+  <br>
+  <ul>
+    <li><input name="card_type" type="checkbox" value="Access"></li>
+    <li><input name="card_type" type="checkbox" value="Amex"></li>
+    <li><input name="card_type" type="checkbox" value="Mastercard"></li>
+  </ul>
+  <br>
+  <input name="card_num">
+  <button name="submit">
+  <button type="reset" name="reset">
+</form>
+</body>
+
+/ Geef	,
+http://www.cgi.com/hello2a.html
+
+/ Vul wat in	, en submit	,
+
+/ we komen op	,
+http://www.cgi.com/cgi-bin/hello2a.cgi
+/ we zien 	,
+POST
+application/x-www-form-urlencoded
+
+/ uitgebreider	,
+
+General
+Request URL:http://www.cgi.com/cgi-bin/hello2a.cgi
+Request Method:POST
+Status Code:200 OK
+Remote Address:192.168.123.182:80
+
+Response Headers
+Connection:Keep-Alive
+Content-Type:text/plain;charset=utf-8
+Date:Tue, 07 Feb 2017 21:57:45 GMT
+Keep-Alive:timeout=5, max=100
+Server:Apache/2.4.18 (Fedora)
+Transfer-Encoding:chunked
+
+Request Headers
+Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Encoding:gzip, deflate
+Accept-Language:en-US,en;q=0.8
+Cache-Control:max-age=0
+Connection:keep-alive
+Content-Length:44
+Content-Type:application/x-www-form-urlencoded			<- komt uit de browser	,
+Host:www.cgi.com
+Origin:http://www.cgi.com
+Referer:http://www.cgi.com/hello2a.html
+Upgrade-Insecure-Requests:1
+User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36
+
+Form Data
+order=eric&card_type=Amex&card_num=7&submit=
+
+/ 13	. 
+
+/ Let op;
+\n\n na headers	,
+#include<stdlib.h> bij getenv	, maar wat is getenv in gdb?
+controleer of getenv geen NULL geeft	,  
+
+/ Lees	,
+https://www.cs.tut.fi/~jkorpela/forms/cgic.html
+
+/ 13	. 
+
+/ we maken ajax form	, 
+/ de controller hello2a2.c levert een stuk html	, hello2a.c moet een page leveren (TODO)
+/ omdat we in hello2a2.html jquery ajax, zien we NIET na een post in de url field van de browser www.cgi.com/cgi/hello2a2.cgi	, maar blijft de page www.cgi.com/hello2a2.html	,
+
+$ vi hello2a2.html
+
+<!doctype html>
+<head>
+<script src="jquery-3.1.1.js"></script>
+</head>
+<body>
+<form id="form" action="/cgi-bin/hello2a2.cgi">
+  <input name="order">
+  <br>
+  <ul>
+    <li><input name="card_type" type="checkbox" value="Access"></li>
+		<li><input name="card_type" type="checkbox" value="Amex"></li>
+    <li><input name="card_type" type="checkbox" value="Mastercard"></li>
+  </ul>
+  <br>
+  <input name="card_num">
+  <button name="submit">Submit</button>
+  <button type="reset" name="reset">Reset</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+var controller=function(event){
+
+  event.preventDefault();
+
+  var $form=$("#form"),
+    order=$form.find("input[name='order']").val(),
+    card_type=$form.find("input[name='card_type']").val(),
+    card_num=$form.find("input[name='card_num']").val(),
+    url=$form.attr("action");  
+
+  var posting=$.post(url,{order:order,card_type:card_type,card_num:card_num});
+  posting.done(function(data){
+    //var content=$(data).find("content");
+    $("#result").empty().html(data);
+  });
+};
+$("#form").submit(controller);
+</script>
+</body>
+
+$ vi hello2a2.c
+
+#include<stdio.h>
+#include<stdlib.h>
+int main(int argc,char*arv[],char*envp[]){
+  printf("content-type:text/html;charset=utf-8\n\n");		
+  char*s;
+  if( (s=getenv("REQUEST_METHOD"))!=NULL){
+    printf("<span>%s</span>",s);
+  }
+  printf("<br>");
+  if( (s=getenv("CONTENT_TYPE"))!=NULL){
+    printf("<span>%s</span>",s);
+  }
+  printf("<br>");
+	printf("<span>π</span>");
+
+  return 0;
+}
+[eric@almond cgi]$ gcc -Wall hello2a2.c -o hello2a2.cgi 
+
+/ text/plain mag ook TODO
+/ charset=utf-8 MOET	, want als we charset=us-ascii , zien we niet π in het window	, maar ... TODO 
+
+/ Als we <button type="button" ...> , dan wordt jquery controller niet called	 TODO 
+
+
+
+
+/ 13	. 
+
+
+
+/ jquery.js in apache	,
+
+/ lees	,
+http://stackoverflow.com/questions/18724718/error-403-in-loading-resources-like-css-and-js-in-my-index-php
+lsof -i tcp:80
+
+/ geef in google,	
+apache jquery.js directory
+/ lees	,
+http://stackoverflow.com/questions/21706067/apache-doesnt-serve-files-in-javascript-directory-why
+http://serverfault.com/questions/274254/cannot-access-javascript-folder
+/ Inderdaad	,
+$ ls /usr/share/javascript/jquery/latest/jquery.js
+
+/ Als we jquery-3.1.1.js in dezelfde dir als de .html , dus in html	, dan OK	,
+/ Maar we hebben geprobeerd	,
+
+[root@almond httpd]# vi conf.d/my-virtual-hosts.conf 
+Alias /js /home/eric/Devel/Apache/js/
+<Directory "/home/eric/Devel/Apache/js/">
+        Options FollowSymLinks MultiViews
+</Directory>
+
+[root@almond httpd]# apachectl graceful
+
+$ vi site.cgi/html/echo_ajax.html
+...
+<script src="/js/jquery-3.1.1.js"></script>
+
+/ Maar dan krijgen we 403 Forbidden 
+
+/ 13	. 
+
+
+
+
+
+ 
+
+
+
+
+
+/ 13	. 
+
+[eric@almond site.cgi]$ nvm use v5.5
+[eric@almond site.cgi]$ npm instal jquery
+
+/ of	,
+[eric@almond site.cgi]$ mkdir js
+[eric@almond site.cgi]$ cp -a ~/Downloads/jquery-3.1.1.js js
+
+
+
+
+
+ 

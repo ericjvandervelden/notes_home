@@ -1,0 +1,1000 @@
+  773  vi main.js
+  774  vi src/main.js
+  775  npm run webpack
+  776  node server
+  777  vi src/main.js
+  778  npm run webpack
+  779  node server
+  780  vi src/main.js
+  781  npm run webpack
+  782  node server
+  783  vi src/main.js
+  784  cp src/main.js src/main3.js.ERR.setState.in.render.also.with.immediate.executing.function
+  785  vi src/main.js
+  786  npm run webpack
+  787  node server
+  788  ls
+  789  rm src/main3.js.ERR.setState.in.render.also.with.immediate.executing.function 
+  790  cp src/main.js src/main3.js.OK.setState.in.render.handler
+  791  vi src/main.js
+  792  npm run webpack
+  793  vi src/main.js
+  794  npm run webpack
+  795  node server
+  796  vi src/main.js
+  797  npm run webpack
+  798  cp src/main.js src/main3.js.final
+  799  pwd
+  800  exit
+  801  cd ../Bootstrap/
+  802  ls
+  803  less public/index.html 
+  804  vi public/index.html 
+  805  vi src/main.css 
+  806  vi server.js 
+  807  vi public/index.html 
+  808  pwd
+  809  vi public/index.html 
+  810  pwd
+  811  exit
+  812  node server
+  813  nvm use v5.5.0
+  814  node server
+  815  pwd
+  816  exit
+  817  ls
+  818  vi src/main.js
+  819  exit
+  820  cd /home/eric/Devel/JavaScript/Node/React/Manual/react-bootstrap-my
+  821  cd /home/eric/Devel/JavaScript/Node/CodeSchool/Bootstrap
+  822  ls
+  823  vi public/index.html 
+  824  grep form -r *
+  825  grep 'form-group' -r *
+  826  node server
+  827  nvm use v5.5.0
+  828  node server
+  829  ls
+  830  exit
+  831  npm run webpack
+  832  nvm use v5.5.0
+  833  npm run webpack
+  834  node server
+  835  npm run webpack
+  836  node server
+  837  npm run webpack
+  838  node server
+  839  npm run webpack
+  840  node server
+  841  npm run webpack
+  842  node server
+  843  npm run webpack
+  844  node server
+  845  npm run webpack
+  846  node server
+  847  npm run webpack
+  848  node server
+  849  npm run webpack
+  850  node server
+  851  npm run webpack
+  852  node server
+  853  npm run webpack
+  854  node server
+  855  npm run webpack
+  856  node server
+  857  npm run webpack
+  858  node server
+  859  npm run webpack
+  860  node server
+  861  npm run webpack
+  862  node server
+  863  npm run webpack
+  864  node server
+  865  npm run webpack
+  866  node server
+  867  npm run webpack
+  868  node server
+  869  npm run webpack
+  870  node server
+  871  npm run webpack
+  872  node server
+  873  npm run webpack
+  874  node server
+  875  npm run webpack
+  876  node server
+  877  npm run webpack
+  878  node server
+  879  npm run webpack
+  880  node server
+  881  npm run webpack
+  882  node server
+  883  npm run webpack
+  884  node server
+  885  npm run webpack
+  886  node server
+  887  exit
+  888  cd /home/eric/Devel/JavaScript/Node/CodeSchool/React
+  889  ls
+  890  ls public/
+  891  ls src
+  892  ls
+  893  vi src/main.js
+  894  ls src/
+  895  cp src/main.js src/main4.js
+  896  exit
+  897  cd 
+  898  cd Devel/Docker/scripts/
+  899  ls
+  900  cat rm-all-containers 
+  901  mv rm-all-containers rm-all-containers.sh
+  902  ls -l
+  903  exit
+  904  cd bin
+  905  cd 
+  906  cd bin
+  907  mv rm-all-containers rm-all-containers.sh
+  908  vi rm-all-containers.sh 
+  909  docker ps -a
+  910  cat rm-all-containers.sh 
+  911  vi rm-all-containers.sh 
+  912  cat rm-all-containers.sh 
+  913  docker ps -a | awk 'NR>1{print $1}' | xargs echo docker rm
+  914  ls
+  915  docker volume ls -f dangling=true 
+  916  docker volume ls -f dangling=true  |  awk 'NR>1{print $2}'
+  917  docker volume ls -f dangling=true  |  awk '{print $2}'
+  918  docker volume ls -f dangling=true  |  awk 'NR>1{print $2}'
+  919  docker volume ls -f dangling=true  |  awk 'NR>1{print $2}' | xargs echo docker volume rm 
+  920  mv rm-dangling-volumes rm-dangling-volumes.sh
+  921  vi rm-dangling-volumes.sh 
+  922  ls -l
+  923  ls /home/eric/Devel/Docker/scripts/
+  924  cat rm-all-containers.sh 
+  925  vi rm-all-containers.sh 
+  926  ls
+  927  rm -f rm-all-containers.sh 
+  928  ln --hlep
+  929  ln --help
+  930  ln -s /home/eric/Devel/Docker/scripts/rm-all-containers.sh .
+  931  ls
+  932  ls -l
+  933  groups
+  934  cat rm-dangling-volumes.sh 
+  935  mv rm-dangling-volumes.sh ~/Devel/Docker/scripts/
+  936  ln -s ~/Devel/Docker/scripts/rm-dangling-volumes.sh .
+  937  ls -l
+  938  cat rm-dangling-images.sh 
+  939  mv rm-dangling-images.sh ~/Devel/Docker/scripts/
+  940  ln -s ~/Devel/Docker/scripts/rm-dangling-images.sh 
+  941  ls
+  942  ls -l
+  943  mv rm-exited-containers ~/Devel/Docker/scripts/rm-exited-containers.sh
+  944  ln -s ~/Devel/Docker/scripts/rm-exited-containers.sh 
+  945  ls -l
+  946  exit
+  947  cd 
+  948  exit
+  949  echo "one
+  950  two"
+  951  echo "one
+  952  exit
+  953  docker ps
+  954  docker commit -m "dnf -y upgrade --setopt=deltarpm=false" 823675943b28 fedora
+  955  exit
+  956  pwd
+  957  ls
+  958  cat Dockerfile 
+  959  exit
+  960  cd 
+  961  cd tmp
+  962  ls
+  963  vi 1.sh
+  964  chmod u+x 1.sh 
+  965  ./1.sh 
+  966  exit
+  967  cd ../sshd/
+  968  vi Dockerfile 
+  969  vi script.sh 
+  970  cd ..
+  971  find -name Dockerfile | xargs grep dnf-command
+  972  cd postgres/
+  973  pwd
+  974  ls
+  975  vi script.sh 
+  976  exit
+  977  sudo su - postgres
+  978  exit
+  979  less ../polymer-first-elements/icon-toggle.html 
+  980  pwd
+  981  ls
+  982  less bower_components/iron-pages/iron-pages.html 
+  983  less ../polymer-first-elements/icon-toggle.html 
+  984  pwd
+  985  exit
+  986  docker ps 
+  987  docker commit --help
+  988  docker commit -m "added: LANG=en_US.UTF-8" -a "Eric J." 4d4e17a61dca my/ubuntu
+  989  exit
+  990  docker ps 
+  991  docker commit -m "added: /home/eric/psql" -a "Eric J." df24a7dc174b       my/fedora_postgres
+  992  exit
+  993  cd 
+  994  vi .bashrc
+  995  echo $PATH
+  996  vi .bash_profile 
+  997  exit
+  998  vi ~/.bash_profile 
+  999  exit
+ 1000  cd ../work2
+ 1001  go install methods
+ 1002  ls
+ 1003  . ~/.bash_profile 
+ 1004  go install methods
+ 1005  . ~/.bash_profile 
+ 1006  methods 
+ 1007  . ~/.bash_profile 
+ 1008  go install methods
+ 1009  methods 
+ 1010  go install methods
+ 1011  methods 
+ 1012  go install methods
+ 1013  methods 
+ 1014  go install methods
+ 1015  methods 
+ 1016  go install methods
+ 1017  methods 
+ 1018  go install methods
+ 1019  methods 
+ 1020  go install methods
+ 1021  methods 
+ 1022  go install methods
+ 1023  methods 
+ 1024  go install methods
+ 1025  methods 
+ 1026  go install methods
+ 1027  methods 
+ 1028  go install methods
+ 1029  methods 
+ 1030  mkdir src/concurrency
+ 1031  vi src/concurrency/main.go
+ 1032  go install concurrency
+ 1033  concurrency 
+ 1034  go install concurrency
+ 1035  concurrency 
+ 1036  go install concurrency
+ 1037  concurrency 
+ 1038  go install concurrency
+ 1039  concurrency 
+ 1040  go install concurrency
+ 1041  concurrency 
+ 1042  go install concurrency
+ 1043  concurrency 
+ 1044  go install concurrency
+ 1045  concurrency 
+ 1046  psql -U postgres
+ 1047  sudo su - postgres
+ 1048  psql -U postgres
+ 1049  postgres -U eric
+ 1050  psql -U eric
+ 1051  ls
+ 1052  concurrency 
+ 1053  go install concurrency
+ 1054  concurrency 
+ 1055  go install concurrency
+ 1056  concurrency 
+ 1057  go install concurrency
+ 1058  concurrency 
+ 1059  go install concurrency
+ 1060  concurrency 
+ 1061  go install concurrency
+ 1062  concurrency 
+ 1063  go install concurrency
+ 1064  concurrency 
+ 1065  go install concurrency
+ 1066  concurrency 
+ 1067  go install concurrency
+ 1068  concurrency 
+ 1069  go install concurrency
+ 1070  concurrency 
+ 1071  go install concurrency
+ 1072  concurrency 
+ 1073  go install concurrency
+ 1074  concurrency 
+ 1075  go install concurrency
+ 1076  concurrency 
+ 1077  go install concurrency
+ 1078  concurrency 
+ 1079  go install concurrency
+ 1080  concurrency 
+ 1081  go install concurrency
+ 1082  concurrency 
+ 1083  go install concurrency
+ 1084  concurrency 
+ 1085  go install concurrency
+ 1086  concurrency 
+ 1087  go install concurrency
+ 1088  concurrency 
+ 1089  go install concurrency
+ 1090  concurrency 
+ 1091  go install concurrency
+ 1092  concurrency 
+ 1093  go install concurrency
+ 1094  concurrency 
+ 1095  go install concurrency
+ 1096  concurrency 
+ 1097  go install concurrency
+ 1098  concurrency 
+ 1099  go install concurrency
+ 1100  concurrency 
+ 1101  go install concurrency
+ 1102  concurrency 
+ 1103  go install concurrency
+ 1104  concurrency 
+ 1105  go install concurrency
+ 1106  concurrency 
+ 1107  go install concurrency
+ 1108  concurrency 
+ 1109  go install concurrency
+ 1110  concurrency 
+ 1111  go install concurrency
+ 1112  concurrency 
+ 1113  go install concurrency
+ 1114  concurrency 
+ 1115  go install concurrency
+ 1116  concurrency 
+ 1117  go install concurrency
+ 1118  concurrency 
+ 1119  go install concurrency
+ 1120  concurrency 
+ 1121  go install concurrency
+ 1122  concurrency 
+ 1123  go install concurrency
+ 1124  concurrency 
+ 1125  go install concurrency
+ 1126  concurrency 
+ 1127  go install concurrency
+ 1128  concurrency 
+ 1129  go install concurrency
+ 1130  concurrency 
+ 1131  go install concurrency
+ 1132  concurrency 
+ 1133  go install concurrency
+ 1134  concurrency 
+ 1135  go install concurrency
+ 1136  concurrency 
+ 1137  go install concurrency
+ 1138  concurrency 
+ 1139  go install concurrency
+ 1140  concurrency 
+ 1141  go install concurrency
+ 1142  concurrency 
+ 1143  go install concurrency
+ 1144  concurrency 
+ 1145  go install concurrency
+ 1146  concurrency 
+ 1147  go install concurrency
+ 1148  concurrency 
+ 1149  go install concurrency
+ 1150  concurrency 
+ 1151  go install concurrency
+ 1152  concurrency 
+ 1153  go install concurrency
+ 1154  concurrency 
+ 1155  go install concurrency
+ 1156  concurrency 
+ 1157  go install concurrency
+ 1158  concurrency 
+ 1159  go install concurrency
+ 1160  concurrency 
+ 1161  go install concurrency
+ 1162  concurrency 
+ 1163  go install concurrency
+ 1164  concurrency 
+ 1165  go install concurrency
+ 1166  concurrency 
+ 1167  go install concurrency
+ 1168  concurrency 
+ 1169  go install concurrency
+ 1170  concurrency 
+ 1171  go install concurrency
+ 1172  concurrency 
+ 1173  go install concurrency
+ 1174  concurrency 
+ 1175  go install concurrency
+ 1176  concurrency 
+ 1177  go install concurrency
+ 1178  concurrency 
+ 1179  ls
+ 1180  ls ~/tmp/
+ 1181  vi ~/tmp/1.c
+ 1182  go install concurrency
+ 1183  vi ~/tmp/1.c
+ 1184  concurrency 
+ 1185  vi ~/tmp/1.c
+ 1186  go install concurrency
+ 1187  vi ~/tmp/1.c
+ 1188  concurrency 
+ 1189  vi ~/tmp/1.c
+ 1190  go install concurrency
+ 1191  vi ~/tmp/1.c
+ 1192  concurrency 
+ 1193  go install concurrency
+ 1194  concurrency 
+ 1195  go install concurrency
+ 1196  concurrency 
+ 1197  go install concurrency
+ 1198  concurrency 
+ 1199  go install concurrency
+ 1200  concurrency 
+ 1201  go install concurrency
+ 1202  concurrency 
+ 1203  go install concurrency
+ 1204  concurrency 
+ 1205  go install concurrency
+ 1206  concurrency 
+ 1207  go install concurrency
+ 1208  concurrency 
+ 1209  go install concurrency
+ 1210  concurrency 
+ 1211  go install concurrency
+ 1212  concurrency 
+ 1213  go install concurrency
+ 1214  concurrency 
+ 1215  go install concurrency
+ 1216  concurrency 
+ 1217  go install concurrency
+ 1218  concurrency 
+ 1219  go install concurrency
+ 1220  concurrency 
+ 1221  go install concurrency
+ 1222  concurrency 
+ 1223  go install concurrency
+ 1224  concurrency 
+ 1225  go install concurrency
+ 1226  concurrency 
+ 1227  go install concurrency
+ 1228  concurrency 
+ 1229  go install concurrency
+ 1230  concurrency 
+ 1231  go install concurrency
+ 1232  concurrency 
+ 1233  go install concurrency
+ 1234  concurrency 
+ 1235  go install concurrency
+ 1236  concurrency 
+ 1237  go install concurrency
+ 1238  concurrency 
+ 1239  go install concurrency
+ 1240  concurrency 
+ 1241  go install concurrency
+ 1242  concurrency 
+ 1243  go install concurrency
+ 1244  concurrency 
+ 1245  go install concurrency
+ 1246  concurrency 
+ 1247  go install concurrency
+ 1248  concurrency 
+ 1249  go install concurrency
+ 1250  concurrency 
+ 1251  go install concurrency
+ 1252  concurrency 
+ 1253  go install concurrency
+ 1254  concurrency 
+ 1255  go install concurrency
+ 1256  concurrency 
+ 1257  go install concurrency
+ 1258  concurrency 
+ 1259  go install concurrency
+ 1260  concurrency 
+ 1261  go install concurrency
+ 1262  concurrency 
+ 1263  go install concurrency
+ 1264  concurrency 
+ 1265  go install concurrency
+ 1266  concurrency 
+ 1267  go install concurrency
+ 1268  concurrency 
+ 1269  go install concurrency
+ 1270  concurrency 
+ 1271  go install concurrency
+ 1272  concurrency 
+ 1273  go install concurrency
+ 1274  concurrency 
+ 1275  go install concurrency
+ 1276  concurrency 
+ 1277  go install concurrency
+ 1278  concurrency 
+ 1279  go install concurrency
+ 1280  concurrency 
+ 1281  go install concurrency
+ 1282  concurrency 
+ 1283  go install concurrency
+ 1284  concurrency 
+ 1285  go install concurrency
+ 1286  concurrency 
+ 1287  go install concurrency
+ 1288  concurrency 
+ 1289  go install concurrency
+ 1290  concurrency 
+ 1291  go install concurrency
+ 1292  concurrency 
+ 1293  go install concurrency
+ 1294  concurrency 
+ 1295  go install concurrency
+ 1296  concurrency 
+ 1297  go install concurrency
+ 1298  concurrency 
+ 1299  go install concurrency
+ 1300  concurrency 
+ 1301  go install concurrency
+ 1302  concurrency 
+ 1303  go install concurrency
+ 1304  concurrency 
+ 1305  go install concurrency
+ 1306  concurrency 
+ 1307  go install concurrency
+ 1308  concurrency 
+ 1309  go install concurrency
+ 1310  concurrency 
+ 1311  go install concurrency
+ 1312  concurrency 
+ 1313  go install concurrency
+ 1314  concurrency 
+ 1315  go install concurrency
+ 1316  concurrency 
+ 1317  go install concurrency
+ 1318  concurrency 
+ 1319  go install concurrency
+ 1320  go install tmp
+ 1321  tmp
+ 1322  go install tmp
+ 1323  tmp
+ 1324  go install tmp
+ 1325  tmp
+ 1326  go install tmp
+ 1327  tmp
+ 1328  go install tmp
+ 1329  tmp
+ 1330  op
+ 1331  top
+ 1332  go install tmp
+ 1333  top
+ 1334  tmp
+ 1335  go install concurrency
+ 1336  concurrency 
+ 1337  go install tmp
+ 1338  tmp
+ 1339  go install tmp
+ 1340  tmp
+ 1341  go install tmp
+ 1342  tmp
+ 1343  go install tmp
+ 1344  tmp
+ 1345  go install tmp
+ 1346  tmp
+ 1347  go install tmp
+ 1348  tmp
+ 1349  go install tmp
+ 1350  tmp
+ 1351  go install tmp
+ 1352  tmp
+ 1353  go install tmp
+ 1354  tmp
+ 1355  go install tmp
+ 1356  tmp
+ 1357  go install tmp
+ 1358  tmp
+ 1359  go install tmp
+ 1360  tmp
+ 1361  go install tmp
+ 1362  tmp
+ 1363  go install tmp
+ 1364  tmp
+ 1365  go install tmp
+ 1366  tmp
+ 1367  go install tmp
+ 1368  tmp
+ 1369  go install tmp
+ 1370  tmp
+ 1371  go install tmp
+ 1372  tmp
+ 1373  go install tmp
+ 1374  tmp
+ 1375  go install tmp
+ 1376  tmp
+ 1377  go install tmp
+ 1378  tmp
+ 1379  go install tmp
+ 1380  tmp
+ 1381  go install tmp
+ 1382  tmp
+ 1383  go install tmp
+ 1384  tmp
+ 1385  go install tmp
+ 1386  tmp
+ 1387  go install tmp
+ 1388  tmp
+ 1389  mkdir src/video
+ 1390  go install video
+ 1391  video
+ 1392  go install video
+ 1393  video
+ 1394  go install video
+ 1395  video
+ 1396  go install video
+ 1397  video
+ 1398  go install video
+ 1399  video
+ 1400  go install video
+ 1401  video
+ 1402  go install video
+ 1403  video
+ 1404  go install video
+ 1405  video
+ 1406  go install video
+ 1407  video
+ 1408  go install concurrency
+ 1409  concurrency 
+ 1410  go install concurrency
+ 1411  concurrency 
+ 1412  ps axj | grep mysql
+ 1413  ps axj | grep maria
+ 1414  go install concurrency
+ 1415  concurrency 
+ 1416  go install concurrency
+ 1417  concurrency 
+ 1418  go install concurrency
+ 1419  concurrency 
+ 1420  go install concurrency
+ 1421  concurrency 
+ 1422  go install concurrency
+ 1423  concurrency 
+ 1424  go install concurrency
+ 1425  concurrency 
+ 1426  go install video
+ 1427  video
+ 1428  go install video
+ 1429  video
+ 1430  go install video
+ 1431  video
+ 1432  go install video
+ 1433  video
+ 1434  go install video
+ 1435  video
+ 1436  go install video
+ 1437  video
+ 1438  go install video
+ 1439  video
+ 1440  go install video
+ 1441  video
+ 1442  go install video
+ 1443  video
+ 1444  go install video
+ 1445  video
+ 1446  go install video
+ 1447  video
+ 1448  go install video
+ 1449  video
+ 1450  go install video
+ 1451  video
+ 1452  to
+ 1453  top
+ 1454  go install video
+ 1455  top
+ 1456  video
+ 1457  go install video
+ 1458  video
+ 1459  top
+ 1460  ps ajxf
+ 1461  top
+ 1462  ps ajx
+ 1463  ps ajxf
+ 1464  ps ajxf --width 2000
+ 1465  top
+ 1466  ps ajxf --width 2000
+ 1467  top
+ 1468  ps ajxf --width 2000
+ 1469  top
+ 1470  kill -9 18182
+ 1471  top
+ 1472  go install video
+ 1473  video
+ 1474  go install video
+ 1475  video
+ 1476  go install video
+ 1477  video
+ 1478  go install video
+ 1479  video
+ 1480  go install video
+ 1481  video
+ 1482  go install video
+ 1483  video
+ 1484  go install video
+ 1485  video
+ 1486  go install video
+ 1487  video
+ 1488  go install video
+ 1489  video
+ 1490  go install video
+ 1491  video
+ 1492  go install video
+ 1493  video
+ 1494  go install video
+ 1495  video
+ 1496  go install video
+ 1497  video
+ 1498  go install video
+ 1499  video
+ 1500  go install video
+ 1501  video
+ 1502  go install video
+ 1503  video
+ 1504  go install video
+ 1505  video 
+ 1506  go install video
+ 1507  video 
+ 1508  go install video
+ 1509  video 
+ 1510  go install video
+ 1511  video 
+ 1512  go install video
+ 1513  video 
+ 1514  go install video
+ 1515  video 
+ 1516  go install video
+ 1517  video 
+ 1518  go install video
+ 1519  video 
+ 1520  go install video
+ 1521  video 
+ 1522  go install video
+ 1523  video 
+ 1524  go install video
+ 1525  video 
+ 1526  go install video
+ 1527  video 
+ 1528  go install video
+ 1529  video 
+ 1530  go install video
+ 1531  video 
+ 1532  go install video
+ 1533  video 
+ 1534  go install video
+ 1535  video 
+ 1536  go install video
+ 1537  video 
+ 1538  go install video
+ 1539  video 
+ 1540  go install video
+ 1541  video 
+ 1542  go install video
+ 1543  video 
+ 1544  go install video
+ 1545  video 
+ 1546  go install video2
+ 1547  video2
+ 1548  go install video2
+ 1549  video2
+ 1550  go install video2
+ 1551  video2
+ 1552  go install video2
+ 1553  video2
+ 1554  go install video2
+ 1555  video2
+ 1556  go install video2
+ 1557  video2
+ 1558  go install video2
+ 1559  video2
+ 1560  go install video2
+ 1561  video2
+ 1562  go install video2
+ 1563  video2
+ 1564  go install video2
+ 1565  video2
+ 1566  go install video2
+ 1567  video2
+ 1568  go install video2
+ 1569  video2
+ 1570  go install video2
+ 1571  video2
+ 1572  go install video2
+ 1573  video2
+ 1574  go install video2
+ 1575  video2
+ 1576  go install video2
+ 1577  video2
+ 1578  go install video2
+ 1579  video2
+ 1580  go install video2
+ 1581  video2
+ 1582  go install video2
+ 1583  video2
+ 1584  go install video2
+ 1585  video2
+ 1586  go install video2
+ 1587  video2
+ 1588  go install video2
+ 1589  video2
+ 1590  go install video2
+ 1591  video2
+ 1592  go install video2
+ 1593  video2
+ 1594  go install video2
+ 1595  video2
+ 1596  go install video2
+ 1597  video2
+ 1598  go install video2
+ 1599  video2
+ 1600  go install video2
+ 1601  video2
+ 1602  go install video2
+ 1603  video2
+ 1604  go install video2
+ 1605  video2
+ 1606  go install video2
+ 1607  video2
+ 1608  go install video2
+ 1609  video2
+ 1610  go install video2
+ 1611  video2
+ 1612  go install video2
+ 1613  video2
+ 1614  w
+ 1615  who
+ 1616  man w
+ 1617  go install video2
+ 1618  man w
+ 1619  video2
+ 1620  go install video2
+ 1621  video2
+ 1622  go install video2
+ 1623  video2
+ 1624  go install video2
+ 1625  video2
+ 1626  go install video2
+ 1627  video2
+ 1628  go install video2
+ 1629  video2
+ 1630  go install video2
+ 1631  video2
+ 1632  go install video2
+ 1633  video2
+ 1634  go install video2
+ 1635  video2
+ 1636  go install video2
+ 1637  video2
+ 1638  go install video2
+ 1639  video2
+ 1640  go install video2
+ 1641  video2
+ 1642  go install video2
+ 1643  video2
+ 1644  go install video2
+ 1645  video2
+ 1646  go install video2
+ 1647  video2
+ 1648  go install video2
+ 1649  video2
+ 1650  go install video2
+ 1651  video2
+ 1652  go install video2
+ 1653  video2
+ 1654  go install video2
+ 1655  video2
+ 1656  go install video2
+ 1657  video2
+ 1658  go install video2
+ 1659  video2
+ 1660  go install video2
+ 1661  video2
+ 1662  go install video2
+ 1663  video2
+ 1664  go install video2
+ 1665  video2
+ 1666  go install video2
+ 1667  video2
+ 1668  go install video2
+ 1669  video2
+ 1670  go install video2
+ 1671  video2
+ 1672  go install video2
+ 1673  video2
+ 1674  go install video2
+ 1675  video2
+ 1676  go install video2
+ 1677  video2
+ 1678  go install video2
+ 1679  video2
+ 1680  go install video2
+ 1681  video2
+ 1682  go install video2
+ 1683  video2
+ 1684  go install video2
+ 1685  video2
+ 1686  go install video2
+ 1687  video2
+ 1688  go install video2
+ 1689  video2
+ 1690  go install video2
+ 1691  video2
+ 1692  go install video2
+ 1693  video2
+ 1694  go install video2
+ 1695  video2
+ 1696  go install video2
+ 1697  video2
+ 1698  go install video2
+ 1699  video2
+ 1700  go install video2
+ 1701  video2
+ 1702  go install video2
+ 1703  video2
+ 1704  go install video2
+ 1705  video2
+ 1706  go install video2
+ 1707  video2
+ 1708  go install video2
+ 1709  video2
+ 1710  go install video2
+ 1711  video2
+ 1712  go install video2
+ 1713  video2
+ 1714  go install video2
+ 1715  video2
+ 1716  go install video3
+ 1717  video3
+ 1718  go install video3
+ 1719  video3
+ 1720  go install video3
+ 1721  video3
+ 1722  go install video3
+ 1723  video3
+ 1724  go install video3
+ 1725  video3
+ 1726  go install video3
+ 1727  video3
+ 1728  go install video3
+ 1729  video3
+ 1730  go install video3
+ 1731  video3
+ 1732  go install video3
+ 1733  video3
+ 1734  go install video3
+ 1735  video3
+ 1736  go install video3
+ 1737  video3
+ 1738  go install video3
+ 1739  video3
+ 1740  go install video3
+ 1741  video3
+ 1742  go install video3
+ 1743  video3
+ 1744  go install video3
+ 1745  video3
+ 1746  go install video3
+ 1747  video3
+ 1748  go install video3
+ 1749  video3
+ 1750  go install video3
+ 1751  video3
+ 1752  go install video3
+ 1753  video3
+ 1754  go install video3
+ 1755  video3
+ 1756  go install video3
+ 1757  video3
+ 1758  go install video3
+ 1759  video3
+ 1760  go install video3
+ 1761  video3
+ 1762  go install video3
+ 1763  video3
+ 1764  go install video3
+ 1765  video3
+ 1766  psql --version
+ 1767  pwd
+ 1768  ls
+ 1769  find
+ 1770  pwd
+ 1771  pwd | sed 's/\//_/g' | xargs -I % echo "/home/eric/Devel/Logs/history/LOG%.txt"
+ 1772  history > /home/eric/Devel/Logs/history/LOG_home_eric_Devel_Golang_work2_3.txt

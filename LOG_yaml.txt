@@ -1,0 +1,564 @@
+/ 7	. 
+
+/ google
+yaml dash
+/ lees	,
+https://github.com/Animosity/CraftIRC/wiki/Complete-idiot%27s-introduction-to-yaml
+https://www.reddit.com/r/ansible/comments/5jhff3/when_to_use_dash_in_yaml/
+
+https://docs.saltstack.com/en/latest/topics/troubleshooting/yaml_idiosyncrasies.html
+Also, you can convert tabs to 2 spaces by these commands in Vim: :set tabstop=2 expandtab and then :retab.
+/ TODO
+
+/ google	,
+yaml indent
+https://stackoverflow.com/questions/42247535/yaml-how-many-spaces-per-indent
+https://www.tutorialspoint.com/yaml/yaml_indentation_and_separation.htm
+https://www.tutorialspoint.com/yaml/index.htm
+
+/ google,
+yaml how to run	,
+https://pyyaml.org/wiki/PyYAMLDocumentation
+
+/ 7	.
+
+/ google
+pyyaml install
+
+https://pyyaml.org/wiki/PyYAMLDocumentation
+
+[eric@almond sixth]$ pip install pyyaml
+Collecting pyyaml
+  Downloading https://files.pythonhosted.org/packages/9e/a3/1d13970c3f36777c583f136c136f804d70f500168edc1edea6daa7200769/PyYAML-3.13.tar.gz (270kB)
+    100% |████████████████████████████████| 276kB 1.3MB/s 
+Building wheels for collected packages: pyyaml
+  Running setup.py bdist_wheel for pyyaml ... done
+  Stored in directory: /home/eric/.cache/pip/wheels/ad/da/0c/74eb680767247273e2cf2723482cb9c924fe70af57c334513f
+Successfully built pyyaml
+mkl-random 1.0.1 requires cython, which is not installed.
+mkl-fft 1.0.0 requires cython, which is not installed.
+Installing collected packages: pyyaml
+Successfully installed pyyaml-3.13
+You are using pip version 10.0.1, however version 19.0.3 is available.
+You should consider upgrading via the 'pip install --upgrade pip' command.
+
+In [1928]: from yaml import load,dump
+
+In [1929]: from yaml import CLoader as Loader,CDumper as Dumper
+---------------------------------------------------------------------------
+ImportError                               Traceback (most recent call last)
+<ipython-input-1929-d29f657e1520> in <module>()
+----> 1 from yaml import CLoader as Loader,CDumper as Dumper
+
+ImportError: cannot import name 'CLoader'
+
+In [1930]: from yaml import Loader,Dumper
+
+/ libYAML
+/ TODO
+
+/ 13	. 
+
+In [1931]: import yaml
+
+In [1932]: document="""
+      ...: a:1
+      ...: b:
+      ...:     c:3
+      ...:     d:4
+      ...: """
+
+In [1933]: print yaml.dump(yaml.load(document))
+  File "<ipython-input-1933-6d7ffde90b92>", line 1
+    print yaml.dump(yaml.load(document))
+             ^
+SyntaxError: invalid syntax
+
+/ 13	. 
+
+In [1934]: yaml.load("""
+      ...: - Foo
+      ...: - BAr
+      ...: """)
+Out[1934]: ['Foo', 'BAr']
+
+/ 13	. 
+
+/ lees verderop	,
+YAML syntax
+->
+https://yaml.org/spec/1.1/#id857168
+
+/ 2.1
+
+/ array, list, sequence
+In [1936]: yaml.load("""
+      ...: - Foo
+      ...: - BAr
+      ...: """)
+Out[1936]: ['Foo', 'BAr']
+
+/ mapping, dictionary
+In [1937]: yaml.load("""
+      ...: hr:  65    # Home runs
+      ...: avg: 0.278 # Batting average
+      ...: rbi: 147   # Runs Batted In
+      ...: """)
+Out[1937]: {'hr': 65, 'avg': 0.278, 'rbi': 147}
+
+
+/ mapping, dictionary met arrays, lists	, sequences	,
+In [1935]: yaml.load("""
+      ...: amiericn:
+      ...: - Bosten REd
+      ...: - Detroit Tigers
+      ...: national:
+      ...: - New Yourk
+      ...: - Chaigo cubs
+      ...: """)
+Out[1935]: 
+{'amiericn': ['Bosten REd', 'Detroit Tigers'],
+ 'national': ['New Yourk', 'Chaigo cubs']}
+
+/ array, list, sequence of mappings, dictionaries	, 
+In [1938]: yaml.load("""
+      ...: -
+      ...:   name: Mark McGwire
+      ...:   hr:   65
+      ...:   avg:  0.278
+      ...: -
+      ...:   name: Sammy Sosa
+      ...:   hr:   63
+      ...:   avg:  0.288
+      ...: """)
+Out[1938]: 
+[{'name': 'Mark McGwire', 'hr': 65, 'avg': 0.278},
+ {'name': 'Sammy Sosa', 'hr': 63, 'avg': 0.288}]
+
+/ array, list, sequence of arrays, lists, sequences
+In [1939]: yaml.load("""
+      ...: - [name        , hr, avg  ]
+      ...: - [Mark McGwire, 65, 0.278]
+      ...: - [Sammy Sosa  , 63, 0.288]
+      ...: """)
+Out[1939]: [['name', 'hr', 'avg'], ['Mark McGwire', 65, 0.278], ['Sammy Sosa', 63, 0.288]]
+
+/ mapping, dictionary of mappings, dictionaries
+In [1940]: yaml.load("""
+      ...: Mark McGwire: {hr: 65, avg: 0.278}
+      ...: Sammy Sosa: {
+      ...:     hr: 63,
+      ...:     avg: 0.288
+      ...:   }""")
+Out[1940]: 
+{'Mark McGwire': {'hr': 65, 'avg': 0.278},
+ 'Sammy Sosa': {'hr': 63, 'avg': 0.288}}
+
+/ Intermezzo
+
+/ met python is het in ieder geval zo, 
+/ dat na de - meteen een key mag staan, maar de key mag ook op de volgende regel
+/ de keys precies onder mekaar moeten staan, of dat nu met spaties of tabs gebeurt, 
+/ na een - de tab niet werkt in ipython	, je kunt dus na een - de key op een nieuwe regel zetten, dan kun je altijd tab	,
+/ na - en na : moet een space	,
+
+In [1991]: yaml.load("""
+      ...: - name: foo
+      ...:   age: 17 
+      ...: """)
+Out[1991]: [{'name': 'foo', 'age': 17}]
+
+In [1992]: yaml.load("""
+      ...: -   name: foo
+      ...:     age: 17 
+      ...: """)
+Out[1992]: [{'name': 'foo', 'age': 17}]
+
+In [1994]: yaml.load("""
+      ...: -
+      ...:     name: foo
+      ...:     age: 17
+      ...: """)
+Out[1994]: [{'name': 'foo', 'age': 17}]
+
+
+
+ 
+
+
+/ Einde Intermezzo
+
+/ 2.2
+
+/ 1313	. 
+
+/ voor meerdere docs in een stream moeten we yaml.load_all use	,
+
+/ een doc is een array of mapping,	
+
+/ lees	,
+https://stackoverflow.com/questions/50788277/why-3-dashes-hyphen-in-yaml-file
+https://stackoverflow.com/questions/14359557/reading-yaml-file-with-python-results-in-yaml-composer-composererror-expected-a
+The yaml documents are separated by ---, and if any stream (e.g. a file) contains more than one document then you should use the yaml.load_all function rather than yaml.load. The code:
+
+In [1949]: g=yaml.load_all("""
+      ...: # Ranking of 1998 home runs
+      ...: ---																	# deze is optioneel	,
+      ...: - Mark McGwire
+      ...: - Sammy Sosa
+      ...: - Ken Griffey
+      ...: # Team ranking
+      ...: ---																	# deze moet, anders 1 doc=array in dit geval	,
+      ...: - Chicago Cubs
+      ...: - St Louis Cardinals""")
+
+In [1950]: for i in g:print(i)
+['Mark McGwire', 'Sammy Sosa', 'Ken Griffey']
+['Chicago Cubs', 'St Louis Cardinals']
+
+/ het verschil is dat als je --- niet use (in het midden , want de bovenste maakt niet uit)	,
+
+In [1951]: g=yaml.load_all("""
+      ...: # Ranking of 1998 home runs
+      ...: ---
+      ...: - Mark McGwire
+      ...: - Sammy Sosa
+      ...: - Ken Griffey
+      ...: # Team ranking
+      ...: - Chicago Cubs
+      ...: - St Louis Cardinals""")
+
+In [1952]: for i in g:print(i)
+['Mark McGwire', 'Sammy Sosa', 'Ken Griffey', 'Chicago Cubs', 'St Louis Cardinals']
+ 
+/ 1313	. 
+
+/ 2 mappings	,
+
+In [1958]: g=yaml.load_all("""
+      ...: time: 20:03:20
+      ...: player: Sammy Sosa
+      ...: action: strike (miss)
+      ...: ...
+      ...: ---
+      ...: time: 20:03:47
+      ...: player: Sammy Sosa
+      ...: action: grand slam
+      ...: ...
+      ...: """)
+
+In [1959]: for i in g:print(i)
+{'time': 72200, 'player': 'Sammy Sosa', 'action': 'strike (miss)'}
+{'time': 72227, 'player': 'Sammy Sosa', 'action': 'grand slam'}
+
+ 
+/ 1313	. 
+
+/ met & duiden we een item aan, met * halen we hem op	,
+/ achter & staat een string die eindigt bij de spatie	, bij * moet dezelfde string staan	,
+
+In [1961]: yaml.load("""
+      ...: ---
+      ...: hr:
+      ...:   - Mark McGwire
+      ...:   # Following node labeled SS
+      ...:   - &SS Sammy Sosa
+      ...: rbi:
+      ...:   - *SS # Subsequent occurrence
+      ...:   - Ken Griffey
+      ...: """)
+Out[1961]: {'hr': ['Mark McGwire', 'Sammy Sosa'], 'rbi': ['Sammy Sosa', 'Ken Griffey']}
+
+/ 1313	. 
+
+/ ?
+
+/ google,
+python yaml complex keys
+/ lees	,
+https://stackoverflow.com/questions/33987316/what-is-a-complex-mapping-key-in-yaml
+
+/ zo	,
+
+In [1973]: yaml.load("""
+      ...: mapping:
+      ...:   foo: 1
+      ...:   bar baz: 2
+      ...:   "qux:quux": 3
+      ...: """)
+Out[1973]: {'mapping': {'foo': 1, 'bar baz': 2, 'qux:quux': 3}}
+
+/ of zo	,
+
+In [1974]: yaml.load("""
+      ...: mapping:
+      ...:   ? foo
+      ...:   : 1
+      ...:   ? bar baz
+      ...:   : 2
+      ...:   ? "qux:quux"
+      ...:   : 3
+      ...: """)
+Out[1974]: {'mapping': {'foo': 1, 'bar baz': 2, 'qux:quux': 3}}
+
+/ maar	,
+In [1976]: yaml.load("""
+      ...: mapping:
+      ...:   # Use a sequence as a key
+      ...:   ? - foo
+      ...:     - bar
+      ...:   : 1
+      ...: """)
+/ ERR	,
+
+In [1977]: yaml.load("""
+      ...: mapping:
+      ...:   # Use a sequence as a key
+      ...:   ? !!python/tuple [foo,bar]
+      ...:   : 1
+      ...: """)
+Out[1977]: {'mapping': {('foo', 'bar'): 1}}
+/ OK	,
+/ de key is een tuple, geen list	,
+/ TODO
+
+/ 13	,
+
+/ sequence of mappings	,
+
+/ dit is toch niets nieuws?
+/ TODO
+
+In [1980]: yaml.load("""
+      ...: ---
+      ...: # products purchased
+      ...: - item    : Super Hoop
+      ...:   quantity: 1
+      ...: - item    : Basketball
+      ...:   quantity: 4
+      ...: - item    : Big Shoes
+      ...:   quantity: 1""")
+Out[1980]: 
+[{'item': 'Super Hoop', 'quantity': 1},
+ {'item': 'Basketball', 'quantity': 4},
+ {'item': 'Big Shoes', 'quantity': 1}]
+
+/ 13	,
+
+/ met | worden alle newlines gezien	, 
+/ met > alleen bij lege regels, en verdere indents	, en laatste regel	,
+/ bij > worden newlines een space	, als niet in gevallen hierboven	, 
+
+/ newline wordt space	,
+In [2011]: yaml.load("""
+      ...: >
+      ...:     foo
+      ...:     bar
+      ...: """)
+Out[2011]: 'foo bar\n'
+
+In [2012]: yaml.load("""
+      ...: >
+      ...:     foo
+      ...:     
+      ...:     bar
+      ...: """)
+Out[2012]: 'foo\nbar\n'
+
+In [2013]: yaml.load("""
+      ...: |
+      ...:     foo
+      ...:     
+      ...:     bar
+      ...: """)
+Out[2013]: 'foo\n\nbar\n'
+
+/ 13	,
+
+In [2019]:  yaml.load("""
+      ...: name: Mark McGwire
+      ...: accomplishment: >
+      ...:   Mark set a major league
+      ...:   home run record in 1998.
+      ...: stats: |
+      ...:   65 Home Runs
+      ...:   0.278 Batting Average
+      ...: """)
+Out[2019]: 
+{'name': 'Mark McGwire',
+ 'accomplishment': 'Mark set a major league home run record in 1998.\n',
+ 'stats': '65 Home Runs\n0.278 Batting Average\n'}
+
+/ 13	,
+
+In [2021]:  yaml.load("""
+      ...: single: '"Howdy!" he cried.'
+      ...: quoted: ' # not a ''comment''.'
+      ...: tie-fighter: '|\-*-/|'""")
+Out[2021]: 
+{'single': '"Howdy!" he cried.',
+ 'quoted': " # not a 'comment'.",
+ 'tie-fighter': '|\\-*-/|'}
+/ TODO
+
+/ "..." is een unicode string in python	, 
+/ \u03c0 is OK, \n is OK, \t is OK, \b ERR	, \x ERR	,
+
+ReaderError: unacceptable character #x0013: special characters are not allowed
+  in "<unicode string>", position 11
+ReaderError: unacceptable character #x0008: special characters are not allowed
+  in "<unicode string>", position 11
+
+In [2025]:  yaml.load("""
+      ...: unicode: "Sosa did fine.\u03c0"
+      ...: """)
+Out[2025]: {'unicode': 'Sosa did fine.π'}
+
+In [2027]: yaml.load("""
+      ...: control: "\n1998\n1999\n2000\n"
+      ...: """)
+Out[2027]: {'control': ' 1998 1999 2000 '}
+/ Waarom worden het spaces?
+/ TODO
+
+/ 13	,
+
+/ implicit types	,
+
+In [2030]:  yaml.load("""
+      ...: canonical: 12345
+      ...: decimal: +12,345
+      ...: sexagesimal: 3:25:45
+      ...: octal: 014
+      ...: hexadecimal: 0xC
+      ...: """)
+Out[2030]: 
+{'canonical': 12345,
+ 'decimal': '+12,345',
+ 'sexagesimal': 12345,
+ 'octal': 12,
+ 'hexadecimal': 12}
+
+In [2031]: yaml.load("""
+      ...: canonical: 1.23015e+3
+      ...: exponential: 12.3015e+02
+      ...: sexagesimal: 20:30.15
+      ...: fixed: 1,230.15
+      ...: negative infinity: -.inf
+      ...: not a number: .NaN
+      ...: """)
+Out[2031]: 
+{'canonical': 1230.15,
+ 'exponential': 1230.15,
+ 'sexagesimal': 1230.15,
+ 'fixed': '1,230.15',
+ 'negative infinity': -inf,
+ 'not a number': nan}
+
+In [2032]: yaml.load("""
+      ...: null: ~
+      ...: true: y
+      ...: false: n
+      ...: string: '12345'
+      ...: """)
+Out[2032]: {None: None, True: 'y', False: 'n', 'string': '12345'}
+
+In [2033]: yaml.load("""
+      ...: s: 12345
+      ...: s2: "12345"
+      ...: s3: '12345'
+      ...: """)
+Out[2033]: {'s': 12345, 's2': '12345', 's3': '12345'}
+
+In [2034]: yaml.load("""
+      ...: canonical: 2001-12-15T02:59:43.1Z
+      ...: iso8601: 2001-12-14t21:59:43.10-05:00
+      ...: spaced: 2001-12-14 21:59:43.10 -5
+      ...: date: 2002-12-14
+      ...: """)
+Out[2034]: 
+{'canonical': datetime.datetime(2001, 12, 15, 2, 59, 43, 100000),
+ 'iso8601': datetime.datetime(2001, 12, 15, 2, 59, 43, 100000),
+ 'spaced': datetime.datetime(2001, 12, 15, 2, 59, 43, 100000),
+ 'date': datetime.date(2002, 12, 14)}
+
+/ 13	.
+
+/ explicit types	,
+
+In [2035]: yaml.load("""
+      ...: ---
+      ...: not-date: !!str 2002-04-28
+      ...: """)
+Out[2035]: {'not-date': '2002-04-28'}
+
+/ andere tags werken niet, 
+/ TODO
+
+/ 7	. 
+
+/ lees	,
+https://docs.docker.com/compose/gettingstarted/#step-4-build-and-run-your-app-with-compose
+
+$ vi docker-compose.yml
+
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+     - "5000:5000"
+  redis:
+    image: "redis:alpine"
+
+/ we oef met de mogelijkheden	,
+
+In [2041]: yaml.load("""
+      ...: version: '3'
+      ...: services:
+      ...:   web:
+      ...:     build: .
+      ...:     ports:
+      ...:      - "5000:5000"
+      ...:   redis:
+      ...:     image: "redis:alpine"
+      ...: """)
+Out[2041]: 
+{'version': '3',
+ 'services': {'web': {'build': '.', 'ports': ['5000:5000']},
+  'redis': {'image': 'redis:alpine'}}}
+
+/ maar dit mag ook	,
+
+In [2048]: yaml.load("""
+      ...: version: 3
+      ...: services:
+      ...:   web:
+      ...:     build: .
+      ...:     ports:
+      ...:      - 
+      ...:       5000:5000
+      ...:   redis:
+      ...:     image: 
+      ...:         redis:alpine
+      ...: """)
+Out[2048]: 
+{'version': 3,
+ 'services': {'web': {'build': '.', 'ports': ['5000:5000']},
+  'redis': {'image': 'redis:alpine'}}}
+
+/ version: '3' : we moeten de 3 quote, anders krijgen we 3 ipv '3'	,
+/ dit kan ook; we moeten 5000:5000 verder indent dan -	, en hoeft niet tussen quotes,
+ports:
+	-
+		5000:5000  
+/ dit kan ook: we hoeven redis:alpine niet te quote, 
+image:
+	redis:alpine
+
+/ 7	 
+
+/ lees	,
+https://github.com/go-yaml/yaml/blob/v2/README.md
+
+
