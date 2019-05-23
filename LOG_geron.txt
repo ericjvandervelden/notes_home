@@ -3215,6 +3215,17 @@ array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
        1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
 ...
 
+//////////////////
+In [4544]: expit(-4.2209364+2.61727777*X_new)
+Out[4544]: 
+array([0.01447236, 0.01458489, 0.01469829, 0.01481255, 0.01492768,
+       0.0150437 , 0.01516061, 0.01527841, 0.01539711, 0.01551671,
+       0.01563724, 0.01575868, 0.01588105, 0.01600436, 0.01612861,
+...
+       0.97235187, 0.97256239, 0.97277134, 0.97297875, 0.97318463,
+       0.97338897, 0.97359181, 0.97379314, 0.97399297, 0.97419132])
+/ Klopt precies	met .proba,
+
 In [3525]: len(X_new)
 Out[3525]: 1000
 In [3524]: len(y_proba[:,1])
@@ -3572,6 +3583,53 @@ In [3712]: plt.plot(left_right,boundary,'k--')
 
 plt.axis([2.9, 7, 0.8, 2.7])
 / OK	,
+
+/ 13	. 
+
+/ Logistic Regression
+
+/ zelf voorbeeld	,
+
+/ (137)
+
+X=np.array([-1,1]).reshape(-1,1)
+y=np.array([0,1])
+log_reg=LogisticRegression()
+log_reg.fit(X,y)
+In [4553]: log_reg.coef_
+Out[4553]: array([[0.67482829]])
+In [4554]: log_reg.intercept_
+Out[4554]: array([0.])
+
+In [4555]: X_new=np.linspace(-2,2,100)
+
+In [4556]: expit(log_reg.coef_*X_new)
+Out[4556]: 
+array([[0.20592652, 0.2104208 , 0.21498662, 0.21962394, 0.22433271,
+        0.2291128 , 0.23396401, 0.23888612, 0.24387881, 0.24894171,
+...
+        0.75105829, 0.75612119, 0.76111388, 0.76603599, 0.7708872 ,
+        0.77566729, 0.78037606, 0.78501338, 0.7895792 , 0.79407348]])
+
+In [4559]: log_reg.predict_proba(X_new)
+Out[4559]: 
+array([[0.79407348, 0.20592652],
+       [0.7895792 , 0.2104208 ],
+       [0.78501338, 0.21498662],
+       [0.78037606, 0.21962394],
+       [0.77566729, 0.22433271],
+...
+       [0.21498662, 0.78501338],
+       [0.2104208 , 0.7895792 ],
+       [0.20592652, 0.79407348]])
+/ klopt precies	,
+
+def f(theta):
+	return -np.log(expit(log_reg.coef_*theta))-np.log(1-expit(-log_reg.coef_*theta))
+
+
+
+
 
 / 13	. 
 
@@ -5317,7 +5375,8 @@ array([[1.87911671],
 
 def init():
 	global a,b,c,t,phi,w,y
-	a=np.array([.5,.75,1,1.25,1.5])
+	#a=np.array([.5,.75,1,1.25,1.5])
+	a=np.array([1])
 	b=-a[::-1]
 	c=np.concatenate([b,a]) # c=np.concatenate([a,b][::-1]) 
 	t=np.concatenate([np.zeros(len(b)),np.ones(len(a))]).reshape(-1,1)
@@ -5337,6 +5396,7 @@ def init2():
 
 # w is een (n,)	, return ook (n,)
 def logreg(w):
+	global R
 	w=w.reshape(-1,1)
 	y=expit(phi.dot(w))
 	gradE=phi.T.dot(y-t)
@@ -5348,7 +5408,6 @@ def logreg(w):
 
 / doe	,
 init()
-# pas evt a aan	, a=np.array([1])
 w=logreg(w)
 
 / 13	. 
@@ -5395,6 +5454,456 @@ In [4453]: %hist -g scipy.special
 3299: from scipy.special import expit
 
 / Einde Intermezzo
+
+/ 13	. 
+
+def f(w):
+	return expit(w)*(1-expit(-w))
+
+w=np.linspace(-2,2,100)
+plt.figure()
+plt.plot(w,f(w))
+
+/ 13	. 
+
+def f(theta):
+	return -np.log(expit(theta))-np.log(1-expit(theta))
+def f(theta):
+	return -np.log(expit(theta))-2*np.log(1-expit(theta))
+def f(theta):
+	return -2*np.log(expit(theta))-np.log(1-expit(theta))
+
+/ 13	. 
+
+/ iris & Bishop alg	,
+
+def init():
+	global X,t,w
+	X=iris['data'][:,3:]
+	X=np.c_[np.ones((150,1)),X]
+	t=(iris['target']==2).reshape(-1,1)
+	t=t.astype(int)
+	w=np.ones((X.shape[1],1))
+	w=np.zeros((X.shape[1],1))
+
+In [4683]: plt.figure()
+X_b=X[:,1]
+t_b=t[:,1]
+In [4684]: plt.plot(X_b[t_b==0],t_b[t_b==0],'bs')
+In [4685]: plt.plot(X_b[t_b==1],t_b[t_b==1],'g^')
+	
+def logreg(w):
+	y=expit(X.dot(w))
+	gradE=X.T.dot(y-t)
+	R=np.diag((y*(1-y))[:,0])
+	H=X.T.dot(R).dot(X)
+	z=X.dot(w)-np.linalg.inv(R).dot(y-t)
+	v=np.linalg.inv(H).dot(X.T).dot(R).dot(z)
+	return v
+	return v[:,0]
+
+/ HIER HIER HIER
+
+/ doe	,
+init()
+w=logreg(w)
+
+/ 1313	. 
+
+/ print X,t
+
+In [4631]: (y*(1-y)).shape
+Out[4631]: (150, 1)
+In [4630]: (y*(1-y))[:,0].shape
+Out[4630]: (150,)
+
+/ 1313	. 
+
+/ print cost fct	,
+
+
+def F(w0,w1):
+	w=np.array([[w0],[w1]])
+	w=np.array([w0,w1]).reshape(-1,1)
+	y=expit(X.dot(w))
+	r=-t*np.log(y)-(1-t)*np.log(1-y)
+	return np.ones((1,3)).dot(r)
+
+
+def E(W):
+	y=expit(X.dot(W))
+	r=-t*np.log(y)-(1-t)*np.log(1-y)
+	return np.ones((1,150)).dot(r)
+
+def E(w0,w1):
+	return w0**2+w1**2
+
+/ 13	. 
+
+def G(W):
+	y=expit(X.dot(W))
+	r=-t*np.log(y)-(1-t)*np.log(1-y)
+	return np.ones((1,3)).dot(r).reshape(-1,3)
+
+In [4994]: X
+Out[4994]: 
+array([[1, 1],
+       [1, 2],
+       [1, 3]])
+In [5019]: t
+Out[5019]: 
+array([[1],
+       [2],
+       [3]])
+w0=np.linspace(-1,1,3)
+w1=np.linspace(-1,1,3)
+W0,W1=np.meshgrid(w0,w1) 	# heb je w0 en w1 meteen 3 keer	,
+W=np.c_[W0.ravel(),W1.ravel()].T
+C=G(W)
+plt.figure()
+contours=plt.contour(W0,W1,C)
+plt.clabel(contours,inline=True)
+
+/ 13	. 
+
+def G(W):
+	y=expit(X.dot(W))
+	r=-t*np.log(y)-(1-t)*np.log(1-y)
+	return np.ones((1,2)).dot(r).reshape(-1,3)
+
+X=np.array([[1,-1],[1,1]])
+t=np.array([[0],[1]])
+w0=np.linspace(-1,1,3)
+w1=np.linspace(-1,1,3)
+W0,W1=np.meshgrid(w0,w1) 	# heb je w0 en w1 meteen 3 keer	,
+W=np.c_[W0.ravel(),W1.ravel()].T
+C=G(W)
+plt.figure()
+contours=plt.contour(W0,W1,C)
+plt.clabel(contours,inline=True)
+
+/ 7	. 
+
+/////////////////////////////////////
+
+def G(W):
+	y=expit(X.dot(W))
+	r=-t*np.log(y)-(1-t)*np.log(1-y)
+	return np.ones((1,150)).dot(r)
+
+#from sklearn import datasets
+#iris=datasets.load_iris()
+X=iris['data'][:,3:]
+X=np.c_[np.ones((150,1)),X]
+t=(iris['target']==2).reshape(-1,1)
+t=t.astype(int)
+w0=np.linspace(-1,1,3)
+w1=np.linspace(-1,1,3)
+W0,W1=np.meshgrid(w0,w1) 	# heb je w0 en w1 meteen 3 keer	,
+W=np.c_[W0.ravel(),W1.ravel()].T
+C=G(W).reshape(-1,3)
+plt.figure()
+contours=plt.contour(W0,W1,C)
+plt.clabel(contours,inline=True)
+
+//////////////////////////////////
+
+/ 13	. 
+
+/ 1313	. 
+
+/ contour	,
+
+def G(W):
+	y=expit(X.dot(W))
+	r=-t*np.log(y)-(1-t)*np.log(1-y)
+	return np.ones((1,150)).dot(r)
+
+#from sklearn import datasets
+#iris=datasets.load_iris()
+X=iris['data'][:,3:]
+X=np.c_[np.ones((150,1)),X]
+t=(iris['target']==2).reshape(-1,1)
+t=t.astype(int)
+
+w0=np.linspace(-21.0,-21.2,10)
+w1=np.linspace(12.9,13.0,10)
+W0,W1=np.meshgrid(w0,w1) 
+W=np.c_[W0.ravel(),W1.ravel()].T
+C=G(W).reshape(-1,10)/10
+plt.figure()
+contours=plt.contour(W0,W1,C)
+plt.clabel(contours,inline=True)
+
+/ zo zien we schuine contourlijnen, maar we zien niet goed dat w een minimum is	,
+
+/ 131313	. 
+
+w0=np.linspace(-30,-10,100)
+w1=np.linspace(0,20,100)
+W0,W1=np.meshgrid(w0,w1) 
+W=np.c_[W0.ravel(),W1.ravel()].T
+C=G(W).reshape(-1,100)/100
+plt.figure()
+contours=plt.contour(W0,W1,C)
+plt.clabel(contours,inline=True)
+
+/ zo zien we contourlijnen, we zien wel 2 minimale contourlijnen	, maar we zien niet goed dat w een minimum is	,
+
+/ 131313	. 
+
+w0=np.linspace(-30,30,100)
+w1=np.linspace(0,20,100)
+W0,W1=np.meshgrid(w0,w1) 
+W=np.c_[W0.ravel(),W1.ravel()].T
+C=G(W).reshape(-1,100)/100
+plt.figure()
+contours=plt.contour(W0,W1,C)
+plt.clabel(contours,inline=True)
+
+/ zo zien we contourlijnen, we zien wel 2 minimale contourlijnen	, maar we zien niet goed dat w een minimum is	,
+
+/ 1313	. 
+
+def logreg(w):
+	y=expit(X.dot(w))
+	gradE=X.T.dot(y-t)
+	R=np.diag((y*(1-y))[:,0])
+	H=X.T.dot(R).dot(X)
+	z=X.dot(w)-np.linalg.inv(R).dot(y-t)
+	v=np.linalg.inv(H).dot(X.T).dot(R).dot(z)
+	return v
+
+->
+In [5149]: w
+Out[5149]: 
+array([[-21.12563996],
+       [ 12.94750716]])
+
+/ boek gaf:
+Out[3511]: array([-4.2209364])
+Out[3510]: array([[2.61727777]])
+
+/ scheelt ongeveer factor 5	,
+
+/ 1313	. 
+
+/ we kunnen makkelijk G uitrekenen	, 
+
+w 			# uitkomst algo	,
+Out[5201]: 
+array([[-21.12563996],
+       [ 12.94750716]])
+G(w)
+Out[5202]: array([[16.71040414]])
+/ allemaal groter	,
+G(w+np.array([[0],[.1]]))
+G(w+np.array([[0],[-.1]]))
+G(w+np.array([[0.1],[0]]))
+G(w+np.array([[0.-1],[0]]))
+
+/ 13	. 
+
+/////////////////////////////////////////////////////////
+
+/ Neem een deelverz van iris[:,3]	,
+
+In [5209]: perm=np.random.permutation(150)
+In [5211]: perm[:10]
+Out[5211]: array([ 43, 135, 118,  29,   4, 103,  42,  68, 104,  52])
+In [5213]: Xr=X[perm[:10]]
+Out[5213]: 
+array([[1. , 0.6],
+       [1. , 2.3],
+       [1. , 2.3],
+       [1. , 0.2],
+       [1. , 0.2],
+       [1. , 1.8],
+       [1. , 0.2],
+       [1. , 1.5],
+       [1. , 2.2],
+       [1. , 1.5]])
+In [5215]: tr=t[perm[:10]]
+In [5216]: tr
+Out[5216]: 
+array([[0],
+       [1],
+       [1],
+       [0],
+       [0],
+       [1],
+       [0],
+       [0],
+       [1],
+       [0]])
+
+/ we nemen grootte perm: 50	, ipv 10	,
+/ maar 10 is ook goed	,
+
+alpha=.1
+def logregr(w):
+	y=expit(Xr.dot(w))
+	gradE=Xr.T.dot(y-tr)
+	R=np.diag((y*(1-y))[:,0])
+	H=Xr.T.dot(R).dot(Xr)
+	z=Xr.dot(w)-alpha*np.linalg.inv(R).dot(y-tr)
+	v=np.linalg.inv(H).dot(Xr.T).dot(R).dot(z)
+	return v
+
+
+/ als alpha=.1
+w=np.array([[0],[0]])
+for i in range(0,10):
+	w=logreg(w)
+->
+In [5276]: w
+Out[5276]: 
+array([[-21.12563996],
+       [ 12.94750716]])
+
+/ als alpha=1	, dan gaat w -> oneindig	,
+
+////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/ 13	. 
+
+In [4985]: w0
+Out[4985]: array([-10.,   0.,  10.])
+In [4986]: W0
+Out[4986]: 
+array([[-10.,   0.,  10.],
+       [-10.,   0.,  10.],
+       [-10.,   0.,  10.]])
+n [4984]: np.c_[W0.ravel(),W1.ravel()].T
+Out[4984]: 
+array([[-10.,   0.,  10., -10.,   0.,  10., -10.,   0.,  10.],
+       [-10., -10., -10.,   0.,   0.,   0.,  10.,  10.,  10.]])
+
+
+w0=np.linspace(-10,10,3)
+w1=np.linspace(-10,10,3)
+W0,W1=np.meshgrid(w0,w1)
+C=F(W0,W1)
+plt.figure()
+contours=plt.contour(W0,W1,C)
+plt.clabel(contours,inline=True)
+
+
+/ 131313	.
+
+def E(x,y):
+	return x**2-y**2 
+
+x=np.linspace(-10,10,11)
+y=np.linspace(-10,10,11)
+X,Y=np.meshgrid(x,y)
+Z=E(X,Y)
+plt.figure()                    
+contours=plt.contour(X,Y,Z)     
+plt.clabel(contours,inline=True)
+
+/ 1313	 .
+
+In [4711]: X.shape
+Out[4711]: (150, 2)
+In [4712]: t.shape
+Out[4712]: (150, 1)
+In [4707]: X
+Out[4707]: 
+array([[1. , 0.2],
+       [1. , 0.2],
+...
+In [4709]: t
+Out[4708]: 
+array([[0],
+       [0],
+       [0],
+...
+In [4713]: w.shape
+Out[4713]: (2, 1)
+In [4710]: w
+Out[4710]: 
+array([[0.],
+       [0.]])
+
+In [4715]: y.shape
+Out[4715]: (150, 1)
+In [4714]: y
+Out[4714]: 
+array([[0.5],
+       [0.5],
+...
+In [4718]: gradE.shape
+Out[4718]: (2, 1)
+In [4717]: gradE
+Out[4717]: 
+array([[ 25. ],
+       [-11.4]])
+In [4720]: R.shape
+Out[4720]: (150, 150)
+In [4721]: R
+Out[4721]: 
+array([[0.25, 0.  , 0.  , ..., 0.  , 0.  , 0.  ],
+       [0.  , 0.25, 0.  , ..., 0.  , 0.  , 0.  ],
+       [0.  , 0.  , 0.25, ..., 0.  , 0.  , 0.  ],
+       ...,
+       [0.  , 0.  , 0.  , ..., 0.25, 0.  , 0.  ],
+       [0.  , 0.  , 0.  , ..., 0.  , 0.25, 0.  ],
+       [0.  , 0.  , 0.  , ..., 0.  , 0.  , 0.25]])
+In [4724]: H.shape
+Out[4724]: (2, 2)
+In [4723]: H
+Out[4723]: 
+array([[37.5  , 44.95 ],
+       [44.95 , 75.575]])
+In [4726]: z.shape
+Out[4726]: (150, 1)
+In [4727]: z
+Out[4727]: 
+array([[-2.],
+       [-2.],
+...
+In [4730]: v.shape
+Out[4730]: (2, 1)
+In [4729]: v
+Out[4729]: 
+array([[-2.95221619],
+       [ 1.9067432 ]])
+
+
+
+
+
+
+
+
 
 
 / Einde BISHOP

@@ -11,6 +11,8 @@ Unknown tag! pos=40 poolCount = 47
 
 / 7	. 
 
+/ NIET:
+
 export GDK_BACKEND=x11
 ./eclipse
 
@@ -61,4 +63,45 @@ Project configuration is not up-to-date with pom.xml. Select: Maven->Update Proj
 / Wat is Project configuration?
 / Kies proj. parent	, en doe Maven, Update Project...
 
+/ 7	. 
 
+[eric@almond oxygen-2]$ pwd
+/home/eric/Devel/Eclipse/oxygen-2
+[eric@almond oxygen-2]$ eclipse/eclipse
+/ OK
+/ bij verplaatsen windows wordt scherm zwart, maar is OK	,
+/ set NIET GDK_BACKEND=x11
+
+/ ga naar	, 
+https://www.eclipse.org/
+/ klik orange button rechtsboven Download	,
+https://www.eclipse.org/downloads
+/ we zien	,
+Get Eclipse IDE 2019‑03
+Install your favorite desktop IDE packages.
+Download 64 bit
+Download Packages | Need Help?
+/ klik Download Packages,
+https://www.eclipse.org/downloads/packages/
+/ we zien rechts in het midden:
+MORE DOWNLOADS
+Other builds
+Eclipse 2018-12 (4.10)
+Eclipse 2018-09 (4.9)
+Eclipse Photon (4.8)
+Eclipse Oxygen (4.7)
+Eclipse Neon (4.6)
+Eclipse Mars (4.5)
+Eclipse Luna (4.4)
+Eclipse Kepler (4.3)
+Older Versions
+
+/ en	,
+RELATED LINKS
+Compare & Combine Packages
+New and Noteworthy
+Install Guide
+Documentation
+Updating Eclipse
+Forums
+Simultaneous Release
