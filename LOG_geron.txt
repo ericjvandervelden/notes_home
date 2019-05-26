@@ -5502,8 +5502,6 @@ def logreg(w):
 	return v
 	return v[:,0]
 
-/ HIER HIER HIER
-
 / doe	,
 init()
 w=logreg(w)
@@ -5665,6 +5663,17 @@ plt.clabel(contours,inline=True)
 
 / 1313	. 
 
+/////////////////////////////////////////////////////
+
+/ convergentie van alg 
+
+#from sklearn import datasets
+#iris=datasets.load_iris()
+X=iris['data'][:,3:]
+X=np.c_[np.ones((150,1)),X]
+t=(iris['target']==2).reshape(-1,1)
+t=t.astype(int)
+
 def logreg(w):
 	y=expit(X.dot(w))
 	gradE=X.T.dot(y-t)
@@ -5674,7 +5683,9 @@ def logreg(w):
 	v=np.linalg.inv(H).dot(X.T).dot(R).dot(z)
 	return v
 
-->
+w=np.array([[0],[0]])
+for i in range(0,10):
+	w=logreg(w)
 In [5149]: w
 Out[5149]: 
 array([[-21.12563996],
@@ -5686,7 +5697,17 @@ Out[3510]: array([[2.61727777]])
 
 / scheelt ongeveer factor 5	,
 
-/ 1313	. 
+/ controle	,
+
+def G(W):
+	y=expit(X.dot(W))
+	r=-t*np.log(y)-(1-t)*np.log(1-y)
+	return np.ones((1,150)).dot(r)
+
+def G(X,t,W):
+	y=expit(X.dot(W))
+	r=-t*np.log(y)-(1-t)*np.log(1-y)
+	return np.ones((1,X.shape[0])).dot(r)
 
 / we kunnen makkelijk G uitrekenen	, 
 
@@ -5701,6 +5722,116 @@ G(w+np.array([[0],[.1]]))
 G(w+np.array([[0],[-.1]]))
 G(w+np.array([[0.1],[0]]))
 G(w+np.array([[0.-1],[0]]))
+
+/ controle	,
+
+def grid_around(c,h,N):
+  # c center, shape (2,1)
+  # h grootte steps
+  # N aantal steps
+  hor_blk=np.linspace(c[0,0]-h,c[0,0]+h,N)
+  hor=np.tile(hor_blk,N)
+  ver_blk=np.linspace(c[1,0]-h,c[1,0]+h,N)
+  ver=np.repeat(ver_blk,N)
+  grid=np.array([hor,ver])
+  return grid
+
+
+# W uit formula, XW, en as grid	,
+def WG(c,h,N):
+	# c center, shape (2,1)
+	# h grootte steps
+	# N aantal steps
+	hblk=np.linspace(c[0,0]-h,c[0,0]+h,N)
+	hor=np.tile(hblk,N)
+	vblk=np.linspace(c[1,0]-h,c[1,0]+h,N)
+	ver=np.repeat(vblk,N)
+	W=np.array([hor,ver])
+	C=G(X,t,W)
+	return C.reshape(N,-1),hblk,vblk 
+
+/ G heeft min in w	, 
+In [5551]: G(X,t,grid_around(w,.1,5)).reshape(-1,5)
+Out[5551]: 
+array([[16.87473249, 16.81815842, 16.77348118, 16.74074612, 16.72000491],
+       [16.78864827, 16.7514355 , 16.7261323 , 16.71279415, 16.71148264],
+       [16.73432467, 16.71639491, 16.71040414, 16.71641766, 16.73450667],
+       [16.71147106, 16.71277426, 16.72606205, 16.75140915, 16.78889592],
+       [16.71984576, 16.74035923, 16.77291837, 16.81760688, 16.87451379]])
+
+In [5613]: r=WG(w,.1,3)
+In [5620]: G0,G1=np.meshgrid(r[1],r[2])
+In [5623]: plt.contour(G0,G1,r[0])
+/ OK	,
+
+/ controle	, 
+
+def grid_around(c,h,N):
+  # c center, shape (2,1)
+  # h grootte steps
+  # N aantal steps
+  hor_blk=np.linspace(c[0,0]-h,c[0,0]+h,N)
+  hor=np.tile(hor_blk,N)
+  ver_blk=np.linspace(c[1,0]-h,c[1,0]+h,N)
+  ver=np.repeat(ver_blk,N)
+  grid=np.array([hor,ver])
+  return grid
+
+# W uit formula, XW, en as grid	,
+def WGrid(X,t,c,h,N):
+	# c center, shape (2,1)
+	# h grootte steps
+	# N aantal steps
+	hblk=np.linspace(c[0,0]-h,c[0,0]+h,N)
+	hor=np.tile(hblk,N)
+	vblk=np.linspace(c[1,0]-h,c[1,0]+h,N)
+	ver=np.repeat(vblk,N)
+	W=np.array([hor,ver])
+	C=G(X,t,W).reshape(N,-1)
+	return C,hblk,vblk 
+
+In [5671]: C,H,V=WGrid(X,t,w,.1,3)
+In [5673]: plt.figure()
+In [5674]: plt.contour(H,V,C)
+/ OK, met 3	,
+
+
+/ G heeft min in w	, 
+In [5551]: G(X,t,grid_around(w,.1,5)).reshape(-1,5)
+Out[5551]: 
+array([[16.87473249, 16.81815842, 16.77348118, 16.74074612, 16.72000491],
+       [16.78864827, 16.7514355 , 16.7261323 , 16.71279415, 16.71148264],
+       [16.73432467, 16.71639491, 16.71040414, 16.71641766, 16.73450667],
+       [16.71147106, 16.71277426, 16.72606205, 16.75140915, 16.78889592],
+       [16.71984576, 16.74035923, 16.77291837, 16.81760688, 16.87451379]])
+
+/ controle	,
+# W uit formula, XW, en as grid	,
+
+def WGrid2(X,t,c,h,N):
+	# c center, shape (2,1)
+	# h grootte steps
+	# N aantal steps
+	hor=np.linspace(c[0,0]-h,c[0,0]+h,N)
+	ver=np.linspace(c[1,0]-h,c[1,0]+h,N)
+	H,V=np.meshgrid(hor,ver)
+	W=np.c_[H.ravel(),V.ravel()].T
+	C=G(X,t,W).reshape(N,-1)
+	return C,H,V
+
+In [5668]: C,H,V=WGrid2(X,t,w,.1,3)
+In [5669]: plt.figure()
+In [5670]: plt.contour(H,V,C)
+/ OK	, met 3	,
+
+/ we zien steeds dat met 3 OK	, 
+/ ook met .05 ipv .1	,
+/ TODO
+
+
+
+
+//////////////////////////////////////////////////
 
 / 13	. 
 
@@ -5754,17 +5885,192 @@ def logregr(w):
 / als alpha=.1
 w=np.array([[0],[0]])
 for i in range(0,10):
-	w=logreg(w)
-->
-In [5276]: w
-Out[5276]: 
-array([[-21.12563996],
-       [ 12.94750716]])
-
-/ als alpha=1	, dan gaat w -> oneindig	,
+	w=logregr(w)
 
 ////////////////////////////////////////////////
 
+/ 13	. 
+
+
+
+def logregs(X,t,alpha,w):
+	y=expit(X.dot(w))
+	gradE=X.T.dot(y-t)
+	R=np.diag((y*(1-y))[:,0])
+	H=X.T.dot(R).dot(X)
+	z=X.dot(w)-alpha*np.linalg.inv(R).dot(y-t)
+	v=np.linalg.inv(H).dot(X.T).dot(R).dot(z)
+	return v
+
+In [5209]: perm=np.random.permutation(150)
+
+w=np.array([[0],[0]])
+for i in range(0,10):
+	w=logregs(X,t,1,w)
+/ OK, 
+
+def perm(X,N):
+	perm=np.random.permutation(150)
+	Xr=X[perm[:N]]
+	tr=t[perm[:N]]
+	return Xr,tr
+
+def round(Xr,tr,alpha,w,N,init):
+	if init: 
+		w=np.array([[0],[0]])
+	for i in range(0,N):
+		w=logregs(Xr,tr,alpha,w)
+	return w
+
+/ 1313	. 
+
+In [5991]: Xr,tr=perm(X,150)
+In [5992]: w=round(Xr,tr,1,w,10,True)
+In [5993]: w
+Out[5993]: 
+array([[-21.12563996],
+       [ 12.94750716]])
+
+/ 1313	. 
+
+In [5994]: Xr,tr=perm(X,75)
+
+w=round(Xr,tr,1,w,10,True)
+In [5996]: w
+array([[-21.42108207],
+       [ 13.48279019]])
+
+w=round(Xr,tr,1,w,10,False)
+In [5998]: w
+array([[-21.42108207],
+       [ 13.48279019]])
+
+In [5999]: Xr,tr=perm(X,75)
+In [6000]: w=round(Xr,tr,1,w,10,True)
+In [6001]: w
+array([[-20.70027195],
+       [ 12.4496527 ]])
+In [6002]: w=round(Xr,tr,1,w,10,False)
+In [6003]: w
+Out[6003]: 
+array([[-20.70027195],
+       [ 12.4496527 ]])
+
+/ 1313	. 
+
+/ bij trainingsets van 50, zien we verschillende uitkomsten	, of geen uitkomst:
+/ hoe je ook start met w, bij een trainingset krijg je steeds hetzelfde antwoord	,
+/ of je krijgt helemaal geen antwoord,	
+
+In [6004]: Xr,tr=perm(X,50)
+In [6005]: w=round(Xr,tr,1,w,10,True)
+In [6007]: w
+Out[6007]: 
+array([[-84.63431113],
+       [ 47.40757674]])
+In [6008]: w=round(Xr,tr,1,w,10,False)
+LinAlgError: Singular matrix
+
+In [6014]: Xr,tr=perm(X,50)
+In [6015]: w=round(Xr,tr,1,w,10,True)
+In [6016]: w
+Out[6016]: 
+array([[-23.09995143],
+       [ 13.66101213]])
+In [6017]: w=round(Xr,tr,1,w,10,False)
+In [6018]: w
+Out[6018]: 
+array([[-23.09995143],
+       [ 13.66101213]])
+
+/ 1313	. 
+
+/ als we 10 stappen kiezen, dan in een keer klaar	, 
+/ en daarna een series met 2, dan zie je dat je meerdere keren moet	,
+
+/ 131313	. 
+
+In [6019]: Xr,tr=perm(X,50)
+In [6020]: w=round(Xr,tr,1,w,10,True)
+In [6021]: w
+Out[6021]: 
+array([[-19.1009447 ],
+       [ 12.04059534]])
+
+/ 131313	.  	
+
+In [6025]: w=round(Xr,tr,1,w,2,True)
+In [6026]: w
+Out[6026]: 
+array([[-5.43338083],
+       [ 3.32082202]])
+In [6027]: w=round(Xr,tr,1,w,2,False)
+In [6028]: w
+Out[6028]: 
+array([[-13.0542869 ],
+       [  8.11463087]])
+In [6029]: w=round(Xr,tr,1,w,2,False)
+In [6030]: w
+Out[6030]: 
+array([[-18.71432969],
+       [ 11.78724967]])
+In [6031]: w=round(Xr,tr,1,w,2,False)
+In [6032]: w
+Out[6032]: 
+array([[-19.10093489],
+       [ 12.04058891]])
+In [6033]: w=round(Xr,tr,1,w,2,False)
+In [6034]: w
+Out[6034]: 
+array([[-19.1009447 ],
+       [ 12.04059534]])
+In [6035]: w=round(Xr,tr,1,w,2,False)
+In [6036]: w
+Out[6036]: 
+array([[-19.1009447 ],
+       [ 12.04059534]])
+
+/ 1313	.
+
+/ je kunt ook een andere start-w kiezen, geef dan meteen False	,
+
+In [6046]: w=np.array([[0],[-1]])
+In [6047]: w=round(Xr,tr,1,w,10,False)
+In [6048]: w
+Out[6048]: 
+array([[-19.1009447 ],
+       [ 12.04059534]])
+
+/ 13	. 
+
+/ als je er 25 kiest	, dan vaker geen antwoord,	
+
+In [6049]: Xr,tr=perm(X,25)
+In [6050]: w=round(Xr,tr,1,w,10,True)
+LinAlgError: Singular matrix
+
+In [6056]: Xr,tr=perm(X,25)
+In [6057]: w=round(Xr,tr,1,w,10,True)
+In [6058]: w
+Out[6058]: 
+array([[-108.17140654],
+       [  63.63042151]])
+
+/ 13	. 
+
+/ print de logistic regression fct	,
+
+Xr,tr=perm(X,150)
+w=round(Xr,tr,1,w,10,True)
+w
+array([[-21.12563996],
+       [ 12.94750716]])
+
+Xval=X[:,1:]
+
+In [4683]: plt.figure()
+In [4684]: plt.plot(Xval[t==0],t[t==0],'bs')
+In [4685]: plt.plot(Xval[t==1],t[t==1],'g^')
 
 
 
@@ -5777,17 +6083,7 @@ array([[-21.12563996],
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+	
 
 
 
@@ -5926,3 +6222,100 @@ sklearn/linear_model/logistic.py:class LogisticRegression(BaseEstimator, LinearC
 
 
 / Einde SKLEARN SOURCE
+
+/ MATPLOTLIB
+
+/ 7	. 
+
+def G(W):
+	y=expit(Xr.dot(W))
+	r=-tr*np.log(y)-(1-tr)*np.log(1-y)
+	return np.ones((1,3)).dot(r)
+
+Xr=np.array([[1,1],[1,2],[1,3]])
+tr=np.array([[1],[0],[1]])
+
+w0=np.linspace(1,3,3)
+w1=np.linspace(1,3,3)
+W0,W1=np.meshgrid(w0,w1)
+W=np.c_[W0.ravel(),W1.ravel()].T
+C=G(W).reshape(-1,3)/3
+plt.figure()
+contours=plt.contour(W0,W1,C)
+/ of	,
+contours=plt.contour(w0,w1,C)
+plt.clabel(contours,inline=True)
+
+
+/ 7	. 
+
+/ TODO
+/ hoe print value naast een punt?
+
+w0=np.linspace(1,3,3)
+w1=np.linspace(1,3,3)
+w0r=np.tile(w0,len(w0))
+w1r=np.repeat(w1,len(w1))
+Wr=np.array([w0r,w1r])
+C=G(Wr).reshape(-1,3)/3
+plt.figure()
+contours=plt.contour(w0,w1,C)
+plt.clabel(contours,inline=True)
+
+plt.figure()
+plt.scatter(w0,w1,G)
+
+In [5433]: w0r
+Out[5433]: array([1., 2., 3., 1., 2., 3., 1., 2., 3.])
+In [5434]: w1r
+Out[5434]: array([1., 1., 1., 2., 2., 2., 3., 3., 3.])
+In [5435]: Wr
+Out[5435]: 
+array([[1., 2., 3., 1., 2., 3., 1., 2., 3.],
+       [1., 1., 1., 2., 2., 2., 3., 3., 3.]])
+In [5436]: C
+Out[5436]: 
+array([[1.0645551 , 1.35781754, 1.67578032],
+       [1.68540472, 2.00698701, 2.33591674],
+       [2.33970226, 2.66902249, 3.00086841]])
+
+
+
+
+
+/ Einde MATPLOTLIB
+
+In [5800]: p=np.array([ 43, 135, 118,  29,   4, 103,  42,  68, 104,  52])
+
+In [5801]: Xr=X[p]
+n [5803]: tr=t[p]
+
+
+In [5807]: alpha=.1
+      ...: def logregr(w):
+      ...:   y=expit(Xr.dot(w))
+      ...:   gradE=Xr.T.dot(y-tr)
+      ...:   R=np.diag((y*(1-y))[:,0])
+      ...:   H=Xr.T.dot(R).dot(Xr)
+      ...:   z=Xr.dot(w)-alpha*np.linalg.inv(R).dot(y-tr)
+      ...:   v=np.linalg.inv(H).dot(Xr.T).dot(R).dot(z)
+      ...:   return v
+      ...: 
+      ...: 
+
+w=np.array([[0],[0]])
+
+for i in range(0,10):
+	w=logregr(w)
+
+In [5810]: w
+Out[5810]: 
+array([[-21.12563996],
+       [ 12.94750716]])
+
+/ 13	. 
+
+w=np.array([[0],[0]])
+
+
+
