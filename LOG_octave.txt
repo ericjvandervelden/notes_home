@@ -1,0 +1,9 @@
+/ 7	. 
+
+/ lees,
+https://www.gnu.org/software/octave/#install
+
+[eric@almond Devel]$ mkdir octave
+[eric@almond Devel]$ cd octave/
+[eric@almond octave]$ hg clone https://www.octave.org/hg/octave
+/ TODO

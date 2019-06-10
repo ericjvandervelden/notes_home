@@ -1,0 +1,10 @@
+/ 7	. 
+
+[eric@almond scikit-learn]$ hg
+bash: hg: command not found...
+Install package 'mercurial' to provide command 'hg'? [N/y] y
+The following packages have to be installed:
+ mercurial-4.2.3-1.fc26.x86_64	Mercurial -- a distributed SCM
+Proceed with changes? [N/y] y
+
+
