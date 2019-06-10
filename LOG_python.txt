@@ -4399,3 +4399,35 @@ n
 
 / Einde LEARNING PYTHON
 
+/ 7	. 
+
+x=1
+def bar():
+  return x
+def foo():
+  x=2
+  t=bar()
+  return t
+t=foo()
+1
+
+/ 13	.  
+
+In [6489]: def foo():
+      ...:     x=1
+      ...:     def bar():
+      ...:         return x
+      ...:     t=bar()
+      ...:     return t
+      ...: 
+      ...: 
+In [6490]: t=foo()
+In [6491]: t
+Out[6491]: 1
+
+In [6492]: x=7
+In [6493]: t=foo()
+In [6494]: t
+Out[6494]: 1
+
+

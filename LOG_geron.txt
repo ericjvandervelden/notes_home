@@ -5663,16 +5663,161 @@ plt.clabel(contours,inline=True)
 
 / 1313	. 
 
+/ sklearn LogisticRegression	, 
+
+/ google,
+logistic regression optimal parameters
+
+https://chrisalbon.com/machine_learning/logistic_regression/one-vs-rest_logistic_regression/
+https://www.kaggle.com/joparga3/2-tuning-parameters-for-logistic-regression
+
+/ lees,
+https://mail.python.org/mailman/listinfo/scikit-learn
+mail: scikit-learn@python.org.
+vlWalnoot27 is wachtwoord	om in te schrijven,
+
+
+
+/ 1313	. 
+
 /////////////////////////////////////////////////////
 
+
+/ GD EN NEWTON CONVERGE TO SAME RESULT
+
+/ trainen = ws (of thetas) bepalen	
+
 / convergentie van alg 
+
+/ gd in 100.000 stappen = newton in 10 stappen	,
+
+/ 1313	. 
+
+/ boek Geron	,
+
+iris=datasets.load_iris()
+a1=iris['data'][:,3:]
+y=(iris['target']==2).astype(int)
+log_reg=LogisticRegression()
+log_reg.fit(a1,y)
+log_reg.coef_
+array([[2.61727777]])
+log_reg.intercept_
+array([-4.2209364])
+
+/ we proberen y = 1 of -1 ipv 1 of 0	,
+/ maar dit maakt niets uit	,
+y2=np.ones(len(y))
+y2[y==False]=-1      
+y=y2                 
+
+/ GD
+/ Coursera	,
+
+#from sklearn import datasets
+#iris=datasets.load_iris()
+a1=iris['data'][:,3:]
+A1=np.c_[np.ones((150,1)),a1]
+y=(iris['target']==2).astype(int).reshape(-1,1)
+alpha=1
+
+def logreg_gd(w):
+	z2=A1.dot(w)
+	a2=expit(z2)
+	delta2=a2-y
+	w=w-(alpha/len(a1))*A1.T.dot(delta2)
+	return w
+
+w=np.array([[0],[0]])
+for i in range(0,100000):
+	w=logreg_gd(w)
+In [6219]: w
+Out[6219]: 
+array([[-21.12563996],
+       [ 12.94750716]])
+
+/ GD regularization term	, 
+
+#from sklearn import datasets
+#iris=datasets.load_iris()
+a1=iris['data'][:,3:]
+A1=np.c_[np.ones((len(a1),1)),a1]
+y=(iris['target']==2).astype(int).reshape(-1,1)
+alpha=1
+lmbda=1
+
+def logreg_gd_reg(w):
+	z2=A1.dot(w)
+	a2=expit(z2)
+	delta2=a2-y
+	w=w*(1-alpha*lmbda/len(a1))-(alpha/len(a1))*A1.T.dot(delta2) 
+	return w
+
+w=np.array([[0],[0]])
+for i in range(0,100000):
+	w=logreg_gd_reg(w)
+
+In [6380]: w
+Out[6380]: 
+array([[-4.22103221],
+       [ 2.61733229]])
+/ Hetzelfde als sklearn!
+/ lees	,
+https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+/ we zien daar in de formula, dat lmbda=1	, 
+
+/ als we 
+In [6381]: lmbda=.1
+/ vinden we weer een andere w	,
+
+In [6382]: w=np.array([[0],[0]])
+      ...: for i in range(0,100000):
+      ...:   w=logreg_gd_reg(w)
+      ...: 
+      ...:   
+
+In [6383]: w
+Out[6383]: 
+array([[-10.06543992],
+       [  6.15521739]])
+
+
+/ Newton-Raphson	,
+/ Bishop	,
+
+#from sklearn import datasets
+#iris=datasets.load_iris()
+a1=iris['data'][:,3:]
+A1=np.c_[np.ones(len(a1)),a1]
+y=(iris['target']==2).astype(int).reshape(-1,1)
+
+def logreg_nr(w):
+	z1=A1.dot(w)
+	y=expit(z1)
+	R=np.diag((y*(1-y))[:,0])
+	H=A1.T.dot(R).dot(A1)
+	tmp=A1.dot(w)-np.linalg.inv(R).dot(y-t)
+	v=np.linalg.inv(H).dot(A1.T).dot(R).dot(tmp)
+	return v
+
+w=np.array([[0],[0]])
+for i in range(0,10):
+	w=logreg_nr(w)
+In [5149]: w
+Out[5149]: 
+array([[-21.12563996],
+       [ 12.94750716]])
+
+/ 1ste keer	,
+/ Newton
+/ Bishop	,
+/ WH rm	,
 
 #from sklearn import datasets
 #iris=datasets.load_iris()
 X=iris['data'][:,3:]
 X=np.c_[np.ones((150,1)),X]
-t=(iris['target']==2).reshape(-1,1)
-t=t.astype(int)
+t=(iris['target']==2).astype(int).reshape(-1,1)
 
 def logreg(w):
 	y=expit(X.dot(w))
@@ -5691,11 +5836,404 @@ Out[5149]:
 array([[-21.12563996],
        [ 12.94750716]])
 
-/ boek gaf:
-Out[3511]: array([-4.2209364])
-Out[3510]: array([[2.61727777]])
+/ Einde WH rm	,
 
-/ scheelt ongeveer factor 5	,
+
+
+/ Einde GD EN NEWTON CONVERGE TO SAME RESULT
+
+/ GD REVISITED 
+
+/ we hebben alpha en lambda input vars gemaakt,	
+/ alle vars zijn global, alpha en lambda ook	,
+
+/ met een lambda zijn de optimale parameters theta kleiner	,
+
+/ 7	. 
+
+def init():
+	a1=iris['data'][:,3:]
+	A1=np.c_[np.ones((150,1)),a1]
+	y=(iris['target']==2).astype(int).reshape(-1,1)
+	return a1,A1,y
+
+def permu(A1,y,N):
+  permu=np.random.permutation(150)
+  A1=A1[permu[:N]]
+  y=y[permu[:N]]
+  return A1,y 
+
+def logreg_gd_reg(w):
+  z2=A1.dot(w)
+  a2=expit(z2)
+  delta2=a2-y
+  w=w*(1-alpha*lmbda/len(a1))-(alpha/len(a1))*A1.T.dot(delta2)
+  return w
+
+def round(init,w):
+	if init:
+		w=np.array([[0],[0]])
+  for i in range(0,100000):
+    w=logreg_gd_reg(w)
+  return w
+
+def total(N,_alpha,_lmbda):
+	global a1,A1,y,alpha,lmbda
+	a1,A1,y=init()
+	alpha=_alpha
+	lmbda=_lmbda
+	A1,y=permu(A1,y,N)
+	w=round(True,None)
+	return w
+
+w=total(150,1,0)
+w=round(False,w)
+...
+
+w=total(150,1,1)
+w=round(False,w)
+...
+
+w=total(75,1,0)
+w=round(False,w)
+...
+
+
+w=total(75,1,0)
+w=round(False,w)
+...
+
+In [6728]: w=total(150,1,0)
+In [6729]: w
+Out[6729]: 
+array([[-21.12563996],
+       [ 12.94750716]])
+
+In [6726]: w=total(150,1,1)
+In [6727]: w
+Out[6727]: 
+array([[-4.22103221],
+       [ 2.61733229]])
+
+In [6720]: w=total(75,1,0)
+In [6721]: w
+Out[6721]: 
+array([[-19.58827344],
+       [ 12.07202365]])
+
+In [6722]: w=total(75,1,1)
+In [6723]: w
+Out[6723]: 
+array([[-3.03177716],
+       [ 2.13542635]])
+
+/ 7	. 
+
+/ WH rm	,
+
+/ we hadden eerst	, toen alpha en lambda nog niet input vars waren	,
+
+def init():
+	a1=iris['data'][:,3:]
+	A1=np.c_[np.ones((150,1)),a1]
+	y=(iris['target']==2).astype(int).reshape(-1,1)
+	alpha=1
+	lmbda=0
+	return a1,A1,y,alpha,lmbda
+
+def permu(A1,y,n):
+  permu=np.random.permutation(150)
+  A1=A1[permu[:n]]
+  y=y[permu[:n]]
+  return A1,y 
+
+def logreg_gd_reg(w):
+  z2=A1.dot(w)
+  a2=expit(z2)
+  delta2=a2-y
+  w=w*(1-alpha*lmbda/len(a1))-(alpha/len(a1))*A1.T.dot(delta2)
+  return w
+
+def round(init,w):
+	if init:
+		w=np.array([[0],[0]])
+  for i in range(0,100000):
+    w=logreg_gd_reg(w)
+  return w
+
+def total(N):
+	global a1,A1,y,alpha,lmbda
+	a1,A1,y,alpha,lmbda=init()
+	A1,y=permu(A1,y,N)
+	w=round(True,None)
+	return w
+
+w=total(75)
+w=round(False,w)
+w=round(False,w)
+...
+
+w=total(25)
+w=round(False,w)
+w=round(False,w)
+...
+
+/ Einde WH rm	,
+
+
+/ 7	. 
+
+/ controle DG zonder/met regularization	,
+
+def Cgrid(h,N):
+  # c center, shape (2,1)
+  # h grootte steps
+  # N aantal steps
+  hblk=np.linspace(w[0,0]-h,w[0,0]+h,N)
+  hor=np.tile(hblk,N)
+  vblk=np.linspace(w[1,0]-h,w[1,0]+h,N)
+  ver=np.repeat(vblk,N)
+  W=np.array([hor,ver])
+  return C(W).reshape(N,-1)
+
+In [6760]: w=total(150,1,0)
+In [6787]: Cgrid(.1,3)
+Out[6787]: 
+array([[16.87473249, 16.77348118, 16.72000491],
+       [16.73432467, 16.71040414, 16.73450667],
+       [16.71984576, 16.77291837, 16.87451379]])
+
+In [6801]: w=total(150,1,1)
+In [6802]: Cgrid(.1,3)
+Out[6802]: 
+array([[39.69895832, 39.68827917, 39.88890701],
+       [38.83038841, 39.14823815, 39.67494106],
+       [38.51933109, 39.15571137, 39.99744445]])
+
+/ 7	. 
+
+/ Newton-Raphson met regularization	,
+
+#from sklearn import datasets
+#iris=datasets.load_iris()
+
+def total(K,N,_lmbda):
+  global x,X,y,lmbda
+  x=iris['data'][:,3:]
+  X=np.c_[np.ones(len(x)),x]
+  y=(iris['target']==2).astype(int).reshape(-1,1)
+  lmbda=_lmbda
+  X,y=permu(X,y,N)
+  w=np.array([[0],[0]])
+  for i in range(0,K):
+    w=logreg_newton_regul(w)
+  return w
+
+w=logreg_newton_regul(w)
+
+# als a.shape=(4,1), is a[:,0].shape=(4,) , dus is weer een array ,
+# np.diag verwacht een np.array ,
+def logreg_newton_regul(w):
+  z=X.dot(w)
+  a=expit(z)
+  D=np.diag((a*(1-a))[:,0])
+  H=X.T.dot(D).dot(X)+lmbda*np.diag(np.ones(len(w)))
+  term_indep_regul=X.T.dot(D.dot(z)-(a-y))
+  w=np.linalg.inv(H).dot(term_indep_regul)
+  return w
+
+def permu(X,y,n):
+  permu=np.random.permutation(150)
+  X=X[permu[:n]]
+  y=y[permu[:n]]
+  return X,y
+
+
+In [6995]: w=total(10,150,0)
+In [6996]: w
+Out[6996]:
+array([[-21.12563996],
+       [ 12.94750716]])
+
+In [6997]: w=total(10,150,1)
+In [6998]: w
+Out[6998]:
+array([[-4.22103221],
+       [ 2.61733229]])
+
+In [7006]: w=total(10,75,0)
+
+In [7007]: w
+Out[7007]:
+array([[-19.27290711],
+       [ 11.89854691]])
+/ een andere total(10,75,0) geeft andere uitkomst ,
+
+In [7008]: w=total(10,75,1)
+
+In [7009]: w
+Out[7009]:
+array([[-3.17860162],
+       [ 1.95655075]])
+/ een andere total(10,75,1) geeft andere uitkomst ,
+
+
+/ 7	. 
+
+/ self	,
+
+/ 13	. 
+
+/ GD	,
+
+/ 0:0, 1:1
+
+def init():
+	a1=np.array([[-1],[1]])
+	A1=np.c_[np.ones((len(a1),1)),a1]
+	y=np.array([[0],[1]])
+	return a1,A1,y
+
+# gebruiken we nu niet, later misschien weer	,
+def permu(A1,y,n):
+  permu=np.random.permutation(150)
+  A1=A1[permu[:n]]
+  y=y[permu[:n]]
+  return A1,y 
+
+def logreg_gd_reg(w):
+  z2=A1.dot(w)
+  a2=expit(z2)
+  delta2=a2-y
+  w=w*(1-alpha*lmbda/len(a1))-(alpha/len(a1))*A1.T.dot(delta2)
+  return w
+
+def round(init,w):
+	if init:
+		w=np.array([[0],[0]])
+  for i in range(0,100000):
+    w=logreg_gd_reg(w)
+  return w
+
+def total(N,_alpha,_lmbda):
+	global a1,A1,y,alpha,lmbda
+	a1,A1,y=init()
+	alpha=_alpha
+	lmbda=_lmbda
+	#A1,y=permu(A1,y,N)
+	w=round(True,None)
+	return w
+
+w=total(2,1,0)		# we use 1ste arg 2 niet	,
+w=round(False,w)
+...
+
+w=total(2,1,1)
+w=round(False,w)
+...
+
+w=total(2,1,.3)
+w=round(False,w)
+...
+
+w=total(2,1,.01)
+w=round(False,w)
+...
+
+/ als lmbda>0	, hoe klein ook, converges 	, 
+/ als lmbda=0	, dan lijkt niet te converge, al gaat het heel langzaam	,
+
+/ 13	. 
+
+/ Newton-Raphson	,
+
+def total(K,N,_lmbda):
+  global x,X,y,lmbda
+	x=np.array([[-1],[1]])
+  X=np.c_[np.ones(len(x)),x]
+	y=np.array([[0],[1]])
+  lmbda=_lmbda
+  #X,y=permu(X,y,N)
+  w=np.array([[0],[0]])
+  for i in range(0,K):
+    w=logreg_newton_regul(w)
+  return w
+
+w=logreg_newton_regul(w)
+
+# als a.shape=(4,1), is a[:,0].shape=(4,) , dus is weer een array ,
+# np.diag verwacht een np.array ,
+def logreg_newton_regul(w):
+  z=X.dot(w)
+  a=expit(z)
+  D=np.diag((a*(1-a))[:,0])
+  H=X.T.dot(D).dot(X)+lmbda*np.diag(np.ones(len(w)))
+  term_indep_regul=X.T.dot(D.dot(z)-(a-y))
+  w=np.linalg.inv(H).dot(term_indep_regul)
+  return w
+
+# gebruiken we even niet	,
+def permu(X,y,n):
+  permu=np.random.permutation(len(X))
+  X=X[permu[:n]]
+  y=y[permu[:n]]
+  return X,y
+
+In [7045]: w=total(10,2,.1)
+
+In [7046]: w
+Out[7046]: 
+array([[4.59908339e-16],
+       [2.12803452e+00]])
+
+/ 1313	. 
+
+/ na 20 stappen van 10 gaat w groeien, en later verschijnt: Singular matrix	,
+
+In [7062]: w=total(10,2,0)
+
+In [7063]: for i in range(0,10):
+      ...:     w=logreg_newton_regul(w)
+      ...:     
+
+In [7064]: for i in range(0,10):
+      ...:     w=logreg_newton_regul(w)
+      ...:     
+
+In [7065]: for i in range(0,5):
+      ...:     w=logreg_newton_regul(w)
+      ...:     
+
+In [7066]: w
+Out[7066]: 
+array([[-6.66133815e-15],
+       [ 3.62028948e+01]])
+
+n [7068]: for i in range(0,5):
+      ...:     w=logreg_newton_regul(w)
+      ...:     
+LinAlgError: Singular matrix
+
+
+
+/ 13	. 
+
+/ GD, meer punten	,
+
+def init():
+	a1=np.array([[-1],[0],[1],[2]])
+	A1=np.c_[np.ones((len(a1),1)),a1]
+	y=np.array([[0],[0],[1],[1]])
+	return a1,A1,y
+
+
+
+
+
+/ Einde GD REVISITED 
+
+
+
 
 / controle	,
 

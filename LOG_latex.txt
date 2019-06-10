@@ -40,5 +40,64 @@ This is my \emph{first} document in \LaTeX.
 [eric@almond latex]$ evince I.1.1.pdf 
 / OK
 
+/ 7	. 
+
+/ google,
+fedora latex editor
+/ lees	,
+https://fedoramagazine.org/typeset-latex-texstudio-fedora/
+
+[eric@almond scikit-learn]$ texstudio
+bash: texstudio: command not found...
+Install package 'texstudio' to provide command 'texstudio'? [N/y] y
+ * Waiting in queue... 
+The following packages have to be installed:
+ poppler-qt5-0.52.0-11.fc26.x86_64	Qt5 wrapper for poppler
+ qt5-qtscript-5.9.4-1.fc26.x86_64	Qt5 - QtScript component
+ qt5-qtsvg-5.9.4-1.fc26.x86_64	Qt5 - Support for rendering and displaying SVG
+ qtlockedfile-qt5-2.4-22.20150629git5a07df5.fc26.x86_64	QFile extension with advisory locking functions (Qt5)
+ qtsingleapplication-qt5-2.6.1-29.fc26.x86_64	Qt5 library to start applications only once per user
+ quazip-qt5-0.7.3-1.fc26.x86_64	Qt5 wrapper for the minizip library
+ texstudio-2.12.6-1.fc26.x86_64	A feature-rich editor for LaTeX documents
+Proceed with changes? [N/y] y
 
 
+ * Waiting in queue... 
+ * Waiting for authentication... 
+ * Waiting in queue... 
+ * Downloading packages... 
+ * Requesting data... 
+ * Testing changes... 
+ * Installing packages... 
+
+/ en hij start hem meteen	, 
+/ File, New	,
+/ copy in untitled	, 
+\documentclass{article}
+\begin{document}
+The Fedora Project is a project sponsored by Red Hat primarily to co-ordinate the development of the Linux-based Fedora operating system, operating with the vision that the project "creates a world where free culture is welcoming and widespread, collaboration is commonplace, and people control their content and devices". The Fedora Project was founded on 22 September 2003 when Red Hat decided to split Red Hat Linux into Red Hat Enterprise Linux (RHEL) and a community-based operating system, Fedora.
+\end{document}
+/ Klik > (groen) of die daar links van	, 
+/ TODO
+
+/ 7	. 
+
+/ google,
+latex tutorial	,
+
+/ lees,
+https://www.overleaf.com/learn/latex/Learn_LaTeX_in_30_minutes
+https://tobi.oetiker.ch/lshort/lshort.pdf
+
+/ google,
+stackoverflow how to type math
+/ lees	,
+https://math.meta.stackexchange.com/questions/3989/how-to-write-math-equation-here
+I should point out that this question has already been asked before (e.g. here, here, here, and here), and it is also dealt with in this supplemental FAQ post, and so we should close it as a duplicate. – Zev Chonoles Apr 16 '12 at 5:54 
+->
+https://math.meta.stackexchange.com/questions/934/where-is-the-latex-reference-please
+For me the bibles of LaTeX are the Not So Short Introduction, the Short Math Guide, and the longer amsmath guide.
+
+/ lees,	
+https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference
+https://www.mathjax.org/
