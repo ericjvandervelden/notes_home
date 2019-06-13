@@ -6186,9 +6186,18 @@ Out[7046]:
 array([[4.59908339e-16],
        [2.12803452e+00]])
 
+/ 1313	 
+
+/ print	,
+
+
+
 / 1313	. 
 
 / na 20 stappen van 10 gaat w groeien, en later verschijnt: Singular matrix	,
+
+In [7090]: total(100,2,0)
+LinAlgError: Singular matrix
 
 In [7062]: w=total(10,2,0)
 
@@ -6214,11 +6223,46 @@ n [7068]: for i in range(0,5):
       ...:     
 LinAlgError: Singular matrix
 
-
-
 / 13	. 
 
-/ GD, meer punten	,
+/ meer punten, 
+/ en print	,
+
+def total(K,N,_lmbda):
+  global x,X,y,lmbda
+	x=np.array([[-2],[-1],[0],[1],[2]])
+  X=np.c_[np.ones(len(x)),x]
+	y=np.array([[0],[0],[1],[1],[1]])
+  lmbda=_lmbda
+  #X,y=permu(X,y,N)
+  w=np.array([[0],[0]])
+  for i in range(0,K):
+    w=logreg_newton_regul(w)
+  return w
+
+In [7129]: plt.figure()
+In [7104]: plt.plot(x[y==0],y[y==0],'bs')
+In [7105]: plt.plot(x[y==1],y[y==1],'g^')
+
+In [7109]: min(x)
+Out[7109]: array([-2])
+In [7110]: max(x)
+Out[7110]: array([2])
+In [7113]: intval=np.linspace(min(x),max(x),11)
+In [7112]: intval 
+Out[7112]: array([-2. , -1.6, -1.2, -0.8, -0.4,  0. ,  0.4,  0.8,  1.2,  1.6,  2. ])
+In [7122]: Intval=np.c_[np.ones(len(intval)),intval]
+In [7116]: theta=total(10,5,.1)
+In [7128]: theta
+Out[7128]: 
+array([[1.00333966],
+       [2.50884624]])
+In [7126]: vals=expit(Intval.dot(theta))
+In [7114]: plt.plot(intval,vals)
+/ OK	,
+
+ 
+
 
 def init():
 	a1=np.array([[-1],[0],[1],[2]])

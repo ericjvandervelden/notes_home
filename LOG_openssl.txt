@@ -22,13 +22,56 @@ $ sudo make install
 
 [eric@almond openssl]$ pwd
 /home/eric/Devel/OpenSSL/openssl
+[eric@almond openssl-1.1.1c]$ export OPENSSL_CONF=apps/openssl.cnf
 [eric@almond ]$ apps/openssl sha <(echo -n eric)
 SHA(/dev/fd/63)= b46ad15ca8898e9b3d1172de80e4b71122573e18
 / of
 [eric@almond ]$ apps/openssl sha
+eric
+ctrl+d 	/ 2 keer	,
 eric(stdin)= b46ad15ca8898e9b3d1172de80e4b71122573e18
-/ we moeten 3 keer ctrl+d
-/ TODO
+
+/ 7	 
+
+/ google	,
+openssl import in eclipse
+/ lees	,
+https://mathieularose.com/notes/how-to-debug-openssl-with-eclipse/
+
+[eric@almond OpenSSL]$ pwd
+/home/eric/Devel/OpenSSL
+[eric@almond OpenSSL]$ tar -xvzf ~/Downloads/openssl-1.1.1c.tar.gz 
+[eric@almond OpenSSL]$ cd openssl-1.1.1c/
+# als nodig, na meerdere keren make	,
+[eric@almond openssl-1.1.1c]$ make distclean 
+[eric@almond openssl-1.1.1c]$ ./config --debug --prefix=~/bin/openssl -Wl,--enable-new-dtags,-rpath,'$(LIBRPATH)'
+[eric@almond openssl-1.1.1c]$ make | tee LOG_make.log
+[eric@almond openssl-1.1.1c]$ make install | tee LOG_make_install.log
+
+[eric@almond openssl-1.1.1c]$ ldd ~/bin/openssl/bin/openssl 
+	linux-vdso.so.1 (0x00007fffcf6ba000)
+	libssl.so.1.1 => /home/eric/bin/openssl/lib/libssl.so.1.1 (0x00007fa30aed0000)
+	libcrypto.so.1.1 => /home/eric/bin/openssl/lib/libcrypto.so.1.1 (0x00007fa30a99d000)
+	libdl.so.2 => /lib64/libdl.so.2 (0x00007fa30a799000)
+	libpthread.so.0 => /lib64/libpthread.so.0 (0x00007fa30a57a000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007fa30a1a5000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007fa30b180000)
+
+[eric@almond openssl-1.1.1c]$ PATH=~/bin/openssl/bin:$PATH
+[eric@almond openssl-1.1.1c]$ openssl version -d
+OPENSSLDIR: "/home/eric/bin/openssl/ssl"
+
+
+
+
+
+/ 7	. 
+
+[eric@almond OpenSSL]$ pwd
+/home/eric/Devel/OpenSSL
+[eric@almond OpenSSL]$ git clone https://github.com/openssl/openssl.git
+
+
 
 / 7	.
 
