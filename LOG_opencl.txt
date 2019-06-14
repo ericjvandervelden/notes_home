@@ -14,3 +14,123 @@ Linux
 fedora opencl install
 / lees	,
 https://github.com/nginnever/zogminer/wiki/Fedora-24-Setup
+
+/ 7	. 
+
+https://software.intel.com/en-us/opencl-sdk
+/ in het midden zien we: 2019 version of the SDK: Download | Instructions
+/ we click Instructions	,
+https://software.intel.com/en-us/articles/opencl-selection-from-iss
+/ hier zien we de link: Navigate to Intel® System Studio downloads from the OpenCL™ Tools portal:
+dynamicinstaller
+ericjvandervelden
+vlWalnoot27&
+
+/ we sign in	, en confirm email	,
+/ we komen op	,
+https://dynamicinstaller.intel.com/system-studio/
+
+[eric@almond intel-sw]$ pwd
+/home/eric/Devel/Eclipse/intel-sw
+[eric@almond intel-sw]$ unzip  ~/Downloads/intel-sw-tools-installation-bundle-linux-linux.zip 
+Archive:  /home/eric/Downloads/intel-sw-tools-installation-bundle-linux-linux.zip
+ extracting: intel-sw-tools-installer.tar.gz  
+ extracting: intel-sw-tools-license.lic  
+ extracting: intel-sw-tools-config-custom.json  
+
+[eric@almond intel-sw]$ tar xvzf intel-sw-tools-installer.tar.gz
+[eric@almond intel-sw]$  ls
+intel-sw-tools-config-custom.json  intel-sw-tools-installer.tar.gz
+intel-sw-tools-installer           intel-sw-tools-license.lic
+
+[eric@almond intel-sw]$ find intel-sw-tools-installer/
+intel-sw-tools-installer/
+intel-sw-tools-installer/install.sh
+intel-sw-tools-installer/silent.cfg
+intel-sw-tools-installer/package_id.txt
+intel-sw-tools-installer/pset
+intel-sw-tools-installer/pset/eula.html
+intel-sw-tools-installer/pset/edition_support.cab
+intel-sw-tools-installer/pset/32e
+intel-sw-tools-installer/pset/32e/platforms
+intel-sw-tools-installer/pset/32e/platforms/libqxcb.so
+intel-sw-tools-installer/pset/32e/libISSASecureWebChannel.so
+intel-sw-tools-installer/pset/32e/qt
+intel-sw-tools-installer/pset/32e/qt/libQt5XcbQpa.so.5
+intel-sw-tools-installer/pset/32e/qt/libQt5Gui.so.5
+intel-sw-tools-installer/pset/32e/qt/libQt5Core.so.5
+intel-sw-tools-installer/pset/32e/qt/libxcb.so.1
+intel-sw-tools-installer/pset/32e/qt/libQt5Widgets.so.5
+intel-sw-tools-installer/pset/32e/qt/libQt5DBus.so.5
+intel-sw-tools-installer/pset/32e/qt/libQt5Xml.so.5
+intel-sw-tools-installer/pset/32e/libssl.so.1.0.0
+intel-sw-tools-installer/pset/32e/install_gui
+intel-sw-tools-installer/pset/32e/libsv.so
+intel-sw-tools-installer/pset/32e/install
+intel-sw-tools-installer/pset/32e/libcrypto.so.1.0.0
+intel-sw-tools-installer/pset/32e/libISSASoapMessenger.so
+intel-sw-tools-installer/pset/eclipse_integration.cab
+intel-sw-tools-installer/pset/install.cab
+intel-sw-tools-installer/pset/wr_dialogs.cab
+intel-sw-tools-installer/pset/cli_mode_help.cab
+intel-sw-tools-installer/pset/pset_yum.cab
+intel-sw-tools-installer/pset/an_upgrade.cab
+intel-sw-tools-installer/pset/yum.repos
+intel-sw-tools-installer/pset/yum.repos/l_comp_lib_p_2019.1.144.repo
+intel-sw-tools-installer/pset/yum.repos/l_vtune_p_2019.4.060.repo
+intel-sw-tools-installer/pset/yum.repos/crossplatf_socwatchext_p_2019.4.130.repo
+intel-sw-tools-installer/pset/yum.repos/crossplatf_iss_docs_p_2019.4.099.repo
+intel-sw-tools-installer/pset/yum.repos/l_comp_lib_p_2019.4.235.repo
+intel-sw-tools-installer/pset/yum.repos/l_iss_comp_lib_p_2019.2.192.repo
+intel-sw-tools-installer/pset/yum.repos/crossplatf_iss_plugins_p_2019.4.548.repo
+intel-sw-tools-installer/pset/yum.repos/l_iss_comp_lib_p_2019.1.149.repo
+intel-sw-tools-installer/pset/yum.repos/l_dhe_p_2019.4.037.repo
+intel-sw-tools-installer/pset/yum.repos/l_inspxe_p_2019.4.036.repo
+intel-sw-tools-installer/pset/yum.repos/l_iss_samples_p_2019.4.098.repo
+intel-sw-tools-installer/pset/yum.repos/l_comp_lib_p_2019.3.206.repo
+intel-sw-tools-installer/pset/yum.repos/l_comp_lib_p_2019.2.187.repo
+intel-sw-tools-installer/pset/yum.repos/crossplatf_socwatcheclipse_p_2019.4.135.repo
+intel-sw-tools-installer/pset/yum.repos/l_iss_comp_lib_p_2019.0.113.repo
+intel-sw-tools-installer/pset/yum.repos/l_sys_dbg_p_2019.4.668.repo
+intel-sw-tools-installer/pset/yum.repos/l_comp_lib_p_2019.0.120.repo
+intel-sw-tools-installer/pset/yum.repos/l_cembd_p_2019.4.963.repo
+intel-sw-tools-installer/pset/yum.repos/l_opencl_sdk_p_2019.4.299.repo
+intel-sw-tools-installer/pset/yum.repos/l_sys_trc_p_2019.4.668.repo
+intel-sw-tools-installer/pset/yum.repos/selection
+intel-sw-tools-installer/pset/yum.repos/l_iss_comp_lib_p_2019.4.235.repo
+intel-sw-tools-installer/pset/yum.repos/l_iss_comp_lib_p_2019.3.206.repo
+intel-sw-tools-installer/pset/yum.repos/l_iss_eclipse_p_2019.4.548.repo
+intel-sw-tools-installer/pset/yum.repos/crossplatf_socwatchnda_p_2.10.0.015.repo
+intel-sw-tools-installer/pset/licenses
+intel-sw-tools-installer/pset/licenses/openssl
+intel-sw-tools-installer/pset/licenses/openssl/license.txt
+intel-sw-tools-installer/pset/licenses/qt
+intel-sw-tools-installer/pset/licenses/qt/qt_source_code.txt
+intel-sw-tools-installer/pset/licenses/qt/LICENSE.LGPLv3
+intel-sw-tools-installer/pset/licenses/libarchive
+intel-sw-tools-installer/pset/licenses/libarchive/COPYING.txt
+intel-sw-tools-installer/pset/mediaconfig.xml
+intel-sw-tools-installer/pset/images
+intel-sw-tools-installer/pset/images/splash.png
+intel-sw-tools-installer/pset/images/pset.ico
+intel-sw-tools-installer/pset/images/pset.icns
+intel-sw-tools-installer/pset/images/finish.png
+intel-sw-tools-installer/pset/per_component_prerequisites.cab
+intel-sw-tools-installer/pset/ndk_integration.cab
+intel-sw-tools-installer/pset/activation.cab
+intel-sw-tools-installer/pset/intel_support.cab
+intel-sw-tools-installer/pset/remove-groups.cab
+intel-sw-tools-installer/pset/proxy_support.cab
+intel-sw-tools-installer/pset/intel-installer-2019.4.130.tgz
+intel-sw-tools-installer/pset/eclipse-killer.cab
+intel-sw-tools-installer/pset/pset_standard_dialogs.cab
+intel-sw-tools-installer/pset/phonehome.cab
+intel-sw-tools-installer/pset/pset_user_stat.cab
+intel-sw-tools-installer/pset/silent_component_uninstall.cab
+intel-sw-tools-installer/pset/check.awk
+intel-sw-tools-installer/pset/user_selection.cab
+intel-sw-tools-installer/pset/offline_uninstall.cab
+intel-sw-tools-installer/pset/scripts
+intel-sw-tools-installer/pset/scripts/force_remove.sh
+intel-sw-tools-installer/README.txt
+

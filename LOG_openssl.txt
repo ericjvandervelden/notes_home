@@ -44,7 +44,7 @@ https://mathieularose.com/notes/how-to-debug-openssl-with-eclipse/
 [eric@almond OpenSSL]$ cd openssl-1.1.1c/
 # als nodig, na meerdere keren make	,
 [eric@almond openssl-1.1.1c]$ make distclean 
-[eric@almond openssl-1.1.1c]$ ./config --debug --prefix=~/bin/openssl -Wl,--enable-new-dtags,-rpath,'$(LIBRPATH)'
+[eric@almond openssl-1.1.1c]$ ./config --debug --prefix=/home/eric/bin/openssl -Wl,--enable-new-dtags,-rpath,'$(LIBRPATH)'
 [eric@almond openssl-1.1.1c]$ make | tee LOG_make.log
 [eric@almond openssl-1.1.1c]$ make install | tee LOG_make_install.log
 
@@ -60,6 +60,83 @@ https://mathieularose.com/notes/how-to-debug-openssl-with-eclipse/
 [eric@almond openssl-1.1.1c]$ PATH=~/bin/openssl/bin:$PATH
 [eric@almond openssl-1.1.1c]$ openssl version -d
 OPENSSLDIR: "/home/eric/bin/openssl/ssl"
+
+/ 13	. 
+
+/ na $ make , dus voor $ maken install, is apps/openssl er	, maar	,
+
+[eric@almond openssl-1.1.1c]$  apps/openssl version -d
+apps/openssl: /lib64/libssl.so.1.1: version `OPENSSL_1_1_1' not found (required by apps/openssl)
+apps/openssl: /lib64/libcrypto.so.1.1: version `OPENSSL_1_1_1' not found (required by apps/openssl)
+
+[eric@almond openssl-1.1.1c]$ ldd apps/openssl
+apps/openssl: /lib64/libssl.so.1.1: version `OPENSSL_1_1_1' not found (required by apps/openssl)
+apps/openssl: /lib64/libcrypto.so.1.1: version `OPENSSL_1_1_1' not found (required by apps/openssl)
+	linux-vdso.so.1 (0x00007ffc6a39b000)
+	libssl.so.1.1 => /lib64/libssl.so.1.1 (0x00007fd16699d000)
+	libcrypto.so.1.1 => /lib64/libcrypto.so.1.1 (0x00007fd166512000)
+	libdl.so.2 => /lib64/libdl.so.2 (0x00007fd16630e000)
+	libpthread.so.0 => /lib64/libpthread.so.0 (0x00007fd1660ef000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007fd165d1a000)
+	libz.so.1 => /lib64/libz.so.1 (0x00007fd165b03000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007fd166c09000)
+
+[eric@almond openssl-1.1.1c]$ apps/openssl sha1 <(echo -n eric)
+apps/openssl: /lib64/libssl.so.1.1: version `OPENSSL_1_1_1' not found (required by apps/openssl)
+apps/openssl: /lib64/libcrypto.so.1.1: version `OPENSSL_1_1_1' not found (required by apps/openssl)
+
+[eric@almond openssl-1.1.1c]$ ls -l apps/openssl
+-rwxrwxr-x. 1 eric eric 1363392 Jun 14 21:53 apps/openssl
+
+/ 13	. 
+
+/ na make install is apps/openssl onveranderd, maar nu kan wel,
+
+[eric@almond openssl-1.1.1c]$ apps/openssl sha1 <(echo -n eric)
+SHA1(/dev/fd/63)= 96f164ad4d9b2b0dacf8ebee2bb1eeb3aa69adf1
+
+[eric@almond openssl-1.1.1c]$ ls -l apps/openssl
+-rwxrwxr-x. 1 eric eric 1363392 Jun 14 21:53 apps/openssl
+[eric@almond openssl-1.1.1c]$ ls -l ~/bin/openssl/bin/openssl 
+-rwxr-xr-x. 1 eric eric 1363392 Jun 14 21:56 /home/eric/bin/openssl/bin/openssl
+
+[eric@almond openssl-1.1.1c]$ ls -i ~/bin/openssl/bin/openssl 
+39080625 /home/eric/bin/openssl/bin/openssl
+[eric@almond openssl-1.1.1c]$ ls -i apps/openssl
+13511223 apps/openssl
+/ ook gaan hard links	,
+
+/ 13	. 
+
+[eric@almond openssl-1.1.1c]$  ldd apps/openssl
+	linux-vdso.so.1 (0x00007fffb5ff0000)
+	libssl.so.1.1 => /home/eric/bin/openssl/lib/libssl.so.1.1 (0x00007f3790640000)
+	libcrypto.so.1.1 => /home/eric/bin/openssl/lib/libcrypto.so.1.1 (0x00007f379010d000)
+	libdl.so.2 => /lib64/libdl.so.2 (0x00007f378ff09000)
+	libpthread.so.0 => /lib64/libpthread.so.0 (0x00007f378fcea000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007f378f915000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f37908f0000)
+
+/ 7	. 
+
+/ we import in eclipse	,
+File, Import, Existing code as makefile project
+Existing code location: /home/eric/Devel/OpenSSL/openssl-1.1.1c
+/ want hier is de Makefile	,
+Toolchain: GNU Autotools toolchain
+
+/ maak debug config	,
+Run , debug configurations	, 
+C/C++ application , dubbel click	,
+/ als project verschijnt automatisch openssl-1.1.1c
+C/C++ application, Browse	, 
+/ we kunnen kiezen	,
+/home/eric/bin/openssl/bin/openssl
+/ of	,
+/home/eric/Devel/OpenSSL/openssl-1.1.1c/apps/openssl
+Debug
+
+
 
 
 

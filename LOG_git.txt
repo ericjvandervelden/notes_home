@@ -4244,3 +4244,48 @@ https://feeding.cloud.geek.nz/posts/setting-up-centralied-git-repository/
 
 
 / Einde GIT
+
+/ 7	. 
+
+/ we hebben openssl checkout	,
+[eric@almond openssl]$ pwd
+/home/eric/Devel/OpenSSL/openssl
+
+/ daarna	,
+$ git fetch --all
+[eric@almond openssl]$ git branch -a
+* master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/OpenSSL_1_1_1-stable
+	...
+
+/ google	,
+git checkout remote branch
+/ lees,
+https://stackoverflow.com/questions/30575041/cant-do-a-checkout-with-multiple-remotes
+
+When you have only a single remote (let's call it origin) then when you type
+
+git checkout foo
+
+when foo doesn't exist but origin/foo does exist git will behave as though you typed the following
+
+git checkout -b foo origin/foo
+
+If you have multiple remotes, and foo does not exist locally but exists in 2 or more remotes then this behavior is suppressed.
+
+You will need to explicitly create foo and instruct git what remote/branch you want it to track.
+
+git checkout -b foo <remote>/foo
+
+/ we hebben maar 1 remote	, origin	, dus we doen	,
+
+[eric@almond openssl]$  git checkout OpenSSL_1_1_1-stable 
+Branch OpenSSL_1_1_1-stable set up to track remote branch OpenSSL_1_1_1-stable from origin.
+Switched to a new branch 'OpenSSL_1_1_1-stable'
+
+/ hij code completion zelfs OpenSSL_1_1_1-stable
+[eric@almond openssl]$ git branch -a
+* OpenSSL_1_1_1-stable
+  master
+

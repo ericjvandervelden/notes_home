@@ -505,6 +505,8 @@ https://stackoverflow.com/questions/8758152/disabling-gs-return-value-optimisati
 
 -fno-elide-constructors
 
+The C++ standard allows an implementation to omit creating a temporary which is only used to initialize another object of the same type. Specifying this option disables that optimization, and forces G++ to call the copy constructor in all cases. [Source: man gcc]
+
 
 int main(){
 	samp s3=k();
