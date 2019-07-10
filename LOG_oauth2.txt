@@ -1,0 +1,61 @@
+/ 7	. 
+
+/ google,
+oauth2 tutorial 
+/ kijk,
+https://www.youtube.com/watch?v=CPbvxxslDTU&t=273s
+
+/ (2:13) Do you wish to authorize MyBucks to access you Memorial Bank account balances and transaction history?
+/ authorize=toestemming geven/machtigen	,
+/ MyBucks heeft een Authorization Request gestuurd naar Memorial Bank's Authorization server	, 
+/ Memorial Bank stuurt een Authorization Grant naar MyBucks	, samen met een Authorization Code	, die MyBucks straks zal gebruiken om een access token te request om Sarah's account te zien	,
+/ MyBucks uses the Authorization Grant met de Authorization Code , om te sturen een Authorization Grant om een access token te request, naar de Authorization Server	, 
+/ we zijn nog steeds niet op de Memorial Bank's Resource Server	,
+/ Memorial Bank stuurt de access token naar MyBucks, om zo namens Sarah haar account balances en transaction history op te kunnen vragen	,
+/ Met de access token kan MyBucks alleen wat Sarah granted MyBucks to see	,
+/ grant = verlenen	,
+
+/ MyBucks stuurt een req naar de Memorial's Resource Server met de access token,
+/ de Resource server verifies the access token and sends de protected resources naar MyBanks	,
+
+/ authentication of Sarah tegelijk met access token dat naar MyBucks wordt gestuurd Ook met Open ID connect	,
+/ TODO
+
+/ voor dit alles moet MyBucks de app register bij Memorial Bank service: 
+/ MyBucks moet sturen:
+Name
+Website
+Callback URL: url waarnaar de Memorial bank redirects de users after they authorized access to their account 
+
+/ 7	. 
+
+https://www.youtube.com/watch?v=996OiexHze0&t=55s
+
+
+/ 7	. 
+
+/ google	,
+login what do cookies do?
+/ lees	,
+https://support.mozilla.org/en-US/kb/where-are-my-logins-stored
+https://www.youtube.com/watch?v=I01XMRo2ESg
+
+/ elke keer als je een req doet, wordt de cookie meegestuurd met het req	,
+/ de server heeft de cookie naar jou gestuurd met de res	, eerder	,
+/ een cookie kan contain:
+the language you chose you want to see the site in,
+the time you last visited the site	,
+the items in your basket last time you visited the site	,
+the links you clicked on the site	,
+
+/ de cookies werden te groot	,
+/ in een cookie staat nu alleen een ID	, en op de server staat achter deze ID allen gegevens die eerst in de cookie stonden	,
+/ the cookie served as a ID for your computer	,
+/ only the website that send the cookie to your computer can access it (when you send it when req the site again)	,
+
+/ third party cookies: 
+/ a site can contain parts of other websites, like ads: advertisements; they can also access the cookie from the hosting website	,
+/ a news website can contain ads	, the same ads that are on another website; the news website may not have send you cookies, but because the ads are on other websites which send you cookies	, those ads can read your information on those cookies and can use it on the news website	,
+
+ 
+

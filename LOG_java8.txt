@@ -1,0 +1,257 @@
+/ 7	. 
+
+https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html
+
+/ git_codebase/java12-study	,
+
+public class RosterTest.java
+	@Test
+	public void testPersonsOlderThan(){
+		for(Person p:roster) {
+			if(p.getAge()>20) {
+				System.out.println(p);
+			}
+		}
+	}
+
+/ WH is het beter om dit soort tests op 1 plaats bij elkaar te brengen	,
+
+$ vi pom.xml
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>my.own</groupId>
+	<artifactId>java12-study</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<dependencies>
+		<dependency>
+			<artifactId>junit</artifactId>
+			<groupId>junit</groupId>
+			<version>4.12</version>
+		</dependency>
+	</dependencies>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+					<release>12</release>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
+
+$ vi RosterTest.java
+
+public class RosterTest {
+
+	private static List<Person> roster = new ArrayList<>();
+
+	private CheckPerson checkPerson2 = new CheckPerson() {
+		@Override
+		public boolean test(Person p) {
+			return p.getGender() == Sex.MALE && p.getAge() >= 18 && p.getAge() < 25;
+		}
+	};
+
+	@BeforeClass
+	public static void init() {
+
+		roster.add(new Person("Fred", IsoChronology.INSTANCE.date(1980, 6, 20), Person.Sex.MALE, "fred@example.com"));
+		roster.add(new Person("Jane", IsoChronology.INSTANCE.date(1990, 7, 15), Person.Sex.FEMALE, "jane@example.com"));
+		roster.add(
+				new Person("George", IsoChronology.INSTANCE.date(1991, 8, 13), Person.Sex.MALE, "george@example.com"));
+		roster.add(new Person("Bob", IsoChronology.INSTANCE.date(2000, 9, 12), Person.Sex.MALE, "bob@example.com"));
+
+	}
+
+	@Test
+	public void testWithCheckPerson2() {
+		System.out.println("test");
+		for (Person p : roster) {
+			if (checkPerson2.test(p)) {
+				System.out.println(p);
+			}
+		}
+	}
+
+/ of inline	,
+
+	@Test
+	@Ignore
+	public void testWithCheckPersonAnonymous() {
+		System.out.println("test");
+		for (Person p : roster) {
+			if (new CheckPerson() {
+				@Override
+				public boolean test(Person p) {
+					return p.getGender() == Sex.MALE && p.getAge() >= 18 && p.getAge() < 25;
+				}
+			}.test(p)) {
+				System.out.println(p);
+			}
+		}
+	}
+
+The CheckPerson interface is a functional interface. A functional interface is any interface that contains only one abstract method. (A functional interface may contain one or more default methods or static methods.) Because a functional interface contains only one abstract method, you can omit the name of that method when you implement it. To do this, instead of using an anonymous class expression, you use a lambda expression, which is highlighted in the following method invocation:
+
+/ lees,
+http://zetcode.com/java/predicate/
+
+public class RosterTest {
+
+	private Predicate<Person>predicate=p->p.getGender()==Sex.MALE && p.getAge()>=18 && p.getAge()<25;
+
+	@Test
+	public void testWithPredicate() {
+		System.out.println("test");
+		for (Person p : roster) {
+			if(predicate.test(p)) {
+				System.out.println(p);
+			}
+			
+		}
+	}
+/ OK	,
+
+/ we kunnen NIET inline zoals	,
+
+	@Test
+	public void testWith() {
+		System.out.println("test");
+		for (Person p : roster) {
+
+			if(new Predicate<Person>(){p->p.getGender() == Sex.MALE && p.getAge() >= 18 && p.getAge() < 25}.test(p)) {
+/ of een cast	, 
+			if(((Predicate<Person>)p->p.getGender() == Sex.MALE && p.getAge() >= 18 && p.getAge() < 25).test(p)) {
+				System.out.println(p);
+			}
+			
+		}
+	}
+/ TODO
+
+/ lees,
+https://dzone.com/articles/writing-clean-predicates-java
+
+/ 13	. 
+
+	private Predicate<Person>predicate=p->p.getGender()==Sex.MALE && p.getAge()>=18 && p.getAge()<25;
+
+/ p.getGender() kan alleen als Predicate<Person>, als we Predicate<String>, dan ERR in eclipse, 
+/ maar eclipse kent geen code completion bij p.	,
+/ TODO
+
+
+/ 13	. 
+
+@FunctionalInterface
+public interface Predicate<T> {
+    boolean test(T t);
+    default Predicate<T> and(Predicate<? super T> other) {
+        Objects.requireNonNull(other);
+        return (t) -> test(t) && other.test(t);
+    }
+		...
+
+/ lees over .and	,
+https://www.baeldung.com/java-predicate-chain
+
+/ 13	. 
+
+/ Vaak zien de lambdas in fct die een lambda verwachten, zoals filter	,
+/ hoe in if hierboven?
+/ TODO
+
+/ 13	. 
+
+public class RosterTest{
+
+	private Predicate<Person>predicate=p->p.getGender()==Sex.MALE && p.getAge()>=18 && p.getAge()<25;
+
+	private Consumer<Person>consumer=p->System.out.println(p); 
+
+	@Test
+	public void testWithPredicateAndConsumer() {
+		System.out.println("test");
+		for (Person p : roster) {
+			if(predicate.test(p)) {
+				consumer.accept(p);
+			}
+			
+		}
+	}
+
+/ 13	. 
+
+public class RosterTest {
+
+	private Predicate<Person>predicate=p->p.getGender()==Sex.MALE && p.getAge()>=18 && p.getAge()<25;
+
+	private Consumer<Person>consumer=p->System.out.println(p); 
+	
+	private Function<Person,String>function=p->p.getEmailAddress();
+	
+	private Consumer<String>consumer2=p->System.out.println(p); 
+
+	@Test
+	public void testWithPredicateAndFunctionAndConsumer() {
+		System.out.println("test");
+		for (Person p : roster) {
+			if(predicate.test(p)) {
+				String s=function.apply(p);
+				consumer2.accept(s);
+			}
+			
+		}
+	}
+	
+/ maar we zien een Consumer<T> waar T er niet toe doet	,
+
+public class RosterTest {
+
+	private Predicate<Person>predicate=p->p.getGender()==Sex.MALE && p.getAge()>=18 && p.getAge()<25;
+
+	private Function<Person,String>function=p->p.getEmailAddress();
+	
+	private Consumer<Object>consumer=p->System.out.println(p);
+/ of	,
+	private Consumer<? super Object>consumer=p->System.out.println(p);
+
+
+	@Test
+	public void testWithPredicateAndConsumer() {
+		System.out.println("test");
+		for (Person p : roster) {
+			if(predicate.test(p)) {
+				consumer.accept(p);
+			}
+			
+		}
+	}
+
+	@Test
+	public void testWithPredicateAndFunctionAndConsumer() {
+		System.out.println("test");
+		for (Person p : roster) {
+			if(predicate.test(p)) {
+				String s=function.apply(p);
+				consumer.accept(s);
+			}
+			
+		}
+
+/ 13	. 
+
+public interface JPATransactionFunction<T> extends Function<EntityManager, T> {
+public interface JPATransactionVoidFunction extends Consumer<EntityManager> {
+
+

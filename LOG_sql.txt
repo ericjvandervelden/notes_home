@@ -9,5 +9,3 @@ https://en.wikipedia.org/wiki/Multiplicative_group_of_integers_modulo_n
 
 / recursive cte
 https://technet.microsoft.com/nl-nl/library/ms186243(v=sql.105).aspx
-
-

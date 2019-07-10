@@ -1,0 +1,525 @@
+/ 7	. 
+
+def init():
+	a1=iris['data'][:,3:]
+	A1=np.c_[np.ones((150,1)),a1]
+	y=(iris['target']==2).astype(int).reshape(-1,1)
+	return a1,A1,y
+
+def permu(A1,y,N):
+  permu=np.random.permutation(150)
+  A1=A1[permu[:N]]
+  y=y[permu[:N]]
+  return A1,y 
+
+def logreg_gd_reg(w):
+  z2=A1.dot(w)
+  a2=expit(z2)
+  delta2=a2-y
+  w=w*(1-alpha*lmbda/len(a1))-(alpha/len(a1))*A1.T.dot(delta2)
+  return w
+
+def round(init,w):
+	if init:
+		w=np.array([[0],[0]])
+  for i in range(0,100000):
+    w=logreg_gd_reg(w)
+  return w
+
+def total(N,_alpha,_lmbda):
+	global a1,A1,y,alpha,lmbda
+	a1,A1,y=init()
+	alpha=_alpha
+	lmbda=_lmbda
+	A1,y=permu(A1,y,N)
+	w=round(True,None)
+	return w
+
+w=total(150,1,0)
+w=round(False,w)
+...
+
+w=total(150,1,1)
+w=round(False,w)
+...
+
+w=total(75,1,0)
+w=round(False,w)
+...
+
+
+w=total(75,1,0)
+w=round(False,w)
+...
+
+In [6720]: w=total(75,1,0)
+In [6721]: w
+Out[6721]: 
+array([[-19.58827344],
+       [ 12.07202365]])
+
+In [6722]: w=total(75,1,1)
+In [6723]: w
+Out[6723]: 
+array([[-3.03177716],
+       [ 2.13542635]])
+
+/ 7	 
+
+def C(w):
+  z2=A1.dot(w)
+  a2=expit(z2)
+  c2=y*-np.log(a2)+(1-y)*-np.log(1-a2)
+  return np.ones((1,len(A1))).dot(c2)
+
+In [6757]: w=total(150,1,1)
+In [6758]: w
+Out[6758]: 
+array([[-4.22103221],
+       [ 2.61733229]])
+In [6759]: C(w)
+Out[6759]: array([[39.14823815]])
+
+In [6760]: w=total(150,1,0)
+In [6763]: w
+Out[6763]: 
+array([[-21.12563996],
+       [ 12.94750716]])
+In [6761]: C(w)
+Out[6761]: array([[16.71040414]])
+
+/ 7	. 
+
+def Cgrid(h,N):
+  # c center, shape (2,1)
+  # h grootte steps
+  # N aantal steps
+  hblk=np.linspace(w[0,0]-h,w[0,0]+h,N)
+  hor=np.tile(hblk,N)
+  vblk=np.linspace(w[1,0]-h,w[1,0]+h,N)
+  ver=np.repeat(vblk,N)
+  W=np.array([hor,ver])
+  return C(W).reshape(N,-1)
+
+In [6760]: w=total(150,1,0)
+In [6787]: Cgrid(.1,3)
+Out[6787]: 
+array([[16.87473249, 16.77348118, 16.72000491],
+       [16.73432467, 16.71040414, 16.73450667],
+       [16.71984576, 16.77291837, 16.87451379]])
+
+In [6801]: w=total(150,1,1)
+In [6802]: Cgrid(.1,3)
+Out[6802]: 
+array([[39.69895832, 39.68827917, 39.88890701],
+       [38.83038841, 39.14823815, 39.67494106],
+       [38.51933109, 39.15571137, 39.99744445]])
+
+/ 7	. 
+
+/ Newton-Raphson  ,
+/ Bishop  ,
+
+#from sklearn import datasets
+#iris=datasets.load_iris()
+def total(K,N,_lmbda):
+  global x,X,y,lmbda
+	x=iris['data'][:,3:]
+	X=np.c_[np.ones(len(x)),x]
+	y=(iris['target']==2).astype(int).reshape(-1,1)
+  lmbda=_lmbda
+  X,y=permu(X,y,N)
+  w=np.array([[0],[0]])
+  for i in range(0,K):
+    w=logreg_newton_regul(w)
+  return w
+
+w=logreg_newton_regul(w)
+
+# als a.shape=(4,1), is a[:,0].shape=(4,)	, dus is weer een array	, 
+# np.diag verwacht een np.array	,
+def logreg_newton_regul(w):
+  z=X.dot(w)
+  a=expit(z)
+  D=np.diag((a*(1-a))[:,0]) 
+  H=X.T.dot(D).dot(X)+lmbda*np.diag(np.ones(len(w)))
+	term_indep_regul=X.T.dot(D.dot(z)-(a-y))
+  w=np.linalg.inv(H).dot(term_indep_regul)
+	return w
+
+def permu(X,y,n):
+  permu=np.random.permutation(150)
+  X=X[permu[:n]]
+  y=y[permu[:n]]
+  return X,y
+
+
+In [6995]: w=total(10,150,0)
+In [6996]: w
+Out[6996]: 
+array([[-21.12563996],
+       [ 12.94750716]])
+
+In [6997]: w=total(10,150,1)
+In [6998]: w
+Out[6998]: 
+array([[-4.22103221],
+       [ 2.61733229]])
+
+In [7006]: w=total(10,75,0)
+
+In [7007]: w
+Out[7007]: 
+array([[-19.27290711],
+       [ 11.89854691]])
+/ een andere total(10,75,0) geeft andere uitkomst	,
+
+In [7008]: w=total(10,75,1)
+
+In [7009]: w
+Out[7009]: 
+array([[-3.17860162],
+       [ 1.95655075]])
+/ een andere total(10,75,1) geeft andere uitkomst	,
+
+
+------------------
+
+/ 7	. 
+
+/ Dit kan gewoon	,
+
+In [7319]: b1=np.array([[1],[2],[3],[4]])
+In [7320]: b1
+Out[7320]: 
+array([[1],
+       [2],
+       [3],
+       [4]])
+In [7321]: 1-b1
+Out[7321]: 
+array([[ 0],
+       [-1],
+       [-2],
+       [-3]])
+
+In [7325]: np.log(b1)
+Out[7325]: 
+array([[0.        ],
+       [0.69314718],
+       [1.09861229],
+       [1.38629436]])
+
+/ 13	. 
+
+In [7336]: b1=np.arange(1,5)
+In [7338]: b1=b1.reshape(len(b1),1)
+In [7339]: b1
+Out[7339]: 
+array([[1],
+       [2],
+       [3],
+       [4]])
+
+/ 13	. 
+
+In [7351]: theta=np.random.rand(2,1)
+In [7352]: theta
+Out[7352]: 
+array([[0.77893654],
+       [0.27937527]])
+
+/ 13	. 
+
+In [7372]: X=iris['data'][:,[2,3]]         
+In [7372]: X=np.c_[np.ones((len(X),1)),X]
+/ alle waarnemingen, alle features + 1 
+
+In [7378]: theta=np.random.rand(3,1)
+In [7379]: theta
+Out[7379]: 
+array([[0.28211265],
+       [0.88633801],
+       [0.06248916]])
+
+In [7392]: y=(iris['target']==2).reshape(-1,1).astype(int)
+
+for i in range(...):
+
+In [7409]: z=X.dot(theta)
+In [7428]: a=expit(z)                                     
+In [7427]: J=y.T.dot(-np.log(a))+(1-y).T.dot(-np.log(1-a))
+
+In [7429]: J
+Out[7429]: array([[297.24332029]])
+
+In [7430]: (1-y).T.dot(-np.log(1-a))
+Out[7430]: array([[296.97379305]])
+In [7431]: y.T.dot(-np.log(a))
+Out[7431]: array([[0.26952724]])
+
+/ In J zien we dat de cost klein is als, 
+y.T.dot(-np.log(a): y=1 en a=1
+(1-y).T.dot(-np.log(1-a)): y=0 en a=0
+
+y.T.dot(-np.log(a): als y=1 en a=0	, is de cost groot	, 
+(1-y).T.dot(-np.log(1-a)): als y=0 en a=1, is de cost groot	, 
+
+/ hoge cost betekent: a en y kloppen niet	,
+
+In [7447]: np.c_[a,y]
+array([[0.82280723, 0.        ],	/ hoge cost	,
+       [0.82280723, 0.        ],	/ ...
+       [0.80951316, 0.        ],
+       [0.8353622 , 0.        ],
+       [0.82280723, 0.        ],
+...
+       [0.98485169, 0.        ],
+       [0.9530178 , 0.        ],
+       [0.98196665, 0.        ],		/ hoge cost	,
+       [0.99684738, 1.        ],		/ lage cost	,
+       [0.99276214, 1.        ],		/ ...
+       [0.99646934, 1.        ],
+
+/ 13	. 
+
+/ petal width	,
+
+/ 1313	. 
+
+/ gd
+
+
+X=iris['data'][:,[3]]         
+X=np.c_[np.ones((len(X),1)),X]
+theta=np.array([0,0]).reshape(-1,1)
+y=(iris['target']==2).reshape(-1,1).astype(int)
+alpha=.1 
+for i in range(0,10000):
+	z=X.dot(theta)
+	a=expit(z)
+	theta=theta-alpha*X.T.dot(a-y)
+
+/ 1313	. 
+
+/ newton	,
+
+X=iris['data'][:,[3]]         
+X=np.c_[np.ones((len(X),1)),X]
+theta=np.array([0,0]).reshape(-1,1)
+y=(iris['target']==2).reshape(-1,1).astype(int)
+for i in range(0,10):
+	z=X.dot(theta)
+	a=expit(z)
+	grad=X.T.dot(a-y)
+	D=np.diag((a*(1-a)).ravel())
+	H=X.T.dot(D).dot(X)
+	theta=theta-np.linalg.inv(H).dot(grad)
+
+In [7594]: theta
+Out[7594]: 
+array([[-21.12563996],
+       [ 12.94750716]])
+
+/ 13	. 
+
+/ petal length, width
+
+/ 1313	. 
+
+/ gd	,
+
+X=iris['data'][:,[2,3]]         
+X=np.c_[np.ones((len(X),1)),X]
+theta=np.array([0,0,0]).reshape(-1,1)
+y=(iris['target']==2).reshape(-1,1).astype(int)
+alpha=.1 
+for i in range(0,100000):
+	z=X.dot(theta)
+	a=expit(z)
+	theta=theta-alpha*X.T.dot(a-y)
+/ niet stabiel	,
+/ TODO
+
+/ 1313	. 
+
+/ newton	,
+
+X=iris['data'][:,[2,3]]         
+X=np.c_[np.ones((len(X),1)),X]
+theta=np.array([0,0,0]).reshape(-1,1)
+y=(iris['target']==2).reshape(-1,1).astype(int)
+for i in range(0,10):
+	z=X.dot(theta)
+	a=expit(z)
+	grad=X.T.dot(a-y)
+	D=np.diag((a*(1-a)).ravel())
+	H=X.T.dot(D).dot(X)
+	theta=theta-np.linalg.inv(H).dot(grad)
+
+In [7602]: theta
+Out[7602]: 
+array([[-45.27234377],
+       [  5.75453232],
+       [ 10.44669989]])
+/ stable	,
+
+
+/ 1313	. 
+
+/ gd, regl	,
+
+X=iris['data'][:,[2,3]]         
+X=np.c_[np.ones((len(X),1)),X]
+theta=np.array([0,0,0]).reshape(-1,1)
+y=(iris['target']==2).reshape(-1,1).astype(int)
+alpha=.1 
+lmbda=1
+for i in range(0,100000):
+	z=X.dot(theta)
+	a=expit(z)
+	grad=X.T.dot(a-y)+lmbda*theta
+	theta=theta-alpha*grad
+
+In [7660]: theta
+Out[7660]: 
+array([[-18.87363258],
+       [ 13.18067091],
+       [ 16.50468954]])
+
+/ met lbmda=.1 is niet stabiel	, 
+/ TODO
+
+/ 1313	. 
+
+/ newton, regl	,
+
+X=iris['data'][:,[2,3]]         
+X=np.c_[np.ones((len(X),1)),X]
+theta=np.array([0,0,0]).reshape(-1,1)
+y=(iris['target']==2).reshape(-1,1).astype(int)
+lmbda=1
+for i in range(0,10):
+	z=X.dot(theta)
+	a=expit(z)
+	grad=X.T.dot(a-y)+lmbda*theta
+	D=np.diag((a*(1-a)).ravel())
+	H=X.T.dot(D).dot(X)+lmbda*np.diag([1,1,1])
+	theta=theta-np.linalg.inv(H).dot(grad)
+
+In [7638]: theta
+Out[7638]: 
+array([[-4.27700077],
+       [ 0.04030967],
+       [ 2.53398464]])
+
+/ als lmbda=.1	, 
+In [7644]: theta
+Out[7644]: 
+array([[-11.50605939],
+       [  0.74893214],
+       [  4.79308489]])
+
+/ als lmbda=.01
+In [7651]: theta
+Out[7651]: 
+array([[-24.86777444],
+       [  2.70155942],
+       [  7.10675456]])
+
+/ 1313		. 
+
+/ sk	,
+
+In [7676]: y=(iris['target']==2).astype(np.int)
+In [7678]: log_reg = LogisticRegression(solver="liblinear", C=10**10)
+In [7679]: log_reg.fit(X,y)
+In [7680]: log_reg.coef_
+Out[7680]: array([[ 5.7528683 , 10.44455633]])
+In [7682]: log_reg.intercept_
+Out[7682]: array([-45.26062435])
+/= eigen Newton boven	, zonder regularisatie	,
+
+/ 1313	. 
+
+/ sk, regl	,
+
+In [7683]: log_reg = LogisticRegression(solver="liblinear")
+In [7684]: log_reg.fit(X,y)
+In [7686]: log_reg.coef_
+Out[7686]: array([[0.04030798, 2.5339354 ]])
+In [7687]: log_reg.intercept_
+Out[7687]: array([-4.27691117])
+/= eigen Newton boven, met regularisatie , lambda=1
+/ default C=1	,
+
+In [7688]: log_reg = LogisticRegression(solver="liblinear",C=10)
+In [7689]: log_reg.fit(X,y)
+In [7690]: log_reg.intercept_
+Out[7690]: array([-11.50605884])
+In [7691]: log_reg.coef_
+Out[7691]: array([[0.74893219, 4.79308438]])
+/= eigen Newton boven, met regulatisatie, lmbda=.1
+
+/ 13	. 
+
+/ print
+
+
+
+
+
+
+
+
+/ 7	. 
+
+/ m waarnemingen, n features	,
+/ X.shape=(m,n+1)	, y.shape=(m,1)
+
+/ 7	. 
+
+/ google,
+differentiate to vectors chain rule
+/ lees,
+http://www.met.reading.ac.uk/~ross/Documents/Chain.pdf
+
+/ 7	. 
+
+/ Intermezzo
+
+X=iris['data'][:,[3]]
+Xext=np.c_[np.ones((len(X),1)),X]
+y=(iris['target']==2).reshape(-1,1).astype(int)
+
+/ maak een random boolean array van 150 lang	,
+bs=np.random.rand(150)<.5
+
+In [7782]: len(bs[bs==True])
+Out[7782]: 78
+/ zoveel zijn er True	,
+
+In [7784]: len(X[bs==True])
+Out[7784]: 78
+
+In [7786]: len(Xext[bs==True])
+Out[7786]: 78
+
+In [7790]: Xext[y==0]
+IndexError: boolean index did not match indexed array along dimension 1; dimension is 2 but corresponding boolean dimension is 1
+In [7790]: Xext[(y==0).ravel()]
+/ OK	,
+
+In [7794]: Xext[[bs==True]]
+/ OK	,
+In [7792]: Xext[[[bs==True]]]
+IndexError: boolean index did not match indexed array along dimension 0; dimension is 150 but corresponding boolean dimension is 1
+
+
+
+
+
+
+
+/ Einde Intermezzo
+

@@ -1,0 +1,164 @@
+/ 7	. 
+
+/ lees,	
+https://sriramjaju.github.io/2018-05-30-2-minute-recipe-how-to-rollback-your-conda-environment/
+
+/ 7	. 
+
+/ google,
+conda update
+/ lees	,
+https://www.anaconda.com/keeping-anaconda-date/
+
+/ 7	. 
+
+/ google,
+conda tensorflow
+
+/ 13	. 
+
+/ lees	,
+https://www.anaconda.com/tensorflow-in-anaconda/
+
+conda create -n tensorflow_env tensorflow
+conda activate tensorflow_env
+
+Or for the GPU version
+
+conda create -n tensorflow_gpuenv tensorflow-gpu
+conda activate tensorflow_gpuenv
+
+/ 13	. 
+
+/ lees	,
+https://docs.anaconda.com/anaconda/user-guide/tasks/tensorflow/
+
+conda create -n tf tensorflow
+conda activate tf
+
+Or, to install the current release of GPU TensorFlow on Linux or Windows:
+
+conda create -n tf-gpu tensorflow-gpu
+conda activate tf-gpu
+
+/ 7. 
+
+/ lees	,
+https://conda.io/projects/conda/en/latest/index.html
+->
+https://conda.io/projects/conda/en/latest/user-guide/index.html
+
+/ 7	. 
+
+/ lees	,
+https://conda.io/projects/conda/en/latest/user-guide/concepts/pkg-specs.html
+
+[eric@almond scikit-learn]$ ls /home/eric/miniconda3/pkgs/numpy-base-1.14.5-py36hdbf6ddf_1/info 
+about.json  git              has_prefix  paths.json  repodata_record.json
+files       hash_input.json  index.json  recipe
+
+
+/ lees, 	
+[eric@almond scikit-learn]$ less /home/eric/miniconda3/pkgs/numpy-base-1.14.5-py36hdbf6ddf_1/info/index.json
+{
+  "arch": "x86_64",
+  "build": "py36hdbf6ddf_1",
+  "build_number": 1,
+  "depends": [
+    "blas 1.0 mkl",
+    "libgcc-ng >=7.2.0",
+    "libgfortran-ng >=7,<8.0a0",
+    "mkl >=2018.0.3",
+    "python >=3.6,<3.7.0a0"
+  ],
+  "name": "numpy-base",
+  "platform": "linux",
+  "subdir": "linux-64",
+  "timestamp": 1530353566518,
+  "version": "1.14.5"
+}
+
+[eric@almond scikit-learn]$ cat  /home/eric/miniconda3/pkgs/numpy-base-1.14.5-py36hdbf6ddf_1/info/repodata_record.json 
+{
+  "arch": "x86_64",
+  "build": "py36hdbf6ddf_1",
+  "build_number": 1,
+  "channel": "https://repo.anaconda.com/pkgs/main/linux-64",
+  "constrains": [],
+  "depends": [
+    "blas 1.0 mkl",
+    "libgcc-ng >=7.2.0",
+    "libgfortran-ng >=7,<8.0a0",
+    "mkl >=2018.0.3",
+    "python >=3.6,<3.7.0a0"
+  ],
+  "features": "",
+  "fn": "numpy-base-1.14.5-py36hdbf6ddf_1.tar.bz2",
+  "md5": "596b00d4944e8c76c59bd32694d5e547",
+  "name": "numpy-base",
+  "platform": "linux",
+  "size": 4339261,
+  "subdir": "linux-64",
+  "timestamp": 1530353566518,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/linux-64/numpy-base-1.14.5-py36hdbf6ddf_1.tar.bz2",
+  "version": "1.14.5"
+
+
+/ files in de package	,
+
+[eric@almond scikit-learn]$ less  /home/eric/miniconda3/pkgs/numpy-base-1.14.5-py36hdbf6ddf_1/info/paths.json
+
+{
+  "paths": [
+    {
+      "_path": "bin/f2py",
+      "file_mode": "text",
+      "path_type": "hardlink",
+      "prefix_placeholder": "/opt/anaconda1anaconda2anaconda3",
+      "sha256": "fc2a474cda8aadd8313ac177343ebf79228af66995a641dba25c0da738251858",
+      "size_in_bytes": 785
+    },
+    {
+      "_path": "lib/python3.6/site-packages/numpy-1.14.5-py3.6.egg-info/PKG-INFO",
+      "path_type": "hardlink",
+      "sha256": "16f7e0586f341b7035bd2602a6523c58745db60e640d3ece4da16a95be30e316",
+      "size_in_bytes": 2398
+    },
+		...
+
+
+/ 7	. 
+
+/ lees Tasks, Managing environments, Viewing a list of the packages in an environment
+
+[eric@almond scikit-learn]$  conda env list
+/ of	,
+[eric@almond scikit-learn]$ conda info --envs
+# conda environments:
+#
+base                  *  /home/eric/miniconda3
+
+[eric@almond scikit-learn]$ conda list -n base
+# packages in environment at /home/eric/miniconda3:
+#
+# Name                    Version                   Build  Channel
+asn1crypto                0.24.0                   py36_0  
+backcall                  0.1.0                    py36_0  
+blas                      1.0                         mkl  
+bleach                    2.1.3                    py36_0  
+ca-certificates           2018.03.07                    0  
+cairo                     1.14.12              h8948797_3  
+certifi                   2018.4.16                py36_0  
+cffi                      1.11.5           py36h9745a5d_0  
+chardet                   3.0.4            py36h0f667ec_1  
+conda                     4.5.9                    py36_0  
+conda-env                 2.6.0                h36134e3_1  
+cryptography              2.2.2            py36h14c3975_0  
+...
+
+
+
+
+
+

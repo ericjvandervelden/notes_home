@@ -1,5 +1,8 @@
 
-/ BUILD OPENSSL
+/ See BUILD
+/ See ECLIPSE
+
+/ 7	,  
 
 [eric@almond OpenSSL]$ pwd
 /home/eric/Devel/OpenSSL
@@ -9,9 +12,6 @@ $ make test
 $ sudo make install
 / in	,
 /usr/local/ssl
-
-
-/ Einde BUILDOPENSSL
 
 
 / DEBUG OPENSSL
@@ -37,6 +37,8 @@ eric(stdin)= b46ad15ca8898e9b3d1172de80e4b71122573e18
 openssl import in eclipse
 / lees	,
 https://mathieularose.com/notes/how-to-debug-openssl-with-eclipse/
+
+/ BUILD
 
 [eric@almond OpenSSL]$ pwd
 /home/eric/Devel/OpenSSL
@@ -117,11 +119,39 @@ SHA1(/dev/fd/63)= 96f164ad4d9b2b0dacf8ebee2bb1eeb3aa69adf1
 	libc.so.6 => /lib64/libc.so.6 (0x00007f378f915000)
 	/lib64/ld-linux-x86-64.so.2 (0x00007f37908f0000)
 
+/ Einde BUILD
+
 / 7	. 
 
+/ ECLIPSE
+
+$ pwd
+/home/eric/Devel/Eclipse/cpp
+$ pwd
+/home/eric/Devel/workspaces/workspace_c
+/src	,
+$ pwd
+/home/eric/Devel/OpenSSL/openssl-1.1.1c
+
+/ we hebben Debug config	,
+Main tab
+-----------
+Name: openssl-1.1.1c
+Project: openssl-1.1.1c
+C/C++ application: /home/eric/bin/openssl/bin/openssl
+Arguments tab
+-------------
+version -d						/ of gensrc	, ...
+Environment tab
+---------------
+OPENSSL_CONF
+/home/eric/bin/openssl/ssl/openssl.cnf
+/ OK	,
+
+/ we hadden eerder	, 
 / we import in eclipse	,
 File, Import, Existing code as makefile project
-Existing code location: /home/eric/Devel/OpenSSL/openssl-1.1.1c
+Existing code location: /home/eric/Devel/OpenSSL/openssl-1.1.1c 		<-
 / want hier is de Makefile	,
 Toolchain: GNU Autotools toolchain
 
@@ -131,12 +161,12 @@ C/C++ application , dubbel click	,
 / als project verschijnt automatisch openssl-1.1.1c
 C/C++ application, Browse	, 
 / we kunnen kiezen	,
-/home/eric/bin/openssl/bin/openssl
+/home/eric/bin/openssl/bin/openssl																<-
 / of	,
 /home/eric/Devel/OpenSSL/openssl-1.1.1c/apps/openssl
 Debug
 
-
+/ Einde ECLIPSE
 
 
 
@@ -147,7 +177,14 @@ Debug
 [eric@almond OpenSSL]$ pwd
 /home/eric/Devel/OpenSSL
 [eric@almond OpenSSL]$ git clone https://github.com/openssl/openssl.git
-
+$ cd openssl
+[eric@almond openssl]$ git fetch -a
+[eric@almond openssl]$ git checkout OpenSSL_1_1_1-stable 
+/ Hier kun je	, 
+./config
+make 
+make test
+make install
 
 
 / 7	.

@@ -1,0 +1,569 @@
+/ See ECLIPSE
+
+/ 7	. 
+
+/ boek (288)
+
+/ we hebben de post_comment (pc) en de post_comment_score (pcs) tabellen	,
+/ zet eerst de parents uit pc in pcs, met root_id=id	, 
+/ en daarna hun children uit pc	, want je joint pcs.id op pc.parent_id	, zo haal je de children uit pc: hun parent_id is al in pcs	.
+/ de root_id van een entry in psc is de root_id van de parent, 
+
+/ 7	. 
+
+https://www.citusdata.com/blog/2018/05/15/fun-with-sql-recursive-ctes/
+
+https://www.postgresonline.com/journal/archives/131-Using-Recursive-Common-table-expressions-to-represent-Tree-structures.html			<-
+
+/ 7	. 
+
+
+[eric@almond mihalcea]$ pwd
+/home/eric/Devel/Java/mihalcea
+[eric@almond mihalcea]$ git clone https://github.com/vladmihalcea/high-performance-java-persistence.git
+
+public class CriteriaAPITest extends AbstractPostgreSQLIntegrationTest {
+
+    @Override
+    public void init() {
+        super.init();
+        doInJPA(entityManager -> {
+					...
+The method dInJPA(JPATransactionFunction<Object>) is ambiguous for the type CriteriaAPITest
+
+    @Test
+    public void testFilterChild() {
+        doInJPA(entityManager -> {
+						...
+            criteria.where(builder.like(postJoin.get(Post_.title), "high-performance%"));
+Post_ cannot be resolved to a variable
+
+/ 13	. 
+
+/ over build-helper-maven-plugin	,
+
+https://www.mojohaus.org/build-helper-maven-plugin/usage.html
+https://stackoverflow.com/questions/38431161/adding-source-folders-to-my-eclipse-project-at-generate-sources
+
+/ 13	. 
+
+/ we doen $ mvn clean generate-sources
+
+/ we zien	,
+
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] high-performance-java-persistence
+[INFO] high-performance-java-persistence-core
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building high-performance-java-persistence 1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[WARNING] The POM for p6spy:p6spy:jar:2.1.4 is invalid, transitive dependencies (if any) will not be available, enable debug logging for more details
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ high-performance-java-persistence ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0:enforce (enforce-maven) @ high-performance-java-persistence ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building high-performance-java-persistence-core 1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ high-performance-java-persistence-core ---
+[INFO] Deleting /home/eric/git_codebase/high-performance-java-persistence/core/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0:enforce (enforce-maven) @ high-performance-java-persistence-core ---
+[INFO] 
+[INFO] --- maven-processor-plugin:2.0.5:process (process) @ high-performance-java-persistence-core ---
+[INFO] Source directory: /home/eric/git_codebase/high-performance-java-persistence/core/target/generated-sources/apt added
+[INFO] Adding compiler arg: -AaddSuppressWarningsAnnotation=true
+[INFO] javac option: -cp
+[INFO] javac option: /home/eric/.m2/repository/org/apache/maven/maven-plugin-api/3.0.1/maven-plugin-api-3.0.1.jar:/home/eric/.m2/repository/org/apache/maven/maven-model/3.0.1/maven-model-3.0.1.jar:/home/eric/.m2/repository/org/apache/maven/maven-artifact/3.0.1/maven-artifact-3.0.1.jar:/home/eric/.m2/repository/org/sonatype/sisu/sisu-inject-plexus/1.4.3.1/sisu-inject-plexus-1.4.3.1.jar:/home/eric/.m2/repository/org/sonatype/sisu/sisu-inject-bean/1.4.3.1/sisu-inject-bean-1.4.3.1.jar:/home/eric/.m2/repository/org/sonatype/sisu/sisu-guice/2.9.1/sisu-guice-2.9.1-noaop.jar:/home/eric/.m2/repository/org/apache/maven/maven-core/3.0.1/maven-core-3.0.1.jar:/home/eric/.m2/repository/org/apache/maven/maven-settings/3.0.1/maven-settings-3.0.1.jar:/home/eric/.m2/repository/org/apache/maven/maven-settings-builder/3.0.1/maven-settings-builder-3.0.1.jar:/home/eric/.m2/repository/org/apache/maven/maven-repository-metadata/3.0.1/maven-repository-metadata-3.0.1.jar:/home/eric/.m2/repository/org/apache/maven/maven-model-builder/3.0.1/maven-model-builder-3.0.1.jar:/home/eric/.m2/repository/org/apache/maven/maven-aether-provider/3.0.1/maven-aether-provider-3.0.1.jar:/home/eric/.m2/repository/org/sonatype/aether/aether-spi/1.8/aether-spi-1.8.jar:/home/eric/.m2/repository/org/sonatype/aether/aether-impl/1.8/aether-impl-1.8.jar:/home/eric/.m2/repository/org/sonatype/aether/aether-api/1.8/aether-api-1.8.jar:/home/eric/.m2/repository/org/sonatype/aether/aether-util/1.8/aether-util-1.8.jar:/home/eric/.m2/repository/org/codehaus/plexus/plexus-interpolation/1.14/plexus-interpolation-1.14.jar:/home/eric/.m2/repository/org/codehaus/plexus/plexus-utils/2.0.4/plexus-utils-2.0.4.jar:/home/eric/.m2/repository/org/codehaus/plexus/plexus-classworlds/2.4/plexus-classworlds-2.4.jar:/home/eric/.m2/repository/org/codehaus/plexus/plexus-component-annotations/1.5.5/plexus-component-annotations-1.5.5.jar:/home/eric/.m2/repository/org/sonatype/plexus/plexus-sec-dispatcher/1.3/plexus-sec-dispatcher-1.3.jar:/home/eric/.m2/repository/org/sonatype/plexus/plexus-cipher/1.4/plexus-cipher-1.4.jar:/home/eric/git_codebase/high-performance-java-persistence/core/src/main/resources:/home/eric/git_codebase/high-performance-java-persistence/core/target/classes:/home/eric/.m2/repository/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar:/home/eric/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar:/home/eric/.m2/repository/ch/qos/logback/logback-core/1.2.3/logback-core-1.2.3.jar:/home/eric/.m2/repository/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar:/home/eric/.m2/repository/org/hibernate/hibernate-core/5.4.3.Final/hibernate-core-5.4.3.Final.jar:/home/eric/.m2/repository/org/jboss/logging/jboss-logging/3.3.2.Final/jboss-logging-3.3.2.Final.jar:/home/eric/.m2/repository/javax/persistence/javax.persistence-api/2.2/javax.persistence-api-2.2.jar:/home/eric/.m2/repository/org/javassist/javassist/3.24.0-GA/javassist-3.24.0-GA.jar:/home/eric/.m2/repository/net/bytebuddy/byte-buddy/1.9.10/byte-buddy-1.9.10.jar:/home/eric/.m2/repository/antlr/antlr/2.7.7/antlr-2.7.7.jar:/home/eric/.m2/repository/org/jboss/spec/javax/transaction/jboss-transaction-api_1.2_spec/1.1.1.Final/jboss-transaction-api_1.2_spec-1.1.1.Final.jar:/home/eric/.m2/repository/org/jboss/jandex/2.0.5.Final/jandex-2.0.5.Final.jar:/home/eric/.m2/repository/com/fasterxml/classmate/1.3.4/classmate-1.3.4.jar:/home/eric/.m2/repository/javax/activation/javax.activation-api/1.2.0/javax.activation-api-1.2.0.jar:/home/eric/.m2/repository/org/dom4j/dom4j/2.1.1/dom4j-2.1.1.jar:/home/eric/.m2/repository/org/hibernate/common/hibernate-commons-annotations/5.1.0.Final/hibernate-commons-annotations-5.1.0.Final.jar:/home/eric/.m2/repository/javax/xml/bind/jaxb-api/2.3.1/jaxb-api-2.3.1.jar:/home/eric/.m2/repository/org/glassfish/jaxb/jaxb-runtime/2.3.1/jaxb-runtime-2.3.1.jar:/home/eric/.m2/repository/org/glassfish/jaxb/txw2/2.3.1/txw2-2.3.1.jar:/home/eric/.m2/repository/com/sun/istack/istack-commons-runtime/3.0.7/istack-commons-runtime-3.0.7.jar:/home/eric/.m2/repository/org/jvnet/staxex/stax-ex/1.8/stax-ex-1.8.jar:/home/eric/.m2/repository/com/sun/xml/fastinfoset/FastInfoset/1.2.15/FastInfoset-1.2.15.jar:/home/eric/.m2/repository/org/hibernate/hibernate-c3p0/5.4.3.Final/hibernate-c3p0-5.4.3.Final.jar:/home/eric/.m2/repository/com/mchange/c3p0/0.9.5.3/c3p0-0.9.5.3.jar:/home/eric/.m2/repository/com/mchange/mchange-commons-java/0.2.15/mchange-commons-java-0.2.15.jar:/home/eric/.m2/repository/org/hibernate/hibernate-hikaricp/5.4.3.Final/hibernate-hikaricp-5.4.3.Final.jar:/home/eric/.m2/repository/org/hibernate/hibernate-spatial/5.4.3.Final/hibernate-spatial-5.4.3.Final.jar:/home/eric/.m2/repository/org/geolatte/geolatte-geom/1.4.0/geolatte-geom-1.4.0.jar:/home/eric/.m2/repository/org/locationtech/jts/jts-core/1.16.0/jts-core-1.16.0.jar:/home/eric/.m2/repository/org/hibernate/hibernate-validator/5.2.3.Final/hibernate-validator-5.2.3.Final.jar:/home/eric/.m2/repository/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final.jar:/home/eric/.m2/repository/org/hibernate/hibernate-jpamodelgen/5.4.3.Final/hibernate-jpamodelgen-5.4.3.Final.jar:/home/eric/.m2/repository/org/hibernate/hibernate-envers/5.4.3.Final/hibernate-envers-5.4.3.Final.jar:/home/eric/.m2/repository/javax/el/javax.el-api/2.2.4/javax.el-api-2.2.4.jar:/home/eric/.m2/repository/javax/transaction/jta/1.1/jta-1.1.jar:/home/eric/.m2/repository/javax/servlet/javax.servlet-api/3.0.1/javax.servlet-api-3.0.1.jar:/home/eric/.m2/repository/org/hibernate/hibernate-ehcache/5.4.3.Final/hibernate-ehcache-5.4.3.Final.jar:/home/eric/.m2/repository/net/sf/ehcache/ehcache/2.10.6/ehcache-2.10.6.jar:/home/eric/.m2/repository/org/hibernate/hibernate-jcache/5.4.3.Final/hibernate-jcache-5.4.3.Final.jar:/home/eric/.m2/repository/javax/cache/cache-api/1.0.0/cache-api-1.0.0.jar:/home/eric/.m2/repository/net/ttddyy/datasource-proxy/1.3.3/datasource-proxy-1.3.3.jar:/home/eric/.m2/repository/p6spy/p6spy/2.1.4/p6spy-2.1.4.jar:/home/eric/.m2/repository/io/dropwizard/metrics/metrics-core/3.1.0/metrics-core-3.1.0.jar:/home/eric/.m2/repository/com/zaxxer/HikariCP/1.3.3/HikariCP-1.3.3.jar:/home/eric/.m2/repository/org/codehaus/btm/btm/2.1.4/btm-2.1.4.jar:/home/eric/.m2/repository/org/flywaydb/flyway-core/3.2.1/flyway-core-3.2.1.jar:/home/eric/.m2/repository/com/vladmihalcea/flexy-pool/flexy-btm/2.0.0/flexy-btm-2.0.0.jar:/home/eric/.m2/repository/com/vladmihalcea/flexy-pool/flexy-pool-core/2.0.0/flexy-pool-core-2.0.0.jar:/home/eric/.m2/repository/com/vladmihalcea/flexy-pool/flexy-dropwizard-metrics/2.0.0/flexy-dropwizard-metrics-2.0.0.jar:/home/eric/.m2/repository/io/dropwizard/metrics/metrics-jmx/4.0.2/metrics-jmx-4.0.2.jar:/home/eric/.m2/repository/com/vladmihalcea/flexy-pool/flexy-hikaricp/2.0.0/flexy-hikaricp-2.0.0.jar:/home/eric/.m2/repository/com/vladmihalcea/db-util/0.0.1/db-util-0.0.1.jar:/home/eric/.m2/repository/org/slf4j/jcl-over-slf4j/1.6.1/jcl-over-slf4j-1.6.1.jar:/home/eric/.m2/repository/commons-lang/commons-lang/2.5/commons-lang-2.5.jar:/home/eric/.m2/repository/com/vladmihalcea/hibernate-types-52/2.4.0/hibernate-types-52-2.4.0.jar:/home/eric/.m2/repository/org/aspectj/aspectjrt/1.8.7/aspectjrt-1.8.7.jar:/home/eric/.m2/repository/org/aspectj/aspectjweaver/1.8.7/aspectjweaver-1.8.7.jar:/home/eric/.m2/repository/org/springframework/spring-beans/5.1.0.RELEASE/spring-beans-5.1.0.RELEASE.jar:/home/eric/.m2/repository/org/springframework/spring-core/5.1.0.RELEASE/spring-core-5.1.0.RELEASE.jar:/home/eric/.m2/repository/org/springframework/spring-jcl/5.1.0.RELEASE/spring-jcl-5.1.0.RELEASE.jar:/home/eric/.m2/repository/org/springframework/spring-context/5.1.0.RELEASE/spring-context-5.1.0.RELEASE.jar:/home/eric/.m2/repository/org/springframework/spring-aop/5.1.0.RELEASE/spring-aop-5.1.0.RELEASE.jar:/home/eric/.m2/repository/org/springframework/spring-expression/5.1.0.RELEASE/spring-expression-5.1.0.RELEASE.jar:/home/eric/.m2/repository/org/springframework/spring-tx/5.1.0.RELEASE/spring-tx-5.1.0.RELEASE.jar:/home/eric/.m2/repository/org/springframework/spring-orm/5.1.0.RELEASE/spring-orm-5.1.0.RELEASE.jar:/home/eric/.m2/repository/org/springframework/spring-jdbc/5.1.0.RELEASE/spring-jdbc-5.1.0.RELEASE.jar:/home/eric/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.9.9/jackson-databind-2.9.9.jar:/home/eric/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.9.0/jackson-annotations-2.9.0.jar:/home/eric/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.9.9/jackson-core-2.9.9.jar:
+[INFO] javac option: -proc:only
+[INFO] javac option: -AaddSuppressWarningsAnnotation=true
+[INFO] javac option: -processor
+[INFO] javac option: org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor
+[INFO] javac option: -d
+[INFO] javac option: /home/eric/git_codebase/high-performance-java-persistence/core/target/classes
+[INFO] javac option: -s
+[INFO] javac option: /home/eric/git_codebase/high-performance-java-persistence/core/target/generated-sources/apt
+[INFO] diagnostic Note: Hibernate JPA 2 Static-Metamodel Generator 5.4.3.Final
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] high-performance-java-persistence .................. SUCCESS [  1.046 s]
+[INFO] high-performance-java-persistence-core ............. SUCCESS [  1.371 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 2.624 s
+[INFO] Finished at: 2019-06-29T19:26:46+02:00
+[INFO] Final Memory: 21M/232M
+[INFO] ------------------------------------------------------------------------
+
+/ 13	. 
+
+/ dan moet je in build path van high-performance-java-persistence-core toevoegen aan sources:
+target
+	generated-sources
+		apt
+/ want daaronder is	,
+			com.vladmihalcea.book.hpjp.hibernate.forum
+				_Post.java
+				...
+
+/ Dus onthoud: altijd de dir add aan source die de package bevat	,
+
+/ 13	. 
+
+/ zo schijnt het ook te kunnen	,	
+
+/ lees	,
+
+https://stackoverflow.com/questions/25568339/add-generated-sources-as-source-folder-to-eclipse?lq=1
+
+   <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>target/generated-sources/xjc</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+/ 13	. 
+
+[eric@almond bin]$ pwd
+/home/eric/bin
+[eric@almond bin]$ tar -xvzf ~/Downloads/jdk-8u211-linux-x64.tar.gz 
+
+/ in eclipse 	, 
+
+window, preferences, Java, installed JREs 
+Add
+/home/eric/bin/jdk1.8.0_211
+
+/ dan	,
+
+window, preferences, Java, installed JREs, Execution Environments
+/ Kies	, want die zien we ook in Build Path, ...
+JavaSE-1.8	
+/ kies	,
+jdk1.8.0_211
+
+/ dan	,
+
+/ proj high-performance-java-persistence-core, Build Path	,
+Libraries 
+JRE System Libraries [JavaSE-1.8]
+/ deze moet nu goed staan	,
+
+/ 13	. 
+
+/ lees	,
+https://www.if-not-true-then-false.com/2014/install-oracle-java-8-on-fedora-centos-rhel/
+
+/ 13	. 
+
+/ we download de laatste eclipse	, en jdk	,
+
+$ pwd
+~/bin
+$ tar -xvzf ~/Downloads/jdk-12.0.1_linux-x64_bin.tar.gz 
+
+$ pwd
+/home/eric/Devel/Eclipse/eclipse-java-2019-06-R-linux-gtk-x86_64
+$ tar -xvzf ~/Downloads/eclipse-java-2019-06-R-linux-gtk-x86_64.tar.gz 
+
+/ we maken in eclipse een mvn project, java12-study	in git_codebase	, maar het is nog geen git project,	
+[eric@almond java12-study]$ git status
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	.classpath
+	.project
+	.settings/
+	pom.xml
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+/ Hoe krijg ik deze niet in mijn git repo?
+/ TODO
+
+/ 13	. 
+
+/ ECLIPSE
+
+$ pwd
+/home/eric/Devel/Eclipse/eclipse-java-2019-06-R-linux-gtk-x86_64
+$ pwd
+/home/eric/Devel/workspaces/workspace_high-performance-java-persistence
+/ src	,
+/home/eric/git_codebase/high-performance-java-persistence
+
+
+/ 13	. 
+
+/ eclipse	, 
+/ we hebben in windows, preferences, java , installed jres, execution environment, JavaSE-12 de jdk-12.0.1 set	, maar als in build path, libraries JavaSE-8 staat, pakt hij nog niet de goede, 
+/ we kunnen hem herstellen, in build path	, maar als we right klik project, Maven Update, dan staat hij weer op JavaSE-1.8	, 
+/ dit komt door, 
+$ vi high-performance-java-persistence/pom.xml 
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.2</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <compilerArgument>-proc:none</compilerArgument>
+                </configuration>
+            </plugin>
+
+/ dit hebben we veranderd	,
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.12</source>
+                    <target>1.12</target>
+                    <compilerArgument>-proc:none</compilerArgument>
+                </configuration>
+            </plugin>
+
+/ Nu blijft na Project, right click, Maven Update	, in build path wel Libraries, JavaSE-12
+
+/ 13	. 
+
+/ we zien in build path, source, dat 
+target/generated-sources/apt er al bij staat!
+/ TODO
+
+
+/ 13	. 
+
+/ omdat we target/generates-sources/apt/ hebben add aan de build_path, sources, is Path_ nu bekend, bijv in CriteriaAPITest, 
+
+/ we de Oracle JDK hebben installed in Eclipse, kent doInJPA nog steeds niet de verschillende types	, 
+/ TODO
+
+
+/ 13	. 
+
+$ sudo su - postgres
+$ vi data/pg_hba.conf
+local   all             all                                     trust
+/ trust was peer	, en daardoor konden we niet: psql -U postgres	, want vroeg om wachtwoord, TODO
+-bash-4.4$ pg_ctl reload
+server signaled
+
+
+[eric@almond scikit-learn]$ psql -U postgres
+psql (9.6.8)
+Type "help" for help.
+
+postgres=# create database high_performance_java_persistence;
+CREATE DATABASE
+
+postgres=# create extension postgis;
+ERROR:  could not open extension control file "/usr/share/pgsql/extension/postgis.control": No such file or directory
+
+/ 13	. 
+
+/ java12	,
+
+package com.vladmihalcea.book.hpjp.hibernate.inheritance.spring.service;
+@Service
+public class CampaignServiceImpl
+        implements CampaignService {
+
+   	@PostConstruct										// kent hij niet	,
+    @SuppressWarnings("unchecked")
+    public void init() {
+
+/ lees,
+https://stackoverflow.com/questions/52701459/i-cant-use-postconstruct-and-postdestroy-with-java-11
+->
+https://www.baeldung.com/spring-postconstruct-predestroy
+
+Note that both @PostConstruct and @PreDestroy annotations are part of Java EE. And since Java EE has been deprecated in Java 9 and removed in Java 11 we have to add an additional dependency to use these annotations:
+
+$ vi high-performance-java-persistence/pom.xml
+
+<!-- ERICJ @PostConstruct -->
+<dependency>
+    <groupId>javax.annotation</groupId>
+    <artifactId>javax.annotation-api</artifactId>
+    <version>1.3.2</version>
+</dependency>
+
+
+
+/ 13	. 
+
+/ java12
+
+/ lees	,
+https://www.baeldung.com/maven-java-version
+
+$ vi high-performance-java-persistence/pom.xml
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+					<release>12</release>
+					<compilerArgument>-proc:none</compilerArgument>
+				</configuration>
+			</plugin>
+
+/ 13	. 
+
+https://www.postgresql.org/docs/9.6/sql-createextension.html
+
+$ sudo su - postgres
+$ vi data/pg_hba.conf
+local   all             all                                     trust 
+-bash-4.4$ pg_ctl reload
+server signaled
+
+[eric@almond python]$ psql -U postgres
+postgres=# create extension postgis;
+ERROR:  could not open extension control file "/usr/share/pgsql/extension/postgis.control": No such file or directory
+postgres=# create extension pgcrypto;
+CREATE EXTENSION
+/ commit?
+/ TODO
+
+/ 13	. 
+
+/ lees	,
+https://stackoverflow.com/questions/45925353/how-to-add-generated-sources-of-dependent-project-to-build-path
+
+How to add generated sources of dependent project to build path?
+
+/ Dit is de phase die we vaker gebruiken: generate-sources	,
+
+<plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>build-helper-maven-plugin</artifactId>
+    <version>1.4</version>
+    <executions>
+        <execution>
+            <id>test</id>
+            <phase>generate-sources</phase>
+            <goals>
+                <goal>add-source</goal>
+            </goals>
+            <configuration>
+                <sources>
+                    <source>${basedir}/target/generated-sources</source>
+                </sources>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+
+/ lees	,
+https://stackoverflow.com/questions/38431161/adding-source-folders-to-my-eclipse-project-at-generate-sources
+
+https://www.mojohaus.org/build-helper-maven-plugin/usage.html
+
+      <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>1.8</version>
+            <executions>
+                <execution>
+                    <id>add-source</id>
+                    <phase>generate-sources</phase>
+                    <goals>
+                        <goal>add-source</goal>
+                    </goals>
+                    <configuration>
+                        <sources>
+                            <source>generated-sources/enums/</source>
+                        </sources>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+/ 13	. 
+
+/ jpamodelgen
+
+/ lees	,
+https://www.baeldung.com/hibernate-criteria-queries-metamodel
+
+/ TODO
+
+/ 	7
+
+/ we hebben fixed	,
+
+package com.vladmihalcea.book.hpjp.hibernate.association;
+public class BidirectionalOneToOneNPlusOneTest extends AbstractTest {
+
+package com.vladmihalcea.book.hpjp.hibernate.association;
+public class BidirectionalOneToOneMapsIdTest extends AbstractTest {
+    public void testLifecycle() {
+/ was al OK	,
+
+package com.vladmihalcea.book.hpjp.hibernate.inheritance;
+public class JoinTableTest extends AbstractTest {
+    @Test
+    public void test() {
+        Topic topic = doInJPA(entityManager -> {
+					...
+/ Omdat er Topic topic = doInJPA staat, weten we dat het de doInJPA versie is	,
+package com.vladmihalcea.book.hpjp.util;
+public abstract class AbstractTest {
+    protected <T> T doInJPA(JPATransactionFunction<T> function) {
+/ OK	,
+
+/ 7	. 
+
+/ NAAR VLAD
+
+/ 13	. 
+
+/ $ vi pom.xml 
+
+<dependency>
+    <groupId>javax.annotation</groupId>
+    <artifactId>javax.annotation-api</artifactId>
+    <version>1.3.2</version>
+</dependency>
+
+/ $ vi SubSelectTest.java
+
+package com.vladmihalcea.book.hpjp.hibernate.view;
+import org.hibernate.annotations.Immutable;
+//import jdk.nashorn.internal.ir.annotations.Immutable;
+public class SubselectTest extends AbstractPostgreSQLIntegrationTest {
+
+$ vi ViewTest.java
+
+package com.vladmihalcea.book.hpjp.hibernate.view;
+import org.hibernate.annotations.Immutable;
+//import jdk.nashorn.internal.ir.annotations.Immutable;
+public class ViewTest extends AbstractPostgreSQLIntegrationTest {
+
+/ 13	. 
+
+/ we hebben in eclipse run configs	,
+
+${project_loc:high-performance-java-persistence-core}
+clean test-compile 
+
+${project_loc:high-performance-java-persistence}
+-Dtest=com.vladmihalcea.book.hpjp.hibernate.association.BidirectionalOneToOneNPlusOneTest test
+/ OK	, 
+/ gaat wel steeds opnieuw testCompile	 ,
+/ TODO
+
+/ we kunnen zelfs 1 test run	,
+-Dtest=com.vladmihalcea.book.hpjp.hibernate.association.BidirectionalOneToOneNPlusOneTest#test4 test
+
+/ Ook als we met eclipse plugin de test run	, zien we dat het goed gaat	,
+/ In 
+public class BidirectionalOneToOneNPlusOneTest extends AbstractTest {
+    @Test
+    public void test() {
+        doInJPA(entityManager -> {
+->            for (int i = 0; i < 3; i++) {
+/ als we bij -> een b set	, zien we dat in vallen, 
+AbstractTest
+    protected void doInJPA(JPATransactionVoidFunction function) {
+
+
+ 
+
+/ 7	. 
+
+/ JOINS
+
+test=> create table _order(id char(1),l char(1));
+test=> create table _line(id char(1),qty int);
+test=> insert into _line values('l',10),('m',20);
+test=> insert into _order values('p','l'),('p','m');
+test=> commit;
+COMMIT
+
+test=> select*
+test-> from _order;
+ id | l 
+----+---
+ p  | l
+ p  | m
+(2 rows)
+test=> select*
+test-> from _line;
+ id | qty 
+----+-----
+ l  |  10
+ m  |  20
+(2 rows)
+
+test=> select*
+test-> from _order,_line;
+/=
+test=> select*
+from _order
+join _line on 1=1;
+/=
+test=> select*
+test-> from _order
+test-> cross join _line;
+
+ id | l | id | qty 
+----+---+----+-----
+ p  | l | l  |  10
+ p  | m | l  |  10
+ p  | l | m  |  20
+ p  | m | m  |  20
+(4 rows)
+
+/ we moeten met (inner) join altijd on	, anders ERR	,
+
+test=> select*
+from _order 
+join _line on _order.l=_line.id;
+ id | l | id | qty 
+----+---+----+-----
+ p  | l | l  |  10
+ p  | m | m  |  20
+(2 rows)
+
+
+
+
+
+
+/ Einde JOINS 
+
+

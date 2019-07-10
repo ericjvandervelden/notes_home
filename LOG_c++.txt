@@ -557,7 +557,7 @@ foo,0x7ffe9654d750
 foo,0x7ffe9654d780
 foo,0x7ffe9654d770
 
-/ we zien de ~samp op si als k exits, maar ook van de copy en van s3, als main exits	,
+/ we zien de ~samp op si als k exits, maar ook van de copy,  en van s3 als main exits	,
 
 / 7	. 
 
@@ -1120,6 +1120,278 @@ Source, Implement method, Select all, OK,
 
 / Ga ze nu implement in Coord.cpp	,
 
+/ 7	. 
 
+/ we kunnen op meerdere manieren een C++ proj maken	,
 
+File, New, C++ project	,
+	Executable 
+		Hello World C++ project
+	Makefile project
+		Hello World C++ Makefile project
+	GNU Autotools 
+		Hello World C++ Autotools project
+
+/ de 1ste ziet er zo uit	,
+[eric@almond workspace]$ find hello2
+hello2
+hello2/.settings
+hello2/Makefile
+hello2/hello2
+hello2/hello2.cpp
+hello2/hello2.o
+hello2/.project
+hello2/.cproject
+
+/ de 2de ziet er zo uit	,
+[eric@almond workspace]$ find hello
+hello
+hello/src
+hello/src/hello.cpp
+hello/Debug
+hello/Debug/src
+hello/Debug/src/subdir.mk
+hello/Debug/src/hello.d
+hello/Debug/src/hello.o
+hello/Debug/objects.mk
+hello/Debug/makefile
+hello/Debug/sources.mk
+hello/Debug/hello
+hello/.project
+hello/.cproject
+
+/ 13	. 
+
+/ In de 2de	, in het Makefile project	, 
+
+[eric@almond workspace]$ cat hello/Debug/makefile 
+
+# All of the sources participating in the build are defined here
+-include sources.mk
+-include src/subdir.mk
+-include subdir.mk
+-include objects.mk
+
+# All Target
+all: hello
+
+# Tool invocations
+hello: $(OBJS) $(USER_OBJS)
+	@echo 'Building target: $@'
+	@echo 'Invoking: GCC C++ Linker'
+	g++  -o "hello" $(OBJS) $(USER_OBJS) $(LIBS)
+	@echo 'Finished building target: $@'
+	@echo ' '
+
+[eric@almond workspace]$ cat hello/Debug/src/subdir.mk 
+
+# Add inputs and outputs from these tool invocations to the build variables 
+CPP_SRCS += \
+../src/hello.cpp 
+
+OBJS += \
+./src/hello.o 
+
+CPP_DEPS += \
+./src/hello.d 
+
+# Each subdirectory must supply rules for building sources it contributes
+src/%.o: ../src/%.cpp
+	@echo 'Building file: $<'
+	@echo 'Invoking: GCC C++ Compiler'
+	g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	@echo 'Finished building: $<'
+	@echo ' '
+
+/ Als we hamertje op deze makefile, dan zien we in eclipse	,
+
+make all 
+
+Building file: ../src/hello.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/hello.d" -MT"src/hello.d" -o "src/hello.o" "../src/hello.cpp"
+Finished building: ../src/hello.cpp
  
+Building target: hello
+Invoking: GCC C++ Linker
+g++  -o "hello"  ./src/hello.o   
+Finished building target: hello
+ 
+10:48:20 Build Finished (took 967ms)
+
+/ er zijn dus 2 rules	,  en ze worden allebei gedaan	,
+src/%.o: ../src/%.cpp
+hello: $(OBJS) $(USER_OBJS)
+
+/ 7	. 
+
+/ ws /home/eric/Devel/Eclipse/cpp/workspace/
+/ proj me4	,
+
+/ 13	. 
+
+/ copy ctor bij var initialisation in main	,
+
+class str{
+	char*p;
+public:
+	str(const char*s);
+	str(const str&x);
+	~str(){
+		delete[]p;
+	}
+};
+str::str(const char*s){
+	p=new char[strlen(s)+1];
+	strcpy(p,s);
+}
+str::str(const str&x){
+	p=new char[strlen(x.p)+1];
+	strcpy(p,x.p);
+}
+int main(){
+	str a("foo"),b("baz"); / calls str::str(const char*s) bij a en b	,
+	str c=a;	/ initialisation 	, calls str::str(const str&x)
+	c=b;	/ assignment 	,bitwise copy	, door C++	, 
+	/ calls ~str op c, b, en die geeft SIGABRT vanwege de bitwise copy	, 
+	/ hierna had dan ~str op a moeten komen	, 
+} 
+
+/ TODO (assignment operator overload)
+
+/ 13	. 
+
+/ cpy ctor bij var initialisation in function call , en daarna dtor	,
+
+class str{
+	char*p;
+public:
+	str(const char*s);
+	str(const str&x);
+	void g();
+	void h(str&x);
+	void h2(str s);
+
+void str::g(){
+}
+void str::h(str&s){
+}
+void str::h2(str s){
+}
+
+int main(){
+	str a("foo"),b("bar"); 	/ beide str(const char*s);
+	str c=a;	/ str(const str&x);
+	a.g();	 / niets	, 
+	a.h(b);	/ niets	,
+	a.h2(b);	/ calls str(const str&x) en daar na ~str op copy van b,
+
+/ 13	. 
+
+/ 3 nieuwe fcts
+/ geen str:: fcts,	
+/ maar gaat hetzelfde met cpy ctors en dtor	,
+
+void g(){
+
+}
+void h(str&s){
+
+}
+void h2(str s){
+
+}
+void show(str x){
+	char*s=x.get();
+	cout<<s<<endl;
+
+}
+int main(){
+	str a("foo"),b("bar");
+	str c=a;
+	g();
+	h(b);
+	h2(b);  	/ calls cpy ctor, en dtor op b	,
+
+/ 13	. 
+
+/ we maken	,
+
+str h3(str&s){
+	return s;
+}
+str& h3a(str&s){
+	return s;
+}
+str h4(str s){
+	return s;
+}
+str& h4a(str s){		/ dit is een slecht idee	, 
+	return s;
+}
+me4.cpp:60:14: warning: reference to local variable ‘s’ returned [-Wreturn-local-addr]
+ str& h4a(str s){
+
+/ 1313	. 
+
+str h3(str&s){
+	return s;
+}
+int main(){
+	str a("foo");
+
+	/ omdat str&s, wordt s niet create, want hij is er al, nl == a	,
+	/ h3(s) wordt create	, en is copy van s	, wordt met str(str&) gedaan	,
+	
+	h3(a);		/ eerst wordt h3(a) zelf create, met str(str&) 
+					/ dan wordt h3(a) destr met ~str	,
+
+	str d	=		h3(a); 
+						str(str&)	/ eerst wordt h3(a) zelf create, met str(str&) copy van s	,
+	str(str&)					/ dan wordt d create (initialise) met str(str&) copy van h3(a)
+						~str()		/ dan wordt h3(a) destr	,
+
+	d=h3(a)
+		str(str&)	 / eerst wordt h3(a) zelf create, met str(str&)
+		/ dan wordt d create met bitwise copy	,
+		/ h3(a) wordt destr met ~str	, 
+
+/ 1313	. 
+
+str& h3a(str&s){
+	return s;
+}
+
+int main(){
+	str a("foo");
+
+	/ omdat str&s, wordt s niet create, want hij is er al, nl == a	,
+	/ h3a(s) wordt niet create	, want is/wordt al d, d wordt create met str(str&)
+
+	h3a(a); 	/ niets, geen calls op str(str&) of ~str	, 
+	str d=h3a(a); 	/ alleen str(str&) voor init d	, 
+									/ h3a(a) wordt zelf niet gemaakt, want is al/wordt al d	, en
+									/ wel wordt dus str(str&) voor initialisatie d called,	 
+	d=h3a(a); / bitwise copy	, d.p==a.p	,
+
+
+/ 1313	. 
+
+str h4(str s){
+				/ str(str&) om s te create (initialise)
+	return s;
+			/ str(str&) om h4(s) te create (initialise)
+}
+	/ ~str op h4(s)
+	/ ~str op s	
+
+int main(){
+
+	h4(a);	/ str(str&) op s en h4(s) , en ~str op  h4(s) en s
+		
+	str d=h4(a);
+	cout<<endl;
+	d=h4(a);
+	cout<<endl;
+
+/ Afmaken	

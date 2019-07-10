@@ -1,0 +1,31 @@
+/ 7	. 
+
+/ google	,
+java keytool smime
+/ lees,
+https://docs.jboss.org/resteasy/docs/3.0.1.Final/userguide/html/ch40.html
+https://www.opencodez.com/java/send-encrypted-email-using-java.htm		<-
+https://notebookbft.wordpress.com/2019/01/10/extracting-private-key-from-java-keystore-jks/	<-
+
+/ google,
+difference keytool bouncycastle
+/ lees	,
+https://www.pixelstech.net/article/1467528503-Different-types-of-keystore-in-Java----BKS
+
+S is a keystore format provided by the popular third party Java cryptographic library provider -- BouncyCastle. It is a keystore similar to the JKS provided by Oracle JDK. 
+
+/ google,
+java keytool
+/ lees,
+https://docs.oracle.com/javase/8/docs/technotes/tools/unix/keytool.html
+
+/ google,
+mutt smime
+/ lees	,
+http://whirlpool.blinkenshell.org/pages/using-mutt-and-smime-for-encrypted-mails.html
+http://equiraptor.com/smime_mutt_how-to.html
+
+/ google	,
+bouncycastle tutorial
+/ lees,
+https://www.baeldung.com/java-bouncy-castle

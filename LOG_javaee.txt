@@ -1,0 +1,6 @@
+/ google
+spring rpc 
+/ lees,
+https://www.baeldung.com/spring-remoting-amqp
+http://www.cs.huji.ac.il/~csip/tirgul3_derivatives.pdf	/ kennen we al	,
+https://explained.ai/matrix-calculus/index.html

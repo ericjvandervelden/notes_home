@@ -1,0 +1,90 @@
+/ 7	. 
+
+/ google,
+ipython history pattern	,
+/ lees	,
+https://stackoverflow.com/questions/3193891/search-inside-ipython-history
+
+7212: %hist -g import
+
+28/1: import numpy as np
+   1: import numpy as np
+   3: import pandas as pd
+  21: import matplotlib.pyplot as plt
+  22: import seaborn
+ 419: from sklearn.naive_bayes import GaussianNB
+ 421: from sklearn.datasets import make_blobs
+ 528: from sklearn.linear_model import LinearRegression
+33/3: import numpy as np
+33/10: import numpy as np
+ 759: from sklearn.linear_model import SGDRegressor
+ 768: from sklearn import  datasets
+ 793: from sklearn.linear_model import LogisticRegression
+ 897: from sklearn.model_selection import train_test_split
+ 913: from sklearn.model_selection import StratifiedShuffleSplit
+ 914: from sklearn.model_selection import StratifiedKFold
+ 938: from sklearn.model_selection import ShuffleSplit
+ 949: from sklearn.model_selection import KFold
+1027: from sklearn.model_selection import RepeatedKFold
+1072: from pandas.tools.plotting import scatter_matrix
+1344: from sklearn.preprocessing import Imputer
+1364: from sklearn.preprocessing import LabelEncoder
+1377: from sklearn.preprocessing import OneHotEncoder
+1396: from sklearn.preprocessing import LabelBinarizer
+1439: from sklearn.base import BaseEstimator,TransformerMixin
+1458: from sklearn.pipeline import Pipeline
+1459: from sklearn.preprocessing import StandardScaler
+1488: from scipy import stats
+1642: from sklearn.pipeline import FeatureUnion
+1648:
+n [1642]: from sklearn.pipeline import FeatureUnion
+
+In [1643]: full_pipeline=FeatureUnion(transformer_list=[('num_pipeline',num_pipeline),('cat_pipeline'
+      ...: ,cat_pipeline)])
+
+In [1644]: housing_p=full_pipeline.fit_transform(housing_t)
+1652: import sklearn
+1654: from future_encoders import OrdinalEncoder
+1725: from future_encoders import OneHotEncoder
+1768: from sklearn.preprocessing import FunctionTransformer
+1778: from sklearn.preprocessing import StandardScaler
+1785: from future_encoders import ColumnTransformer
+2049: from sklearn.metrics import mean_squared_error
+2054: from sklearn.tree import DecisionTreeRegressor
+2071: from sklearn.model_selection import cross_val_score
+2092: from sklearn.ensemble import RandomForestRegressor
+2106: from sklearn.model_selection import GridSearchCV
+2120: feature_importances=grid_search.best_estimator_.feature_importances_
+2121: feature_importances
+2143: feature_importances
+2144: sorted(zip(feature_importances,attributes),reverse=True)
+2162: from scipy import stats
+2202: from scipy.stats import norm
+2233: from scipy.stats import t
+2245: from scipy.stats import chi2
+2299: from scipy.stats import binom
+2638: from scipy.stats import geom
+2745: from sklearn.datasets import fetch_mldata
+2748: from sklearn.datasets import fetch_openml
+2750: from sklearn.datasets import get_data_home
+2772: import matplotlib as mpl
+2783: from sklearn.linear_model import SGDClassifier
+2790: from sklearn.base import clone
+2845: from sklearn.model_selection import cross_val_score
+2849: from sklearn.model_selection import cross_val_predict
+2854:  from sklearn.metrics import confusion_matrix
+2855: from sklearn.metrics import confusion_matrix
+3011: from scipy.stats import nbinom
+3055: from scipy.stats import poisson
+3103: from scipy.stats import  expon
+3153: from sklearn.metrics import precision_score,recall_score
+3162: from sklearn.metrics import f1_score
+3180: from sklearn.metrics import precision_recall_curve
+3299: from scipy.special import expit
+6230: import statsmodels.api as sm
+6803: %history *import*
+6804: %history import
+6806: %history "*import*"
+6809: %history -g import
+7212: %hist -g import
+

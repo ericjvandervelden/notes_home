@@ -1,3 +1,4 @@
+/ See FINAL ALGORITHMS
 / 7	 .
 
 / (xviii)
@@ -5713,6 +5714,7 @@ y=y2
 
 / GD
 / Coursera	,
+/ FINAL ALGORITHMS
 
 #from sklearn import datasets
 #iris=datasets.load_iris()
@@ -5766,6 +5768,15 @@ array([[-4.22103221],
 https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
 / we zien daar in de formula, dat lmbda=1	, 
 
+In [7243]: log_reg_sk=LogisticRegression()
+In [7240]: log_reg_sk.fit(a1,y)		# y.shape=(150,)	 vector, geen matrix (150,1)
+In [7241]: log_reg_sk.coef_
+Out[7241]: array([[2.61727777]])
+In [7242]: log_reg_sk.intercept_
+Out[7242]: array([-4.2209364])
+
+
+
 / als we 
 In [6381]: lmbda=.1
 / vinden we weer een andere w	,
@@ -5800,6 +5811,7 @@ def logreg_nr(w):
 	v=np.linalg.inv(H).dot(A1.T).dot(R).dot(tmp)
 	return v
 
+
 w=np.array([[0],[0]])
 for i in range(0,10):
 	w=logreg_nr(w)
@@ -5807,6 +5819,28 @@ In [5149]: w
 Out[5149]: 
 array([[-21.12563996],
        [ 12.94750716]])
+
+/ Intermezzo
+
+In [7293]: y.shape
+Out[7293]: (150, 1)
+In [7295]: z=y.ravel()
+In [7294]: z.shape
+Out[7294]: (150,)
+
+/ niet de bedoeling	,
+In [7304]: y*(1-y).shape  
+= y*((1-y).shape)
+= 
+
+
+
+(y*(1-y))[:,0]==(y*(1-y)).ravel()	, .shape=(150,)	,
+
+/ y*(1-y) is OK, maar voor [:,0] moet het tussen (): (y*(1-y))[:,0]
+
+
+/ Einde Intermezzo
 
 / 1ste keer	,
 / Newton
@@ -6261,18 +6295,191 @@ In [7126]: vals=expit(Intval.dot(theta))
 In [7114]: plt.plot(intval,vals)
 / OK	,
 
+/ 13	. 
+
+///////////////////////////////////////////////////
+
+def main(N,K,_lmbda):
+	init(N,_lmbda)
+	theta=calc_theta(K)
+	print()
+
+theta=logreg_newton_regul(theta)
+# klik window weg,	
+print()
+
+
+def init(N,_lmbda):
+  global x,X,y,lmbda
+	x=np.array([[-2],[-1],[0],[1],[2]])
+  X=np.c_[np.ones(len(x)),x]
+	y=np.array([[0],[0],[1],[1],[1]])
+  lmbda=_lmbda
+  #X,y=permu(X,y,N)
+
+def permu(X,y,n):
+  permu=np.random.permutation(len(X))
+  X=X[permu[:n]]
+  y=y[permu[:n]]
+  return X,y
+
+def calc_theta(K):
+  theta=np.array([[0],[0]])
+  for i in range(0,K):
+    theta=logreg_newton_regul(theta)
+  return theta 
+
+def logreg_newton_regul(theta):
+  z=X.dot(theta)
+  a=expit(z)
+  D=np.diag((a*(1-a))[:,0])
+  H=X.T.dot(D).dot(X)+lmbda*np.diag(np.ones(len(theta)))
+  term_indep_regul=X.T.dot(D.dot(z)-(a-y))
+  theta=np.linalg.inv(H).dot(term_indep_regul)
+  return theta 
+
+def print():
+
+	plt.figure()
+	plt.plot(x[y==0],y[y==0],'bs')
+	plt.plot(x[y==1],y[y==1],'g^')
+	
+	intval=np.linspace(min(x),max(x),11)
+	Intval=np.c_[np.ones(len(intval)),intval]
+	vals=expit(Intval.dot(theta))
+	plt.plot(intval,vals)
+
+/ 1313	. 
+
+/ de calls	,
+
+/ 1	. 
+
+In [7165]: init(5,.1)
+
+In [7166]: theta=calc_theta(10)
+
+In [7168]: theta
+Out[7168]: 
+array([[1.00333966],
+       [2.50884624]])
+
+In [7169]: print()
+
+/ OK	,
+
+/ 2	. 
+
+In [7161]: init(5,.01)
+
+In [7162]: theta=calc_theta(10)
+
+In [7163]: theta
+Out[7163]: 
+array([[2.47825639],
+       [5.36630471]])
+
+In [7164]: print()
+
+/ Dichterbij 	,
+
+
+/////////////////////////////////////////////
+
+/ 13	. 
+
+/ andere init()	,
+
+def init(N,_lmbda):
+  global x,X,y,lmbda
+	x=np.array([[-1],[0],[1]])
+  X=np.c_[np.ones(len(x)),x]
+	y=np.array([[0],[1],[0]])
+  lmbda=_lmbda
+  #X,y=permu(X,y,N)
  
+In [7171]: init(3,.1)
 
+In [7172]: theta=calc_theta(10)
 
-def init():
-	a1=np.array([[-1],[0],[1],[2]])
-	A1=np.c_[np.ones((len(a1),1)),a1]
-	y=np.array([[0],[0],[1],[1]])
-	return a1,A1,y
+In [7173]: theta
+Out[7173]: 
+array([[-0.6038565],
+       [ 0.       ]])
 
+In [7174]: print()
 
+/ we zien horizontale grafiek	,
 
+/ 13	. 
 
+/ andere init	,
+
+def init(N,_lmbda):
+  global x,X,y,lmbda
+	x=np.array([[-1],[0],[1]])
+  X=np.c_[np.ones(len(x)),x]
+	y=np.array([[1],[0],[0]])
+  lmbda=_lmbda
+  #X,y=permu(X,y,N)
+
+/ we zien een dalende grafiek	,
+
+/ 13	. 
+
+/ andere init	,
+
+def init(N,_lmbda):
+  global x,X,y,lmbda
+	x=np.array([[0],[1],[2],[3],[4],[5],[6],[7]])
+  X=np.c_[np.ones(len(x)),x]
+	y=np.array([[0],[0],[0],[1],[1],[0],[1],[1]])
+  lmbda=_lmbda
+  #X,y=permu(X,y,N)
+
+In [7187]: init(8,.1)
+
+In [7190]: theta=calc_theta(10)
+
+In [7191]: theta
+Out[7191]: 
+array([[-2.07747638],
+       [ 0.63774768]])
+
+In [7192]: print()
+
+/ we zien stijgende grafiek	,
+/ tussen init(8,.1) en init(8,.01) zit weinig verschil	,
+
+/ 13	. 
+
+/ andere init	,
+
+/ 2 0s aan het eind	,
+
+def init(N,_lmbda):
+  global x,X,y,lmbda
+	x=np.array([[0],[1],[2],[3],[4],[5],[6],[7]])
+  X=np.c_[np.ones(len(x)),x]
+	y=np.array([[0],[0],[0],[1],[1],[0],[0],[1]])
+  lmbda=_lmbda
+  #X,y=permu(X,y,N)
+
+/ de grafiek stijgt nog, maar loopt veel vlakker	,
+
+/ 13	. 
+
+/ aan het eind 3 keer 0
+
+def init(N,_lmbda):
+  global x,X,y,lmbda
+	x=np.array([[0],[1],[2],[3],[4],[5],[6],[7]])
+  X=np.c_[np.ones(len(x)),x]
+	y=np.array([[0],[0],[0],[1],[1],[0],[0],[0]])
+  lmbda=_lmbda
+  #X,y=permu(X,y,N)
+
+/ de grafiek loopt zelfs naar beneden	, 
 
 / Einde GD REVISITED 
 

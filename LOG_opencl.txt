@@ -134,3 +134,15 @@ intel-sw-tools-installer/pset/scripts
 intel-sw-tools-installer/pset/scripts/force_remove.sh
 intel-sw-tools-installer/README.txt
 
+[eric@almond intel-sw-tools-installer]$ pwd
+/home/eric/Devel/Eclipse/intel-sw/intel-sw-tools-installer
+[eric@almond intel-sw-tools-installer]$ sudo ./install.sh 
+
+/ na installatie, loopt hij door en wil eclipse start, hij vraagt om een workspace	, 
+/ hij suggereert	,
+/home/eric/system_studio/workspace
+/ we maken er van,
+/home/eric/Devel/Eclipse/system_studio/workspace
+/ OK, 
+/ eclipse is started, hij is Downloading samples...
+
