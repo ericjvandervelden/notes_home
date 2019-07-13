@@ -1,0 +1,218 @@
+/ 7	. 
+
+/ we gaan met de hand 	,
+
+[eric@almond postgres3a]$ pwd
+/home/eric/Devel/Docker2/fedora/postgres3a
+
+from my/fedora-locale
+
+run dnf -y upgrade  --setopt=deltarpm=false
+run dnf -y install postgresql-server postgresql-contrib
+run dnf -y install less hostname iputils
+run setcap cap_net_raw,cap_net_admin+p /usr/bin/ping
+
+user postgres
+env PGDATA=/var/lib/pgsql/data
+run initdb;\
+pg_ctl -w start;\
+psql -c "create role eric with createdb login password 'eric'";\
+psql -c "create role foo with createdb login password 'foo'";\
+psql -Ueric postgres -c "create database eric";\
+psql -Ufoo postgres -c "create database foo";\
+pg_ctl stop;\
+echo "host all all 172.18.0.1/24 trust"  >>$PGDATA/pg_hba.conf;\
+echo "listen_addresses='*'" >>$PGDATA/postgresql.conf
+
+expose 5432
+cmd postgres
+
+/ 13	. 
+
+[eric@almond postgres3a]$ docker run -ti --rm my/fedora-locale bash
+
+/ 1313	. 
+
+[root@4913466ed357 /]# dnf -y upgrade --setopt=deltarpm=false
+Dependencies resolved.
+Nothing to do.
+Complete!
+[root@4913466ed357 /]# cat /etc/fedora-release 
+Fedora release 24 (Twenty Four)
+/ TODO
+
+/ 1313	. 
+
+[root@4913466ed357 /]# dnf -y install postgresql-server postgresql-contrib
+Dependencies resolved.
+===============================================================================
+ Package                 Arch        Version                Repository    Size
+===============================================================================
+Installing:
+ libxslt                 x86_64      1.1.28-12.fc24         fedora       247 k
+ postgresql              x86_64      9.5.7-1.fc24           updates      1.3 M
+ postgresql-contrib      x86_64      9.5.7-1.fc24           updates      664 k
+ postgresql-libs         x86_64      9.5.7-1.fc24           updates      249 k
+ postgresql-server       x86_64      9.5.7-1.fc24           updates      4.4 M
+ uuid                    x86_64      1.6.2-32.fc24          fedora        61 k
+/ installs, maar start niets	,
+
+[root@4913466ed357 /]# ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.0 120576  4468 ?        Ss   20:02   0:00 bash
+root        58  0.0  0.0 150008  3668 ?        R+   20:12   0:00 ps aux
+
+/ 1313	. 
+
+[root@4913466ed357 /]# dnf install less hostname iputils findutils
+/ OK,
+[root@4913466ed357 /]# setcap cap_net_raw,cap_net_admin+p /usr/bin/ping
+/ OK	, 
+
+/ 1313	. 
+
+[root@4913466ed357 /]# su - postgres
+-bash-4.3$ whoami
+postgres
+-bash-4.3$ pwd
+/var/lib/pgsql
+/ home dir van postgres	,
+
+/ 1313	. 
+
+-bash-4.3$ env
+...
+USER=postgres
+PGDATA=/var/lib/pgsql/data
+
+/ Dus wat in de Dockerfile staat hoeven we niet te doen	,
+
+/ 1313	. 
+
+-bash-4.3$ find
+.
+./backups
+./data
+./.bash_profile
+./.bash_history
+
+/ we zien dat data/ helemaal leeg is	,
+
+/ Intermezzo 
+
+/ zie wat in een package zit	, 
+$ dnf repoquery -l findutils			
+/ of,	
+$ rpm -ql findutils
+
+/ in container	,
+-bash-4.3$ dnf repoquery -l postgresql-server
+No such command: repoquery. Please use /usr/bin/dnf --help
+It could be a DNF plugin command, try: "dnf install 'dnf-command(repoquery)'"
+/ TODO
+/ in host wel OK	,
+
+
+/ in welk package zit postgres? 
+-bash-4.3$ which postgres | xargs dnf provides
+Last metadata expiration check: 0:02:16 ago on Sat Jul 13 20:58:48 2019.
+postgresql-server-9.5.7-1.fc24.x86_64 : The programs needed to create and run a
+                                      : PostgreSQL server
+
+
+/ lees,
+https://www.linuxtechi.com/dnf-command-examples-rpm-management-fedora-linux/
+
+/ list files in installed package	,
+$ rpm -ql package-name
+
+/ in welk package zit een file?
+[eric@almond postgres3a]$ rpm -qf /usr/bin/repoquery
+yum-utils-1.1.31-512.fc26.noarch
+[eric@almond postgres3a]$ rpm -qf /usr/bin/postgres
+postgresql-server-9.6.8-1.fc26.x86_64
+
+-bash-4.3$ rpm -ql postgresql-server
+/var/lib/pgsql/data
+/usr/bin/initdb
+/usr/bin/pg_basebackup
+/usr/bin/pg_ctl
+/usr/bin/postgres
+
+/ Einde Intermezzo
+
+-bash-4.3$ initdb
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "C".
+The default database encoding has accordingly been set to "SQL_ASCII".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/pgsql/data ... ok
+creating subdirectories ... ok
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting dynamic shared memory implementation ... posix
+creating configuration files ... ok
+creating template1 database in /var/lib/pgsql/data/base/1 ... ok
+initializing pg_authid ... ok
+initializing dependencies ... ok
+creating system views ... ok
+loading system objects' descriptions ... ok
+creating collations ... ok
+creating conversions ... ok
+creating dictionaries ... ok
+setting privileges on built-in objects ... ok
+creating information schema ... ok
+loading PL/pgSQL server-side language ... ok
+vacuuming database template1 ... ok
+copying template1 to template0 ... ok
+copying template1 to postgres ... ok
+syncing data to disk ... ok
+
+WARNING: enabling "trust" authentication for local connections
+You can change this by editing pg_hba.conf or using the option -A, or
+--auth-local and --auth-host, the next time you run initdb.
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/pgsql/data -l logfile start
+
+/ WH kijkt initdb naar PGDATA env var	,
+/ doe nog een keer	,
+-bash-4.3$ initdb
+...
+initdb: directory "/var/lib/pgsql/data" exists but is not empty
+If you want to create a new database system, either remove or empty
+the directory "/var/lib/pgsql/data" or run initdb
+with an argument other than "/var/lib/pgsql/data".
+
+/ Intermezzo
+
+[eric@almond postgres3a]$  docker container ls
+...
+[eric@almond postgres3a]$ docker inspect nostalgic_bassi 
+...
+        "GraphDriver": {
+            "Name": "devicemapper",
+            "Data": {
+                "DeviceId": "5913",
+                "DeviceName": "docker-253:1-2504345-9183dee066ca5fb089aa11fb0156840d70d64f6501573655c8d52cdbd6a4ae71",
+                "DeviceSize": "107374182400"
+            }
+
+[root@almond ~]# ls /var/lib/docker/devicemapper/mnt/9183dee066ca5fb089aa11fb0156840d70d64f6501573655c8d52cdbd6a4ae71/rootfs/var/lib/pgsql/data
+base          pg_hba.conf    pg_replslot   pg_subtrans  postgresql.auto.conf
+global        pg_ident.conf  pg_serial     pg_tblspc    postgresql.conf
+pg_clog       pg_logical     pg_snapshots  pg_twophase
+pg_commit_ts  pg_multixact   pg_stat       PG_VERSION
+pg_dynshmem   pg_notify      pg_stat_tmp   pg_xlog
+
+/ dit is de data/ uit de container	,
+
+/ Einde Intermezzo
+
+

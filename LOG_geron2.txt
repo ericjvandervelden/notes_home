@@ -1,3 +1,5 @@
+/ See FINAL GD NEWTON SELF SCIKIT LEARN
+
 / 7	. 
 
 def init():
@@ -283,6 +285,8 @@ array([[0.82280723, 0.        ],	/ hoge cost	,
 
 / 13	. 
 
+/ FINAL GD NEWTON SELF SCIKIT LEARN
+
 / petal width	,
 
 / 1313	. 
@@ -465,6 +469,76 @@ Out[7691]: array([[0.74893219, 4.79308438]])
 
 / print
 
+X=iris['data'][:,[3]]
+Xext=np.c_[np.ones((len(X),1)),X]
+
+In [7958]: plt.figure()
+In [7959]: plt.plot(X[(y==0).ravel()],y[(y==0).ravel()],'gs')
+In [7960]: plt.plot(X[(y==1).ravel()],y[(y==1).ravel()],'b^')
+
+In [7936]: I=np.linspace(min(X.ravel()),max(X.ravel()),101)
+In [7936]: Iext=np.c_[np.ones(101),I]
+In [7939]: v=expit(Iext.dot(theta))
+In [7968]: plt.plot(I,v)
+
+/ 13	. 
+
+[eric@almond my]$ pwd
+/home/eric/Devel/python/my
+[eric@almond my]$ cat newton.py 
+
+import numpy as np
+from IPython.display import display
+
+from sklearn import datasets
+iris=datasets.load_iris()
+
+x=iris['data'][:,[3]]
+X=np.c_[np.ones((len(x),1)),x]
+theta=np.array([0,0]).reshape(-1,1)
+y=(iris['target']==2).reshape(-1,1).astype(int)
+
+from scipy.special import expit
+
+for i in range(0,10):
+  z=X.dot(theta)
+  a=expit(z)
+  grad=X.T.dot(a-y)
+  D=np.diag((a*(1-a)).ravel())
+  H=X.T.dot(D).dot(X)
+  theta=theta-np.linalg.inv(H).dot(grad)
+
+display(theta)
+
+import matplotlib.pyplot as plt
+import seaborn
+seaborn.set()
+
+plt.figure()
+plt.plot(x[(y==0).ravel()],y[(y==0).ravel()],'gs')
+plt.plot(x[(y==1).ravel()],y[(y==1).ravel()],'b^')
+
+i=np.linspace(min(x.ravel()),max(x.ravel()),101)
+I=np.c_[np.ones(101),i]
+v=expit(I.dot(theta))
+plt.plot(i,v)
+
+plt.show()
+
+/ in ipython deden we 
+%matplotlib
+/ in het script doen we dat NIET	,
+
+/ hierdoor zien we een assenstelsel:
+seaborn.set() 
+
+/ we moeten, in ipython hoeft dat NIET	,
+plt.show()
+
+
+
+/ Einde FINAL GD NEWTON SELF SCIKIT LEARN
+
 
 
 
@@ -488,12 +562,108 @@ http://www.met.reading.ac.uk/~ross/Documents/Chain.pdf
 
 / Intermezzo
 
+/ conclusie	, 
+
+/ 13	. 
+
+/ we hebben een array van (150,2)	,
+/ deze kun je select op een boolean (150,)	, hij pakt dan die entries waar het boolean array True is	,
+/ omdat het array (150,2) is , kun je ook select op een boolean (150,2)	, hij pakt dan die entries waar het boolean array True is	, en dit wil je niet	,
+/ boolean array (150,1) geeft ERR op dimension 1	, die moet 2 zijn en is 1	,
+
+https://www.leukerecepten.nl/recepten/wrap-met-falafel/
+
+bs=np.random.rand(150)<.5
+bs2=np.concatenate((bs.reshape(-1,2),bs.reshape(-1,2)),axis=0)
+
+Xextsel=Xext[:10]
+bs2sel=bs2[:10]
+
+In [7913]: Xextsel
+Out[7913]: 
+array([[1. , 0.2],
+       [1. , 0.2],
+       [1. , 0.2],
+       [1. , 0.2],
+       [1. , 0.2],
+       [1. , 0.4],
+       [1. , 0.3],
+       [1. , 0.2],
+       [1. , 0.2],
+       [1. , 0.1]])
+
+In [7914]: bs2sel
+Out[7914]: 
+array([[ True,  True],
+       [False, False],
+       [ True, False],
+       [ True, False],
+       [ True, False],
+       [ True, False],
+       [False, False],
+       [False,  True],
+       [ True,  True],
+       [ True, False]])
+
+In [7915]: Xextsel[bs2sel]
+Out[7915]: array([1. , 0.2, 1. , 1. , 1. , 1. , 0.2, 1. , 0.2, 1. ])
+
+/ Dit willen we niet	,
+/ we willen	,
+In [7916]: bssel=bs[:10]
+array([ True,  True, False, False,  True, False,  True, False,  True,
+       False])
+
+In [7918]: Xextsel[bssel]
+Out[7918]: 
+array([[1. , 0.2],
+       [1. , 0.2],
+       [1. , 0.2],
+       [1. , 0.3],
+       [1. , 0.2]])
+
+/ 13	. 
+
+/ y is een (150,1) array. Deze kun je dan toevallig wel: y[y==0]	, 
+/ beter is y[(y==0).ravel()]
+/ y[y==0] werkt toevallig wel	, want y is (150,) en y==0 ook	, en net als boven pakt hij alle entries waar True staat	, maar nu is dimensie 1 1 groot, dus gaat het goed	, 
+/ dat is alleen in dit geval	, 
+
+/ Einde conclusie
+
+/ 13	.
+
 X=iris['data'][:,[3]]
 Xext=np.c_[np.ones((len(X),1)),X]
 y=(iris['target']==2).reshape(-1,1).astype(int)
 
+In [7824]: X[y==0]          
+/ OK	,
+In [7824]: X[(y==0).ravel()]
+/ OK
+
+In [7820]: Xext[y==0]
+IndexError: boolean index did not match indexed array along dimension 1; dimension is 2 but corresponding boolean dimension is 1
+/ ERR	,
+In [7820]: Xext[(y==0).ravel()]
+/ OK	,
+
 / maak een random boolean array van 150 lang	,
 bs=np.random.rand(150)<.5
+
+In [7833]: (y==0).shape
+Out[7833]: (150, 1)
+In [7834]: (y==0).ravel().shape
+Out[7834]: (150,)
+
+In [7831]: (bs==True).shape
+Out[7831]: (150,)
+In [7832]: Xext[bs==True]                
+/ OK	,
+In [7832]: Xext[(bs==True).reshape(-1,1)]
+IndexError: boolean index did not match indexed array along dimension 1; dimension is 2 but corresponding boolean dimension is 1
+/ ERR,	
+/ net als Xext[y==0]	
 
 In [7782]: len(bs[bs==True])
 Out[7782]: 78
@@ -514,6 +684,30 @@ In [7794]: Xext[[bs==True]]
 / OK	,
 In [7792]: Xext[[[bs==True]]]
 IndexError: boolean index did not match indexed array along dimension 0; dimension is 150 but corresponding boolean dimension is 1
+
+/ 1313	. 
+
+/ tmp	,
+
+----> 1 Xext[np.array([True,False])]
+IndexError: boolean index did not match indexed array along dimension 0; dimension is 150 but corresponding boolean dimension is 2
+
+----> 1 Xext[np.array([True,False,True])]
+IndexError: boolean index did not match indexed array along dimension 0; dimension is 150 but corresponding boolean dimension is 3
+
+In [7866]: np.array([True,False,True]).shape
+Out[7866]: (3,)
+
+
+
+
+
+
+
+/ 7 .
+
+/ install pydev	,
+https://www.pydev.org/manual_101_install.html
 
 
 

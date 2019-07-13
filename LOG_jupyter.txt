@@ -1,0 +1,8 @@
+/ 7	. 
+
+[eric@almond handson-ml]$ pwd
+/home/eric/Devel/python/geron/handson-ml
+[eric@almond handson-ml]$  jupyter notebook
+
+
+

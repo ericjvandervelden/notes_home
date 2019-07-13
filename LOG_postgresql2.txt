@@ -2,6 +2,7 @@
 / See INRICHTEN MASTER SLAVE VLG VIDEO
 / See 2PC
 / See FDW
+/ See HOE PG START IN CONTAINER
 
 / postgres in docker	,
 
@@ -3899,6 +3900,8 @@ pg_basebackup: directory "data/" exists but is not empty
 / maar zo moeten we de container helemaal niet starten	, 
 
 / 13	. 
+
+/ HOE PG START IN CONTAINER
 
 / als we een container zonder --rm start, met -ti, en weer exit, is hij nog Up	, 
 / we kunnen docker exec	, maar niet docker start	,

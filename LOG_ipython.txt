@@ -88,3 +88,29 @@ In [1644]: housing_p=full_pipeline.fit_transform(housing_t)
 6809: %history -g import
 7212: %hist -g import
 
+/ 7	. 
+
+[eric@almond handson-ml]$ pwd
+/home/eric/Devel/python/geron/handson-ml
+[eric@almond handson-ml]$  jupyter notebook
+
+/ 7	. 
+
+/ google,	
+how ipython prints
+/ lees	,
+https://stackoverflow.com/questions/37947496/how-to-print-like-jupyter-notebooks-default-cell-output
+
+$ ipython
+In [1]: import numpy as np
+In [2]: a=arange(10)
+In [12]: from IPython.display import  display
+In [13]: display(a)
+array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+In [14] exit
+
+[eric@almond my]$ ipython newton.py 
+array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+
+
