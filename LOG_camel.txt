@@ -1,0 +1,870 @@
+/ See CAMEL TEST FRAMEWORK
+
+
+/ 7	. 
+
+/ google,
+camel narayana
+
+/ lees	,
+https://github.com/christian-posta/spring-boot-camel-narayana/blob/master/README.md
+/ lees	,
+https://access.redhat.com/documentation/en-us/red_hat_fuse/7.1/html/transaction_guide/configuring-narayana
+
+/ google	,
+camel activemq jta
+/ lees	,
+https://camel.apache.org/how-do-i-make-my-jms-endpoint-transactional.html
+/ kijk
+https://www.youtube.com/watch?v=22OW5t_Mbnk&t=341s
+
+/ google	,
+activemq routing
+/ lees,	
+https://examples.javacodegeeks.com/enterprise-java/apache-camel/apache-camel-routing-tutorial/
+
+/ lees	,
+http://activemq.apache.org/components/artemis/documentation/
+https://camel.apache.org/index.html
+
+/ 7	. 
+
+[eric@almond demo]$ mkdir ~/Devel/workspaces/workspace_camel
+
+[eric@almond misc_codebase]$ pwd
+/home/eric/misc_codebase
+[eric@almond misc_codebase]$ unzip  ~/Downloads/camelinaction-master.zip 
+
+[eric@almond Eclipse]$ eclipse-java-2019-06-R-linux-gtk-x86_64/eclipse/eclipse 
+/ op workspace_camel
+/ disable validation	,
+
+/ toggle off Build automatically	,
+File, Import, Maven project,
+/home/eric/misc_codebase/camelinaction-master
+/ hij gaat wel alle deps import	, ook sources en javadoc	, dus dat gaat gewoon door,	
+/ we use eclipse's mvn	, 
+/ we check Build automatically	, 
+/ we zien 7 Errors	,
+/ Maven, Maven update	,
+/ TODO was dit nodig?
+/ we zien projects zoals chapter1 en chapter1-file-copy. Alleen de laatste is een Java (Maven) project, dat zie je aan de J in het icon	,
+
+/ 7	. 
+
+/ google,
+log4j pattern layout	,
+/ lees 	,
+https://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html
+https://www.tutorialspoint.com/log4j/log4j_patternlayout
+
+/ 7	. 
+
+FileCopierWithCamel, right click,	 
+/ In console zien we de logging	,
+
+/ 7	. 
+
+$ vi parent/pom.xml
+...
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.5</version>
+          <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+
+/ was 1.7, 
+/ select all projects, Maven update	, 
+/ we zien in build path JavaSE-1.8
+
+/ 7	. 
+
+/ google,
+camel routesbuilder functional interface
+/ lees	,
+https://stackoverflow.com/questions/31482093/why-cant-functionalinterface-be-applied-to-a-sam-abstract-base-class
+
+/ RoutesBuilder of RouteBuilder (TODO) is geen functional interface	, dus lambdas gaat niet 	,
+
+/ er staat hoe wel toch wel kan	,
+
+public static RouteBuilder fromConfigurator(Consumer<RouteBuilder> configurator) {
+    return new RouteBuilder() {
+        public void configure() {
+            configurator.accept(this);
+        }
+    }
+}
+And use it like this:
+
+context.addRoutes(fromConfigurator(
+    rb->rb.from("file:data/inbox?noop=true").to("file:data/outbox")));
+
+/ TODO
+
+/ 7	. 
+
+/ slf4j	, 
+
+/ we zien	,
+$ vi chapter1-file-copy/pom.xml
+...
+     <dependency>
+       <groupId>org.slf4j</groupId>
+       <artifactId>slf4j-log4j12</artifactId>
+     </dependency>
+  </dependencies>
+
+$  less ~/.m2/repository/org/apache/camel/camel-core/2.15.2/camel-core-2.15.2.pom
+/ als we de slf4j-log4j12 dep niet opnemen, hebben we geen slf4j deps, want dan zien we alleen entries in <dependencyManagement/>
+
+  <properties>
+    <slf4j-version>1.7.5</slf4j-version>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.7.5</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>1.7.5</version>
+      </dependency>
+
+/ als we het wel doen, zien we in <dependencies/>	,
+  <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.7.5</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+/ In chapter2-ftp-jms/pom.xml wordt er in <dependencies/>: 
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
+      <scope>compile</scope>
+    </dependency>
+
+/ en dat is ook goed	,
+/ TODO
+
+/ we zien in Deps Hierarchy dat we niet slf4j of log4j hoeven te dep	, want die zijn er al	,
+slf4j-log4j12:1.7.5
+	slf4j:1.7.5
+	log4j:1.12.7
+
+/ we zien in dep hierarchy,
+camel-core:2.15.2
+	slf4j-api:1.7.5	 (managed from 1.6.6)
+/ in de pom van camel-core zien we inderdaad slf4j version 1.6.6	, 
+/ waarom komt 1.7.5 vandaan?
+/ TODO
+
+/ 7	. 
+
+/ we zien	,
+
+package org.apache.camel.component.file;
+public class FileConsumer extends GenericFileConsumer<File> {
+    @Override
+    protected boolean pollDirectory(String fileName, List<GenericFile<File>> fileList, int depth) {
+        log.trace("pollDirectory from fileName: {}", fileName);
+/e
+package org.apache.camel.component.file;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsumer {
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected int poll() throws Exception {
+        if (!prePollCheck()) {
+            log.debug("Skipping poll as pre poll check returned false");
+...
+
+
+/ 7	 .
+
+/ we start	,
+
+$ PATH=/home/eric/Devel/Java/activemq/apache-activemq-5.15.8/bin/:$PATH
+$ activemq console
+...
+INFO | Listening for connections at: tcp://almond.nuts.org:61616?maximumConnections=1000&wireFormat.maxFrameSize=104857600
+INFO | ActiveMQ WebConsole available at http://0.0.0.0:8161/
+
+/ we maken in eclipse, in chapter2-ftp-jms	,
+
+public class FileToJmsExample {
+	public static void main(String[] args) throws Exception {
+		CamelContext ctx = new DefaultCamelContext();
+//		ConnectionFactory fact = new ActiveMQConnectionFactory("vm://localhost");
+		ConnectionFactory fact = new ActiveMQConnectionFactory("tcp://localhost:61616");		
+		ctx.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(fact));
+		ctx.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("file:data/inbox?noop=true").to("jms:foobar");
+			}
+		});
+		ctx.start();
+		Thread.sleep(10000);
+		ctx.stop();
+
+/ we hebben	,
+$ cat data/inbox/message1.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<order name="motor" amount="1" customer="honda"/>
+
+/ run dit prg,
+/ open localhost:8161	,
+/ klik queues, we zien : foobar klik 	,
+/ we zien	in de 1ste column	, 
+
+Message ID  	Correlation ID  	Persistence  	Priority  	Redelivered  	Reply To  	Timestamp  	Type  	Operations  
+ID:almond.nuts.org-43539-1563625746707-1:1:1:1:1	
+/ klik hierop	,
+/ dan zien we 
+Headers
+
+Headers
+-------
+Message ID	ID:almond.nuts.org-43539-1563625746707-1:1:1:1:1
+Destination	queue://foobar																		<-
+Correlation ID	
+Group	
+Sequence	0
+Expiration	0
+Persistence	Persistent
+Priority	4
+Redelivered	false
+Reply To	
+Timestamp	2019-07-20 14:29:06:895 CEST
+Type		
+
+Properties
+----------
+CamelFileContentType	application/xml
+CamelFileLastModified	1436201236000
+CamelFileParent	data/inbox
+CamelFilePath	data/inbox/message1.xml												<-
+CamelFileNameConsumed	message1.xml
+breadcrumbId	ID-almond-nuts-org-43569-1563625744508-0-1
+CamelFileLength	89
+CamelFileRelativePath	message1.xml
+CamelFileAbsolute	false
+CamelFileAbsolutePath	/home/eric/misc_codebase/camelinaction-master/chapter2/ftp-jms/data/inbox/message1.xml
+CamelFileName	message1.xml
+CamelFileNameOnly	message1.xml
+
+Message Details
+--------------
+<?xml version="1.0" encoding="UTF-8"?>
+<order name="motor" amount="1" customer="honda"/>
+
+/ we zien geen polling	, net als in chapter1-file-copy	,
+/ TODO
+
+/ 7	 .
+
+/ google	,
+camel jms queue
+/ lees,
+https://people.apache.org/~dkulp/camel/jms.html
+
+jms:[queue:|topic:]destinationName[?options]
+Where destinationName is a JMS queue or topic name. By default, the destinationName is interpreted as a queue name. For example, to connect to the queue, FOO.BAR use:
+
+jms:FOO.BAR
+You can include the optional queue: prefix, if you prefer:
+
+jms:queue:FOO.BAR
+To connect to a topic, you must include the topic: prefix. For example, to
+connect to the topic, Stocks.Prices, use:
+
+jms:topic:Stocks.Prices
+You append query options to the URI using the following format, ?option=value&option=value&...
+
+/ 7. 
+
+/ google
+camel from jms to file example
+/ lees, 
+https://camel.apache.org/walk-through-an-example.html
+->
+https://svn.apache.org/repos/asf/camel/trunk/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java
+
+/ 7	. 
+
+/ we willen van file -> jms -> file	,
+
+/ we start	,
+$ PATH=/home/eric/Devel/Java/activemq/apache-activemq-5.15.8/bin/:$PATH
+$ activemq console
+...
+INFO | Listening for connections at: tcp://almond.nuts.org:61616?maximumConnections=1000&wireFormat.maxFrameSize=104857600
+INFO | ActiveMQ WebConsole available at http://0.0.0.0:8161/
+
+/ 13	. 
+
+$ vi FileToJmsToFileExample {
+
+public class FileToJmsToFileExample {
+	public static void main(String[] args) throws Exception {
+		CamelContext ctx = new DefaultCamelContext();
+//		ConnectionFactory fact = new ActiveMQConnectionFactory("vm://localhost");
+		ConnectionFactory fact = new ActiveMQConnectionFactory("tcp://localhost:61616");
+		ctx.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(fact));
+		ctx.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("file:data/inbox?noop=true").to("jms:queue:foobar");
+			}
+		});
+		ctx.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("jms:foobar").to("file:data/outbox");
+
+			}
+		});
+
+		ctx.start();
+		Thread.sleep(1000);
+		ctx.stop();
+		
+
+/ 13	. 
+
+/ we hadden eerst een andere moment van de 2de ctx.addRoute	, maar zoals hierboven is beste; we hadden eerst: 
+
+$ vi FileToJmsToFileExample1.java 
+
+package camelinaction;
+
+import javax.jms.ConnectionFactory;
+
+public class FileToJmsToFileExample1 {
+	public static void main(String[] args) throws Exception {
+		CamelContext ctx = new DefaultCamelContext();
+//		ConnectionFactory fact = new ActiveMQConnectionFactory("vm://localhost");
+		ConnectionFactory fact = new ActiveMQConnectionFactory("tcp://localhost:61616");
+		ctx.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(fact));
+		ctx.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("file:data/inbox?noop=true").to("jms:queue:foobar");
+			}
+		});
+
+		ctx.start();
+		Thread.sleep(1000);
+		
+		ctx.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("jms:foobar").to("file:data/outbox");
+
+			}
+		});
+		Thread.sleep(1000);
+		ctx.stop();
+
+
+/ 13	. 
+		
+$ vi FileToJmsToFileExample2.java 
+
+public class FileToJmsToFileExample2 {
+	public static void main(String[] args) throws Exception {
+		CamelContext ctx = new DefaultCamelContext();
+//		ConnectionFactory fact = new ActiveMQConnectionFactory("vm://localhost");
+		ConnectionFactory fact = new ActiveMQConnectionFactory("tcp://localhost:61616");
+		ctx.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(fact));
+		ctx.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("file:data/inbox?noop=true").to("jms:queue:foobar");
+			}
+		});
+
+		ctx.start();
+		Thread.sleep(1000);
+		ctx.stop();
+		
+		CamelContext ctx2 = new DefaultCamelContext();
+		ConnectionFactory fact2 = new ActiveMQConnectionFactory("tcp://localhost:61616");
+		ctx2.addComponent("jms2", JmsComponent.jmsComponentAutoAcknowledge(fact2));
+		ctx2.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("jms2:foobar").to("file:data/outbox");
+
+			}
+		});
+		ctx2.start();
+		Thread.sleep(1000);
+		ctx2.stop();
+		
+/ 13	. 
+
+/ onthoud: na ctx.stop() moet je ctx niet meer gebruiken	,
+
+
+$ vi FileToJmsToFileExample3.java 
+
+public class FileToJmsToFileExample3 {
+	public static void main(String[] args) throws Exception {
+		CamelContext ctx = new DefaultCamelContext();
+//		ConnectionFactory fact = new ActiveMQConnectionFactory("vm://localhost");
+		ConnectionFactory fact = new ActiveMQConnectionFactory("tcp://localhost:61616");
+		ctx.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(fact));
+		ctx.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("file:data/inbox?noop=true").to("jms:queue:foobar");
+			}
+		});
+
+		ctx.start();
+		Thread.sleep(1000);
+		ctx.stop();
+		
+		ctx = new DefaultCamelContext();
+		fact = new ActiveMQConnectionFactory("tcp://localhost:61616");			
+		ctx.addComponent("jms2", JmsComponent.jmsComponentAutoAcknowledge(fact));
+		ctx.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("jms2:foobar").to("file:data/outbox");
+
+			}
+		});
+		ctx.start();
+		Thread.sleep(1000);
+		ctx.stop();	
+
+/ deze is OK	,	
+/ maar als we NIET ctx=new DefaultCamelContext() doen	, maar dus met de ctx.stop() verder gaan	,
+/ dan of je nou een nieuwe fact maakt of niet	, we zien	ERR,
+// java.lang.IllegalArgumentException: connectionFactory must be specified
+/ TODO
+
+/ 7	. 
+
+/ we voegen een paar log regels toe	,
+
+public class FileToJmsToFileExampleWithProcessor {
+	static final Logger logger=LoggerFactory.getLogger(FileToJmsToFileExample.class);
+	
+	public static void main(String[] args) throws Exception {
+		CamelContext ctx = new DefaultCamelContext();
+		ConnectionFactory fact = new ActiveMQConnectionFactory("vm://localhost");
+//		ConnectionFactory fact = new ActiveMQConnectionFactory("tcp://localhost:61616");
+		ctx.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(fact));
+		ctx.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("file:data/inbox?noop=true")
+				.process(new Processor() {
+					@Override
+					public void process(Exchange exchange) throws Exception {
+						logger.info("From file to jms: "+exchange.getIn().getHeader("CamelFileName"));
+					}
+				})
+				.to("jms:queue:foobar");
+			}
+		});
+		ctx.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("jms:foobar")
+				.process(new Processor() {	
+					@Override
+					public void process(Exchange exchange) throws Exception {
+						logger.info("From jms to file: "+exchange.getIn().getHeader("JMSDestination"));
+					}
+				})
+				.to("file:data/outbox");
+
+			}
+		});
+
+		ctx.start();
+		Thread.sleep(1000);
+		ctx.stop(); 
+
+/ we zien in de logging	,
+[ thread #0 - file://data/inbox] FileToJmsToFileExample         INFO  From file to jms: message1.xml
+[hread #1 - JmsConsumer[foobar]] FileToJmsToFileExample         INFO  From jms to file: queue://foobar
+
+/ we set een b in beide .process	,
+
+/ from file to jms	,
+/s,
+exchange
+	in
+		headers
+{breadcrumbId=ID-almond-nuts-org-45067-1563647779947-0-1, 
+ CamelFileAbsolute=false
+ CamelFileAbsolutePath=/home/eric/misc_codebase/camelinaction-master/chapter2/ftp-jms/data/inbox/message1.xml
+ CamelFileContentType=application/xml
+ CamelFileLastModified=1436201236000
+ CamelFileLength=89
+ CamelFileName=message1.xml
+ CamelFileNameConsumed=message1.xml
+ CamelFileNameOnly=message1.xml
+ CamelFileParent=data/inbox
+ CamelFilePath=data/inbox/message1.xml
+ CamelFileRelativePath=message1.xml}
+
+exchange
+	pattern
+ InOnly
+	properties
+{CamelBatchSize=1
+ CamelFileLockFileAcquired=true
+ CamelMessageHistory=[DefaultMessageHistory[routeId=route1, node=process1]]
+ CamelBatchComplete=true
+ CamelFileLockFileName=/home/eric/misc_codebase/camelinaction-master/chapter2/ftp-jms/data/inbox/message1.xml.camelLock
+ CamelBatchIndex=0
+ CamelFileExchangeFile=GenericFile[message1.xml]
+ CamelCreatedTimestamp=Sat Jul 20 20:41:51 CEST 2019}
+
+/ from jms to file	
+
+exchange
+	in
+		headers
+{breadcrumbId=ID-almond-nuts-org-38907-1563647944378-0-1
+ CamelFileAbsolute=false
+ CamelFileAbsolutePath=/home/eric/misc_codebase/camelinaction-master/chapter2/ftp-jms/data/inbox/message1.xml
+ CamelFileContentType=application/xml
+ CamelFileLastModified=1436201236000
+ CamelFileLength=89
+ CamelFileName=message1.xml
+ CamelFileNameConsumed=message1.xml
+ CamelFileNameOnly=message1.xml
+ CamelFileParent=data/inbox
+ CamelFilePath=data/inbox/message1.xml
+ CamelFileRelativePath=message1.xml
+ JMSCorrelationID=null
+ JMSDeliveryMode=2
+ JMSDestination=queue://foobar
+ JMSExpiration=0
+ JMSMessageID=ID:almond.nuts.org-42481-1563647947000-3:2:1:1:1
+ JMSPriority=4
+ JMSRedelivered=false
+ JMSReplyTo=null
+ JMSTimestamp=1563647949132
+ JMSType=null
+ JMSXGroupID=null
+ JMSXUserID=null}
+
+exchange
+	pattern
+		InOnly
+	properties
+{CamelBinding=org.apache.camel.component.jms.JmsBinding@6cb5591e
+ CamelMessageHistory=[DefaultMessageHistory[routeId=route2, node=process2]]
+ CamelExternalRedelivered=false
+ CamelCreatedTimestamp=Sat Jul 20 20:40:00 CEST 2019}
+
+/ 7	. 
+
+/ start eclipse
+[eric@almond Eclipse]$ eclipse-java-2019-06-R-linux-gtk-x86_64/eclipse/eclipse 
+/ kies ws /home/eric/Devel/workspaces/workspace_camel
+
+$ vi chapter2-cbr/.../MyOrderRouter.java
+
+package camelinaction;
+...
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class MyOrderRouter {
+	
+	private static final Logger logger=LoggerFactory.getLogger(MyOrderRouter.class);
+
+	public static void main(String[] args) throws Exception {
+		CamelContext context = new DefaultCamelContext();
+		ConnectionFactory factory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+		context.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(factory));
+		context.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("file:src/data?noop=true").to("jms:queue:incomingOrders");
+				from("jms:queue:incomingOrders").choice()
+					.when(header("CamelFileName").endsWith("xml"))
+						.to("jms:queue:xmlOrders")
+					.when(header("CamelFileName").endsWith("csv"))
+						.to("jms:queue:csvOrders");
+				from("jms:queue:xmlOrders").process(new Processor() {			
+					@Override
+					public void process(Exchange exchange) throws Exception {
+						logger.info("Received xml order "+exchange.getIn().getHeader("CamelFileName"));
+					}
+				});
+				from("jms:queue:csvOrders").process(new Processor() {	
+					@Override
+					public void process(Exchange exchange) throws Exception {
+						logger.info("Received csv order "+exchange.getIn().getHeader("CamelFileName"));
+						
+					}
+				});
+						
+					
+			}
+		});
+		context.start();
+		Thread.sleep(1000);
+		context.stop();
+
+	}
+
+}
+/ In src/data zijn 4 files	, 
+message1.xml
+message2.csv
+message3.csl
+message4.bad
+
+/ we zien in amq 3 queues:
+incomingOrders 	4 4
+xmlOrders	1 1
+csvOrders 1 1
+/ klopt	,
+
+/ 7	 . 
+
+/ boek (79)
+/ ws. workspace_camel
+/ proj. chapter3-order	,
+
+/ CAMEL TEST FRAMEWORK
+
+/ 13	. 
+
+/ bijv	, 
+
+/ proj. chapter3-order
+
+/ we zien dat onderstaande method via een @Before method altijd dus wordt called	, en dat daarvan een @Test method gebruik kan maken	, 
+
+public class PurchaseOrderCsvTest extends CamelTestSupport {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                context.setTracing(true);
+
+                from("file://src/test/resources?noop=true&fileName=order.csv")
+                    .unmarshal().csv()
+                    .split(body())
+                        .to("mock:queue.csv");
+            }
+        };
+    }
+
+/ start	,
+package org.apache.camel.test.junit4;
+public abstract class CamelTestSupport extends TestSupport {
+    @Before
+    public void setUp() throws Exception {
+...
+                doSetUp();
+/s,
+    private void doSetUp() throws Exception {
+            RouteBuilder[] builders = createRouteBuilders();
+            for (RouteBuilder builder : builders) {
+                log.debug("Using created route builder: " + builder);
+                context.addRoutes(builder);
+            }
+////////////////////////////////
+/ context.addRoutes(new RouteBuilder(){@Override public void configure()throws Exception{from("file:...").to("jms:...")
+/ doen we altijd zelf, maar nu doet het test fw het voor ons	, tenminste alleen context.addRoutes doet hij voor ons	, de rest moeten we nog zelf doen	,
+/s,
+    /**
+     * Factory method which derived classes can use to create an array of
+     * {@link org.apache.camel.builder.RouteBuilder}s to define the routes for testing
+     *
+     * @see #createRouteBuilder()
+     */
+    protected RouteBuilder[] createRouteBuilders() throws Exception {
+        return new RouteBuilder[] {createRouteBuilder()};
+    }
+/s,
+public class PurchaseOrderCsvTest extends CamelTestSupport {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                context.setTracing(true);
+
+                from("file://src/test/resources?noop=true&fileName=order.csv")
+                    .unmarshal().csv()
+                    .split(body())
+                        .to("mock:queue.csv");
+            }
+        };
+    }
+
+/ 13	. 
+
+/ proj. chapter3-order
+
+public class PurchaseOrderCsvTest extends CamelTestSupport {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+			...
+/ er is een route added aan context	,
+
+/ nu kan de @Test method deze use	,
+
+	@Test
+    public void testCsv() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:queue.csv");
+        mock.expectedMessageCount(2);
+
+        assertMockEndpointsSatisfied();
+
+        List line1 = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        assertEquals("Camel in Action", line1.get(0));
+        assertEquals("4995", line1.get(1));
+        assertEquals("1", line1.get(2));
+
+        List line2 = mock.getReceivedExchanges().get(1).getIn().getBody(List.class);
+        assertEquals("Activemq in Action", line2.get(0));
+        assertEquals("4495", line2.get(1));
+        assertEquals("2", line2.get(2));
+    }
+
+/ 13	. 
+
+/ we gaan deze method echt doen	,
+
+/ 13	. 
+
+/ we deden per ongeluk,
+		ConnectionFactory factory = new ActiveMQConnectionFactory("http://localhost:61616");
+/ we zien ERR	,
+Caused by: java.lang.NoClassDefFoundError: org/apache/http/HttpRequestInterceptor
+/ TODO
+
+/ 13	. 
+
+/ een class in src/test/java kent de classes in src/main/java	, maar niet andersom	,
+
+/ 13	. 
+
+/ voor een class in src/main/java	,
+public class PurchaseOrderCSVFromFileToJms {
+ 				from("file:src/main/resources?noop=true&fileName=order.csv")
+/ ERR	,
+ 				from("file:data/inbox?noop=true&fileName=order.csv")
+/ OK	,
+
+/ WH kan wel voor een class in src/test/java	, 
+ 				from("file:src/test/resources?noop=true&fileName=order.csv")
+/ TODO
+
+
+/ 13	. 
+
+/ als in de pom de deps er zijn	, dan moet je nog wel in src/main/java en src/test/java afzonderlijk log4j.xml hebben in src/main/resources resp. src/test/resources	, 
+/ dus een class in src/main/java wilt log, moet er in src/main/resources log4j.xml zijn,	
+
+/ 13	. 
+
+/ als FileToJmsExample from("file:data/inbox?noop=true").to("jms:queue:foobar") doet, dan zien we in amq	,
+/ als JmsToFileExample from("jms:queue:foobar").to("file:data/outbox"); doet, dan zien we in amq	,
+number of pending messages,  messages enqueued,	messages.dequeued 
+1														1										0									# na file -> jms
+0														1										1									# na jms -> file
+
+/ dus als we FileToJmsToFile doen, die beide ... na elkaar doet	, dan zien we
+number of pending messages,  messages enqueued,	messages.dequeued 
+0														1										1									# na file -> jms
+
+/ 13	. 
+
+/ lees	,
+https://logging.apache.org/log4j/1.2/manual.html
+https://activemq.apache.org/how-do-i-change-the-logging
+
+[eric@almond camelinaction-master]$ vi  ~/Devel/Java/activemq/apache-activemq-5.15.8/conf/log4j.properties 
+
+log4j.rootLogger=INFO, console, logfile
+# When debugging or reporting problems to the ActiveMQ team,
+# comment out the above lines and uncomment the next.
+#log4j.rootLogger=DEBUG, logfile, console
+log4j.appender.console.threshold=INFO
+
+->
+
+#log4j.rootLogger=INFO, console, logfile
+# When debugging or reporting problems to the ActiveMQ team,
+# comment out the above lines and uncomment the next.
+log4j.rootLogger=DEBUG, logfile, console
+log4j.appender.console.threshold=INFO
+
+/ in de log file
+[eric@almond camelinaction-master]$ less ~/Devel/Java/activemq/apache-activemq-5.15.8/data/activemq.log 
+/ zien we DEBUG, maar op de console niet, alleen INFO	, dit komt door die threshold	,
+
+/ 13	. 
+
+/ use Thread.sleep(3000)	, 
+/ Thread.sleep(1000) is te weinig	,
+
+/ 13	. 
+
+/ proj. chapter3-order	,
+
+/ in src/main/java	,
+$ vi PurchaseOrderCSVFromFileToJms.java
+
+public class PurchaseOrderCSVFromFileToJms {
+	public static void main(String[] args) throws Exception{
+		CamelContext context = new DefaultCamelContext();
+		ConnectionFactory factory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+		context.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(factory));
+		context.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("file:data/inbox?noop=true&fileName=order.csv")
+				.unmarshal().csv().split(body())
+				.to("jms:queue:csvOrders");
+
+			}
+		});
+		context.start();
+		Thread.sleep(3000);
+		context.stop();
+	}
+}
+
+/ we zien in amq	,
+name, 		number of pending messages, messages unqueued	, messages queued
+csvOrders 2														2										0
+
+/ klik csvOrders	, we zien er twee	, 
+/ als je op beide klikt, zie je	,
+[Camel in Action, 4995, 1]
+[Activemq in Action, 4495, 2]
+
+/ je start met csv, vandaar dat je unmarshal doet, dus je krijgt een List van 2	,
+
+/ Einde CAMEL TEST FRAMEWORK

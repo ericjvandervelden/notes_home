@@ -1,0 +1,145 @@
+/ 7	. 
+
+/ 13	. 
+
+/ klik Downloads	,
+/ lees	,
+https://www.graalvm.org/downloads/
+
+GraalVM Updater (link, klik straks) tool included in the core distribution can add support for GraalVM Native Image and experimental support for the Ruby, R, or Python languages. It can also install third party languages and tools.
+
+CE
+Download from github
+graalvm-ce-linux-amd64-19.1.1.tar.gz
+native-image-installable-svm-linux-amd64-19.1.1.jar	/ TODO
+
+
+[eric@almond bin]$ pwd
+/home/eric/bin
+[eric@almond bin]$ tar xvzf ~/Downloads/graalvm-ce-linux-amd64-19.1.1.tar.gz 
+
+$ cd graalvm-ce-19.1.1
+[eric@almond graalvm-ce-19.1.1]$ PATH=$(pwd)/bin:$PATH
+
+$ export JAVA_HOME=$(pwd)
+/ TODO
+
+/ 13	. 
+
+/ klik de link GraalVM Updater	, 
+/ lees	,
+https://www.graalvm.org/docs/reference-manual/graal-updater/
+
+[eric@almond bin]$ pwd
+/home/eric/bin/graalvm-ce-19.1.1/bin
+
+[eric@almond bin]$ gu list
+ComponentId              Version             Component name      Origin 
+--------------------------------------------------------------------------------
+graalvm                  19.1.1              GraalVM Core        
+
+[eric@almond bin]$ gu available
+Downloading: Component catalog from www.graalvm.org
+ComponentId              Version             Component name      Origin 
+--------------------------------------------------------------------------------
+native-image             19.1.1              Native Image        github.com
+python                   19.1.1              Graal.Python        github.com
+R                        19.1.1              FastR               github.com
+ruby                     19.1.1              TruffleRuby         github.com
+
+[eric@almond bin]$ gu install native-image
+[eric@almond bin]$ ls -ltr
+total 736
+-rwxr-xr-x. 1 eric eric   5110 Jun 26 17:07 jvisualvm
+-rwxr-xr-x. 1 eric eric   2806 Jul 11 14:16 java-rmi.cgi
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 xjc
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 wsimport
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 wsgen
+-rwxr-xr-x. 1 eric eric 234714 Jul 11 14:16 unpack200
+-rwxr-xr-x. 1 eric eric   9109 Jul 11 14:16 tnameserv
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 servertool
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 serialver
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 schemagen
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 rmiregistry
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 rmid
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 rmic
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 policytool
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 pack200
+-rwxr-xr-x. 1 eric eric   9109 Jul 11 14:16 orbd
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 native2ascii
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 keytool
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 jstatd
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 jstat
+-rwxr-xr-x. 1 eric eric   9101 Jul 11 14:16 jstack
+-rwxr-xr-x. 1 eric eric   9053 Jul 11 14:16 jsadebugd
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 jrunscript
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 jps
+-rwxr-xr-x. 1 eric eric   9101 Jul 11 14:16 jmap
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 jjs
+-rwxr-xr-x. 1 eric eric   9101 Jul 11 14:16 jinfo
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 jhat
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 jdeps
+-rwxr-xr-x. 1 eric eric   9053 Jul 11 14:16 jdb
+-rwxr-xr-x. 1 eric eric   9069 Jul 11 14:16 jconsole
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 jcmd
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 javap
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 javah
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 javadoc
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 javac
+-rwxr-xr-x. 1 eric eric   8926 Jul 11 14:16 java
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 jarsigner
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 jar
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 idlj
+-rwxr-xr-x. 1 eric eric   9053 Jul 11 14:16 hsdb
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 extcheck
+-rwxr-xr-x. 1 eric eric   9053 Jul 11 14:16 clhsdb
+-rwxr-xr-x. 1 eric eric   9045 Jul 11 14:16 appletviewer
+lrwxrwxrwx. 1 eric eric     19 Jul 13 11:57 polyglot -> ../jre/bin/polyglot
+lrwxrwxrwx. 1 eric eric     14 Jul 13 11:57 npm -> ../jre/bin/npm
+lrwxrwxrwx. 1 eric eric     15 Jul 13 11:57 node -> ../jre/bin/node
+lrwxrwxrwx. 1 eric eric     14 Jul 13 11:57 lli -> ../jre/bin/lli
+lrwxrwxrwx. 1 eric eric     13 Jul 13 11:57 js -> ../jre/bin/js
+lrwxrwxrwx. 1 eric eric     23 Jul 13 11:57 gu -> ../lib/installer/bin/gu
+lrwxrwxrwx. 1 eric eric     33 Jul 22 21:20 native-image-configure -> ../jre/bin/native-image-configure
+lrwxrwxrwx. 1 eric eric     23 Jul 22 21:20 native-image -> ../jre/bin/native-image
+lrwxrwxrwx. 1 eric eric     25 Jul 22 21:20 rebuild-images -> ../jre/bin/rebuild-images
+
+/ 13	. 
+
+/ lees	,
+https://www.graalvm.org/docs/getting-started/
+
+$ cd /tmp
+[eric@almond tmp]$ cat HelloWorld.java 
+public class HelloWorld{
+	public static void main(String...args){
+		System.out.println("Hello World");
+	}
+}
+[eric@almond tmp]$ javac HelloWorld.java 
+$ ls -ltr
+-rw-rw-r--. 1 eric eric   108 Jul 22 20:58 HelloWorld.java
+-rw-rw-r--. 1 eric eric   425 Jul 22 20:58 HelloWorld.class
+[eric@almond tmp]$ java HelloWorld 
+Hello World
+[eric@almond tmp]$ jar cfe app.jar HelloWorld HelloWorld.class
+[eric@almond tmp]$ java -jar app.jar 
+Hello World
+
+[eric@almond tmp]$ native-image HelloWorld
+[eric@almond tmp]$ ./helloworld 
+Hello World
+[eric@almond tmp]$ ldd helloworld 
+	linux-vdso.so.1 (0x00007fff38329000)
+	libm.so.6 => /lib64/libm.so.6 (0x00007fa0ee66e000)
+	libpthread.so.0 => /lib64/libpthread.so.0 (0x00007fa0ee44f000)
+	libdl.so.2 => /lib64/libdl.so.2 (0x00007fa0ee24b000)
+	libz.so.1 => /lib64/libz.so.1 (0x00007fa0ee034000)
+	librt.so.1 => /lib64/librt.so.1 (0x00007fa0ede2c000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007fa0eda57000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007fa0ee984000)
+
+
+
+
+

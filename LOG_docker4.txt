@@ -1,0 +1,359 @@
+/ See DOCKER NETWORK 
+/ See DOCKER COMPOSE 
+
+/ DOCKER NETWORK 
+
+/ 7		.
+
+/ lees,	
+https://docs.docker.com/network/network-tutorial-standalone/
+
+/ 13	. 
+
+/ als we  
+[eric@almond postgres3a]$ docker run -dti --rm my/fedora-postgres3a bash
+/ moeten we , anders kunnen we het cmd postgres niet overwrite met bash	,
+$ vi Dockerfile
+#entrypoint ["postgres"]
+cmd ["postgres"]
+
+/ 13	.
+
+/ doe	 -dti	,
+[eric@almond postgres3a]$ docker run -dti --rm my/fedora-postgres3a bash
+3f87341ab58e853f3fefbb26bef1a2b81a9005b1b0b64ef3827b1a7a6c780d11
+[eric@almond postgres3a]$ docker run -dti --rm my/fedora-postgres3a bash
+338fc9145f355a670e3bf1d424c27f4d51d30925b027df478ca435992d8e2f11
+
+[eric@almond postgres3a]$ docker inspect bridge
+        "Containers": {
+            "338fc9145f355a670e3bf1d424c27f4d51d30925b027df478ca435992d8e2f11": {
+                "Name": "priceless_goodall",
+                "EndpointID": "294b04bc74ccfdd00582b5d624f00eb39cc89ccfe1ca77cb43deeb090e5330cd",
+                "MacAddress": "02:42:ac:11:00:03",
+                "IPv4Address": "172.17.0.3/16",
+                "IPv6Address": ""
+            },
+            "3f87341ab58e853f3fefbb26bef1a2b81a9005b1b0b64ef3827b1a7a6c780d11": {
+                "Name": "silly_ramanujan",
+                "EndpointID": "be360e16bb33786d80c3604d7c379aae1f9d4ec0f466e1867448909dc2a71daa",
+                "MacAddress": "02:42:ac:11:00:02",
+                "IPv4Address": "172.17.0.2/16",
+                "IPv6Address": ""
+            }
+        },
+
+/ klopt	,
+[eric@almond postgres3a]$ docker container ls
+CONTAINER ID        IMAGE                  COMMAND             CREATED             STATUS              PORTS               NAMES
+338fc9145f35        my/fedora-postgres3a   "bash"              8 minutes ago       Up 8 minutes                            priceless_goodall
+3f87341ab58e        my/fedora-postgres3a   "bash"              8 minutes ago       Up 8 minutes                            silly_ramanujan
+
+/ we hoeven geen 
+$ docker inspect priceless_goodall 
+/ te doen	, omdat we de ip& al hebben	,
+
+/ 13	. 
+
+[eric@almond postgres3a]$ docker attach priceless_goodall 
+/ Geef Enter
+bash-4.3$ 
+bash-4.3$ 
+/ WH bug dat we Enter moeten geven	, ook attach wordt ook niet herkend	,
+
+/ als we  in container
+bash-4.3$ ctrl+pq
+/ dan zien we	,
+bash-4.3$ [eric@almond postgres3a]$ 
+/ en de containers zijn er nog,	 en ze zijn nog up	,	
+
+eric@almond postgres3a]$ docker container ls
+CONTAINER ID        IMAGE                  COMMAND             CREATED             STATUS              PORTS               NAMES
+338fc9145f35        my/fedora-postgres3a   "bash"              17 minutes ago      Up 17 minutes                           priceless_goodall
+3f87341ab58e        my/fedora-postgres3a   "bash"              17 minutes ago      Up 17 minutes                           silly_ramanujan
+
+/ 13	. 
+
+/ als je in de container
+$ exit
+/ dan verdwijnt de container	, WH omdat we hem met --rm hebben start	,
+
+/ 13	. 
+
+/ Waarom werkt ping in de tutorial	, want wij hebben hem installed met dnf	,
+/ ip hebben we niet	,
+/ TODO
+
+/ 13	. 
+
+/ ping met ip& ging OK	, 
+/ maar bij ons op container naam , gaat het goed of niet?
+
+bash-4.3$ ping -c 2 172.17.0.4
+PING 172.17.0.4 (172.17.0.4) 56(84) bytes of data.
+From 172.17.0.3 icmp_seq=1 Destination Host Unreachable
+From 172.17.0.3 icmp_seq=2 Destination Host Unreachable
+/ Klopt, is er niet	,
+
+--- 172.17.0.4 ping statistics ---
+2 packets transmitted, 0 received, +2 errors, 100% packet loss, time 1059ms
+pipe 2
+bash-4.3$ ping -c 2 priceless_goodall
+PING priceless_goodall.nuts.org (69.172.201.153) 56(84) bytes of data.
+
+--- priceless_goodall.nuts.org ping statistics ---
+2 packets transmitted, 0 received, 100% packet loss, time 1000ms
+
+/ WH we zien 100% packet loss, dus 
+/ ERR	,
+
+/ 13	. 
+
+/ nu niet op brigde, maar eigen gemaakt netwerk	,
+
+[eric@almond postgres3a]$   docker network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+1da8cb793d48        bridge              bridge              local
+a12fa67c85ef        docker_gwbridge     bridge              local
+src3ifciv47s        foo_webnet          overlay             swarm
+349ef13fadf7        host                host                local
+c6d3f8et1qrt        ingress             overlay             swarm
+c360bb8026c9        my-bridge           bridge              local
+023f75a0aec7        my-net              bridge              local
+a01ab7ad5edd        none                null                local
+
+/ WH hebben we eerder	zo het zgn. user-defined network gemaakt ,
+
+$ docker network create --driver bridge alpine-net
+/ of	,
+$ docker network create alpine-net
+ 
+[eric@almond postgres3a]$ docker run -dti --rm --network my-bridge my/fedora-postgres3a bash
+e55a9cc91ac0637bf7c53d2435d327395d1895a8613d035e2b86b1b48396d90b
+[eric@almond postgres3a]$ docker run -dti --rm --network my-bridge my/fedora-postgres3a bash
+ffe3b656bba8ee20a69b3e20d66c9a284d801788be060f484a544c08cf859408
+
+[eric@almond postgres3a]$ docker inspect my-bridge 
+        "Containers": {
+            "e55a9cc91ac0637bf7c53d2435d327395d1895a8613d035e2b86b1b48396d90b": {
+                "Name": "eager_pike",
+                "EndpointID": "c2d05e41fc31d8cad9f7068c81f15fa008f2ad7721d7e97c00b19a079e1f1270",
+                "MacAddress": "02:42:ac:12:00:02",
+                "IPv4Address": "172.18.0.2/16",
+                "IPv6Address": ""
+            },
+            "ffe3b656bba8ee20a69b3e20d66c9a284d801788be060f484a544c08cf859408": {
+                "Name": "eager_gates",
+                "EndpointID": "18aedc3c90620f9d38fc0d982582fd922cd1359b81356daf57c407654df0992c",
+                "MacAddress": "02:42:ac:12:00:03",
+                "IPv4Address": "172.18.0.3/16",
+                "IPv6Address": ""
+            }
+        },
+
+/ we zien dat op container name nog steeds fout 	,
+
+[eric@almond postgres3a]$ docker attach eager_pike 
+
+bash-4.3$ ping -c 2 eager_gates
+PING eager_gates.nuts.org (69.172.201.153) 56(84) bytes of data.
+
+--- eager_gates.nuts.org ping statistics ---
+2 packets transmitted, 0 received, 100% packet loss, time 1042ms
+
+bash-4.3$ ping -c 2 172.18.0.3
+PING 172.18.0.3 (172.18.0.3) 56(84) bytes of data.
+64 bytes from 172.18.0.3: icmp_seq=1 ttl=64 time=0.271 ms
+64 bytes from 172.18.0.3: icmp_seq=2 ttl=64 time=0.171 ms
+
+--- 172.18.0.3 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1059ms
+/ ERR	,
+
+
+
+/ 7	 .
+
+/ DOCKER COMPOSE 
+
+/ we hebben al installed,	
+[root@almond ~]# dnf install docker-compose-1.16.1-1.fc26.noarch
+
+/ 13	 .
+
+[eric@almond part2]$ pwd
+/home/eric/Devel/Docker2/getting-started/part2
+
+/ 1313	. 
+
+[eric@almond part2]$ cat Dockerfile 
+
+workdir /app
+/ of	,
+workdir app 		
+
+# Copy the current directory contents into the container at /app
+copy . /app
+/ of	,
+copy . . 	
+
+/ alle 4 de combinaties zijn OK	,
+
+
+/ 7	 
+
+/ DOCKER CONTAINERS
+
+/ 13	. 
+
+[eric@almond part2]$ docker build --rm -t friendlyhello .
+Sending build context to Docker daemon  5.12 kB
+Step 1/6 : FROM python:2.7-slim
+ ---> f2ac6489d817
+Step 2/6 : WORKDIR app
+ ---> Using cache
+ ---> a07acae04510
+Step 3/6 : COPY . .
+ ---> Using cache
+ ---> 2cad98258e03
+Step 4/6 : RUN pip install --trusted-host pypi.python.org -r requirements.txt
+ ---> Using cache
+ ---> 4d5c33be5b99
+Step 5/6 : ENV NAME World
+ ---> Using cache
+ ---> 2ada6827edb6
+Step 6/6 : CMD python app.py
+ ---> Using cache
+ ---> e89a62a73338
+Successfully built e89a62a73338
+
+/ 13	. 
+
+[eric@almond part2]$ docker run -ti -p 4000:80 friendlyhello
+
+/ in chrome	,
+http://localhost:4000/
+
+Hello World!
+Hostname: 456ab9524d09
+Visits: cannot connect to Redis, counter disabled
+
+/ NB  . friendlyhello is de image name , een container heet bijv gifted_hawking  ,
+/ de container id = 3d599545b86e  , en dat is ook $ hostname  ,
+
+[eric@almond java12-study]$ docker container ls -a
+CONTAINER ID        IMAGE                                                                                                       COMMAND             CREATED             STATUS              PORTS                  NAMES
+456ab9524d09        friendlyhello                                                                                               "python app.py"     4 minutes ago       Up 4 minutes        0.0.0.0:4000->80/tcp   sharp_pasteur
+
+
+
+/ 7	.  
+
+/ fout bij rm container	,
+/  containers op fs	,
+
+[eric@almond java12-study]$ docker container ls -a
+CONTAINER ID        IMAGE                                                                                                       COMMAND             CREATED             STATUS              PORTS                  NAMES
+13264fa07f7a        friendlyhello       "python app.py"     About a minute ago   Up About a minute   0.0.0.0:4000->80/tcp   compassionate_kare
+ea2165ed4f97        ericjvandervelden/getting-started@sha256:9c5e788110a723941a9020720d34c47a5f6fb20bfb03a907a283232c57bfd3eb   "python app.py"     3 months ago        Dead                                       foo_web.2.17uhxe3a8dn0vz76xkq8ja6ze
+
+/ we zagen	,
+$ docker rm ea2165ed4f97
+...
+Error response from daemon: Driver devicemapper failed to remove root filesystem ea2165ed4f97a838963ff32cec10bb11aa6f88595ab6154fc09c3b30bb5d487d: failed to remove device b3b8945f98acea24188b99c30e89f05c08cf3a1e0dd6a8a5534d28d6aeb18f20-init:devicemapper: Error running DeleteDevice dm_task_run failed
+
+/ de oplossing was	,
+# systemctl restart docker 
+
+/ 13	 
+
+/ we hebben gedaan	,
+[eric@almond part2]$ docker run -ti -p 4000:80 friendlyhello
+...
+[eric@almond java12-study]$ docker inspect 13264fa07f7a
+        "Image": "sha256:e89a62a73338519555756056c45035bf020be15ce94be7f2ed9f665f04b3f094",
+        "ResolvConfPath": "/var/lib/docker/containers/13264fa07f7a520d5f9d70daba302d609dc494ded95dc96d91baab798f73fa67/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/13264fa07f7a520d5f9d70daba302d609dc494ded95dc96d91baab798f73fa67/hostname",
+        "HostsPath": "/var/lib/docker/containers/13264fa07f7a520d5f9d70daba302d609dc494ded95dc96d91baab798f73fa67/hosts",
+        "GraphDriver": {
+            "Name": "devicemapper",
+            "Data": {
+                "DeviceId": "6079",
+                "DeviceName": "docker-253:1-2504345-d5bfabb3387f417c28698adccd2da8010ddfa10137ee40f6229c7aca51f9edec",
+                "DeviceSize": "107374182400"
+            }
+        },
+
+/ image	,
+[root@almond docker]# find -name "e89a62a73338519555756*" 
+./image/devicemapper/imagedb/content/sha256/e89a62a73338519555756056c45035bf020be15ce94be7f2ed9f665f04b3f094
+./image/devicemapper/imagedb/metadata/sha256/e89a62a73338519555756056c45035bf020be15ce94be7f2ed9f665f04b3f094
+
+/ container	,
+[root@almond docker]# find -name "13264fa07f7a520d5f9d70daba3*" 
+./containers/13264fa07f7a520d5f9d70daba302d609dc494ded95dc96d91baab798f73fa67
+./image/devicemapper/layerdb/mounts/13264fa07f7a520d5f9d70daba302d609dc494ded95dc96d91baab798f73fa67
+
+/ ? 
+[root@almond docker]# find -name "d5bfabb3387f417c28698adccd2da8*" 
+./devicemapper/mnt/d5bfabb3387f417c28698adccd2da8010ddfa10137ee40f6229c7aca51f9edec-init
+./devicemapper/mnt/d5bfabb3387f417c28698adccd2da8010ddfa10137ee40f6229c7aca51f9edec
+./devicemapper/metadata/d5bfabb3387f417c28698adccd2da8010ddfa10137ee40f6229c7aca51f9edec-init
+./devicemapper/metadata/d5bfabb3387f417c28698adccd2da8010ddfa10137ee40f6229c7aca51f9edec
+
+/ wat zit er in de files hierboven?
+
+[root@almond docker]# ls devicemapper/mnt/d5bfabb3387f417c28698adccd2da8010ddfa10137ee40f6229c7aca51f9edec-init
+[root@almond docker]# ls devicemapper/mnt/d5bfabb3387f417c28698adccd2da8010ddfa10137ee40f6229c7aca51f9edec/rootfs/
+app  bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+
+/ dit zijn 2 metadata files	,
+./devicemapper/metadata/d5bfabb3387f417c28698adccd2da8010ddfa10137ee40f6229c7aca51f9edec-init
+./devicemapper/metadata/d5bfabb3387f417c28698adccd2da8010ddfa10137ee40f6229c7aca51f9edec
+
+[root@almond docker]# ls ./containers/13264fa07f7a520d5f9d70daba302d609dc494ded95dc96d91baab798f73fa67/
+checkpoints/      hostconfig.json   hosts             resolv.conf.hash  shm/
+config.v2.json    hostname          resolv.conf       secrets/          
+
+[root@almond docker]# ls ./image/devicemapper/layerdb/mounts/13264fa07f7a520d5f9d70daba302d609dc494ded95dc96d91baab798f73fa67/
+init-id  mount-id  parent
+
+/ na ctrl+c in $ docker run --rm -ti friendlyhello	, is de container Exited	, maar alles van de container op het fs in /var/lib/docker is er nog	,
+/ na $ docker rm 456ab9524d09 is alles van de container op het fs in /var/lib/docker weg	,  
+
+/ 13	. 
+
+[eric@almond java12-study]$ docker inspect foo_web.2.17uhxe3a8dn0vz76xkq8ja6ze
+        "Image": "sha256:ea7a60a6945398aa9841dcbd87e598890fb4c8c5716cce1bf0be428a2a060d1e",
+        "ResolvConfPath": "/var/lib/docker/containers/ea2165ed4f97a838963ff32cec10bb11aa6f88595ab6154fc09c3b30bb5d487d/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/ea2165ed4f97a838963ff32cec10bb11aa6f88595ab6154fc09c3b30bb5d487d/hostname",
+        "HostsPath": "/var/lib/docker/containers/ea2165ed4f97a838963ff32cec10bb11aa6f88595ab6154fc09c3b30bb5d487d/hosts",
+        "GraphDriver": {
+            "Name": "devicemapper",
+            "Data": null
+        },
+
+/ we zagen	,
+$ docker rm ea2165ed4f97
+...
+Error response from daemon: Driver devicemapper failed to remove root filesystem ea2165ed4f97a838963ff32cec10bb11aa6f88595ab6154fc09c3b30bb5d487d: failed to remove device b3b8945f98acea24188b99c30e89f05c08cf3a1e0dd6a8a5534d28d6aeb18f20-init:devicemapper: Error running DeleteDevice dm_task_run failed
+
+/ image	,
+[root@almond docker]# find -name "ea7a60a6945398aa9*" 
+./image/devicemapper/imagedb/content/sha256/ea7a60a6945398aa9841dcbd87e598890fb4c8c5716cce1bf0be428a2a060d1e
+./image/devicemapper/imagedb/metadata/sha256/ea7a60a6945398aa9841dcbd87e598890fb4c8c5716cce1bf0be428a2a060d1e
+
+/ container	,
+[root@almond docker]# find -name "ea2165ed4f97a838963f*" 
+./containers/ea2165ed4f97a838963ff32cec10bb11aa6f88595ab6154fc09c3b30bb5d487d
+./image/devicemapper/layerdb/mounts/ea2165ed4f97a838963ff32cec10bb11aa6f88595ab6154fc09c3b30bb5d487d
+
+[root@almond docker]# find -name "b3b8945f98acea24188b9*" 
+./devicemapper/mnt/b3b8945f98acea24188b99c30e89f05c08cf3a1e0dd6a8a5534d28d6aeb18f20-init
+[root@almond docker]# ls devicemapper/mnt/b3b8945f98acea24188b99c30e89f05c08cf3a1e0dd6a8a5534d28d6aeb18f20-init/
+/ leeg	,
+
+
+
+
+

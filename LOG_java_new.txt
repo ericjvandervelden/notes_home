@@ -1,0 +1,64 @@
+/ lees	,
+https://technology.amis.nl/2018/11/01/running-reactive-spring-boot-on-graalvm-in-docker/
+
+/ lees	,
+https://www.graalvm.org
+
+/ lees	,
+https://micronaut.io/
+
+/ lees	,
+https://www.baeldung.com/micronaut
+/ is alternative voor spring	,
+
+/ lees	,
+https://start.microprofile.io/
+/ kies Thorntail V2
+
+/ lees	,
+https://developers.redhat.com/blog/2018/12/12/writing-better-spring-applications-using-springfu/
+
+/ lees	,
+https://quarkus.io/
+Quarkus tailors your application for GraalVM and HotSpot.
+/ TODO HotSpot	,
+
+/ lees,
+https://developers.redhat.com/blog/2018/11/21/eclipse-microprofile-for-spring-boot-developers/
+
+/ lees	,
+http://www.mastertheboss.com/eclipse/eclipse-microservices/getting-started-with-microprofile-applications
+/ XA ...
+
+/ lees	,
+https://medium.com/swlh/a-practical-guide-for-jwt-authentication-using-nodejs-and-express-d48369e7e6d4
+
+/ 7	 
+
+[eric@almond Eclipse]$ eclipse-java-2019-06-R-linux-gtk-x86_64/eclipse/eclipse
+
+/ we maken een nieuwe ws	, workspace_microprofile in ~/Devel/workspaces/	,
+
+/ we gaan naar,
+start.microprofile.io
+/ en kiezen Thorntail V2 en maken demo.zip	,
+
+[eric@almond misc_codebase]$ pwd
+/home/eric/misc_codebase
+[eric@almond misc_codebase]$ unzip  ~/Downloads/demo.zip 
+/ dit is een mvn project, die we import in eclipse	,
+
+/ 7	. 
+
+/ java 9 modules	,
+
+/ er is geen classpath meer	,
+
+/ lees,
+http://tutorials.jenkov.com/java/modules.html
+
+In Java 9 you can still use the -classpath argument to the Java VM when running an application. On the classpath you can include all your older Java classes, just like you have done before Java 9. All classes found on the classpath will be included in what Java calls the unnamed module.
+
+
+
+
