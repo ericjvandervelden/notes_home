@@ -154,5 +154,10 @@ https://logging.apache.org/log4j/2.0/manual/architecture.html
 / fatal
 / off
 
+/ lees  ,
+https://logging.apache.org/log4j/1.2/manual.html
+https://activemq.apache.org/how-do-i-change-the-logging
+https://www.mkyong.com/tutorials/log4j-tutorial/
+
 
 

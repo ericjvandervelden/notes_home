@@ -215,4 +215,461 @@ pg_dynshmem   pg_notify      pg_stat_tmp   pg_xlog
 
 / Einde Intermezzo
 
+/ 1313	. 
+
+-bash-4.3$ pg_ctl start
+server starting
+-bash-4.3$ LOG:  redirecting log output to logging collector process
+HINT:  Future log output will appear in directory "pg_log".
+
+/ Geef Enter	,
+-bash-4.3$ ps aux -w
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.0 120576  4468 ?        Ss   Jul13   0:00 bash
+root       123  0.0  0.0 199640  4540 ?        S    Jul13   0:00 su - postgres
+postgres   124  0.0  0.0  12556  3760 ?        S    Jul13   0:00 -bash
+postgres   261  0.0  0.1 236976 20072 ?        S    07:06   0:00 /usr/bin/postgres
+postgres   262  0.0  0.0  91960  2560 ?        Ss   07:06   0:00 postgres: logger process  
+postgres   264  0.0  0.0 236976  3456 ?        Ss   07:06   0:00 postgres: checkpointer process  
+postgres   265  0.0  0.0 236976  4660 ?        Ss   07:06   0:00 postgres: writer process  
+postgres   266  0.0  0.0 236976  3520 ?        Ss   07:06   0:00 postgres: wal writer process  
+postgres   267  0.0  0.0 237272  4576 ?        Ss   07:06   0:00 postgres: autovacuum launcher process  
+postgres   268  0.0  0.0  91960  2568 ?        Ss   07:06   0:00 postgres: stats collector process  
+
+-bash-4.3$ psql -c "create role eric with createdb login password 'eric'" 
+CREATE ROLE
+-bash-4.3$ psql<<SQL
+> create database eric
+> SQL
+CREATE DATABASE
+
+/ 1313	. 
+
+-bash-4.3$ pg_ctl stop
+waiting for server to shut down.... done
+server stopped
+-bash-4.3$ ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.0 120576  4468 ?        Ss   Jul13   0:00 bash
+root       123  0.0  0.0 199640  4540 ?        S    Jul13   0:00 su - postgres
+postgres   124  0.0  0.0  12688  3880 ?        S    Jul13   0:00 -bash
+postgres   290  0.0  0.0  42000  3224 ?        R+   07:14   0:00 ps aux
+
+/ 1313	. 
+
+
+/ Intermezzo
+
+-bash-4.3$ less data/pg_hba.conf 
+
+# This file controls: which hosts are allowed to connect, how clients
+# are authenticated, which PostgreSQL user names they can use, which
+# databases they can access.  Records take one of these forms:
+#
+# local      DATABASE  USER  METHOD  [OPTIONS]
+# host       DATABASE  USER  ADDRESS  METHOD  [OPTIONS]
+...
+# The first field is the connection type: "local" is a Unix-domain
+# socket, "host" is either a plain or SSL-encrypted TCP/IP socket,
+# "hostssl" is an SSL-encrypted TCP/IP socket, and "hostnossl" is a
+# plain TCP/IP socket.
+...
+# If you want to allow non-local connections, you need to add more
+# "host" records.  In that case you will also need to make PostgreSQL
+# listen on a non-local interface via the listen_addresses
+# configuration parameter, or via the -i or -h command line switches.
+
+/ Dus als je maakt	,
+host all all 172.17.0.1/24 trust  
+/ dan mogen alle computers in het 172.17.0 netwerk met ons connect, 
+/ maar in postgresql.conf moeten we ook zeggen dat we naar deze machines luisteren	, 
+listen_address='*'
+/ of je use options met postgres
+$ postgres -i -h ...
+  -h HOSTNAME        host name or IP address to listen on
+  -i                 enable TCP/IP connections
+
+/ 13	. 
+
+/ Hoe moeten we dit doen in Dockerfile? Want van te voren weet je niet in welk netwerk de container zit	, dus moeten we? 
+host all all 172.17.0.1/24 trust  
+/ of	,
+host all all 172.18.0.1/24 trust  
+/ TODO
+
+/ Einde Intermezzo
+
+/ 1313	. 
+
+-bash-4.3$ ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.2  netmask 255.255.0.0  broadcast 0.0.0.0
+...
+/ Daarom doen we	,
+-bash-4.3$ echo "host all all 172.17.0.2/24 trust" >>data/pg_hba.conf
+-bash-4.3$ echo "listen_addresses='*'">>data/postgresql.conf
+
+/ 1313	 .
+
+/ Intermezzo
+
+/ lees	,
+https://goinbigdata.com/docker-run-vs-cmd-vs-entrypoint/
+
+Use RUN instructions to build your image by adding layers on top of initial image.
+
+Prefer ENTRYPOINT to CMD when building executable Docker image and you need a command always to be executed. Additionally use CMD if you need to provide extra default arguments that could be overwritten from command line when docker container runs.
+
+Choose CMD if you need to provide a default command and/or arguments that can be overwritten from command line when docker container runs.
+
+/ Einde Intermezzo
+
+/ lees,	
+https://nickjanetakis.com/blog/docker-tip-7-the-difference-between-run-and-cmd
+
+/////////////////////////////////////
+You could say that CMD is a Docker run-time operation, meaning it’s not something that gets executed at build time. It happens when you run an image. A running image is called a container.
+
+RUN lets you execute commands inside of your Docker image. These commands get executed once at build time and get written into your Docker image as a new layer.
+
+For example if you wanted to install a package or create a directory inside of your Docker image then RUN will be what you’ll want to use. For example, RUN mkdir -p /path/to/folder.
+
+CMD lets you define a default command to run when your container starts.
+
+/ lees	,
+https://docs.docker.com/engine/reference/builder/
+The EXPOSE instruction does not actually publish the port. It functions as a type of documentation between the person who builds the image and the person who runs the container, about which ports are intended to be published. To actually publish the port when running the container, use the -p flag on docker run to publish and map one or more ports, or the -P flag to publish all exposed ports and map them to high-order ports.
+
+/ Einde Intermezzo
+
+/ 1313	. 
+
+-bash-4.3$ postgres
+LOG:  redirecting log output to logging collector process
+HINT:  Future log output will appear in directory "pg_log".
+
+/ Nu doet Enter niets	, dit is final command	,
+
+/ Kun je in Dockerfile
+postgres
+/ vervangen door?
+pg_ctl start
+/ TODO
+
+/ we kunnen in de container wel,
+ctrl+c
+C-bash-4.3$ ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.0 120576  4468 ?        Ss   Jul13   0:00 bash
+root       123  0.0  0.0 199640  4540 ?        S    Jul13   0:00 su - postgres
+postgres   124  0.0  0.0  12688  3884 ?        S    Jul13   0:00 -bash
+postgres   374  0.0  0.0  42000  3300 ?        R+   08:21   0:00 ps aux
+
+/ 1313	. 
+
+/ we kunnen 2 dingen doen	,
+
+/ 131313	. 
+
+/ in een andere console,	
+[eric@almond postgres3a]$ docker exec -ti nostalgic_bassi bash
+[root@4913466ed357 /]# 
+
+/ weer in de container	,
+-bash-4.3$ postgres
+LOG:  redirecting log output to logging collector process
+HINT:  Future log output will appear in directory "pg_log".
+
+/ doe nu in de docker exec	,
+[root@4913466ed357 /]# ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.0 120576  4468 ?        Ss   Jul13   0:00 bash
+root       123  0.0  0.0 199640  4540 ?        S    Jul13   0:00 su - postgres
+postgres   124  0.0  0.0  12688  3884 ?        S    Jul13   0:00 -bash
+root       375  0.0  0.0 120552  4200 ?        Ss   09:06   0:00 bash
+postgres   394  0.7  0.1 236976 19828 ?        S+   09:08   0:00 postgres
+postgres   395  0.0  0.0  89840  2664 ?        Ss   09:08   0:00 postgres: logge
+postgres   397  0.0  0.0 236976  3448 ?        Ss   09:08   0:00 postgres: check
+postgres   398  0.0  0.0 236976  3512 ?        Ss   09:08   0:00 postgres: write
+postgres   399  0.0  0.0 236976  3512 ?        Ss   09:08   0:00 postgres: wal w
+postgres   400  0.0  0.0 237408  4552 ?        Ss   09:08   0:00 postgres: autov
+postgres   401  0.0  0.0  91960  2620 ?        Ss   09:08   0:00 postgres: stats
+root       402  0.0  0.0 150008  3684 ?        R+   09:08   0:00 ps aux
+
+/ doe in de container weer ctrl+c	,
+^C-bash-4.3$ 
+
+/ 131313	. 
+
+/ doe in de container	,
+-bash-4.3$ postgres&
+-bash-4.3$ ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.0 120576  4468 ?        Ss   Jul13   0:00 bash
+root       123  0.0  0.0 199640  4540 ?        S    Jul13   0:00 su - postgres
+postgres   124  0.0  0.0  12688  3884 ?        S    Jul13   0:00 -bash
+postgres   403  0.5  0.1 236976 19784 ?        S    09:09   0:00 postgres
+postgres   404  0.0  0.0  89840  2680 ?        Ss   09:09   0:00 postgres: logger process  
+postgres   406  0.0  0.0 236976  3588 ?        Ss   09:09   0:00 postgres: checkpointer process  
+postgres   407  0.0  0.0 236976  3588 ?        Ss   09:09   0:00 postgres: writer process  
+postgres   408  0.0  0.0 236976  3588 ?        Ss   09:09   0:00 postgres: wal writer process  
+postgres   409  0.0  0.0 237408  4664 ?        Ss   09:09   0:00 postgres: autovacuum launcher process  
+postgres   410  0.0  0.0  91960  2700 ?        Ss   09:09   0:00 postgres: stats collector process  
+postgres   411  0.0  0.0  42000  3308 ?        R+   09:09   0:00 ps aux
+
+/ Hoe stop we deze processes?
+
+/ 13131313	 .
+
+-bash-4.3$ pg_ctl stop
+waiting for server to shut down.... done
+server stopped
+/ OK
+
+/ 13131313	.
+
+-bash-4.3$ postgres&
+[1] 414
+-bash-4.3$ LOG:  redirecting log output to logging collector process
+HINT:  Future log output will appear in directory "pg_log".
+
+-bash-4.3$ ps ajx
+ PPID   PID  PGID   SID TTY      TPGID STAT   UID   TIME COMMAND
+    0     1     1     1 ?          422 Ss       0   0:00 bash
+    1   123   123     1 ?          422 S        0   0:00 su - postgres
+  123   124   124     1 ?          422 S       26   0:00 -bash
+  124   414   414     1 ?          422 S       26   0:00 postgres
+  414   415   415   415 ?           -1 Ss      26   0:00 postgres: logger process  
+  414   417   417   417 ?           -1 Ss      26   0:00 postgres: checkpointer process  
+  414   418   418   418 ?           -1 Ss      26   0:00 postgres: writer process  
+  414   419   419   419 ?           -1 Ss      26   0:00 postgres: wal writer process  
+  414   420   420   420 ?           -1 Ss      26   0:00 postgres: autovacuum launcher process  
+  414   421   421   421 ?           -1 Ss      26   0:00 postgres: stats collector process  
+  124   422   422     1 ?          422 R+      26   0:00 ps ajx
+-bash-4.3$ kill -9 414
+/ OK	,
+
+/ 1313	. 
+
+/ nu kunnen we vanaf de host een connectie maken	,
+
+[eric@almond postgres3a]$  psql -h 172.17.0.2
+psql (9.6.8, server 9.5.7)
+ric=> \l
+                             List of databases
+   Name    |  Owner   | Encoding  | Collate | Ctype |   Access privileges   
+-----------+----------+-----------+---------+-------+-----------------------
+ eric      | postgres | SQL_ASCII | C       | C     | 
+...
+/ klopt	,
+
+/ 1313	. 
+
+/ als je wilt	,
+
+-bash-4.3$ vi data/pg_hba.conf 
+-bash-4.3$ pg_ctl reload
+server signaled
+
+/ 1313	. 
+
+/ we hadden de container start	,
+[eric@almond postgres3a]$ docker run -ti --rm my/fedora-locale bash
+/ dan als we hem exit	, stopt de container ook	,
+-bash-4.3$ exit			/ uit su - postgres
+logout
+[root@4913466ed357 /]# exit		/ uit de container,
+exit
+[eric@almond postgres3a]$ 		/ weer op de host	,
+
+/ 7	. 
+
+/ kunnen we in de Dockerfile 
+cmd postgres
+/ vervangen door?
+cmd pg_ctl start
+
+/ 13	. 
+
+/ we kunnen ipv	,
+cmd postgres
+/ ook	,
+cmd ["postgres"]
+entrypoint ["postgres"]
+
+/ er moet een spatie tussen cmd en [, dus	, 
+entrypoint["postgres"]
+/ ERR
+
+$ vi Dockerfile
+...
+run initdb;\
+echo "host all all 172.17.0.1/24 trust"  >>$PGDATA/pg_hba.conf;\
+...
+entrypoint ["postgres"]
+
+[eric@almond postgres3a]$ docker build --rm -t my/fedora-postgres3a .
+
+/ in andere console	,
+[eric@almond postgres3a]$ docker run -ti --rm my/fedora-postgres3a 
+LOG:  redirecting log output to logging collector process
+HINT:  Future log output will appear in directory "pg_log".
+/ Enter doet niets, we kunnen alleen ctrl+c
+
+eric@almond postgres3a]$  docker container ls
+CONTAINER ID        IMAGE                  COMMAND             CREATED             STATUS              PORTS               NAMES
+9f5e1436a895        my/fedora-postgres3a   "postgres"          48 seconds ago      Up 46 seconds       5432/tcp            jolly_davinci
+
+[eric@almond postgres3a]$ docker inspect jolly_davinci 
+            "Networks": {
+                "bridge": {
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.2",
+
+/ in ifconfig op de host zien we alleen de gateway	, dus we moeten docker inspect	,
+
+/ in 1ste console	,
+[eric@almond postgres3a]$ psql -h 172.17.0.2
+/ OK
+
+/ 13	. 
+
+/ Bij docker build worden de run methods called	,
+
+/ Als we in Dockerfile iets veranderen wat nog niet eerder was, bijv	,
+run initdb;\
+pg_ctl -w start;\
+...
+echo "host all all 172.19.0.1/24 trust"  >>$PGDATA/pg_hba.conf;\
+
+/ dan zien we bij docker build dat de run methods worden gedaan	,
+
+[eric@almond postgres3a]$ docker build --rm -t my/fedora-postgres3a .
+...
+Step 7/10 : ENV PGDATA /var/lib/pgsql/data
+ ---> Using cache
+ ---> 0fb64d12f1ca
+Step 8/10 : RUN initdb;pg_ctl -w start;psql -c "create role eric with createdb login password 'eric'";psql -c "create role foo with createdb login password 'foo'";psql -Ueric postgres -c "create database eric";psql -Ufoo postgres -c "create database foo";pg_ctl stop;echo "host all all 172.19.0.1/24 trust"  >>$PGDATA/pg_hba.conf;echo "listen_addresses='*'" >>$PGDATA/postgresql.conf
+ ---> Running in 512747b69395
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.UTF-8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/pgsql/data ... ok
+creating subdirectories ... ok
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting dynamic shared memory implementation ... posix
+creating configuration files ... ok
+creating template1 database in /var/lib/pgsql/data/base/1 ... ok
+initializing pg_authid ... ok
+initializing dependencies ... ok
+creating system views ... ok
+loading system objects' descriptions ... ok
+creating collations ... ok
+creating conversions ... ok
+creating dictionaries ... ok
+setting privileges on built-in objects ... ok
+creating information schema ... ok
+loading PL/pgSQL server-side language ... ok
+vacuuming database template1 ... ok
+copying template1 to template0 ... ok
+copying template1 to postgres ... ok
+syncing data to disk ... ok
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/pgsql/data -l logfile start
+
+
+WARNING: enabling "trust" authentication for local connections
+You can change this by editing pg_hba.conf or using the option -A, or
+--auth-local and --auth-host, the next time you run initdb.
+waiting for server to start....LOG:  redirecting log output to logging collector process
+HINT:  Future log output will appear in directory "pg_log".
+ done
+server started
+CREATE ROLE
+CREATE ROLE
+CREATE DATABASE
+CREATE DATABASE
+waiting for server to shut down.... done
+server stopped
+ ---> ce8fc47d6a1e
+Removing intermediate container 512747b69395
+Step 9/10 : EXPOSE 5432
+ ---> Running in f52c38d56aac
+ ---> 9c245aac214c
+Removing intermediate container f52c38d56aac
+Step 10/10 : ENTRYPOINT postgres
+ ---> Running in f663cf28706d
+ ---> 44f9801f9850
+Removing intermediate container f663cf28706d
+Successfully built 44f9801f9850
+
+/ Toch zien we ook	,
+Step 10/10 : ENTRYPOINT postgres
+ ---> Running in f663cf28706d
+ ---> 44f9801f9850
+/ TODO
+
+/ 7	. 
+
+/ welke ip& mag in pg_hba.conf staan?
+
+/ 13	. 
+
+$ vi Dockerfile
+run initdb;\
+...
+echo "host all all 172.18.0.1/8 trust"  >>$PGDATA/pg_hba.conf;\
+
+/ we doen het expres fout	, want het ip& zal 172.17.0.2 zijn	, maar door /8 gaat het toch goed	,
+
+[eric@almond postgres3a]$ docker build --rm -t my/fedora-postgres3a .
+/ in andere console	,
+[eric@almond postgres3a]$ docker run -ti --rm my/fedora-postgres3a
+...
+[eric@almond postgres3a]$ docker container ls
+[eric@almond postgres3a]$ docker inspect sleepy_golick 
+                    "IPAddress": "172.17.0.2",
+[eric@almond postgres3a]$ psql -h 172.17.0.2
+/ OK	,
+
+/ 13	. 
+
+/ Maar deze zijn ook goed	,
+run initdb;\
+...
+echo "host all all 172.18.0.1/0 trust"  >>$PGDATA/pg_hba.conf;\
+/ of	,
+echo "host all all 0.0.0.0/0 trust"  >>$PGDATA/pg_hba.conf;\
+
+/ 13	. 
+
+/ Inderdaad, hoeft NIET	, 
+expose 5432 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

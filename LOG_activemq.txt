@@ -6,6 +6,11 @@
 -rw-rw-r--. 1 eric eric    49392344 Mar 18 21:02  apache-artemis-2.6.4-bin.tar.gz
 -rw-rw-r--. 1 eric eric      221907 Mar 18 21:03  AMQinA-src.zip
 
+[eric@almond misc_codebase]$ pwd
+/home/eric/misc_codebase
+[eric@almond misc_codebase]$ ls
+amq-in-action-example-src  camelinaction-master  demo
+
 [eric@almond amq-in-action-example-src]$ mkdir ch2
 [eric@almond amq-in-action-example-src]$ cp chapter8/pom.xml ch2
 [eric@almond amq-in-action-example-src]$ vi ch2/pom.xml 
@@ -97,6 +102,12 @@ Loading message broker from: xbean:activemq.xml
  INFO | Connector openwire started
  INFO | Apache ActiveMQ 5.15.8 (localhost, ID:almond.nuts.org-35165-1552941789948-0:1) started
  INFO | For help or more information please see: http://activemq.apache.org
+
+/ we zien dus,	
+INFO | Listening for connections at: tcp://almond.nuts.org:61616?maximumConnections=1000&wireFormat.maxFrameSize=104857600
+ INFO | ActiveMQ WebConsole available at http://0.0.0.0:8161/
+
+
 
 [eric@almond jobs]$ cat activemq.xml 
 <beans

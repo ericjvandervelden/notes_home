@@ -481,6 +481,18 @@ In [7936]: Iext=np.c_[np.ones(101),I]
 In [7939]: v=expit(Iext.dot(theta))
 In [7968]: plt.plot(I,v)
 
+x=iris['data'][:,[3]]
+X=np.c_[np.ones((len(x),1)),x]
+
+plt.figure()
+plt.plot(x[(y==0).ravel()],y[(y==0).ravel()],'gs')
+plt.plot(x[(y==1).ravel()],y[(y==1).ravel()],'b^')
+
+i=np.linspace(min(x.ravel()),max(x.ravel()),101)
+I=np.c_[np.ones(101),i]
+v=expit(I.dot(theta))
+plt.plot(i,v)
+
 / 13	. 
 
 [eric@almond my]$ pwd
@@ -534,6 +546,11 @@ seaborn.set()
 
 / we moeten, in ipython hoeft dat NIET	,
 plt.show()
+
+/ 13	. 
+
+/ print 2 features	,
+
 
 
 

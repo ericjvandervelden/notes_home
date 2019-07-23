@@ -242,3 +242,74 @@ world hello
 
 / kijk	,
 https://www.youtube.com/watch?v=SzgRMrrbTnM	 / concurrency	,
+
+/ 7	. 
+
+/ we hebben een nieuwe dir gemaakt	,
+[eric@almond work5]$ pwd
+/home/eric/Devel/Golang/work5
+
+[eric@almond work5]$ cd src/github.com/golang/
+[eric@almond golang]$ git clone https://github.com/golang/example.git
+[eric@almond golang]$ cd ../../../
+/ dus we hebben	,
+[eric@almond work5]$ ls src/github.com/golang/example/
+appengine-hello  gotypes  hello  LICENSE  outyet  README.md  stringutil  template
+
+[eric@almond work5]$ less src/github.com/golang/example/hello/hello.go 
+import (
+        "fmt"
+
+        "github.com/golang/example/stringutil"
+)
+/ we hebben inderdaad in src/ github.com/golang/ en dan pas example/	,
+
+/ als hij stringutil niet kan vinden (we hadden de huidige dir structuur nog niet) zien we	,
+[eric@almond work5]$  go install example/hello
+src/example/hello/hello.go:22:2: cannot find package "github.com/golang/example/stringutil" in any of:
+	/usr/lib/golang/src/github.com/golang/example/stringutil (from $GOROOT)
+	/home/eric/Devel/Golang/work5/src/github.com/golang/example/stringutil (from $GOPATH)
+
+/ Geef niet src/ mee in path	, 
+$ go install github.com/golang/example/hello/
+
+/ na $ go install zien we	,
+
+[eric@almond work5]$ find bin
+bin
+bin/hello
+[eric@almond work5]$ find pkg
+pkg
+pkg/linux_amd64
+pkg/linux_amd64/github.com
+pkg/linux_amd64/github.com/golang
+pkg/linux_amd64/github.com/golang/example
+pkg/linux_amd64/github.com/golang/example/stringutil.a
+
+[eric@almond work5]$ bin/hello 
+Hello, Go examples!
+
+/ 7	. 
+
+/ in work6	, we halen github.com/golang uit het pad	, en we passen hello.go aan	,
+
+[eric@almond work6]$ ls src/
+example
+[eric@almond work6]$ cat src/example/hello/hello.go 
+import (
+	"fmt"
+
+	"example/stringutil"
+)
+
+/ Geef niet src/ mee in path 
+[eric@almond work6]$ go install example/hello
+
+
+
+
+/ lees	,
+https://golang.org/doc/code.html
+
+
+
