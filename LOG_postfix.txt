@@ -1,0 +1,51 @@
+/ google,
+fedora configure postfix
+/ lees,
+https://docs.fedoraproject.org/en-US/Fedora/12/html/Deployment_Guide/s3-email-mta-postfix-conf.html
+
+/ google,
+/ lees,
+https://www.ziggo.nl/klantenservice/internet/e-mail/serverinstellingen
+
+Inkomende serverinstellingen
+
+server: imap.ziggo.nl
+serverpoort: 993
+type versleuteling: TLS/SSL
+verificatie vereist: ja
+gebruikersnaam: volledig e-mailadres
+wachtwoord: je e-mailwachtwoord
+Uitgaande serverinstellingen
+
+server: smtp.ziggo.nl
+serverpoort: 587
+type versleuteling: STARTTLS, TLS of SSL
+verificatie vereist: ja
+gebruikersnaam: volledig e-mailadres
+wachtwoord: je e-mailwachtwoord
+
+Wat is mijn Ziggo e-mailadres?
+Log hier in op Mijn Ziggo. Kies voor Producten en klik vervolgens op het tabblad Internet voor een overzicht van je e-mailadressen.
+->
+/ we komen op,
+https://www.ziggo.nl/mijn-ziggo/producten/#internet
+/ en we zien	,
+eric.j.v@upcmail.nlWachtwoord beheren
+j.velden11@upcmail.nlWachtwoord beheren
+ericvandervelden@upcmail.nlWachtwoord beheren
+ericj.vandervelden@upcmail.nlWachtwoord beheren
+eric.v@upcmail.nlWachtwoord beheren
+
+/ we hebben een nieuw email adres aangemaakt	,
+ericjvandervelden@ziggo.nl
+VldWalnoot27&
+
+/ we hebben Mijn Ziggo ook : VldWalnoot27&	,
+
+/ we hebben ook	, 
+j.velden11@upcmail.nl
+VldWalnoot27&
+
+
+
+

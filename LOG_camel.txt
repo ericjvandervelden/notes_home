@@ -826,8 +826,11 @@ log4j.appender.console.threshold=INFO
 
 / 13	. 
 
+////////////////////////////////////////////////////
 / use Thread.sleep(3000)	, 
 / Thread.sleep(1000) is te weinig	,
+
+/ inlog in amq is admin, admin
 
 / 13	. 
 
@@ -865,6 +868,452 @@ csvOrders 2														2										0
 [Camel in Action, 4995, 1]
 [Activemq in Action, 4495, 2]
 
-/ je start met csv, vandaar dat je unmarshal doet, dus je krijgt een List van 2	,
+/ je start met csv, vandaar dat je unmarshal doet, dus je krijgt een List van List<String>	; een row is een List<String> en we hebben meerdere rows, dus dat is ook een List	,
+
+/ 13	. 
+
+/ proj. chapter3-order
+
+/ voor 
+public class PurchaseOrderCSVFromFileToJms {
+				from("file:data/inbox?noop=true&fileName=order.csv")
+				.unmarshal().csv().split(body())
+				.to("jms:queue:csvOrders");
+
+/ hebben we geen PurchaseOrder class nodig: werkt met een csv file	,
+
+/ maar voor PurchaseOrderJaxbTest hebben we wel een PurchaseOrder class nodig (annotated met jaxb annotaties), want nu werken we met java objecten ipv een csv file!
+
+/ 13	. 
+
+/ jaxb
+
+/ lees,
+https://camel.apache.org/producertemplate.html
+
+/ proj chapter3-order
+
+/ de PurchageOrder type is verplaatst naar src/main/java	,
+
+$ vi PurchaseOrderJaxbToJms.java
+
+public class PurchaseOrderJaxbToJms {
+	public static void main(String[] args) throws Exception{
+		CamelContext context = new DefaultCamelContext();
+		ConnectionFactory factory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+		context.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(factory));
+		context.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("direct:order")
+				.marshal().jaxb()
+				.to("jms:queue:jaxbOrders");
+			}
+		});    
+		
+		PurchaseOrder order=new PurchaseOrder();
+    order.setAmount(5);
+    order.setName("foo");
+    order.setPrice(3.14159);
+
+    ProducerTemplate template=context.createProducerTemplate();
+
+		context.start();
+		// na context.start() anders zijn er geen consumers:
+    template.sendBody("direct:order", order);
+		Thread.sleep(3000);
+		context.stop();
+	}
+}
+
+/ let op:
+		context.start();
+		// na context.start() anders zijn er geen consumers:
+    template.sendBody("direct:order", order);
+
+/ we zien in amq	,
+name, 		number of pending messages, messages unqueued	, messages queued
+jaxbOrders 1														1										0
+/ klik op jaxbOrders	,
+
+Message ID  	Correlation ID  	Persistence  	Priority  	Redelivered  	Reply To  	Timestamp  	Type  	Operations  
+ID:almond.nuts.org-43643-1563959136019-1:1:1:1:1	 ...
+/ klik op deze,	
+
+Message Details
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<purchaseOrder name="foo" price="3.14159" amount="5.0"/>
+
+/ 13	. 
+
+/ bindy	,
+
+/ we maken in src/main/java ook een package camelinaction.bindy	, en verplaatsten PurchaseOrder daarheen	,
+/ als je het project chapter3-order clean, dan ziet eclipse pas dat er in src/main/java/camelinaction.bindy en in src/test/java/camelinaction.bindy PurchaseOrder staat	,
+
+package camelinaction.bindy;
+@CsvRecord(separator = ",", crlf = "UNIX")
+public class PurchaseOrder {
+...
+
+$ vi PurchaseOrderBindyToJms.java
+
+package camelinaction.bindy
+public class PurchaseOrderBindyToJms {
+	public static void main(String[] args) throws Exception{
+		CamelContext context = new DefaultCamelContext();
+		ConnectionFactory factory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+		context.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(factory));
+		context.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("direct:order")
+				.marshal().bindy(BindyType.Csv, "camelinaction.bindy")
+				.to("jms:queue:bindyOrders");
+			}
+		});    
+		
+		PurchaseOrder order=new PurchaseOrder();
+	  order.setAmount(5);
+	  order.setName("foo");
+	  order.setPrice(new BigDecimal("3.14"));
+
+	  ProducerTemplate template=context.createProducerTemplate();
+		
+		context.start();
+		// na context.start() anders zijn er geen consumers:
+	  template.sendBody("direct:order", order); 
+		Thread.sleep(3000);
+		context.stop();
+	}
+}
+
+/ we zien in amq	,
+
+Name 	Number Of Pending Messages  	Number Of Consumers  	Messages Enqueued  	Messages Dequeued
+bindyOrders	1	0	1	0
+/ klik bindyOrders	,
+
+/ we zien	,
+Message ID  	Correlation ID  	Persistence  	Priority  	Redelivered  	Reply To  	Timestamp  	Type  	Operations  
+ID:almond.nuts.org-34483-1563962607987-1:1:1:1:1		Persistent	4	false		2019-07-24 12:03:28:175 CEST		Delete
+View Consumers
+/ klik ID:almond.nuts.org-34483-1563962607987-1:1:1:1:1 
+
+/ we zien	,
+Message Details
+foo,3.14,5
+
+/ 13	. 
+
+/ proj. chapter3-order
+
+public class PurchaseOrderJSONTest extends CamelTestSupport {
+
+    @Test
+    public void testJSON() throws Exception {
+        String out = template.requestBody("http://localhost:8080/order/service?id=123", null, String.class);
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("jetty://http://0.0.0.0:8080/order/service")
+                    .beanRef("orderService", "lookup")
+                    .marshal().json(JsonLibrary.Jackson);
+            }
+
+
+/ Waarom wordt deze jetty (simulatie door camel) used? Tot nu toe we marshal/unmarshal en je stuurde het antwoord naar jms	, 
+
+/ nu willen we het antwoord zelf hebben: String out=template.requestBody(...)	, 
+/ we sturen een leeg req mee: template.requestBody(...,null,...)	,
+
+/ we deden altijd template.sendBody	,
+/ template.requestBody is ook een .send	, zou .sendRequest heten als deze zou bestaan	, je send het request (als is die null bij ons)	,
+/ daarom komt hij toch aan bij from("jetty://http://0.0.0.0:8080/order/service")	, deze zoekt de bean "orderService op in de registry	, en invokes lookup()	, dan marshal als json	, en sends als response	, en dat String out=...
+
+/ 13	. 
+
+/ lees	,
+https://camel.apache.org/data-format.html
+
+/ we doen altijd unmarshal().csv() of marshal().jaxb()
+/////////////////////////////////////////////////////////////////////
+/ .csv() en .jaxb() zijn dataformats	,
+
+/ we zien ze in XML configs ook in het boek (83)	,
+
+<camelContext ...>
+	<dataFormats>
+		<json ...>
+
+/ we maken	,
+		DataFormat format=new JaxbDataFormat("camelinaction");
+/ we moeten in src/main/resources
+	camelinaction
+		jaxb.index
+
+$ vi jaxb.index
+PurchaseOrder
+
+/ we doen dus ipv .marshal().jaxb(): marshal(format) in	,
+
+$ vi PurchaseOrderJaxbToJms2.java
+
+public class PurchaseOrderJaxbToJms2 {
+	public static void main(String[] args) throws Exception{
+		CamelContext context = new DefaultCamelContext();
+		ConnectionFactory factory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+		context.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(factory));
+		DataFormat format=new JaxbDataFormat("camelinaction");			<-
+		context.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("direct:order")
+				.marshal(format)																				<-
+				.to("jms:queue:jaxbOrders");
+			}
+		});    
+
+/  we zien in amq,
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<purchaseOrder name="bar" price="3.14159" amount="5.0"/>
+
+/ 1313	. 
+
+/ we krijgen ERR als we new JaxbDataFormat() doen	,
+Caused by: java.io.IOException: org.apache.camel.InvalidPayloadException: No body available of type: javax.xml.bind.JAXBElement but has value: camelinaction.PurchaseOrder@18d87d80 of type: camelinaction.PurchaseOrder on: Message: <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<purchaseOrder name="bar" price="3.14159" amount="5.0"/>
+. Exchange[Message: <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<purchaseOrder name="bar" price="3.14159" amount="5.0"/>
+]
+/ TODO
+
+/ 13	. 
+
+/ eigen dataformat	,
+
+/ we move ReverseDataFormat van src/test/java naar src/main/java	,
+
+/ we maken eigen ReverseDataFormatToSelf.java	,
+
+/ we gebruiken template.requestBody weer, dat een .sendBody doet , nl een req	, en dus in een from terecht komt	, maar nu komt er een resp terug	,
+
+/ Intermezzo
+
+class DefaultProducerTemplate{
+    public Object requestBody(String endpoint, Object body) throws CamelExecutionException {
+        return sendBody(endpoint, ExchangePattern.InOut, body);
+    }
+/ we zien InOut	,
+
+/ Einde Intermezzo
+
+
+/ 1313	. 
+
+/ we kunnen een template.requestBody("direct:marshal") niet aanlaten sluiten op:
+				from("direct:marshal")
+				.marshal(format)
+				.to("jms:queue:log");
+/ want dan zien we:
+org.apache.camel.ExchangeTimedOutException: The OUT message was not received within: 20000 millis due reply message with correlationID: Camel-ID-almond-nuts-org-45053-1563982038815-0-3 not received on destination: temp-queue://ID:almond.nuts.org-40495-1563982039945-1:1:1. Exchange[Message: !skcor lemaC]
+	at org.apache.camel.component.jms.reply.ReplyManagerSupport.processReply(ReplyManagerSupport.java:152)
+	at org.apache.camel.component.jms.reply.TemporaryQueueReplyHandler.onTimeout(TemporaryQueueReplyHandler.java:61)
+	at org.apache.camel.component.jms.reply.CorrelationTimeoutMap.onEviction(CorrelationTimeoutMap.java:54)
+	at org.apache.camel.component.jms.reply.CorrelationTimeoutMap.onEviction(CorrelationTimeoutMap.java:30)
+	at org.apache.camel.support.DefaultTimeoutMap.purge(DefaultTimeoutMap.java:230)
+	at org.apache.camel.support.DefaultTimeoutMap.run(DefaultTimeoutMap.java:180)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+
+/ template.requestBody verwacht een antwoord en dat geeft jms niet	,
+
+/ 1313. 
+
+/ daarom	,
+
+public class ReverseDataFormatToLog {
+	private static final Logger logger=LoggerFactory.getLogger(ReverseDataFormat.class);
+	
+	public static void main(String[] args) throws Exception{
+		CamelContext context = new DefaultCamelContext();
+		DataFormat format=new ReverseDataFormat();
+		context.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("direct:marshal")
+				.marshal(format)
+				.to("log:marshal");
+			}
+		});    
+		context.addRoutes(new RouteBuilder() {	
+			@Override
+			public void configure() throws Exception {
+				from("direct:unmarshal")
+				.marshal(format)
+				.to("log:unmarshal");
+			}
+		});
+
+	    ProducerTemplate template=context.createProducerTemplate();
+		
+		context.start();
+		// na context.start() anders zijn er geen consumers:
+	    String res=template.requestBody("direct:marshal","Camel rocks!",String.class); 
+	    logger.info("res: "+res);
+	    String finalRes=template.requestBody("direct:unmarshal",res,String.class); 
+	    logger.info("finalRes: "+finalRes);
+	    logger.info("equals: "+"Camel rocks!".equals(finalRes));
+		Thread.sleep(3000);
+		context.stop();
+	}
+
+/ we zien in de console log van eclipse	,
+
+DEBUG DirectProducer       - Starting producer: Producer[direct://marshal]
+DEBUG ProducerCache        - Adding to producer cache with key: Endpoint[direct://marshal] for producer: Producer[direct://marshal]
+DEBUG ProducerCache        - >>>> Endpoint[direct://marshal] Exchange[Message: Camel rocks!]
+DEBUG SendProcessor        - >>>> Endpoint[log://marshal] Exchange[Message: !skcor lemaC]
+INFO  marshal            * - Exchange[ExchangePattern: InOut, BodyType: byte[], Body: !skcor lemaC]
+INFO  ReverseDataFormat  ! - res: !skcor lemaC
+DEBUG DirectProducer       - Starting producer: Producer[direct://unmarshal]
+DEBUG ProducerCache        - Adding to producer cache with key: Endpoint[direct://unmarshal] for producer: Producer[direct://unmarshal]
+DEBUG ProducerCache        - >>>> Endpoint[direct://unmarshal] Exchange[Message: !skcor lemaC]
+DEBUG SendProcessor        - >>>> Endpoint[log://unmarshal] Exchange[Message: Camel rocks!]
+INFO  unmarshal          * - Exchange[ExchangePattern: InOut, BodyType: byte[], Body: Camel rocks!]
+INFO  ReverseDataFormat  ! - finalRes: Camel rocks!
+INFO  ReverseDataFormat    - equals: true
+
+/ de regels met * zijn wh .to(log:marshal) en .to(log:unmarshal)
+/ de regels met ! zijn onze eigen log regels	,
+
+/ Waarom?
+INFO  marshal              - Exchange[ExchangePattern: InOut, BodyType: byte[], Body: !skcor lemaC]
+/ WH is .marshal InOut	, en doet .log log de Out van .marshal	, maar de Out van .marshal gaat ook gewoon naar de client	,
+/ bij .to achter .marshal gaat de Out van .marshal naar de In van .to	, en gaat de Out van .marshal niet naar de client	(maar naar .to)	, 
+
+/ 131313	. 
+
+/ we doen	,
+		context.addRoutes(new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("direct:marshal")
+				.marshal(format);
+//				.to("log:marshal");
+			}
+		});    
+		context.addRoutes(new RouteBuilder() {	
+			@Override
+			public void configure() throws Exception {
+				from("direct:unmarshal")
+				.marshal(format);
+//				.to("log:unmarshal");
+
+/ Alles gaat nog OK	, we missen WH alleen de 2 log regels	,
+
+DEBUG ProducerCache        - >>>> Endpoint[direct://marshal] Exchange[Message: Camel rocks!]
+INFO  ReverseDataFormat  ! - res: !skcor lemaC
+DEBUG DirectProducer       - Starting producer: Producer[direct://unmarshal]
+DEBUG ProducerCache        - Adding to producer cache with key: Endpoint[direct://unmarshal] for producer: Producer[direct://unmarshal]
+DEBUG ProducerCache        - >>>> Endpoint[direct://unmarshal] Exchange[Message: !skcor lemaC]
+INFO  ReverseDataFormat  ! - finalRes: Camel rocks!
+INFO  ReverseDataFormat    - equals: true
+
+/ de regels met ! zijn onze eigen log regels	,
+
+/ 131313	. 
+
+/ wat docs	,
+
+/ 13131313	. 
+
+/ google
+camel log inout
+/ lees	,
+https://stackoverflow.com/questions/22099945/camel-inout-log-both-in-and-out
+
+yeah the log only logs the IN, as there is not OUT as the log does not change/set an OUT message. – Claus Ibsen Feb 28 '14 at 16:45
+
+If you add the log at the end of the route, then what the log output in IN is what is returned to the client.
+
+Its the pipes and filters principle http://camel.apache.org/pipes-and-filters.html
+/ TODO
+
+/ 13131313	 
+
+/ google,
+camel marshal inout
+/ lees,
+https://stackoverflow.com/questions/5456807/apache-camel-inout-routes-out-exchange-marshaling-unmarshaling-with-jaxb
+from("jms:doCommand").unmarshal(jaxbDataFormat).beanRef("bean").marshal(jaxbDataFormat);
+/ lees,	
+https://access.redhat.com/documentation/en-us/red_hat_jboss_fuse/6.2/html/apache_camel_development_guide/restservices-binding
+
+
+/ 13131313	. 
+
+/ google,	
+camel log exchange pattern
+/ lees	,
+https://camel.apache.org/exchange-pattern.html
+->
+https://camel.apache.org/request-reply.html
+
+/ 7	. 
+
+/ type converters	,
+
+/ proj. chapter3-converter
+
+/ we zien 
+$ less /home/eric/misc_codebase/camelinaction-master/chapter3/converter/src/main/resources/META-INF/services/org/apache/camel/TypeConverter
+
+camelinaction
+
+$ less /home/eric/misc_codebase/camelinaction-master/chapter3/converter/src/main/java/camelinaction/PurchaseOrderConverter.java
+
+@Converter
+public final class PurchaseOrderConverter {
+    @Converter
+    public static PurchaseOrder toPurchaseOrder(byte[] data, Exchange exchange) {
+			... 
+
+/ 13	. 
+
+/ ook in Camel zelf zijn er TypeConverter files en converters	,
+
+[eric@almond Camel]$ cd ~/git_codebase/
+[eric@almond git_codebase]$ git clone https://github.com/apache/camel.git
+
+[eric@almond camel]$ find -name TypeConverter
+./core/camel-core/src/test/resources/META-INF/services/org/apache/camel/TypeConverter
+./components/camel-test-blueprint/src/test/resources/META-INF/services/org/apache/camel/TypeConverter
+./tests/camel-typeconverterscan-test/src/test/resources/META-INF/services/org/apache/camel/TypeConverter
+./tests/camel-partial-classpath-test/src/test/resources/META-INF/services/org/apache/camel/TypeConverter
+
+[eric@almond camel]$ cat  ./core/camel-core/src/test/resources/META-INF/services/org/apache/camel/TypeConverter
+org.apache.camel.converter.myconverter
+/ TODO
+
+/ Er zijn veel @Converter classes	,
+
+[eric@almond camel]$ find -name "*.java" | xargs grep @Converter
+./core/camel-jaxp/src/main/java/org/apache/camel/converter/jaxp/XmlConverter.java:    @Converter
+./core/camel-base/src/main/java/org/apache/camel/converter/ObjectConverter.java:    @Converter
+./components/camel-cxf/src/main/java/org/apache/camel/component/cxf/converter/CxfConverter.java:    @Converter
+./components/camel-hl7/src/main/java/org/apache/camel/component/hl7/HL724Converter.java:    @Converter
+./components/camel-mail/src/main/java/org/apache/camel/component/mail/MailConverters.java:    @Converter
+./components/camel-activemq/src/main/java/org/apache/camel/component/activemq/converter/ActiveMQMessageConverter.java:    @Conver
+
+ 
 
 / Einde CAMEL TEST FRAMEWORK

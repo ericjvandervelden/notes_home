@@ -1,0 +1,52 @@
+/ 7	. 
+
+/ we wilden een output van git status door awk of sed laten , om zo de filenames achter elkaar te krijgen, 
+
+/ 13	. 
+
+/ use
+$ echo "
+/ en zet de copied stdout er direct achter de " en copy aan het eind niet de newline	mee	,
+
+$ git status
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	.LOG_conda.txt.swp
+	.LOG_geron2.txt.swp
+	.LOG_java_ssl.txt.swp
+	.LOG_postgresql2.txt.swp
+	LOG_java8.txt.bak
+
+$ echo "  .LOG_conda.txt.swp
+  .LOG_geron2.txt.swp
+  .LOG_java_ssl.txt.swp
+  .LOG_postgresql2.txt.swp
+  LOG_java8.txt.bak" | awk ...
+
+/ 13	. 
+
+/ om OFS te veranderen moeten we $1=$1 doen	,
+
+/ lees,
+https://stackoverflow.com/questions/20844666/setting-the-output-field-separator-in-awk
+
+[eric@almond tmp]$ cat swp.txt 
+.LOG_conda.txt.swp
+.LOG_geron2.txt.swp
+.LOG_java_ssl.txt.swp
+.LOG_postgresql2.txt.swp
+LOG_java8.txt.bak
+
+/ we moeten $1=$1 doen	, anders werkt het niet	,
+[eric@almond tmp]$ awk  'BEGIN{FS="_";OFS=";"}{$1=$1;print $0}' swp.txt 
+.LOG;conda.txt.swp
+.LOG;geron2.txt.swp
+.LOG;java;ssl.txt.swp
+.LOG;postgresql2.txt.swp
+LOG;java8.txt.bak
+
+/ 13	. 
+
+/ lees,
+https://stackoverflow.com/questions/47216786/use-of-nf-in-awk-command
