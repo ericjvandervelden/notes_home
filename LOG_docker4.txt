@@ -1,7 +1,9 @@
 / See DOCKER NETWORK 
 / See DOCKER COMPOSE 
+/ See DOCKER LOCATION
 
 / DOCKER NETWORK 
+
 
 / 7		.
 
@@ -353,6 +355,142 @@ Error response from daemon: Driver devicemapper failed to remove root filesystem
 [root@almond docker]# ls devicemapper/mnt/b3b8945f98acea24188b99c30e89f05c08cf3a1e0dd6a8a5534d28d6aeb18f20-init/
 / leeg	,
 
+/ 	7 
+
+/ google	,
+fedora docker change location /var/lib/docker
+/ lees	,
+https://forums.docker.com/t/how-do-i-change-the-docker-image-installation-directory/1169
+https://linuxconfig.org/how-to-move-docker-s-default-var-lib-docker-to-another-directory-on-ubuntu-debian-linux
+
+
+/ 7	 
+
+/ how much space do the images take?
+
+[eric@almond part3]$ docker image ls | awk '{n+=$(NF-1)}END{print n}' 
+26505.4
+/ that is MB	,
+
+/ de laatsten zijn,
+maven                                            3.2-jdk-7-onbuild   66e629e8f34e        4 years ago         594 MB
+training/postgres                                latest              6fa973bb3c26        5 years ago         365 MB
+
+/ 13	. 
+
+[eric@almond part3]$ docker rmi 6fa973bb3c26
+Untagged: training/postgres:latest
+Deleted: sha256:6fa973bb3c26975c81e1517842a2645205ba513dedc5190e4515f2ae77bd1add
+Deleted: sha256:6bb5b8675b9c767f76136430f26a5375bf99eccb316df323258287fce88ce35d
+Deleted: sha256:3dd7f3145ea96bc475bfdaa9622a129b0148dada82630ca922767136ceea7075
+Deleted: sha256:133fbe01d0f35ad7e6a8e28918c293d9755f31bfa20f466b20218383a5b497af
+Deleted: sha256:3b8e747c9abde6f7d7c63ac2f1f860102203fe163730640fedf91021bd2e5045
+Deleted: sha256:34f7dfe93b37d70522702ad4249e0c4543ebb6ed7805a0d52f7e567c233f9faa
+Deleted: sha256:2547b72ab20b01db88b5cc226df44947f90ca52c1f87ecd81e0b297acdd8bd64
+Deleted: sha256:762659db0e88620be57bb4e426f80cf670df935226764da72dad1005bf4bd352
+Deleted: sha256:eb94483ebe519700c2a6abbb63c3f532ad811f7aa7ed8a7ced03caebacf13415
+Deleted: sha256:95c8201c99066e7eee6d605f1cf1b5971472d664124c3c39798fe3d854bba23f
+Deleted: sha256:b0c2d97e0a4530fadfe9349e1cf5b1a2d50546506a535b815b80f65ec470d810
+Deleted: sha256:011a3c5b7a7e9b0f8f66465f9b13fb3aecdc3555d288b83e18a4643a37a6bc3e
+Deleted: sha256:02b020a52826d9ff10ba3646cf55b36b4818cf53029e32456d3409d1285b8e85
+Deleted: sha256:ee5def3918d29e9d40d91f85d9912a4df2405703083a0a4ea15c80457166e07f
+Deleted: sha256:b65857b2991b7e284a8bdd07e56f6f5cd907dd7fc907b0e94efe08ce0ed97e5a
+Deleted: sha256:f2038692277fa753adb1f94e4bc10d5a183e8edd71426faae8332cad7c1f6e04
+Deleted: sha256:16caee1f24bb34a142bd03222ca7b24ef59d235271bda16df92f0ccd79780f53
+Deleted: sha256:4a68c36b008e7e4455e5eff55db162cbe662056fc9ee37b0770037b68489b70f
+Deleted: sha256:a367d6a62984e53d3f2c6f03fbb5479e2801854d58d6540e7314b5e0be806996
+Deleted: sha256:6c96c76dfcecbc1d705c75778492ba9ac223fc85321fc3827a5cb6e0cd52d7ce
+Deleted: sha256:5827e3408ef9bec2d8b1916d8728f93fc18b82cb5abf98ebc4279d9243d1f6c6
+Deleted: sha256:005f7dc2f252f597a07317d02c59190c89905e474c5bac1f4884bf23fcbb1db3
+Deleted: sha256:700e3f43cac3c0a3604957d22c9a8625e0e3e436cfa0f091c99333b236eefd1f
+Deleted: sha256:14678841a80f279910221e10386de5343f04750ca7e81fabbece9f9c08b550f6
+Deleted: sha256:716bbf2a76b6842ee2879dd68f71620b1fc74e53b1d3dac0cfb705ee8cea0fdc
+Deleted: sha256:e0c3c7e7d910acab318e4ffd82963f3fbea2f191e290f04bc300b33589f6296b
+Deleted: sha256:2935444c7f23efd91dd0c2b6f1bd642552b03b47a5ebdb154212f7141c083f40
+
+[eric@almond part3]$ docker image ls | awk '{n+=$(NF-1)}END{print n}' 
+26140.4
+/ klopt	, 365MB er af	,
+
+/ 13	. 
+
+[root@almond docker]# find -name "66e6*" 
+./image/devicemapper/imagedb/content/sha256/66e629e8f34e8e8b1c3b9627980a94e83cc6f28985bffeb7bb3e473a436e9886
+/ hoe kun je zien welke ... er allemaal vanaf hangen, die dan ook deleted worden?
+
+[eric@almond part3]$ docker image inspect 66e629e8f34e
+...
+       "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+                "sha256:dc7818f0ad09983722a2dbfc1e5044b2df367b8a5ee359a1a252b57fdf73bd5f",
+                "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+                "sha256:d3e19c04de2cef953df4b64f147787d001540aa3122f859112d4f6be01153143",
+                "sha256:c5bfde1f74995ca6b8cdc0251eb7720b5a216060dc28d04d509e8bd5a05b5e97",
+                "sha256:ea744fd9d88674f1088c9a82507e5a39214c95c8c20d737f75706129c54ace65",
+                "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+                "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+                "sha256:f1cfecf0dc70a55df7ce8705a5c97e2d55cf2d86a991911adba8e171720aafcb",
+                "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+                "sha256:c8709654989086cabcba23313cd4af67ed27be63eaa9ef7dfd1f18c918441eb7",
+                "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+                "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+                "sha256:256e8214af6e68113819a23680f1ac199709593fb7c4182f21699dbdd9d62e8c",
+                "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+                "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+                "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef"
+            ]
+
+/ we zoeken op	, 
+[root@almond docker]# find -name "5f70bf18a086*" 
+./image/devicemapper/distribution/v2metadata-by-diffid/sha256/5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef
+./image/devicemapper/layerdb/sha256/5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef
+[root@almond docker]# find -name "f1cfecf0dc70*" 
+./image/devicemapper/distribution/v2metadata-by-diffid/sha256/f1cfecf0dc70a55df7ce8705a5c97e2d55cf2d86a991911adba8e171720aafcb
+
+///////////////////////////////////////////////////////////////
+[eric@almond part3]$ docker rmi 66e629e8f34e
+Error response from daemon: conflict: unable to delete 66e629e8f34e (cannot be forced) - image has dependent child images
+
+/ 13	. 
+
+[eric@almond part3]$ docker rmi 6fae60ef3446
+Untagged: training/webapp:latest
+Deleted: sha256:6fae60ef344644649a39240b94d73b8ba9c67f898ede85cf8e947a887b3e6557
+Deleted: sha256:875bde2b9e2d99e7c1362993645a474fe621475c6fc1b1623c9ed5312b7bdeae
+Deleted: sha256:efcef8076f3bd41ff3e77871759aced2634c1fe0d4ea8584ff4c3272690cd5dd
+Deleted: sha256:bbdb5ee3757ef8f2633694016df5840fc3410422b37c22f98c0300e295ce75cc
+Deleted: sha256:3fd2f2dc41693b0f56ad011f775a5b00e8c14b6035f5ebc00d5973dc1e22e0bc
+Deleted: sha256:d718446240e3f48a904ad4bbf2a1f61737c5d70df35b8210d674a9517cdc9803
+Deleted: sha256:99e4602542e9f58c1c15d44ef152308ad7fdf814721d9a20b20e891b30d4c311
+Deleted: sha256:a890440f4933412f9aafb056eb2f07f2276ed756631a81e960d4a8a6de5857a3
+Deleted: sha256:532f6e94cf4516e8cd08f9b7ebbaff7e7ad7213ee55159ed8c92088f272fb864
+Deleted: sha256:68a74799a9e67953725058ef21a530f100025088943446aa60c73fba7beebd47
+Deleted: sha256:22527fe016cb4e8aa14a88168c312ad893f361fcaf29e7de7ac81602b3a251bd
+Deleted: sha256:b23e4b6b440d0e9ab4ffd7852fbf81edd6d5eb606e24d4950d83502e14af2856
+Deleted: sha256:6e773e2e184c95df1e9cb8e4a2849d0dcb07ce9cd50159abe930bbcd5ad9c32f
+Deleted: sha256:f115b0453c71fb4d21fdb6f579201984bd5033ae28ed5908978576a19282418b
+Deleted: sha256:ad14f28a611d6905ebc22cbe2425e4cd753525618f051d011352f9b9873f2aad
+Deleted: sha256:b0da82df3229cd06a2992449f2310caaa42f09fdfb088f4a98c5ea587ea85c7e
+Deleted: sha256:ff02ebf1a559b889e763eaa50bc1ea92447b51d43e90b2a83da881cab79f3e66
+Deleted: sha256:f6f162dad6e64715d3d07e21d4574733860a557f2f89228d07909c1f6f04e882
+Deleted: sha256:b77d6a00f04933dada38bab2629c8d39877c4e1de792dcc0956a73961f9366c0
+Deleted: sha256:088f9eb16f16713e449903f7edb4016084de8234d73a45b1882cf29b1f753a5a
+Deleted: sha256:753bd8d045a1717861ef78b0accc4ab71bd5771c4d28f4d72428a1358e7aa8a5
+Deleted: sha256:799115b9fdd1511e8af8a8a3c8b450d81aa842bbf3c9f88e9126d264b232c598
+Deleted: sha256:3b0f09e547d533ae7c5aee678d1a4974c8a3b8f1f0243f5598435605662136c9
+Deleted: sha256:3549adbf614379d5c33ef0c5c6486a0d3f577ba3341f573be91b4ba1d8c60ce4
+Deleted: sha256:50d40eac64f30a13bb9139062a69edf83beb23c11f4b098cc9be7ed001a823b3
+Deleted: sha256:1154ba695078d29ea6c4e1adb55c463959cd77509adf09710e2315827d66271a
+
+
+
+
+
+
+
+/ Einde DOCKER LOCATION
 
 
 

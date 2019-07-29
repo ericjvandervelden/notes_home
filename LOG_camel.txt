@@ -1314,6 +1314,55 @@ org.apache.camel.converter.myconverter
 ./components/camel-mail/src/main/java/org/apache/camel/component/mail/MailConverters.java:    @Converter
 ./components/camel-activemq/src/main/java/org/apache/camel/component/activemq/converter/ActiveMQMessageConverter.java:    @Conver
 
+/ 7	. 
+
+/ boek (117)
+
+/ proj. chapter4-bean
+
+/ we hebben de files,
+src/main/java
+camelinaction.XmlOrderService.java
+src/test/java
+camelinaction.XmlOrderTest.java
+xmlOrder.xml
+
+$ vi camelinaction.XmlOrderTest.java
+
+public class XmlOrderTest extends CamelSpringTestSupport {
+...
+/ de xml,
+        // prepare a XML document from a String which is converted to a DOM
+        String body = "<order customerId=\"4444\"><item>Camel in action</item></order>";
+        Document xml = context.getTypeConverter().convertTo(Document.class, body);
+
+/ startpunt	,	
+        // store the order as a file which is picked up by the route
+        template.sendBodyAndHeader("file://target/order", xml, Exchange.FILE_NAME, "order.xml");
+
+$ vi xmlOrder.xml
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="file://target/order"/>		/ dan komt hierin	,
+            <to uri="log:before"/>
+            <bean ref="xmlOrderService"/>	/ dan komt hierin	,
+            <to uri="log:after"/>
+            <to uri="mock:queue:order"/>
+        </route>
+    </camelContext>
+
+$ vi camelinaction.XmlOrderService.java
+public class XmlOrderService { 																/ dus komen we hier	,
+    public Document handleIncomingOrder(@Body Document xml,
+                                        @XPath("/order/@customerId") int customerId,
+                                        @Bean(ref = "guid", method = "generate") int orderId) {
+
+
+
+
+
+
+
  
 
 / Einde CAMEL TEST FRAMEWORK

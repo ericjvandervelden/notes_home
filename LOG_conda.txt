@@ -48,6 +48,53 @@ https://conda.io/projects/conda/en/latest/index.html
 ->
 https://conda.io/projects/conda/en/latest/user-guide/index.html
 
+/ 7	.  
+
+/ lees,
+https://conda.io/projects/conda/en/latest/user-guide/overview.html
+
+/ 7	. 
+
+https://conda.io/projects/conda/en/latest/user-guide/concepts/index.html
+
+/ 7	. 
+
+/ lees,
+https://conda.io/projects/conda/en/latest/user-guide/concepts/packages.html
+
+[eric@almond my]$  ls /home/eric/miniconda3/pkgs/
+/ hier zien we allemaal tar.bz2 files	, maar ook al uitgepakt	,
+...
+numpy-1.14.5-py36hcd700cb_1
+numpy-1.14.5-py36hcd700cb_1.tar.bz2
+numpy-base-1.14.5-py36hdbf6ddf_1
+numpy-base-1.14.5-py36hdbf6ddf_1.tar.bz2
+...
+
+/ numpy heeft alleen een info/	,
+[eric@almond my]$  ls /home/eric/miniconda3/pkgs/numpy-1.14.5-py36hcd700cb_1
+info
+[eric@almond my]$  ls /home/eric/miniconda3/pkgs/numpy-1.14.5-py36hcd700cb_1/info/
+about.json  git              index.json   paths.json  repodata_record.json
+files       hash_input.json  LICENSE.txt  recipe      test
+
+/ expat heeft een info/, maar ook een bin/	, en een lib/
+[eric@almond my]$ ls /home/eric/miniconda3/pkgs/expat-2.2.5-he0dffb1_0
+bin  include  info  lib  share
+
+
+/ Intermezzo
+
+/ een dir wordt gevonden met find	,
+
+[eric@almond my]$ find /tmp/sbu -name foo
+/tmp/sbu/foo
+[eric@almond my]$ find /tmp/sbu -name foo | xargs file
+/tmp/sbu/foo: directory
+
+/ Einde Intermezzo
+
+
 / 7	. 
 
 / lees	,
@@ -64,7 +111,7 @@ files       hash_input.json  index.json  recipe
   "arch": "x86_64",
   "build": "py36hdbf6ddf_1",
   "build_number": 1,
-  "depends": [
+  "depends": [											<-
     "blas 1.0 mkl",
     "libgcc-ng >=7.2.0",
     "libgfortran-ng >=7,<8.0a0",
@@ -127,35 +174,201 @@ files       hash_input.json  index.json  recipe
     },
 		...
 
+/ 7	. 
+
+/ lees	,
+https://conda.io/projects/conda/en/latest/user-guide/concepts/channels.html
+
+/ ga naar	,
+https://repo.anaconda.com/pkgs/
+/ see,
+Anaconda (pkgs/main channel)
+/ klik Linux x86_64 (64-bit) main/linux-64 (major support) 
+https://repo.anaconda.com/pkgs/main/linux-64/
+...
+repodata.json	16.1 MB	2019-07-26 10:00:40 +0000	815815f26b368f600f4265370744c301a6b9158a21bf167cc9edbee9c05c5065	38329090094f170a5cae020af7f51c61
+repodata.json.bz2	2.0 MB	2019-07-26 10:00:44 +0000	ade0ab0b74417fc1725a4de194c9958517a9a4a2dded9e1104edfdaf413b5e1a
+...
 
 / 7	. 
 
-/ lees Tasks, Managing environments, Viewing a list of the packages in an environment
+https://conda.io/projects/conda/en/latest/user-guide/concepts/environments.html
 
-[eric@almond scikit-learn]$  conda env list
-/ of	,
-[eric@almond scikit-learn]$ conda info --envs
+Conda environments
+
+/ ze hebben het over	,
+[eric@almond my]$  ls ~/miniconda3/ -a
+.                doc      libexec      plugins    translations
+..               envs     LICENSE.txt  qml        var
+bin              etc      mkspecs      resources  x86_64-conda_cos6-linux-gnu
+compiler_compat  include  phrasebooks  share
+conda-meta       lib      pkgs         ssl
+
+/ we zien bin/, include/, lib/, share/ , 
+
+/ 7	 .
+
+/ lees	,
+https://conda.io/projects/conda/en/latest/user-guide/concepts/installing-with-conda.html
+
+/ 7	. 
+
+/ lees,
+https://conda.io/projects/conda/en/latest/user-guide/concepts/data-science.html
+
+/ google,
+intel mkl tensorflow
+https://software.intel.com/en-us/articles/intel-optimization-for-tensorflow-installation-guide
+
+/ 7	. 
+
+
+/ lees, 
+$ vi LOG_VanderPlas.txt
+
+/ we hebben ooit	,
+[eric@almond vanderplas]$ bash ~/Downloads/Miniconda3-latest-Linux-x86_64.sh 
+
+/ lees,
+https://conda.io/projects/conda/en/latest/user-guide/getting-started.html
+
+[eric@almond my]$ conda -V
+/=
+[eric@almond my]$ conda --version
+conda 4.5.9
+
+/ TODOS
+
+$ conda update conda
+$ conda create --name snowflakes biopython
+$ conda activate snowflakes
+
+Now that you are in your snowflakes environment, any conda commands you type will go to that environment until you deactivate it.
+
+/ Einde TODOS
+
+[eric@almond my]$ conda info --envs
+/=
+[eric@almond my]$ conda env list 
 # conda environments:
 #
 base                  *  /home/eric/miniconda3
 
-[eric@almond scikit-learn]$ conda list -n base
-# packages in environment at /home/eric/miniconda3:
-#
-# Name                    Version                   Build  Channel
-asn1crypto                0.24.0                   py36_0  
-backcall                  0.1.0                    py36_0  
-blas                      1.0                         mkl  
-bleach                    2.1.3                    py36_0  
-ca-certificates           2018.03.07                    0  
-cairo                     1.14.12              h8948797_3  
-certifi                   2018.4.16                py36_0  
-cffi                      1.11.5           py36h9745a5d_0  
-chardet                   3.0.4            py36h0f667ec_1  
-conda                     4.5.9                    py36_0  
-conda-env                 2.6.0                h36134e3_1  
-cryptography              2.2.2            py36h14c3975_0  
-...
+/ * betekent active	,
+
+$ conda activate
+/ back to default (base)
+
+/ we hebben in ~/Documents/conda-cheatsheet.pdf	,
+
+/ 7	. 
+
+/ lees,
+https://conda.io/projects/conda/en/latest/user-guide/troubleshooting.html
+
+/ youtube
+conda
+/ kijk	,
+https://www.youtube.com/watch?v=23aQdrS58e0&t=1034s
+
+$ conda env list
+
+# create env	, 
+$ conda create --name ai37 python=3.7 
+	source activate ai37
+	source deactivate
+# installs laatste python 3.7: 3.7.1
+
+$ conda env list
+# activate deze evn	,
+$ source activate ai37
+
+# show package list in active env	,
+$ conda list													
+
+# create nog een env	,
+$ conda create --name da35 python=3.5	
+# installs laatste python 3.5: 3.5.6	,
+
+# list van envs	,
+$ conda env list
+
+$ source activate
+# list van packages in active env	,
+$ conda list
+# install numpy in active env	,
+$ conda install numpy
+
+/ ga naar andere env	,
+$ source activate ai37
+
+# niet in default channel	,
+$ conda  install pytorch
+
+/ 13	. 
+
+$ conda config --show channels
+channels:
+  - defaults
+
+# -c = channel	,
+$ conda install -c pytorch pytorch
+
+# one time thing, 
+# beter: add de channel aan conda, zodat we hem vaker kunnen use	,
+# toch gaan we dit NIET doen	,
+$ conda config --add channels pytorch
+$ conda install pytorch
+
+/ maar we doen	,
+$ conda config --add channels conda-forge
+$ conda config --show channels
+default
+conda-config
+$ conda activate da35
+$ conda install ablog  
+
+# channels zijn oo van envs:
+# terug naar base env	, 
+# TODO of ga je terug naar vorige env?
+$ conda deactivate
+$ conda config --show channels
+default
+conda-config
+
+# als een pkg wordt gevonden in conda-config, dan pakt hij dit, ook al is er een hogere versie van het pkg in defaults	,
+$ conda config --get channels
+defaults # lowest prio
+conda-config # highest prio
+
+/ 7	 
+
+/ lees,
+https://conda.io/projects/conda/en/latest/user-guide/getting-started.html
+
+Create a new environment and install a package in it.
+$ conda create --name snowflakes biopython
+
+$ conda activate snowflakes
+$ conda info --envs
+
+Change your current environment back to the default (base): 
+$ conda activate
+
+Managing python	
+When you create a new environment, conda installs the same Python version you used when you downloaded and installed Anaconda. If you want to use a different version of Python, for example Python 3.5, simply create a new environment and specify the version of Python that you want.
+
+conda create --name snakes python=3.5
+conda activate snakes
+
+# is a pkg available on Anaconda repo?
+conda search beautifulsoup4
+
+/ 7	. 
+
+/ lees	,
+https://conda.io/projects/conda/en/latest/user-guide/configuration/index.html
+
 
 
 

@@ -50,3 +50,10 @@ LOG;java8.txt.bak
 
 / lees,
 https://stackoverflow.com/questions/47216786/use-of-nf-in-awk-command
+
+/ 13	. 
+
+[eric@almond part3]$ docker image ls  | awk "{print $1}"
+/=
+[eric@almond part3]$ docker image ls  | awk {print\ \$1}
+

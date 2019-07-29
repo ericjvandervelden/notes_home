@@ -1,0 +1,7 @@
+/ 7	. 
+
+/ google
+fedora install kvm
+/ lees	,
+https://computingforgeeks.com/how-to-install-kvm-on-fedora/
+https://docs.fedoraproject.org/en-US/quick-docs/getting-started-with-virtualization/

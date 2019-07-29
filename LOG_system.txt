@@ -20141,3 +20141,58 @@ chrome
 https://www.google.com/chrome/
 
 / Einde CHROME
+
+/ FEDORA
+
+[root@almond docker]# find /var/ -maxdepth 1 | xargs -I % bash -c "echo %;du -hs %"
+/var/
+/var/cache
+12G	/var/cache
+33G	/var/
+/var/lib
+19G	/var/lib
+/var/log
+2.2G	/var/log
+
+[root@almond docker]# find /var/cache -maxdepth 1 | xargs -I % bash -c "echo %;du -hs %"
+/var/cache
+12G	/var/cache
+/var/cache/PackageKit
+11G	/var/cache/PackageKit
+
+/ google,
+fedora /var/cache
+/ lees	,
+https://unix.stackexchange.com/questions/265755/fedora-23-can-i-safely-delete-files-in-var-cache-packagekit-metadata-updates
+
+[root@almond docker]# find /var/lib -maxdepth 1 | xargs -I % bash -c "echo %;du -hs %"
+/var/lib
+19G	/var/lib
+/var/lib/docker
+19G	/var/lib/docker
+
+[root@almond docker]# find /var/lib/docker/ -maxdepth 1 | xargs -I % bash -c "echo %;du -hs %"
+/var/lib/docker/
+19G	/var/lib/docker/
+/var/lib/docker/devicemapper
+19G	/var/lib/docker/devicemapper
+
+[root@almond docker]# find /var/lib/docker/devicemapper/ -maxdepth 1 | xargs -I % bash -c "echo %;du -hs %"
+/var/lib/docker/devicemapper/
+19G	/var/lib/docker/devicemapper/
+/var/lib/docker/devicemapper/devicemapper
+19G	/var/lib/docker/devicemapper/devicemapper
+
+[root@almond docker]# find /var/lib/docker/devicemapper/devicemapper/ -maxdepth 1 | xargs -I % bash -c "echo %;du -hs %"
+/var/lib/docker/devicemapper/devicemapper/
+19G	/var/lib/docker/devicemapper/devicemapper/
+/var/lib/docker/devicemapper/devicemapper/data
+19G	/var/lib/docker/devicemapper/devicemapper/data
+
+[root@almond docker]# ls -lh /var/lib/docker/devicemapper/devicemapper/data
+-rw-------. 1 root root 100G Jul 27 18:58 /var/lib/docker/devicemapper/devicemapper/data
+/ TODO
+
+/ 
+
+/ Einde FEDORA
