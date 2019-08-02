@@ -1,0 +1,18 @@
+/	7	.  
+
+/ lees over CI/CD/CD	,
+https://stackify.com/continuous-delivery-vs-continuous-deployment-vs-continuous-integration/
+
+/ 7	. 
+
+/ google,
+jenkins x gce
+
+/ lees	,
+https://jenkins-x.io/getting-started/jenkins-x-gke-install-with-bot/
+
+/ google,
+kubernetes gce
+/ lees	,
+https://cloud.google.com/kubernetes-engine/docs/quickstart
+
