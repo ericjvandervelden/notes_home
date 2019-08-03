@@ -450,6 +450,8 @@ Deleted: sha256:2935444c7f23efd91dd0c2b6f1bd642552b03b47a5ebdb154212f7141c083f40
 ./image/devicemapper/distribution/v2metadata-by-diffid/sha256/f1cfecf0dc70a55df7ce8705a5c97e2d55cf2d86a991911adba8e171720aafcb
 
 ///////////////////////////////////////////////////////////////
+[eric@almond part3]$ docker image ls
+maven                                            3.2-jdk-7-onbuild   66e629e8f34e        4 years ago         594 MB
 [eric@almond part3]$ docker rmi 66e629e8f34e
 Error response from daemon: conflict: unable to delete 66e629e8f34e (cannot be forced) - image has dependent child images
 
@@ -484,13 +486,419 @@ Deleted: sha256:3549adbf614379d5c33ef0c5c6486a0d3f577ba3341f573be91b4ba1d8c60ce4
 Deleted: sha256:50d40eac64f30a13bb9139062a69edf83beb23c11f4b098cc9be7ed001a823b3
 Deleted: sha256:1154ba695078d29ea6c4e1adb55c463959cd77509adf09710e2315827d66271a
 
+/ 13	. 
+
+[eric@almond part3]$ docker image ls 
+hello-world                                      latest              690ed74de00f        3 years ago         960 B
+
+
+[root@almond docker]# find -name "690ed74de00f99a7d00a9*" 
+./image/devicemapper/imagedb/content/sha256/690ed74de00f99a7d00a98a5ad855ac4febd66412be132438f9b8dbd300a937d
+./image/devicemapper/imagedb/metadata/sha256/690ed74de00f99a7d00a98a5ad855ac4febd66412be132438f9b8dbd300a937d
+
+[root@almond docker]# cat ./image/devicemapper/imagedb/content/sha256/690ed74de00f99a7d00a98a5ad855ac4febd66412be132438f9b8dbd300a937d
+{"architecture":"amd64","config":{"Hostname":"5428b43b1a3e","Domainname":"","User":"","AttachStdin":false,"AttachStdout":false,"AttachStderr":false,"Tty":false,"OpenStdin":false,"StdinOnce":false,"Env":null,"Cmd":["/hello"],"Image":"3f12c794407e68e515ba7f473a744e748ac8a827a2ea8b33855dec564238b2e5","Volumes":null,"WorkingDir":"","Entrypoint":null,"OnBuild":null,"Labels":null},"container":"ea6a0578b48631dd3f3b70d7ea48e73ac0b0891433fad177872e74c35d82f56d","container_config":{"Hostname":"5428b43b1a3e","Domainname":"","User":"","AttachStdin":false,"AttachStdout":false,"AttachStderr":false,"Tty":false,"OpenStdin":false,"StdinOnce":false,"Env":null,"Cmd":["/bin/sh","-c","#(nop) CMD [\"/hello\"]"],"Image":"3f12c794407e68e515ba7f473a744e748ac8a827a2ea8b33855dec564238b2e5","Volumes":null,"WorkingDir":"","Entrypoint":null,"OnBuild":null,"Labels":null},"created":"2015-10-13T23:47:48.954129267Z","docker_version":"1.8.2","history":[{"created":"2015-10-13T23:47:48.522046233Z","created_by":"/bin/sh -c #(nop) COPY file:1ad52e3eaf4327c8f846c76dfc7424152b2347bf7bed5959932fa309d7496afc in /"},{"created":"2015-10-13T23:47:48.954129267Z","created_by":"/bin/sh -c #(nop) CMD [\"/hello\"]"}],"os":"linux","rootfs":{"type":"layers","diff_ids":["sha256:b652ec3a27e758f30de4742156b5d096bb19c82f2dc836e96e430323ba166ffe","sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef"]}}
+
+[root@almond docker]# cat ./image/devicemapper/imagedb/metadata/sha256/690ed74de00f99a7d00a98a5ad855ac4febd66412be132438f9b8dbd300a937d/parent
+sha256:a3e5b6fb3fcedcdc1f7dfca29c7a23d1a1b8714cd75d1c021cc9c296bef0a6d1
+
+[root@almond docker]# find -name "a3e5b6fb3fcedcdc1f7dfca29c7*"
+./image/devicemapper/imagedb/content/sha256/a3e5b6fb3fcedcdc1f7dfca29c7a23d1a1b8714cd75d1c021cc9c296bef0a6d1
+/ deze heeft WH geen parent	,
+
+[root@almond docker]# cat ./image/devicemapper/imagedb/content/sha256/a3e5b6fb3fcedcdc1f7dfca29c7a23d1a1b8714cd75d1c021cc9c296bef0a6d1
+{"architecture":"amd64","config":{"Hostname":"5428b43b1a3e","Domainname":"","User":"","AttachStdin":false,"AttachStdout":false,"AttachStderr":false,"Tty":false,"OpenStdin":false,"StdinOnce":false,"Env":null,"Cmd":null,"Image":"","Volumes":null,"WorkingDir":"","Entrypoint":null,"OnBuild":null,"Labels":null},"container":"5428b43b1a3ef166dd7447c7f4fd39168a12525458fc6320f3cc95bab9a7fe53","container_config":{"Hostname":"5428b43b1a3e","Domainname":"","User":"","AttachStdin":false,"AttachStdout":false,"AttachStderr":false,"Tty":false,"OpenStdin":false,"StdinOnce":false,"Env":null,"Cmd":["/bin/sh","-c","#(nop) COPY file:1ad52e3eaf4327c8f846c76dfc7424152b2347bf7bed5959932fa309d7496afc in /"],"Image":"","Volumes":null,"WorkingDir":"","Entrypoint":null,"OnBuild":null,"Labels":null},"created":"2015-10-13T23:47:48.522046233Z","docker_version":"1.8.2","history":[{"created":"2015-10-13T23:47:48.522046233Z","created_by":"/bin/sh -c #(nop) COPY file:1ad52e3eaf4327c8f846c76dfc7424152b2347bf7bed5959932fa309d7496afc in /"}],"os":"linux","rootfs":{"type":"layers","diff_ids":["sha256:b652ec3a27e758f30de4742156b5d096bb19c82f2dc836e96e430323ba166ffe"]}}
 
 
 
-
-
+[eric@almond part3]$ docker image inspect hello-world 
 
 / Einde DOCKER LOCATION
+
+
+/ HOW IMAGES ARE BUILD LAYERS
+
+/ 7	 . 
+
+/ bij $ docker build is --rm=true de default	,
+/ je kunt --rm=false doen	,
+
+/ 7	. 
+
+[eric@almond study]$ docker build --rm=false -t my/fedora-study .
+Sending build context to Docker daemon 2.048 kB
+Step 1/2 : FROM fedora
+ ---> f9873d530588
+Step 2/2 : RUN echo π
+ ---> Running in 1c5815a6b044
+π
+ ---> 4448147d1495
+Successfully built 4448147d1495
+
+[eric@almond study]$ docker image inspect my/fedora-study
+[
+    {
+        "Id": "sha256:4448147d14951b006087823de95050f94574bc406097cb364e45844d35a53702",
+...
+        "Parent": "sha256:f9873d530588316311ac1d3d15e95487b947f5d8b560e72bdd6eb73a7831b2c4",
+...
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3",
+                "sha256:ee888e79577b34f820d9c857959b1765329f8662e95b517eb36b411cbe101c16"
+            ]
+        }
+
+/ layer ee88... zien we niet op het fs	, 
+/ maar als we image rm, zien we dat 6c99... rm, en nog een	, die wel zien op fs	, ba94... hieronder	, 
+
+[root@almond docker]# find -name "4448147d14951b006087*"
+./image/devicemapper/imagedb/content/sha256/4448147d14951b006087823de95050f94574bc406097cb364e45844d35a53702
+./image/devicemapper/imagedb/metadata/sha256/4448147d14951b006087823de95050f94574bc406097cb364e45844d35a53702
+
+[root@almond docker]# find -name "f9873d530588316311ac1d*"
+./image/devicemapper/imagedb/content/sha256/f9873d530588316311ac1d3d15e95487b947f5d8b560e72bdd6eb73a7831b2c4
+
+[root@almond docker]# find -name "6c992a0e818a94b78f7a3a271983ffb*"
+./image/devicemapper/distribution/v2metadata-by-diffid/sha256/6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3
+./image/devicemapper/layerdb/sha256/6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3
+
+[root@almond docker]# find -name "ee888e79577b34f820d9c857*"
+/ vinden we niet	,
+
+[root@almond docker]# ls -ltr image/devicemapper/layerdb/sha256/
+drwx------. 2 root root 4096 Aug  3 17:09 6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3
+drwx------. 2 root root 4096 Aug  3 17:23 ba94601ded861da4d872ae82322fc2331b4a23aea167d33adb2fecb1843fa8c8
+
+[root@almond docker]# ls -ltr image/devicemapper/distribution/v2metadata-by-diffid/sha256/ | grep 6c99
+-rw-r--r--. 1 root root 132 Jul 23  2016 6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3
+/ TODO
+[root@almond docker]# cat image/devicemapper/distribution/v2metadata-by-diffid/sha256/6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3 
+[{"Digest":"sha256:7c91a140e7a1025c3bc3aace4c80c0d9933ac4ee24b8630a6b0b5d8b9ce6b9d4","SourceRepository":"docker.io/library/fedora"}]
+
+
+[eric@almond study]$ docker image rm my/fedora-study
+Untagged: my/fedora-study:latest
+Deleted: sha256:4448147d14951b006087823de95050f94574bc406097cb364e45844d35a53702
+Deleted: sha256:ba94601ded861da4d872ae82322fc2331b4a23aea167d33adb2fecb1843fa8c8
+/ De laatste layer zagen we inderdaad in image/devicemapper/layerdb/sha256/	,
+
+
+/ 7	. 
+
+/ we doen opnieuw	,
+
+[eric@almond study]$ docker build  -t my/fedora-study .
+Sending build context to Docker daemon 2.048 kB
+Step 1/2 : FROM fedora
+ ---> f9873d530588
+Step 2/2 : RUN echo π
+ ---> Running in cae1e57ab875
+π
+ ---> 9b277257d413
+Removing intermediate container cae1e57ab875
+Successfully built 9b277257d413
+
+[eric@almond study]$ docker image inspect my/fedora-study
+[
+    {
+        "Id": "sha256:9b277257d413edc8cb2035c8e98d54863b20f9acf26ece691761c6cb5553d8d5",
+        "Parent": "sha256:f9873d530588316311ac1d3d15e95487b947f5d8b560e72bdd6eb73a7831b2c4",
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3",
+                "sha256:6137dc778b1aead17e9ad409837d3b03900046fbe1a8b8a3c65fb45b07c6ecd5"
+            ]
+        }
+
+/ images 9b27... en f987... vind je in devicemapper/imagedb 
+/ layers 6c99... en "6137..." vind je in devicemapper/layerdb
+
+/ 13	. 
+
+/ layers	,
+
+/  layer 6137 vinden we niet op het fs, maar dit in de diff file in layer e6a9..., die met layer 6c99... tegelijk is create	,
+/ TODO
+
+[root@almond sha256]# pwd
+/var/lib/docker/image/devicemapper/layerdb/sha256
+[root@almond sha256]# ls -ltr
+drwx------. 2 root root 4096 Aug  3 17:09 6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3
+drwx------. 2 root root 4096 Aug  3 17:45 e6a9ce5ca9c01d5b0aa1f30f02ffc164d1848cc2aa90563ed0772ef1d31efe56
+
+/ 1313	. 
+
+[root@almond sha256]# cd e6a9ce5ca9c01d5b0aa1f30f02ffc164d1848cc2aa90563ed0772ef1d31efe56/
+
+[root@almond e6a9ce5ca9c01d5b0aa1f30f02ffc164d1848cc2aa90563ed0772ef1d31efe56]# ls
+cache-id  diff  parent  size  tar-split.json.gz
+
+[root@almond e6a9ce5ca9c01d5b0aa1f30f02ffc164d1848cc2aa90563ed0772ef1d31efe56]# cat diff 
+sha256:6137dc778b1aead17e9ad409837d3b03900046fbe1a8b8a3c65fb45b07c6ecd5
+/ Deze zien we in $ docker inspect	,
+
+[root@almond e6a9ce5ca9c01d5b0aa1f30f02ffc164d1848cc2aa90563ed0772ef1d31efe56]# cat parent 
+sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3
+
+/ 1313	. 
+
+[root@almond sha256]# cd 6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3/
+[root@almond 6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3]# cat diff 
+sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3
+
+/ 13	. 
+
+/ images	,
+
+[root@almond sha256]# cd devicemapper/imagedb/content/sha256/
+[root@almond sha256]# ls -ltr
+-rw-------. 1 root root  1791 Aug  3 17:45 9b277257d413edc8cb2035c8e98d54863b20f9acf26ece691761c6cb5553d8d5
+
+/ de parent is er al lang	,
+[root@almond sha256]# ls f9873d53058831631* -ltr
+-rw-------. 1 root root 1771 Jul 23  2016 f9873d530588316311ac1d3d15e95487b947f5d8b560e72bdd6eb73a7831b2c4
+
+/ in de deze files staat wat je ziet met $ docker image inspect	,
+
+/ 7	. 
+
+/ we doen hetzelfde in /home/eric/Devel/Docker2/fedora/study2, met een andere from in de Dockerfile, we zien hele andere layers	,
+
+[eric@almond study2]$ cat ../study/Dockerfile 
+from fedora
+run ["echo","π"]
+
+[eric@almond study2]$ cat Dockerfile 
+from my/fedora-locale
+run ["echo","π"]
+
+[eric@almond study2]$ docker build  -t my/fedora-study2 .
+
+[eric@almond study2]$ docker image inspect my/fedora-locale
+[
+    {
+        "Id": "sha256:033337dd16dc83bbb5d8811b1330faff83fe0b79308041d8c9f0cd673f068347",
+        "Parent": "sha256:2a4a466a29671e27bf65789003882ee5d8f35447a2b1e1c635d66cb25d682b48",
+...
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3",
+                "sha256:100d2e2e85cba4517decb869c2d53203cfb2bb02b721f5b33076d746b1f0d5df",
+                "sha256:c5ca0b4a864ccd14f747b5dacce4c20529467669b7fc126a4f3994041058e18c",
+                "sha256:72d3ad75c6662e333572e0352f37b8bb53f02f96da7f65d1cb9f5aee5493d0b5",
+                "sha256:c13c731a15e09b25a149445090e593d3509ae603815a221ef83871182ddeccb2",
+                "sha256:d8c8a058c2a4a8473886431a8697ea3bf4a826874fe4209c8f9932b29f9be95b"
+            ]
+        }
+    }
+
+/ 13	. 
+
+[root@almond sha256]# pwd
+/var/lib/docker/image/devicemapper/layerdb/sha256
+
+[root@almond sha256]# grep 6c992a0e818a94b78f -r *
+371d11e0978ef635951e880025fa94895108e4c179d099d6433b7c7f688eec1a/parent:sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3
+48a7cbb3ac4168ccf8427b76c50a735d29561f83a523cb8808a18e0419fa25a6/parent:sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3
+58c29c00953f80623471bfaf289a4892ff6a47759eb0802074a48d094cde9ecc/parent:sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3
+6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3/diff:sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3
+6cc59885c18bbd094b094b63cbe97b12048e91b2a06d0d4ff591c43dda957ea8/parent:sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3
+8d1c4072365d5437250a106cc39ada3829d814920338b580c146b2ef3d3ddbc9/parent:sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3
+8ebc43a9fd22ce158b1c33cb725335e2ac0c484bf158d048b097c71c33ae1ac7/parent:sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3
+
+[root@almond sha256]# grep 100d2e2e85cba4517decb8 -r *
+48a7cbb3ac4168ccf8427b76c50a735d29561f83a523cb8808a18e0419fa25a6/diff:sha256:100d2e2e85cba4517decb869c2d53203cfb2bb02b721f5b33076d746b1f0d5df
+
+[root@almond sha256]# grep c5ca0b4a864ccd14f747b5dacce4 -r *
+2d2ef6b47fe3e69e680a3bd79769a6e8a86b50188f0f2b7e8ea633155bf48648/diff:sha256:c5ca0b4a864ccd14f747b5dacce4c20529467669b7fc126a4f3994041058e18c
+
+...
+
+/ wat zijn dit voor layers?
+/ TODO
+
+/ 13	. 
+
+/ hier zien we images	,
+
+[eric@almond study2]$ docker history my/fedora-study2
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+c9e9663e572e        31 minutes ago      echo π                                          0 B                 
+033337dd16dc        11 months ago       /bin/sh -c #(nop)  ENV TERM=xterm-256color      0 B                 
+2a4a466a2967        11 months ago       /bin/sh -c #(nop)  ENV LANG=en_US.UTF-8         0 B                 
+3f0b5b3053fe        11 months ago       dnf -y install net-tools                        23.5 MB             
+680e70e1a5f3        11 months ago       dnf -y install procps-ng                        18.6 MB             
+a3046016d8ef        11 months ago       dnf -y install vim                              58.4 MB             
+f83255d9c393        11 months ago       dnf -y upgrade --refresh --setopt=deltarpm...   486 MB              
+de1608558fb0        11 months ago       echo ϐ                                          0 B                 
+f9873d530588        3 years ago         /bin/sh -c #(nop) ADD file:eca70e370936ac9...   204 MB              
+<missing>           3 years ago         /bin/sh -c #(nop) MAINTAINER Adam Miller <...   0 B     
+
+/ als we de image rm, zien we dat al deze layers blijven	, 
+
+/ je kunt doen	,
+$ docker image inspect c9e9663e572e		/ my/fedora-study2
+$ docker image inspect 033337dd16dc		/ my/fedora-locale
+$ docker image inspect 2a4a466a2967		/ heeft geen tag	,
+...
+/ je ziet dat die eronder de parent is van die erboven	,	
+
+[eric@almond study2]$ docker image inspect f9873d530588
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3"
+            ]
+        }
+[eric@almond study2]$ docker image inspect de1608558fb0
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3",
+                "sha256:100d2e2e85cba4517decb869c2d53203cfb2bb02b721f5b33076d746b1f0d5df"
+            ]
+        }
+
+[eric@almond study2]$ docker image inspect a3046016d8ef
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3",
+                "sha256:100d2e2e85cba4517decb869c2d53203cfb2bb02b721f5b33076d746b1f0d5df",
+                "sha256:c5ca0b4a864ccd14f747b5dacce4c20529467669b7fc126a4f3994041058e18c",
+                "sha256:72d3ad75c6662e333572e0352f37b8bb53f02f96da7f65d1cb9f5aee5493d0b5"
+            ]
+        }
+
+[eric@almond study2]$ docker image inspect 680e70e1a5f3
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3",
+                "sha256:100d2e2e85cba4517decb869c2d53203cfb2bb02b721f5b33076d746b1f0d5df",
+                "sha256:c5ca0b4a864ccd14f747b5dacce4c20529467669b7fc126a4f3994041058e18c",
+                "sha256:72d3ad75c6662e333572e0352f37b8bb53f02f96da7f65d1cb9f5aee5493d0b5",
+                "sha256:c13c731a15e09b25a149445090e593d3509ae603815a221ef83871182ddeccb2"
+            ]
+        }
+
+[eric@almond study2]$ docker image inspect 3f0b5b3053fe
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3",
+                "sha256:100d2e2e85cba4517decb869c2d53203cfb2bb02b721f5b33076d746b1f0d5df",
+                "sha256:c5ca0b4a864ccd14f747b5dacce4c20529467669b7fc126a4f3994041058e18c",
+                "sha256:72d3ad75c6662e333572e0352f37b8bb53f02f96da7f65d1cb9f5aee5493d0b5",
+                "sha256:c13c731a15e09b25a149445090e593d3509ae603815a221ef83871182ddeccb2",
+                "sha256:d8c8a058c2a4a8473886431a8697ea3bf4a826874fe4209c8f9932b29f9be95b"
+            ]
+        }
+
+[eric@almond study2]$ docker image inspect 2a4a466a2967
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3",
+                "sha256:100d2e2e85cba4517decb869c2d53203cfb2bb02b721f5b33076d746b1f0d5df",
+                "sha256:c5ca0b4a864ccd14f747b5dacce4c20529467669b7fc126a4f3994041058e18c",
+                "sha256:72d3ad75c6662e333572e0352f37b8bb53f02f96da7f65d1cb9f5aee5493d0b5",
+                "sha256:c13c731a15e09b25a149445090e593d3509ae603815a221ef83871182ddeccb2",
+                "sha256:d8c8a058c2a4a8473886431a8697ea3bf4a826874fe4209c8f9932b29f9be95b"
+            ]
+        }
+/ ENV geeft geen layer erbij	, RUN wel, zoals we hierboven zagen	,
+
+
+[eric@almond study2]$ docker image inspect 2a4a466a2967
+/ en	,
+[eric@almond study2]$ docker image inspect 033337dd16dc
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3",
+                "sha256:100d2e2e85cba4517decb869c2d53203cfb2bb02b721f5b33076d746b1f0d5df",
+                "sha256:c5ca0b4a864ccd14f747b5dacce4c20529467669b7fc126a4f3994041058e18c",
+                "sha256:72d3ad75c6662e333572e0352f37b8bb53f02f96da7f65d1cb9f5aee5493d0b5",
+                "sha256:c13c731a15e09b25a149445090e593d3509ae603815a221ef83871182ddeccb2",
+                "sha256:d8c8a058c2a4a8473886431a8697ea3bf4a826874fe4209c8f9932b29f9be95b"
+            ]
+        }
+
+/ maar ook	, 
+[eric@almond study2]$ docker image inspect c9e9663e572e
+
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3",
+                "sha256:100d2e2e85cba4517decb869c2d53203cfb2bb02b721f5b33076d746b1f0d5df",
+                "sha256:c5ca0b4a864ccd14f747b5dacce4c20529467669b7fc126a4f3994041058e18c",
+                "sha256:72d3ad75c6662e333572e0352f37b8bb53f02f96da7f65d1cb9f5aee5493d0b5",
+                "sha256:c13c731a15e09b25a149445090e593d3509ae603815a221ef83871182ddeccb2",
+                "sha256:d8c8a058c2a4a8473886431a8697ea3bf4a826874fe4209c8f9932b29f9be95b"
+            ]
+        }
+
+/ we zien in layerdb/sha256/ dan ook maar 1 nieuwe layer	,
+
+/ 13	. 
+
+/ maar als we 	,
+[eric@almond study]$ docker build  -t my/fedora-study .
+
+[eric@almond study]$ docker history my/fedora-study
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+e0507eb7b23b        2 minutes ago       echo π                                          0 B                 
+f9873d530588        3 years ago         /bin/sh -c #(nop) ADD file:eca70e370936ac9...   204 MB              
+<missing>           3 years ago         /bin/sh -c #(nop) MAINTAINER Adam Miller <...   0 B        
+
+[eric@almond study]$ docker image inspect f9873d530588
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3"
+            ]
+        }
+[eric@almond study]$ docker image inspect e0507eb7b23b
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3",
+                "sha256:4ae22624afa32ba7e46bbfb1b8ad2cdca2cdc432e1bc4cc75e0e8e654534022b"
+            ]
+        }
+
+[root@almond devicemapper]# ls -ltr layerdb/sha256/
+drwx------. 2 root root 4096 Aug  3 17:09 6c992a0e818a94b78f7a3a271983ffb297244c8d5c2bb997cde1dd3e5b9b11d3
+drwx------. 2 root root 4096 Aug  3 22:25 ccb89a516e2dd3578865694da48110a0ee366af5aadc02d67dc32919d84e242c
+
+[root@almond devicemapper]# cat layerdb/sha256/ccb89a516e2dd3578865694da48110a0ee366af5aadc02d67dc32919d84e242c/diff 
+sha256:4ae22624afa32ba7e46bbfb1b8ad2cdca2cdc432e1bc4cc75e0e8e654534022b
+
+/ 13	. 
+
+/ we zien dat als we in een Dockerfile
+RUN ["echo","π"]
+RUN ["echo","ρ"]
+/ dat we maar 1 layer zien ipv 2
+/ TODO
+
+
+
+/ Einde HOW IMAGES ARE BUILD LAYERS
+
+
+
+
+
+
+
+
 
 
 

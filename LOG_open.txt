@@ -2824,6 +2824,81 @@ Out[2048]:
 
 / Einde 2019-04-28
 
+/ CHROME 2019-08-02
+
+https://cloud.google.com/kubernetes-engine/docs/quickstart
+https://github.com/docker-library/redis/blob/a767b4701be8de74f252e204e3eadb39c8e38583/5.0/alpine/Dockerfile
+https://www.projectatomic.io/blog/2015/07/what-are-docker-none-none-images/ 	/ !
+https://docs.docker.com/compose/gettingstarted/
+
+https://www.baeldung.com/java-bouncy-castle 	/ !
+
+http://localhost:8161/admin/browse.jsp?JMSDestination=log
+
+https://www.guru99.com/junit-ignore-test.html
+http://tutorials.jenkov.com/java/modules.html
+https://docs.oracle.com/javase/tutorial/java/generics/upperBounded.html
+https://medium.com/@isuru89/java-producer-extends-consumer-super-9fbb0e7dd268
+http://zetcode.com/java/predicate/
+https://www.baeldung.com/java-8-lambda-expressions-tips
+https://docs.oracle.com/javase/tutorial/java/javaOO/examples/RosterTest.java
+https://github.com/vladmihalcea/high-performance-java-persistence/blob/master/core/src/test/java/com/vladmihalcea/book/hpjp/hibernate/view/SubselectTest.java
+
+https://www.postgresql.org/docs/11/queries-with.html
+https://tecadmin.net/install-postgresql-11-on-fedora/
+
+https://conda.io/projects/conda/en/latest/user-guide/configuration/index.html
+https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html#sklearn.linear_model.LogisticRegression
+https://en.wikipedia.org/wiki/Newton%27s_method_in_optimization
+https://matplotlib.org/3.1.0/gallery/lines_bars_and_markers/scatter_symbol.html#sphx-glr-gallery-lines-bars-and-markers-scatter-symbol-py
+https://matplotlib.org/3.1.0/api/markers_api.html
+https://matplotlib.org/3.1.1/gallery/images_contours_and_fields/contour_demo.html
+https://docs.scipy.org/doc/numpy-1.13.0/user/basics.indexing.html
+https://docs.scipy.org/doc/numpy/reference/generated/numpy.diag.html
+https://en.wikipedia.org/wiki/Convex_function
+https://ai.googleblog.com/2018/04/mobilenetv2-next-generation-of-on.html
+https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+http://www.liclipse.com/download.html#linux
+https://en.wikipedia.org/wiki/Precision_and_recall / !
+https://en.wikipedia.org/wiki/Binomial_distribution
+https://math.stackexchange.com/questions/93098/how-to-prove-that-geometric-distributions-converge-to-an-exponential-distributio
+https://en.wikipedia.org/wiki/Negative_binomial_distribution
+https://en.wikipedia.org/wiki/Standard_error
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binom.html#scipy.stats.binom
+https://scikit-learn.org/stable/developers/advanced_installation.html
+https://scikit-learn.org/stable/modules/cross_validation.html#k-fold
+https://github.com/amplab/datascience-sp14/blob/master/lab7/mldata/mnist-original.mat
+https://stackoverflow.com/questions/17071871/select-rows-from-a-dataframe-based-on-values-in-a-column-in-pandas
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.geom.html#scipy.stats.geom
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binom.html#scipy.stats.binom
+https://docs.scipy.org/doc/scipy-1.2.1/reference/generated/scipy.stats.nbinom.html#scipy.stats.nbinom
+https://docs.scipy.org/doc/scipy/reference/tutorial/stats.html
+https://www.anaconda.com/keeping-anaconda-date/
+https://github.com/ageron/handson-ml/
+https://github.com/ageron/handson-ml/issues/55
+https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.KFold.html
+https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html
+https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.ShuffleSplit.html
+https://scikit-learn.org/stable/modules/cross_validation.html
+https://docs.scipy.org/doc/numpy/reference/generated/numpy.c_.html
+http://127.0.0.1:33167/help/index.jsp
+
+
+
+
+
+
+https://signin.intel.com
+https://www.eriksmistad.no/getting-started-with-opencl-and-gpu-computing/
+
+
+
+
+
+
+
+
+/ Einde CHROME 2019-08-02
 
 
 
