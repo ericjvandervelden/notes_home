@@ -888,6 +888,47 @@ RUN ["echo","ρ"]
 / dat we maar 1 layer zien ipv 2
 / TODO
 
+/ 7	. 
+
+/ we maken zelf my/hello-world
+
+[eric@almond study3]$ pwd
+/home/eric/Devel/Docker2/fedora/study3
+
+[eric@almond study3]$ cat hello.c
+#include<stdio.h>
+int main(){
+	printf("%s\n","Hello World!");
+	return 0;
+}
+
+[eric@almond study3]$ gcc -o hello -static -L /usr/lib/debug/usr/lib64/ hello.c
+
+[eric@almond study3]$ docker build -t my/hello-world .
+
+[eric@almond study3]$ docker run --rm -ti my/hello-world
+Hello World!
+
+[eric@almond study3]$ docker inspect my/hello-world
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:78ae1294664f44a913889fad248c620e525c9e310ae4c060d9000b4bab7b870c"
+            ]
+        }
+[eric@almond study3]$ docker rmi my/hello-world
+Untagged: my/hello-world:latest
+Deleted: sha256:799f1fa6fadcf50688bb2cfa726a0be41d196d33db3ff7488e75b2c201708464
+Deleted: sha256:8c948e3fa3b645be3c1f62a1b0ae79f9e996361b44b34e9f1f32c29a8bee4ccf
+Deleted: sha256:78ae1294664f44a913889fad248c620e525c9e310ae4c060d9000b4bab7b870c
+
+/ we zien maar 1 layer in $ docker inspect my/hello-world	,
+/ in $ docker inspect hello-world zien we 2 layers	,
+/ TODO
+
+/ als we my/hello-world rm, zien we 3 layers	,
+/ TODO
+
 
 
 / Einde HOW IMAGES ARE BUILD LAYERS

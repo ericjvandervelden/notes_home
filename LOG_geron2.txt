@@ -835,3 +835,176 @@ https://www.pydev.org/manual_101_install.html
 
 / Einde Intermezzo
 
+/ BISHOP (209) 
+
+/ multiclass log reg
+
+/ 13	. 
+
+In [8454]: a=np.array([1,2,3,4])
+In [8455]: A=a.reshape(-1,1)
+In [8456]: a.shape
+Out[8456]: (4,)
+In [8457]: A.shape
+Out[8457]: (4, 1)
+In [8462]: a
+Out[8462]: array([1, 2, 3, 4])
+In [8463]: A
+Out[8463]: 
+array([[1],
+       [2],
+       [3],
+       [4]])
+
+In [8458]: b=np.array([4,3,2,1])
+In [8459]: B=b.reshape(-1,1)
+In [8460]: b
+Out[8460]: array([4, 3, 2, 1])
+In [8461]: B
+Out[8461]: 
+array([[4],
+       [3],
+       [2],
+       [1]])
+
+
+In [8464]: A+B
+Out[8464]: 
+array([[5],
+       [5],
+       [5],
+       [5]])
+
+In [8465]: A/(A+B)
+Out[8465]: 
+array([[0.2],
+       [0.4],
+       [0.6],
+       [0.8]])
+
+In [8466]: a/(a+b)
+Out[8466]: array([0.2, 0.4, 0.6, 0.8])
+
+/ 13	. 
+
+X=iris['data'][:,[3]]
+X=np.c_[np.ones((len(X),1)),X]
+y=(iris['target']==2).reshape(-1,1).astype(int)
+
+theta1=np.array([1,0])
+Theta1=theta1.reshape(-1,1)
+theta2=np.array([0,1])
+Theta2=theta2.reshape(-1,1)
+Theta=np.r_[Theta1,Theta2]
+
+In [8481]: X.dot(theta1).shape
+Out[8481]: (150,)
+In [8482]: X.shape
+Out[8482]: (150, 2)
+
+X.dot(Theta1)/(X.dot(Theta1)+X.dot(Theta2))
+/ shape=(150,1)
+
+/ y is vector met 1 en 0	, 1 betekent: iris['target']=2	,
+/ moeten we omzetten naar 1-of-K coding	,
+T=np.c_[1-y,y]
+
+/ of	,
+# T=np.c_[y,1-y]
+
+/ print	,
+In [8501]: T[:5]
+/ of	,
+In [8501]: T[-5:]
+
+V1=np.exp(X.dot(Theta1))/(np.exp(X.dot(Theta1))+np.exp(X.dot(Theta2)))
+V2=np.exp(X.dot(Theta2))/(np.exp(X.dot(Theta1))+np.exp(X.dot(Theta2)))
+grad1J=X.T.dot(V1-T[:,[0]])                                     
+grad2J=X.T.dot(V2-T[:,[1]])                                     
+gradJ=np.r_[grad1J,grad2J]
+
+In [8585]: V1.shape
+Out[8585]: (150, 1)
+In [8586]: V2.shape
+Out[8586]: (150, 1)
+In [8587]: grad1J.shape
+Out[8587]: (2, 1)
+In [8588]: grad2J.shape
+Out[8588]: (2, 1)
+
+/  verschil Theta1 en theta1	,
+In [8537]: r=X.dot(theta1)/(X.dot(theta1)+X.dot(theta2))-T[:,0]
+/ r.shape=(150,)
+
+H11=X.T.dot(np.diag((V1*(1-V1)).ravel())).dot(X)
+H12=X.T.dot(np.diag(-(V1*V2).ravel())).dot(X)
+H21=X.T.dot(np.diag(-(V2*V1).ravel())).dot(X)
+H22=X.T.dot(np.diag((V2*(1-V2)).ravel())).dot(X)
+
+H=np.block([[H11,H12],[H21,H22]])
+
+Theta=Theta-np.linalg.inv(H).dot(gradJ)
+
+/ 13	. 
+
+/ alles bij elkaar, precies hetzelfde als de 13 hierboven	,
+
+
+/ init	,
+
+X=iris['data'][:,[3]]
+X=np.c_[np.ones((len(X),1)),X]
+y=(iris['target']==2).reshape(-1,1).astype(int)
+
+theta1=np.array([1,2])
+Theta1=theta1.reshape(-1,1)
+theta2=np.array([0,1])
+Theta2=theta2.reshape(-1,1)
+Theta=np.r_[Theta1,Theta2]
+
+/ loop	,
+
+for i in range(0,10):
+	V1=np.exp(X.dot(Theta1))/(np.exp(X.dot(Theta1))+np.exp(X.dot(Theta2)))
+	V2=np.exp(X.dot(Theta2))/(np.exp(X.dot(Theta1))+np.exp(X.dot(Theta2)))
+	grad1J=X.T.dot(V1-T[:,[0]])                                     
+	grad2J=X.T.dot(V2-T[:,[1]])                                     
+	gradJ=np.r_[grad1J,grad2J]
+	
+	H11=X.T.dot(np.diag((V1*(1-V1)).ravel())).dot(X)
+	H12=X.T.dot(np.diag(-(V1*V2).ravel())).dot(X)
+	H21=X.T.dot(np.diag(-(V2*V1).ravel())).dot(X)
+	H22=X.T.dot(np.diag((V2*(1-V2)).ravel())).dot(X)
+	
+	H=np.block([[H11,H12],[H21,H22]])
+	
+	Theta=Theta-np.linalg.inv(H).dot(gradJ)
+
+/ doe het	,
+
+In [8712]: Theta
+Out[8712]: 
+array([[19.2654514 ],
+       [-7.90724373],
+       [-6.06130297],
+       [ 3.70362186]])
+
+In [8716]: Theta[1][0]-Theta[3][0]
+Out[8716]: -11.610865592785048
+
+In [8717]: Theta[0][0]-Theta[2][0]
+Out[8717]: 25.32675436427709
+
+
+/ log reg	, 2 classes met sigmoid	,
+In [7594]: theta
+Out[7594]: 
+array([[-21.12563996],
+       [ 12.94750716]])
+
+
+
+
+
+/ Einde BISHOP (209) 
+

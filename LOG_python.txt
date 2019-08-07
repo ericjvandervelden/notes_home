@@ -4430,4 +4430,13 @@ In [6493]: t=foo()
 In [6494]: t
 Out[6494]: 1
 
+/ 	7	. 
 
+/ pip, virtualenv	,
+
+/ google,
+pip virtualenv
+/ lees	,
+https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/
+
+/ 

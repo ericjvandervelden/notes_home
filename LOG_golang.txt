@@ -303,13 +303,47 @@ import (
 )
 
 / Geef niet src/ mee in path 
+[eric@almond work6]$ GOPATH=$(pwd)
 [eric@almond work6]$ go install example/hello
-
 
 
 
 / lees	,
 https://golang.org/doc/code.html
 
+
+/ 7	 
+
+[eric@almond work7]$  pwd
+/home/eric/Devel/Golang/work7
+[eric@almond work7]$ GOPATH=$(pwd)
+[eric@almond work7]$ go get github.com/golang/example/hello
+[eric@almond work7]$ ls
+bin  pkg  src
+[eric@almond work7]$ rm -rf  bin pkg
+[eric@almond work7]$ go install github.com/golang/example/hello/
+[eric@almond work7]$ bin/hello
+Hello, Go examples!
+
+/ 7	. 
+
+[eric@almond work7]$ rm -rf  bin pkg
+[eric@almond work7]$ go build github.com/golang/example/hello/
+[eric@almond work7]$ ls
+hello  src
+[eric@almond work7]$ ./hello 
+Hello, Go examples!
+/ TODO
+/ Geen pkg met stringutils.a	, toch werkt het	,
+
+/ 7	. 
+
+[eric@almond work8]$ pwd
+/home/eric/Devel/Golang/work8
+[eric@almond work8]$ go get golang.org/x/tools/cmd/goimports
+# golang.org/x/tools/go/internal/packagesdriver
+src/golang.org/x/tools/go/internal/packagesdriver/sizes.go:94: undefined: types.SizesFor
+# golang.org/x/tools/go/internal/gcimporter
+src/golang.org/x/tools/go/internal/gcimporter/bexport.go:212: obj.IsAlias undefined (type *types.TypeName has no field or method IsAlias)
 
 
