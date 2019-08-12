@@ -1002,6 +1002,644 @@ Out[7594]:
 array([[-21.12563996],
        [ 12.94750716]])
 
+/ 13	. 
+
+/ newton 
+
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((len(X),1)),X]
+#y=iris['target']
+#of ,
+y=np.array(iris['target']).reshape(-1,1)
+T=np.c_[y==0,y==1,y==2].astype(int)
+theta12=np.array([0,0,0])
+Theta12=theta12.reshape(-1,1)
+theta13=np.array([0,0,0])
+Theta13=theta13.reshape(-1,1)
+Theta=np.r_[Theta12,Theta13]
+for i in range(0,10):
+  p1givenX=1/(1+np.exp(-X.dot(Theta12))+np.exp(-X.dot(Theta13)))
+  V12=np.exp(-X.dot(Theta12))/p1givenX
+  V13=np.exp(-X.dot(Theta13))/p1givenX
+  grad12J=X.T.dot(T[:,[1]]-V12)
+  grad13J=X.T.dot(T[:,[2]]-V13)
+  grad1213J=np.r_[grad12J,grad13J]
+  H1212=X.T.dot(np.diag((V12*(1-V12)).ravel())).dot(X)
+  H1312=X.T.dot(np.diag((-V12*V13).ravel())).dot(X)
+  H1213=X.T.dot(np.diag((-V13*V12).ravel())).dot(X)
+  H1313=X.T.dot(np.diag((V13*(1-V13)).ravel())).dot(X)
+  H_=np.block([[H1212,H1312],[H1213,H1313]])
+  Theta=Theta-np.linalg.inv(H_).dot(grad1213J)
+
+/ 13	. 
+
+/ newton 
+
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((len(X),1)),X]
+y=iris['target']
+#of ,
+#y=np.array(iris['target']).reshape(-1,1)
+#T=np.c_[y==0,y==1,y==2].astype(int)
+theta10=np.array([0,0,0])
+Theta10=theta10.reshape(-1,1)
+theta12=np.array([0,0,0])
+Theta12=theta12.reshape(-1,1)
+Theta=np.r_[Theta10,Theta12]
+lmbda=1
+for i in range(0,10):
+  p1gX=1/(np.exp(-X.dot(Theta10))+1+np.exp(-X.dot(Theta12)))
+  V10=np.exp(-X.dot(Theta10))*p1gX
+  V12=np.exp(-X.dot(Theta12))*p1gX
+  grad10J=X.T.dot((y==0).reshape(-1,1).astype(int)-V10)+lmbda*Theta10
+  grad12J=X.T.dot((y==2).reshape(-1,1).astype(int)-V12)+lmbda*Theta12
+  grad1012J=np.r_[grad10J,grad12J]
+  H1010=X.T.dot(np.diag((V10*(1-V10)).ravel())).dot(X)+lmbda*np.diag(np.ones(len(theta10)))
+  H1210=X.T.dot(np.diag((-V10*V12).ravel())).dot(X)
+  H1012=X.T.dot(np.diag((-V12*V10).ravel())).dot(X)
+  H1212=X.T.dot(np.diag((V12*(1-V12)).ravel())).dot(X)+lmbda*np.diag(np.ones(len(theta10)))
+  H_=np.block([[H1010,H1210],[H1012,H1212]])
+  Theta=Theta-np.linalg.inv(H_).dot(grad1012J)
+
+/ HIER HIER HIER
+
+
+/ 13	. 
+
+/ lees	,
+http://localhost:8888/notebooks/04_training_linear_models.ipynb
+
+/ voorbeeld 2 classes,	 2 features	,
+
+X = iris["data"][:, (2, 3)]  # petal length, petal width
+y = (iris["target"] == 2).astype(np.int)
+
+lg=LogisticRegression(C=10**10)
+lg.fit(X,y)
+
+
+x0, x1 = np.meshgrid(
+        np.linspace(2.9, 7, 500).reshape(-1, 1),
+        np.linspace(0.8, 2.7, 200).reshape(-1, 1),
+)
+X_new = np.c_[x0.ravel(), x1.ravel()]
+
+In [9166]: x0
+Out[9166]: 
+array([[2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ],
+       [2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ],
+       [2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ],
+       ...,
+       [2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ],
+       [2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ],
+       [2.9       , 2.90821643, 2.91643287, ..., 6.98356713, 6.99178357,
+        7.        ]])
+In [9167]: x1
+Out[9167]: 
+array([[0.8       , 0.8       , 0.8       , ..., 0.8       , 0.8       ,
+        0.8       ],
+       [0.80954774, 0.80954774, 0.80954774, ..., 0.80954774, 0.80954774,
+        0.80954774],
+       [0.81909548, 0.81909548, 0.81909548, ..., 0.81909548, 0.81909548,
+        0.81909548],
+       ...,
+       [2.68090452, 2.68090452, 2.68090452, ..., 2.68090452, 2.68090452,
+        2.68090452],
+       [2.69045226, 2.69045226, 2.69045226, ..., 2.69045226, 2.69045226,
+        2.69045226],
+       [2.7       , 2.7       , 2.7       , ..., 2.7       , 2.7       ,
+        2.7       ]])
+
+In [9168]: X_new
+Out[9168]: 
+array([[2.9       , 0.8       ],
+       [2.90821643, 0.8       ],
+       [2.91643287, 0.8       ],
+       ...,
+       [6.98356713, 2.7       ],
+       [6.99178357, 2.7       ],
+       [7.        , 2.7       ]])
+
+In [9172]: X_new.shape
+Out[9172]: (100000, 2)
+
+# p(1|(x0,x1))
+y_proba = lg.predict_proba(X_new)
+
+In [9173]: y_proba[50250]
+Out[9173]: array([0.17256704, 0.82743296])
+In [9174]: y_proba[50250][0]+y_proba[50250][1]
+Out[9174]: 1.0
+
+
+In [9161]: y_predict = log_reg.predict(X_new)
+In [9162]: y_predict
+Out[9162]: array([0, 0, 0, ..., 1, 1, 1])
+In [9163]: y_predict[50250]
+Out[9163]: 1
+
+# p(1|(x0,x1)) in rooster vorm	, zoals x0 en x1 dat zijn	,
+zz1 = y_proba[:, 1].reshape(x0.shape)
+
+# de uitkomst 0 of 1 in (x0,x1) al na gelang welke groter is: 
+zz = y_predict.reshape(x0.shape)
+
+/ 13	. 
+
+/ lees	,
+http://localhost:8888/notebooks/04_training_linear_models.ipynb
+
+/ 3 classes, 2 features	,
+
+
+X=iris['data'][:,[2,3]]
+y = iris["target"]
+lg=LogisticRegression(C=10**10)
+lg.fit(X,y)
+
+/ grotere grid	als in vorig voorbeeld	,
+
+x0, x1 = np.meshgrid(
+        np.linspace(0,8, 500).reshape(-1, 1),
+        np.linspace(0,3.5, 200).reshape(-1, 1),
+)
+X_new = np.c_[x0.ravel(), x1.ravel()]
+y_proba = lg.predict_proba(X_new)
+y_predict = lg.predict(X_new)
+
+(.29<=y_proba[:,0]) & (y_proba[:,0]<=.31) & (.29<=y_proba[:,1]) & (y_proba[:,1]<=.31) & (.29<=y_proba[:,2]) & (y_proba[:,2]<=.31)         
+/ OK	,
+/ maar te strict , er zijn geen punten in X_new die hieraan voldoen	,
+/ daarom doen we	,
+np.where((.25<=y_proba[:,0]) & (y_proba[:,0]<=.35) & (.25<=y_proba[:,1]) & (y_proba[:,1]<=.35) & (.25<=y_proba[:,2]) & (y_proba[:,2]<=.35))
+Out[9253]: (array([80560, 81058]),)
+
+/ er zijn dus 2 punten in X_new	, met index 80560, 81058
+In [9258]: X_new[80560]
+Out[9258]: array([0.96192385, 2.83165829])
+In [9259]: X_new[81058]
+Out[9259]: array([0.92985972, 2.84924623])
+
+In [9254]: y_proba[80560]
+Out[9254]: array([0.32889255, 0.33255792, 0.33854952])
+In [9260]: y_predict[80560]
+Out[9260]: 2
+In [9255]: y_proba[80560][0]+y_proba[80560][1]+y_proba[80560][2]
+Out[9255]: 1.0
+
+In [9256]: y_proba[81058]
+Out[9256]: array([0.34949538, 0.30554656, 0.34495806])
+In [9261]: y_predict[81058]
+Out[9261]: 0
+In [9257]: y_proba[81058][0]+y_proba[81058][1]+y_proba[81058][2]
+Out[9257]: 1.0
+
+/ 1313	. 
+
+/ hij laat 2 contours zien: 
+
+zz1 = y_proba[:, 1].reshape(x0.shape)
+zz = y_predict.reshape(x0.shape)
+
+from matplotlib.colors import ListedColormap
+custom_cmap = ListedColormap(['#fafab0','#9898ff','#a0faa0'])
+
+plt.contourf(x0, x1, zz, cmap=custom_cmap)
+contour = plt.contour(x0, x1, zz1, cmap=plt.cm.brg)
+plt.clabel(contour, inline=1, fontsize=12)
+
+/ de 3 classes toont hij met 3 kleuren	, en de niveaus van de middelste klasse toont hij met niveaulijnen	,
+
+/ 1313	. 
+
+/ we gaan de grafiek ook tekenen	,
+
+X=iris['data'][:,[2,3]]
+y = iris["target"]
+lg=LogisticRegression(C=10**10)
+lg=LogisticRegression(multi_class="multinomial",solver="lbfgs",C=10) # C=10 !
+lg=LogisticRegression(C=10)
+
+lg.fit(X,y)
+
+x0, x1 = np.meshgrid(
+        np.linspace(0,8, 500).reshape(-1, 1),
+        np.linspace(0,3.5, 200).reshape(-1, 1),
+)
+X_new = np.c_[x0.ravel(), x1.ravel()]
+y_proba = lg.predict_proba(X_new)
+y_predict = lg.predict(X_new)
+
+prb0=y_proba[:,0].reshape(x0.shape)
+prb1=y_proba[:,1].reshape(x0.shape)
+prb2=y_proba[:,2].reshape(x0.shape)
+est=y_predict.reshape(x0.shape)
+
+# print training data	,
+plt.figure()
+plt.plot(X[y==2,0],X[y==2,1],"g^",label="Iris-Virginia")
+plt.plot(X[y==1,0],X[y==1,1],"bs",label="Iris-Versicolor")
+plt.plot(X[y==0,0],X[y==0,1],"yo",label="Iris-Setosa")
+
+from matplotlib.colors import ListedColormap
+custom_cmap=ListedColormap(['#fafab0','#9898ff','#a0faa0'])
+plt.contourf(x0,x1,est,cmap=custom_cmap)
+
+countour1=plt.contour(x0,x1,prb1,cmap=plt.cm.brg)
+countour0=plt.contour(x0,x1,prb0,cmap=plt.cm.brg)
+countour2=plt.contour(x0,x1,prb2,cmap=plt.cm.brg)
+
+plt.clabel(countour1,inline=1,fontsize=12)
+
+/ deze 2 zijn minder onderscheidend	, als we de nivolijnen tekenen van class 1, lopen die door de waarnemingen met classes 0 en 2 heen	, 
+lg=LogisticRegression(C=10**10)
+lg=LogisticRegression(C=10)
+
+/ deze is meer onderscheidend	,
+lg=LogisticRegression(multi_class="multinomial",solver="lbfgs",C=10) # C=10 !
+/ maar met C=10**10 is het hele gebied totaal anders, 	we zien 3 schuine gebieden	, het is misschien zo dat het 3-vlakken punt buiten het gebied ligt, linksboven	,
+/ TODO
+
+/ we kunnen ook nivolijnen tekenen voor classes 0 en 2	, deze gebieden zijn minder scherp, dus ze lopen ook langs hun grenzen net als bij class 1, maar maken niet zo'n bocht	,
+
+/ 13	. 
+
+/ we gaan terug naar 2 classes, 1 feature	, 
+
+/ 1313	. 
+
+/ self, 
+
+x=iris['data'][:,[3]]
+X=np.c_[np.ones((len(x),1)),x]
+theta=np.array([0,0]).reshape(-1,1)
+y=(iris['target']==2).reshape(-1,1).astype(int)
+
+for i in range(0,10):
+  z=X.dot(theta)
+  a=expit(z)
+  grad=X.T.dot(a-y)
+  D=np.diag((a*(1-a)).ravel())
+  H=X.T.dot(D).dot(X)
+  theta=theta-np.linalg.inv(H).dot(grad)
+
+In [9370]: theta
+Out[9370]: 
+array([[-21.12563996],
+       [ 12.94750716]])
+
+p(1|1.5)
+In [9382]: expit(np.c_[1,1.5].dot(theta))
+Out[9382]: array([[0.15389418]])
+
+p(0|1.5)
+In [9383]: 1-expit(np.c_[1,1.5].dot(theta))
+/ of	,
+In [9384]: expit(-np.c_[1,1.5].dot(theta))
+Out[9384]: array([[0.84610582]])
+
+/ p(1|1.5)<p(0|1.5) -> pred t=0
+
+p(1|1.6)
+In [9385]: expit(np.c_[1,1.6].dot(theta))
+Out[9385]: array([[0.3990012]])
+
+p(0|1.6)
+In [9386]: 1-expit(np.c_[1,1.6].dot(theta))
+/ of	,
+In [9387]: expit(-np.c_[1,1.6].dot(theta))
+Out[9387]: array([[0.6009988]])
+
+/ p(1|1.6)>p(0|1.6) -> pred t=1
+
+
+/ 1313	. 
+
+/ met sklearn	,
+
+X=iris['data'][:,[3]]
+y=(iris['target']==2).astype(int)
+lg=LogisticRegression(C=10**10)
+lg.fit(X,y)
+
+X_=np.linspace(0.1,2.5,25).reshape(-1,1)
+p1gX=lg.predict_proba(X_)
+pr=lg.predict(X_.reshape(-1,1))
+
+
+In [9368]: np.c_[X_,p1gX,pr]
+Out[9368]: 
+				x								p(0|x)					p(1|x)					pred t	,
+array([[1.00000000e-01, 9.99999998e-01, 2.44100157e-09, 0.00000000e+00],
+       [2.00000000e-01, 9.99999991e-01, 8.90984641e-09, 0.00000000e+00],
+       [3.00000000e-01, 9.99999967e-01, 3.25216349e-08, 0.00000000e+00],
+       [4.00000000e-01, 9.99999881e-01, 1.18706499e-07, 0.00000000e+00],
+       [5.00000000e-01, 9.99999567e-01, 4.33287861e-07, 0.00000000e+00],
+       [6.00000000e-01, 9.99998418e-01, 1.58153274e-06, 0.00000000e+00],
+       [7.00000000e-01, 9.99994227e-01, 5.77269389e-06, 0.00000000e+00],
+       [8.00000000e-01, 9.99978930e-01, 2.10704615e-05, 0.00000000e+00],
+       [9.00000000e-01, 9.99923095e-01, 7.69045368e-05, 0.00000000e+00],
+       [1.00000000e+00, 9.99719350e-01, 2.80650372e-04, 0.00000000e+00],
+       [1.10000000e+00, 9.98976366e-01, 1.02363447e-03, 0.00000000e+00],
+       [1.20000000e+00, 9.96273762e-01, 3.72623759e-03, 0.00000000e+00],
+       [1.30000000e+00, 9.86531936e-01, 1.34680637e-02, 0.00000000e+00],
+       [1.40000000e+00, 9.52534622e-01, 4.74653781e-02, 0.00000000e+00],
+       [1.50000000e+00, 8.46105573e-01, 1.53894427e-01, 0.00000000e+00],
+       [1.60000000e+00, 6.00998853e-01, 3.99001147e-01, 0.00000000e+00],
+       [1.70000000e+00, 2.92117947e-01, 7.07882053e-01, 1.00000000e+00],
+       [1.80000000e+00, 1.01572935e-01, 8.98427065e-01, 1.00000000e+00],
+       [1.90000000e+00, 3.00431473e-02, 9.69956853e-01, 1.00000000e+00],
+       [2.00000000e+00, 8.41435978e-03, 9.91585640e-01, 1.00000000e+00],
+       [2.10000000e+00, 2.31942430e-03, 9.97680576e-01, 1.00000000e+00],
+       [2.20000000e+00, 6.36516988e-04, 9.99363483e-01, 1.00000000e+00],
+       [2.30000000e+00, 1.74465108e-04, 9.99825535e-01, 1.00000000e+00],
+       [2.40000000e+00, 4.78036916e-05, 9.99952196e-01, 1.00000000e+00],
+       [2.50000000e+00, 1.30970760e-05, 9.99986903e-01, 1.00000000e+00]])
+
+
+In [9365]: p1gX[p1gX[:,0]<p1gX[:,1]]
+Out[9365]: 
+array([[2.92117947e-01, 7.07882053e-01],
+       [1.01572935e-01, 8.98427065e-01],
+       [3.00431473e-02, 9.69956853e-01],
+       [8.41435978e-03, 9.91585640e-01],
+...
+
+/ HIER HIER HIER
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/ 13	. 
+
+X=iris['data'][:,[2,3]]
+lg=LogisticRegression(multi_class="multinomial",solver="lbfgs",C=10**10)
+y=iris['target']
+lg.fit(X,y)
+
+In [8996]: lg.intercept_
+Out[8996]: array([ 41.08973527,   2.09196084, -43.18169611]) / klasse 0,1,2
+
+In [8997]: lg.coef_
+Out[8997]: 
+array([[ -8.08440785, -18.01963296],	 / klasse 0
+       [  1.16488946,   3.78620864],	 / klasse 1
+       [  6.91951839,  14.23342432]])	 / klasse 2
+
+
+/ 13	. 
+
+X=iris['data'][:,[2,3]]
+lg=LogisticRegression(C=10**10)
+y=iris['target']
+lg.fit(X,y)
+
+In [9001]: lg.intercept_
+Out[9001]: array([ 24.05565958,  -2.85895422, -45.26062435]) / klasse 0,1,2
+
+In [9002]: lg.coef_
+Out[9002]: 
+array([[-6.67454643, -9.82307197],		/ klasse 0
+       [ 1.54644801, -3.10696268],		/ klasse 1
+       [ 5.7528683 , 10.44455633]])		/ klasse 2
+
+/ 13	. 
+
+X=iris['data'][:,[2,3]]
+lg= LogisticRegression(C=10**10)
+y=(iris['target']==2).astype(np.int)
+lg.fit(X,y)
+
+In [9006]: lg.intercept_
+Out[9006]: array([-45.26062435])
+In [9007]: lg.coef_
+Out[9007]: array([[ 5.7528683 , 10.44455633]])
+
+/ 13	. 
+
+X=iris['data'][:,[2,3]]
+lg= LogisticRegression(C=10**10)
+T=np.c_[y==2,y!=2].astype(int)
+lg.fit(X,T)
+
+In [9006]: lg.intercept_
+Out[9006]: array([-45.26062435])
+In [9007]: lg.coef_
+Out[9007]: array([[ 5.7528683 , 10.44455633]])
+
+
+/ 13	. 
+
+/ LogisticRegression verwacht altijd een 1-dim array	, dus ovr T=[(1,0),(0,1),...] kan NIET	,
+
+/ we hebben 2 classes	, 1 en 0	,
+
+X=iris['data'][:,[2,3]]
+y=iris['target']
+T=np.c_[y==2].astype(int).ravel()
+lg=LogisticRegression(multi_class="multinomial",solver="lbfgs",C=10**10)
+lg.fit(X,T)
+
+In [9066]: lg.intercept_
+Out[9066]: array([-22.63617953])
+In [9067]: lg.coef_
+Out[9067]: array([[2.87726566, 5.22335671]])
+
+/ 13	. 
+
+/ als je 2 classes opgeeft,	
+
+/ 1313	. 
+
+/ klasse 2	,
+
+X=iris['data'][:,[2,3]]
+y=iris['target']
+T=np.c_[y==2].astype(int).ravel()
+lg=LogisticRegression(C=10**10)
+lg.fit(X,T)
+
+In [9074]: lg.coef_
+Out[9074]: array([[ 5.7528683 , 10.44455633]])
+In [9075]: lg.intercept_
+Out[9075]: array([-45.26062435])
+
+/ 1313	. 
+
+/ klasse 1	,
+
+X=iris['data'][:,[2,3]]
+y=iris['target']
+T=np.c_[y==1].astype(int).ravel()
+lg=LogisticRegression(C=10**10)
+lg.fit(X,T)
+
+In [9079]: lg.coef_
+Out[9079]: array([[ 1.54644801, -3.10696268]])
+In [9080]: lg.intercept_
+Out[9080]: array([-2.85895422])
+
+/ 1313. 
+
+/ klasse 0	,
+
+X=iris['data'][:,[2,3]]
+y=iris['target']
+T=np.c_[y==0].astype(int).ravel()
+lg=LogisticRegression(C=10**10)
+lg.fit(X,T)
+
+In [9084]: lg.coef_
+Out[9084]: array([[-6.67454643, -9.82307197]])
+In [9085]: lg.intercept_
+Out[9085]: array([24.05565958])
+
+
+
+/ 1313	. 
+
+/ klasse 0,1,2 tegelijk	,
+
+X=iris['data'][:,[2,3]]
+lg=LogisticRegression(C=10**10)
+y=iris['target']
+lg.fit(X,y)
+
+In [9001]: lg.intercept_
+Out[9001]: array([ 24.05565958,  -2.85895422, -45.26062435]) / klasse 0,1,2
+
+In [9002]: lg.coef_
+Out[9002]: 
+array([[-6.67454643, -9.82307197],		/ klasse 0
+       [ 1.54644801, -3.10696268],		/ klasse 1
+       [ 5.7528683 , 10.44455633]])		/ klasse 2
+
+/ 13	. 
+
+/ bij 2 classes gaat het anders als bij 3 of meer classes	,
+
+X=iris['data'][:,[2,3]]
+T=np.copy(iris['target'])
+T[T==1]=0
+lg=LogisticRegression(C=10**10)
+lg.fit(X,T)
+
+X=iris['data'][:,[2,3]]
+T=np.copy(iris['target'])
+T[T==0]=1
+lg=LogisticRegression(C=10**10)
+lg.fit(X,T)
+
+In [9110]: lg.coef_
+Out[9110]: array([[ 5.7528683 , 10.44455633]])
+In [9111]: lg.intercept_
+Out[9111]: array([-45.26062435])
+
+/ 13	. 
+
+/ bij 4 classes	,
+
+
+X=iris['data'][:,[2,3]]
+T=np.copy(iris['target'])
+In [9115]: T[149]=4
+lg=LogisticRegression(C=10**10)
+lg.fit(X,T)
+
+In [9119]: lg.coef_
+Out[9119]: 
+array([[-6.67454643, -9.82307197],
+       [ 1.54644801, -3.10696268],
+       [ 4.83150998,  8.55309696],
+       [ 0.29721707,  0.7417456 ]])
+In [9120]: lg.intercept_
+Out[9120]: array([ 24.05565958,  -2.85895422, -37.93261325,  -7.48765147])
+
+
+/ 13	. 
+
+/ newton	,
+
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((len(X),1)),X]
+theta=np.array([0,0,0]).reshape(-1,1)
+y=(iris['target']==2).reshape(-1,1).astype(int)
+for i in range(0,10):
+  z=X.dot(theta)
+  a=expit(z)
+  grad=X.T.dot(a-y)
+  D=np.diag((a*(1-a)).ravel())
+  H=X.T.dot(D).dot(X)
+  theta=theta-np.linalg.inv(H).dot(grad)
+
+In [9123]: theta
+Out[9123]: 
+array([[-45.27234329],
+       [  5.75453225],
+       [ 10.44669981]])
+
+
+/ 1313	. 
+
+/ newton	,
+
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((len(X),1)),X]
+theta=np.array([0,0,0]).reshape(-1,1)
+y=(iris['target']==1).reshape(-1,1).astype(int)
+for i in range(0,10):
+  z=X.dot(theta)
+  a=expit(z)
+  grad=X.T.dot(a-y)
+  D=np.diag((a*(1-a)).ravel())
+  H=X.T.dot(D).dot(X)
+  theta=theta-np.linalg.inv(H).dot(grad)
+
+In [9125]: theta
+Out[9125]: 
+array([[-2.85880689],
+       [ 1.54646368],
+       [-3.10710628]])
+
+/ 1313	 
+
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((len(X),1)),X]
+theta=np.array([0,0,0]).reshape(-1,1)
+y=(iris['target']==0).reshape(-1,1).astype(int)
+for i in range(0,10):
+  z=X.dot(theta)
+  a=expit(z)
+  grad=X.T.dot(a-y)
+  D=np.diag((a*(1-a)).ravel())
+  H=X.T.dot(D).dot(X)
+  theta=theta-np.linalg.inv(H).dot(grad)
+
+In [9127]: theta
+Out[9127]: 
+array([[21.81940571],
+       [-5.73678936],
+       [-9.66992458]])
+
+/ deze wijkt iets af van toen we de klasses 0,1,2 tegelijk deden	,
+
 
 
 

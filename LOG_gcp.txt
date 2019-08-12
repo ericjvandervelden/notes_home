@@ -1,0 +1,76 @@
+/ 7	 
+
+
+/ ga naar	,
+https://cloud.google.com/
+/ click Getting started	, kies Quickstarts
+https://cloud.google.com/gcp/getting-started/
+/ click quick starts	,
+https://cloud.google.com/gcp/getting-started/#quick-starts
+
+/ 13	. 
+
+/ 1ste panel	, 
+
+/ click 'Create a Linux VM'
+https://cloud.google.com/compute/docs/quickstart-linux
+
+/ klik 'Go to the project selector page',
+/ klik Create
+Create Project: My Project 36819 
+
+/ op de een of andere manier kwamen we op een eerder project uit	, kies in de blauwe balk boven: My Project 36819
+
+/ de panels kun je verplaatsen	,
+/ linksonder zien we	panel Getting started	, 
+/ TODO
+
+/ Als je in de blauwe balk klikt op 'Google Cloud Platform', kom je op de pagina met de panels	,
+
+/ 13	. 
+
+/ billing	,
+
+/ klik in blauwe balk hamburger icon	, kies Billing	,
+https://console.cloud.google.com/billing
+/ hij staat op 'Show all accounts'	,
+/ we zien	,
+Billing account name 	Billing account ID 	Status 	# of projects
+My first billing account 	00EC84-4BF9F1-37F734 	Closed 	3 
+/ hij is dus closed	,
+
+/ klik 'My first billing account', 
+https://console.cloud.google.com/billing/00EC84-4BF9F1-37F734
+/ dit is de pagina waar we alles kunnen regelen over de billing	,
+
+/ klik 'Payment overview',
+https://console.cloud.google.com/billing/00EC84-4BF9F1-37F734/payment
+/ hier moesten we onze mastercard update	, 
+
+/ gaan we terug naar 
+https://console.cloud.google.com/billing/00EC84-4BF9F1-37F734
+/ dan zien we in het horizontale witte menu 'Reopen billing account'
+
+/ 13	.  
+
+/ compute engine
+
+/ als we teruggaan naar,	
+https://cloud.google.com/compute/docs/quickstart-linux
+
+/ dan komen we bij 'Go to vm instances page'
+
+/ maar dit is hetzelfde als	,
+/ kies in hamburger icon menu	,
+/ klik 'Compute engine'
+
+/ we moeten eerst 'Enable billing', op project 'My project 36819'	,
+/ klik in hamburger icon menu op billing, dan zie je het project 'My project 36819' er bij staan	,
+
+/ gaan we weer terug naar hamburger icon menu, compute engine,
+/ we zijn in menu links op VM instances	,
+/ we zien in het panel VM instances, Create	, klik
+
+
+
+
