@@ -1,4 +1,6 @@
 / See FINAL GD NEWTON SELF SCIKIT LEARN
+/ See 3 CLASSES	, SCIKIT LEARN NEWTON
+/ See LAATSTE VERSIE 3 CLASSES
 
 / 7	. 
 
@@ -835,6 +837,571 @@ https://www.pydev.org/manual_101_install.html
 
 / Einde Intermezzo
 
+/ 7	
+
+In [10061]: m=np.array([1,2,3,4]).reshape(-1,2)
+array([[1, 2],
+       [3, 4]])
+
+In [10063]: x=np.array([2,3]).reshape(-1,1)
+array([[2],
+       [3]])
+
+In [10077]: x.T.dot(m)
+Out[10077]: array([[11, 16]])
+
+In [10078]: m.dot(x)
+array([[ 8],
+       [18]])
+
+/ 1313	. 
+
+In [10088]: m
+array([[1, 2],
+       [3, 4]])
+
+In [10089]: x
+array([[2],
+       [3]])
+
+
+/ elem gewijs verm zolang het past	,
+
+/ omdat x vector, verm ieder elem van x met rij in m	,
+In [10079]: x*m
+/=
+In [10079]: m*x
+/=
+In [10084]: np.diag(x.ravel()).dot(m)
+Out[10079]: 
+array([[ 2,  4],
+       [ 9, 12]])
+
+/ verm ieder elem van x met kolom van m	,
+In [10081]: x.T*m
+/=
+In [10085]: m*x.T
+/=
+In [10086]: m.dot(np.diag(x.ravel()))
+array([[ 2,  6],
+       [ 6, 12]])
+
+/ 7	 
+
+/ np.eye(3) maakt een diagonaal matrix met 1 op hoofddiagonaal	,
+/ maar we kunnen hem ook zo maken: elem=int(i==j) 
+/ dit is NIET OK	,
+In [10138]: a=np.array([0,1,2]).reshape(-1,1)
+In [10139]: a==a
+Out[10139]: 
+array([[ True],
+       [ True],
+       [ True]])
+
+/ 7	
+
+/ maak van 
+n [10180]: m
+Out[10180]: 
+array([[1, 2],
+       [3, 4]])
+
+(1 0	.dot (1 0	(2 0
+ 0 3)				0 3) 0 4)
+(2 0
+ 0 4)
+
+/ lees	,
+https://cmdlinetips.com/2018/04/how-to-concatenate-arrays-in-numpy/
+
+In [10191]: n=np.concatenate((np.diag(m[:,0]),np.diag(m[:,1])))
+/ of	,
+In [10192]: n=np.vstack((np.diag(m[:,0]),np.diag(m[:,1])))
+Out[10192]: 
+array([[1, 0],
+       [0, 3],
+       [2, 0],
+       [0, 4]])
+/ let op extra ()
+
+/ of	,
+In [10213]: n=np.r_[np.diag(m[:,0]),np.diag(m[:,1])]
+       ...: 
+       ...: 
+Out[10213]: 
+array([[1, 0],
+       [0, 3],
+       [2, 0],
+       [0, 4]])
+
+
+In [10196]: n.dot(n.T)
+Out[10196]: 
+array([[ 1,  0,  2,  0],
+       [ 0,  9,  0, 12],
+       [ 2,  0,  4,  0],
+       [ 0, 12,  0, 16]])
+
+/ 13	. 
+
+
+In [10220]: s=np.diag(np.r_[m[:,[0]],m[:,[1]]].ravel())
+Out[10220]: 
+array([[1, 0, 0, 0],
+       [0, 3, 0, 0],
+       [0, 0, 2, 0],
+       [0, 0, 0, 4]])
+
+In [10222]: s-n.dot(n.T)
+Out[10222]: 
+array([[  0,   0,  -2,   0],
+       [  0,  -6,   0, -12],
+       [ -2,   0,  -2,   0],
+       [  0, -12,   0, -12]])
+
+
+/ 	7
+
+/ bij np.r_ moet je []	, dus np.r_[m,n]
+/ bij np.block moet je ook ()	, dus np.block([[m,n],[o,p]])
+
+np.block([[m,n],[o,p]])
+
+/ 7	. 
+
+/ let p () in:
+
+In [10283]: t[(t==0)|(t==2)]
+Out[10283]: 
+array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2])
+
+
+
+
+
+
+
+
+
+/ BISHOP (209)
+
+/ 3 classes	, 2 features	,
+
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((len(X),1)),X]
+t=iris['target']
+T=np.c_[t==0,t==1,t==2].astype(int)
+mu0=np.zeros(3).reshape(-1,1)
+mu1=np.zeros(3).reshape(-1,1)
+mu2=np.zeros(3).reshape(-1,1)
+mu=np.r_[mu0,mu1,mu2]
+
+#for i in range(0,10):
+mu0=mu[:3].reshape(-1,1)
+mu1=mu[3:6].reshape(-1,1)
+mu2=mu[6:9].reshape(-1,1)
+M=np.c_[np.exp(X.dot(mu0)),np.exp(X.dot(mu1)),np.exp(X.dot(mu2))]
+S=(M[:,0]+M[:,1]+M[:,2]).reshape(-1,1)
+Y=M/S # (150,3) Y[n,k]=p(k|xn)
+J=np.ones(len(X)).reshape(1,-1).dot(T*Y).dot(np.ones(len(T[0])))
+# TODO print bij verschillende mu0,mu1,mu2 J	, en maak contourlijnen	,
+GradJ=X.T.dot(Y-T)  # (3,3) 
+HessianJ= np.block([
+	[X.T.dot(np.diag(Y[:,0])).dot(np.diag(1-Y[:,0])).dot(X),
+		X.T.dot(np.diag(Y[:,0])).dot(np.diag(-Y[:,1])).dot(X),
+		X.T.dot(np.diag(Y[:,0])).dot(np.diag(-Y[:,2])).dot(X)],
+	[X.T.dot(np.diag(Y[:,1])).dot(np.diag(-Y[:,0])).dot(X),
+		X.T.dot(np.diag(Y[:,1])).dot(np.diag(1-Y[:,1])).dot(X),
+		X.T.dot(np.diag(Y[:,1])).dot(np.diag(-Y[:,2])).dot(X)],
+	[X.T.dot(np.diag(Y[:,2])).dot(np.diag(-Y[:,0])).dot(X),
+		X.T.dot(np.diag(Y[:,2])).dot(np.diag(-Y[:,1])).dot(X),
+		X.T.dot(np.diag(Y[:,2])).dot(np.diag(1-Y[:,2])).dot(X)],
+])
+mu=mu-np.linalg.inv(HessianJ).dot(GradJ)
+
+
+/ 2 classes	, 2 features,	
+
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((len(X),1)),X]
+t=iris['target']
+T=np.c_[t==1,(t==0)|(t==2)].astype(int)
+mu1=np.zeros(3).reshape(-1,1)
+mu0=np.zeros(3).reshape(-1,1)
+mu=np.r_[mu1,mu0]
+
+#for i in range(0,10):
+mu1=mu[:3].reshape(-1,1)
+mu0=mu[3:6].reshape(-1,1)
+M=np.c_[np.exp(X.dot(mu1)),np.exp(X.dot(mu0))]
+S=(M[:,0]+M[:,1]).reshape(-1,1)
+Y=M/S # (150,3) Y[n,k]=p(k|xn)
+J=np.ones(len(X)).reshape(1,-1).dot(T*Y).dot(np.ones(len(T[0])))
+# TODO print bij verschillende mu0,mu1,mu2 J	, en maak contourlijnen	,
+GradJ=X.T.dot(Y-T)  # (3,3) 
+HessianJ= np.block([
+	[X.T.dot(np.diag(Y[:,0])).dot(np.diag(1-Y[:,0])).dot(X),
+		X.T.dot(np.diag(Y[:,0])).dot(np.diag(-Y[:,1])).dot(X),],
+	[X.T.dot(np.diag(Y[:,1])).dot(np.diag(-Y[:,0])).dot(X),
+		X.T.dot(np.diag(Y[:,1])).dot(np.diag(1-Y[:,1])).dot(X),],
+])
+mu=mu-np.linalg.inv(HessianJ).dot(GradJ)
+
+
+/ LAATSTE VERSIE 3 CLASSES
+
+/ 3 classes	, 2 features	,
+
+/ 7	.
+
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((len(X),1)),X]
+t=iris['target']
+T=np.c_[t==0,t==1,t==2].astype(int)
+psi=np.zeros(3).reshape(-1,1)
+theta=np.zeros(3).reshape(-1,1)
+psitheta=np.r_[psi,theta]
+
+for i in range(0,10):
+	psi=psitheta[:3].reshape(-1,1)
+	theta=psitheta[3:6].reshape(-1,1)
+	M=np.c_[np.exp(-X.dot(psi)),np.ones(len(X)).reshape(-1,1),np.exp(-X.dot(theta))]
+	S=(M[:,0]+M[:,1]+M[:,2]).reshape(-1,1)
+	Y=M/S # (150,3) Y[n,k]=p(k|xn)
+	#J=np.ones(len(X)).reshape(1,-1).dot(T*-np.log(Y)).dot(np.ones(len(T[0])))
+	# TODO print bij verschillende psi,theta J	, en maak contourlijnen	,
+	GradJ=X.T.dot((T-Y)[:,[0,2]])  
+	gradJ=np.r_[GradJ[:,[0]],GradJ[:,[1]]]
+	HessianJ= np.block([
+		[X.T.dot(np.diag(Y[:,0])).dot(np.diag(1-Y[:,0])).dot(X),
+			X.T.dot(np.diag(-Y[:,0])).dot(np.diag(Y[:,2])).dot(X)],
+		[X.T.dot(-np.diag(-Y[:,2])).dot(np.diag(Y[:,0])).dot(X),
+			X.T.dot(np.diag(Y[:,2])).dot(np.diag(1-Y[:,2])).dot(X)],
+	])
+	psitheta=psitheta-np.linalg.inv(HessianJ).dot(gradJ)
+
+psi=psitheta[:3].reshape(-1,1)
+theta=psitheta[3:6].reshape(-1,1)
+M=np.c_[np.exp(-X.dot(psi)),np.ones(len(X)).reshape(-1,1),np.exp(-X.dot(theta))]
+S=(M[:,0]+M[:,1]+M[:,2]).reshape(-1,1)
+Y=M/S # (150,3) Y[n,k]=p(k|xn)
+#J=np.ones(len(X)).reshape(1,-1).dot(T*-np.log(Y)).dot(np.ones(len(T[0])))
+# TODO print bij verschillende psi,theta J	, en maak contourlijnen	,
+GradJ=X.T.dot((T-Y)[:,[0,2]])  
+gradJ=np.r_[GradJ[:,[0]],GradJ[:,[1]]]
+HessianJ= np.block([
+	[X.T.dot(np.diag(Y[:,0])).dot(np.diag(1-Y[:,0])).dot(X),
+		X.T.dot(np.diag(-Y[:,0])).dot(np.diag(Y[:,2])).dot(X)],
+	[X.T.dot(np.diag(-Y[:,2])).dot(np.diag(Y[:,0])).dot(X),
+		X.T.dot(np.diag(Y[:,2])).dot(np.diag(1-Y[:,2])).dot(X)],
+])
+psitheta=psitheta-np.linalg.inv(HessianJ).dot(gradJ)
+
+/ 7	. 
+
+X=iris['data'][:,[2,3]][[0,50,100]]
+X=np.c_[np.ones((X.shape[0],1)),X]
+t=iris['target'][[0,50,100]].reshape(-1,1)
+T=np.c_[t==0,t==1,t==2].astype(int)
+
+s0=np.linspace(-1,1,3)
+s1=np.linspace(-1,1,3)
+s2=np.linspace(-1,1,3)
+t0=np.linspace(-1,1,3)
+t1=np.linspace(-1,1,3)
+t2=np.linspace(-1,1,3)
+S0,S1,S2,T0,T1,T2=np.meshgrid(s0,s1,s2,t0,t1,t2)
+G=np.c_[S0.ravel(),S1.ravel(),S2.ravel(),T0.ravel(),T1.ravel(),T2.ravel()]
+
+psi=np.c_[s0.ravel(),s1.ravel(),s2.ravel()][0:3]
+theta=np.c_[t0.ravel(),t1.ravel(),t2.ravel()][0:3]
+M=np.c_[np.exp(-X.dot(psi.T)),np.ones(X.shape[0]),np.exp(-X.dot(theta.T))]
+S=M.dot(np.ones(M.shape[1]).reshape(-1,1))
+# TODO bij .dot moeten we .reshape doen op np.ones	, bij np.c_ niet 
+Y=M/S # (150,3) Y[n,k]=p(k|xn)
+J=np.ones(len(X)).reshape(1,-1).dot(T*-np.log(Y)).dot(np.ones(len(T[0])))
+Res=np.c_[psi,theta,J]
+
+/ controle,	
+In [10677]: Y.dot(np.ones(Y.shape[1]).reshape(-1,1))
+Out[10677]: 
+array([[1.],
+       [1.],
+       [1.]])
+
+/ 7	. 
+
+s0,s1,t0,t1= np.meshgrid(
+        np.linspace(-1,1,3),
+        np.linspace(-1,1,3),
+        np.linspace(-1,1,3),
+        np.linspace(-1,1,3),
+)
+s0,s1= np.meshgrid(
+        np.linspace(0,1,2),
+        np.linspace(0,1,2),
+)
+
+/ 7	. 
+
+/ OK	,
+
+i=np.linspace(0,1,2)
+j=np.linspace(0,1,2)
+I,J=np.meshgrid(i,j)
+G=np.c_[J.ravel(),I.ravel()]
+
+In [11718]: i
+Out[11718]: array([0., 1.])
+
+In [11719]: j
+Out[11719]: array([0., 1.])
+
+In [11720]: I
+Out[11720]: 
+array([[0., 1.],
+       [0., 1.]])
+
+In [11721]: J
+Out[11721]: 
+array([[0., 0.],
+       [1., 1.]])
+
+In [11722]: G
+Out[11722]: 
+array([[0., 0.],
+       [1., 0.],
+       [0., 1.],
+       [1., 1.]])
+
+
+/ 7	. 
+
+/ we zien dit fout gaan	,
+
+s0,s1= np.meshgrid(
+	np.linspace(0,1,2),
+	np.linspace(0,1,2),
+)
+In [11702]: s0
+Out[11702]: 
+array([[0., 1.],
+       [0., 1.]])
+
+In [11703]: s1
+Out[11703]: 
+array([[0., 0.],
+       [1., 1.]])
+
+/ Dit is ERR	,
+In [11706]: np.array([s0.ravel(),s1.ravel()])
+Out[11706]: 
+array([[0., 1., 0., 1.],
+       [0., 0., 1., 1.]])
+
+In [11707]: np.array([s0.ravel(),s1.ravel()]).reshape(-1,2)
+Out[11707]: 
+array([[0., 1.],
+       [0., 1.],
+       [0., 0.],
+       [1., 1.]])
+
+/ 7	. 
+
+In [11743]: print??
+Signature: print()
+Docstring: <no docstring>
+Source:   
+def print():
+
+  plt.figure()
+  plt.plot(x[y==0],y[y==0],'bs')
+  plt.plot(x[y==1],y[y==1],'g^')
+
+  intval=np.linspace(min(x),max(x),11)
+  Intval=np.c_[np.ones(len(intval)),intval]
+  vals=expit(Intval.dot(theta))
+  plt.plot(intval,vals)
+File:      ~/Devel/python/geron/handson-ml/<ipython-input-7151-224684f4a9b6>
+Type:      function
+/ TODO
+
+In [11744]: del print
+
+In [11746]: for i,j in G:
+       ...:     print(i,j)
+       ...:     
+0.0 0.0
+0.0 1.0
+1.0 0.0
+1.0 1.0
+
+/ of	,
+
+In [11747]: a=np.zeros((4,2))
+In [11747]: k=0              
+In [11747]: for i,j in G:    
+       ...:     a[k]=(i,j)
+       ...:     k=k+1
+       ...:     
+In [11751]: a
+Out[11751]: 
+array([[0., 0.],
+       [0., 1.],
+       [1., 0.],
+       [1., 1.]])
+
+/ 7	.
+
+s0=np.linspace(-1,1,3)
+s1=np.linspace(-1,1,3)
+s2=np.linspace(-1,1,3)
+t0=np.linspace(-1,1,3)
+t1=np.linspace(-1,1,3)
+t2=np.linspace(-1,1,3)
+S0,S1,S2,T0,T1,T2=np.meshgrid(s0,s1,s2,t0,t1,t2,indexing='ij')
+G=np.c_[S0.ravel(),S1.ravel(),S2.ravel(),T0.ravel(),T1.ravel(),T2.ravel()]
+
+for i in np.arange(G.shape[0]):
+	psi=G[i][:3]
+	theta=G[i][-3:]
+	print(psi,theta)
+
+[-1. -1. -1.] [-1. -1. -1.]
+[-1. -1. -1.] [-1. -1.  0.]
+[-1. -1. -1.] [-1. -1.  1.]
+[-1. -1. -1.] [-1.  0. -1.]
+[-1. -1. -1.] [-1.  0.  0.]
+[-1. -1. -1.] [-1.  0.  1.]
+[-1. -1. -1.] [-1.  1. -1.]
+[-1. -1. -1.] [-1.  1.  0.]
+[-1. -1. -1.] [-1.  1.  1.]
+[-1. -1. -1.] [ 0. -1. -1.]
+[-1. -1. -1.] [ 0. -1.  0.]
+[-1. -1. -1.] [ 0. -1.  1.]
+[-1. -1. -1.] [ 0.  0. -1.]
+[-1. -1. -1.] [0. 0. 0.]
+[-1. -1. -1.] [0. 0. 1.]
+[-1. -1. -1.] [ 0.  1. -1.]
+[-1. -1. -1.] [0. 1. 0.]
+[-1. -1. -1.] [0. 1. 1.]
+[-1. -1. -1.] [ 1. -1. -1.]
+[-1. -1. -1.] [ 1. -1.  0.]
+[-1. -1. -1.] [ 1. -1.  1.]
+[-1. -1. -1.] [ 1.  0. -1.]
+[-1. -1. -1.] [1. 0. 0.]
+[-1. -1. -1.] [1. 0. 1.]
+[-1. -1. -1.] [ 1.  1. -1.]
+[-1. -1. -1.] [1. 1. 0.]
+[-1. -1. -1.] [1. 1. 1.]
+[-1. -1.  0.] [-1. -1. -1.]
+[-1. -1.  0.] [-1. -1.  0.]
+[-1. -1.  0.] [-1. -1.  1.]
+[-1. -1.  0.] [-1.  0. -1.]
+[-1. -1.  0.] [-1.  0.  0.]
+[-1. -1.  0.] [-1.  0.  1.]
+[-1. -1.  0.] [-1.  1. -1.]
+[-1. -1.  0.] [-1.  1.  0.]
+...
+
+
+/ 7	. 
+
+/ 1313	. 
+
+s0=np.linspace(0,1,2)
+s1=np.linspace(0,1,2)
+t0=np.linspace(0,1,2)
+t1=np.linspace(0,1,2)
+S0,S1,T0,T1=np.meshgrid(s0,s1,t0,t1,indexing='ij')
+G=np.c_[S0.ravel(),S1.ravel(),T0.ravel(),T1.ravel()]
+
+In [11775]: G
+Out[11775]: 
+array([[0., 0., 0., 0.],
+       [0., 0., 0., 1.],
+       [0., 0., 1., 0.],
+       [0., 0., 1., 1.],
+       [0., 1., 0., 0.],
+       [0., 1., 0., 1.],
+       [0., 1., 1., 0.],
+       [0., 1., 1., 1.],
+       [1., 0., 0., 0.],
+       [1., 0., 0., 1.],
+       [1., 0., 1., 0.],
+       [1., 0., 1., 1.],
+       [1., 1., 0., 0.],
+       [1., 1., 0., 1.],
+       [1., 1., 1., 0.],
+       [1., 1., 1., 1.]])
+
+for i in np.arange(G.shape[0]):
+	psi=G[i][:2]
+	theta=G[i][-2:]
+	print(psi,theta)
+
+[0. 0.] [0. 0.]
+[0. 0.] [0. 1.]
+[0. 0.] [1. 0.]
+[0. 0.] [1. 1.]
+[1. 0.] [0. 0.]
+[1. 0.] [0. 1.]
+[1. 0.] [1. 0.]
+[1. 0.] [1. 1.]
+[0. 1.] [0. 0.]
+[0. 1.] [0. 1.]
+[0. 1.] [1. 0.]
+[0. 1.] [1. 1.]
+[1. 1.] [0. 0.]
+[1. 1.] [0. 1.]
+[1. 1.] [1. 0.]
+[1. 1.] [1. 1.]
+
+
+/ 1313	. 
+
+In [11779]: s0=np.linspace(0,1,2)
+       ...: s1=np.linspace(0,1,2)
+       ...: t0=np.linspace(0,1,2)
+       ...: t1=np.linspace(0,1,2)
+       ...: S0,S1,T0,T1=np.meshgrid(s0,s1,t0,t1,indexing='xy')
+       ...: G=np.c_[S0.ravel(),S1.ravel(),T0.ravel(),T1.ravel()]
+
+
+In [11778]: G
+Out[11778]: 
+array([[0., 0., 0., 0.],
+       [0., 0., 0., 1.],
+       [0., 0., 1., 0.],
+       [0., 0., 1., 1.],
+       [1., 0., 0., 0.],
+       [1., 0., 0., 1.],
+       [1., 0., 1., 0.],
+       [1., 0., 1., 1.],
+       [0., 1., 0., 0.],
+       [0., 1., 0., 1.],
+       [0., 1., 1., 0.],
+       [0., 1., 1., 1.],
+       [1., 1., 0., 0.],
+       [1., 1., 0., 1.],
+       [1., 1., 1., 0.],
+       [1., 1., 1., 1.]])
+
+/ 1313	. 
+
+
+
+
+
+
+/ Einde LAATSTE VERSIE 3 CLASSES
+
+/ Einde BISHOP (209)
+
 / BISHOP (209) 
 
 / multiclass log reg
@@ -1035,6 +1602,8 @@ for i in range(0,10):
 
 / newton 
 
+/ HIER HIER HIER
+
 X=iris['data'][:,[2,3]]
 X=np.c_[np.ones((len(X),1)),X]
 y=iris['target']
@@ -1155,6 +1724,7 @@ zz = y_predict.reshape(x0.shape)
 http://localhost:8888/notebooks/04_training_linear_models.ipynb
 
 / 3 classes, 2 features	,
+
 
 
 X=iris['data'][:,[2,3]]
@@ -1512,6 +2082,8 @@ In [9085]: lg.intercept_
 Out[9085]: array([24.05565958])
 
 
+//////////////////
+/ 3 CLASSES	, SCIKIT LEARN NEWTON
 
 / 1313	. 
 
@@ -1640,7 +2212,7 @@ array([[21.81940571],
 
 / deze wijkt iets af van toen we de klasses 0,1,2 tegelijk deden	,
 
-
+/ Einde 3 CLASSES	, SCIKIT LEARN NEWTON
 
 
 

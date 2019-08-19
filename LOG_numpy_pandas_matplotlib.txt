@@ -1,3 +1,10 @@
+/ See CONTOUR, PAD NAAR MINIMA MAXIMA 
+/ See PANDAS
+/ See NUMPY DTYPE
+/ See NUMPY STRINGS BYTES
+
+
+
 / 7	. 
 
 / lees	,
@@ -368,6 +375,9 @@ https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.gca.html
 / om dezelfde schaal op de assen te krijgen	,
 / gca=get current axes	,
 
+/ lees	,
+https://matplotlib.org/3.1.0/api/_as_gen/matplotlib.pyplot.clabel.html
+
 x0, x1 = np.meshgrid( np.linspace(0,2, 11), np.linspace(0,4,21),)
 #X= np.c_[x0.ravel(), x1.ravel()]
 
@@ -398,23 +408,81 @@ x0, x1 = np.meshgrid(
 	np.linspace(-np.sqrt(4*np.pi),np.sqrt(4*np.pi),11), 
 	np.linspace(-np.sqrt(4*np.pi),np.sqrt(4*np.pi),11), 
 )
-
-f=
+x0, x1 = np.meshgrid( 
+	np.linspace(0,np.sqrt(2*np.pi),11), 
+	np.linspace(-np.sqrt(2*np.pi),np.sqrt(2*np.pi),11), 
+)
+f=np.sin(x0**2+x1**2)
 
 plt.figure()
 plt.gca().set_aspect('equal')
 c= plt.contour(x0, x1, f,cmap=plt.cm.brg)
 plt.clabel(c, fmt='%1.1f', inline_spacing=40,fontsize=10)
 
-x=np.zeros((10,2))
-for i in range(0,10-1): 
-	gradf=np.array([4*(x[i,0]-1)**3,4*(x[i,1]-2)**3])
-	H=np.block([[4*3*(x[i,0]-1)**2,0],[0,4*3*(x[i,1]-2)**2]])
-	x[i+1]=x[i]-np.linalg.inv(H).dot(gradf)
+# je kunt λ=1 nemen als we start in √π +.1 of -.1	,
+# je moet λ=.3,... nemen als we start in √π	, 
+x=np.zeros((40,2))
+#x[0]=np.array([np.sqrt(np.pi),0])
+#x[0]=np.array([1,np.sqrt(2)])
+#x[0]=np.array([1,1])
+#x[0]=np.array([np.sqrt(2*np.pi)-.1,0])
+#x[0]=np.array([np.sqrt(2*np.pi)+.1,0])
+x[0]=np.array([1,1])*np.sqrt(3)
+display(x[0])
+lmbda=1
+for i in range(0,40-1): 
+	r=np.sqrt(x[i,0]**2+x[i,1]**2)
+	gradf=np.array([np.cos(r**2)*2*x[i,0],np.cos(r**2)*2*x[i,1]])
+	H=np.array([
+		[-np.sin(r**2)*2*r*2*x[i,0]*2*x[i,0]+np.cos(r**2)*2,-np.sin(r**2)*2*r*2*x[i,1]*2*x[i,0]],
+		[-np.sin(r**2)*2*r*2*x[i,0]*2*x[i,1],-np.sin(r**2)*2*r*2*x[i,1]*2*x[i,1]+np.cos(r**2)*2],
+	])
+	x[i+1]=x[i]-lmbda*np.linalg.inv(H).dot(gradf)
 	display(x[i+1])
 	plt.scatter(x[:,0],x[:,1],)
 # or	,
 #	plt.plot(x[:,0],x[:,1],)
+
+/ ctrl+shift+u221a=√
+/ ctrl+shift+u03bb=λ
+
+/ als je in het nulpunt (√π,0) begint, precies tussen het max √π/2 en min √3π/2 in	, dan moet je een λ erbij nemen	, 
+/ als je √π+.1 of -.1, dan gaat het zonder λ (λ=1) meteen goed	, 
+
+/ we start in √π	, links in √π/2 is er een max, en rechts in √3π/2 is er een minimum	,
+/ als λ>0, dan convergeert hij naar √π/2	, 
+/ als λ<0, dan convergeert hij naar √3π/2	, 
+/ bij λ=.3, .5 schiet hij over √π/2 heen, links ervan dus, maar gaat dan toch naar rechts naar √π/2	,
+/ bij λ=.2 doet hij dat niet, en gaat naar links naar √π/2
+/ bij λ=1 schiet hij zo ver door naar links, dat hij in 0 uitkomt!
+/ bij λ=.6 schiet hij zo ver door naar links, dat hij in -√π/2 uitkomt!
+
+/ je kunt ook beginnen in (1,1),  we zitten binnen (1,1)√π/√2, dus hij convergeert naar (1,1)√π/2/√2 = (1,1)√π/2
+/ je gaat over de radius naar  
+/ je kunt ook beginnen in (1,√2),  we zitten binnen (1,√2)√π/√3, dus hij convergeert naar (1,√2)√π/2/√3 = (1,√2)√π/6
+
+/ als we nemen (√π-.1,0), dan komen we in (√3π/2,0)
+/ als we nemen (√π+.1,0), dan komen we in (√5π/2,0)
+
+/ 1313	. 
+
+/ de andere grens is bij √2π, bijv (1,1)/√2 * √2π. Kies √3(1,1). Dit convergeert naar (1,1)/√2 * √3π/2. Dat is een factor (√π)/2 .
+
+/ we zien	,
+...
+array([1.53499661, 1.53499661])
+array([1.5349951, 1.5349951])
+
+/ doe	,
+In [9988]: x[19]/x[0]
+Out[9988]: array([0.88677315, 0.88677315])
+
+In [9989]: np.sqrt(np.pi)/2
+Out[9989]: 0.8862269254527579
+
+
+
+
 
 
 
@@ -506,4 +574,1237 @@ q = plt.quiver(X_, Y_, U_, V_,units="width")
 plt.quiverkey(q, 0.9, 0.9, 2, r'$2 \frac{m}{s}$', labelpos='E', coordinates='figure')
 / TODO
 
+/ 	7. 
+
+/ ravel en reshape	,
+
+In [10537]: s0
+Out[10537]: 
+array([[-1.,  0.,  1.],
+       [-1.,  0.,  1.],
+       [-1.,  0.,  1.]])
+
+In [10538]: s0.ravel()
+/=
+In [10539]: s0.ravel(order='C')
+/=
+In [10540]: s0.reshape(-1)
+Out[10539]: array([-1.,  0.,  1., -1.,  0.,  1., -1.,  0.,  1.])
+
+In [10536]: s0.ravel(order='F')
+Out[10536]: array([-1., -1., -1.,  0.,  0.,  0.,  1.,  1.,  1.])
+
+/ C is C-style order, F is Fortran-style order	,
+/ C-style is de default	,
+
+/ reshape(-1)
+/ TODO
+/ Kan ook F-style met reshape?
+/ TODO
+
+/ 7	.
+
+/ print params en fct 
+
+/ meshgrid en f hieronder maken 3 arrays	, die elk het grid voorstellen	, en in ekl punt geven s0, dat de proj is op de hor as, s1, dat de proj is op de vert as, en f, dat f geeft in het punt in de grid	,
+
+s0,s1=np.meshgrid(
+        np.linspace(-1,1,3),
+        np.linspace(-1,1,3),
+)
+f=s0+s1
+
+In [10518]: s0
+Out[10518]: 
+array([[-1.,  0.,  1.],
+       [-1.,  0.,  1.],
+       [-1.,  0.,  1.]])
+
+In [10519]: s1
+Out[10519]: 
+array([[-1., -1., -1.],
+       [ 0.,  0.,  0.],
+       [ 1.,  1.,  1.]])
+
+In [10520]: 
+
+In [10520]: f
+Out[10520]: 
+array([[-2., -1.,  0.],
+       [-1.,  0.,  1.],
+       [ 0.,  1.,  2.]])
+
+/ 13	. 
+
+/ np.c_[s0,s1,f] heeft geen betekenis,	 want je zet 3 matrices naast elkaar,	
+
+X=np.c_[s0,s1,f]
+In [10522]: X
+Out[10522]: 
+array([[-1.,  0.,  1., -1., -1., -1., -2., -1.,  0.],
+       [-1.,  0.,  1.,  0.,  0.,  0., -1.,  0.,  1.],
+       [-1.,  0.,  1.,  1.,  1.,  1.,  0.,  1.,  2.]])
+
+/ 13	. 
+
+/ s0.ravel() zet de rijen in s0 achter elkaar	,
+/ doe dat ook met s1 en f	, en je hebt een tabel		,
+
+/ OK	,
+X=np.c_[s0.ravel(),s1.ravel(),f.ravel()]
+In [10546]: X.shape
+Out[10546]: (9, 3)
+
+In [10541]: s0.ravel()
+Out[10541]: array([-1.,  0.,  1., -1.,  0.,  1., -1.,  0.,  1.])
+In [10544]: s0.ravel().shape
+Out[10544]: (9,)
+In [10542]: s1.ravel()
+Out[10542]: array([-1., -1., -1.,  0.,  0.,  0.,  1.,  1.,  1.])
+In [10543]: f.ravel()
+Out[10543]: array([-2., -1.,  0., -1.,  0.,  1.,  0.,  1.,  2.])
+
+In [10547]: X
+Out[10547]: 
+array([[-1., -1., -2.],
+       [ 0., -1., -1.],
+       [ 1., -1.,  0.],
+       [-1.,  0., -1.],
+       [ 0.,  0.,  0.],
+       [ 1.,  0.,  1.],
+       [-1.,  1.,  0.],
+       [ 0.,  1.,  1.],
+       [ 1.,  1.,  2.]])
+
+/ 	7. 
+
+/ matrix waarvan de elems ook matrices zijn	,
+
+/ 13	. 
+
+/ 1313	. 
+
+m=np.array([
+	np.array([[1,2],[3,4]]),
+	np.array([[1,2],[3,4]]),
+],dtype=object)
+
+In [10752]: m.shape
+Out[10752]: (2, 2, 2)
+
+In [10753]: m[0]
+Out[10753]: 
+array([[1, 2],
+       [3, 4]], dtype=object)
+
+/ 1313	. 
+
+m=np.array([
+	[np.array([[1,2],[3,4]]),
+	np.array([[1,2],[3,4]])],
+	[np.array([[1,2],[3,4]]),
+	np.array([[1,2],[3,4]])],
+],dtype=object)
+/ of	,
+m=np.array([
+	[
+		np.array([[1,2],[3,4]]),
+		np.array([[1,2],[3,4]])
+	],
+	[
+		np.array([[1,2],[3,4]]),
+		np.array([[1,2],[3,4]])
+	],
+],dtype=object)
+
+In [10756]: m.shape
+Out[10756]: (2, 2, 2, 2)
+
+In [10757]: m[0,0]
+Out[10757]: 
+array([[1, 2],
+       [3, 4]], dtype=object)
+
+In [10758]: m[0,1]
+Out[10758]: 
+array([[1, 2],
+       [3, 4]], dtype=object)
+
+
+/ 13	. 
+
+/ of zo,	
+
+In [10738]: m=np.arange(0,16).reshape(2,2,2,2)
+
+In [10739]: m[0,0]
+Out[10739]: 
+array([[0, 1],
+       [2, 3]])
+
+In [10741]: m[0,1]
+Out[10741]: 
+array([[4, 5],
+       [6, 7]])
+
+In [10740]: m[1,0]
+Out[10740]: 
+array([[ 8,  9],
+       [10, 11]])
+
+/ 13	. 
+
+/ gegeven een matrix	, 
+In [10766]: m=np.array([1,2,3,4]).reshape(-1,2)
+
+/ zie dit als indices	, en maak voor ieder een 
+
+
+
+
+
 / Einde CONTOUR, PAD NAAR MINIMA MAXIMA 
+
+/ NUMPY DTYPE
+
+/ 7	. 
+
+In [10824]: n=np.arange(5)
+In [10826]: id(n)
+Out[10826]: 140457377677920
+
+In [10827]: n=np.arange(7)
+In [10828]: id(n)
+Out[10828]: 140457377680320
+/ andere	,
+
+/ 	7. 
+
+/ lees,
+https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.html
+
+/ er is ook,
+https://docs.scipy.org/doc/numpy/reference/arrays.dtypes.html
+
+/ dtype staat voor data type	,
+/ als m een np.ndarray is 	, is np.ndarray  zijn type	, maar is zijn data type bijv np.int64, of een andere dtype	,
+In [11006]: type(m)
+Out[11006]: numpy.ndarray
+In [11007]: m.dtype
+Out[11007]: dtype([('f0', '<i4'), ('f1', '<i4')])
+
+
+A numpy array is homogeneous, and contains elements described by a dtype object. A dtype object can be constructed from different combinations of fundamental numeric types.
+
+/ 13	 .
+
+/ je hebt type en dtype	,
+/ in numpy.ndarray wordt dtype used	,
+
+/ scalar types:
+
+In [10959]: type(int)
+Out[10959]: type
+In [10960]: type(np.int64)
+Out[10960]: type
+In [10961]: type(np.int16)
+Out[10961]: type
+
+/ een numpy.ndarray 
+In [10953]: n=np.arange(5)
+In [10955]: n.dtype
+Out[10955]: dtype('int64')
+
+/ arg np.dtype kan zijn: een type, string, np.dtype:
+In [10957]: np.dtype(int)
+In [10966]: np.dtype(np.int)
+In [10968]: np.dtype('int')
+In [10969]: np.dtype('int64')
+In [10971]: np.dtype(np.dtype('int64'))
+In [10981]: np.dtype('i8')
+Out[10966]: dtype('int64')
+
+In [10962]: type(np.dtype('int64'))
+Out[10962]: numpy.dtype
+
+/ 13	. 
+
+/ structured types	,
+
+/ structured types is list of fields, die een name hebben en een type	, 
+
+In [10984]: dt=np.dtype([('a','i8')])
+In [10984]: dt=np.dtype([('a',np.int64)])
+In [10985]: dt
+Out[10985]: dtype([('a', '<i8')])
+
+/ 1313	. 
+
+In [10975]: dt=np.dtype([('f',int),('g',float)])
+In [10977]: dt
+Out[10977]: dtype([('f', '<i8'), ('g', '<f8')])
+In [10976]: np.zeros(4,dtype=dt)
+Out[10976]: 
+array([(0, 0.), (0, 0.), (0, 0.), (0, 0.)],
+      dtype=[('f', '<i8'), ('g', '<f8')])
+In [11031]: a[2]=(5,2.4)
+/ OK	,
+
+/ 1313	. 
+
+/ 'i8' of '<i8' zijn WH string repr van np.int64	, want je kunt andersom	,
+In [10995]: np.dtype('i8')
+Out[10995]: dtype('int64')
+
+/ 1313	.
+
+/////////////////////////////////////////////
+In [11015]: dt=np.dtype('(2,3)i2')
+In [11017]: a=np.zeros(4,dtype=dt)
+In [11019]: a[2]=np.array([1,2,3,1,2,3]).reshape(-1,3)
+In [11021]: a[2]
+Out[11021]: 
+array([[1, 2, 3],
+       [1, 2, 3]], dtype=int16)
+In [11022]: a[2]=np.array([1,2,3,1,2,3]).reshape(-1,2)
+ValueError: could not broadcast input array from shape (3,2) into shape (2,3)
+
+/ 1313	. 
+
+/ dtypes zonder name	,
+
+In [11015]: dt=np.dtype('(2,3)i2')
+/=
+In [11015]: dt=np.dtype(('(2,3)i2'))
+
+/ als je [] use	, wordt deze dtype niet begrepen	, 
+/ als je [] use, moet er een naam bij	(= column 
+
+/ 1313	. 
+
+/////////////////////////////////////////////////////////////
+
+/ dtypes met name	,
+
+/ de name van een dtype is de column in pd.DataFrame	,
+/ en als a zo'n array is , dan is met a[2] 2 een index	, 
+
+/ als je een dtype met name wilt, gebruik dan []	,
+/ een name is als een key in de dict	,
+
+In [11075]: dt=np.dtype([('hello','(2,3)f8')])
+
+/ of	,
+In [11076]: dt=np.dtype([('hello','(2,3)f8'),('world','i2')])
+In [11077]: a=np.zeros(4,dtype=dt)
+
+In [11078]: a
+Out[11078]: 
+array([([[0., 0., 0.], [0., 0., 0.]], 0),
+       ([[0., 0., 0.], [0., 0., 0.]], 0),
+       ([[0., 0., 0.], [0., 0., 0.]], 0),
+       ([[0., 0., 0.], [0., 0., 0.]], 0)],
+      dtype=[('hello', '<f8', (2, 3)), ('world', '<i2')])
+
+/ het klopt	,
+In [11081]: np.array([[0., 0., 0.], [0., 0., 0.]])
+Out[11081]: 
+array([[0., 0., 0.],
+       [0., 0., 0.]])
+
+In [11086]: a[2]=(np.array([[1,2,3],[4,3,2]]),7)
+/ OK,
+In [11088]: a
+Out[11088]: 
+array([([[0., 0., 0.], [0., 0., 0.]], 0),
+       ([[0., 0., 0.], [0., 0., 0.]], 0),
+       ([[1., 2., 3.], [4., 3., 2.]], 7),
+       ([[0., 0., 0.], [0., 0., 0.]], 0)],
+      dtype=[('hello', '<f8', (2, 3)), ('world', '<i2')])
+
+In [11089]: type(a[2])
+Out[11089]: numpy.void
+/ TODO
+
+In [11090]: type(a[2][0])
+Out[11090]: numpy.ndarray
+In [11091]: type(a[2][1])
+Out[11091]: numpy.int16
+
+In [11092]: a['hello']
+Out[11092]: 
+array([[[0., 0., 0.],
+        [0., 0., 0.]],
+
+       [[0., 0., 0.],
+        [0., 0., 0.]],
+
+       [[1., 2., 3.],
+        [4., 3., 2.]],
+
+       [[0., 0., 0.],
+        [0., 0., 0.]]])
+
+In [11093]: a['world']
+Out[11093]: array([0, 0, 7, 0], dtype=int16)
+
+In [11094]: type(a['hello'])
+Out[11094]: numpy.ndarray
+
+In [11095]: type(a['world'])
+Out[11095]: numpy.ndarray
+
+In [11096]: a['hello'].dtype
+Out[11096]: dtype('float64')
+/ TODO had verwachtn numpy.ndarray	,
+In [11098]: a['hello'][1].dtype
+Out[11098]: dtype('float64')
+/ OK	,
+
+In [11097]: a['world'].dtype
+Out[11097]: dtype('int16')
+
+/ 1313	. 
+
+In [11024]: dt=np.dtype([('hello',(np.int64,3)),('world',np.void,10)])
+In [11025]: dt
+Out[11025]: dtype([('hello', '<i8', (3,)), ('world', 'V10')])
+
+In [11026]: a=np.zeros(4,dtype=dt)
+In [11027]: a
+Out[11027]: 
+array([([0, 0, 0], b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'),
+       ([0, 0, 0], b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'),
+       ([0, 0, 0], b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'),
+       ([0, 0, 0], b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00')],
+      dtype=[('hello', '<i8', (3,)), ('world', 'V10')])
+
+In [11039]: a[2]=(np.array([1,2,3]),b'\x0a\x41\x42\x41\x43\x0a\x41\x42\x0a\x43')
+/ OK,
+
+/ fixed type, niet flexible	,
+In [11038]: a[2]=(np.array([1,2,3,4]),b'\x0a\x41\x42\x41\x43\x0a\x41\x42\x0a\x43')
+ValueError: could not broadcast input array from shape (4) into shape (3)
+
+/ flexible type:
+/ als we een byte teveel geven , kapt hij hem eraf	, 
+/ als we een byte teweinig geven , schrijft hij \x00 	,
+
+/ 1313	. 
+
+/ verdeel een np.int16 in twee stukken	,
+
+dt=np.dtype((np.int16,{'x':(np.int8,0),'y':(np.int8,1)}))
+a=np.zeros(4,dtype=dt)
+
+In [11168]: a[0]=10;a[1]=11;a[2]=12;a[3]=13
+
+In [11169]: a
+Out[11169]: array([10, 11, 12, 13], dtype=(numpy.int16, [('x', 'i1'), ('y', 'i1')]))
+
+In [11170]: a['x']
+Out[11170]: array([10, 11, 12, 13], dtype=int8)
+
+In [11171]: a['y']
+Out[11171]: array([0, 0, 0, 0], dtype=int8)
+
+In [11172]: a[2]=0xab34
+
+In [11173]: a['x']
+Out[11173]: array([10, 11, 52, 13], dtype=int8)
+
+In [11174]: a['y']
+Out[11174]: array([  0,   0, -85,   0], dtype=int8)
+
+In [11176]: np.int8(0xab)
+Out[11176]: -85
+
+In [11177]: np.int8(0x34)
+Out[11177]: 52
+
+/ 1313	 .
+
+/ See NUMPY STRING BYTE
+
+/ je kunt names en dtypes bij elkaar def	,
+
+In [11204]: dt=np.dtype({'names':['gender','age'],'formats':['U1',np.uint8]})
+In [11204]: a=np.zeros(1,dtype=dt)                                           
+In [11205]: a
+Out[11205]: array([('', 0)], dtype=[('gender', '<U1'), ('age', 'u1')])
+In [11204]: a[0]=('\u03c0',7)                                                
+In [11208]: a
+Out[11208]: array([('π', 7)], dtype=[('gender', '<U1'), ('age', 'u1')])
+
+In [11209]: dt=np.dtype({'names':['gender','age'],'formats':['S1',np.uint8]})
+In [11210]: a=np.zeros(1,dtype=dt)
+In [11211]: a
+Out[11211]: array([(b'', 0)], dtype=[('gender', 'S1'), ('age', 'u1')])
+In [11213]: a[0]=('A',7)
+/ OK	, TODO
+In [11214]: a
+Out[11214]: array([(b'A', 7)], dtype=[('gender', 'S1'), ('age', 'u1')])
+In [11215]: a[0]=(b'A',7)
+In [11216]: a
+Out[11216]: array([(b'A', 7)], dtype=[('gender', 'S1'), ('age', 'u1')])
+
+In [11217]: a[0]=(b'AB',7)
+In [11218]: a
+Out[11218]: array([(b'A', 7)], dtype=[('gender', 'S1'), ('age', 'u1')])
+In [11219]: a[0]=(b'\x41\x42',7)
+In [11220]: a
+Out[11220]: array([(b'A', 7)], dtype=[('gender', 'S1'), ('age', 'u1')]
+
+/ 1313	.
+
+In [11231]: dt=np.dtype({'surname':('S4',0),'age':(np.uint8,4)})
+In [11232]: a=np.zeros(4,dtype=dt)
+In [11237]: a[0]=('John Doe',257)
+In [11238]: a
+Out[11238]: 
+array([(b'John', 1), (b'', 0), (b'', 0), (b'', 0)],
+      dtype=[('surname', 'S4'), ('age', 'u1')])
+
+/ 13	. 
+
+/ SAMENVATTING
+
+/ 1313	. 
+
+/ het kan zo	,
+
+In [11331]: dt=np.dtype([('gender','U2'),('age','i2')])
+In [11333]: dt=np.dtype([('gender',(np.unicode,2)),('age',np.int16)])
+In [11334]: dt
+Out[11334]: dtype([('gender', '<U2'), ('age', '<i2')])
+
+/ maar ook zo	,
+
+In [11338]: dt=np.dtype({'names':['gender','age'],'formats':[(np.unicode,2),np.int16]})
+In [11339]: dt
+Out[11339]: dtype([('gender', '<U2'), ('age', '<i2')])
+
+
+
+/ 1313	. 
+
+/ (np.unicode,2)='U2', maar (np.int8,2) != np.int16	,
+
+In [11305]: dt=np.dtype([('gender',(np.unicode,2)),('age',(np.int8,2))])
+In [11307]: a=np.zeros(1,dtype=dt)
+In [11309]: a[0]=('abc',65537)
+In [11310]: a
+Out[11310]: array([('ab', [1, 1])], dtype=[('gender', '<U2'), ('age', 'i1', (2,))])
+/ klopt	, 0x10001=\u0001\u0001
+
+In [11312]: dt=np.dtype([('gender',(np.unicode,2)),('age',(np.int16))])
+In [11316]: a[0]=('abc',65537)
+In [11317]: a
+Out[11317]: array([('ab', 1)], dtype=[('gender', '<U2'), ('age', '<i2')])
+
+/ 13	.
+
+/ Einde https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.html
+
+
+/ 7	. 
+
+/ VanderPlas(93)
+
+/ we moeten in dtype 'names' en 'formats' use	,
+/ lees,
+https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.html
+
+/ 1313	. 
+
+In [11343]: dt=np.dtype({'names':('name','age','weight'),'formats':('U10','i4','f8')})
+n [11358]: dt=np.dtype([('name','U10'),('age','i4'),('weight','f8')])
+In [11344]: data=np.zeros(4,dtype=dt)
+In [10941]: data
+Out[10941]: 
+array([('', 0, 0.), ('', 0, 0.), ('', 0, 0.), ('', 0, 0.)],
+      dtype=[('name', '<U10'), ('age', '<i4'), ('weight', '<f8')])
+
+/ Intermezzo
+
+/ je kunt ook	,
+/ maar dan kun je dt niet in de tussentijd bekijken	, maar wel achteraf met a.dtype	,
+In [11348]: dt={'names':('name','age','weight'),'formats':('U10','i4','f8')}
+In [11344]: a=np.zeros(4,dtype=dt)
+
+/ dus je kunt	, 
+data=np.zeros(4,dtype={'names':('name','age','weight'),'formats':('U10','i4','f8')})
+/=
+data=np.zeros(4,dtype=np.dtype({'names':('name','age','weight'),'formats':('U10','i4','f8')}))
+
+/ Einde Intermezzo  
+
+/ 1313	. 
+
+////////////////////////////
+/ als je aan df denkt, schrijven we nu de columns	,
+
+In [11367]: data['name']=['Alice','Bob','Cathy','Doug']
+In [11368]: data['age']=[25,45,37,19]
+In [11369]: data['weight']=[55,85.5,68,61.5]
+In [11370]: data
+Out[11370]: 
+array([('Alice', 25, 55. ), ('Bob', 45, 85.5), ('Cathy', 37, 68. ),
+       ('Doug', 19, 61.5)],
+      dtype=[('name', '<U10'), ('age', '<i4'), ('weight', '<f8')])
+
+//////////////////////////////
+/ column, 
+In [11371]: data['name']
+Out[11371]: array(['Alice', 'Bob', 'Cathy', 'Doug'], dtype='<U10')
+/ row	,
+In [11372]: data[0]
+Out[11372]: ('Alice', 25, 55.)
+
+/ 131313	. 
+
+/ Dus we kunnen het ook zo doen	,
+
+In [11373]: dt=np.dtype([('name','U10'),('age','i4'),('weight','f8')])
+In [11374]: data=np.zeros(4,dtype=dt)
+In [11376]: data[0]=('Alice',25,55)
+In [11378]: data[1]=('Bob',45,85.5)
+In [11379]: data[2]=('Cathy',37,68)
+In [11380]: data[3]=('Doug',19,61.5)
+In [11381]: data
+Out[11381]: 
+array([('Alice', 25, 55. ), ('Bob', 45, 85.5), ('Cathy', 37, 68. ),
+       ('Doug', 19, 61.5)],
+      dtype=[('name', '<U10'), ('age', '<i4'), ('weight', '<f8')])
+In [11382]: data['name']
+Out[11382]: array(['Alice', 'Bob', 'Cathy', 'Doug'], dtype='<U10')
+...
+
+/ 1313	. 
+
+In [11383]: data[data['age']<30]
+Out[11383]: 
+array([('Alice', 25, 55. ), ('Doug', 19, 61.5)],
+      dtype=[('name', '<U10'), ('age', '<i4'), ('weight', '<f8')])
+
+In [11384]: data[data['age']<30]['name']
+Out[11384]: array(['Alice', 'Doug'], dtype='<U10')
+
+/ Intermezzo
+
+/ kijk naar column 'age' en kijk welke rows <30 zijn	,
+
+In [11385]: data['age']<30
+Out[11385]: array([ True, False, False,  True])
+In [11388]: data[[True,False,False,True]]				/ selects columns, shows rows	zoals altijd,
+/ TODO
+Out[11388]: 
+array([('Alice', 25, 55. ), ('Doug', 19, 61.5)],
+      dtype=[('name', '<U10'), ('age', '<i4'), ('weight', '<f8')])
+
+In [11395]: data[['age','weight']]
+Out[11395]: 
+array([(25, 55. ), (45, 85.5), (37, 68. ), (19, 61.5)],
+      dtype=[('age', '<i4'), ('weight', '<f8')])
+
+/ Einde Intermezzo
+
+/ 1313	. 
+
+/ VanderPlas(95)
+
+In [11397]: dt=np.dtype([('id','i8'),('mat','f8',(3,3))])
+/=
+In [11401]: dt=np.dtype([('id','i8'),('mat','(3,3)f8')])
+In [11403]: dt
+Out[11403]: dtype([('id', '<i8'), ('mat', '<f8', (3, 3))])
+
+/ 1313	. 
+
+In [11424]: dt=np.dtype('m','(2,2)i1')
+In [11425]: dt
+Out[11425]: dtype('<m8')
+/ TODO
+
+
+/ Einde NUMPY DTYPE
+
+/ NUMPY STRINGS BYTES
+
+/ lees,
+https://stackoverflow.com/questions/6269765/what-does-the-b-character-do-in-front-of-a-string-literal
+
+In [11187]: '\u03c0'.encode('utf-8')
+Out[11187]: b'\xcf\x80'
+
+In [11188]: b'\xcf\x80'.decode('utf-8')
+Out[11188]: 'π'
+
+>>> b'A' == b'\x41'
+True
+>>> 'A' == b'A'
+False
+
+/ 13	. 
+
+/ lees,
+https://docs.scipy.org/doc/numpy/reference/arrays.dtypes.html
+
+'S', 'a'	zero-terminated bytes (not recommended)
+'U'	Unicode string
+
+Note on string types
+For backward compatibility with Python 2 the S and a typestrings remain zero-terminated bytes and np.string_ continues to map to np.bytes_. To use actual strings in Python 3 use U or np.unicode_. For signed bytes that do not need zero-termination b or i1 can be used.
+
+/ we moeten S1 WH zien als b'\x..'	, 1 byte	,
+/ als je teveel bytes geeft, wordt hij afgekapt	,
+
+/ 7	. 
+
+/ is S25 een b'' string	, je kunt ascii chars invoeren	,
+
+In [11230]: dt=np.dtype({'surname':('S25',0),'age':(np.uint8,25)})
+In [11230]: a=np.zeros(4,dtype=dt)                                
+In [11230]: a[0]=('John',7)                                       
+In [11230]: a
+Out[11230]: 
+array([(b'John', 7), (b'', 0), (b'', 0), (b'', 0)],
+      dtype=[('surname', 'S25'), ('age', 'u1')])
+In [11229]: a[0]=('\u03c0',7)
+UnicodeEncodeError: 'ascii' codec can't encode character '\u03c0' in position 0: ordinal not in range(128)
+
+
+
+
+/ Einde NUMPY STRINGS BYTES
+
+/ PANDAS SERIES
+
+/ (102) series is numpy array met flexible indices	,
+
+/ lees over id,
+https://medium.com/broken-window/many-names-one-memory-address-122f78734cb6
+
+/ 7	. 
+
+In [10772]: s=pd.Series([.25,.5])
+
+/ 13	. 
+
+In [10868]: s.values[0]=7
+/ OK,
+In [10869]: s.index[0]=7 
+TypeError: Index does not support mutable operations
+
+/ aanpassingen kun je ook doen via een var	,
+i=s.index
+i[0]=7	 / deze kan dan niet, want s.index is immutable,	
+m=s.values
+m[0]=7	 / s.values is aangepast, 
+
+/ bij vervanging moet je niet via een var doen, want dan vervang de de var, niet 
+
+In [10878]: s.index=['a','b']
+/ OK,
+In [10879]: s.values=[1,3]
+AttributeError: can't set attribute
+
+/ 13	,
+
+/ wat we hieronder zien is een algemeen python iets:
+
+n=m		/ id(n)=id(m)	, wijzen naar hetzelfde ding	,
+n[0]=... / dan verandert m[0] ook	,
+n=p / id(n) != id(m), 	dus n wijst naar waar p naar wijst	,  
+
+/ 13	. 
+
+In [10776]: s.reshape(-1,1)
+/ ERR	,
+
+In [10881]: s.values.reshape(-1,1)
+Out[10881]: 
+array([[9. ],
+       [0.5]])
+In [10882]: s.values
+Out[10882]: array([9. , 0.5])
+/ TODO
+
+/ 7	. 
+
+/ manieren om een series te maken	,
+
+/ 13	. 
+
+In [10883]: type([1,2])
+Out[10883]: list
+
+s=pd.Series([.25,.5])
+/ we maken dus een series met een list	,
+
+In [10885]: type(s.values)
+Out[10885]: numpy.ndarray
+
+In [10886]: type (s.index)
+Out[10886]: pandas.core.indexes.base.Index
+
+/ dus we start met een list	, en we krijgen een np.array	,
+
+/ 13	. 
+
+In [10889]: pd.Series([1,2],index=['a','b'])
+Out[10889]: 
+a    1
+b    2
+dtype: int64
+
+
+/ 13	 .
+
+In [10890]: type({1,2})
+Out[10890]: set
+In [10891]: type({'a':1})
+Out[10891]: dict
+
+In [10892]: s=pd.Series({'a':1,'b':2})
+In [10894]: s.index
+Out[10894]: Index(['a', 'b'], dtype='object')
+In [10895]: s.values
+Out[10895]: array([1, 2])
+
+In [10898]: s=pd.Series({'a':1,'b':2},index=['a'])
+In [10900]: s.index
+Out[10900]: Index(['a'], dtype='object')
+In [10901]: s.values
+Out[10901]: array([1])
+
+In [10902]: s=pd.Series({'a':1,'b':2},index=['c','d'])
+In [10904]: s.values
+Out[10904]: array([nan, nan])
+In [10905]: s.index
+Out[10905]: Index(['c', 'd'], dtype='object')
+
+/ 13	. 
+
+/ itt dict kunnen we in een series slice:
+
+In [10907]: s=pd.Series({'a':1,'b':2,'c':3,'d':4})
+
+In [10908]: s
+Out[10908]: 
+a    1
+b    2
+c    3
+d    4
+dtype: int64
+
+In [10909]: s['b':'d']
+Out[10909]: 
+b    2
+c    3
+d    4
+dtype: int64
+
+/ 7	. 
+
+/ series van matrices	,
+
+/ 13	. 
+
+/ dit is een series van lists	,
+
+In [11462]: s=pd.Series([[1,2],[3,4]])
+In [11471]: s
+Out[11471]: 
+0    [1, 2]
+1    [3, 4]
+dtype: object
+
+In [11472]: type(s[0])
+Out[11472]: list
+
+/ 13	. 
+
+/ dit is een series van een list van matrices	,
+
+In [11473]: s=pd.Series([np.array([[1,2],[3,4]]),np.array([[1,2],[3,4]])])
+
+In [11474]: s
+Out[11474]: 
+0    [[1, 2], [3, 4]]
+1    [[1, 2], [3, 4]]
+dtype: object
+
+In [11475]: type(s[0])
+Out[11475]: numpy.ndarray
+In [11476]: s[0]
+Out[11476]: 
+array([[1, 2],
+       [3, 4]])
+
+In [11645]: s.values
+Out[11645]: 
+array([array([[1, 2],
+       [3, 4]]), array([[1, 2],
+       [3, 4]])], dtype=object)
+
+
+/ dit is een series van een list van objects	,
+
+In [11473]: s=pd.Series([(np.array([[1,2],[3,4]]),7),(np.array([[1,2],[3,4]]),13)])
+/ OK	,
+
+
+/ 1313	. 
+
+/ maak een series van een array	,
+
+dt=np.dtype('i8')
+a=np.zeros(7,dtype=dt)
+s=pd.Series(a)
+In [11577]: s
+Out[11577]: 
+0    0
+1    0
+2    0
+3    0
+4    0
+5    0
+6    0
+dtype: int64
+
+/ Maar dit kan NIET	,
+
+In [11644]: s=pd.Series(np.array([np.array([[1,2],[3,4]]),np.array([[1,2],[3,4]])]))
+Exception: Data must be 1-dimensional
+/ TODO
+
+/ 1313	.
+
+/ we gaan geen columns maken, dus doe NIET	, 
+
+dt=np.dtype([('a','i8'),('b','f8')])
+a=np.zeros(7,dtype=dt)
+s=pd.Series(a)
+/ je ziet dan ook	,
+In [11567]: s                                        
+TypeError: ufunc 'isnan' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''
+
+/ 1313	. 
+
+dt=np.dtype('(3,2)i8,f8')
+In [11603]: dt
+Out[11603]: dtype([('f0', '<i8', (3, 2)), ('f1', '<f8')])
+In [11604]: a=np.zeros(4,dtype=dt)
+In [11605]: a[0]=(np.array([1,2,3,1,2,3]).reshape(3,2),7.)
+/ OK	,
+
+/ In dtypes zien we [] alleen met names erbij	,
+/ TODO
+dt=np.dtype([('(3,2)i8','f8')])
+In [11613]: dt
+Out[11613]: dtype([('(3,2)i8', '<f8')])
+/ TODO
+In [11614]: a=np.zeros(4,dtype=dt)
+In [11615]: a
+Out[11615]: array([(0.,), (0.,), (0.,), (0.,)], dtype=[('(3,2)i8', '<f8')])
+/ TODO
+
+
+/ 1313	. 
+
+dt=np.dtype('(3,2)i8,f8')
+a=np.zeros(4,dtype=dt)
+s=pd.Series(a)
+
+In [11565]: s[0]
+Out[11565]: ([[0, 0], [0, 0], [0, 0]], 0.)
+In [11566]: s[6]
+Out[11566]: ([[0, 0], [0, 0], [0, 0]], 0.)
+/ OK	, 
+/ maar	,
+In [11567]: s                                        
+TypeError: ufunc 'isnan' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''
+
+/ ook met 
+dt=np.dtype('i8,f8')
+a=np.zeros(4,dtype=dt)
+s=pd.Series(a)
+In [11567]: s
+TypeError: ufunc 'isnan' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''
+
+
+/ 13	.
+
+/ dataframe van matrices	,
+
+In [11473]: s=pd.Series([np.array([[1,2],[3,4]]),np.array([[1,2],[3,4]])])
+In [11477]: df=pd.DataFrame({'m':s})
+In [11478]: df
+Out[11478]: 
+                  m
+0  [[1, 2], [3, 4]]
+1  [[1, 2], [3, 4]]
+
+/ 13	 .
+
+
+
+dt=np.dtype([('a','i8'),('b','f8')])
+a=np.zeros(4,dtype=dt)
+df=pd.DataFrame(a)    
+/ OK	,
+In [11669]: df
+Out[11669]: 
+   a    b
+0  0  0.0
+1  0  0.0
+2  0  0.0
+3  0  0.0
+
+
+dt=np.dtype([('a','(3,2)i8'),('b','f8')])
+a=np.zeros(4,dtype=dt)
+df=pd.DataFrame(a)    
+Exception: Data must be 1-dimensional
+
+dt=np.dtype([('a','(3,2)i8'),('b','(3,2)f8')])
+a=np.zeros(4,dtype=dt)
+df=pd.DataFrame(a)    
+ValueError: If using all scalar values, you must pass an index
+
+/ 13	. 
+
+dt=np.dtype([('a','(3,2)i8'),('b','f8')])
+a=np.zeros(7,dtype=dt)
+s=pd.Series({'m':a})
+/ Dit is een series met maar 1 elem	,
+In [11552]: s['m']
+Out[11552]: 
+array([([[0, 0], [0, 0], [0, 0]], 0.), ([[0, 0], [0, 0], [0, 0]], 0.),
+       ([[0, 0], [0, 0], [0, 0]], 0.), ([[0, 0], [0, 0], [0, 0]], 0.),
+       ([[0, 0], [0, 0], [0, 0]], 0.), ([[0, 0], [0, 0], [0, 0]], 0.),
+       ([[0, 0], [0, 0], [0, 0]], 0.)],
+      dtype=[('a', '<i8', (3, 2)), ('b', '<f8')])
+/ Dat is niet wat we bedoelden	,
+
+
+
+/ 13	. 
+
+/ index is gegeven array	,
+
+/ er wordt een ander obj van gemaakt,	
+
+In [11481]: i=np.arange(0,2)
+In [11482]: s=pd.Series([np.array([[1,2],[3,4]]),np.array([[1,2],[3,4]])],index=i)
+In [11484]: s.index
+Out[11484]: Int64Index([0, 1], dtype='int64')
+
+/ TODO
+
+/ 13	. 
+
+In [11486]: i=np.array([[3,4],[5,6]])
+In [11490]: s=pd.Series([np.array([[1,2],[3,4]]),np.array([[1,2],[3,4]]),np.array([[1,2],[3,4]]),np.array([[1,2],[3,4]])],index=i)
+ValueError: Length of passed values is 4, index implies 2
+
+
+In [11486]: i=np.array([[3,4],[5,6]])
+In [11493]: s=pd.Series([[np.array([[1,2],[3,4]]),np.array([[1,2],[3,4]])],[np.array([[1,2],[3,4]]),np.array([[1,2],[3,4]])]],index=i)
+/ OK	, 
+/ maar 
+In [11497]: s
+TypeError: unsupported format string passed to numpy.ndarray.__format__
+In [11499]: s[3,5] 
+ValueError: Buffer has wrong number of dimensions (expected 1, got 2)
+
+/ TODO
+
+/ 13	.
+
+
+
+
+
+/ Einde PANDAS SERIES
+
+/ PANDAS DATAFRAMES
+
+/ 7	. 
+
+/ dataframe	,
+
+In [10907]: s=pd.Series({'a':1,'b':2,'c':3,'d':4})
+In [10910]: t=pd.Series({'a':11,'b':12,'c':13,'d':14})
+In [10913]: df=pd.DataFrame({'s':s,'t':t})
+In [10914]: df
+Out[10914]: 
+   s   t
+a  1  11
+b  2  12
+c  3  13
+d  4  14
+
+In [10915]: df.index
+Out[10915]: Index(['a', 'b', 'c', 'd'], dtype='object')
+In [10916]: df.columns
+Out[10916]: Index(['s', 't'], dtype='object')
+
+/ 13	. 
+
+/ manieren om een df te maken	,
+
+/ 1313	. 
+
+/ bij een single series	,
+In [10907]: s=pd.Series({'a':1,'b':2,'c':3,'d':4})
+In [10923]: df=pd.DataFrame({'s':s})
+/ of,	
+In [10927]: df=pd.DataFrame(s,columns=['s'])
+/ ['s'] is een list	,
+
+/ 1313	. 
+
+s=pd.Series({'a':1,'b':2,'c':3,'d':4})
+t=pd.Series({'a':11,'b':12,'c':13,'d':14})
+df=pd.DataFrame({'s':s,'t':t})
+
+/ 1313	. 
+
+/ deze manier staat eig. orthogonaal op die hierboven	,
+/ de index is implicit,
+
+In [10928]: [{'a':i,'b':2*i}for i in range(0,3)]
+Out[10928]: [{'a': 0, 'b': 0}, {'a': 1, 'b': 2}, {'a': 2, 'b': 4}]
+In [10930]: df=pd.DataFrame([{'a':i,'b':2*i}for i in range(0,3)])
+In [10932]: df.columns
+Out[10932]: Index(['a', 'b'], dtype='object')
+In [10933]: df.index
+Out[10933]: RangeIndex(start=0, stop=3, step=1)
+
+/ 1313	 .
+
+In [10936]: np.random.rand(3,2).shape
+Out[10936]: (3, 2)
+In [10937]: df=pd.DataFrame(np.random.rand(3,2),index=['a','b','c'],columns=['s','t'])
+In [11405]: df
+Out[11405]: 
+          s         t
+a  0.449947  0.798913
+b  0.976986  0.883560
+c  0.336524  0.780653
+
+/ 1313	.
+
+dt=np.dtype([('a','i8'),('b','f8')])
+a=np.zeros(7,dtype=dt)
+df=pd.DataFrame(a)
+
+In [11414]: a
+Out[11414]: 
+array([(0, 0.), (0, 0.), (0, 0.), (0, 0.), (0, 0.), (0, 0.), (0, 0.)],
+      dtype=[('a', '<i8'), ('b', '<f8')])
+
+In [11413]: df
+Out[11413]: 
+   a    b
+0  0  0.0
+1  0  0.0
+2  0  0.0
+3  0  0.0
+4  0  0.0
+5  0  0.0
+6  0  0.0
+
+/ het verschil tussen a en df is dat de columns van df series zijn, en van a arrays, series hebben een index	, net als arrays,	 maar deze kan anders zijn dan de standaard 0,1,2,...	, het kan ook een 2-dim array zijn!
+
+In [11417]: type(a['a'])
+Out[11417]: numpy.ndarray
+In [11418]: a['a'].shape
+Out[11418]: (7,)
+In [11423]: a['a'].index
+AttributeError: 'numpy.ndarray' object has no attribute 'index'
+
+
+In [11419]: type(df['a'])
+Out[11419]: pandas.core.series.Series
+In [11420]: type(df['a'].values)
+Out[11420]: numpy.ndarray
+In [11421]: df['a'].values.shape
+Out[11421]: (7,)
+
+In [11422]: df['a'].index
+Out[11422]: RangeIndex(start=0, stop=7, step=1)
+
+/ HIER HIER HIER
+
+/ 13	.
+
+/ dataframe van matrices	,
+
+dt=np.dtype('(2,2)i1')
+a=np.zeros(12,dtype=dt)
+df=pd.DataFrame(a)
+ValueError: Must pass 2-d input
+
+dt=np.dtype([('n','(2,2)i1')])
+a=np.zeros(12,dtype=dt)
+df=pd.DataFrame(a)
+ValueError: If using all scalar values, you must pass an index
+/ we zijn de column vergeten	,
+
+dt=np.dtype([('_','(2,2)i1')])
+a=np.zeros(12,dtype=dt)
+df=pd.DataFrame({'m':a})
+df
+Out[11511]: 
+                      m
+0   ([[0, 0], [0, 0]],)
+1   ([[0, 0], [0, 0]],)
+2   ([[0, 0], [0, 0]],)
+3   ([[0, 0], [0, 0]],)
+4   ([[0, 0], [0, 0]],)
+5   ([[0, 0], [0, 0]],)
+6   ([[0, 0], [0, 0]],)
+7   ([[0, 0], [0, 0]],)
+8   ([[0, 0], [0, 0]],)
+9   ([[0, 0], [0, 0]],)
+10  ([[0, 0], [0, 0]],)
+11  ([[0, 0], [0, 0]],)
+/OK	,
+
+dt=np.dtype([('_',('(2,2)i1'))])
+a=np.zeros(12,dtype=dt)
+df=pd.DataFrame({'m':a})
+ValueError: If using all scalar values, you must pass an index
+
+
+
+
+s=pd.Series([np.array([[1,2],[3,4]]),np.array([[1,2],[3,4]])])
+df=pd.DataFrame({'m':s})
+df
+Out[11478]: 
+                  m
+0  [[1, 2], [3, 4]]
+1  [[1, 2], [3, 4]]
+
+In [11507]: df['m',0]
+/ ERR	
+In [11507]: df['m'][0]
+/ OK	,
+
+
+
+
+
+
+
+
+/ Einde PANDAS DATAFRAMES
+
+/ NUMPY
+
+
+/ Einde NUMPY

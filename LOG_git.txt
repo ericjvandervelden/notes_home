@@ -4289,3 +4289,48 @@ Switched to a new branch 'OpenSSL_1_1_1-stable'
 * OpenSSL_1_1_1-stable
   master
 
+/ 7	. 
+
+[eric@almond my]$ pwd
+/home/eric/Devel/python/my
+
+[eric@almond my]$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	deleted:    log_reg_1_class_1_feature_newton.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	log_reg_2_classes_1_feature_newton.py
+	log_reg_3_classes_2_features_newton.py
+	model_contourlijnen_padnaarminimum.py
+
+/ we hebben 	,
+$ mv log_reg_1_class_1_feature_newton.py log_reg_2_classes_1_feature_newton.py 
+
+/ lees,	
+https://stackoverflow.com/questions/12373733/staging-deleted-files
+
+/ we moeten $ git rm op de deleted file	,
+
+[eric@almond my]$ git rm log_reg_1_class_1_feature_newton.py 
+rm 'log_reg_1_class_1_feature_newton.py'
+[eric@almond my]$ git add log_reg_2_classes_1_feature_newton.py log_reg_3_classes_2_features_newton.py model_contourlijnen_padnaarminimum.py 
+[eric@almond my]$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	renamed:    log_reg_1_class_1_feature_newton.py -> log_reg_2_classes_1_feature_newton.py
+	new file:   log_reg_3_classes_2_features_newton.py
+	new file:   model_contourlijnen_padnaarminimum.py
+
+/ precies goed	,
+
+
