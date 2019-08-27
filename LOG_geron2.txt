@@ -1602,6 +1602,166 @@ for i in np.arange(g.shape[0]):
 
 / Einde PRINT COST FUNCTION
 
+/ PRINT COST FUNCTION WITH GRADIENT
+
+/ morgen in file set	,
+/ TODO
+
+/ we kijken in de beta ruimte
+/ want we sum over alle xn
+/ we print: beta, likelihood	, gradient grootte, gradient richting	,
+/ likelihood ipv. cost	,
+
+s0=np.linspace(-46,-44,11)
+s1=np.linspace(4,6,11)
+s2=np.linspace(9,11,11)
+s0c,s1c,s2c=np.meshgrid(s0,s1,s2,indexing='ij')
+g=np.c_[s0c.ravel(),s1c.ravel(),s2c.ravel()]
+
+x=iris['data'][:,[2,3]]
+X=np.c_[np.ones((x.shape[0],1)),x]
+t=iris['target']
+T=np.c_[t==2,t!=2].astype(int)
+ResJ=np.zeros((g.shape[0],g.shape[1]+1+4))
+
+for i in np.arange(g.shape[0]):
+  beta=g[i][:3]
+  beta=beta.reshape(-1,1)
+
+
+# of	,
+  #M=np.c_[np.exp(X.dot(beta)),np.ones(X.shape[0])]
+  #S=M.dot(np.ones(M.shape[1]).reshape(-1,1))
+  #Y=M/S # (150,3) Y[n,k]=p(k|xn)
+  #Jv=T*np.log(Y)
+  #J=np.ones(Jv.shape[0]).reshape(1,-1).dot(Jv).dot(np.ones(Jv.shape[1]).reshape(-1,1))
+
+# of	,
+  Jv=X.dot(beta)*T[:,0].reshape(-1,1)-np.log(np.exp(X.dot(beta))+1)
+  J=np.ones(Jv.shape[0]).reshape(1,-1).dot(Jv)
+
+  Grad=X.T.dot(T[:,0].reshape(-1,1)-np.exp(X.dot(beta))/(np.exp(X.dot(beta))+1)) 
+
+  ResJ[i]=np.r_[beta.ravel(),J.ravel(),np.linalg.norm(Grad),(Grad/np.linalg.norm(Grad)).ravel()]
+
+/ 13	. 
+
+
+In [12465]: ResJ.shape
+Out[12465]: (1331, 8)
+
+/ Dus we kunnen doen	,
+In [12467]: ResJ[0,0]
+Out[12467]: -46.0
+In [12468]: ResJ[0,7]
+Out[12468]: 0.33748609913703964
+In [12469]: ResJ[:,7]
+Out[12469]: 
+array([ 0.3374861 ,  0.33714648,  0.33672513, ..., -0.30363107,
+       -0.30333013, -0.3029947 ])
+In [12474]:  ResJ[:,0][300:400]
+Out[12474]: 
+array([-45.6, -45.6, -45.6, -45.6, -45.6, -45.6, -45.6, -45.6, -45.6,
+       -45.6, -45.6, -45.6, -45.6, -45.6, -45.6, -45.6, -45.6, -45.6,...
+
+In [12443]: ResJ[:,-5:]
+...
+
+/ 13	. 
+
+/ Dit is het antwoord	,
+array([[-45.27234329],
+       [  5.75453225],
+       [ 10.44669981]])
+
+In [12483]: ResJ[(ResJ[:,0]==-45.4) & (ResJ[:,1]==5.8)&(ResJ[:,2]==10.4)]
+Out[12483]: 
+array([[-45.4       ,   5.8       ,  10.4       , -10.28261491,
+          0.31015941,  -0.18547759,  -0.93924567,  -0.28881764]])
+
+In [12488]: ResJ[(ResJ[:,0]==-45) & (ResJ[:,1]==5)&(ResJ[:,2]==10)]
+Out[12488]: 
+array([[-45.        ,   5.        ,  10.        , -39.7212182 ,
+         78.73015937,   0.18279137,   0.92864649,   0.3228049 ]])
+/ gradient heeft tegenovergestelde richting dan in -45.4,5.8,10.4
+/ en is heel groot	,
+
+In [12484]: ResJ[:,3].max()
+Out[12484]: -10.282614913271278
+
+In [12486]: ResJ[ResJ[:,4].min()==ResJ[:,4]]
+Out[12486]: 
+array([[-45.4       ,   5.6       ,  11.        , -10.29689103,
+          0.21076559,  -0.20678729,  -0.81888636,  -0.53541026]])
+
+In [12487]: ResJ[ResJ[:,4].max()==ResJ[:,4]]
+Out[12487]: 
+array([[-4.60000000e+01,  4.00000000e+00,  9.00000000e+00,
+        -2.85787270e+02,  2.66727521e+02,  1.69228791e-01,
+         9.25993925e-01,  3.37486099e-01]])
+
+
+
+
+
+/ Einde PRINT COST FUNCTION WITH GRADIENT
+/ SCRIPTS
+
+/ 13	. 
+
+/ voorbeeld uit boek, class 2 of niet	, grafiek in 2-dim feature ruimte	,
+[eric@almond my]$ ipython log_reg_2_classes_2_features_newton.py 
+array([[-45.27234329],
+       [  5.75453225],
+       [ 10.44669981]])
+
+/ 13	. 
+
+/ voorbeeld uit boek met 3 classes, one-vs-rest, grafiek met stompe punt	,
+[eric@almond my]$ ipython log_reg_3_classes_2_features_newton_geron.py 
+
+/ 13	. 
+
+[eric@almond my]$ ipython log_reg_3_classes_2_features_sklearn.py 
+lg.intercept_
+[ 24.05565958  -2.85895422 -45.26062435]
+lg.coef_
+[[-6.67454643 -9.82307197]
+ [ 1.54644801 -3.10696268]
+ [ 5.7528683  10.44455633]]
+
+/ 13	. 
+
+[eric@almond my]$ ipython log_reg_3_classes_2_features_newton_hastie.py 
+/ TODO
+
+/ 13	. 
+
+[eric@almond my]$ ipython log_reg_3_classes_2_features_newton_one_vs_all.py 
+class 0
+array([[21.81940571],
+       [-5.73678936],
+       [-9.66992458]])
+class 1
+array([[-2.85880689],
+       [ 1.54646368],
+       [-3.10710628]])
+class 2
+array([[-45.27234329],
+       [  5.75453225],
+       [ 10.44669981]])
+
+/ 13	. 
+
+/ en grafiek van sigmoid	,
+[eric@almond my]$ ipython log_reg_2_classes_1_feature_newton.py 
+array([[-21.12563996],
+       [ 12.94750716]])
+
+
+
+/ Einde SCRIPTS
+
 
 / 7	. 
 
