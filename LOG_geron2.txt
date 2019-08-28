@@ -1702,9 +1702,105 @@ array([[-4.60000000e+01,  4.00000000e+00,  9.00000000e+00,
 
 
 
-
-
 / Einde PRINT COST FUNCTION WITH GRADIENT
+
+/ PRINT COST FUNCTION WITH GRADIENT AND HESSIAN
+
+/ morgen in file set	,
+/ TODO
+
+/ we kijken in de beta ruimte
+/ want we sum over alle xn
+/ we print: beta, likelihood	, gradient grootte, gradient richting	,
+/ likelihood ipv. cost	,
+
+s0=np.linspace(-46,-44,11)
+s1=np.linspace(4,6,11)
+s2=np.linspace(9,11,11)
+s0c,s1c,s2c=np.meshgrid(s0,s1,s2,indexing='ij')
+g=np.c_[s0c.ravel(),s1c.ravel(),s2c.ravel()]
+
+x=iris['data'][:,[2,3]]
+X=np.c_[np.ones((x.shape[0],1)),x]
+t=iris['target']
+T=np.c_[t==2,t!=2].astype(int)
+ResJ=np.zeros((g.shape[0],g.shape[1]+1+1+3+3+3)) # ml,|gr|,gr direction, inv(hessian).grad,new beta
+
+for i in np.arange(g.shape[0]):
+  beta=g[i][:3]
+  beta=beta.reshape(-1,1)
+
+
+# of	,
+  #M=np.c_[np.exp(X.dot(beta)),np.ones(X.shape[0])]
+  #S=M.dot(np.ones(M.shape[1]).reshape(-1,1))
+  #Y=M/S # (150,3) Y[n,k]=p(k|xn)
+  #Jv=T*np.log(Y)
+  #J=np.ones(Jv.shape[0]).reshape(1,-1).dot(Jv).dot(np.ones(Jv.shape[1]).reshape(-1,1))
+
+# of	,
+  Jv=X.dot(beta)*T[:,0].reshape(-1,1)-np.log(np.exp(X.dot(beta))+1)
+  J=np.ones(Jv.shape[0]).reshape(1,-1).dot(Jv)
+
+  Grad=X.T.dot(T[:,0].reshape(-1,1)-np.exp(X.dot(beta))/(np.exp(X.dot(beta))+1)) 
+
+  Nwt=np.linalg.inv(X.T.dot(np.diag((np.exp(X.dot(beta))/(np.exp(X.dot(beta))+1)).ravel())).dot(np.diag((1/(np.exp(X.dot(beta))+1)).ravel())).dot(X)).dot(Grad)
+
+  New=beta-Nwt
+
+  ResJ[i]=np.r_[beta.ravel(),J.ravel(),np.linalg.norm(Grad),(Grad/np.linalg.norm(Grad)).ravel(),Nwt.ravel(),New.ravel()]
+
+/ 13	. 
+
+/ Dit is het antwoord	,
+array([[-45.27234329],
+       [  5.75453225],
+       [ 10.44669981]])
+
+In [12522]: ResJ[(ResJ[:,0]==-45.4) & (ResJ[:,1]==5.8)&(ResJ[:,2]==10.4)]
+Out[12522]: 
+array([[-45.4       ,   5.8       ,  10.4       , -10.28261491,
+          0.31015941,  -0.18547759,  -0.93924567,  -0.28881764,
+          0.13194028,  -0.04632153,   0.046611  , -45.53194028,
+          5.84632153,  10.353389  ]])
+/ Hij loopt van het max af	, 
+/ TODO
+
+In [12523]: ResJ[(ResJ[:,0]==-45) & (ResJ[:,1]==5)&(ResJ[:,2]==10)]
+       ...: 
+Out[12523]: 
+array([[ -45.        ,    5.        ,   10.        ,  -39.7212182 ,
+          78.73015937,    0.18279137,    0.92864649,    0.3228049 ,
+         122.15184671,  -12.33240607,  -28.57086948, -167.15184671,
+          17.33240607,   38.57086948]])
+
+/ gradient heeft tegenovergestelde richting dan in -45.4,5.8,10.4
+/ en is heel groot	,
+
+In [12484]: ResJ[:,3].max()
+Out[12484]: -10.282614913271278
+
+/ kleinste grad	,
+In [12525]: ResJ[ResJ[:,4].min()==ResJ[:,4]]
+Out[12525]: 
+array([[-45.4       ,   5.6       ,  11.        , -10.29689103,
+          0.21076559,  -0.20678729,  -0.81888636,  -0.53541026,
+          0.20634022,   0.14310311,  -0.5683972 , -45.60634022,
+          5.45689689,  11.5683972 ]])
+
+
+
+/ Einde HESSIAN SEMI POSITIVE DEFINITE AND HESSIAN
+
+/ lees	,
+https://math.stackexchange.com/questions/3189729/how-do-we-know-that-the-hessian-will-be-positive-definite-for-mle-of-logistic-re
+
+
+
+/ Einde HESSIAN SEMI POSITIVE DEFINITE
+
+
+
 / SCRIPTS
 
 / 13	. 
