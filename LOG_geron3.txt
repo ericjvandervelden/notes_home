@@ -1,0 +1,635 @@
+/ 13
+
+
+/ 1313	. 
+
+/ newton, 
+/ sigmoid,
+/ -log
+/ = cost	, dus zoek min cost
+
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((X.shape[0],1)),X]
+beta=np.array([-45,5,10]).reshape(-1,1)
+beta=np.array([0,0,0]).reshape(-1,1)
+t=(iris['target']==2).reshape(-1,1).astype(int)
+# :3		3:6	6:9  9		10		11:14
+# beta, grad,nwt,ml,|grad|,eigv(hessian)
+resML=np.zeros((10,3+3+3+1+1+3))
+for i in range(0,10):
+  m=X.dot(beta)
+  p1gX=expit(m)
+	mlv=t*-np.log(p1gX)+(1-t)*-np.log(1-p1gX)
+	ml=np.ones((1,mlv.shape[0])).dot(mlv)
+  grad=X.T.dot(p1gX-t)
+  D=np.diag((p1gX*(1-p1gX)).ravel())
+  H=X.T.dot(D).dot(X)
+	nwt=-np.linalg.inv(H).dot(grad)
+	resML[i]=np.r_[beta.ravel(),grad.ravel(),nwt.ravel(),ml.ravel(),np.linalg.norm(grad).ravel(),np.linalg.eig(H)[0]]
+  beta=beta+nwt
+
+In [13307]: resML[:,9]
+Out[13307]: 
+array([103.97207708,  48.1034082 ,  33.56702215,  22.92609003,
+        15.70037066,  12.12853775,  10.67459324,  10.3132056 ,
+        10.28207149,  10.28175409])
+
+In [7638]: theta
+Out[7638]:
+array([[-4.27700077],
+       [ 0.04030967],
+       [ 2.53398464]])
+
+/ als lmbda=.1  ,
+In [7644]: theta
+Out[7644]:
+array([[-11.50605939],
+       [  0.74893214],
+       [  4.79308489]])
+
+/ als lmbda=.01
+In [7651]: theta
+Out[7651]:
+array([[-24.86777444],
+       [  2.70155942],
+       [  7.10675456]])
+
+
+/ 1313	. 
+
+/ newton	,
+/ sigmoid	,
+/ log
+/ = ml	, dus zoek max ml	, 
+
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((X.shape[0],1)),X]
+beta=np.array([-45,5,10]).reshape(-1,1)	 # singl
+beta=np.array([0,0,0]).reshape(-1,1)		# ok	,
+beta=np.array([-45,5,10]).reshape(-1,1) # singl
+beta=np.array([-46,5,10]).reshape(-1,1) # singl
+beta=np.array([-46,6,10]).reshape(-1,1) # ok	, 
+beta=np.array([-46,5,11]).reshape(-1,1) # singl	, 
+beta=np.array([-45,6,11]).reshape(-1,1) # ok, 
+beta=np.array([-45,4,11]).reshape(-1,1) # singl, 
+beta=np.array([-45,7,10]).reshape(-1,1) # singl, 
+beta=np.array([-45,5,10]).reshape(-1,1)	 # singl
+t=(iris['target']==2).reshape(-1,1).astype(int)
+# :3		3:6	6:9  9		10		11:14
+# beta, grad,nwt,ml,|grad|,eigv(hessian)
+resML=np.zeros((20,3+3+3+1+1+3))
+alpha=.4
+for i in range(0,20):
+  m=X.dot(beta)
+  p1gX=expit(m)
+	mlv=t*np.log(p1gX)+(1-t)*np.log(1-p1gX) 	# log ipv -log
+	ml=np.ones((1,mlv.shape[0])).dot(mlv)
+  grad=X.T.dot(t-p1gX)									# t-p1gX ipv p1gX-t 
+  D=np.diag((-p1gX*(1-p1gX)).ravel())		# -p1gX*(1-p1gX) ipv p1gX*(1-p1gX)
+  H=X.T.dot(D).dot(X)
+	nwt=-alpha*np.linalg.inv(H).dot(grad)
+	resML[i]=np.r_[beta.ravel(),grad.ravel(),nwt.ravel(),ml.ravel(),np.linalg.norm(grad).ravel(),np.linalg.eig(H)[0]]
+  beta=beta+nwt
+
+In [13309]: resML[:,9]
+Out[13309]: 
+array([-103.97207708,  -48.1034082 ,  -33.56702215,  -22.92609003,
+        -15.70037066,  -12.12853775,  -10.67459324,  -10.3132056 ,
+        -10.28207149,  -10.28175409])
+
+
+/ 1313	. 
+
+/ newton	,
+/ sigmoid	,
+/ regularization	,
+/ -log
+/ lmbda >0
+/ TODO
+
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((X.shape[0],1)),X]
+beta=np.array([-45,5,10]).reshape(-1,1)
+beta=np.array([0,0,0]).reshape(-1,1)
+t=(iris['target']==2).reshape(-1,1).astype(int)
+# :3		3:6	6:9  9		10		11:14
+# beta, grad,nwt,ml,|grad|,eigv(hessian)
+resML=np.zeros((10,3+3+3+1+1+3))
+lmbda=1
+i=0
+for i in range(0,10):
+  m=X.dot(beta)
+  p1gX=expit(m)
+	mlv=t*-np.log(p1gX)+(1-t)*-np.log(1-p1gX)
+	ml=np.ones((1,mlv.shape[0])).dot(mlv)+lmbda*beta.T.dot(beta)
+  grad=X.T.dot(p1gX-t)+lmbda*beta
+  D=np.diag((p1gX*(1-p1gX)).ravel())
+  H=X.T.dot(D).dot(X)+lmbda*np.eye(beta.shape[0])
+	nwt=-np.linalg.inv(H).dot(grad)
+	resML[i]=np.r_[beta.ravel(),grad.ravel(),nwt.ravel(),ml.ravel(),np.linalg.norm(grad).ravel(),np.linalg.eig(H)[0]]
+  beta=beta+nwt
+
+m=X.dot(beta)
+p1gX=expit(m)
+mlv=t*np.log(p1gX)+(1-t)*np.log(1-p1gX)
+ml=np.ones((1,mlv.shape[0])).dot(mlv)+lmbda*beta.T.dot(beta)
+grad=X.T.dot(t-p1gX)+lmbda*beta
+D=np.diag((-p1gX*(1-p1gX)).ravel())
+H=X.T.dot(D).dot(X)+lmbda*np.eye(beta.shape[0])
+nwt=-np.linalg.inv(H).dot(grad)
+resML[i]=np.r_[beta.ravel(),grad.ravel(),nwt.ravel(),ml.ravel(),np.linalg.norm(grad).ravel(),np.linalg.eig(H)[0]]
+beta=beta+nwt
+i=i+1
+
+/ 1313	. 
+
+/ newton	,
+/ sigmoid	,
+/ regularization	,
+/ log
+/ lmbda <0
+/ TODO
+
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((X.shape[0],1)),X]
+beta=np.array([-45,5,10]).reshape(-1,1)
+beta=np.array([0,0,0]).reshape(-1,1)
+t=(iris['target']==2).reshape(-1,1).astype(int)
+# :3		3:6	6:9  9		10		11:14
+# beta, grad,nwt,ml,|grad|,eigv(hessian)
+resML=np.zeros((10,3+3+3+1+1+3))
+lmbda=-1
+i=0
+for i in range(0,10):
+  m=X.dot(beta)
+  p1gX=expit(m)
+	mlv=t*np.log(p1gX)+(1-t)*np.log(1-p1gX)
+	ml=np.ones((1,mlv.shape[0])).dot(mlv)+lmbda*beta.T.dot(beta)
+  grad=X.T.dot(t-p1gX)+lmbda*beta
+  D=np.diag((-p1gX*(1-p1gX)).ravel())
+  H=X.T.dot(D).dot(X)+lmbda*np.eye(beta.shape[0])
+	nwt=-np.linalg.inv(H).dot(grad)
+	resML[i]=np.r_[beta.ravel(),grad.ravel(),nwt.ravel(),ml.ravel(),np.linalg.norm(grad).ravel(),np.linalg.eig(H)[0]]
+  beta=beta+nwt
+
+m=X.dot(beta)
+p1gX=expit(m)
+mlv=t*np.log(p1gX)+(1-t)*np.log(1-p1gX)
+ml=np.ones((1,mlv.shape[0])).dot(mlv)+lmbda*beta.T.dot(beta)
+grad=X.T.dot(t-p1gX)+lmbda*beta
+D=np.diag((-p1gX*(1-p1gX)).ravel())
+H=X.T.dot(D).dot(X)+lmbda*np.eye(beta.shape[0])
+nwt=-np.linalg.inv(H).dot(grad)
+resML[i]=np.r_[beta.ravel(),grad.ravel(),nwt.ravel(),ml.ravel(),np.linalg.norm(grad).ravel(),np.linalg.eig(H)[0]]
+beta=beta+nwt
+i=i+1
+
+/ 1313	. 
+
+/ gd,
+/ sigmoid	,
+/ -log, 
+/ zoek min cost	, dus volg -grad,	
+
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((X.shape[0],1)),X]
+beta=np.array([-45,5,10]).reshape(-1,1)
+beta=np.array([0,0,0]).reshape(-1,1)
+t=(iris['target']==2).reshape(-1,1).astype(int)
+# :3		3:6	6:9  9		10		11:14
+# beta, grad,nwt,ml,|grad|,eigv(hessian)
+resML=np.zeros((1000,3+3+3+1))
+alpha=.1
+i=0
+for i in range(0,1000):
+  m=X.dot(beta)
+  p1gX=expit(m)
+	mlv=t*-np.log(p1gX)+(1-t)*-np.log(1-p1gX) 	
+	ml=np.ones((1,mlv.shape[0])).dot(mlv)
+  grad=X.T.dot(p1gX-t)								
+	nwt=alpha*-grad
+	resML[i]=np.r_[beta.ravel(),grad.ravel(),nwt.ravel(),ml.ravel(),]
+  beta=beta+nwt
+
+m=X.dot(beta)
+p1gX=expit(m)
+mlv=t*-np.log(p1gX)+(1-t)*-np.log(1-p1gX)
+ml=np.ones((1,mlv.shape[0])).dot(mlv)
+grad=X.T.dot(p1gX-t)			
+nwt=alpha*-grad
+resML[i]=np.r_[beta.ravel(),grad.ravel(),nwt.ravel(),ml.ravel(),]
+beta=beta+nwt
+i=i+1
+
+/ 1313	. 
+
+/ gd,
+/ sigmoid	,
+/ log	, = ml
+/ zoek max, dus volg grad	,
+
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((X.shape[0],1)),X]
+beta=np.array([-45,5,10]).reshape(-1,1)
+beta=np.array([0,0,0]).reshape(-1,1)
+t=(iris['target']==2).reshape(-1,1).astype(int)
+# :3		3:6	6:9  9		10		11:14
+# beta, grad,nwt,ml,|grad|,eigv(hessian)
+resML=np.zeros((10,3+3+3+1))
+alpha=.5
+i=0
+for i in range(0,10):
+  m=X.dot(beta)
+  p1gX=expit(m)
+	mlv=t*np.log(p1gX)+(1-t)*np.log(1-p1gX) 	# log ipv -log
+	ml=np.ones((1,mlv.shape[0])).dot(mlv)
+  grad=X.T.dot(t-p1gX)									# t-p1gX ipv p1gX-t 
+	nwt=alpha*grad
+	resML[i]=np.r_[beta.ravel(),grad.ravel(),nwt.ravel(),ml.ravel(),]
+  beta=beta+nwt
+
+m=X.dot(beta)
+p1gX=expit(m)
+mlv=t*np.log(p1gX)+(1-t)*np.log(1-p1gX) 	# log ipv -log
+ml=np.ones((1,mlv.shape[0])).dot(mlv)
+grad=X.T.dot(t-p1gX)									# t-p1gX ipv p1gX-t 
+nwt=alpha*grad
+resML[i]=np.r_[beta.ravel(),grad.ravel(),nwt.ravel(),ml.ravel(),]
+beta=beta+nwt
+i=i+1
+
+
+/ 13	. 
+
+/ 1 feature	,
+
+/ 1313	. 
+
+/ newton	,
+/ sigmoid	,
+/ regularization	,
+/ log
+/ lmbda <0
+/ TODO
+
+X=iris['data'][:,[3]]
+X=np.c_[np.ones((X.shape[0],1)),X]
+beta=np.array([-21,12]).reshape(-1,1)
+t=(iris['target']==2).reshape(-1,1).astype(int)
+# :3		3:6	6:9  9		10		11:14
+# beta, grad,nwt,ml,|grad|,eigv(hessian)
+resML=np.zeros((10,2+2+2+1+1+2))
+lmbda=0
+i=0
+for i in range(0,10):
+  m=X.dot(beta)
+  p1gX=expit(m)
+	mlv=t*np.log(p1gX)+(1-t)*np.log(1-p1gX)
+	ml=np.ones((1,mlv.shape[0])).dot(mlv)+lmbda*beta.T.dot(beta)
+  grad=X.T.dot(t-p1gX)+lmbda*beta
+  D=np.diag((-p1gX*(1-p1gX)).ravel())
+  H=X.T.dot(D).dot(X)+lmbda*np.eye(beta.shape[0])
+	nwt=-np.linalg.inv(H).dot(grad)
+	resML[i]=np.r_[beta.ravel(),grad.ravel(),nwt.ravel(),ml.ravel(),np.linalg.norm(grad).ravel(),np.linalg.eig(H)[0]]
+  beta=beta+nwt
+
+m=X.dot(beta)
+p1gX=expit(m)
+mlv=t*np.log(p1gX)+(1-t)*np.log(1-p1gX)
+ml=np.ones((1,mlv.shape[0])).dot(mlv)+lmbda*beta.T.dot(beta)
+grad=X.T.dot(t-p1gX)+lmbda*beta
+D=np.diag((-p1gX*(1-p1gX)).ravel())
+H=X.T.dot(D).dot(X)+lmbda*np.eye(beta.shape[0])
+nwt=-np.linalg.inv(H).dot(grad)
+resML[i]=np.r_[beta.ravel(),grad.ravel(),nwt.ravel(),ml.ravel(),np.linalg.norm(grad).ravel(),np.linalg.eig(H)[0]]
+beta=beta+nwt
+i=i+1
+
+# in de 1ste stap ga je de verkeerde kant op	, daarna goed:
+6.49116244e+00, -2.92355732e+00, 	# verkeerd	,
+-4.03932128e+00,  2.33840635e+00	# ok	,
+...
+In [13358]: resML
+Out[13358]: 
+array([[-2.10000000e+01,  1.20000000e+01,  7.32980154e+00,
+         1.24971138e+01,  6.49116244e+00, -2.92355732e+00,
+        -2.18780514e+01,  1.44880587e+01, -3.16189918e-02,
+        -2.21976998e+01],
+       [-1.45088376e+01,  9.07644268e+00, -2.85554275e+00,
+        -3.77084753e+00, -4.03932128e+00,  2.33840635e+00,
+        -1.85144814e+01,  4.73005449e+00, -8.72161555e-02,
+        -2.71034126e+01],
+       [-1.85481588e+01,  1.14148490e+01, -6.23277201e-01,
+        -7.75108084e-01, -2.16067493e+00,  1.28278799e+00,
+        -1.69074812e+01,  9.94619028e-01, -4.83104324e-02,
+        -2.05265739e+01],
+       [-2.07088338e+01,  1.26976370e+01, -7.26514138e-02,
+        -8.51030288e-02, -4.05525346e-01,  2.43065060e-01,
+        -1.67148719e+01,  1.11896173e-01, -3.61946798e-02,
+        -1.77947749e+01],
+       [-2.11143591e+01,  1.29407021e+01, -1.59553397e-03,
+        -1.72443592e-03, -1.12725670e-02,  6.80005759e-03,
+        -1.67104073e+01,  2.34934201e-03, -3.43512445e-02,
+        -1.73327510e+01],
+       [-2.11256317e+01,  1.29475021e+01, -9.42868266e-07,
+        -8.95445294e-07, -8.27835686e-06,  5.02327785e-06,
+        -1.67104041e+01,  1.30031644e-06, -3.43014348e-02,
+        -1.73200771e+01],
+       [-2.11256400e+01,  1.29475072e+01, -3.89910326e-13,
+        -2.90434343e-13, -4.46189873e-12,  2.72277538e-12,
+        -1.67104041e+01,  4.86191495e-13, -3.43013980e-02,
+        -1.73200677e+01],
+       [-2.11256400e+01,  1.29475072e+01, -3.10862447e-15,
+        -3.55271368e-15, -1.94860360e-14,  1.17089474e-14,
+        -1.67104041e+01,  4.72073305e-15, -3.43013980e-02,
+        -1.73200677e+01],
+       [-2.11256400e+01,  1.29475072e+01, -1.46549439e-14,
+        -2.22044605e-14, -2.09182591e-14,  1.11044995e-14,
+        -1.67104041e+01,  2.66046133e-14, -3.43013980e-02,
+        -1.73200677e+01],
+       [-2.11256400e+01,  1.29475072e+01,  3.55271368e-15,
+         7.10542736e-15, -1.73271648e-14,  1.12294104e-14,
+        -1.67104041e+01,  7.94410929e-15, -3.43013980e-02,
+        -1.73200677e+01]])
+
+/ 1313	. 
+
+/ 1 feature	,
+/ print 
+
+beta0=np.linspace(-22,-20,11)
+beta1=np.linspace(11,13,11)
+beta0c,beta1c=np.meshgrid(beta0,beta1,indexing='ij')
+betag=np.c_[beta0c.ravel(),beta1c.ravel()]
+
+X=iris['data'][:,[3]]
+X=np.c_[np.ones((X.shape[0],1)),X]
+t=(iris['target']==2).reshape(-1,1).astype(int)
+#resML=np.zeros((g.shape[0],g.shape[1]+2+1))
+# :2		2:4					 4     5:7 7	 8:10	
+# beta, normed grad,|grad|,nwt,ml,eigv(hessian)
+resML=np.zeros((g.shape[0],g.shape[1]+2+1+2+1+2))
+lmbda=0
+
+for i in np.arange(0,g.shape[0]):
+	beta=g[i].reshape(-1,1)
+  m=X.dot(beta)
+  p1gX=expit(m)
+	mlv=t*np.log(p1gX)+(1-t)*np.log(1-p1gX)
+	ml=np.ones((1,mlv.shape[0])).dot(mlv)+lmbda*beta.T.dot(beta)
+  grad=X.T.dot(t-p1gX)+lmbda*beta
+  D=np.diag((-p1gX*(1-p1gX)).ravel())
+  H=X.T.dot(D).dot(X)+lmbda*np.eye(beta.shape[0])
+	nwt=-np.linalg.inv(H).dot(grad)
+	#resML[i]=np.r_[beta.ravel(),(grad/np.linalg.norm(grad)).ravel(),ml.ravel()]
+	resML[i]=np.r_[beta.ravel(),(grad/np.linalg.norm(grad)).ravel(),np.linalg.norm(grad).ravel(),nwt.ravel(),ml.ravel(),np.linalg.eig(H)[0]]
+  beta=beta+nwt
+
+df=pd.DataFrame(resML,columns=['b1','b2','g1','g2','ml'])
+In [13397]: df.sort_values(by='ml',ascending=False)
+Out[13397]: 
+       b1    b2        g1        g2         ml
+54  -21.2  13.0 -0.497811 -0.867286 -16.710817
+85  -20.6  12.6  0.469843  0.882750 -16.720871
+75  -20.8  12.8 -0.539241 -0.842151 -16.730836
+106 -20.2  12.4 -0.612557 -0.790426 -16.734740
+64  -21.0  12.8  0.518454  0.855106 -16.742067
+116 -20.0  12.2  0.472626  0.881263 -16.762515
+96  -20.4  12.6 -0.542745 -0.839898 -16.787476
+95  -20.4  12.4  0.504827  0.863221 -16.790921
+43  -21.4  13.0  0.527250  0.849710 -16.796113
+65  -21.0  13.0 -0.528959 -0.848647 -16.816883
+74  -20.8  12.6  0.515805  0.856706 -16.852889
+117 -20.0  12.4 -0.544585 -0.838706 -16.883189
+86  -20.6  12.8 -0.534463 -0.845192 -16.916849
+105 -20.2  12.2  0.507916  0.861406 -16.945443
+53  -21.2  12.8  0.521030  0.853539 -16.946280
+84  -20.6  12.4  0.513824  0.857896 -17.047804
+107 -20.2  12.6 -0.538024 -0.842929 -17.057554
+32  -21.6  13.0  0.523882  0.851791 -17.069108
+76  -20.8  13.0 -0.532087 -0.846690 -17.119464
+63  -21.0  12.6  0.517380  0.855756 -17.180220
+115 -20.0  12.0  0.508105  0.861295 -17.189431
+97  -20.4  12.8 -0.535557 -0.844499 -17.305801
+94  -20.4  12.2  0.511990  0.858991 -17.331875
+42  -21.4  12.8  0.519636  0.854388 -17.340786
+73  -20.8  12.4  0.514597  0.857432 -17.503062
+21  -21.8  13.0  0.521100  0.853496 -17.527741
+118 -20.0  12.6 -0.538328 -0.842735 -17.537314
+87  -20.6  13.0 -0.534666 -0.845063 -17.625011
+52  -21.2  12.6  0.516388  0.856355 -17.701171
+104 -20.2  12.0  0.510213  0.860048 -17.710710
+...
+
+In [13416]: resML[(resML[:,0]==-21)&(resML[:,1]==12)]
+Out[13416]: 
+array([[-21.        ,  12.        ,   0.5059202 ,   0.86258029,
+         14.48805871,   6.49116244,  -2.92355732, -21.87805139,
+         -0.03161899, -22.19769975]])
+/ Hoe met df?
+/ TODO
+
+In [13422]: df=pd.DataFrame(resML,columns=['b1','b2','g1','g2','norm grad','nwt1','nwt2','ml','eigv1','eigv2'])
+
+
+/ Einde ...
+
+
+/ NEWTON
+
+/  7	. 
+
+/ nulpunten fct	,
+
+/ 13	.  
+
+/ zonder demping	,
+
+In [13439]: np.sqrt(1/3)
+Out[13439]: 0.5773502691896257
+/ opl + en -	,
+
+def f(x):
+	return x**3-x
+def gradf(x):
+	return 3*x**2-1
+
+def nwt(s):
+	return -f(s)/gradf(s)	
+
+x=.44
+res=np.zeros((100,2))
+for i in np.arange(0,100):
+	d=nwt(x)
+	res[i]=(x,d)
+	x=x+d
+
+d=nwt(x)
+res[i]=(x,d)
+x=x+d
+
+/ links en vlakbij 1/√3 -> -1 en verder naar links naar 0 -> 0
+/ rechts van 1/√3 -> 1
+/ rechts vlakbij -1/√3 -> 1
+/ links van -1/√3 -> -1
+      ->-1     | ->1               0<-           -1<- |          ->1
+-------------------------------------------------------------------
+	   -1				-1/√3								0            1/√3              1
+
+/ 1/√3 = 0.5773502691896257
+/ we zien dat .45 -> -1 omdat dicht bij 1/√3	, en .44 -> 0 omdat dicht bij 0	
+
+/ bij .44 < 1/√5  <.45 springt hij heen en weer	, 
+/ TODO
+
+/ .5 -> -1	, en dus niet naar 0	, die dichterbij ligt	,
+/ maar het schiet over 0 heen	,
+In [13458]: res
+Out[13458]: 
+array([[ 0.5, -1.5],
+       [-1. , -0. ],
+       [-1. , -0. ],
+       [-1. , -0. ],
+       [-1. , -0. ],
+       [-1. , -0. ],
+       [-1. , -0. ],
+       [-1. , -0. ],
+       [-1. , -0. ],
+       [-1. , -0. ]])
+
+/ .4 -> 0 wel	,
+In [13460]: res
+Out[13460]: 
+array([[ 4.00000000e-01, -6.46153846e-01],
+       [-2.46153846e-01,  2.82610534e-01],
+       [ 3.64566877e-02, -3.65539840e-02],
+       [-9.72963905e-05,  9.72963923e-05],
+       [ 1.84212965e-12, -1.84212965e-12],
+       [ 0.00000000e+00,  0.00000000e+00],
+       [ 0.00000000e+00,  0.00000000e+00],
+       [ 0.00000000e+00,  0.00000000e+00],
+       [ 0.00000000e+00,  0.00000000e+00],
+       [ 0.00000000e+00,  0.00000000e+00]])
+
+/ 0 -> 0
+In [13462]: res
+Out[13462]: 
+array([[ 0., -0.],
+       [ 0.,  0.],
+       [ 0.,  0.],
+       [ 0.,  0.],
+       [ 0.,  0.],
+       [ 0.,  0.],
+       [ 0.,  0.],
+       [ 0.,  0.],
+       [ 0.,  0.],
+       [ 0.,  0.]])
+
+/ .57 -> -1
+In [13464]: res
+Out[13464]: 
+array([[  0.57      , -15.20976285],
+       [-14.63976285,   4.86471794],
+       [ -9.7750449 ,   3.23553509],
+       [ -6.53950981,   2.14558817],
+       [ -4.39392164,   1.4131771 ],
+       [ -2.98074454,   0.9161229 ],
+       [ -2.06462164,   0.57144306],
+       [ -1.49317858,   0.32273996],
+       [ -1.17043862,   0.13923055],
+       [ -1.03120807,   0.02984625]])
+
+/ .49 -> -1
+In [13466]: res
+Out[13466]: 
+array([[ 4.90000000e-01, -1.33125134e+00],
+       [-8.41251341e-01, -2.18940474e-01],
+       [-1.06019182e+00,  5.54257002e-02],
+       [-1.00476611e+00,  4.73241592e-03],
+       [-1.00003370e+00,  3.36973520e-05],
+       [-1.00000000e+00,  1.70330549e-09],
+       [-1.00000000e+00, -0.00000000e+00],
+       [-1.00000000e+00, -0.00000000e+00],
+       [-1.00000000e+00, -0.00000000e+00],
+       [-1.00000000e+00, -0.00000000e+00]])
+
+/ .58 -> 1
+In [13468]: res
+Out[13468]: 
+array([[  0.58      ,  41.83565217],
+       [ 42.41565217, -14.1333106 ],
+       [ 28.28234158,  -9.41958664],
+       [ 18.86275494,  -6.27579293],
+       [ 12.58696201,  -4.17796183],
+       [  8.40900018,  -2.77644818],
+       [  5.632552  ,  -1.8376452 ],
+       [  3.7949068 ,  -1.20502341],
+       [  2.58988338,  -0.77300344],
+       [  1.81687994,  -0.46957905]])
+
+
+/ 13	. 
+
+/ met demping	, 
+
+/ zonder demping zagen we dat .45 -> -1 omdat dichtbij 1/√3	, en .44 -> 0
+/ maar met demping gaat .45 -> 0	,
+
+def f(x):
+  return x**3-x
+def gradf(x):
+  return 3*x**2-1
+
+def nwt(s):
+  return -f(s)/gradf(s)
+
+x=.45
+alpha=.1
+res=np.zeros((100,2))
+for i in np.arange(0,100):
+  d=alpha*nwt(x)
+  res[i]=(x,d)
+  x=x+d
+
+In [13499]: res
+Out[13499]: 
+array([[ 4.40000000e-01, -8.46412214e-01],
+       [-4.06412214e-01,  6.72533724e-01],
+       [ 2.66121510e-01, -3.13984343e-01],
+...
+       [ 1.22894507e-05, -1.22894507e-06],
+       [ 1.10605056e-05, -1.10605056e-06],
+       [ 9.95445506e-06, -9.95445506e-07]])
+
+/ 7	. 
+
+/  nulpunten afgeleiden	,
+
+# (x³-x)(x²-4)	 		
+/ x³= x ctrl+shift+u b3
+/ x²= x ctrl+shift+u b2
+def f(x):
+  return x**5-5*x**3+4*x 
+def gradf(x):
+  return 5*x**4-15*x**2+4 
+def hessianf(x):
+	return 20*x**3-30*x 
+
+def nwt(s):
+  return -gradf(s)/hessianf(s)
+
+plt.figure()
+x=np.linspace(-2,2,21)
+plt.plot(x,f(x))
+/ we zien de max/min bij ongeveer -1.6, -.6	, .6, 1.6
+
+x=.45
+alpha=.1
+res=np.zeros((100,2))
+for i in np.arange(0,100):
+  d=alpha*nwt(x)
+  res[i]=(x,d)
+  x=x+d
+
+
+/ Einde NEWTON
