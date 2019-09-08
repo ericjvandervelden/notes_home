@@ -1,0 +1,165 @@
+/ 7	. 
+
+/ we maken ~/Devel/workspace/wildfly	,
+/ Nog niet nodig WH	,
+
+/ 7	. 
+
+/ 13	. 
+
+/ ophalen	, 
+/ gaan we niet use	,
+
+/ git local repo,
+[eric@almond wildfly]$ pwd
+/home/eric/Devel/Java/jboss/wildfly
+
+[eric@almond wildfly]$  git fetch -a 
+$ git branch -a
+/ je ziet alle branches	, in het rood zie je de remote branches	,
+$ git tag -l 
+/ je ziet alle tags	, 
+/ deze check we uit	,	 en we maken local een branch	,
+[eric@almond wildfly]$  git checkout -b 17.0.1.Final
+[eric@almond wildfly]$  git branch  -a
+  10.1.0.Final-branch
+* 17.0.1.Final
+  master
+...
+
+/ 13	. 
+
+[eric@almond jboss]$ pwd
+/home/eric/Devel/Java/jboss
+[eric@almond jboss]$ tar -xvzf ~/Downloads/wildfly-17.0.1.Final.tar.gz 
+
+[eric@almond wildfly-17.0.1.Final]$ pwd
+/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final
+$ bin/standalone.sh
+...
+
+/ 13	. 
+
+/ we geven, maar zien de admin console niet	, 
+localhost:9990/console
+
+/ lees	,
+https://docs.wildfly.org/17/Getting_Started_Guide.html
+
+By default WildFly 17 is now distributed with security enabled for the management interfaces, this means that before you connect using the administration console or remotely using the CLI you will need to add a new user, this can be achieved simply by using the add-user.sh script in the bin folder.
+
+[eric@almond wildfly-17.0.1.Final]$ bin/add-user.sh 
+/ verander het wachtwoord van admin	, de user admin is er al	,
+admin
+vl$walnoot27
+
+http://localhost:9990/console/index.html
+/ OK	,
+
+/ 13	. 
+
+$ bin/domain.sh
+
+/ het admin wachtwoord geldt nog steeds	,
+
+/ we zien 2 server groups	, onder Runtime, Server groups	,
+
+main-server-group,	 full profile	,
+	server-one	, host master	,  
+	server-two 	, host master	, 
+other-server-group 	, full-ha profile
+	server-three, host master	, 
+
+/ 13	. 
+
+/ we hebben server-three in de gui gestart	,
+
+[eric@almond wildfly-17.0.1.Final]$ less domain/configuration/host.xml 
+   <servers>
+        <server name="server-one" group="main-server-group"/>
+        <server name="server-two" group="main-server-group" auto-start="true">
+            <jvm name="default"/>
+            <socket-bindings port-offset="150"/>
+        </server>
+        <server name="server-three" group="other-server-group" auto-start="false">
+            <jvm name="default"/>
+            <socket-bindings port-offset="250"/>
+        </server>
+    </servers>
+
+/ server-three heeft auto-start=false	,
+
+/ 13	. 
+
+/ er is naast wildfly ook wildfly-core	, 
+/ in wildfly-core is ook de host-controller	, cli, process-controller	,
+/ TODO
+
+[eric@almond wildfly-core]$ git checkout -b 9.0.2.Final 
+Switched to a new branch '9.0.2.Final'
+
+/ 13	. 
+
+/ hoe moeten wildfly en wildfly-core samen?
+/ TODO
+
+/ 1313	. 
+
+/ als we onze zelf gebuilde wildfly start, 	
+
+[eric@almond wildfly-10.1.0.Final]$ pwd
+/home/eric/Devel/Java/jboss/wildfly/dist/target/wildfly-10.1.0.Final
+[eric@almond wildfly-10.1.0.Final]$ bin/standalone.sh 
+...
+23:41:09,664 INFO  [org.jboss.as] (MSC service thread 1-8) WFLYSRV0049: WildFly Full 10.1.0.Final (WildFly Core 2.2.0.Final) starting
+
+/ 1313	. 
+
+[eric@almond wildfly]$ pwd
+/home/eric/Devel/Java/jboss/wildfly
+
+/ hoe wildfly-core in wildfly?
+
+$ less pom.xml
+    <dependencyManagement>
+        <dependencies>
+            <!-- Import the core parent to get all the managed dependencies from co
+re -->
+            <dependency>
+                <groupId>org.wildfly.core</groupId>
+                <artifactId>wildfly-core-parent</artifactId>
+                <version>${version.org.wildfly.core}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+/ klopt,	
+[eric@almond wildfly-core]$ pwd
+/home/eric/Devel/Java/jboss/wildfly-core
+$ less pom.xml
+...
+		<groupId>org.wildfly.core</groupId>
+    <artifactId>wildfly-core-parent</artifactId>
+    <version>3.0.0.Alpha10-SNAPSHOT</version>
+
+
+
+
+
+/ lees	,
+https://wildfly.org/news/2019/03/01/Galleon_Openshift/
+
+
+
+/ 13	 
+
+/ we start 
+$ bin/standalone.xml
+...
+23:19:13,092 INFO  [org.jboss.as] (MSC service thread 1-1) WFLYSRV0049: WildFly Full 17.0.1.Final (WildFly Core 9.0.2.Final) starting
+
+	
+
+
+
+
