@@ -1,5 +1,13 @@
 / See CAMEL TEST FRAMEWORK
 
+/ 7	. 
+
+[eric@almond Eclipse]$ pwd
+/home/eric/Devel/Eclipse
+[eric@almond Eclipse]$ eclipse-java-2019-06-R-linux-gtk-x86_64/eclipse/eclipse
+~/Devel/workspacesworkspace_camel
+
+
 
 / 7	. 
 
@@ -1356,6 +1364,7 @@ public class XmlOrderService { 																/ dus komen we hier	,
     public Document handleIncomingOrder(@Body Document xml,
                                         @XPath("/order/@customerId") int customerId,
                                         @Bean(ref = "guid", method = "generate") int orderId) {
+
 
 
 

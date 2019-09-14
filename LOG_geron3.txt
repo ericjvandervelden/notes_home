@@ -210,13 +210,17 @@ i=i+1
 # als je 150 waarnemingen xn doet,	 dan bepaal je de beta waarvoor deze 150 waarnemingen de grootste kans hebben	,
 
 
-def _ml(beta):
+def _ml_alt(beta):
   p1gX_at_beta=expit(X.dot(beta))
 	ml_vector=t*np.log(p1gX_at_beta)+(1-t)*np.log(1-p1gX_at_beta)
 	return np.ones((1,ml_vector.shape[0])).dot(ml_vector)+lmbda*beta.T.dot(beta)
 
-def _grad_ml_to_beta(beta):
+def _ml(beta):
   p1gX_at_beta=expit(X.dot(beta))
+	return t.T.dot(np.log(p1gX_at_beta))+(1-t).T.dot(np.log(1-p1gX_at_beta))++lmbda*beta.T.dot(beta)
+
+def _grad_ml_to_beta(beta):
+  p1gX_at_beta=expit(X.dot(beta))+lmbda*beta
   return X.T.dot(t-p1gX_at_beta)		# X staat er 2 keer in	,
 
 def _hessian_ml_to_beta(beta):  
@@ -229,8 +233,94 @@ def _grad_ml_to_beta_lin(beta,delta):
 
 def _eig_values(m):
 	return np.linalg.eig(m)[0]
+def _min_abs_eig_values(m):
+	return np.min(np.abs(np.linalg.eig(m)[0]))
 def _eig_vectors(m):
 	return np.linalg.eig(m)[1]
+def _det(m):
+	return np.linalg.det(m)
+
+def total():
+  global beta
+  ml=_ml(beta)
+  grad_ml_to_beta=_grad_ml_to_beta(beta)
+  hessian_ml_to_beta=_hessian_ml_to_beta(beta)
+  nwt=-np.linalg.inv(hessian_ml_to_beta).dot(grad_ml_to_beta)
+  check_if_grad_ml_lin_is_zero=_grad_ml_to_beta_lin(beta,nwt)
+  print(beta)
+  print(grad_ml_to_beta)
+  print(hessian_ml_to_beta)
+  print(nwt)
+  print(check_if_grad_ml_lin_is_zero)
+  print(_eig_values(hessian_ml_to_beta))
+  print(_eig_vectors(hessian_ml_to_beta))
+  beta=beta+nwt
+  print(beta)
+  print("--------------------")
+
+def total2(beta):
+  ml=_ml(beta)
+  grad_ml_to_beta=_grad_ml_to_beta(beta)
+  hessian_ml_to_beta=_hessian_ml_to_beta(beta)
+	if _min_abs_eig_values(hessian_ml_to_beta)<.01:
+		return 'STOP'
+  nwt=-np.linalg.inv(hessian_ml_to_beta).dot(grad_ml_to_beta)
+  check_if_grad_ml_lin_is_zero=_grad_ml_to_beta_lin(beta,nwt)
+  print(beta)
+  print(grad_ml_to_beta)
+  print(hessian_ml_to_beta)
+  print(nwt)
+  print(check_if_grad_ml_lin_is_zero)
+  print(_eig_values(hessian_ml_to_beta))
+  print(_eig_vectors(hessian_ml_to_beta))
+  beta=beta+nwt
+  print(beta)
+  print("--------------------")
+	return beta
+
+X=iris['data'][:,[3]]
+X=np.c_[np.ones((X.shape[0],1)),X]
+a=-21.12563996
+b=12.94750716
+beta=np.array([a,b]).reshape(-1,1)
+beta=np.array([[a+0.8510062],[b-0.52515564]]).reshape(-1,1)
+beta=np.array([[a+0.52515564],[b+0.8510062]]).reshape(-1,1) 
+# singular hessian als λ=0, niet singular als λ=-1
+beta=np.array([[a+2*0.52515564],[b+2*0.8510062]]).reshape(-1,1)  
+t=(iris['target']==2).reshape(-1,1).astype(int)
+# :3		3:6	6:9  9		10		11:14
+# beta, grad,nwt,ml,|grad|,eigv(hessian)
+lmbda=-1
+for i in range(0,10):
+  total()
+
+X=iris['data'][:,[3]]
+X=np.c_[np.ones((X.shape[0],1)),X]
+a=-21.12563996
+b=12.94750716
+beta=np.array([[a+0.8510062],[b-0.52515564]]).reshape(-1,1)
+beta=np.array([[a+0.52515564],[b+0.8510062]]).reshape(-1,1) 
+# singular hessian als λ=0, niet singular als λ=-1
+beta=np.array([a,b]).reshape(-1,1)
+beta=np.array([[a+0.52515564],[b+0.8510062]]).reshape(-1,1) 
+beta=np.array([[a+2*0.52515564],[b+2*0.8510062]]).reshape(-1,1)  
+t=(iris['target']==2).reshape(-1,1).astype(int)
+# :3		3:6	6:9  9		10		11:14
+# beta, grad,nwt,ml,|grad|,eigv(hessian)
+lmbda=0
+for i in range(0,10):
+	beta=total2(beta)
+  if beta=='STOP':
+		break
+
+
+/ unicodes	,
+3bb λ
+3bc μ
+221a √
+b2 ²
+b3 ³
+
 
 X=iris['data'][:,[3]]
 X=np.c_[np.ones((X.shape[0],1)),X]
@@ -247,6 +337,7 @@ for i in range(0,10):
 	check_if_grad_ml_lin_is_zero=_grad_ml_to_beta_lin(beta,nwt)
 	print(beta)
 	print(grad_ml_to_beta)
+  print(hessian_ml_to_beta)
 	print(nwt)
 	print(check_if_grad_ml_lin_is_zero)
   print(_eig_values(hessian_ml_to_beta))
@@ -264,6 +355,7 @@ nwt=-np.linalg.inv(hessian_ml_to_beta).dot(grad_ml_to_beta)
 check_if_grad_ml_lin_is_zero=_grad_ml_to_beta_lin(beta,nwt)
 print(beta)
 print(grad_ml_to_beta)
+print(hessian_ml_to_beta)
 print(nwt)
 print(check_if_grad_ml_lin_is_zero)
 print(_eig_values(hessian_ml_to_beta))
@@ -277,6 +369,8 @@ In [14045]: beta=np.array([[a],[b]])
  [ 12.94750716]]
 [[-4.86671210e-08]
  [-7.87996095e-08]]
+[[ -4.8015161   -7.72519407]
+ [ -7.72519407 -12.55285302]]
 [[-3.65078583e-09]
  [-4.03068373e-09]]
 [[9.79381845e-22]
@@ -288,24 +382,7 @@ In [14045]: beta=np.array([[a],[b]])
  [ 12.94750716]]
 --------------------
 
-In [14047]: beta=np.array([[a+0.52515564],[b+0.8510062]])
-[[-20.60048432]
- [ 13.79851336]]
-[[ -9.93540995]
- [-15.26636816]]
-[[10.35106068]
- [-8.14169455]]
-[[2.66453526e-13]
- [3.94351218e-13]]
-[ -0.02574677 -19.49882459]
-[[ 0.82786289  0.5609305 ]
- [-0.5609305   0.82786289]]
-[[-10.24942364]
- [  5.65681881]]
---------------------
-
 In [14049]: beta=np.array([[a+0.8510062],[b-0.52515564]])
-[[-20.27463376]
  [ 12.42235152]]
 [[-0.02950951]
  [ 0.0213212 ]]
@@ -320,6 +397,214 @@ In [14049]: beta=np.array([[a+0.8510062],[b-0.52515564]])
  [ 12.91862248]]
 --------------------
 
+In [14047]: beta=np.array([[a+0.52515564],[b+0.8510062]])
+[[-20.60048432]
+ [ 13.79851336]]
+[[ -9.93540995]
+ [-15.26636816]]
+[[ -6.15281497  -9.04278227]
+ [ -9.04278227 -13.37175639]]
+[[10.35106068]
+ [-8.14169455]]
+[[2.66453526e-13]
+ [3.94351218e-13]]
+[ -0.02574677 -19.49882459]
+[[ 0.82786289  0.5609305 ]
+ [-0.5609305   0.82786289]]
+[[-10.24942364]
+ [  5.65681881]]
+--------------------
+
+In [14107]: Hessian_of_ml_to_beta=np.array([[ -6.15281497 , -9.04278227]
+       ...: , [ -9.04278227, -13.37175639]])
+
+In [14117]: np.linalg.eig(Hessian_of_ml_to_beta)
+Out[14117]: 
+(array([ -0.02574677, -19.49882459]), array([[ 0.82786289,  0.5609305 ],
+        [-0.5609305 ,  0.82786289]]))
+
+In [14118]: V=np.array([[ 0.82786289,  0.5609305 ],[-0.5609305 ,  0.82786289]])
+
+In [14119]: V
+Out[14119]: 
+array([[ 0.82786289,  0.5609305 ],
+       [-0.5609305 ,  0.82786289]])
+
+In [14120]: Vinv=np.linalg.inv(V)
+
+In [14121]: Vinv
+Out[14121]: 
+array([[ 0.8278629 , -0.56093051],
+       [ 0.56093051,  0.8278629 ]])
+
+In [14122]: Lmbda=np.diag([ -0.02574677, -19.49882459])
+
+In [14123]: Lmbda
+Out[14123]: 
+array([[ -0.02574677,   0.        ],
+       [  0.        , -19.49882459]])
+
+In [14124]: V.dot(Lmbda).dot(Vinv)
+Out[14124]: 
+array([[ -6.15281496,  -9.04278226],
+       [ -9.04278226, -13.3717564 ]])
+
+In [14128]: nwt
+Out[14128]: 
+array([[10.35106068],
+       [-8.14169455]])
+
+In [14129]: Vinv.dot(nwt)
+Out[14129]: 
+array([[13.13618393],
+       [-0.93398115]])
+In [14130]: Lmbda.dot(Vinv).dot(nwt)
+Out[14130]: 
+array([[-0.33821431],
+       [18.21153453]])
+In [14132]: V.dot(Lmbda).dot(Vinv).dot(nwt)
+Out[14132]: 
+array([[ 9.9354101 ],
+       [15.26636833]])
+
+/ ook	,
+
+In [14145]: hessian_ml_to_beta
+Out[14145]: 
+array([[ -6.15281497,  -9.04278227],
+       [ -9.04278227, -13.37175639]])
+
+In [14146]: nwt
+Out[14146]: 
+array([[10.35106068],
+       [-8.14169455]])
+
+In [14147]: hessian_ml_to_beta.dot(nwt)
+Out[14147]: 
+array([[ 9.93540995],
+       [15.26636816]])
+
+/ ook,
+
+/ ontbind nwt in eigv	,
+/ nwt in V basis	,
+In [14152]: y=Vinv.dot(nwt)
+y
+Out[14152]: 
+array([[13.13618393],
+       [-0.93398115]])
+
+In [14183]: Lmbda
+Out[14183]: 
+array([[ -0.02574677,   0.        ],
+       [  0.        , -19.49882459]])
+
+In [14184]: z=Lmbda.dot(y)
+z
+Out[14184]: 
+array([[-0.33821431],
+       [18.21153453]])
+
+In [14186]: V.dot(z)
+Out[14186]: 
+array([[ 9.9354101 ],
+       [15.26636833]])
+
+
+/ 1313	. 
+
+/ plot	, 
+
+def _total(beta):
+	for i in range(0,10):
+		path[i]=beta.ravel()
+		ml=_ml(beta)
+	  grad_ml_to_beta=_grad_ml_to_beta(beta)
+		hessian_ml_to_beta=_hessian_ml_to_beta(beta)
+		nwt=-np.linalg.inv(hessian_ml_to_beta).dot(grad_ml_to_beta)
+		check_if_grad_ml_lin_is_zero=_grad_ml_to_beta_lin(beta,nwt)
+		print(beta)
+		print(grad_ml_to_beta)
+	  print(hessian_ml_to_beta)
+		print(nwt)
+		print(check_if_grad_ml_lin_is_zero)
+	  print(_eig_values(hessian_ml_to_beta))
+	  print(_eig_vectors(hessian_ml_to_beta))
+	  if (grad_ml_to_beta == np.zeros(beta.shape[0])).all():
+	    break
+		beta=beta+nwt
+		print(beta)
+		print("--------------------")
+
+
+X=iris['data'][:,[3]]
+X=np.c_[np.ones((X.shape[0],1)),X]
+t=(iris['target']==2).reshape(-1,1).astype(int)
+# :3		3:6	6:9  9		10		11:14
+# beta, grad,nwt,ml,|grad|,eigv(hessian)
+lmbda=0
+a=-21.12563996
+b=12.94750716
+_max=np.array([[a],[b]])
+v1=np.array([[ 0.82786289], [-0.5609305 ]])
+v2=np.array([[0.5609305 ], [0.82786289]])
+plt.figure()
+
+path=np.zeros((10,2))
+beta=_max+v1
+_total(beta)
+plt.plot(path[:,0],path[:,1])
+
+path=np.zeros((10,2))
+beta=_max+v2
+_total(beta)
+plt.plot(path[:,0],path[:,1])
+
+path=np.zeros((10,2))
+beta=_max-v2
+_total(beta)
+plt.plot(path[:,0],path[:,1])
+
+# singular matrix
+path=np.zeros((10,2))
+beta=_max-2*v2
+_total(beta)
+plt.plot(path[:,0],path[:,1])
+
+# singular matrix
+path=np.zeros((10,2))
+beta=_max+2*v2
+_total(beta)
+plt.plot(path[:,0],path[:,1])
+
+/ 1313	 
+
+/ maak contour	,
+
+/ we maken een 441x2 array	,
+/ elk elem is een (1,2)	, 
+/ _ml verwacht een (2,1)
+/ daarom _ml2	,
+
+def _ml2(beta):
+	return _ml(beta.reshape(-1,1))
+
+In [14303]: _ml2(beta.reshape(1,-1))
+Out[14303]: array([[-25.60583895]])
+
+x=np.linspace(a-2,a+2,21)
+y=np.linspace(b-2,b+2,21)
+g1,g2=np.meshgrid(x,y)
+g=np.c_[g1.ravel(),g2.ravel()]
+
+In [14314]: _ml2(g[0])
+Out[14314]: array([[-97.09921453]])
+
+In [14316]: _ml2(g)
+ValueError: shapes (150,2) and (882,1) not aligned: 2 (dim 1) != 882 (dim 0)
+/ TODO Afmaken	,
+
+/ 1313	. 
 
 
 

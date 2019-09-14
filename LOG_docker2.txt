@@ -1667,6 +1667,10 @@ DEPRECATION: Python 2.7 will reach the end of its life on January 1st, 2020. Ple
  * Running on http://0.0.0.0:80/ (Press CTRL+C to quit)
 172.17.0.1 - - [24/Feb/2019 18:47:35] "GET / HTTP/1.1" 200 -			# zien we na de curl, nu nog niet	,
 
+/ we moeten -p 4000:80	, of -p 80:80	,  zonder -p doen de curl regels het niet hieronder	,
+/ geef dan 
+$ curl http://localhost:4000 of in het 2de geval http://localhost of http://localhost:80
+
 / we hebben Flask installed, en de Redis driver, maar Redis zelf niet	,
 [eric@almond Postgres]$ docker exec -ti modest_kowalevski bash
 root@30376520d7ef:/# find -name "Flask*" 

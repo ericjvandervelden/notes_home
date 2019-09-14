@@ -7008,6 +7008,124 @@ Native Linux Install
 
 sklearn/linear_model/logistic.py:class LogisticRegression(BaseEstimator, LinearClassifierMixin,
 
+/ import
+/home/eric/git_codebase/scikit-learn
+
+/ 7	. 
+
+/ 13	. 
+
+File, New PyDev project
+Project name: logisticregression
+
+File, New , PyDev package
+src folder /logisticregression/src
+name: root.nested
+
+[eric@almond camel]$ ls ~/Devel/Eclipse/python/workspace/logisticregression/
+.project       .pydevproject  src/     
+[eric@almond camel]$ ls ~/Devel/Eclipse/python/workspace/logisticregression/src/root/
+__init__.py  nested/  
+[eric@almond camel]$ ls ~/Devel/Eclipse/python/workspace/logisticregression/src/root/nested/
+__init__.py
+
+/ 13	. 
+
+File, New, PyDev module
+src folder /logisticregression/src
+package: root.nested
+name: example
+
+template: empty
+
+[eric@almond camel]$ ls ~/Devel/Eclipse/python/workspace/logisticregression/src/root/nested
+example.py  __init__.py
+
+/ 13	. 
+
+/ we zien , 
+
+$ less example.py
+
+'''
+Created on Sep 9, 2019
+
+@author: eric
+'''
+
+/ ga eronder staan, en geef ctrl_space	, 
+/ we zien wat we kunnen gebruiken	,
+
+$ less example.py
+
+'''
+Created on Sep 9, 2019
+
+@author: eric
+'''
+if __name__ == '__main__':
+    print('Hello World')
+
+/ klik F9, runs
+
+/ set b in de print regel, klik shift+F9	,  je gaat over naar Debug perspective, en hij valt in de print regel	,
+/ je kunt ook : right klik example.py, Debug as, Python run
+
+/ 13	. 
+
+In this perspective, the debug actions are activated and presented to
+you, so, you can use:
+
+F5: Step into
+
+F6: Step over
+
+F7: Step return
+
+F8: Resume execution
+
+Ctrl+Shift+B: Toggle Breakpoints
+
+Ctrl+Alt+R: Set Next Statement (so, in the example above, you could set the if __name__ == "__main__" as the next line to be executed).
+
+Use line prefixed with >>> in the console to evaluate expressions.
+
+After the debug session, you can return to the previous perspective by using Ctrl+F8 (this keybinding iterates through the open perspectives)... And while we are at it, Ctrl+F7 iterates through the views and Ctrl+F6 iterates through the editors.
+
+Note: you can also add those actions to other perspectives by customizing the perspective (in Window > Perspective > > Customize Perspective ... > Action Set availability enable the Breakpoints and Debug options)
+
+/ 13	 .
+
+/ lees,
+https://www.pydev.org/manual_101_navigate_code.html
+
+/ 13	 .
+
+/ lees	,
+https://www.pydev.org/manual_adv_interactive_console.html
+
+/ console	, 
+/ we zien 2 console icons rechts	, 
+/ met de linker kies je welk console,
+/ met de rechter voeg je een console type toe	,
+/ rechts bij V, kies PyDev console,	
+/ terwijl je debugt, kun je bijv, 
+>> print(__name__)
+__main__
+
+/ 13	 .
+
+[eric@almond scikit-learn]$ git fetch -a
+[eric@almond scikit-learn]$ git tag -l 
+[eric@almond scikit-learn]$  git checkout -b 0.21.3
+Switched to a new branch '0.21.3'
+[eric@almond scikit-learn]$ git branch -a
+* 0.21.3
+  master
+
+
+ 
+
 
 
 / Einde SKLEARN SOURCE

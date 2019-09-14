@@ -142,9 +142,18 @@ $ less pom.xml
     <artifactId>wildfly-core-parent</artifactId>
     <version>3.0.0.Alpha10-SNAPSHOT</version>
 
+/ 13	. 
+
+[eric@almond host-controller]$ pwd
+/home/eric/Devel/Java/jboss/wildfly-core/host-controller
+
+[eric@almond host-controller]$ less ./src/main/java/org/jboss/as/host/controller/HostControllerEnvironment.java
+     * the default domain configuration file is "host.xml". The default domain conf
+iguration file is only
 
 
 
+/ 13	. 
 
 / lees	,
 https://wildfly.org/news/2019/03/01/Galleon_Openshift/
