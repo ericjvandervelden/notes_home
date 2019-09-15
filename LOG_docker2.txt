@@ -1691,6 +1691,7 @@ CONTAINER ID        IMAGE                  COMMAND             CREATED          
 
 [eric@almond Postgres]$ docker stop modest_kowalevski 
 modest_kowalevski
+/ of ctrl+c op de container	,
 
 / 13	. 
 
@@ -1811,6 +1812,9 @@ $ vi app.py
 
 / lees	,
 https://docs.docker.com/get-started/part3/
+
+[eric@almond composetest]$ dnf list installed | grep compose
+docker-compose.noarch                1.16.1-1.fc26                 @updates     
 
 /////////////////////////////////////
 A docker-compose.yml file is a YAML file that defines how Docker containers should behave in production.

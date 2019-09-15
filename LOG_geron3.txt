@@ -1,3 +1,7 @@
+/ See NEWTON NAAR ONEINDIG 
+
+
+
 / 13
 
 / NEWTON LOGISTIC REGRESSION
@@ -192,11 +196,346 @@ resML[i]=np.r_[beta.ravel(),grad.ravel(),nwt.ravel(),ml.ravel(),np.linalg.norm(g
 beta=beta+nwt
 i=i+1
 
+/ 13	. 
 
+/ lees	,
+https://stackoverflow.com/questions/32308335/how-to-handle-the-divide-by-zero-exception-in-list-comprehensions-while-dividing
+
+def add_handler(handler, exc, func):
+    def wrapper(*args, **kwargs):
+
+        try:
+            return func(*args, **kwargs)
+        except exc:
+            return handler(*args, **kwargs)    # ???
+    return wrapper
 
 / 13	. 
 
+X=iris['data'][:,[3]]
+X=np.c_[np.ones((X.shape[0],1)),X]
+a=-21.12563996
+b=12.94750716
+beta=np.array([a,b]).reshape(-1,1)
+beta=np.array([[a+0.8510062],[b-0.52515564]]).reshape(-1,1)
+beta=np.array([[a+0.52515564],[b+0.8510062]]).reshape(-1,1) 
+beta=np.array([[a+2*0.52515564],[b+2*0.8510062]]).reshape(-1,1)  
+# singular hessian als λ=0, niet singular als λ=-1
+t=(iris['target']==2).reshape(-1,1).astype(int)
+# :3		3:6	6:9  9		10		11:14
+# beta, grad,nwt,ml,|grad|,eigv(hessian)
+lmbda=0
+for i in range(0,10):
+  total()
+
+[[-20.07532868]
+ [ 14.64951956]]
+[[-21.0024308 ]
+ [-31.05819707]]
+[[ -6.39444339  -8.77809057]
+ [ -8.77809057 -12.11921016]]
+[[ 41.06556592]
+ [-32.30701084]]
+[[1.63424829e-13]
+ [2.27373675e-13]]
+[ -0.02383632 -18.48981723]
+[[ 0.80932593  0.5873598 ]
+ [-0.5873598   0.80932593]]
+[[ 20.99023724]
+ [-17.65749128]]
+--------------------
+[[ 20.99023724]
+ [-17.65749128]]
+[[-13.33164173]
+ [ 74.48848531]]
+[[-3.53652642 -4.34723503]
+ [-4.34723503 -5.38073374]]
+[[-3027.47155128]
+ [ 2459.81673196]]
+[[ 9.45021839e-13]
+ [-9.52127266e-13]]
+[-0.01467603 -8.90258413]
+[[ 0.7770123   0.62948542]
+ [-0.62948542  0.7770123 ]]
+[[-3006.48131405]
+ [ 2442.15924068]]
+--------------------
+/home/eric/miniconda3/bin/ipython:8: RuntimeWarning: divide by zero encountered in log
+
+
+////////////////////////////////////////////////////////////
+
+/ 7	. 
+
+/ NEWTON NAAR ONEINDIG 
+
 / 1 feature	,
+
+/ 13
+
+/ in p	,
+
+/ ontbind een vector op evc's ,
+
+In [14460]: Hp=_hessian_ml_to_beta(p)
+In [14593]: Ep=np.linalg.eig(Hp)
+In [14595]: evap=Ep[0]
+In [14597]: Lp=np.diag(evap)
+In [14598]: Lp
+Out[14598]: 
+array([[ -0.0343014 ,   0.        ],
+       [  0.        , -17.32006772]])
+In [14621]: Vp=Ep[1]
+In [14622]: Vp
+Out[14622]: 
+array([[ 0.8510062 ,  0.52515564],
+       [-0.52515564,  0.8510062 ]])
+
+In [14623]: e1=np.array([[1],[0]])
+In [14624]: e2=np.array([[0],[1]])
+
+In [14626]: evcp1=Vp.dot(e1)
+In [14627]: evcp2=Vp.dot(e2)
+
+In [14631]: Vinvp=np.linalg.inv(Vp)
+
+/ check	,
+In [14632]: Vp.dot(Lp).dot(Vinvp)
+Out[14632]: 
+array([[ -4.8015161 ,  -7.72519407],
+       [ -7.72519407, -12.55285302]])
+In [14634]: Hp
+Out[14634]: 
+array([[ -4.8015161 ,  -7.72519407],
+       [ -7.72519407, -12.55285302]])
+
+/ evcp1 en evcp2 basic eigenvectors,
+/ check	,
+In [14640]: Vinvp.dot(evcp1)
+Out[14640]: 
+array([[1.],
+       [0.]])
+In [14641]: Vinvp.dot(evcp2)
+Out[14641]: 
+array([[5.55111512e-17],
+       [1.00000000e+00]])
+
+/ wat is effect Hp op beide eigenvectors?
+/ we geven coord van effect in basic eigenvectors	,
+
+39b Λ
+207b ⁻
+b9 ¹ 
+/ omdat HV=VΛ is H=VΛV⁻¹ , dus geeft ΛV⁻¹x de coord van Hx tov de eigenvectoren,
+
+In [14642]:  Lp.dot(Vinvp).dot(evcp2)
+Out[14642]: 
+array([[-5.20417043e-18],
+       [-1.73200677e+01]])
+
+In [14643]:  Lp.dot(Vinvp).dot(evcp1)
+Out[14643]: 
+array([[-0.0343014],
+       [ 0.       ]])
+
+In [14650]:  Lp.dot(Vinvp).dot(evcp2*2)
+Out[14650]: 
+array([[-1.04083409e-17],
+       [-3.46401354e+01]])
+/ klopt, we zien 2 keer de 2de eigenwaarde	,  
+
+/ in q	,
+
+In [14659]: q=p+2*evcp2
+In [14660]: q
+Out[14660]: 
+array([[-20.07532867],
+       [ 14.64951956]])
+
+In [14661]: Hq=_hessian_ml_to_beta(q)
+In [14662]: Eq=np.linalg.eig(Hq)
+In [14663]: evaq=Eq[0]
+In [14664]: Lq=np.diag(evaq)
+In [14665]: Lq
+Out[14665]: 
+array([[ -0.02383632,   0.        ],
+       [  0.        , -18.48981723]])
+
+In [14666]: Vq=Eq[1]
+In [14667]: Vq
+Out[14667]: 
+array([[ 0.80932593,  0.5873598 ],
+       [-0.5873598 ,  0.80932593]])
+
+In [14668]: evcq1=Vq.dot(e1)
+In [14669]: evcq2=Vq.dot(e2)
+
+In [14670]: Vinvq=np.linalg.inv(Vq)
+
+In [14671]: Vq.dot(Lq).dot(Vinvq)
+Out[14671]: 
+array([[ -6.39444339,  -8.77809057],
+       [ -8.77809057, -12.11921016]])
+/=
+In [14672]: Hq
+Out[14672]: 
+array([[ -6.39444339,  -8.77809057],
+       [ -8.77809057, -12.11921016]])
+
+In [14673]: Vinvq.dot(evcq1)
+Out[14673]: 
+array([[ 1.00000000e+00],
+       [-5.55111512e-17]])
+In [14674]: Vinvq.dot(evcq2)
+Out[14674]: 
+array([[0.],
+       [1.]])
+
+39b Λ
+207b ⁻
+b9 ¹ 
+/ omdat HV=VΛ is H=VΛV⁻¹ , dus geeft ΛV⁻¹x de coord van Hx tov de eigenvectoren,
+
+/ coord tov basic eigenvectoren	,
+In [14675]: Lq.dot(Vinvq).dot(evcq1)
+Out[14675]: 
+array([[-2.38363201e-02],
+       [ 1.77635684e-15]])
+In [14676]: Lq.dot(Vinvq).dot(evcq2)
+Out[14676]: 
+array([[  0.        ],
+       [-18.48981723]])
+In [14677]: evaq
+Out[14677]: array([ -0.02383632, -18.48981723])
+
+/ Hoe is gradq tov basis eigenvectoren van Hq?
+In [14695]: Vinvq.dot(gradq)
+Out[14695]: 
+array([[  1.24452447],
+       [-37.47218791]])
+
+/ Hq⁻¹(-gradq) tov V	,
+In [14697]: np.linalg.inv(Lq).dot(Vinvq).dot(-gradq)
+Out[14697]: 
+array([[52.21126693],
+       [-2.02663917]])
+
+/ Hq⁻¹(-gradq) tov standaard basis,
+In [14768]: sq=Vq.dot(np.linalg.inv(Lq)).dot(Vinvq).dot(-gradq)
+/=
+In [14769]: 52.21126693*evcq1+-2.02663917*evcq2
+Out[14768]: 
+array([[ 41.06556597],
+       [-32.30701089]])
+
+/ check
+In [14773]: Hq.dot(sq)
+Out[14773]: 
+array([[21.00243083],
+       [31.0581971 ]])
+
+In [14779]: nsq=sq/np.linalg.norm(sq)
+In [14780]: nsq
+Out[14780]: 
+array([[ 0.78593504],
+       [-0.61830907]])
+
+In [14793]: Hq.dot(52.21126693*evcq1)
+Out[14793]: 
+array([[-1.00722593],
+       [ 0.73098364]])
+In [14794]: Hq.dot(-2.02663917*evcq2)
+Out[14794]: 
+array([[22.00965672],
+       [30.32721341]])
+In [14795]: Hq.dot(52.21126693*evcq1)+Hq.dot(-2.02663917*evcq2)
+Out[14795]: 
+array([[21.00243079],
+       [31.05819706]])
+
+/ we plot	,
+/ lees,
+https://stackoverflow.com/questions/35363444/plotting-lines-connecting-points
+
+/ we plot vanuit q gezien	,
+In [14752]: plt.figure()
+In [14754]: plt.gca().set_aspect('equal')
+# -(q-p)	,
+In [14753]: plt.plot([0,1.05031129],[0,1.7020124])
+# evcq1
+In [14743]: plt.plot([0,0.80932593],[0,-0.5873598])
+# evcq2
+In [14744]: plt.plot([0,0.5873598],[0,0.80932593])
+
+# voor de plot	,
+In [14779]: nsq=sq/np.linalg.norm(sq)
+In [14780]: nsq
+Out[14780]: 
+array([[ 0.78593504],
+       [-0.61830907]])
+In [14781]: plt.plot([0,0.78593504],[0,-0.61830907])
+Out[14781]: [<matplotlib.lines.Line2D at 0x7fbec4c1a048>]
+
+In [14787]: Hq.dot(nsq)
+Out[14787]: 
+array([[0.4019559],
+       [0.5944086]])
+/=
+In [14785]: ngradq=gradq/np.linalg.norm(sq)
+In [14788]: ngradq
+Out[14788]: 
+array([[-0.4019559],
+       [-0.5944086]])
+
+/ plot	, 
+/ we zien loodrechte eigenvectoren van Hq	,
+/ evcq1 loopt naar rechtsonder	, 
+/ evcq2 loopt naar rechtsboven	,
+/ -gradq ligt net boven evcq2	,
+/ sq list net onder evcq1	, 
+/ in sq moet Hq.dot(sq) gelijk zijn aan -gradq	,  en zo is het lin vv in sq =0	,
+/ sq heeft grote positieve component langs evcq1, en kleine negatieve component langs evcq2	, sq=a*evcq1 + b*evcq2	, a>>0, b<0 klein	,
+/ wat is Hq.sq? evaq1 is klein neg, evaq2 groot neg, dus Hq.a*evcq1=a*-.03*evcq1 en is kleine O(1) vector langs evaq1, die naar links wijst	, en Hq.b*evcq2 = b*-17*evcq2, en omdat b<0, is dit een vector langs evcq2 naar rechtsboven	, dus dus in sq is het l vv een vector // evcq2, maar iets naar links, en is precies -gradq	.
+
+/ 1313	 .
+
+/ eerste 2 stappen 	,
+
+[[-20.07532868]
+ [ 14.64951956]]
+[[-21.0024308 ]
+ [-31.05819707]]
+[[ -6.39444339  -8.77809057]
+ [ -8.77809057 -12.11921016]]
+[[ 41.06556592]
+ [-32.30701084]]
+[[1.63424829e-13]
+ [2.27373675e-13]]
+[ -0.02383632 -18.48981723]
+[[ 0.80932593  0.5873598 ]
+ [-0.5873598   0.80932593]]
+[[ 20.99023724]
+ [-17.65749128]]
+--------------------
+[[ 20.99023724]
+ [-17.65749128]]
+[[-13.33164173]
+ [ 74.48848531]]
+[[-3.53652642 -4.34723503]
+ [-4.34723503 -5.38073374]]
+[[-3027.47155128]
+ [ 2459.81673196]]
+[[ 9.45021839e-13]
+ [-9.52127266e-13]]
+[-0.01467603 -8.90258413]
+[[ 0.7770123   0.62948542]
+ [-0.62948542  0.7770123 ]]
+[[-3006.48131405]
+ [ 2442.15924068]]
+--------------------
+/home/eric/miniconda3/bin/ipython:8: RuntimeWarning: divide by zero encountered in log
+
+/ 13	. 
 
 / 1313	. 
 
@@ -207,7 +546,41 @@ i=i+1
 / lmbda <0
 / TODO
 
+/ als 
+In [14426]: beta
+Out[14426]: 
+array([[-3006.48131405],
+       [ 2442.15924068]])
+
+
 # als je 150 waarnemingen xn doet,	 dan bepaal je de beta waarvoor deze 150 waarnemingen de grootste kans hebben	,
+
+/ 131313	 .
+
+/ als 
+In [14426]: beta
+Out[14426]: 
+array([[-3006.48131405],
+       [ 2442.15924068]])
+/ en omdat	,
+In [14427]: X[:9]
+Out[14427]: 
+array([[1. , 0.2],
+       [1. , 0.2],
+       [1. , 0.2],
+       [1. , 0.2],
+...
+/ is	, 
+In [14428]: expit(X.dot(beta))
+       ...: 
+Out[14428]: 
+array([[0.00000000e+000],
+       [0.00000000e+000],
+/ en zien we dus  in _ml	,
+/home/eric/miniconda3/bin/ipython:8: RuntimeWarning: divide by zero encountered in log
+/ Hoe vangen we deze af?
+/ TODO
+/ De reden is dat 1 van de eigenwaarden is ongeveer (negatief) 0 en de andere groot negatief	,
 
 
 def _ml_alt(beta):
@@ -240,6 +613,12 @@ def _eig_vectors(m):
 def _det(m):
 	return np.linalg.det(m)
 
+def _direction(v):
+	return v[1]/v[0]
+
+def _size(v):
+	return np.linalg.norm(v) 
+
 def total():
   global beta
   ml=_ml(beta)
@@ -258,25 +637,6 @@ def total():
   print(beta)
   print("--------------------")
 
-def total2(beta):
-  ml=_ml(beta)
-  grad_ml_to_beta=_grad_ml_to_beta(beta)
-  hessian_ml_to_beta=_hessian_ml_to_beta(beta)
-	if _min_abs_eig_values(hessian_ml_to_beta)<.01:
-		return 'STOP'
-  nwt=-np.linalg.inv(hessian_ml_to_beta).dot(grad_ml_to_beta)
-  check_if_grad_ml_lin_is_zero=_grad_ml_to_beta_lin(beta,nwt)
-  print(beta)
-  print(grad_ml_to_beta)
-  print(hessian_ml_to_beta)
-  print(nwt)
-  print(check_if_grad_ml_lin_is_zero)
-  print(_eig_values(hessian_ml_to_beta))
-  print(_eig_vectors(hessian_ml_to_beta))
-  beta=beta+nwt
-  print(beta)
-  print("--------------------")
-	return beta
 
 X=iris['data'][:,[3]]
 X=np.c_[np.ones((X.shape[0],1)),X]
@@ -285,41 +645,29 @@ b=12.94750716
 beta=np.array([a,b]).reshape(-1,1)
 beta=np.array([[a+0.8510062],[b-0.52515564]]).reshape(-1,1)
 beta=np.array([[a+0.52515564],[b+0.8510062]]).reshape(-1,1) 
-# singular hessian als λ=0, niet singular als λ=-1
 beta=np.array([[a+2*0.52515564],[b+2*0.8510062]]).reshape(-1,1)  
-t=(iris['target']==2).reshape(-1,1).astype(int)
-# :3		3:6	6:9  9		10		11:14
-# beta, grad,nwt,ml,|grad|,eigv(hessian)
-lmbda=-1
-for i in range(0,10):
-  total()
-
-X=iris['data'][:,[3]]
-X=np.c_[np.ones((X.shape[0],1)),X]
-a=-21.12563996
-b=12.94750716
-beta=np.array([[a+0.8510062],[b-0.52515564]]).reshape(-1,1)
-beta=np.array([[a+0.52515564],[b+0.8510062]]).reshape(-1,1) 
 # singular hessian als λ=0, niet singular als λ=-1
-beta=np.array([a,b]).reshape(-1,1)
-beta=np.array([[a+0.52515564],[b+0.8510062]]).reshape(-1,1) 
-beta=np.array([[a+2*0.52515564],[b+2*0.8510062]]).reshape(-1,1)  
 t=(iris['target']==2).reshape(-1,1).astype(int)
 # :3		3:6	6:9  9		10		11:14
 # beta, grad,nwt,ml,|grad|,eigv(hessian)
 lmbda=0
 for i in range(0,10):
-	beta=total2(beta)
-  if beta=='STOP':
-		break
+  total()
 
 
 / unicodes	,
 3bb λ
+39b Λ
 3bc μ
 221a √
 b2 ²
 b3 ³
+b9 ¹
+207b ⁻
+
+/ 1313	. 
+
+/ zonder total() fct	,
 
 
 X=iris['data'][:,[3]]
@@ -604,8 +952,94 @@ In [14316]: _ml2(g)
 ValueError: shapes (150,2) and (882,1) not aligned: 2 (dim 1) != 882 (dim 0)
 / TODO Afmaken	,
 
-/ 1313	. 
+/ Einde NEWTON NAAR ONEINDIG
 
+/ NEWTON NAAR ONEINDIG 2 FEATURES
+
+/ we copy de fcts	,
+
+def _ml_alt(beta):
+  p1gX_at_beta=expit(X.dot(beta))
+	ml_vector=t*np.log(p1gX_at_beta)+(1-t)*np.log(1-p1gX_at_beta)
+	return np.ones((1,ml_vector.shape[0])).dot(ml_vector)+lmbda*beta.T.dot(beta)
+
+def _ml(beta):
+  p1gX_at_beta=expit(X.dot(beta))
+	return t.T.dot(np.log(p1gX_at_beta))+(1-t).T.dot(np.log(1-p1gX_at_beta))++lmbda*beta.T.dot(beta)
+
+def _grad_ml_to_beta(beta):
+  p1gX_at_beta=expit(X.dot(beta))+lmbda*beta
+  return X.T.dot(t-p1gX_at_beta)		# X staat er 2 keer in	,
+
+def _hessian_ml_to_beta(beta):  
+  p1gX_at_beta=expit(X.dot(beta))
+  D=np.diag((-p1gX_at_beta*(1-p1gX_at_beta)).ravel())
+  return X.T.dot(D).dot(X)+lmbda*np.eye(beta.shape[0])
+
+def _grad_ml_to_beta_lin(beta,delta):
+	return _grad_ml_to_beta(beta)+_hessian_ml_to_beta(beta).dot(delta)
+
+def _eig_values(m):
+	return np.linalg.eig(m)[0]
+def _min_abs_eig_values(m):
+	return np.min(np.abs(np.linalg.eig(m)[0]))
+def _eig_vectors(m):
+	return np.linalg.eig(m)[1]
+def _det(m):
+	return np.linalg.det(m)
+
+def _direction(v):
+	return v[1]/v[0]
+
+def _size(v):
+	return np.linalg.norm(v) 
+
+def total():
+  global beta
+  ml=_ml(beta)
+  grad_ml_to_beta=_grad_ml_to_beta(beta)
+  hessian_ml_to_beta=_hessian_ml_to_beta(beta)
+  nwt=-np.linalg.inv(hessian_ml_to_beta).dot(grad_ml_to_beta)
+  check_if_grad_ml_lin_is_zero=_grad_ml_to_beta_lin(beta,nwt)
+  print(beta)
+  print(grad_ml_to_beta)
+  print(hessian_ml_to_beta)
+  print(nwt)
+  print(check_if_grad_ml_lin_is_zero)
+  print(_eig_values(hessian_ml_to_beta))
+  print(_eig_vectors(hessian_ml_to_beta))
+  beta=beta+nwt
+  print(beta)
+  print("--------------------")
+
+
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((X.shape[0],1)),X]
+a=-21.12563996
+b=12.94750716
+beta=np.array([a,b]).reshape(-1,1)
+beta=np.array([[a+0.8510062],[b-0.52515564]]).reshape(-1,1)
+beta=np.array([[a+0.52515564],[b+0.8510062]]).reshape(-1,1) 
+beta=np.array([[a+2*0.52515564],[b+2*0.8510062]]).reshape(-1,1)  
+beta=np.array([0,0]).reshape(-1,1)
+# singular hessian als λ=0, niet singular als λ=-1
+t=(iris['target']==2).reshape(-1,1).astype(int)
+# :3		3:6	6:9  9		10		11:14
+# beta, grad,nwt,ml,|grad|,eigv(hessian)
+lmbda=0
+for i in range(0,10):
+  total()
+
+
+/ unicodes	,
+3bb λ
+39b Λ
+3bc μ
+221a √
+b2 ²
+b3 ³
+b9 ¹
+207b ⁻
 
 
 
