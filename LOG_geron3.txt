@@ -989,7 +989,7 @@ def _det(m):
 	return np.linalg.det(m)
 
 def _direction(v):
-	return v[1]/v[0]
+ 	return v[1]/v[0]
 
 def _size(v):
 	return np.linalg.norm(v) 
@@ -999,6 +999,10 @@ def total():
   ml=_ml(beta)
   grad_ml_to_beta=_grad_ml_to_beta(beta)
   hessian_ml_to_beta=_hessian_ml_to_beta(beta)
+  global h						# om de hessian te pakken	,
+  h=hessian_ml_to_beta
+  global e 						# om de eig te pakken	,
+  e=np.linalg.eig(hessian_ml_to_beta)
   nwt=-np.linalg.inv(hessian_ml_to_beta).dot(grad_ml_to_beta)
   check_if_grad_ml_lin_is_zero=_grad_ml_to_beta_lin(beta,nwt)
   print(beta)
@@ -1015,20 +1019,92 @@ def total():
 
 X=iris['data'][:,[2,3]]
 X=np.c_[np.ones((X.shape[0],1)),X]
-a=-21.12563996
-b=12.94750716
-beta=np.array([a,b]).reshape(-1,1)
-beta=np.array([[a+0.8510062],[b-0.52515564]]).reshape(-1,1)
-beta=np.array([[a+0.52515564],[b+0.8510062]]).reshape(-1,1) 
-beta=np.array([[a+2*0.52515564],[b+2*0.8510062]]).reshape(-1,1)  
-beta=np.array([0,0]).reshape(-1,1)
+beta=np.array([0,0,0]).reshape(-1,1)
+beta=p+evc1p
 # singular hessian als λ=0, niet singular als λ=-1
 t=(iris['target']==2).reshape(-1,1).astype(int)
 # :3		3:6	6:9  9		10		11:14
 # beta, grad,nwt,ml,|grad|,eigv(hessian)
-lmbda=0
+lmbda=-1
+h=0	# om de hessian te pakken	,
+e=0 # om de eig te pakken	,
 for i in range(0,10):
   total()
+
+/ start met 0,0,0		, dan laatste frame	,
+
+--------------------
+[[-45.2685563 ]
+ [  5.75398881]
+ [ 10.44602654]]
+[[-8.03220288e-05]
+ [-3.00670505e-04]
+ [-9.12751521e-05]]
+[[ -3.01681996 -14.78627212  -4.91471535]
+ [-14.78627212 -72.66365494 -24.07153134]
+ [ -4.91471535 -24.07153134  -8.07897298]]
+[[-0.00378699]
+ [ 0.00054344]
+ [ 0.00067327]]
+[[-1.73472348e-18]
+ [ 0.00000000e+00]
+ [ 1.73472348e-18]]
+[-8.36589650e+01 -5.15069180e-03 -9.53321981e-02]
+[[-0.18971096 -0.97647328  0.10251679]
+ [-0.93190288  0.14620281 -0.33193638]
+ [-0.30913876  0.15850766  0.93771454]]
+[[-45.27234329]
+ [  5.75453225]
+ [ 10.44669981]]
+--------------------
+
+/ we zien net zo iets als bij 1 feature: 1 grote eigenwaarde	,
+
+In [14830]: evalp=e[0]
+In [14831]: evalp
+Out[14831]: array([-8.36589650e+01, -5.15069180e-03, -9.53321981e-02])
+
+In [14822]: evc1p=e[1][:,0].reshape(-1,1)
+In [14828]: evc1p
+Out[14828]: 
+array([[-0.18971096],
+       [-0.93190288],
+       [-0.30913876]])
+
+In [14833]: p=beta
+In [14834]: p
+Out[14834]: 
+array([[-45.27234329],
+       [  5.75453225],
+       [ 10.44669981]])
+
+/ als we start met p+evc1p	, dan weer ERR	,
+/ neem daarom lmbda=-1	,
+
+--------------------
+[[-44.43141175]
+ [  5.68535817]
+ [ 10.13921646]]
+[[-0.00280051]
+ [-0.00508894]
+ [ 0.01712558]]
+[[ -4.10013326 -15.18689482  -5.05320038]
+ [-15.18689482 -75.59379477 -24.74024704]
+ [ -5.05320038 -24.74024704  -9.31245201]]
+[[-0.0029317 ]
+ [-0.00460335]
+ [ 0.01565946]]
+[[ 0.00000000e+00]
+ [ 0.00000000e+00]
+ [-2.08166817e-17]]
+[-86.90369772  -1.00544718  -1.09723514]
+[[-0.18978211 -0.97700179  0.09721242]
+ [-0.93178126  0.14801614 -0.33147384]
+ [-0.30946153  0.15348852  0.93844277]]
+[[-44.43434345]
+ [  5.68075482]
+ [ 10.15487592]]
+
 
 
 / unicodes	,
