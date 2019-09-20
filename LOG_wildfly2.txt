@@ -167,7 +167,28 @@ $ bin/standalone.xml
 ...
 23:19:13,092 INFO  [org.jboss.as] (MSC service thread 1-1) WFLYSRV0049: WildFly Full 17.0.1.Final (WildFly Core 9.0.2.Final) starting
 
+/ 13	. 
+
+/ als we	,
+$ domain.sh
+
+eric     14226  3.2  0.4 4122348 67720 pts/34  Sl+  19:46   0:01 java -D[Process Controller] -server -Xms64m -Xmx512m -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true -Dorg.jboss.boot.log.file=/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/domain/log/process-controller.log -Dlogging.configuration=file:/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/domain/configuration/logging.properties -jar /home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/jboss-modules.jar -mp /home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/modules org.jboss.as.process-controller -jboss-home /home/eric/Devel/Java/jboss/wildfly-17.0.1.Final -jvm java -mp /home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/modules -- -Dorg.jboss.boot.log.file=/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/domain/log/host-controller.log -Dlogging.configuration=file:/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/domain/configuration/logging.properties -server -Xms64m -Xmx512m -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true -- -default-jvm java
+eric     14244 37.4  2.1 4213776 355072 pts/34 Sl+  19:46   0:19 java -D[Host Controller] -Dorg.jboss.boot.log.file=/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/domain/log/host-controller.log -Dlogging.configuration=file:/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/domain/configuration/logging.properties -server -Xms64m -Xmx512m -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true -jar /home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/jboss-modules.jar -mp /home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/modules org.jboss.as.host-controller -mp /home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/modules --pc-address 127.0.0.1 --pc-port 38119 -default-jvm java -Djboss.home.dir=/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final
+eric     14338 51.5  2.6 4286020 439660 pts/34 Sl+  19:46   0:23 /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-5.b14.fc26.x86_64/jre/bin/java -D[Server:server-one] -D[pcid:895782987] -Xms64m -Xmx512m -server -XX:MetaspaceSize=96m -XX:MaxMetaspaceSize=256m -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true -Djboss.home.dir=/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final -Djboss.modules.system.pkgs=org.jboss.byteman -Djboss.server.log.dir=/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/domain/servers/server-one/log -Djboss.server.temp.dir=/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/domain/servers/server-one/tmp -Djboss.server.data.dir=/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/domain/servers/server-one/data -Dlogging.configuration=file:/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/domain/servers/server-one/data/logging.properties -jar /home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/jboss-modules.jar -mp /home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/modules org.jboss.as.server
+eric     14380 56.5  2.7 4286044 452324 pts/34 Sl+  19:46   0:23 /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-5.b14.fc26.x86_64/jre/bin/java -D[Server:server-two] -D[pcid:328701111] -Xms64m -Xmx512m -server -XX:MetaspaceSize=96m -XX:MaxMetaspaceSize=256m -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true -Djboss.home.dir=/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final -Djboss.modules.system.pkgs=org.jboss.byteman -Djboss.server.log.dir=/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/domain/servers/server-two/log -Djboss.server.temp.dir=/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/domain/servers/server-two/tmp -Djboss.server.data.dir=/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/domain/servers/server-two/data -Dlogging.configuration=file:/home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/domain/servers/server-two/data/logging.properties -jar /home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/jboss-modules.jar -mp /home/eric/Devel/Java/jboss/wildfly-17.0.1.Final/modules org.jboss.as.server
+eric     14925  0.0  0.0 118596   940 pts/37   S+   19:47   0:00 grep --color=auto java
+eric     22390  0.0  1.7 5200528 288948 pts/29 Sl+  Jul23  47:00 /usr/bin/java -Xms64M -Xmx1G -Djava.util.logging.config.file=logging.properties -Djava.security.auth.login.config=/home/eric/Devel/Java/activemq/apache-activemq-5.15.8//conf/login.config -Dcom.sun.management.jmxremote -Djava.awt.headless=true -Djava.io.tmpdir=/home/eric/Devel/Java/activemq/apache-activemq-5.15.8//tmp -Dactivemq.classpath=/home/eric/Devel/Java/activemq/apache-activemq-5.15.8//conf:/home/eric/Devel/Java/activemq/apache-activemq-5.15.8//../lib/: -Dactivemq.home=/home/eric/Devel/Java/activemq/apache-activemq-5.15.8/ -Dactivemq.base=/home/eric/Devel/Java/activemq/apache-activemq-5.15.8/ -Dactivemq.conf=/home/eric/Devel/Java/activemq/apache-activemq-5.15.8//conf -Dactivemq.data=/home/eric/Devel/Java/activemq/apache-activemq-5.15.8//data -jar /home/eric/Devel/Java/activemq/apache-activemq-5.15.8//bin/activemq.jar start
 	
+/ we zien de modules,
+org.jboss.as.process-controller
+org.jboss.as.host-controller
+
+[eric@almond wildfly-17.0.1.Final]$ ls modules/system/layers/base/org/jboss/as/host-controller/main/
+module.xml
+wildfly-host-controller-9.0.2.Final.jar
+
+[eric@almond wildfly-17.0.1.Final]$ ls modules/system/layers/base/org/jboss/as/process-controller/main/
+module.xml  wildfly-process-controller-9.0.2.Final.jar
 
 
 
