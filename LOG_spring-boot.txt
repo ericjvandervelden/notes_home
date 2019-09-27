@@ -1,0 +1,176 @@
+/ 7	. 
+
+/ lees,
+https://spring.io/guides/gs/spring-boot-docker/
+
+/ in start.spring.io maken kiezen we Web als ...
+/ en hello als package	,
+
+/ de zip extract we	,
+[eric@almond gs-spring-boot-docker]$ pwd
+/home/eric/misc_codebase/gs-spring-boot-docker
+
+/ start eclipse,	
+[eric@almond Eclipse]$ eclipse-java-2019-06-R-linux-gtk-x86_64/eclipse/eclipse 
+
+/ we maken workspace_spring-boot	, 
+/ we import maven proj,
+
+/ we hebben vrijwel meteen de goede pom	,
+
+$ vi pom.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.8.RELEASE</version>
+	</parent>
+
+	<groupId>org.springframework</groupId>
+	<artifactId>gs-spring-boot-docker</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+
+/ we maken 
+
+$ vi src/main/java/hello
+
+package hello;
+
+import org.springframework.boot.SpringApplication;
+
+@SpringBootApplication
+@RestController
+public class Application {
+	
+	@RequestMapping("/")
+	public String home() {
+		return "Hello Docker World";
+	}
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class,args);
+	}
+
+}
+
+/ op de command line doen we	,
+[eric@almond gs-spring-boot-docker]$ ./mvnw package
+[eric@almond gs-spring-boot-docker]$ java -jar target/gs-spring-boot-docker-0.0.1-SNAPSHOT.jar 
+
+$ curl http://localhost:8080
+
+/ 13	. 
+
+[eric@almond gs-spring-boot-docker]$ pwd
+/home/eric/misc_codebase/gs-spring-boot-docker
+
+/ naast pom.xml	, in de root dus	,
+$ vi Dockerfile
+from openjdk:8-jdk-alpine
+volume /tmp
+arg jar_file
+copy ${jar_file} app.jar
+entrypoint ["java","-jar","app.jar"]
+
+[eric@almond gs-spring-boot-docker]$ docker build --rm -t gs-spring-boot-docker --build-arg jar_file=target/gs-spring-boot-docker-0.0.1-SNAPSHOT.jar .
+Sending build context to Docker daemon 16.96 MB
+Step 1/5 : FROM openjdk:8-jdk-alpine
+Trying to pull repository docker.io/library/openjdk ... 
+sha256:94792824df2df33402f201713f932b58cb9de94a0cd524164a0f2283343547b3: Pulling from docker.io/library/openjdk
+e7c96db7181b: Pull complete 
+f910a506b6cb: Pull complete 
+c2274a1a0e27: Pull complete 
+Digest: sha256:94792824df2df33402f201713f932b58cb9de94a0cd524164a0f2283343547b3
+Status: Downloaded newer image for docker.io/openjdk:8-jdk-alpine
+ ---> a3562aa0b991
+Step 2/5 : VOLUME /tmp
+ ---> Running in 68be19745f96
+ ---> 1ae2e282fa8f
+Removing intermediate container 68be19745f96
+Step 3/5 : ARG jar_file
+ ---> Running in c8a3898ba5d5
+ ---> 0a35ffb06c3d
+Removing intermediate container c8a3898ba5d5
+Step 4/5 : COPY ${jar_file} app.jar
+ ---> db5be6242218
+Removing intermediate container 0bb71882a95c
+Step 5/5 : ENTRYPOINT java -jar app.jar
+ ---> Running in 59fd7ea6a905
+ ---> f99ff6de97b2
+Removing intermediate container 59fd7ea6a905
+Successfully built f99ff6de97b2
+
+[eric@almond gs-spring-boot-docker]$  docker run --rm -ti -p 8080:8080 gs-spring-boot-docker
+
+[eric@almond Eclipse]$ curl http://localhost:8080
+Hello Docker World[eric@almond Eclipse]$ 
+
+/ 131313	. 
+
+/ dit hebben we nog niet eerder gedaan	,
+
+$ vi Dockerfile
+from openjdk:8-jdk-alpine
+volume /tmp
+arg jar_file											<- deze zet je bij $ docker build	,
+copy ${jar_file} app.jar
+entrypoint ["java","-jar","app.jar"]
+
+$ docker build ... --build-arg jar_file=target/gs-spring-boot-docker-0.0.1-SNAPSHOT.jar .
+
+/ 13	. 
+
+/ we kunnen ook anders dan $ java -jar 	,
+
+[eric@almond target]$ mkdir extract
+[eric@almond target]$ cd extract/
+[eric@almond extract]$ jar xvf ../gs-spring-boot-docker-0.0.1-SNAPSHOT.jar 
+[eric@almond extract]$ mv BOOT-INF/lib/ .
+[eric@almond extract]$ mv BOOT-INF/classes/* .
+[eric@almond extract]$ rm -rf BOOT-INF/
+[eric@almond extract]$ rm -rf org_/
+
+[eric@almond target]java -cp extract/:extract/lib/* hello.Application
+/ of	,
+[eric@almond extract]$ java -cp ./:lib/* hello.Application
+
+/ OK, 
+/ TODO
+
+
+ 
+
+
+

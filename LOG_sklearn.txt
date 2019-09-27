@@ -31,5 +31,93 @@ Clone URI
 Next	,
 /home/eric/Devel/python/scikit-learn
 
+/ 7	. 
 
+
+/ lees	,
+https://www.pydev.org/manual_adv_debugger.html
+https://www.pydev.org/manual_101_root.html			<-
+->
+https://www.pydev.org/manual_101_first_module.html 	<-
+
+/ lees,
+https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html
+https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+->
+https://en.wikipedia.org/wiki/Broyden%E2%80%93Fletcher%E2%80%93Goldfarb%E2%80%93Shanno_algorithm
+/ 7	. 
+
+/ start LiClipse	,
+
+[eric@almond liclipse]$ pwd
+/home/eric/Devel/Eclipse/python/liclipse
+[eric@almond liclipse]$ ./LiClipse 
+/ ws, 
+/home/eric/Devel/Eclipse/python/workspace
+
+/ we hebben de manual gevolgd, en toegevoegd in root.nested package,
+log_reg_sklearn.py	, 
+
+/ we hebben ook scikit-learn 0.19.1 in liclipse	, 
+/ TODO nodig?
+
+/ log_reg_sklearn.py, right click, Debug as, Python run	,
+
+
+
+
+/ 7	. 
+
+/ lees,
+https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html#sklearn.linear_model.LogisticRegression.fit
+https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
  
+
+/ 7	. 
+
+/ pas op bij zoeken, want er zijn 2 versies van logistic.py	,
+/ 1 is in miniconda's sklearn, 																<-
+/ en de andere is WH die we hebben import in eclipse	, 
+
+/ 7		.
+
+/ newton-cg
+/ lees,
+https://en.wikipedia.org/wiki/Nonlinear_conjugate_gradient_method
+
+/ 13	. 
+
+In [15406]: from scipy.sparse.linalg import cg
+
+In [15404]: A=np.array([[3,-1],[-1,3]])/2
+In [15405]: A
+Out[15405]: 
+array([[ 1.5, -0.5],
+       [-0.5,  1.5]])
+
+In [15409]: b=np.array([3,2]).reshape(-1,1)
+In [15410]: b
+Out[15410]: 
+array([[3],
+       [2]])
+
+In [15411]: cg(A,b)
+Out[15411]: (array([2.75, 2.25]), 0)
+
+0 : successful exit >0 : convergence to tolerance not achieved, number of iterations <0 : illegal input or breakdown
+
+/ check	, 
+
+In [15418]: x=x[0].reshape(-1,1)
+
+In [15419]: x
+Out[15419]: 
+array([[2.75],
+       [2.25]])
+
+In [15420]: A.dot(x)
+Out[15420]: 
+array([[3.],
+       [2.]])
+
+

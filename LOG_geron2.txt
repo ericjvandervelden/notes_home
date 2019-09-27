@@ -8,6 +8,8 @@
 
 / See SCHOMMELINGEN NEWTON
 
+/ See CONTOURS 
+
 / 7	. 
 
 def init():
@@ -2914,6 +2916,8 @@ In [9257]: y_proba[81058][0]+y_proba[81058][1]+y_proba[81058][2]
 Out[9257]: 1.0
 
 / 1313	. 
+
+/ CONTOURS
 
 / hij laat 2 contours zien: 
 

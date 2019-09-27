@@ -3297,6 +3297,7 @@ bash-4.3$ echo $(hostname)
 / 13	. 
 
 / bekijk	,
+/ de video over replication
 https://www.youtube.com/watch?v=ldOPon17uYE
 
 / 1ste	,
@@ -3488,6 +3489,9 @@ postgres=#
 / 13	 
 
 / INRICHTEN MASTER SLAVE VLG VIDEO
+
+/ de video over replication
+https://www.youtube.com/watch?v=ldOPon17uYE
 
 / 1313	. 
 
