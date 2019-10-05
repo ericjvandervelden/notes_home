@@ -1,6 +1,8 @@
 / See DOCKER NETWORK 
 / See DOCKER COMPOSE 
 / See DOCKER LOCATION
+/ See DOCKER POSTGRES AGAIN
+/ See HOW IMAGES ARE BUILD LAYERS
 
 / DOCKER NETWORK 
 
@@ -933,6 +935,274 @@ Deleted: sha256:78ae1294664f44a913889fad248c620e525c9e310ae4c060d9000b4bab7b870c
 
 / Einde HOW IMAGES ARE BUILD LAYERS
 
+/ DOCKER POSTGRES AGAIN
+
+/ 7	. 
+
+/ connect to pg in een container	,
+
+/ we moeten 2 dingen doen	,
+
+-bash-4.3$ vi data/postgresql.conf 
+listen_addresses = '*'
+-bash-4.3$ pg_ctl restart
+
+-bash-4.3$ vi data/pg_hba.conf 
+host all all 172.17.0.1/32 trust			/ gateway van docker network bridge
+-bash-4.3$ pg_ctl reload
+
+/ dan	vanaf de host,
+[eric@almond my]$ psql -h 172.17.0.2 -U postgres
+psql (9.6.8, server 9.5.7)
+Type "help" for help.
+
+postgres=# \q
+/ OK	,
+
+/ 13	. 
+
+/ in de container	,
+
+-bash-4.3$ ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.2  netmask 255.255.0.0  broadcast 0.0.0.0
+
+/ op de host	,
+
+[eric@almond my]$ ifconfig |less
+docker0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.1  netmask 255.255.0.0  broadcast 0.0.0.0
+
+/ 13	. 
+
+/ als we de hba conf NIET hebben set 
+host all all 172.17.0.1/32 trust
+
+/ dan	,
+[eric@almond my]$ psql -h 172.17.0.2 -U postgres
+psql: FATAL:  no pg_hba.conf entry for host "172.17.0.1", user "postgres", database "postgres", SSL off
+
+/ hba staat voor host-based authentication	,
+
+/ 13	. 
+
+/ op de host doen we	,
+[eric@almond my]$ docker network inspect bridge
+[
+    {
+        "Name": "bridge",
+...
+        "IPAM": {
+...
+            "Config": [
+                {
+                    "Subnet": "172.17.0.0/16",
+                    "Gateway": "172.17.0.1"
+
+/ 13	 .
+
+/ wat is de gateway van het netwerk van de host?
+
+/ we hebben dit NIET nodig	,
+/ als we $ psql -h 192.168.123.182 willen doen, moeten we deze machine access geven in hba	, en niet de gateway 192.168.123.254	,
+/ als pg in docker draait, moeten we de gateway van het docker netwerk bridge hba geven, WH omdat je van buiten komt	,
+/ TODO 
+
+/ lees	,
+https://www.unixmen.com/how-to-find-default-gateway-in-linux/
+
+/ er zijn verschillende mogelijkheden	,
+
+[eric@almond my]$ route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         192.168.123.254 0.0.0.0         UG    100    0        0 enp0s25
+...
+192.168.123.0   0.0.0.0         255.255.255.0   U     100    0        0 enp0s25
+
+[eric@almond my]$ ip route show
+default via 192.168.123.254 dev enp0s25 proto static metric 100 
+192.168.123.0/24 dev enp0s25 proto kernel scope link src 192.168.123.182 metric 100
+
+[eric@almond my]$ netstat -rn
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+0.0.0.0         192.168.123.254 0.0.0.0         UG        0 0          0 enp0s25
+192.168.123.0   0.0.0.0         255.255.255.0   U         0 0          0 enp0s25
+
+[eric@almond my]$ cat /etc/sysconfig/network-scripts/ifcfg-enp0s25 
+/ we zien GEEN 
+GATEWAY ...
+
+/ de gateway is dus	192.168.123.254
+
+[eric@almond my]$ ifconfig
+enp0s25: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.123.182  netmask 255.255.255.0  broadcast 192.168.123.255
+
+/ 13	. 
+
+/ op de host	,
+
+[eric@almond my]$ psql -h 192.168.123.182 -U postgres
+psql: could not connect to server: Connection refused
+	Is the server running on host "192.168.123.182" and accepting
+	TCP/IP connections on port 5432?
+
+[eric@almond postgres3a]$ sudo su - postgres
+-bash-4.4$ vi data/pg_hba.conf 
+host all all 192.168.123.254/24 trust		/ 254 maakt niet uit	, 
+/ of	,
+host all all 192.168.123.182/32 trust
+-bash-4.4$ pg_ctl  reload
+
+eric@almond my]$ psql -h 192.168.123.182 -U postgres
+/ OK	,
+
+/ 13	. 
+
+/ Hij vraagt om ww als we md5 geven ipv trust	,
+/ dat geldt voor socket of tcp verbindingen	,
+
+-bash-4.4$ vi data/pg_hba.conf 
+local   all             all                                    md5
+-bash-4.4$ pg_ctl  reload
+
+[eric@almond my]$ psql
+Password: 
+
+/ 13	. 
+
+/ listen_address='*' is dat hij listens naar alle hosts,	 dus ook 192.168.123.182	,
+
+/ dit is de default	, dus je kunt hem ook weglaten	,
+listen_addresses = 'localhost'  
+
+/ we hebben op de host	,
+
+-bash-4.4$ vi data/pg_hba.conf 
+local all all trust 
+host all all 192.168.123.182/32 trust
+
+/ dan	,
+[eric@almond my]$ psql -U postgres
+/ OK	,
+[eric@almond my]$ psql -h 192.168.123.182 -U postgres
+psql: could not connect to server: Connection refused
+	Is the server running on host "192.168.123.182" and accepting
+	TCP/IP connections on port 5432?
+
+/ nu doen we	,
+-bash-4.4$ vi data/postgresql.conf 
+listen_addresses = '*'
+-bash-4.4$ pg_ctl restart
+
+[eric@almond my]$ psql -U postgres
+/ OK	,
+[eric@almond my]$ psql -h 192.168.123.182 -U postgres
+/ OK	,
+
+/ 13	. 
+
+/ we kunnen ook	,
+-bash-4.4$ vi data/postgresql.conf 
+listen_addresses = 'localhost,192.168.123.182'
+-bash-4.4$ pg_ctl restart
+
+[eric@almond my]$ psql -U postgres
+/ OK  ,
+[eric@almond my]$ psql -h 192.168.123.182 -U postgres
+/ OK  ,
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+/ 7	. 
+
+/ in een bash 	,
+[eric@almond postgres3a]$ docker build --rm -t my/fedora-postgres3a .
+Step 9/10 : EXPOSE 5432
+/ Hoeft NIET	,
+...
+[eric@almond postgres3a]$ docker run --rm my/fedora-postgres3a 
+
+/ in andere bash	,
+[eric@almond java12-study]$ docker exec -ti ecstatic_fermat bash
+$ ps auxw
+...
+bash-4.3$ ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.2  netmask 255.255.0.0  broadcast 0.0.0.0
+...
+
+/ in nog andere bash	, 
+[eric@almond my]$ psql -h 172.17.0.2
+psql (9.6.8, server 9.5.7)
+Type "help" for help.
+
+eric=> 
+/ in Dockerfile staat dat eric een database eric heeft,	 dus gaat meteen goed	,
+/ of	,
+[eric@almond my]$ psql -U postgres
+psql (9.6.8)
+Type "help" for help.
+
+postgres=# 
+
+/ 7	. 
+
+/ self	,
+
+/ lees  , fedora/postgres3a/Dockerfile
+
+[eric@almond postgres3a]$ docker run --network=my-bridge -ti my/fedora-locale bash
+[root@c6220566d120 /]# dnf -y install postgresql-server postgresql-contrib
+[root@c6220566d120 /]# dnf -y install less hostname iputils
+[root@c6220566d120 /]# su - postgres
+-bash-4.3$ env				/ iedere user heeft eigen env	,
+...
+PWD=/var/lib/pgsql
+HOME=/var/lib/pgsql
+LOGNAME=postgres
+PGDATA=/var/lib/pgsql/data
+... 
+-bash-4.3$ initdb --locale=en_US.UTF8
+-bash-4.3$  pg_ctl -w start
+-bash-4.3$ psql
+postgres=# \l
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges
+
+-----------+----------+----------+-------------+-------------+---------------------
+--
+ postgres  | postgres | UTF8     | en_US.utf-8 | en_US.utf-8 |
+...
+postgres=# \c - eric
+You are now connected to database "postgres" as user "eric".
+postgres=# \q
+
+-bash-4.3$ psql -U eric postgres -c "create database eric"  
+/ je moet een db (hier postgres) opgeven waartoe naar connect , om daarna het command uit te voeren ,
+
+
+
+
+
+/ Einde DOCKER POSTGRES AGAIN
 
 
 

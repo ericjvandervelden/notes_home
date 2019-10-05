@@ -3540,7 +3540,6 @@ https://jpetazzo.github.io/2013/10/16/configure-docker-bridge-network/
 https://blog.alejandrocelaya.com/2017/04/21/set-specific-ip-addresses-to-docker-containers-created-with-docker-compose/
 
 
-
 / 1313	. 
 
 / 1ste node	,

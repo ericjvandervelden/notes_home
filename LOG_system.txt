@@ -1,3 +1,5 @@
+/ See SUDO
+
 / 7. 
 
 / chrome
@@ -20193,6 +20195,35 @@ https://unix.stackexchange.com/questions/265755/fedora-23-can-i-safely-delete-fi
 -rw-------. 1 root root 100G Jul 27 18:58 /var/lib/docker/devicemapper/devicemapper/data
 / TODO
 
-/ 
+/ 7	. 
+
+/ SUDO
+
+/ lees,
+https://docs.fedoraproject.org/en-US/quick-docs/adding_user_to_sudoers_file/
+
+[eric@almond my]$ groups
+eric wheel docker
+
+On Fedora, it is the wheel group the user has to be added to, as this group has full admin privileges. Add a user to the group using the following command:
+$ sudo usermod -aG wheel username
+/ TODO
+
+$ sudo visudo
+...
+%wheel ALL=(ALL) ALL
+...
+
+/ we zien op almond	,
+## Allows people in group wheel to run all commands
+%wheel  ALL=(ALL)       ALL
+
+## Same thing without a password
+%wheel  ALL=(ALL)       NOPASSWD: ALL
+
+/ daarom kan WH	,
+[eric@almond postgres3a]$ sudo su - postgres
+-bash-4.4$ exit
+/ TODO 
 
 / Einde FEDORA

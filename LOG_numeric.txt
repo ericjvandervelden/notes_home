@@ -1,0 +1,83 @@
+/ 7	. 
+
+/ Burden Faires (466)
+
+# A,b gegeven	,
+In [15554]: A
+Out[15554]: 
+array([[ 3, -1],
+       [-1,  3]])
+In [15555]: b
+Out[15555]: 
+array([[1],
+       [5]])
+
+/ globale vars	, behalve t
+/ A,b
+/ x,v
+
+def g(x):
+  r=x.T.dot(A).dot(x)-2*x.T.dot(b)
+  return r[0,0]
+
+
+def h(t):                      
+	if type(t)==np.ndarray:
+		r=np.zeros(t.shape[0])	
+		for i in range(r.shape[0]):
+			r[i]=g(x+t[i]*v) 
+		return r
+	elif type(t)==int:
+		r=g(x+t*v)
+		return r
+
+def t_hat(x,v):
+	r=v.T.dot(b-A.dot(x))/v.T.dot(A).dot(v)
+	return r[0,0]
+
+plt.figure()
+plt.plot(t,h(t))
+
+/ 1313	. 
+
+x=np.array([0,0]).reshape(-1,1)
+v=np.array([1,2]).reshape(-1,1)
+
+t_hat(x,v)
+1.0
+/ klopt, want in in 1,2 is opl A=1,5 en daar is g min	, 
+/ je ziet t_hat	, en maak t met t_hat er in	,
+t=np.linspace(-2,2,11)
+
+/ 1313	. 
+
+x=np.array([2,2]).reshape(-1,1)
+v=np.array([1,0]).reshape(-1,1)
+
+t_hat(x,v)
+-1.0
+/ klopt	,
+
+/ 1313	. 
+
+x=np.array([2,2]).reshape(-1,1)
+v=np.array([1,-1]).reshape(-1,1)
+
+In [15620]: t_hat(x,v)
+Out[15620]: -0.5
+
+
+
+
+
+
+
+
+
+
+
+
+/ we zien een kwadratische fct WH, met minimum bij 1.0	,
+
+
+	
