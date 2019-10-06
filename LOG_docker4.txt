@@ -1198,6 +1198,157 @@ postgres=# \q
 -bash-4.3$ psql -U eric postgres -c "create database eric"  
 / je moet een db (hier postgres) opgeven waartoe naar connect , om daarna het command uit te voeren ,
 
+/ 7	. 
+
+/ 13	. 
+
+/ container 172.17.0.2	,
+[eric@almond postgres3a]$ docker run  -ti my/fedora-locale bash
+[root@269fbe154315 /]# dnf -y install postgresql-server postgresql-contrib
+[root@269fbe154315 /]# dnf -y install less hostname iputils
+[root@269fbe154315 /]# su - postgres
+-bash-4.3$ initdb --locale=en_US.UTF8
+-bash-4.3$ pg_ctl -w start
+-bash-4.3$ psql -c "create role eric createdb login password 'eric'"
+-bash-4.3$ psql -U eric postgres -c "create database eric"
+-bash-4.3$ pg_ctl stop
+-bash-4.3$ ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.2  netmask 255.255.0.0  broadcast 0.0.0.0
+-bash-4.3$ vi data/pg_hba.conf 
+host all all 172.17.0.2/24 trust
+-bash-4.3$ vi data/postgresql.conf 
+listen_addresses = '*'
+/ of	,
+listen_addresses = '172.17.0.2'
+-bash-4.3$ pg_ctl -w start
+-bash-4.3$ psql -h 172.17.0.3
+/ OK	,
+
+/ container 172.17.0.3	,
+[eric@almond postgres3a]$ docker run  -ti my/fedora-locale bash
+[root@269fbe154315 /]# dnf -y install postgresql-server postgresql-contrib
+[root@269fbe154315 /]# dnf -y install less hostname iputils
+[root@269fbe154315 /]# su - postgres
+-bash-4.3$ initdb --locale=en_US.UTF8
+-bash-4.3$ pg_ctl -w start
+-bash-4.3$ psql -c "create role eric createdb login password 'eric'"
+-bash-4.3$ psql -U eric postgres -c "create database eric"
+-bash-4.3$ pg_ctl stop
+-bash-4.3$ ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.3  netmask 255.255.0.0  broadcast 0.0.0.0
+-bash-4.3$ vi data/pg_hba.conf 
+host all all 172.17.0.3/24 trust
+-bash-4.3$ vi data/postgresql.conf 
+listen_addresses = '*'
+/ of	,
+listen_addresses = '172.17.0.3'
+-bash-4.3$ pg_ctl -w start
+-bash-4.3$ psql -h 172.17.0.2
+/ OK	,
+
+/ 13	. 
+
+//////////////////////////////////////////////////
+/ we kunnen bij listen_address '*', of host zelf, '172.17.0.2' op node2,
+/ dit zijn de intefaces op de machine zelf waarop hij luistert	,
+/ als 172.17.0.2 het listen& is 	, dan alles wat op 172.17.0.2 binnenkomt	, dat verwerkt hij	,
+/ dus node 3 kan dan $ psql -h node2
+/ als het listen& * is, luistert hij op alle interfaces op de machine, ook socket interface	,
+
+/ als listen_address 172.17.0.2 is	, dan gaat $ psql toch OK (socket interface),
+/ TODO
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/runtime-config-connection.html
+Specifies the TCP/IP address(es) on which the server is to listen for connections from client applications.
+listen_addresses controls which interfaces accept connection attempts, which can help prevent repeated malicious connection requests on insecure network interfaces. 
+
+
+/ 13	. 
+
+-bash-4.3$ ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.2  netmask 255.255.0.0  broadcast 0.0.0.0
+-bash-4.3$ hostname
+269fbe154315
+-bash-4.3$ cat /etc/hosts
+127.0.0.1	localhost
+172.17.0.2	269fbe154315
+
+-bash-4.3$ ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.3  netmask 255.255.0.0  broadcast 0.0.0.0
+-bash-4.3$ hostname
+a0060b1b5ac5
+-bash-4.3$ cat /etc/hosts
+127.0.0.1 localhost
+172.17.0.3	a0060b1b5ac5
+
+/ we kunnen bijv op 3 2 toevoegen in de hosts file	,
+/ we moeten wel root worden, om de hosts file te kunnen edit	,
+/ als we de hosts file edit, dan meteen OK	, we hoeven geen process te signal	, 
+/ op 172.17.0.3	,
+[root@a0060b1b5ac5 /]# cat /etc/hosts
+127.0.0.1	localhost
+172.17.0.2 	269fbe154315		 <-
+172.17.0.3	a0060b1b5ac5
+/ dan kunnen we, let op -U postgres	,
+[root@a0060b1b5ac5 /]# psql -h 269fbe154315 -U postgres
+/ OK,
+[root@a0060b1b5ac5 /]# psql -h 269fbe154315
+psql: FATAL:  role "root" does not exist
+
+/ 13	. 
+
+/ we doen op 2 en 3	, 
+# vi /etc/hosts
+127.0.0.1       localhost
+172.17.0.2      269fbe154315 node2
+172.17.0.3      a0060b1b5ac5 node3
+[root@a0060b1b5ac5 /]# su - postgres
+
+/ op 3	,
+-bash-4.3$ psql -h node2
+/ OK	,
+
+/ 13	. 
+
+/ op 2	,
+-bash-4.3$ psql -c "create role replicator replication login password 'replicator'"
+/ replication is net als createdb, login	, een actie	,
+-bash-4.3$ psql -c '\du'
+                                    List of roles
+ Role name  |                         Attributes                         | Member o
+f 
+------------+------------------------------------------------------------+---------
+--
+ eric       | Create DB                                                  | {}
+ postgres   | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+ replicator | Replication                                                | {}
+
+
+
+
+/ 13	. 
+
+/ TODOS
+
+/ 1313	. 
+
+/ create role encrypted password
+
+/ 1313	. 
+
+
+
+
+
+
+
+
+
 
 
 
