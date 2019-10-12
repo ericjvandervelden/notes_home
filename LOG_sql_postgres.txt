@@ -1,0 +1,236 @@
+/ 7	. 
+
+/ in docker container	, master slave	, see LOG_postgresql2.txt
+
+/ we zijn in de master	,
+
+/ \dnS+ hangt af van de database waarin je bent	,
+
+/ \c foo connects to de foo database	, en de user blijft onveranderd	, het is 
+\c db usr
+
+/ 13	. 
+
+foo=# create temp table bar(i int);
+CREATE TABLE
+foo=# \d
+          List of relations
+  Schema   | Name | Type  |  Owner   
+-----------+------+-------+----------
+ pg_temp_4 | bar  | table | postgres
+(1 row)
+
+foo=# \dnS+
+                                     List of schemas
+        Name        |  Owner   |  Access privileges   |           Description      
+      
+--------------------+----------+----------------------+----------------------------
+------
+ information_schema | postgres | postgres=UC/postgres+| 
+                    |          | =U/postgres          | 
+ pg_catalog         | postgres | postgres=UC/postgres+| system catalog schema
+                    |          | =U/postgres          | 
+ pg_temp_1          | postgres |                      | 
+ pg_temp_4          | postgres |                      | 
+ pg_toast           | postgres |                      | reserved schema for TOAST t
+ables
+ pg_toast_temp_1    | postgres |                      | 
+ pg_toast_temp_4    | postgres |                      | 
+ public             | postgres | postgres=UC/postgres+| standard public schema
+                    |          | =UC/postgres         | 
+(8 rows)
+
+
+foo=# \c postgres
+You are now connected to database "postgres" as user "postgres".
+postgres=# \dnS+
+                                     List of schemas
+        Name        |  Owner   |  Access privileges   |           Description      
+      
+--------------------+----------+----------------------+----------------------------
+------
+ information_schema | postgres | postgres=UC/postgres+| 
+                    |          | =U/postgres          | 
+ pg_catalog         | postgres | postgres=UC/postgres+| system catalog schema
+                    |          | =U/postgres          | 
+ pg_temp_1          | postgres |                      | 
+ pg_toast           | postgres |                      | reserved schema for TOAST t
+ables
+ pg_toast_temp_1    | postgres |                      | 
+ public             | postgres | postgres=UC/postgres+| standard public schema
+                    |          | =UC/postgres         | 
+(6 rows)
+
+/ 13	. 
+
+/ als je een temp table maakt, en je \c naar een andere db en keert weer terug, dan is de temp table weg	,
+
+/ als je binnen de conn blijft, en je wilt de temp table drop, use drop table	, drop temp table kan niet	,
+
+foo=# create temp table bar(i int);
+CREATE TABLE
+foo=# drop table bar;
+DROP TABLE
+
+/ 13	. 
+
+/ select into
+
+foo=# select *
+foo-# from (values(7))_;
+ column1 
+---------
+       7
+(1 row)
+
+foo=# select * into bar
+from (values(7))_;
+SELECT 1
+
+foo=# select*
+foo-# from bar;
+ column1 
+---------
+       7
+(1 row)
+
+/ 1313	. 
+
+foo=# select * into temp bar
+from (values(7))_;
+SELECT 1
+/ OK	,
+
+foo=# select * into temp table bar
+from (values(7))_;
+SELECT 1
+/ OK	,
+
+foo=# select * into table bar
+from (values(7))_;
+SELECT 1
+/ OK	,
+
+/ 1313	. 
+
+foo=# select n into table bar
+from (values(7))t(n);
+SELECT 1
+
+foo=# select *from bar;
+ n 
+---
+ 7
+(1 row)
+
+/ 13	. 
+
+/ generate_series in een table	,
+
+foo=# select n into bar
+from generate_series(0,10)t(n);
+SELECT 11
+foo=# select n from bar;
+ n  
+----
+  0
+...
+
+/ 1313	. 
+
+/ zonder naam	,
+
+foo=# select * into bar
+from generate_series(0,10);
+SELECT 11
+
+foo=# select*from bar;
+ generate_series 
+-----------------
+               0
+               1
+               2
+               3
+               4
+               5
+               6
+               7
+               8
+               9
+              10
+(11 rows)
+
+/ 13	. 
+
+foo=# with numbers as(
+foo(# select*
+foo(# from generate_series(1,5)
+foo(# )
+foo-# select *
+foo-# from numbers;
+ generate_series 
+-----------------
+               1
+               2
+               3
+               4
+               5
+(5 rows)
+
+/ 13	. 
+
+foo=# with numbers as(
+select*
+from generate_series(1,5)
+)
+select * into bar
+from numbers;
+SELECT 5
+foo=# select *
+foo-# from bar;
+ generate_series 
+-----------------
+               1
+               2
+               3
+               4
+               5
+(5 rows)
+
+/ 13	. 
+
+foo=# with numbers as(
+select*
+from generate_series(1,5)
+)
+select generate_series*random()
+foo-# from numbers; 
+      ?column?      
+--------------------
+ 0.0273240925744176
+   1.33512936811894
+  0.841836721636355
+  0.325871406123042
+   2.00562108540908
+(5 rows)
+
+
+/ 13	. 
+
+foo=# with numbers as(
+select*
+from generate_series(1,5)
+)
+select generate_series,random()
+from numbers;
+ generate_series |      random       
+-----------------+-------------------
+               1 | 0.997579316608608
+               2 | 0.255285303574055
+               3 |  0.49440031638369
+               4 | 0.780610703863204
+               5 | 0.518066473305225
+(5 rows)
+
+
+

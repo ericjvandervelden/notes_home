@@ -3967,8 +3967,8 @@ postgres=> \q
 / we hoeven niet eerst pg_ctl start	,
 
 bash-4.3$ pg_basebackup -h 172.18.0.2 -D data -U replicator -v -P 
-Password: 
-/ TODO MORGEN
+Password: replicator
+
 pg_basebackup: initiating base backup, waiting for checkpoint to complete
 pg_basebackup: checkpoint completed
 86282/86282 kB (100%), 1/1 tablespace                                         
@@ -3980,7 +3980,14 @@ archive       pg_clog	    pg_ident.conf  pg_notify	 pg_stat      pg_twophase	   
 backup_label  pg_commit_ts  pg_log	   pg_replslot	 pg_stat_tmp  PG_VERSION
 base	      pg_dynshmem   pg_logical	   pg_serial	 pg_subtrans  pg_xlog
 global	      pg_hba.conf   pg_multixact   pg_snapshots  pg_tblspc    postgresql.auto.conf
+
+/ op de slave is pg_xlog leeg	,
+/ pg_basebackup copies data/base TODO, en doet niets met WAL files	,
+/ als master/slave draait, dan worden de WAL files met replicatie used	,
+/ TODO 
+////////////////////////////////////////////////////////////////
 / we zien in data/postgres.conf precies die van de master!
+/ dus die moeten we edit	,
 
 bash-4.3$ psql 
 psql: could not connect to server: No such file or directory
@@ -3993,6 +4000,11 @@ $ vi data/postgres.conf
 # CONNECTIONS AND AUTHENTICATION
 listen_addresses = '172.18.0.3'         # what IP address(es) to listen on;
 
+    169 # WRITE AHEAD LOG
+...
+    174 wal_level = hot_standby
+/ TODO
+
 # - Standby Servers -
 # These settings are ignored on a master server.
 hot_standby = on                        # "on" allows queries during recovery
@@ -4002,6 +4014,14 @@ hot_standby = on                        # "on" allows queries during recovery
 #archive_mode = on              # enables archiving; off, on, or always
 #archive_command = 'cp -i %p /var/lib/pgsql/data/archive/%f'            # command to use to archive a logfile segment
 
+ 	# - Sending Server(s) -
+	# Set these on the master and on any standby that will send replication data.
+max_wal_senders = 3
+                                # (change requires restart)
+wal_keep_segments = 8
+
+
+/ nieuwe file	,
 bash-4.3$ vi data/recovery.conf
 standby_mode='on'
 primary_conninfo='host=172.18.0.2 port=5432 user=replicator password=foo'

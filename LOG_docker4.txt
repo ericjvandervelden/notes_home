@@ -2,10 +2,10 @@
 / See DOCKER COMPOSE 
 / See DOCKER LOCATION
 / See DOCKER POSTGRES AGAIN
+/ See DOCKER POSTGRES VOLUME
 / See HOW IMAGES ARE BUILD LAYERS
 
 / DOCKER NETWORK 
-
 
 / 7		.
 
@@ -1354,6 +1354,77 @@ f
 
 
 / Einde DOCKER POSTGRES AGAIN
+
+/ DOCKER POSTGRES VOLUME
+
+/ google,
+docker volume owner
+/ lees,
+https://devops.stackexchange.com/questions/4540/how-to-change-the-owner-of-volume-directory-in-dockerfile
+->
+https://chapeau.freevariable.com/2014/08/docker-uid.html
+docker run --privileged=true -e DEV_UID=$UID -e DEV_GID=$GID -i -t -v ${HOME}/devel:/devel willb/java-dev:centos7-spark-uid
+
+/ lees over useradd	,
+http://www.labtestproject.com/linuse/adding_user.html
+
+
+
+
+/ Einde DOCKER POSTGRES VOLUME
+
+/ DOCKER COMPOSE
+
+[eric@almond composetest]$ pwd
+/home/eric/Devel/Docker2/compose/composetest
+
+[eric@almond part3]$ cd ../../compose/composetest/
+[eric@almond composetest]$ docker-compose up
+Creating network "composetest_default" with the default driver
+Creating composetest_redis_1 ... 
+Creating composetest_web_1 ... 
+Creating composetest_web_1
+Creating composetest_web_1 ... done
+Attaching to composetest_redis_1, composetest_web_1
+redis_1  | 1:C 11 Oct 2019 19:12:52.480 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+redis_1  | 1:C 11 Oct 2019 19:12:52.480 # Redis version=5.0.3, bits=64, commit=00000000, modified=0, pid=1, just started
+redis_1  | 1:C 11 Oct 2019 19:12:52.480 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+redis_1  | 1:M 11 Oct 2019 19:12:52.483 * Running mode=standalone, port=6379.
+redis_1  | 1:M 11 Oct 2019 19:12:52.484 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+redis_1  | 1:M 11 Oct 2019 19:12:52.484 # Server initialized
+redis_1  | 1:M 11 Oct 2019 19:12:52.484 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+redis_1  | 1:M 11 Oct 2019 19:12:52.484 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+redis_1  | 1:M 11 Oct 2019 19:12:52.484 * Ready to accept connections
+web_1    |  * Serving Flask app "app" (lazy loading)
+web_1    |  * Environment: production
+web_1    |    WARNING: Do not use the development server in a production environment.
+web_1    |    Use a production WSGI server instead.
+web_1    |  * Debug mode: on
+web_1    |  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+web_1    |  * Restarting with stat
+web_1    |  * Debugger is active!
+web_1    |  * Debugger PIN: 135-645-034
+
+/ in ander console	,
+[eric@almond composetest]$ docker container ls  -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
+be1534873279        composetest_web     "python app.py"          2 minutes ago       Up 2 minutes        0.0.0.0:5000->5000/tcp   composetest_web_1
+2eed0bc316dc        redis:alpine        "docker-entrypoint..."   2 minutes ago       Up 2 minutes        6379/tcp                 composetest_redis_1
+
+/ 13	. 
+
+[eric@almond composetest]$  docker-compose down
+Stopping composetest_web_1   ... done
+Stopping composetest_redis_1 ... done
+Removing composetest_web_1   ... done
+Removing composetest_redis_1 ... done
+Removing network composetest_default
+
+
+
+
+
+/ Einde DOCKER COMPOSE
 
 
 

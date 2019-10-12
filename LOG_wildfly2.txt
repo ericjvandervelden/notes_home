@@ -190,6 +190,29 @@ wildfly-host-controller-9.0.2.Final.jar
 [eric@almond wildfly-17.0.1.Final]$ ls modules/system/layers/base/org/jboss/as/process-controller/main/
 module.xml  wildfly-process-controller-9.0.2.Final.jar
 
+/ 7	. 
+
+/ WILDFLY IN DOCKER
+
+/ lees, 
+http://www.mastertheboss.com/soa-cloud/docker/deploying-applications-on-your-docker-wildfly-image
+
+Deploying applications using the Web Admin console
+docker run -it wildfly-helloworld /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement=0.0.0.0
+
+/ 13	. 
+
+/ lees,
+https://docs.jboss.org/author/display/WFLY/Command+line+parameters
+
+-b=<value>	Sets system property jboss.bind.address to <value>. See Controlling the Bind Address with -b for further details.
+-b<name>=<value>	Sets system property jboss.bind.address.<name> to <value> where name can vary. See Controlling the Bind Address with -b for further details.
+
+/ lees	,
+https://docs.jboss.org/author/display/WFLY/Command+line+parameters#Commandlineparameters-bindaddress
 
 
 
+
+
+/ Einde WILDFLY IN DOCKER
