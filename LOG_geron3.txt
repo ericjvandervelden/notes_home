@@ -1605,6 +1605,162 @@ b9 ¹
 
 / Einde NEWTON 3 CLASSES 2 FEATURES
 
+/ CG
+
+/ 7	. 
+
+/ 13	. 
+
+N=3
+A=np.array([[4,3,0],[3,4,-1],[0,-1,4]])
+#b=np.array([1,0,-3]).reshape(-1,1)
+b=np.array([24,20,16]).reshape(-1,1)
+
+r=np.zeros((N,N+1))
+t=np.zeros((1,N+1))
+x=np.zeros((N,N+1))
+s=np.zeros((1,N+1))
+v=np.zeros((N,N+1))
+
+def cg():
+  x[:,[0]]=np.zeros(N).reshape(-1,1)
+  r[:,[0]]=b-A.dot(x[:,[0]])
+  v[:,[1]]=r[:,[0]]
+
+  for i in range(1,N+1):
+    t[:,[i]]=r[:,[i-1]].T.dot(r[:,[i-1]])/v[:,[i]].T.dot(A).dot(v[:,[i]])
+    x[:,[i]]=x[:,[i-1]]+t[:,[i]]*v[:,[i]]
+    r[:,[i]]=r[:,[i-1]]-t[:,[i]]*A.dot(v[:,[i]])
+		if i==N:
+      break
+    s[:,[i]]=r[:,[i]].T.dot(r[:,[i]])/r[:,[i-1]].T.dot(r[:,[i-1]])
+    v[:,[i+1]]=r[:,[i]]+s[:,[i]]*v[:,[i]]
+
+ 
+In [15853]: cg()
+In [15858]: x
+Out[15858]: 
+array([[ 0.        ,  0.25      ,  0.32258065,  1.        ],
+       [ 0.        ,  0.        , -0.48387097, -1.        ],
+       [ 0.        , -0.75      , -0.96774194, -1.        ]])
+
+In [15862]: v[:,[3]].T.dot(A).dot(v[:,[2]])
+Out[15862]: array([[-1.11022302e-16]])
+
+In [15863]: v[:,[3]].T.dot(A).dot(v[:,[1]])
+Out[15863]: array([[-1.33226763e-15]])
+
+/ 13	. 
+
+In [15878]: A
+Out[15878]: 
+array([[ 4,  3,  0],
+       [ 3,  4, -1],
+       [ 0, -1,  4]])
+
+In [15864]: A.dot(np.array([3,4,5]).reshape(-1,1))
+Out[15864]: 
+array([[24],
+       [20],
+       [16]])
+
+In [15868]: cg()
+
+In [15869]: x
+Out[15869]: 
+array([[0.        , 4.125     , 3.90774042, 3.        ],
+       [0.        , 3.4375    , 3.04300235, 4.        ],
+       [0.        , 2.75      , 4.73964034, 5.        ]])
+/ klopt	,
+
+
+/ 7	. 
+
+/ andere A
+
+/ lees	,
+https://stackoverflow.com/questions/38426349/how-to-create-random-orthonormal-matrix-in-python-numpy
+
+/ lees	,
+https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_spd_matrix.html
+
+/ 13	. 
+
+In [15884]: O=np.array([[1,1,0]/np.sqrt(2),[1,-1,0]/np.sqrt(2),[0,0,1]])
+In [15887]: A=O.dot(np.diag([4,7,9]).np.linalg.inv(O))
+In [15889]: A
+Out[15889]: 
+array([[ 5.5, -1.5,  0. ],
+       [-1.5,  5.5,  0. ],
+       [ 0. ,  0. ,  9. ]])
+
+/ check	,
+In [15890]: np.linalg.eigvals(A)
+Out[15890]: array([7., 4., 9.])
+
+In [15893]: b=A.dot(np.array([3,4,5]).reshape(-1,1))
+In [15894]: b
+Out[15894]: 
+array([[10.5],
+       [17.5],
+       [45. ]])
+
+/ 13	. 
+
+N=3
+O=np.array([[1,1,0]/np.sqrt(2),[1,-1,0]/np.sqrt(2),[0,0,1]])
+A=O.dot(np.diag([4,7,9]).dot(np.linalg.inv(O)))
+b=A.dot(np.array([3,4,5]).reshape(-1,1))
+
+r=np.zeros((N,N+1))
+t=np.zeros((1,N+1))
+x=np.zeros((N,N+1))
+s=np.zeros((1,N+1))
+v=np.zeros((N,N+1))
+
+def cg():
+  x[:,[0]]=np.zeros(N).reshape(-1,1)
+  r[:,[0]]=b-A.dot(x[:,[0]])
+  v[:,[1]]=r[:,[0]]
+
+  for i in range(1,N+1):
+    t[:,[i]]=r[:,[i-1]].T.dot(r[:,[i-1]])/v[:,[i]].T.dot(A).dot(v[:,[i]])
+    x[:,[i]]=x[:,[i-1]]+t[:,[i]]*v[:,[i]]
+    r[:,[i]]=r[:,[i-1]]-t[:,[i]]*A.dot(v[:,[i]])
+		if i==N:
+      break
+    s[:,[i]]=r[:,[i]].T.dot(r[:,[i]])/r[:,[i-1]].T.dot(r[:,[i-1]])
+    v[:,[i+1]]=r[:,[i]]+s[:,[i]]*v[:,[i]]
+   	
+ 
+cg()
+In [15899]: x
+Out[15899]: 
+array([[0.        , 1.28406672, 2.90408674, 3.        ],
+       [0.        , 2.1401112 , 4.06734336, 4.        ],
+       [0.        , 5.50314308, 4.99407439, 5.        ]])
+
+/ hieronder allen 0	,
+v[:,[3]].T.dot(A).dot(v[:,[1]])
+Out[15906]: array([[6.28830321e-13]])
+
+v[:,[3]].T.dot(A).dot(v[:,[2]])
+
+v[:,[2]].T.dot(A).dot(v[:,[1]])
+
+r[:,[2]].T.dot(v[:,[1]])
+
+r[:,[2]].T.dot(v[:,[2]])
+
+r[:,[2]].T.dot(v[:,[0]])
+
+r[:,[1]].T.dot(v[:,[0]])
+
+r[:,[1]].T.dot(v[:,[1]])
+
+
+/ Einde GC
+
 / GD 2 CLASSES 2 FEATURES
 
 / p(1|x)=exp(x.T.dot(w1))/(exp(x.T.dot(w1))+exp(x.T.dot(w2))+exp(x.T.dot(w3)))

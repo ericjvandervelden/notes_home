@@ -4,6 +4,7 @@
 / See DOCKER POSTGRES AGAIN
 / See DOCKER POSTGRES VOLUME
 / See HOW IMAGES ARE BUILD LAYERS
+/ See DOCKER COMPOSE POSTGRES
 
 / DOCKER NETWORK 
 
@@ -1225,6 +1226,33 @@ listen_addresses = '172.17.0.2'
 -bash-4.3$ psql -h 172.17.0.3
 / OK	,
 
+/ na $ dnf -y install postgresql-server postgresql-contrib is er
+/ 1313	. 
+postgres user	,  
+# su - postgres
+-bash-4.3$ id
+uid=26(postgres) gid=26(postgres) groups=26(postgres)
+/ 1313	. 
+/ Nu weet initdb waar data/ is	,
+-bash-4.3$ env
+PGDATA=/var/lib/pgsql/data
+
+/ 13	. 
+
+/ als we kijken in de container	,
+-bash-4.3$ ls -l /var/lib
+drwx------. 4 postgres postgres 4096 Oct 12 20:01 pgsql
+
+/ dus we kunnen	,
+$ docker run -v $(pwd)/pgsql:/var/lib/pgsql ...
+/ of is dit te vroeg, en moeten we volume use in Dockerfile?
+/ TODO 
+/ WH is /var/lib/pgsql er niet (later pas), en kan dit ook helemaal niet	,
+
+
+
+
+
 / container 172.17.0.3	,
 [eric@almond postgres3a]$ docker run  -ti my/fedora-locale bash
 [root@269fbe154315 /]# dnf -y install postgresql-server postgresql-contrib
@@ -1368,6 +1396,62 @@ docker run --privileged=true -e DEV_UID=$UID -e DEV_GID=$GID -i -t -v ${HOME}/de
 / lees over useradd	,
 http://www.labtestproject.com/linuse/adding_user.html
 
+/ 13	. 
+
+[eric@almond permissionstest]$ less ../../fedora/postgres3a/Dockerfile 
+
+run dnf -y install postgresql-server postgresql-contrib	 # create user postgres	,
+user postgres
+env PGDATA=/var/lib/pgsql/data
+run initdb --locale=en_US.UTF8;\
+...
+/ TODO
+
+
+[eric@almond permissionstest]$ docker container inspect friendly_jennings 
+...
+                "DeviceName": "docker-253:1-2504345-3ddd82001f8d23a970440ba22671e3dc1352b790ca189640480367eac17c1aa4",
+
+[root@almond ~]# ls -l /var/lib/docker/devicemapper/mnt/3ddd82001f8d23a970440ba22671e3dc1352b790ca189640480367eac17c1aa4/rootfs/var/lib
+total 44
+...
+drwx------. 4 postgres postgres 4096 Oct  9 19:48 pgsql
+...
+drwxr-xr-x. 3 root     root     4096 Jun 16  2016 selinux
+/ vrijwel alles is van root, behalve pgsql en alles daarbinnen	,
+
+/ 13	
+
+/ google	, 
+docker run as user
+/ lees,
+https://medium.com/redbubble/running-a-docker-container-as-a-non-root-user-7d2e00f8ee15
+
+docker container run --rm -it \
+  -v $(app):/app \                          # Mount the source code
+  --workdir /app \                          # Set the working dir
+  --user 1000:1000 \                        # Run as the given user
+  my-docker/my-build-environment:latest \   # Our build env image
+  make assets                               # ... and the command!
+
+So instead of setting --user 1000:1000, we could use subshells to set 
+--user $(id -u):$(id -g). 
+
+/ 1313	.	 
+
+[eric@almond test]$ docker run --rm -v $(pwd)/data:/data -ti my/fedora-locale bash
+/ OK, 
+/ we moeten heel heel path opgeven voor de dir op de host: $(pwd)/data
+/ hij wordt create als je $ docker run doet	, maar hij en alles er in is wel van root	, omdat dat de user is de container	,
+
+/ TODO --user $(id -u):$(id -g)
+
+Your user will be $HOME-less
+
+
+
+
+
 
 
 
@@ -1426,7 +1510,14 @@ Removing network composetest_default
 
 / Einde DOCKER COMPOSE
 
+/ DOCKER COMPOSE POSTGRES
 
+/ lees	,
+https://hackernoon.com/docker-compose-install-postgresql-for-local-development-environment-ph293zxd
+
+
+
+/ Einde DOCKER COMPOSE POSTGRES
 
 
 
