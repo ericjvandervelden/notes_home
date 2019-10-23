@@ -1705,32 +1705,6 @@ array([[10.5],
        [17.5],
        [45. ]])
 
-/ 13	. 
-
-N=3
-O=np.array([[1,1,0]/np.sqrt(2),[1,-1,0]/np.sqrt(2),[0,0,1]])
-A=O.dot(np.diag([4,7,9]).dot(np.linalg.inv(O)))
-b=A.dot(np.array([3,4,5]).reshape(-1,1))
-
-r=np.zeros((N,N+1))
-t=np.zeros((1,N+1))
-x=np.zeros((N,N+1))
-s=np.zeros((1,N+1))
-v=np.zeros((N,N+1))
-
-def cg():
-  x[:,[0]]=np.zeros(N).reshape(-1,1)
-  r[:,[0]]=b-A.dot(x[:,[0]])
-  v[:,[1]]=r[:,[0]]
-
-  for i in range(1,N+1):
-    t[:,[i]]=r[:,[i-1]].T.dot(r[:,[i-1]])/v[:,[i]].T.dot(A).dot(v[:,[i]])
-    x[:,[i]]=x[:,[i-1]]+t[:,[i]]*v[:,[i]]
-    r[:,[i]]=r[:,[i-1]]-t[:,[i]]*A.dot(v[:,[i]])
-		if i==N:
-      break
-    s[:,[i]]=r[:,[i]].T.dot(r[:,[i]])/r[:,[i-1]].T.dot(r[:,[i-1]])
-    v[:,[i+1]]=r[:,[i]]+s[:,[i]]*v[:,[i]]
    	
  
 cg()
@@ -1758,8 +1732,172 @@ r[:,[1]].T.dot(v[:,[0]])
 
 r[:,[1]].T.dot(v[:,[1]])
 
+/ 13	. 
+
+/ Hestenes Stiefel not	, 
+
+N=3
+O=np.array([[1,1,0]/np.sqrt(2),[1,-1,0]/np.sqrt(2),[0,0,1]])
+A=O.dot(np.diag([4,7,9]).dot(np.linalg.inv(O)))
+k=A.dot(np.array([3,4,5]).reshape(-1,1))
+
+r=np.zeros((N,N+1))
+a=np.zeros((1,N+1))
+x=np.zeros((N,N+1))
+b=np.zeros((1,N+1))
+p=np.zeros((N,N+1))
+
+def cg():
+
+  x[:,[0]]=np.zeros(N).reshape(-1,1) # hoeft niet	,
+  r[:,[0]]=k-A.dot(x[:,[0]])
+  p[:,[0]]=r[:,[0]]
+
+  for i in range(0,N):
+    a[:,[i]]=r[:,[i]].T.dot(r[:,[i]])/p[:,[i]].T.dot(A).dot(p[:,[i]])
+    x[:,[i+1]]=x[:,[i]]+a[:,[i]]*p[:,[i]]
+    r[:,[i+1]]=r[:,[i]]-a[:,[i]]*A.dot(p[:,[i]])
+		if i+1==N:
+      break
+    b[:,[i]]=r[:,[i+1]].T.dot(r[:,[i+1]])/r[:,[i]].T.dot(r[:,[i]])
+    p[:,[i+1]]=r[:,[i+1]]+b[:,[i]]*p[:,[i]]
+
+cg()
+In [15899]: x
+Out[15899]: 
+array([[0.        , 1.28406672, 2.90408674, 3.        ],
+       [0.        , 2.1401112 , 4.06734336, 4.        ],
+       [0.        , 5.50314308, 4.99407439, 5.        ]])
+
+
 
 / Einde GC
+
+/ GAUSS
+
+/ Einde GAUSS
+
+/ NEWTON CG 3 CLASSES 2 FEATURES
+
+/ p(1|x)=exp(x.T.dot(w1))/(exp(x.T.dot(w1))+exp(x.T.dot(w2))+exp(x.T.dot(w3)))
+/ p(2|x)=exp(x.T.dot(w2))/(exp(x.T.dot(w1))+exp(x.T.dot(w2))+exp(x.T.dot(w3)))
+/ p(3|x)=exp(x.T.dot(w3))/(exp(x.T.dot(w1))+exp(x.T.dot(w2))+exp(x.T.dot(w3)))
+
+/ deel in alle 3 de kansen de teller en noemer door exp(x.T.dot(w1))	,
+/ dan met
+v2=w1-w2, v3=w1-w3  ,zien we - in exp(-x.T.dot(v2)) en exp(-x.T.dot(v3))
+v=(v2,v3).T
+
+/ versie met - in de exponenten	,
+
+def _pX(v2,v3):
+	return 1+np.exp(-X.dot(v2))+np.exp(-X.dot(v3))
+def _p1gX(v2,v3):
+	return 1/_pX(v2,v3)
+def _p2gX(v2,v3):
+	return np.exp(-X.dot(v2))/_pX(v2,v3)
+def _p3gX(v2,v3):
+	return np.exp(-X.dot(v3))/_pX(v2,v3)
+
+def _ml(v2,v3):
+	return (1-t2.T-t3.T).dot(np.log(_p1gX(v2,v3)))+t2.T.dot(np.log(_p2gX(v2,v3)))+t3.T.dot(np.log(_p3gX(v2,v3)))#+lmbda*(v2.T.dot(v2)+v3.T.dot(v3))/2
+
+def _ml_alt(v2,v3):
+  return -np.ones(X.shape[0]).reshape(-1,1).T.dot(np.log(_pX(v2,v3)))
+		-t2.T.dot(X).dot(v2)-t3.T.dot(X).dot(v3)
+
+def _grad_ml_to_v2(v2,v3):
+  return X.T.dot(_p2gX(v2,v3)-t2)#+lmbda*v2
+
+def _grad_ml_to_v3(v2,v3):
+  return X.T.dot(_p3gX(v2,v3)-t3)#+lmbda*v3
+
+def _grad_ml_to_v(v2,v3):
+  return np.r_[_grad_ml_to_v2(v2,v3),_grad_ml_to_v3(v2,v3)]		# X staat er 2 keer in	, 
+
+def _grad_to_v2_T_grad_ml_to_v2(v2,v3):
+  D=-np.diag(_p2gX(v2,v3).ravel()).dot(np.diag((1-_p2gX(v2,v3)).ravel()))
+  return X.T.dot(D).dot(X)
+
+def _grad_to_v3_T_grad_ml_to_v2(v2,v3):
+  D=np.diag(_p2gX(v2,v3).ravel()).dot(np.diag((1-_p3gX(v2,v3)).ravel()))
+  return X.T.dot(D).dot(X)
+
+def _grad_to_v2_T_grad_ml_to_v3(v2,v3):
+  D=np.diag(_p2gX(v2,v3).ravel()).dot(np.diag((1-_p3gX(v2,v3)).ravel()))
+  return X.T.dot(D).dot(X)
+
+def _grad_to_v3_T_grad_ml_to_v3(v2,v3):
+  D=-np.diag(_p3gX(v2,v3).ravel()).dot(np.diag((1-_p3gX(v2,v3)).ravel()))
+  return X.T.dot(D).dot(X)
+
+def _hessian_to_v(v2,v3):
+	return np.block([
+		[_grad_to_v2_T_grad_ml_to_v2(v2,v3),_grad_to_v2_T_grad_ml_to_v3(v2,v3)],
+		[_grad_to_v3_T_grad_ml_to_v2(v2,v3),_grad_to_v3_T_grad_ml_to_v3(v2,v3)],
+	])
+		
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((X.shape[0],1)),X]
+t2=(iris['target']==1).reshape(-1,1).astype(int)
+t3=(iris['target']==2).reshape(-1,1).astype(int)
+
+v2=np.array([0,0,0]).reshape(-1,1)
+v3=np.array([0,0,0]).reshape(-1,1)
+v=np.r_[v2,v3]
+
+N=3
+O=np.array([[1,1,0]/np.sqrt(2),[1,-1,0]/np.sqrt(2),[0,0,1]])
+A=O.dot(np.diag([4,7,9]).dot(np.linalg.inv(O)))
+k=A.dot(np.array([3,4,5]).reshape(-1,1))
+
+
+def _cg(N,A,):
+
+/ k=grad	,
+
+  r=np.zeros((N,N+1))
+  a=np.zeros((1,N+1))
+  x=np.zeros((N,N+1))
+  b=np.zeros((1,N+1))
+  p=np.zeros((N,N+1))
+
+  x[:,[0]]=np.zeros(N).reshape(-1,1) # hoeft niet	,
+  r[:,[0]]=k-A.dot(x[:,[0]])
+  p[:,[0]]=r[:,[0]]
+
+  for i in range(0,N):
+    a[:,[i]]=r[:,[i]].T.dot(r[:,[i]])/p[:,[i]].T.dot(A).dot(p[:,[i]])
+    x[:,[i+1]]=x[:,[i]]+a[:,[i]]*p[:,[i]]
+    r[:,[i+1]]=r[:,[i]]-a[:,[i]]*A.dot(p[:,[i]])
+		if i+1==N:
+      break
+    b[:,[i]]=r[:,[i+1]].T.dot(r[:,[i+1]])/r[:,[i]].T.dot(r[:,[i]])
+    p[:,[i+1]]=r[:,[i+1]]+b[:,[i]]*p[:,[i]]
+
+
+
+
+
+
+
+
+# evt np_c[s,t]
+# :3		3:6	6:9  9		10		11:14
+# beta, grad,nwt,ml,|grad|,eigv(hessian)
+lmbda=0
+h=0	# om de hessian te pakken	,
+e=0 # om de eig te pakken	,
+for i in range(0,100):
+  total()
+
+ml=_ml(v)
+grad_ml_to_v=_grad_ml_to_v(v)
+gd=_gd(v)
+ch=_check(v)
+v=v+grad_ml_to_v
+
+/ Einde NEWTON CG 3 CLASSES 2 FEATURES
 
 / GD 2 CLASSES 2 FEATURES
 

@@ -3,6 +3,7 @@
 / See 2PC
 / See FDW
 / See HOE PG START IN CONTAINER
+/ See WAL FILES IN DOCKER 
 
 / postgres in docker	,
 
@@ -6934,5 +6935,156 @@ https://www.postgresql.org/docs/devel/static/installation.html
 
 
 / Einde SOURCE
+
+/ WAL FILES IN DOCKER 
+
+/ master,	
+-bash-4.3$ hostname
+269fbe154315
+
+/ slave	,
+-bash-4.3$ hostname
+a0060b1b5ac5
+
+/ de laatste WAL file is	,
+-bash-4.3$ ls -ltr data/pg_xlog/
+total 114696
+-rw-------. 1 postgres postgres 16777216 Oct  8 20:30 000000010000000000000001
+-rw-------. 1 postgres postgres 16777216 Oct  9 17:55 000000010000000000000002
+-rw-------. 1 postgres postgres 16777216 Oct  9 18:41 000000010000000000000003
+-rw-------. 1 postgres postgres 16777216 Oct  9 18:41 000000010000000000000004
+-rw-------. 1 postgres postgres 16777216 Oct  9 19:08 000000010000000000000005
+-rw-------. 1 postgres postgres 16777216 Oct  9 19:08 000000010000000000000006
+-rw-------. 1 postgres postgres      302 Oct  9 19:08 000000010000000000000006.00000028.backup
+drwx------. 2 postgres postgres     4096 Oct  9 19:08 archive_status
+-rw-------. 1 postgres postgres 16777216 Oct 14 20:47 000000010000000000000007
+
+/ net als tail -f	,
+-bash-4.3$ pg_xlogdump -f data/pg_xlog/000000010000000000000007
+/ je kunt gerust spaces geven om beter te bekijken	,
+
+/ we doen psql in	,
+[eric@almond my]$ docker exec -ti friendly_jennings bash
+foo=# \set AUTOCOMMIT off    
+
+/ 13	. 
+
+foo=# insert into t2 values(12,'s2');
+INSERT 0 1
+foo=# insert into t2 values(12,'s2');
+INSERT 0 1
+foo=# rollback ;
+ROLLBACK
+
+/ we zien	,
+
+rmgr: Heap        len (rec/tot):      3/    62, tx:       1910, lsn: 0/070B57C8, prev 0/070B5790, desc: INSERT off 8, blkref #0: rel 1663/16387/16432 blk 0
+rmgr: Standby     len (rec/tot):     28/    54, tx:          0, lsn: 0/070B5808, prev 0/070B57C8, desc: RUNNING_XACTS nextXid 1911 latestCompletedXid 1909 oldestRunningXid 1910; 1 xacts: 1910
+rmgr: Heap        len (rec/tot):      3/    62, tx:       1910, lsn: 0/070B5840, prev 0/070B5808, desc: INSERT off 9, blkref #0: rel 1663/16387/16432 blk 0
+rmgr: Transaction len (rec/tot):      8/    34, tx:       1910, lsn: 0/070B5880, prev 0/070B5840, desc: ABORT 2019-10-14 20:54:58.804881 UTC
+rmgr: Standby     len (rec/tot):     24/    50, tx:          0, lsn: 0/070B58A8, pr
+
+/ 13	. 
+
+foo=# insert into t2 values(12,'s2');
+INSERT 0 1
+foo=# insert into t2 values(12,'s2');
+INSERT 0 1
+foo=# insert into t2 values(12,'s2');
+INSERT 0 1
+foo=# commit;
+COMMIT
+
+
+rmgr: Heap        len (rec/tot):      3/    62, tx:       1911, lsn: 0/070B58E0, prev 0/070B58A8, desc: INSERT off 10, blkref #0: rel 1663/16387/16432 blk 0
+rmgr: Heap        len (rec/tot):      3/    62, tx:       1911, lsn: 0/070B5920, prev 0/070B58E0, desc: INSERT off 11, blkref #0: rel 1663/16387/16432 blk 0
+rmgr: Heap        len (rec/tot):      3/    62, tx:       1911, lsn: 0/070B5960, prev 0/070B5920, desc: INSERT off 12, blkref #0: rel 1663/16387/16432 blk 0
+rmgr: Standby     len (rec/tot):     28/    54, tx:          0, lsn: 0/070B59A0, prev 0/070B5960, desc: RUNNING_XACTS nextXid 1912 latestCompletedXid 1910 oldestRunningXid 1911; 1 xacts: 1911
+rmgr: Transaction len (rec/tot):      8/    34, tx:       1911, lsn: 0/070B59D8, prev 0/070B59A0, desc: COMMIT 2019-10-14 20:55:47.797741 UTC
+
+
+/ 13	. 
+
+foo=# create table t(i int,s text);  
+CREATE TABLE
+
+rmgr: Storage     len (rec/tot):     16/    42, tx:          0, lsn: 0/070C8648, prev 0/070C8610, desc: CREATE base/16387/16438
+rmgr: Heap        len (rec/tot):      3/  4398, tx:       1916, lsn: 0/070C8678, prev 0/070C8648, desc: INSERT off 24, blkref #0: rel 1663/16387/1247 blk 8 FPW
+rmgr: Btree       len (rec/tot):      2/  7813, tx:       1916, lsn: 0/070C97A8, prev 0/070C8678, desc: INSERT_LEAF off 386, blkref #0: rel 1663/16387/2703 blk 1 FPW
+...
+
+foo=# commit;
+COMMIT
+
+rmgr: Transaction len (rec/tot):   1096/  1125, tx:       1916, lsn: 0/070E8248, prev 0/070E8210, desc: COMMIT 2019-10-14 21:21:23.238412 UTC; inval msgs: catcache 45 catcache 44 catcache 45 catcache 44 cat...
+
+/ 13	. 
+
+
+foo=# drop table t2;
+DROP TABLE
+foo=# commit;
+COMMIT
+
+
+ev 0/070E8718, desc: LOCK xid 1917 db 16387 rel 16443 
+rmgr: Heap        len (rec/tot):      8/    54, tx:       1917, lsn: 0/070E8778, prev 0/070E8748, desc: DELETE off 26 KEYS_UPDATED , blkref #0: rel 1663/16387/1247 blk 8
+rmgr: Heap        len (rec/tot):      8/    54, tx:       1917, lsn: 0/070E87B0, prev 0/070E8778, desc: DELETE off 121 KEYS_UPDATED , blkref #0: rel 1663/16387/2608 blk 53
+...
+rmgr: Heap        len (rec/tot):      8/    54, tx:       1913, lsn: 0/070C0280, prev 0/070C0248, desc: DELETE off 113 KEYS_UPDATED , blkref #0: rel 1663/16387/2608 blk 53
+rmgr: Standby     len (rec/tot):     40/    66, tx:          0, lsn: 0/070C02B8, prev 0/070C0280, desc: LOCK xid 1913 db 16387 rel 16432 xid 1913 db 16387 rel 16437 xid 1913 db 16387 rel 16435 
+rmgr: Standby     len (rec/tot):     28/    54, tx:          0, lsn: 0/070C0300, prev 0/070C02B8, desc: RUNNING_XACTS nextXid 1914 latestCompletedXid 1912 oldestRunningXid 1913; 1 xacts: 1913
+rmgr: Heap2       len (rec/tot):      8/    62, tx:          0, lsn: 0/070C0338, prev 0/070C0300, desc: CLEAN remxid 1912, blkref #0: rel 1663/16387/1259 blk 3
+
+rmgr: Transaction len (rec/tot):   1040/  1069, tx:       1917, lsn: 0/070E90A0, prev 0/070E9068, desc: COMMIT 2019-10-14 21:23:25.390431 UTC; rels: base/16387/16438 base/16387/16441 base/16387/16443; inva
+
+
+ 
+
+
+
+/ Einde WAL FILES IN DOCKER
+
+/ WAL FILES
+
+/ 13	. 
+
+/ overzicht	,
+
+19. Server configuration  = parameters	, zoals wal_keep_segments	,
+25. Backup and Restore
+26. High Availability, Load Balancing, and Replication
+27. Recovery Configuration
+
+/ lees	19.6. Replication,
+https://www.postgresql.org/docs/9.6/runtime-config-replication.html
+
+/ lees 25.3. Continuous Archiving and Point-in-Time Recovery (PITR)
+https://www.postgresql.org/docs/9.6/continuous-archiving.html
+
+/ lees 26.2.3. Preparing the Master for Standby Servers
+-> 25.3
+
+/ lees 26.2.4. Setting Up a Standby Server 
+https://www.postgresql.org/docs/9.6/warm-standby.html#PREPARING-MASTER-FOR-STANDBY
+
+/ lees 26.2.5. Streaming Replication
+
+/ 13	. 
+
+/ lees 26.2.3. Preparing the Master for Standby Servers
+Set up continuous archiving on the primary to an archive directory accessible from the standby, as described in Section 25.3. The archive location should be accessible from the standby even when the master is down, i.e. it should reside on the standby server itself or another trusted server, not on the master server.
+
+/ lees 25.3. Continuous Archiving and Point-in-Time Recovery (PITR)
+database's data files. This log exists primarily for crash-safety purposes: if the system crashes, the database can be restored to consistency by "replaying" the log entries made since the last checkpoint. However, the existence of the log makes it possible to use a third strategy for backing up databases: we can combine a file-system-level 
+/ TODO since the last checkpoint	,
+
+/ 13	. 
+
+/ lees over checkpoints,
+https://www.2ndquadrant.com/en/blog/basics-of-tuning-checkpoints/
+
+
+/ Einde WAL_FILES
 
 

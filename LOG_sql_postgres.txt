@@ -233,4 +233,372 @@ from numbers;
 (5 rows)
 
 
+/ 13	. 
+
+/ lees,
+https://dataschool.com/learn-sql/random-sequences/
+
+foo=# select t.i,7*random()
+from generate_series(1,5)t(i);
+ i |     ?column?     
+---+------------------
+ 1 | 5.59645607788116
+ 2 | 3.94555319705978
+ 3 | 4.28401217283681
+ 4 | 3.71547135431319
+ 5 |  2.3878477839753
+(5 rows)
+
+/ 13	. 
+
+foo=# select max(i),(10*random())::int j
+from generate_series(1,5)t(i)
+group by j;
+ max | j  
+-----+----
+   3 | 10
+   5 |  9
+(2 rows)
+
+foo=# select count(i),(10*random())::int j
+from generate_series(1,5)t(i)
+group by j;
+ count | j  
+-------+----
+     1 | 10
+     1 |  8
+     3 |  1
+(3 rows)
+
+foo=# select count(i),(10*random())::int j
+from generate_series(1,5)t(i) 
+group by j;
+ count | j 
+-------+---
+     1 | 4
+     3 | 3
+     1 | 7
+(3 rows)
+
+/ over alle columns kan wel aggr fct zonder group by	,
+
+foo=# select max(t.i)       
+from generate_series(1,5)t(i);
+ max 
+-----
+   5
+(1 row)
+foo=# select sum(t.i)
+from generate_series(1,5)t(i);
+ sum 
+-----
+  15
+(1 row)
+
+/ 13	. 
+
+foo=# values(7);
+ column1 
+---------
+       7
+(1 row)
+
+foo=# select *
+from (values(7))_;
+ column1 
+---------
+       7
+(1 row)
+
+foo=# select *
+foo-# into temp table t  
+foo-# from (values(7))_;
+SELECT 1
+
+foo=# select *
+from t;
+ column1 
+---------
+       7
+(1 row)
+
+
+select *
+from (	
+	select i,(10*random())::int j
+	from generate_series(1,5)_(i)
+)_;
+ i | j 
+---+---
+ 1 | 3
+ 2 | 9
+ 3 | 5
+ 4 | 7
+ 5 | 9
+(5 rows)
+
+/ Hoe zit het met de 2 _'s?
+
+/ 1313	 .
+
+select *
+from generate_series(1,5)_(i)
+join generate_series(1,5)__(j) on _.i=5-__.j;
+ i | j 
+---+---
+ 1 | 4
+ 2 | 3
+ 3 | 2
+ 4 | 1
+(4 rows)
+
+
+select*
+from (values(7))_(i) 
+join (values(13))__(j) on _.i=__.j-6;
+ i | j  
+---+----
+ 7 | 13
+(1 row)
+
+/ 131313	 
+
+foo=# values(7);
+ column1 
+---------
+       7
+(1 row)
+
+foo=# (values(7))_;
+ERROR:  syntax error at or near "_"
+LINE 1: (values(7))_;
+
+/ 13	 
+
+select *
+into temp table t 
+from (
+  select i,(10*random())::int j
+  from generate_series(1,5)_(i)
+)_;
+SELECT 5
+foo=# select*from t;
+ i | j 
+---+---
+ 1 | 5
+ 2 | 3
+ 3 | 4
+ 4 | 7
+ 5 | 6
+(5 rows)
+commit;
+
+foo=# values(random());
+      column1      
+-------------------
+ 0.408866154495627
+(1 row)
+
+/ 13	. 
+
+/ vergl t met 	,
+
+foo=# select*
+from t 
+cross join (values(random()))_(j);
+ i | j |         j         
+---+---+-------------------
+ 1 | 7 | 0.452587937004864
+ 2 | 0 | 0.452587937004864
+ 3 | 9 | 0.452587937004864
+ 4 | 9 | 0.452587937004864
+ 5 | 8 | 0.452587937004864
+(5 rows)
+
+/ 1313	. 
+
+/ hoe maak je een table met 5 random's?
+/ TODO
+
+/ niet zo	,
+foo=#  values(random(),random());
+      column1      |      column2      
+-------------------+-------------------
+ 0.783371998928487 | 0.824927776586264
+(1 row)
+
+/ maar zo	,
+
+foo=# select random()
+from generate_series(1,5)_;
+       random        
+---------------------
+   0.368411855306476
+ 0.00667581846937537
+    0.12870581401512
+   0.297968475148082
+   0.492900458630174
+(5 rows)
+
+/ 13	. 
+
+select *
+from t
+where j=(
+	select max(j)
+	from t
+);
+ i | j 
+---+---
+ 3 | 9
+ 4 | 9
+(2 rows)
+
+select t.*
+from t
+join (select max(j)m
+	from t)_ on _.m=t.j; 
+ i | j 
+---+---
+ 3 | 9
+ 4 | 9
+(2 rows)
+
+with _ as(
+select max(j)m
+from t)
+select t.*
+from t
+join _ on _.m=t.j;
+ i | j 
+---+---
+ 3 | 9
+ 4 | 9
+(2 rows)
+
+foo=# with _(m) as(
+select max(j) 
+from t)
+select t.*
+from t
+join _ on _.m=t.j;
+ i | j 
+---+---
+ 3 | 9
+ 4 | 9
+(2 rows)
+
+/ 13	. 
+
+foo=# select (10*random())::int  
+from generate_series(1,10)t(i);
+ int4 
+------
+    1
+    6
+...
+/ dus t(i) bepaalt niet dat de column i heet	,
+/ TODO
+
+/ zo wel	,
+
+with t(i) as(
+select (10*random())::int
+from generate_series(1,10))
+select *
+from t;
+ i 
+---
+ 9
+ 6
+...
+
+foo=# with t as(                                  
+select (10*random())::int i 
+from generate_series(1,10)) 
+select *
+from t;
+ i  
+----
+  9
+  3
+
+with t as(                                  
+select (10*random())::int i 
+from generate_series(1,10)) 
+select *
+from t;
+ i  
+----
+  9
+  3
+...
+
+
+/ 13	. 
+
+with t(i,j) as(
+select (10*random())::int,(10*random())::int
+from generate_series(1,100)
+)
+select *
+into t2
+from t;
+
+select i,avg(j) 
+from t 
+group by i
+having avg(j)>5
+;
+ i |        avg         
+---+--------------------
+ 4 | 9.0000000000000000
+ 1 | 7.0000000000000000
+ 5 | 8.0000000000000000
+ 3 | 9.0000000000000000
+(4 rows)
+
+select i,count(*)
+from t2
+group by i;
+ i  | count 
+----+-------
+  8 |    13
+  4 |    14
+  1 |    14
+  5 |     5
+  3 |     9
+  0 |     4
+ 10 |     5
+  9 |    10
+  6 |    13
+  2 |    11
+  7 |     2
+(11 rows)
+
+select i,avg(j)
+from t2 
+group by i;
+ i  |        avg         
+----+--------------------
+  6 | 4.6923076923076923
+  8 | 5.5384615384615385
+  2 | 4.3636363636363636
+  1 | 4.5714285714285714
+  3 | 5.2222222222222222
+ 10 | 4.0000000000000000
+  4 | 4.5714285714285714
+  5 | 4.0000000000000000
+  9 | 6.4000000000000000
+  0 | 3.2500000000000000
+  7 | 8.0000000000000000
+(11 rows)
+
+
+
+
+
+
+
+
 
