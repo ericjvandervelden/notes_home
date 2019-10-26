@@ -2883,22 +2883,24 @@ https://scikit-learn.org/stable/modules/cross_validation.html
 https://docs.scipy.org/doc/numpy/reference/generated/numpy.c_.html
 http://127.0.0.1:33167/help/index.jsp
 
-
-
-
-
-
 https://signin.intel.com
 https://www.eriksmistad.no/getting-started-with-opencl-and-gpu-computing/
 
-
-
-
-
-
-
-
 / Einde CHROME 2019-08-02
+
+/ CHROME 2019-10-26
+
+https://docs.scipy.org/doc/numpy/reference/generated/numpy.meshgrid.html
+https://docs.scipy.org/doc/numpy/reference/arrays.dtypes.html
+https://docs.scipy.org/doc/numpy/reference/generated/numpy.copy.html
+https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.gca.html
+https://medium.com/broken-window/many-names-one-memory-address-122f78734cb6
+
+http://www.ironjacamar.org/
+
+http://www.postgresqltutorial.com/postgresql-select-into/
+
+/ Einde CHROME 2019-10-26
 
 
 

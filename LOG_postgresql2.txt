@@ -7055,6 +7055,7 @@ rmgr: Transaction len (rec/tot):   1040/  1069, tx:       1917, lsn: 0/070E90A0,
 25. Backup and Restore
 26. High Availability, Load Balancing, and Replication
 27. Recovery Configuration
+29. Reliability and the Write-Ahead Log 
 
 / lees	19.6. Replication,
 https://www.postgresql.org/docs/9.6/runtime-config-replication.html
@@ -7069,6 +7070,8 @@ https://www.postgresql.org/docs/9.6/continuous-archiving.html
 https://www.postgresql.org/docs/9.6/warm-standby.html#PREPARING-MASTER-FOR-STANDBY
 
 / lees 26.2.5. Streaming Replication
+
+/ lees 29.2. Write-Ahead Logging (WAL)
 
 / 13	. 
 

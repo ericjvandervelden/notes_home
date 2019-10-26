@@ -594,8 +594,40 @@ group by i;
   7 | 8.0000000000000000
 (11 rows)
 
+/ 7	. 
+
+postgres=# create table par(i int primary key);
+postgres=# create table par2(i int,primary key(i));
+
+postgres=# \d par
+      Table "public.par"
+ Column |  Type   | Modifiers 
+--------+---------+-----------
+ i      | integer | not null
+Indexes:
+    "par_pkey" PRIMARY KEY, btree (i)
 
 
+/ 13	. 
+
+postgres=# \h create table
+ PRIMARY KEY index_parameters |
+index_parameters in UNIQUE, PRIMARY KEY, and EXCLUDE constraints are:
+
+[ INCLUDE ( column_name [, ... ] ) ]
+[ WITH ( storage_parameter [= value] [, ... ] ) ]
+[ USING INDEX TABLESPACE tablespace_name ]
+/ TODO
+
+/ 13	. 
+
+/ als je een fk maakt in de col def zelf, use dan GEEN foreign key, alleen references	,
+
+postgres=# create table chl(i int primary key references par(i));
+CREATE TABLE
+
+postgres=# create table chl2(i int,primary key(i),foreign key(i)references par(i));
+CREATE TABLE
 
 
 

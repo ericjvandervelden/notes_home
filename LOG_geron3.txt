@@ -1777,7 +1777,42 @@ array([[0.        , 1.28406672, 2.90408674, 3.        ],
 
 / Einde GAUSS
 
-/ NEWTON CG 3 CLASSES 2 FEATURES
+/ NEWTON TODO CG 3 CLASSES 2 FEATURES
+
+/ 13	. 
+
+/ Eerder	,
+
+X=iris['data'][:,[2,3]]
+y = iris["target"]
+lg=LogisticRegression(multi_class="multinomial",solver="newton-cg",C=10**10) 
+lg.fit(X,y)
+display(lg.coef_)
+display(lg.intercept_)
+array([[ -7.96438255, -12.71560017],
+       [  1.10492054,   1.13445454],
+       [  6.859462  ,  11.58114562]])
+array([ 36.95518541,   4.15859445, -41.11377986])
+
+In [16042]: w1=np.r_[lg.intercept_[0].reshape(-1,1),lg.coef_[0,:].reshape(-1,1)]
+
+In [16043]: w2=np.r_[lg.intercept_[1].reshape(-1,1),lg.coef_[1,:].reshape(-1,1)]
+
+In [16044]: w3=np.r_[lg.intercept_[2].reshape(-1,1),lg.coef_[2,:].reshape(-1,1)]
+
+In [16045]: w1-w2
+Out[16045]: 
+array([[ 32.79659095],
+       [ -9.06930309],
+       [-13.85005471]])
+
+In [16046]: w1-w3
+Out[16046]: 
+array([[ 78.06896527],
+       [-14.82384455],
+       [-24.29674579]])
+
+/ 13	. 
 
 / p(1|x)=exp(x.T.dot(w1))/(exp(x.T.dot(w1))+exp(x.T.dot(w2))+exp(x.T.dot(w3)))
 / p(2|x)=exp(x.T.dot(w2))/(exp(x.T.dot(w1))+exp(x.T.dot(w2))+exp(x.T.dot(w3)))
@@ -1803,8 +1838,7 @@ def _ml(v2,v3):
 	return (1-t2.T-t3.T).dot(np.log(_p1gX(v2,v3)))+t2.T.dot(np.log(_p2gX(v2,v3)))+t3.T.dot(np.log(_p3gX(v2,v3)))#+lmbda*(v2.T.dot(v2)+v3.T.dot(v3))/2
 
 def _ml_alt(v2,v3):
-  return -np.ones(X.shape[0]).reshape(-1,1).T.dot(np.log(_pX(v2,v3)))
-		-t2.T.dot(X).dot(v2)-t3.T.dot(X).dot(v3)
+  return -np.ones(X.shape[0]).reshape(-1,1).T.dot(np.log(_pX(v2,v3)))-t2.T.dot(X).dot(v2)-t3.T.dot(X).dot(v3)
 
 def _grad_ml_to_v2(v2,v3):
   return X.T.dot(_p2gX(v2,v3)-t2)#+lmbda*v2
@@ -1820,11 +1854,11 @@ def _grad_to_v2_T_grad_ml_to_v2(v2,v3):
   return X.T.dot(D).dot(X)
 
 def _grad_to_v3_T_grad_ml_to_v2(v2,v3):
-  D=np.diag(_p2gX(v2,v3).ravel()).dot(np.diag((1-_p3gX(v2,v3)).ravel()))
+  D=np.diag(_p2gX(v2,v3).ravel()).dot(np.diag((_p3gX(v2,v3)).ravel()))
   return X.T.dot(D).dot(X)
 
 def _grad_to_v2_T_grad_ml_to_v3(v2,v3):
-  D=np.diag(_p2gX(v2,v3).ravel()).dot(np.diag((1-_p3gX(v2,v3)).ravel()))
+  D=np.diag(_p2gX(v2,v3).ravel()).dot(np.diag((_p3gX(v2,v3)).ravel()))
   return X.T.dot(D).dot(X)
 
 def _grad_to_v3_T_grad_ml_to_v3(v2,v3):
@@ -1837,6 +1871,28 @@ def _hessian_to_v(v2,v3):
 		[_grad_to_v3_T_grad_ml_to_v2(v2,v3),_grad_to_v3_T_grad_ml_to_v3(v2,v3)],
 	])
 		
+def _cg(A,k):
+	N=A.shape[0]
+  r=np.zeros((N,N+1))
+  a=np.zeros((1,N+1))
+  v=np.zeros((N,N+1))
+  b=np.zeros((1,N+1))
+  p=np.zeros((N,N+1))
+
+  v[:,[0]]=np.zeros(N).reshape(-1,1) # hoeft niet	,
+  r[:,[0]]=k-A.dot(v[:,[0]])
+  p[:,[0]]=r[:,[0]]
+
+  for i in range(0,N):
+    a[:,[i]]=r[:,[i]].T.dot(r[:,[i]])/p[:,[i]].T.dot(A).dot(p[:,[i]])
+    v[:,[i+1]]=v[:,[i]]+a[:,[i]]*p[:,[i]]
+    r[:,[i+1]]=r[:,[i]]-a[:,[i]]*A.dot(p[:,[i]])
+		if i+1==N:
+      return v,r 
+    b[:,[i]]=r[:,[i+1]].T.dot(r[:,[i+1]])/r[:,[i]].T.dot(r[:,[i]])
+    p[:,[i+1]]=r[:,[i+1]]+b[:,[i]]*p[:,[i]]
+
+
 X=iris['data'][:,[2,3]]
 X=np.c_[np.ones((X.shape[0],1)),X]
 t2=(iris['target']==1).reshape(-1,1).astype(int)
@@ -1845,59 +1901,416 @@ t3=(iris['target']==2).reshape(-1,1).astype(int)
 v2=np.array([0,0,0]).reshape(-1,1)
 v3=np.array([0,0,0]).reshape(-1,1)
 v=np.r_[v2,v3]
+k=_grad_ml_to_v(v2,v3)
+A=_hessian_to_v(v2,v3)
+N=v.shape[0]
+v,r=_cg(N,A,v,k)
+for i in range(10):
+  v=v[:,N].reshape(-1,1)
+  v2=v[:3].reshape(-1,1)
+  v3=v[-3:].reshape(-1,1)
+  k=_grad_ml_to_v(v2,v3)
+  A=_hessian_to_v(v2,v3)
+  N=v.shape[0]
+  v,r=_cg(N,A,v,k)
 
-N=3
-O=np.array([[1,1,0]/np.sqrt(2),[1,-1,0]/np.sqrt(2),[0,0,1]])
-A=O.dot(np.diag([4,7,9]).dot(np.linalg.inv(O)))
-k=A.dot(np.array([3,4,5]).reshape(-1,1))
+v=v[:,N].reshape(-1,1)
+v2=v[:3].reshape(-1,1)
+v3=v[-3:].reshape(-1,1)
+k=_grad_ml_to_v(v2,v3)
+A=_hessian_to_v(v2,v3)
+N=v.shape[0]
+v,r=_cg(N,A,v,k)
 
 
-def _cg(N,A,):
 
-/ k=grad	,
 
+
+
+/ Einde TODO NEWTON CG 3 CLASSES 2 FEATURES
+
+/ NEWTON CG MULTICLASS 3 CLASSES 2 FEATURES
+
+/ 13	. 
+
+/ Eerder	,
+
+X=iris['data'][:,[2,3]]
+y = iris["target"]
+lg=LogisticRegression(multi_class="multinomial",solver="newton-cg",C=10**10) 
+lg.fit(X,y)
+display(lg.coef_)
+display(lg.intercept_)
+array([[ -7.96438255, -12.71560017],
+       [  1.10492054,   1.13445454],
+       [  6.859462  ,  11.58114562]])
+array([ 36.95518541,   4.15859445, -41.11377986])
+
+In [16042]: w1=np.r_[lg.intercept_[0].reshape(-1,1),lg.coef_[0,:].reshape(-1,1)]
+
+In [16043]: w2=np.r_[lg.intercept_[1].reshape(-1,1),lg.coef_[1,:].reshape(-1,1)]
+
+In [16044]: w3=np.r_[lg.intercept_[2].reshape(-1,1),lg.coef_[2,:].reshape(-1,1)]
+
+In [16045]: w1-w2
+Out[16045]: 
+array([[ 32.79659095],
+       [ -9.06930309],
+       [-13.85005471]])
+
+In [16046]: w1-w3
+Out[16046]: 
+array([[ 78.06896527],
+       [-14.82384455],
+       [-24.29674579]])
+
+/ 13	. 
+
+/ p(1|x)=exp(x.T.dot(w1))/(exp(x.T.dot(w1))+exp(x.T.dot(w2))+exp(x.T.dot(w3)))
+/ p(2|x)=exp(x.T.dot(w2))/(exp(x.T.dot(w1))+exp(x.T.dot(w2))+exp(x.T.dot(w3)))
+/ p(3|x)=exp(x.T.dot(w3))/(exp(x.T.dot(w1))+exp(x.T.dot(w2))+exp(x.T.dot(w3)))
+
+/ deel in alle 3 de kansen de teller en noemer door exp(x.T.dot(w1))	,
+/ dan met
+v2=w1-w2, v3=w1-w3  ,zien we - in exp(-x.T.dot(v2)) en exp(-x.T.dot(v3))
+v=(v2,v3).T
+
+def _pX(v1,v2,v3):
+	return np.exp(X.dot(v1))+np.exp(X.dot(v2))+np.exp(X.dot(v3))
+def _p1gX(v1,v2,v3):
+	return np.exp(X.dot(v1))/_pX(v1,v2,v3)
+def _p2gX(v1,v2,v3):
+	return np.exp(X.dot(v2))/_pX(v1,v2,v3)
+def _p3gX(v1,v2,v3):
+	return np.exp(X.dot(v3))/_pX(v1,v2,v3)
+
+def _ml(v1,v2,v3):
+	return t1.T.dot(np.log(_p1gX(v1,v2,v3)))+t2.T.dot(np.log(_p2gX(v1,v2,v3)))+t3.T.dot(np.log(_p3gX(v1,v2,v3)))#+lmbda*(v2.T.dot(v2)+v3.T.dot(v3))/2
+
+def _grad_ml_to_v1(v1,v2,v3):
+  return X.T.dot(t1-_p1gX(v1,v2,v3))#+lmbda*v2
+
+def _grad_ml_to_v2(v1,v2,v3):
+  return X.T.dot(t2-_p2gX(v1,v2,v3))#+lmbda*v2
+
+def _grad_ml_to_v3(v1,v2,v3):
+  return X.T.dot(t3-_p3gX(v1,v2,v3))#+lmbda*v3
+
+def _grad_ml_to_v(v1,v2,v3):
+  return np.r_[_grad_ml_to_v1(v1,v2,v3),_grad_ml_to_v2(v1,v2,v3),_grad_ml_to_v3(v1,v2,v3)]		# X staat er 2 keer in	, 
+
+def _grad_to_v1_T_grad_ml_to_v1(v1,v2,v3):
+  D=np.diag(-_p1gX(v1,v2,v3).ravel()).dot(np.diag((1-_p1gX(v2,v3)).ravel()))
+  return X.T.dot(D).dot(X)
+def _grad_to_v2_T_grad_ml_to_v1(v1,v2,v3):
+  D=np.diag(_p1gX(v1,v2,v3).ravel()).dot(np.diag(_p2gX(v1,v2,v3)).ravel())
+  return X.T.dot(D).dot(X)
+def _grad_to_v3_T_grad_ml_to_v1(v1,v2,v3):
+  D=np.diag(_p1gX(v1,v2,v3).ravel()).dot(np.diag(_p3gX(v1,v2,v3)).ravel())
+  return X.T.dot(D).dot(X)
+
+def _grad_to_v1_T_grad_ml_to_v2(v1,v2,v3):
+  D=np.diag(_p2gX(v1,v2,v3).ravel()).dot(np.diag(_p1gX(v1,v2,v3)).ravel())
+  return X.T.dot(D).dot(X)
+def _grad_to_v2_T_grad_ml_to_v2(v1,v2,v3):
+  D=np.diag(-_p2gX(v1,v2,v3).ravel()).dot(np.diag((1-_p2gX(v2,v3)).ravel()))
+  return X.T.dot(D).dot(X)
+def _grad_to_v3_T_grad_ml_to_v2(v1,v2,v3):
+  D=np.diag(_p2gX(v1,v2,v3).ravel()).dot(np.diag(_p3gX(v1,v2,v3)).ravel())
+  return X.T.dot(D).dot(X)
+
+def _grad_to_v1_T_grad_ml_to_v3(v1,v2,v3):
+  D=np.diag(_p3gX(v1,v2,v3).ravel()).dot(np.diag(_p1gX(v1,v2,v3)).ravel())
+  return X.T.dot(D).dot(X)
+def _grad_to_v2_T_grad_ml_to_v3(v1,v2,v3):
+  D=np.diag(_p3gX(v1,v2,v3).ravel()).dot(np.diag(_p2gX(v2,v3)).ravel())
+  return X.T.dot(D).dot(X)
+def _grad_to_v3_T_grad_ml_to_v3(v1,v2,v3):
+  D=np.diag(-_p3gX(v1,v2,v3).ravel()).dot(np.diag((1-_p3gX(v1,v2,v3)).ravel()))
+  return X.T.dot(D).dot(X)
+
+
+def _hessian_ml_to_v(v1,v2,v3):
+	return np.block([
+		[_grad_to_v1_T_grad_ml_to_v1(v1,v2,v3),_grad_to_v2_T_grad_ml_to_v1(v1,v2,v3),_grad_to_v3_T_grad_ml_to_v1(v1,v2,v3)],
+		[_grad_to_v1_T_grad_ml_to_v2(v1,v2,v3),_grad_to_v2_T_grad_ml_to_v2(v1,v2,v3),_grad_to_v3_T_grad_ml_to_v2(v1,v2,v3)],
+		[_grad_to_v1_T_grad_ml_to_v3(v1,v2,v3),_grad_to_v2_T_grad_ml_to_v3(v1,v2,v3),_grad_to_v3_T_grad_ml_to_v3(v1,v2,v3)],
+	])
+		
+def _cg(A,k):
+	N=A.shape[0]
   r=np.zeros((N,N+1))
   a=np.zeros((1,N+1))
-  x=np.zeros((N,N+1))
+  v=np.zeros((N,N+1))
   b=np.zeros((1,N+1))
   p=np.zeros((N,N+1))
 
-  x[:,[0]]=np.zeros(N).reshape(-1,1) # hoeft niet	,
-  r[:,[0]]=k-A.dot(x[:,[0]])
+  v[:,[0]]=np.zeros(N).reshape(-1,1) # hoeft niet	,
+  r[:,[0]]=k-A.dot(v[:,[0]])
   p[:,[0]]=r[:,[0]]
 
   for i in range(0,N):
     a[:,[i]]=r[:,[i]].T.dot(r[:,[i]])/p[:,[i]].T.dot(A).dot(p[:,[i]])
-    x[:,[i+1]]=x[:,[i]]+a[:,[i]]*p[:,[i]]
+    v[:,[i+1]]=v[:,[i]]+a[:,[i]]*p[:,[i]]
     r[:,[i+1]]=r[:,[i]]-a[:,[i]]*A.dot(p[:,[i]])
 		if i+1==N:
-      break
+      return v,r 
     b[:,[i]]=r[:,[i+1]].T.dot(r[:,[i+1]])/r[:,[i]].T.dot(r[:,[i]])
     p[:,[i+1]]=r[:,[i+1]]+b[:,[i]]*p[:,[i]]
 
 
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((X.shape[0],1)),X]
+t1=(iris['target']==0).reshape(-1,1).astype(int)
+t2=(iris['target']==1).reshape(-1,1).astype(int)
+t3=(iris['target']==2).reshape(-1,1).astype(int)
+
+v1=np.array([0,0,0]).reshape(-1,1)
+v2=np.array([0,0,0]).reshape(-1,1)
+v3=np.array([0,0,0]).reshape(-1,1)
+v=np.r_[v1,v2,v3]
+
+k=_grad_ml_to_v(v1,v2,v3)
+A=_hessian_to_v(v1,v2,v3)
+_v,_r=_cg(A,k)
+
+for i in range(10):
+v=v[:,N].reshape(-1,1)
+v2=v[:3].reshape(-1,1)
+v3=v[-3:].reshape(-1,1)
+k=_grad_ml_to_v(v2,v3)
+A=_hessian_to_v(v2,v3)
+N=v.shape[0]
+v,r=_cg(N,A,v,k)
+
+v=v[:,N].reshape(-1,1)
+v2=v[:3].reshape(-1,1)
+v3=v[-3:].reshape(-1,1)
+k=_grad_ml_to_v(v2,v3)
+A=_hessian_to_v(v2,v3)
+N=v.shape[0]
+v,r=_cg(N,A,v,k)
 
 
 
 
 
+/ Einde NEWTON CG MULTICLASS 3 CLASSES 2 FEATURES
 
-# evt np_c[s,t]
-# :3		3:6	6:9  9		10		11:14
-# beta, grad,nwt,ml,|grad|,eigv(hessian)
-lmbda=0
-h=0	# om de hessian te pakken	,
-e=0 # om de eig te pakken	,
-for i in range(0,100):
-  total()
+/ NEWTON CG OVR 2 CLASSES 2 FEATURES
 
-ml=_ml(v)
-grad_ml_to_v=_grad_ml_to_v(v)
-gd=_gd(v)
-ch=_check(v)
-v=v+grad_ml_to_v
+/ 13	. 
 
-/ Einde NEWTON CG 3 CLASSES 2 FEATURES
+/ Eerder ovr( one-vs-rest), liblinear(TODO)	,
+
+/ 2 features	,
+In [16087]: X
+Out[16087]: 
+array([[1.4, 0.2],
+       [1.4, 0.2],
+       [1.3, 0.2],
+...
+
+/ 3 classes	,
+In [16089]: y
+Out[16089]: 
+array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2])
+
+X=iris['data'][:,[2,3]]
+y = iris["target"]
+lg=LogisticRegression(C=10**10)                                      
+       
+lg.fit(X,y)
+display(lg.coef_)
+display(lg.intercept_)
+
+array([[-6.67454643, -9.82307197],
+       [ 1.54644801, -3.10696268],
+       [ 5.7528683 , 10.44455633]])
+array([ 24.05565958,  -2.85895422, -45.26062435])
+
+/ we zien 3 antwoorden , voor elke class 1	,
+
+
+/ 13	. 
+
+/ w1r staat voor w van de rest, dus 
+/ p(1|x)=exp(x.T.dot(w1))/(exp(x.T.dot(w1))+exp(x.T.dot(w1r)))
+/ p(2|x)=exp(x.T.dot(w2))/(exp(x.T.dot(w2))+exp(x.T.dot(w2r)))
+/ p(3|x)=exp(x.T.dot(w3))/(exp(x.T.dot(w3))+exp(x.T.dot(w3r)))
+
+/ als v1=w1-w1r	, v2=w2-w2r, v3=w3-w3r	,
+
+/ versie met - in de exponenten	,
+
+def _p1gX(v1):
+	return 1/(1+np.exp(-X.dot(v1)))
+def _p2gX(v2):
+	return 1/(1+np.exp(-X.dot(v2)))
+def _p3gX(v3):
+	return 1/(1+np.exp(-X.dot(v3)))
+
+def _ml1(v1):
+	return t1.T.dot(np.log(_p1gX(v1)))+(1-t1).T.dot(np.log(1-_p1gX(v1)))
+def _ml2(v2):
+	return t2.T.dot(np.log(_p2gX(v2)))+(1-t2).T.dot(np.log(1-_p2gX(v2)))
+def _ml3(v3):
+	return t3.T.dot(np.log(_p3gX(v3)))+(1-t3).T.dot(np.log(1-_p3gX(v3)))
+
+def _grad_ml1_to_v1(v1):
+  return X.T.dot(t1-_p1gX(v1))#+lmbda*v2
+def _grad_ml2_to_v2(v2):
+  return X.T.dot(t2-_p2gX(v2))#+lmbda*v2
+def _grad_ml3_to_v3(v3):
+  return X.T.dot(t3-_p3gX(v3))#+lmbda*v2
+
+def _hessian_ml1_to_v1_T_to_v1(v1):
+  D=np.diag(-_p1gX(v1).ravel()).dot(np.diag((1-_p1gX(v1)).ravel()))
+  return X.T.dot(D).dot(X)
+def _hessian_ml2_to_v2_T_to_v2(v2):
+  D=np.diag(-_p2gX(v2).ravel()).dot(np.diag((1-_p2gX(v2)).ravel()))
+  return X.T.dot(D).dot(X)
+def _hessian_ml3_to_v3_T_to_v3(v3):
+  D=np.diag(-_p3gX(v3).ravel()).dot(np.diag((1-_p3gX(v3)).ravel()))
+  return X.T.dot(D).dot(X)
+
+def _cg(A,k):
+	N=A.shape[0]
+  r=np.zeros((N,N+1))
+  a=np.zeros((1,N+1))
+  v=np.zeros((N,N+1))
+  b=np.zeros((1,N+1))
+  p=np.zeros((N,N+1))
+
+  v[:,[0]]=np.zeros(N).reshape(-1,1) # hoeft niet	,
+  r[:,[0]]=k-A.dot(v[:,[0]])
+  p[:,[0]]=r[:,[0]]
+
+  for i in range(0,N):
+    a[:,[i]]=r[:,[i]].T.dot(r[:,[i]])/p[:,[i]].T.dot(A).dot(p[:,[i]])
+    v[:,[i+1]]=v[:,[i]]+a[:,[i]]*p[:,[i]]
+    r[:,[i+1]]=r[:,[i]]-a[:,[i]]*A.dot(p[:,[i]])
+		if i+1==N:
+      return v,r 
+    b[:,[i]]=r[:,[i+1]].T.dot(r[:,[i+1]])/r[:,[i]].T.dot(r[:,[i]])
+    p[:,[i+1]]=r[:,[i+1]]+b[:,[i]]*p[:,[i]]
+
+
+X=iris['data'][:,[2,3]]
+X=np.c_[np.ones((X.shape[0],1)),X]
+t1=(iris['target']==0).reshape(-1,1).astype(int)
+
+t2=(iris['target']==1).reshape(-1,1).astype(int)
+t3=(iris['target']==2).reshape(-1,1).astype(int)
+v2=np.array([0,0,0]).reshape(-1,1)
+v3=np.array([0,0,0]).reshape(-1,1)
+k2=_grad_ml2_to_v2(v2)
+k3=_grad_ml3_to_v3(v3)
+A2=_hessian_ml2_to_v2_T_to_v2(v2)
+A3=_hessian_ml3_to_v3_T_to_v3(v3)
+
+/ 13	. 
+
+# class 1	,
+v1=np.array([0,0,0]).reshape(-1,1)
+# in for loop	,
+for i in range(10):
+  k1=_grad_ml1_to_v1(v1)
+  A1=_hessian_ml1_to_v1_T_to_v1(v1)
+  v,r=_cg(A1,k1)
+  # check r[:,A1.shape[0]].reshape(-1,1)	,
+  v1=v1-v[:,A1.shape[0]].reshape(-1,1)
+In [16163]: v1
+Out[16163]: 
+array([[21.81940571],
+       [-5.73678936],
+       [-9.66992458]])
+
+# class 2	,
+v2=np.array([0,0,0]).reshape(-1,1)
+# in for loop	,
+for i in range(10):
+  k2=_grad_ml2_to_v2(v2)
+  A2=_hessian_ml2_to_v2_T_to_v2(v2)
+  v,r=_cg(A2,k2)
+  # check r[:,A1.shape[0]].reshape(-1,1)	,
+  v2=v2-v[:,A2.shape[0]].reshape(-1,1)
+In [16165]: v2
+Out[16165]: 
+array([[-2.85880689],
+       [ 1.54646368],
+       [-3.10710628]])
+
+# class 3	,
+v3=np.array([0,0,0]).reshape(-1,1)
+# in for loop	,
+for i in range(10):
+  k3=_grad_ml3_to_v3(v3)
+  A3=_hessian_ml3_to_v3_T_to_v3(v3)
+  v,r=_cg(A3,k3)
+  # check r[:,A1.shape[0]].reshape(-1,1)	,
+  v3=v3-v[:,A3.shape[0]].reshape(-1,1)
+
+In [16169]: v3
+Out[16169]: 
+array([[-45.27234329],
+       [  5.75453225],
+       [ 10.44669981]])
+
+/ 13	. 
+
+/ met inv hessian	,
+
+# class 1	,
+v1=np.array([0,0,0]).reshape(-1,1)
+# in for loop	,
+for i in range(10):
+  k1=_grad_ml1_to_v1(v1)
+  A1=_hessian_ml1_to_v1_T_to_v1(v1)
+  v=np.linalg.inv(A1).dot(k1)
+  v1=v1-v
+In [16153]: v1
+Out[16153]: 
+array([[21.81940571],
+       [-5.73678936],
+       [-9.66992458]])
+
+# class 2	,
+v2=np.array([0,0,0]).reshape(-1,1)
+# in for loop	,
+for i in range(10):
+  k2=_grad_ml2_to_v2(v2)
+  A2=_hessian_ml2_to_v2_T_to_v2(v2)
+  v=np.linalg.inv(A2).dot(k2)
+  v2=v2-v
+In [16156]: v2
+Out[16156]: 
+array([[-2.85880689],
+       [ 1.54646368],
+       [-3.10710628]])
+
+# class 3	,
+v3=np.array([0,0,0]).reshape(-1,1)
+# in for loop	,
+for i in range(10):
+  k3=_grad_ml3_to_v3(v3)
+  A3=_hessian_ml3_to_v3_T_to_v3(v3)
+  v=np.linalg.inv(A3).dot(k3)
+  v3=v3-v
+In [16158]: v3
+Out[16158]: 
+array([[-45.27234329],
+       [  5.75453225],
+       [ 10.44669981]])
+
+
+/ Einde NEWTON CG OVR 2 CLASSES 2 FEATURES
 
 / GD 2 CLASSES 2 FEATURES
 
