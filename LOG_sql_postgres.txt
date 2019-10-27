@@ -629,7 +629,99 @@ CREATE TABLE
 postgres=# create table chl2(i int,primary key(i),foreign key(i)references par(i));
 CREATE TABLE
 
+/ 13	. 
 
+postgres=# drop table par;
+ERROR:  cannot drop table par because other objects depend on it
+DETAIL:  constraint chl_i_fkey on table chl depends on table par
+constraint chl2_i_fkey on table chl2 depends on table par
+HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+
+postgres=# drop table par cascade;
+NOTICE:  drop cascades to 2 other objects
+DETAIL:  drop cascades to constraint chl_i_fkey on table chl
+drop cascades to constraint chl2_i_fkey on table chl2
+DROP TABLE
+
+/ table par is dropped	,
+/ Van chl en chl2 zijn de fk's dropped	, 
+
+postgres=# \d chl
+      Table "public.chl"
+ Column |  Type   | Modifiers 
+--------+---------+-----------
+ i      | integer | not null
+Indexes:
+    "chl_pkey" PRIMARY KEY, btree (i)
+
+postgres=# \d chl2
+     Table "public.chl2"
+ Column |  Type   | Modifiers 
+--------+---------+-----------
+ i      | integer | not null
+Indexes:
+    "chl2_pkey" PRIMARY KEY, btree (i)
+
+/ deze had geen dependencies	,
+postgres=# drop table par2;
+DROP TABLE
+
+postgres=# drop table chl;
+DROP TABLE
+postgres=# drop table chl2
+postgres-# ;
+DROP TABLE
+
+/ 13	. 
+
+/ wanneer kan een col reference naar een andere col?
+
+postgres=# create table par(i int,j int,primary key(i));
+CREATE TABLE
+postgres=# create table chl(j int primary key references par(j));         
+ERROR:  there is no unique constraint matching given keys for referenced table "par"
+
+/ het kan wel als we	,
+
+postgres=# alter table par add unique(j);
+ALTER TABLE
+postgres=# \d par
+      Table "public.par"
+ Column |  Type   | Modifiers 
+--------+---------+-----------
+ i      | integer | not null
+ j      | integer | 
+Indexes:
+    "par_pkey" PRIMARY KEY, btree (i)
+    "par_j_key" UNIQUE CONSTRAINT, btree (j)
+
+postgres=# create table chl(j int primary key references par(j));
+CREATE TABLE
+
+/ 13	. 
+
+/ we willen table chl toch iets anders	,
+
+postgres=# create table chl(j int references par(j));
+CREATE TABLE
+
+/ lees	,
+https://pgdash.io/blog/postgres-psql-tips-tricks.html
+
+postgres=# \pset null null
+Null display is "null".
+
+postgres=# insert into chl values(null);
+INSERT 0 1
+postgres=# insert into chl values(null);
+INSERT 0 1
+
+postgres=# select * from chl;
+  j   
+------
+ null
+ null
+(2 rows)
 
 
 

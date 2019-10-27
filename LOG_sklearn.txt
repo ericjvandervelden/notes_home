@@ -120,4 +120,140 @@ Out[15420]:
 array([[3.],
        [2.]])
 
+/ NEWTON-CG DEBUG
+
+
+/ 7	 .
+
+/ we komen in 	,
+
+$ less logistic.py
+
+def _multinomial_loss(w, X, Y, alpha, sample_weight):
+
+
+/ 13	. 
+
+In [16272]: from scipy.special import logsumexp
+
+/ axis is de richting waarin je sommeert	,
+
+In [16280]: a=np.array([1,2,1,2]).reshape(-1,2)
+In [16281]: a
+Out[16281]: 
+array([[1, 2],
+       [1, 2]])
+
+In [16273]: logsumexp(a,axis=1)
+Out[16273]: array([2.31326169, 2.31326169])
+
+In [16274]: logsumexp(a,axis=0)
+Out[16274]: array([1.69314718, 2.69314718])
+
+/ lees	,
+https://docs.scipy.org/doc/scipy-0.19.0/reference/generated/scipy.misc.logsumexp.html
+
+>>> from scipy.special import logsumexp
+>>> a = np.arange(10)
+>>> np.log(np.sum(np.exp(a)))
+9.4586297444267107
+>>> logsumexp(a)
+9.4586297444267107
+
+/ 13	. 
+
+/ een andere manier om van een array een vector te maken	, dan reshape(-1,1)	,
+In [16277]: logsumexp(a,axis=1).shape
+Out[16277]: (2,)
+In [16278]: logsumexp(a,axis=1)[:,np.newaxis].shape
+Out[16278]: (2, 1)
+
+    p = safe_sparse_dot(X, w.T)
+    p += intercept
+    p -= logsumexp(p, axis=1)[:, np.newaxis]
+    loss = -(sample_weight * Y * p).sum()
+    loss += 0.5 * alpha * squared_norm(w)
+    p = np.exp(p, p)
+
+
+/ w=(3,2), de rijen zijn de 2 coeff (niet de intercept) voor class 1,2,3
+/ bij ons heten ze w1,w2,w3	,
+/ X.dot(w.T), wij doen altijd X.T.dot(w)
+/ zij hebben X ongemoeid laten, en de intercept apart	, wij hadden een 1 kolom toegevoegd	, zij tellen de intercept er bij op 	, hetzelfde	,
+/ dan bereken we altijd noemer pX=e^x.T.dot(w1)+ e^x.T.dot(w2)+e^x.T.dot(w3)	, en deze komt in de ml of cost in de log terecht	, en dat bereken we hier,
+
+/ de loss (=cost):
+
+/ de 1ste 3 regels hierboven berekent, voor elke waarneming en bijbehorende class die er bij hoort (supervised learning)	, dus p is 150 lang array (wi0=intercept)	: 
+x.T.dot(w1)+w10-log(som e^...), x.T.dot(w2)+w20-log(som e^...), x.T.dot(w3)+w30-log(som e^...)
+
+/ dan de 4de regel berekent:
+t1*(x.T.dot(w1)+w10-log(som e^...))t2*(x.T.dot(w2)+w20-log(som e^...))t3*(x.T.dot(w3)+w30-log(som e^...))
+/ het is gelijk aan	, maar dat doen zij niet	, wij wel	,
+/ (waarin hier de intercept in w1 zit en x een extra 1 heeft)	,
+t1*x.T.dot(w1)+t2*x.T.dot(w2)+t3*(x.T.dot(w3)-log(som e^...)
+
+/ regularisatie doen we niet , we hadden C=10**10, waardoor alpha=10**-10	,
+
+/ dan de laatste stap: np.exp(p,p) (moeten 2 keer p geven met floats TODO):
+/ pi = x.T.dot(wi)-log(e^x.T.dot(w1)+e^x.T.dot(w2)+e^x.T.dot(w3)), en p= matrix met column p1,p2,p3 en rij = elke waarneming	,
+/ dan is e^pi = e^x.T.dot(wi)/(e^x.T.dot(w1)+e^x.T.dot(w2)+e^x.T.dot(w3))	, en dat precies kans op i gegeven x	, wat we altijd doen	,
+
+/ 13	. 
+
+/ het lijkt erop dat als de dtype van een array float is	, we np.exp(a,a) moeten doen, als dtype=int	, dan moeten we np.exp(a) doen	,
+
+In [16289]: a
+Out[16289]: 
+array([[1],
+       [2]])
+
+In [16290]: np.exp(a)
+Out[16290]: 
+array([[2.71828183],
+       [7.3890561 ]])
+
+In [16298]: a=np.array([1,2],dtype=float).reshape(-1,1)
+
+In [16299]: a
+Out[16299]: 
+array([[1.],
+       [2.]])
+
+In [16300]: np.exp(a,a)
+Out[16300]: 
+array([[2.71828183],
+       [7.3890561 ]])
+
+In [16301]: np.exp(a)
+Out[16301]: 
+array([[  15.15426224],
+       [1618.17799191]])
+
+/ 7	. 
+
+/ we komen in
+
+$ less logistic.py
+
+def _multinomial_loss_grad(w, X, Y, alpha, sample_weight):
+
+    loss, p, w = _multinomial_loss(w, X, Y, alpha, sample_weight)
+    sample_weight = sample_weight[:, np.newaxis]
+    diff = sample_weight * (p - Y)
+/ klopt	, 
+    grad[:, :n_features] = safe_sparse_dot(diff.T, X)
+
+    if fit_intercept:
+        grad[:, -1] = diff.sum(axis=0)
+
+ndarray: [[ 1.14733333e+02  4.77333333e+01 -5.27355937e-14]
+ [-2.50666667e+01 -6.36666667e+00  2.65343303e-14]
+ [-8.96666667e+01 -4.13666667e+01 -6.21724894e-14]]
+
+/ de 3 gradienten zijn rijen	,
+
+/ Einde NEWTON-CG DEBUG
+
+
 

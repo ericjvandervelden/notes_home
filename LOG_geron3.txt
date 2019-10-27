@@ -1946,6 +1946,8 @@ array([[ -7.96438255, -12.71560017],
        [  6.859462  ,  11.58114562]])
 array([ 36.95518541,   4.15859445, -41.11377986])
 
+/ WH RM
+
 In [16042]: w1=np.r_[lg.intercept_[0].reshape(-1,1),lg.coef_[0,:].reshape(-1,1)]
 
 In [16043]: w2=np.r_[lg.intercept_[1].reshape(-1,1),lg.coef_[1,:].reshape(-1,1)]
@@ -1963,6 +1965,8 @@ Out[16046]:
 array([[ 78.06896527],
        [-14.82384455],
        [-24.29674579]])
+
+/ Einde WH RM
 
 / 13	. 
 
@@ -2000,30 +2004,30 @@ def _grad_ml_to_v(v1,v2,v3):
   return np.r_[_grad_ml_to_v1(v1,v2,v3),_grad_ml_to_v2(v1,v2,v3),_grad_ml_to_v3(v1,v2,v3)]		# X staat er 2 keer in	, 
 
 def _grad_to_v1_T_grad_ml_to_v1(v1,v2,v3):
-  D=np.diag(-_p1gX(v1,v2,v3).ravel()).dot(np.diag((1-_p1gX(v2,v3)).ravel()))
+  D=np.diag(-_p1gX(v1,v2,v3).ravel()).dot(np.diag((1-_p1gX(v1,v2,v3)).ravel()))
   return X.T.dot(D).dot(X)
 def _grad_to_v2_T_grad_ml_to_v1(v1,v2,v3):
-  D=np.diag(_p1gX(v1,v2,v3).ravel()).dot(np.diag(_p2gX(v1,v2,v3)).ravel())
+  D=np.diag(_p1gX(v1,v2,v3).ravel()).dot(np.diag(_p2gX(v1,v2,v3).ravel()))
   return X.T.dot(D).dot(X)
 def _grad_to_v3_T_grad_ml_to_v1(v1,v2,v3):
-  D=np.diag(_p1gX(v1,v2,v3).ravel()).dot(np.diag(_p3gX(v1,v2,v3)).ravel())
+  D=np.diag(_p1gX(v1,v2,v3).ravel()).dot(np.diag(_p3gX(v1,v2,v3).ravel()))
   return X.T.dot(D).dot(X)
 
 def _grad_to_v1_T_grad_ml_to_v2(v1,v2,v3):
-  D=np.diag(_p2gX(v1,v2,v3).ravel()).dot(np.diag(_p1gX(v1,v2,v3)).ravel())
+  D=np.diag(_p2gX(v1,v2,v3).ravel()).dot(np.diag(_p1gX(v1,v2,v3).ravel()))
   return X.T.dot(D).dot(X)
 def _grad_to_v2_T_grad_ml_to_v2(v1,v2,v3):
-  D=np.diag(-_p2gX(v1,v2,v3).ravel()).dot(np.diag((1-_p2gX(v2,v3)).ravel()))
+  D=np.diag(-_p2gX(v1,v2,v3).ravel()).dot(np.diag((1-_p2gX(v1,v2,v3)).ravel()))
   return X.T.dot(D).dot(X)
 def _grad_to_v3_T_grad_ml_to_v2(v1,v2,v3):
-  D=np.diag(_p2gX(v1,v2,v3).ravel()).dot(np.diag(_p3gX(v1,v2,v3)).ravel())
+  D=np.diag(_p2gX(v1,v2,v3).ravel()).dot(np.diag(_p3gX(v1,v2,v3).ravel()))
   return X.T.dot(D).dot(X)
 
 def _grad_to_v1_T_grad_ml_to_v3(v1,v2,v3):
-  D=np.diag(_p3gX(v1,v2,v3).ravel()).dot(np.diag(_p1gX(v1,v2,v3)).ravel())
+  D=np.diag(_p3gX(v1,v2,v3).ravel()).dot(np.diag(_p1gX(v1,v2,v3).ravel()))
   return X.T.dot(D).dot(X)
 def _grad_to_v2_T_grad_ml_to_v3(v1,v2,v3):
-  D=np.diag(_p3gX(v1,v2,v3).ravel()).dot(np.diag(_p2gX(v2,v3)).ravel())
+  D=np.diag(_p3gX(v1,v2,v3).ravel()).dot(np.diag(_p2gX(v1,v2,v3).ravel()))
   return X.T.dot(D).dot(X)
 def _grad_to_v3_T_grad_ml_to_v3(v1,v2,v3):
   D=np.diag(-_p3gX(v1,v2,v3).ravel()).dot(np.diag((1-_p3gX(v1,v2,v3)).ravel()))
@@ -2038,10 +2042,20 @@ def _hessian_ml_to_v(v1,v2,v3):
 	])
 		
 def _cg(A,k):
+
+#     x0=0
+# p0->x1
+# p1->x2
+# p2->x3
+#...
+# pN-1->xN
+# p0, ..., pN-1 basis RN	,
+# x1,...,xN rij 	, xN is opl	,
+
 	N=A.shape[0]
   r=np.zeros((N,N+1))
   a=np.zeros((1,N+1))
-  v=np.zeros((N,N+1))
+  v=np.zeros((N,N+1))		# in Hestenes Stiefel heet v x	,
   b=np.zeros((1,N+1))
   p=np.zeros((N,N+1))
 
@@ -2065,31 +2079,24 @@ t1=(iris['target']==0).reshape(-1,1).astype(int)
 t2=(iris['target']==1).reshape(-1,1).astype(int)
 t3=(iris['target']==2).reshape(-1,1).astype(int)
 
-v1=np.array([0,0,0]).reshape(-1,1)
-v2=np.array([0,0,0]).reshape(-1,1)
-v3=np.array([0,0,0]).reshape(-1,1)
-v=np.r_[v1,v2,v3]
-
-k=_grad_ml_to_v(v1,v2,v3)
-A=_hessian_to_v(v1,v2,v3)
-_v,_r=_cg(A,k)
-
+v=np.zeros(3*3).reshape(-1,1)
 for i in range(10):
-v=v[:,N].reshape(-1,1)
-v2=v[:3].reshape(-1,1)
-v3=v[-3:].reshape(-1,1)
-k=_grad_ml_to_v(v2,v3)
-A=_hessian_to_v(v2,v3)
-N=v.shape[0]
-v,r=_cg(N,A,v,k)
+  k=_grad_ml_to_v(v[:3],v[3:-3],v[-3:])
+  A=_hessian_to_v(v[:3],v[3:-3],v[-3:])
+  _v,_r=_cg(A,k)
+  v=v-_v[:,3*3].reshape(-1,1)
 
-v=v[:,N].reshape(-1,1)
-v2=v[:3].reshape(-1,1)
-v3=v[-3:].reshape(-1,1)
-k=_grad_ml_to_v(v2,v3)
-A=_hessian_to_v(v2,v3)
-N=v.shape[0]
-v,r=_cg(N,A,v,k)
+In [16257]: v
+Out[16257]: 
+array([[ 30.69982696],
+       [ -7.12903796],
+       [ -9.35131346],
+       [  8.60935645],
+       [ -1.05252579],
+       [ -0.21218392],
+       [-36.66298837],
+       [  4.70200667],
+       [ 10.23451617]])
 
 
 
@@ -2311,6 +2318,16 @@ array([[-45.27234329],
 
 
 / Einde NEWTON CG OVR 2 CLASSES 2 FEATURES
+
+
+
+
+
+
+
+
+
+
 
 / GD 2 CLASSES 2 FEATURES
 
