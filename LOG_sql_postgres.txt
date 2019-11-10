@@ -1,4 +1,13 @@
-/ 7	. 
+/ See GENERATE 
+/ See TABLES
+/ See SCHEMAS
+/ See PRIVILEGES 
+
+
+
+/ GENERATE 
+
+/  13	. 
 
 / in docker container	, master slave	, see LOG_postgresql2.txt
 
@@ -594,6 +603,10 @@ group by i;
   7 | 8.0000000000000000
 (11 rows)
 
+/ Einde GENERATE
+
+/ TABLES 
+
 / 7	. 
 
 postgres=# create table par(i int primary key);
@@ -675,6 +688,7 @@ DROP TABLE
 / 13	. 
 
 / wanneer kan een col reference naar een andere col?
+/ als die col unique is	,
 
 postgres=# create table par(i int,j int,primary key(i));
 CREATE TABLE
@@ -713,6 +727,43 @@ Null display is "null".
 
 postgres=# insert into chl values(null);
 INSERT 0 1
+
+/ 13	. 
+
+/ \d op een schema laat ook alle indexes zien	,
+
+postgres=# \d public.*
+      Table "public.chl"
+ Column |  Type   | Modifiers 
+--------+---------+-----------
+ j      | integer | 
+Foreign-key constraints:
+    "chl_j_fkey" FOREIGN KEY (j) REFERENCES par(j)
+
+      Table "public.par"
+ Column |  Type   | Modifiers 
+--------+---------+-----------
+ i      | integer | not null
+ j      | integer | 
+Indexes:
+    "par_pkey" PRIMARY KEY, btree (i)
+    "par_j_key" UNIQUE CONSTRAINT, btree (j)
+Referenced by:
+    TABLE "chl" CONSTRAINT "chl_j_fkey" FOREIGN KEY (j) REFERENCES par(j)
+
+   Index "public.par_j_key"
+ Column |  Type   | Definition 
+--------+---------+------------
+ j      | integer | j
+unique, btree, for table "public.par"
+
+    Index "public.par_pkey"
+ Column |  Type   | Definition 
+--------+---------+------------
+ i      | integer | i
+primary key, btree, for table "public.par"
+
+
 postgres=# insert into chl values(null);
 INSERT 0 1
 
@@ -722,6 +773,934 @@ postgres=# select * from chl;
  null
  null
 (2 rows)
+
+/ TABLES
+
+/ SCHEMAS
+
+/ 13	. 
+
+/ lees	,
+http://www.postgresqltutorial.com/postgresql-create-schema/
+
+/ we hadden eerder user eric gemaakt, met pw eric	,
+
+-bash-4.3$ psql -h 269fbe154315 -U eric
+Password for user eric: eric
+psql (9.5.7)
+Type "help" for help.
+
+eric=> create schema authorization eric;
+CREATE SCHEMA
+eric=> \dnS+
+                                     List of schemas
+        Name        |  Owner   |  Access privileges   |           Description    
+        
+--------------------+----------+----------------------+--------------------------
+--------
+ eric               | eric     |                      | 
+ 
+
+eric=> create schema if not exists _saskia authorization eric;
+CREATE SCHEMA
+eric=> \dnS+
+                                     List of schemas
+        Name        |  Owner   |  Access privileges   |           Description    
+        
+--------------------+----------+----------------------+--------------------------
+--------
+ _saskia            | eric     |                      | 
+ eric               | eric     |                      | 
+
+/ 13	. 
+
+foo=> \c eric
+You are now connected to database "eric" as user "eric".
+eric=> \dnS+
+                                     List of schemas
+        Name        |  Owner   |  Access privileges   |           Description    
+        
+--------------------+----------+----------------------+--------------------------
+--------
+ _saskia            | eric     |                      | 
+ eric               | eric     |                      | 
+...
+
+
+eric=> \c foo
+You are now connected to database "foo" as user "eric".
+
+foo=> \dnS+
+                                     List of schemas
+        Name        |  Owner   |  Access privileges   |           Description    
+        
+--------------------+----------+----------------------+--------------------------
+--------
+ information_schema | postgres | postgres=UC/postgres+| 
+                    |          | =U/postgres          | 
+ pg_catalog         | postgres | postgres=UC/postgres+| system catalog schema
+                    |          | =U/postgres          | 
+ pg_temp_1          | postgres |                      | 
+ pg_temp_3          | postgres |                      | 
+ pg_temp_4          | postgres |                      | 
+ pg_toast           | postgres |                      | reserved schema for TOAST
+ tables
+ pg_toast_temp_1    | postgres |                      | 
+ pg_toast_temp_3    | postgres |                      | 
+ pg_toast_temp_4    | postgres |                      | 
+ public             | postgres | postgres=UC/postgres+| standard public schema
+                    |          | =UC/postgres         | 
+(10 rows)
+
+/ we zien in database foo andere schema's	,
+
+foo=> select current_database();
+ current_database 
+------------------
+ foo
+(1 row)
+
+foo=> \d eric.*
+Did not find any relation named "eric.*".
+foo=> create table eric.t(i int);
+ERROR:  schema "eric" does not exist
+LINE 1: create table eric.t(i int);
+
+foo=> create schema authorization eric;
+ERROR:  permission denied for database foo
+/ TODO
+
+/ lees	,
+https://stackoverflow.com/questions/10852529/grant-create-schema-on-database-to-a-user
+GRANT CREATE ON DATABASE db TO user;
+
+-bash-4.3$ psql -h 269fbe154315 -U postgres
+Password for user postgres: 
+/ TODO
+
+/ 13	. 
+
+-bash-4.3$ psql                            
+postgres=# grant create on database foo to eric;
+GRANT
+postgres=# \c foo eric
+You are now connected to database "foo" as user "eric".
+foo=> create schema schm authorization eric;
+CREATE SCHEMA
+foo=> \dn
+  List of schemas
+  Name  |  Owner   
+--------+----------
+ public | postgres
+ schm   | eric
+(2 rows)
+
+/ 13	. 
+
+foo=> \c eric
+You are now connected to database "eric" as user "eric".
+eric=> \dn
+  List of schemas
+  Name   |  Owner   
+---------+----------
+ _saskia | eric
+ eric    | eric
+ public  | postgres
+(3 rows)
+
+////////////////////////////
+/ eric is de default schema	,
+/ zie search_path 
+
+
+eric=> create table t(i int);
+CREATE TABLE
+eric=> \d
+       List of relations
+ Schema | Name | Type  | Owner 
+--------+------+-------+-------
+ eric   | t    | table | eric
+(1 row)
+
+eric=> create table public.t( i int);
+CREATE TABLE
+eric=> \d public.*
+       Table "public.t"
+ Column |  Type   | Modifiers 
+--------+---------+-----------
+ i      | integer | 
+
+eric=> drop schema eric;
+ERROR:  cannot drop schema eric because other objects depend on it
+DETAIL:  table t depends on schema eric
+HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+
+NOTICE:  drop cascades to table t
+DROP SCHEMA
+
+///////////////////////////////////////
+/ nu is public weer de default schema	,
+
+eric=> \d            
+       List of relations
+ Schema | Name | Type  | Owner 
+--------+------+-------+-------
+ public | t    | table | eric
+(1 row)
+
+/ 13	. 
+
+/ lees	,
+https://www.postgresql.org/docs/9.3/ddl-schemas.html
+
+eric=> select *
+eric-> from eric.public.t;
+/ db.sch.tbl
+
+Often you will want to create a schema owned by someone else (since this is one of the ways to restrict the activities of your users to well-defined namespaces). The syntax for that is:
+CREATE SCHEMA schemaname AUTHORIZATION username;
+
+You can even omit the schema name, in which case the schema name will be the same as the user name. See Section 5.7.6 for how this can be useful.
+
+In the previous sections we created tables without specifying any schema names. By default such tables (and other objects) are automatically put into a schema named "public". Every new database contains such a schema.
+
+////////////////////////////////////
+eric=> show search_path;
+   search_path   
+-----------------
+ "$user", public
+(1 row)
+
+/ Einde SCHEMAS
+
+/ PRIVILEGES
+
+/ 7	. 
+
+/ lees over privileges	,
+/ Chapter 5. Data Definition
+https://www.postgresql.org/docs/current/ddl-priv.html
+
+/ 13	. 
+
+eric=> select current_user;
+eric=> select current_database();
+
+/ eric heeft geen permission to: create role, drop role	,
+eric=> create role baz createdb login password 'baz';
+ERROR:  permission denied to create role
+/ eric heeft deze permissie niet, postgres kan 
+> create role eric createdb createrole ...
+
+eric=> \c - postgres
+You are now connected to database "eric" as user "postgres".
+eric=# drop role baz;
+DROP ROLE
+
+/ 13	. 
+
+/ with grant option	,
+
+eric=# alter role eric createrole;
+ALTER ROLE
+eric=> create role mgr createdb createrole login password 'mgr';
+CREATE ROLE
+
+eric=> \c eric -  
+You are now connected to database "eric" as user "eric".
+eric=> create table t1(s text);
+CREATE TABLE
+eric=> grant select on t to mgr;
+GRANT
+
+eric=> \c - mgr
+You are now connected to database "eric" as user "mgr".
+eric=> create role emp createdb createrole login password 'emp';    
+CREATE ROLE
+eric=> grant select on t1 to emp;
+ERROR:  permission denied for relation t1
+
+/ omdat eric mgr heeft granted on t1	, maar niet met with grant option, kan mgr niet een grant uitgeven voor emp	,
+
+/ WH zo uitbreiden van een grant	, alter grant bestaat niet	,
+eric=> grant all on t1 to mgr with grant option;
+GRANT
+
+eric=>  \dp t1
+                               Access privileges
+ Schema | Name | Type  |    Access privileges    | Column privileges | Policies 
+--------+------+-------+-------------------------+-------------------+----------
+ public | t1   | table | eric=arwdDxt/eric      +|                   | 
+        |      |       | mgr=a*r*w*d*D*x*t*/eric |                   | 
+(1 row)
+
+eric=> \c - mgr
+You are now connected to database "eric" as user "mgr".
+eric=> grant select on t1 to emp;
+GRANT
+
+/ nu kan mgr het wel	,
+
+/ 13	. 
+
+/ tot nu toe,
+
+/ lees	,
+https://www.postgresql.org/docs/current/ddl-priv.html
+
+eric=> \l 
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   
+-----------+----------+----------+------------+------------+-----------------------
+ eric      | eric     | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+ foo       | postgres | UTF8     | en_US.UTF8 | en_US.UTF8 | =Tc/postgres         +
+           |          |          |            |            | postgres=CTc/postgres+
+           |          |          |            |            | eric=C/postgres
+...
+
+eric=> \dp
+                               Access privileges
+ Schema | Name | Type  |    Access privileges    | Column privileges | Policies 
+--------+------+-------+-------------------------+-------------------+----------
+ public | chl  | table |                         |                   | 
+ public | t    | table | eric=arwdDxt/eric      +|                   | 
+        |      |       | mgr=r/eric              |                   | 
+ public | t1   | table | eric=arwdDxt/eric      +|                   | 
+        |      |       | mgr=a*r*w*d*D*x*t*/eric+|                   | 
+        |      |       | emp=r/mgr               |                   | 
+(3 rows)
+
+
+If the “Access privileges” column is empty for a given object, it means the object has default privileges (that is, its privileges entry in the relevant system catalog is null). 
+The first GRANT or REVOKE on an object will instantiate the default privileges (producing, for example, miriam=arwdDxt/miriam) and then modify them per the specified request. 
+
+/ De default privileges for a db are	,
+=Tc/eric
+eric=CTc/eric
+
+/ de default privileges for a tbl are	,
+eric=arwdDxt/eric
+
+/ pas als je iets doet met privs verschijnen ze	,
+/ je kunt bijv mgr een priv revoke en weer add	,
+
+/ 1313	. 
+
+foo:
+=Tc/postgres
+postgres=CTc/postgres
+eric=C/postgres
+
+/ omdat we eerder	,
+postgres=# grant create on database foo to eric;
+GRANT
+
+t:
+eric=arwdDxt/eric
+mgr=r/eric
+
+/ 1313	. 
+
+foo=> grant select on t to mgr;
+GRANT
+/ daarom	,
+foo=> \dp
+                            Access privileges
+ Schema | Name | Type  | Access privileges | Column privileges | Policies 
+--------+------+-------+-------------------+-------------------+----------
+ public | t    | table | eric=arwdDxt/eric+|                   | 
+        |      |       | mgr=r/eric        |                   | 
+
+/ we zien geen verandering in 	,
+
+foo=> \l
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   
+-----------+----------+----------+------------+------------+-----------------------
+ eric      | eric     | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+
+eric=> revoke connect on database eric from mgr;
+REVOKE
+
+eric=> \l
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   
+-----------+----------+----------+------------+------------+-----------------------
+ eric      | eric     | UTF8     | en_US.UTF8 | en_US.UTF8 | =Tc/eric             +
+           |          |          |            |            | eric=CTc/eric
+
+eric=>  \c - mgr
+You are now connected to database "eric" as user "mgr".
+/ Waarom kan dit?
+/ TODO
+/ Waarom zien we deze revoke niet in \l?
+/ TODO
+
+eric=>  grant connect on database eric to mgr;
+GRANT
+eric=> \l
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   
+-----------+----------+----------+------------+------------+-----------------------
+ eric      | eric     | UTF8     | en_US.UTF8 | en_US.UTF8 | =Tc/eric             +
+           |          |          |            |            | eric=CTc/eric        +
+           |          |          |            |            | mgr=c/eric
+
+/ Let op dat je database opschrijft, anders	ziet hij het als een tbl,
+eric=> revoke connect on eric from mgr;
+ERROR:  relation "eric" does not exist
+
+eric=> revoke select on t from mgr;
+REVOKE
+eric=> \c eric mgr;
+You are now connected to database "eric" as user "mgr".
+eric=> select *from t;
+ERROR:  permission denied for relation t
+/ Klopt	, 
+
+/ 13	 
+
+eric=> select current_user;
+ current_user 
+--------------
+ mgr
+(1 row)
+
+eric=> select current_database();
+ current_database 
+------------------
+ eric
+(1 row)
+
+eric=> select current_schema;
+ current_schema 
+----------------
+ public
+(1 row)
+
+eric=> drop schema _saskia;
+ERROR:  must be owner of schema _saskia
+
+eric=> grant usage on schema _saskia to mgr;
+ERROR:  permission denied for schema _saskia
+eric=> \c - eric
+You are now connected to database "eric" as user "eric".
+eric=> grant usage on schema _saskia to mgr;
+GRANT
+
+eric=> drop schema _saskia;
+ERROR:  must be owner of schema _saskia
+
+eric=> \dn+
+                          List of schemas
+  Name   |  Owner   |  Access privileges   |      Description       
+---------+----------+----------------------+------------------------
+ _saskia | eric     | eric=UC/eric        +| 
+         |          | mgr=U/eric           | 
+
+/ 13	. 
+
+eric=> select current_user;
+ current_user 
+--------------
+ eric
+(1 row)
+
+eric=> create schema authorization eric;
+CREATE SCHEMA
+
+eric=> create schema authorization mgr; 
+ERROR:  must be member of role "mgr"
+
+eric=> select current_schema;
+ current_schema 
+----------------
+ eric
+(1 row)
+/ See search path	,
+
+/ 13	. 
+
+eric=> \c - mgr
+You are now connected to database "eric" as user "mgr".
+eric=> create schema authorization mgr;
+ERROR:  permission denied for database eric
+/ Klopt	, eerder hadden we	,
+eric=> revoke connect on database eric from mgr;
+REVOKE
+
+eric=> grant connect on database eric to mgr;
+GRANT
+eric=> \c - mgr                        
+You are now connected to database "eric" as user "mgr".
+eric=> create schema authorization mgr;
+ERROR:  permission denied for database eric
+
+eric=> \c - eric
+You are now connected to database "eric" as user "eric".
+eric=> grant create on database eric to mgr;
+GRANT
+eric=> \c - mgr
+You are now connected to database "eric" as user "mgr".
+eric=> create schema authorization mgr;
+CREATE SCHEMA
+
+eric=> \dn    
+  List of schemas
+  Name  |  Owner   
+--------+----------
+ eric   | eric
+ mgr    | mgr
+ public | postgres
+(3 rows)
+
+/ is connect nodig?
+/ Nee	,
+
+eric=> \c - eric
+You are now connected to database "eric" as user "eric".
+eric=> revoke connect on database eric from mgr;
+REVOKE
+eric=> \c - mgr
+You are now connected to database "eric" as user "mgr".
+eric=> create schema authorization mgr;
+CREATE SCHEMA
+
+/ create database als eric en postgres	,
+
+
+
+
+/ 13	. 
+
+/ alle privileges	,
+
+/ lees	,
+https://www.postgresql.org/docs/current/ddl-priv.html
+Table 5.2. Summary of Access Privileges
+
+/ 13	. 
+
+eric=> \l 
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   
+-----------+----------+----------+------------+------------+-----------------------
+ eric      | eric     | UTF8     | en_US.UTF8 | en_US.UTF8 | =Tc/eric             +
+           |          |          |            |            | eric=CTc/eric        +
+           |          |          |            |            | mgr=C/eric
+
+eric=> \c - mgr
+You are now connected to database "eric" as user "mgr".
+
+eric=> revoke create on database eric from mgr;
+REVOKE
+/ mgr kan zichzelf revoke	, 
+
+eric=> \l
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   
+-----------+----------+----------+------------+------------+-----------------------
+ eric      | eric     | UTF8     | en_US.UTF8 | en_US.UTF8 | =Tc/eric             +
+           |          |          |            |            | eric=CTc/eric
+
+eric=> \c - eric
+You are now connected to database "eric" as user "eric".
+
+eric=>  revoke all on database eric from public;
+REVOKE
+/ mgr kan dit niet	, 
+
+eric=>  \l 
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   
+-----------+----------+----------+------------+------------+-----------------------
+ eric      | eric     | UTF8     | en_US.UTF8 | en_US.UTF8 | eric=CTc/eric
+
+eric=> \c - mgr
+FATAL:  permission denied for database "eric"
+DETAIL:  User does not have CONNECT privilege.
+
+/ eerst kon mgr \c - mgr	, via public	,
+
+eric=> grant connect on database eric to mgr;
+GRANT
+eric=> \c - mgr
+You are now connected to database "eric" as user "mgr".
+/ Okay	,
+
+eric=> \l
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   
+-----------+----------+----------+------------+------------+-----------------------
+ eric      | eric     | UTF8     | en_US.UTF8 | en_US.UTF8 | eric=CTc/eric        +
+           |          |          |            |            | mgr=c/eric
+
+eric=> create table t5(i int);
+CREATE TABLE
+/ Waarom kan dit? 
+
+eric=> \dt mgr.
+       List of relations
+ Schema | Name | Type  | Owner 
+--------+------+-------+-------
+ mgr    | s    | table | mgr
+ mgr    | t3   | table | mgr
+ mgr    | t5   | table | mgr
+(3 rows)
+
+eric=> \dn+
+                          List of schemas
+  Name  |  Owner   |  Access privileges   |      Description       
+--------+----------+----------------------+------------------------
+ eric   | eric     | eric=UC/eric        +| 
+        |          | =U/eric              | 
+ mgr    | mgr      | mgr=UC/mgr           | 
+...
+/ Dus mgr kan C (create) in schema mgr	, 
+
+/ maar mgr kan geen tables create in schema eric	,
+eric=>  \c - mgr
+You are now connected to database "eric" as user "mgr".
+eric=> create table eric.t6(i int);
+ERROR:  permission denied for schema eric
+
+/ Wat kun je maken in een database? schema's, ...
+/ Wat kun je maken in een schema? tables, ... 
+/ Wat betekent C in \l? Dat een user schema's kan maken in een database	,
+/ Wat betekent C in \dn? Dat een user tables, views kan maken in een schema	,
+
+eric=> \l
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   
+-----------+----------+----------+------------+------------+-----------------------
+ eric      | eric     | UTF8     | en_US.UTF8 | en_US.UTF8 | eric=CTc/eric        +
+           |          |          |            |            | mgr=c/eric
+
+/ we zien dat mgr geen schema kan maken in database eric, 
+
+eric=>  \c - mgr
+You are now connected to database "eric" as user "mgr".
+eric=> create table eric.t6(i int);
+ERROR:  permission denied for schema eric
+
+eric=>  \dn+    
+                          List of schemas
+  Name  |  Owner   |  Access privileges   |      Description       
+--------+----------+----------------------+------------------------
+ eric   | eric     | eric=UC/eric        +| 
+        |          | =U/eric              | 
+
+/ we zien dat mgr geen table kan maken in schema eric, 
+
+eric=> create table eric.t6(i int);
+ERROR:  permission denied for schema eric
+
+
+
+/ 13	. 
+
+/ \dn+ volgt niet search_path $user,public, maar geeft alle schema in de current_database()	,
+
+eric=> \dn+ 
+                          List of schemas
+  Name  |  Owner   |  Access privileges   |      Description       
+--------+----------+----------------------+------------------------
+ eric   | eric     | eric=UC/eric        +| 
+        |          | =U/eric              | 
+ mgr    | mgr      | mgr=UC/mgr           | 
+ public | postgres | postgres=UC/postgres+| standard public schema
+        |          | =UC/postgres         | 
+(3 rows)
+
+/ Deze geeft alle schema's,	
+
+eric=> \dn+ *.
+                                     List of schemas
+        Name        |  Owner   |  Access privileges   |           Description            
+--------------------+----------+----------------------+----------------------------------
+ eric               | eric     | eric=UC/eric        +| 
+                    |          | =U/eric              | 
+ information_schema | postgres | postgres=UC/postgres+| 
+                    |          | =U/postgres          | 
+ mgr                | mgr      | mgr=UC/mgr           | 
+ pg_catalog         | postgres | postgres=UC/postgres+| system catalog schema
+                    |          | =U/postgres          | 
+ pg_temp_1          | postgres |                      | 
+ pg_toast           | postgres |                      | reserved schema for TOAST tables
+ pg_toast_temp_1    | postgres |                      | 
+ public             | postgres | postgres=UC/postgres+| standard public schema
+                    |          | =UC/postgres         | 
+(8 rows)
+
+
+
+
+/ 13	. 
+
+eric=> \dt
+       List of relations
+ Schema | Name | Type  | Owner 
+--------+------+-------+-------
+ public | chl  | table | mgr
+ public | t    | table | eric
+ public | t1   | table | eric
+(3 rows)
+
+
+eric=> \c - mgr
+You are now connected to database "eric" as user "mgr".
+eric=> \dt
+       List of relations
+ Schema | Name | Type  | Owner 
+--------+------+-------+-------
+ mgr    | s    | table | mgr
+ mgr    | t3   | table | mgr
+ public | chl  | table | mgr
+ public | t    | table | eric
+ public | t1   | table | eric
+(5 rows)
+
+
+eric=>  \dn+
+                          List of schemas
+  Name  |  Owner   |  Access privileges   |      Description       
+--------+----------+----------------------+------------------------
+ eric   | eric     |                      | 
+ mgr    | mgr      |                      | 
+ public | postgres | postgres=UC/postgres+| standard public schema
+        |          | =UC/postgres         | 
+(3 rows)
+
+eric=> \c - eric
+You are now connected to database "eric" as user "eric".
+eric=> create table t4 (i int);
+CREATE TABLE
+
+/ lees	,
+https://stackoverflow.com/questions/6931883/why-does-postgresqls-dt-show-only-public-schema-tables
+
+/ \dt volgt search_path=$user,public	, 
+
+eric=> \dt+
+                    List of relations
+ Schema | Name | Type  | Owner |    Size    | Description 
+--------+------+-------+-------+------------+-------------
+ eric   | t4   | table | eric  | 0 bytes    | 
+ public | chl  | table | mgr   | 0 bytes    | 
+ public | t    | table | eric  | 0 bytes    | 
+ public | t1   | table | eric  | 8192 bytes | 
+(4 rows)
+
+eric=> \c - mgr
+You are now connected to database "eric" as user "mgr".
+eric=> \dt+
+                    List of relations
+ Schema | Name | Type  | Owner |    Size    | Description 
+--------+------+-------+-------+------------+-------------
+ mgr    | s    | table | mgr   | 0 bytes    | 
+ mgr    | t3   | table | mgr   | 0 bytes    | 
+ public | chl  | table | mgr   | 0 bytes    | 
+ public | t    | table | eric  | 0 bytes    | 
+ public | t1   | table | eric  | 8192 bytes | 
+(5 rows)
+
+/ maar je kunt ook expliciet schema aangeven	,
+
+eric=> select current_user;
+ current_user 
+--------------
+ eric
+(1 row)
+
+eric=> \dt mgr.*
+/ of	,
+eric=> \dt mgr.
+       List of relations
+ Schema | Name | Type  | Owner 
+--------+------+-------+-------
+ mgr    | s    | table | mgr
+ mgr    | t3   | table | mgr
+(2 rows)
+
+/ of alles	,	
+
+eric=> \dt *.
+                        List of relations
+       Schema       |          Name           | Type  |  Owner   
+--------------------+-------------------------+-------+----------
+ eric               | t4                      | table | eric
+ information_schema | sql_features            | table | postgres
+ information_schema | sql_implementation_info | table | postgres
+ information_schema | sql_languages           | table | postgres
+ information_schema | sql_packages            | table | postgres
+ information_schema | sql_parts               | table | postgres
+ information_schema | sql_sizing              | table | postgres
+ information_schema | sql_sizing_profiles     | table | postgres
+ mgr                | s                       | table | mgr
+ mgr                | t3                      | table | mgr
+ pg_catalog         | pg_aggregate            | table | postgres
+ pg_catalog         | pg_am                   | table | postgres
+ pg_catalog         | pg_amop                 | table | postgres
+...
+
+
+
+
+
+
+
+
+
+
+
+
+
+/ 1313	. 
+
+foo=> \c eric mgr                          
+You are now connected to database "eric" as user "mgr".
+
+/ TODO Waarom mag dit?
+
+
+/ 13	. 
+
+/ google,
+postgresql show default privileges
+/ lees	,
+https://blog.dbi-services.com/a-wonderful-postgresql-feature-default-privileges/
+
+/ google	,
+postgresql what are the default privileges
+https://dba.stackexchange.com/questions/117109/how-to-manage-default-privileges-for-users-on-a-database-vs-schema
+
+/ lees	,
+http://www.postgresqltutorial.com/postgresql-create-table/
+/ on delete
+
+/ lees,	
+https://www.postgresql.org/docs/9.6/sql-revoke.html
+
+/ lees	,
+https://severalnines.com/database-blog/postgresql-privileges-and-security-locking-down-public-schema
+
+
+/ Einde PRIVILEGES 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/ TABLES 
+
+
+/ 13	. 
+
+/ lees	,
+https://www.techonthenet.com/postgresql/primary_keys.php
+
+/ drop primary key
+
+/ 1313	. 
+
+/ drop primary key: use drop constraint	,
+
+eric=> create table par(id int,nm text,primary key (id));
+CREATE TABLE
+eric=> \d par
+      Table "public.par"
+ Column |  Type   | Modifiers 
+--------+---------+-----------
+ id     | integer | not null
+ nm     | text    | 
+Indexes:
+    "par_pkey" PRIMARY KEY, btree (id)
+
+eric=> alter table par drop constraint par_pkey ;
+ALTER TABLE
+eric=> \d par
+      Table "public.par"
+ Column |  Type   | Modifiers 
+--------+---------+-----------
+ id     | integer | not null
+ nm     | text    | 
+
+/ 1313	. 
+
+/ je kunt een pk of fk ook een naam geven, zet er dan constraint voor	,
+
+eric=> create table par(id int,constraint foo primary key(id));
+CREATE TABLE
+eric=> \d par
+      Table "public.par"
+ Column |  Type   | Modifiers 
+--------+---------+-----------
+ id     | integer | not null
+Indexes:
+    "foo" PRIMARY KEY, btree (id)
+
+eric=> alter table par drop constraint foo;
+ALTER TABLE
+
+/ 1313	, 
+
+/ dit kan NIET	,
+/ je kunt constraint dus alleen achter de , in create table	,
+
+eric=> create table par(id constraint foo primary key,s text);
+/ ERR	,
+
+/ 13	. 
+
+/ met drop table cascade verdwijnen fk's in referencing tables	,
+
+eric=> create table par(id int primary key);
+CREATE TABLE
+eric=> create table chl(id int primary key, id2 int  references par);
+CREATE TABLE
+eric=> \d chl
+      Table "public.chl"
+ Column |  Type   | Modifiers 
+--------+---------+-----------
+ id     | integer | not null
+ id2    | integer | 
+Indexes:
+    "chl_pkey" PRIMARY KEY, btree (id)
+Foreign-key constraints:
+    "chl_id2_fkey" FOREIGN KEY (id2) REFERENCES par(id)
+
+eric=> drop table par cascade ;
+NOTICE:  drop cascades to constraint chl_id2_fkey on table chl
+DROP TABLE
+eric=> \d chl
+      Table "public.chl"
+ Column |  Type   | Modifiers 
+--------+---------+-----------
+ id     | integer | not null
+ id2    | integer | 
+Indexes:
+    "chl_pkey" PRIMARY KEY, btree (id)
+
+
+/ Einde TABLES
+
+
+
+
+
+
+
+
 
 
 
