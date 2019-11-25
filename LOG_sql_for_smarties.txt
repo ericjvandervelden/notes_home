@@ -1,0 +1,230 @@
+/ 7	. 
+
+/ (70)
+
+/ 13	. 
+
+create table source(
+pair_nbr integer not null unique,
+a integer not null,
+b integer not null,
+primary key(a,b));
+
+insert into source 
+values(1,1,1),(2,1,2),(3,2,3),(4,7,2),(5,2,4),(6,5,5),(7,5,1),(8,5,3),(9,9,0),(10,11,2);
+
+/ 13	. 
+
+with flags(i)as(
+select *
+from (values('t'),('f'))_
+)
+select i
+from flags;
+ i 
+---
+ t
+ f
+(2 rows)
+
+/ of	,
+
+with flags as(
+select *
+from (values('t'),('f'))_(i)
+)
+select i
+from flags;
+ i 
+---
+ t
+ f
+(2 rows)
+
+/ 13	. 
+
+with flags(i)as(
+select *
+from (values('t'),('f'))_
+),
+subsets(subset_nr,f01,f02,f03,f04,f05,f06,f07,f08,f09,f10)as(
+
+
+
+
+
+
+
+/ KLAD
+
+/ 13	. 
+
+eric=> values('t'),('f');
+ column1 
+---------
+ t
+ f
+(2 rows)
+
+/ 13	 .
+
+/ we kunnen column1 niet rename	, 
+/ TODO
+
+/ 13	. 
+
+eric=> select 't'a,'f'b;
+ a  | b 
+----+----
+ t  | f
+(1 row)
+
+/ net zo iets	,
+eric=> select (values('t'),('f'))_;
+ERROR:  more than one row returned by a subquery used as an expression
+
+/ 13	. 
+
+eric=> select * from (values('t'),('f'))_(i);
+ i 
+---
+ t
+ f
+(2 rows)
+
+/ maar	,
+
+eric=> (values('t'),('f'))_(i);
+ERROR:  syntax error at or near "_"
+
+eric=> select from (values('t'),('f'))_(i);
+--
+(2 rows)
+
+
+/ 7	. 
+
+/ google	,
+postgres sub query brackets
+/ lees	,
+https://stackoverflow.com/questions/46538515/postgres-wraps-subquery-results-in-parentheses
+
+eric=> select e from (values(7),(13))e;
+  e   
+------
+ (7)
+ (13)
+(2 rows)
+/ je select rijen	,
+
+/ 7	. 
+
+/ google	,
+ERROR:  more than one row returned by a subquery used as an expression
+/ lees	,
+https://stackoverflow.com/questions/21048955/postgres-error-more-than-one-row-returned-by-a-subquery-used-as-an-expression
+
+UPDATE customer
+SET customer_id=(
+	SELECT t1 
+	FROM dblink('port=5432, dbname=SERVER1 user=postgres password=309245',
+   'SELECT store_key FROM store') AS (t1 integer));
+
+/ we kunnen zoiets niet	,
+select i from (values('t'),('f'))(i int);
+/ ERR	,
+
+This error means that the SELECT store_key FROM store query has returned two or more rows in the SERVER1 database. If you would like to update all customers, use a join instead of a scalar = operator. You need a condition to "connect" customers to store items in order to do that.
+
+If you wish to update all customer_ids to the same store_key, you need to supply a WHERE clause to the remotely executed SELECT so that the query returns a single row.
+
+/ 7	. 
+
+select * 
+from (values(7),(13))s(i)
+natural join (values(7),(6))t(i) 
+;
+ i 
+---
+ 7
+(1 row)
+
+select * 
+from (values(7),(13))s(i)
+cross join (values(7),(6))t(i) 
+;
+ i  | i 
+----+---
+  7 | 7
+  7 | 6
+ 13 | 7
+ 13 | 6
+(4 rows)
+
+select * 
+from (values(7),(13))s(i)
+order by i
+cross join (values(7),(6))t(i) 
+;
+
+/ 7	. 
+
+/ order a join	,
+
+eric=> select * 
+from (values(7),(13))s(i)
+cross join (values(7),(6))t(j)
+order by i; 
+ i  | j 
+----+---
+  7 | 7
+  7 | 6
+ 13 | 7
+ 13 | 6
+(4 rows)
+
+
+select * 
+from (values(7),(13))s(i)
+cross join (values(7),(6))t(j) 
+order by j 
+;
+ i  | j 
+----+---
+  7 | 6
+ 13 | 6
+  7 | 7
+ 13 | 7
+(4 rows)
+
+eric=> select * 
+eric-> from (values(7),(13))s(i)
+eric-> cross join (values(7),(6))t(j)
+eric-> order by i,j
+eric-> ;
+ i  | j 
+----+---
+  7 | 6
+  7 | 7
+ 13 | 6
+ 13 | 7
+(4 rows)
+
+select * 
+from (values(7),(13))s(i)
+cross join (values(7),(6))t(j) 
+order by j 
+;
+
+select *
+from (values(7),(13))s(i)
+--order by i 
+union all
+select *
+from (values(6),(12))t(j)
+order by j;
+
+ERROR:  column "j" does not exist
+LINE 7: order by j;
+HINT:  There is a column named "j" in table "*SELECT* 2", but it cannot be referenced from this part of the query.
+

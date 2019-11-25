@@ -2,6 +2,7 @@
 / See TABLES
 / See SCHEMAS
 / See PRIVILEGES 
+/ See MAX
 
 
 
@@ -975,6 +976,13 @@ eric=> show search_path;
 
 / PRIVILEGES
 
+/ 7	 .
+
+/ Wat kun je maken in een database? schema's, ...
+/ Wat kun je maken in een schema? tables, ... 
+/ Wat betekent C in \l? Dat een user schema's kan maken in een database	,
+/ Wat betekent C in \dn? Dat een user tables, views kan maken in een schema	,
+
 / 7	. 
 
 / lees over privileges	,
@@ -1395,6 +1403,35 @@ eric=>  \dn+
 eric=> create table eric.t6(i int);
 ERROR:  permission denied for schema eric
 
+/	13	. 
+
+/ wat doet U ?
+
+/ als in schema eric: mgr=C/eric	, dan kan mgr wel een table create, maar geen insert doen 	,
+
+eric=> grant create on schema eric to mgr;
+GRANT
+eric=> \c - mgr
+You are now connected to database "eric" as user "mgr".
+eric=> \dn+
+                          List of schemas
+  Name  |  Owner   |  Access privileges   |      Description       
+--------+----------+----------------------+------------------------
+ eric   | eric     | eric=UC/eric        +| 
+        |          | mgr=C/eric           | 
+
+eric=> create table eric.t(i int);
+CREATE TABLE
+
+eric=> insert into eric.t values(7,13);
+ERROR:  permission denied for schema eric
+LINE 1: insert into eric.t values(7,13);
+
+
+
+/ TODO 
+/ ordenen	,
+
 
 
 / 13	. 
@@ -1600,7 +1637,6 @@ https://severalnines.com/database-blog/postgresql-privileges-and-security-lockin
 
 
 
-
 / TABLES 
 
 
@@ -1694,9 +1730,428 @@ Indexes:
 
 / Einde TABLES
 
+/ 7	 .
+
+/ MAX
+
+/ 13	.
+
+eric=> create table tbl(s char(3),d date,n int);
+CREATE TABLE
+eric=> insert into tbl values('foo','2018-11-25',91);
+INSERT 0 1
+eric=> insert into tbl values('foo','2018-11-25',89);
+INSERT 0 1
+eric=> insert into tbl values('foo','2018-11-26',75);
+INSERT 0 1
+eric=> insert into tbl values('foo','2018-11-27',13);
+INSERT 0 1
+eric=> insert into tbl values('foo','2018-11-27',7);
+INSERT 0 1
+eric=> insert into tbl values('bar','2018-11-25',91);
+INSERT 0 1
+eric=> insert into tbl values('bar','2018-11-26',23);
+INSERT 0 1
+eric=> insert into tbl values('bar','2018-11-26',25);
+INSERT 0 1
+eric=> select*from tbl;
+  s  |     d      | n  
+-----+------------+----
+ foo | 2018-11-25 | 91
+ foo | 2018-11-25 | 89
+ foo | 2018-11-26 | 75
+ foo | 2018-11-27 | 13
+ foo | 2018-11-27 |  7
+ bar | 2018-11-25 | 91
+ bar | 2018-11-26 | 23
+ bar | 2018-11-26 | 25
+(8 rows)
+
+/ 1313	. 
+
+/ toon hele rij in tbl waar n max is per s	,
+
+/ bepaal s,n per s met n max	, interm	,
+/ interm is dus s,n waar n is max(n) per s	, 
+/ maar we willlen 
+/ join deze rijen met de orig tbl, en print alleen tbl	, 
+
+with interm as(
+select s,max(n)n
+from tbl
+group by s
+)
+select t.*
+from tbl t
+join interm i on t.s=i.s and t.n=i.n 
+;
+  s  |     d      | n  
+-----+------------+----
+ foo | 2018-11-25 | 91
+ bar | 2018-11-25 | 91
+(2 rows)
+
+
+/ bepaal per s de max d, en daarvan die met de max n	,
+
+with cte as(
+select s,max(d)d
+from tbl
+group by s 
+),
+cte2 as(
+select*
+from tbl
+natural join cte
+)
+select s,d,max(n)
+from cte2
+group by s,d
+;
+  s  |     d      | max 
+-----+------------+-----
+ bar | 2018-11-26 |  25
+ foo | 2018-11-27 |  13
+(2 rows)
+
+/ je kunt ook doen	,
+
+select s,max(d)d
+into interm
+from tbl
+group by s;
+
+select * 
+into interm2
+from tbl
+natural join interm
+-- of	,
+select tbl.* 
+into interm2
+from tbl
+join interm on tbl.s=interm.s and tbl.d=interm.d
+;
+-- of	,
+select tbl.* 
+into interm2
+from tbl
+join interm using(s,d)
+; 
+
+eric=> select s,d,max(n)m
+eric-> from interm2
+eric-> group by s,d;
+  s  |     d      | m  
+-----+------------+----
+ foo | 2018-11-27 | 13
+ bar | 2018-11-26 | 25
+(2 rows)
 
 
 
+
+
+/ Einde MAX
+
+/ PROCEDURES
+
+/ 13	 .
+
+/ lees	,
+https://severalnines.com/database-blog/overview-new-stored-procedures-postgresql-11
+
+Over the years many people were anxious to have the functionality and it was finally added in PostgreSQL 11. Traditionally, PostgreSQL has provided all the means to write functions (which were called as stored procedures) however, in a function you cannot run transactions. All you can really use is exceptions, which are basically savepoints. Inside a function body you cannot just commit a transaction or open a new one. The new CREATE PROCEDURE will change all that and provide a functionality to run transactions inside procedural code.
+
+Transaction control allowing us to COMMIT and ROLLBACK inside procedures.
+
+/ 13	. 
+
+https://www.postgresql.org/docs/9.6/plpgsql-structure.html
+
+create or replace function somefunc()returns int as $$
+<< outerblock >>
+declare qty int:=30;
+begin
+	raise notice 'qty is here %',qty;
+	qty=50;
+	declare qty int:=80;
+	begin
+		raise notice 'qty is here %',qty;
+		raise notice 'outer qty is here %',outerblock.qty;
+	end;
+	raise notice 'qty is here %',qty;
+	return qty;
+end;
+$$ language plpgsql;
+
+/ tussen declare en begin kan geen code staan	,
+
+/ 13	. 
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/sql-syntax-calling-funcs.html
+
+eric=> select somefunc();
+NOTICE:  qty is here 30
+NOTICE:  qty is here 80
+NOTICE:  outer qty is here 50
+NOTICE:  qty is here 50
+ somefunc 
+----------
+       50
+(1 row)
+
+	
+
+/ 13	. 
+
+/ lees	,
+https://www.postgresql.org/docs/9.6/plpgsql-structure.html
+
+
+
+
+/ Einde PROCEDURES
+
+/ MISC
+
+/ 7	. 
+
+/ hoe rename column bij select into?
+
+eric=> create table foo( i int);
+CREATE TABLE
+eric=> insert into foo values(7),(13);
+INSERT 0 2
+
+eric=> select i j
+eric-> into bar
+eric-> from foo;
+SELECT 2
+eric=> select*from bar;
+ j  
+----
+  7
+ 13
+(2 rows)
+
+/ 7	. 
+
+/ select over	,
+
+/ 13  .
+
+/ lees
+https://www.postgresql.org/docs/9.6/tutorial-window.html
+
+eric=> create table sal(dep text,sal int);
+CREATE TABLE
+eric=> alter table sal add no int;
+ALTER TABLE
+eric=> insert into sal values('foo',7,1),('foo',13,2),('bar',47,3),('bar',53,4);
+INSERT 0 4
+
+eric=>  select dep,sal,no,avg(sal)over(partition by dep)from sal;
+-- of	,
+eric=>  select *,avg(sal)over(partition by dep)from sal;
+ dep | sal | no |         avg
+-----+-----+----+---------------------
+ bar |  47 |  3 | 50.0000000000000000
+ bar |  53 |  4 | 50.0000000000000000
+ foo |   7 |  1 | 10.0000000000000000
+ foo |  13 |  2 | 10.0000000000000000
+(4 rows)
+/ 2 partities	,
+
+eric=> select dep,sal,no,avg(sal)over(partition by dep,sal)from sal;
+ dep | sal | no |         avg         
+-----+-----+----+---------------------
+ bar |  47 |  3 | 47.0000000000000000
+ bar |  53 |  4 | 53.0000000000000000
+ foo |   7 |  1 |  7.0000000000000000
+ foo |  47 |  2 | 47.0000000000000000
+(4 rows)
+/ 4 partities	,
+
+/ 1313	. 
+
+eric=> select*from s;
+ i | j  
+---+----
+ 1 | 11
+ 1 | 12
+ 3 | 13
+ 3 | 14
+(4 rows)
+
+eric=> select i,j,row_number()over()
+from s;
+ i | j  | row_number 
+---+----+------------
+ 1 | 11 |          1
+ 1 | 12 |          2
+ 3 | 13 |          3
+ 3 | 14 |          4
+(4 rows)
+
+eric=> select i,j,row_number()over(partition by i)
+from s;
+ i | j  | row_number 
+---+----+------------
+ 1 | 11 |          1
+ 1 | 12 |          2
+ 3 | 13 |          1
+ 3 | 14 |          2
+(4 rows)
+
+/ 1313. 
+
+/ we kunnen de column name ook in de cte geven,
+
+select *
+from (values('t'),('f'))t(i);
+ i 
+---
+ t
+ f
+(2 rows)
+
+with flags as(
+select *
+from (values('t'),('f'))t(i)		-- geen ;
+)
+select*from flags;
+ i 
+---
+ t
+ f
+(2 rows)
+
+/ of	,
+
+with flags(i) as(
+select *
+from (values('t'),('f'))t		-- geen ;
+)
+select*from flags;
+ i 
+---
+ t
+ f
+(2 rows)
+
+/ 1313	. 
+
+with flags(i)as(
+select*
+from (values('t'),('f'))t
+),
+subsets(nr,f01,f02)as(
+select row_number()over()nr,f01.i,f02.i
+from flags f01
+cross join flags f02
+)
+select *
+from subsets
+;
+ nr | f01 | f02 
+----+-----+-----
+  1 | t   | t
+  2 | t   | f
+  3 | f   | t
+  4 | f   | f
+(4 rows)
+
+
+
+/ 13	 .
+
+/ vergl	,
+
+eric=> select dep,avg(sal)
+eric-> from sal
+eric-> group by dep;
+ dep |         avg         
+-----+---------------------
+ foo | 10.0000000000000000
+ bar | 50.0000000000000000
+(2 rows)
+
+eric=> select dep,avg(sal)over(partition by dep)
+eric-> from sal;
+ dep |         avg         
+-----+---------------------
+ bar | 50.0000000000000000
+ bar | 50.0000000000000000
+ foo | 10.0000000000000000
+ foo | 10.0000000000000000
+(4 rows)
+
+/ 13	. 
+
+/ zonder partition by	, dan 1 partition	,
+
+eric=> select dep,no,sal,rank()over() from sal;
+ dep | no | sal | rank 
+-----+----+-----+------
+ foo |  1 |   7 |    1
+ foo |  2 |  13 |    1
+ bar |  3 |  47 |    1
+ bar |  4 |  53 |    1
+(4 rows)
+/ 1 partition	,
+/ je zegt niet waarover hij moet rank	,
+/ er is 1 window frame, die de hele table is	,
+
+eric=> select dep,no,sal,rank()over(order by sal desc) from sal;
+ dep | no | sal | rank 
+-----+----+-----+------
+ bar |  4 |  53 |    1
+ bar |  3 |  47 |    2
+ foo |  2 |  13 |    3
+ foo |  1 |   7 |    4
+(4 rows)
+/ 1 partition	,
+/ iedere rij of rijen bij verschilende sal zijn window frames,	
+
+eric=> update sal set sal =47 where sal =13;
+eric=> select*from sal;                     
+ dep | sal | no 
+-----+-----+----
+ foo |   7 |  1
+ bar |  47 |  3
+ bar |  53 |  4
+ foo |  47 |  2
+(4 rows)
+eric=> select dep,no,sal,rank()over(order by sal desc) from sal;
+ dep | no | sal | rank 
+-----+----+-----+------
+ bar |  4 |  53 |    1
+ bar |  3 |  47 |    2
+ foo |  2 |  47 |    2
+ foo |  1 |   7 |    4
+(4 rows)
+/ er zijn 3 frames	, de 1ste rij, de 2de en 3de rij, en de 4de rij	, 
+
+/ 7	 
+
+/ als een column type int	, en je insert een string, dan aut conversie	,
+
+eric=> create table ints(i int);
+CREATE TABLE
+eric=> insert into ints values('13')
+eric-> ;
+INSERT 0 1
+
+eric=> select pg_typeof(i) from ints;
+ pg_typeof 
+-----------
+ integer
+(1 row)
+
+
+
+/ Einde MISC
 
 
 
