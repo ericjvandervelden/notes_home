@@ -1,5 +1,138 @@
 / 7	. 
 
+/ (69)
+
+/ we hadden eerder	,
+create table source(
+nr integer not null unique,
+a integer not null,
+b integer not null,
+primary key(a,b));
+
+/ we willen column nr rm	,
+eric=> alter table source drop nr;      
+ALTER TABLE
+
+-- deze hebben we gedaan	,
+insert into source
+values(1,1),(1,2), -- a=1
+(2,3),(2,4),			-- a=2
+(5,5),(5,1),(5,3),
+(7,2),
+(9,0),
+(11,2);
+-- deze hebben we niet gedaan	,
+insert into source
+values(9,0), 	-- b=0
+(1,1),(5,1),	-- b=1
+(1,2),(7,2),(11,2),
+(2,3),(5,3),
+(2,4),
+(5,5);
+
+/ 131313	. 
+
+/ a asc, b desc
+/ dit geeft 4 rijen met unique a,b	,
+
+with x(a,b,nr)
+as(
+select a,b,row_number()over(order by a asc,b desc)
+from source
+)
+select * from x;
+ a  | b | nr 
+----+---+----
+  1 | 2 |  1
+  1 | 1 |  2
+  2 | 4 |  3
+  2 | 3 |  4
+  5 | 5 |  5
+  5 | 3 |  6
+  5 | 1 |  7
+  7 | 2 |  8
+  9 | 0 |  9
+ 11 | 2 | 10
+(10 rows)
+-- geen partition, dus de row numbers gaan over de hele table	,
+
+
+with x(a,b,nr)
+as(
+select a,b,row_number()over(order by a asc,b desc)
+from source
+)
+select a,b,nr
+from x p1
+where not exists(
+select *
+from x p2
+where p2.nr<p1.nr
+and(p1.a=p2.a or p1.b=p2.b)
+);
+-- er is geen vorige rij dan de huidige rij die a of b gelijk heeft	,
+ a | b | nr 
+---+---+----
+ 1 | 2 |  1
+ 2 | 4 |  3
+ 5 | 5 |  5
+ 9 | 0 |  9
+(4 rows)
+-- a en b zijn beide unique	,
+
+/ 131313	. 
+
+/ a asc,b asc
+/ nu hebben we maar 3 rijen met unique a,b
+
+with x(a,b,nr)
+as(
+select a,b,row_number()over(order by a asc,b asc)
+from source
+)
+select * from x;
+ a  | b | nr 
+----+---+----
+  1 | 1 |  1
+  1 | 2 |  2
+  2 | 3 |  3
+  2 | 4 |  4
+  5 | 1 |  5
+  5 | 3 |  6
+  5 | 5 |  7
+  7 | 2 |  8
+  9 | 0 |  9
+ 11 | 2 | 10
+(10 rows)
+
+with x(a,b,nr)
+as(
+select a,b,row_number()over(order by a asc,b asc)
+from source
+)
+select a,b,nr
+from x p1
+where not exists(
+select *
+from x p2
+where p2.nr<p1.nr
+and(p1.a=p2.a or p1.b=p2.b)
+);
+-- er is geen vorige rij dan de huidige rij die a of b gelijk heeft	,
+ a | b | nr 
+---+---+----
+ 1 | 1 |  1
+ 2 | 3 |  3
+ 9 | 0 |  9
+(3 rows)
+-- a en b zijn beide unique	,
+/ 5,5 zit er ten onrechte niet bij	,
+/ de query kijkt naar de bovenliggende rijen uit de table x, maar niet naar de gekozen entries, en dat zou moeten	,
+
+
+
+/ 7	. 
+
 / (70)
 
 / 13	. 
@@ -44,10 +177,41 @@ from flags;
 / 13	. 
 
 with flags(i)as(
-select *
-from (values('t'),('f'))_
+select*
+from (values('t'),('f'))t
 ),
-subsets(subset_nr,f01,f02,f03,f04,f05,f06,f07,f08,f09,f10)as(
+subsets(nr,f01,f02,f03,f04,f05,f06,f07,f08,f09,f10)as( -- name columns  ,
+select row_number()over()nr,f01.i,f02.i,f03.i,f04.i,f05.i,f06.i,f07.i,f08.i,f09.i,f10.i
+from flags f01
+cross join flags f02
+cross join flags f03
+cross join flags f04
+cross join flags f05
+cross join flags f06
+cross join flags f07
+cross join flags f08
+cross join flags f09
+cross join flags f10
+)
+select *
+from subsets
+;
+  nr  | f01 | f02 | f03 | f04 | f05 | f06 | f07 | f08 | f09 | f10
+------+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----
+    1 | t   | t   | t   | t   | t   | t   | t   | t   | t   | t
+    2 | t   | t   | t   | t   | t   | t   | t   | t   | t   | f
+    3 | t   | t   | t   | t   | t   | t   | t   | t   | f   | t
+    4 | t   | t   | t   | t   | t   | t   | t   | t   | f   | f
+    5 | t   | f   | t   | t   | t   | t   | t   | t   | t   | t
+    6 | t   | f   | t   | t   | t   | t   | t   | t   | t   | f
+...
+-- hij kiest de volgorde vreemd ,
+ 1021 | f   | f   | f   | f   | f   | f   | f   | f   | t   | t
+ 1022 | f   | f   | f   | f   | f   | f   | f   | f   | t   | f
+ 1023 | f   | f   | f   | f   | f   | f   | f   | f   | f   | t
+ 1024 | f   | f   | f   | f   | f   | f   | f   | f   | f   | f
+(1024 rows)
+
 
 
 

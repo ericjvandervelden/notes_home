@@ -2062,6 +2062,76 @@ from subsets
   4 | f   | f
 (4 rows)
 
+/ 1313	. 
+
+with flags(i)as(
+select*
+from (values('t'),('f'))t
+),
+subsets(nr,f01,f02,f03,f04,f05,f06,f07,f08,f09,f10)as( -- name columns	,
+select row_number()over()nr,f01.i,f02.i,f03.i,f04.i,f05.i,f06.i,f07.i,f08.i,f09.i,f10.i
+from flags f01
+cross join flags f02
+cross join flags f03
+cross join flags f04
+cross join flags f05
+cross join flags f06
+cross join flags f07
+cross join flags f08
+cross join flags f09
+cross join flags f10
+)
+select *
+from subsets
+;
+  nr  | f01 | f02 | f03 | f04 | f05 | f06 | f07 | f08 | f09 | f10 
+------+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----
+    1 | t   | t   | t   | t   | t   | t   | t   | t   | t   | t
+    2 | t   | t   | t   | t   | t   | t   | t   | t   | t   | f
+    3 | t   | t   | t   | t   | t   | t   | t   | t   | f   | t
+    4 | t   | t   | t   | t   | t   | t   | t   | t   | f   | f
+    5 | t   | f   | t   | t   | t   | t   | t   | t   | t   | t
+    6 | t   | f   | t   | t   | t   | t   | t   | t   | t   | f
+...
+-- hij kiest de volgorde vreemd	,
+ 1021 | f   | f   | f   | f   | f   | f   | f   | f   | t   | t
+ 1022 | f   | f   | f   | f   | f   | f   | f   | f   | t   | f
+ 1023 | f   | f   | f   | f   | f   | f   | f   | f   | f   | t
+ 1024 | f   | f   | f   | f   | f   | f   | f   | f   | f   | f
+(1024 rows)
+
+/ 1313	. 
+
+/ herhaal	,
+eric=> alter table source rename pair_nbr to nr;
+
+with flags(i)as(
+select*
+from (values('t'),('f'))t
+),
+subsets(nr,f01,f02,f03,f04,f05,f06,f07,f08,f09,f10)as( -- name columns	,
+select row_number()over()nr,f01.i,f02.i,f03.i,f04.i,f05.i,f06.i,f07.i,f08.i,f09.i,f10.i
+from flags f01
+cross join flags f02
+cross join flags f03
+cross join flags f04
+cross join flags f05
+cross join flags f06
+cross join flags f07
+cross join flags f08
+cross join flags f09
+cross join flags f10
+),
+candidates(nr,a,b)
+as(
+select nr,s.a,s.b
+from subsets p,source s
+where s.
+select *
+from subsets
+;
+
+
 
 
 / 13	 .
