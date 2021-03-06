@@ -1,0 +1,1874 @@
+/ See VANDERPLAS
+/ See GERON
+/ See MY ML
+/ See MY PYTHON
+/ See LOGISTICREGRESSION=OWN ALGORITHM
+
+/ VANDERPLAS
+
+/ (79)
+
+In [1]: import numpy as np
+
+In [56]: np.random.RandomState?
+...
+In [50]: rand=np.random.RandomState(42)
+
+n [55]: rand.randint(10,size=10)
+Out[55]: array([0, 9, 2, 6, 3, 8, 2, 4, 2, 6])
+/ dus van 0 t/m 9	,
+
+/ we kunnen net zo goed np.random use ipv np.random.RandomState(42)	,
+
+/i, 
+
+/ er zijn 2 vragen	, 
+
+/ wat is np.random.RandomState() ivm np.random	?
+/ wat is verschil np.random.rand en np.random.random	?
+
+/ np.random.RandomState kan meer, 	maar wij kunen np.random use	,
+/ np.random.random is arg een tuple	,
+
+/ lees,
+https://stackoverflow.com/questions/47231852/np-random-rand-vs-np-random-random
+
+First note that numpy.random.random is actually an alias for numpy.random.random_sample. I'll use the latter in the following. (See this question and answer for more aliases.)
+
+Both functions generate samples from the uniform distribution on [0, 1). The only difference is in how the arguments are handled. With numpy.random.rand, the length of each dimension of the output array is a separate argument. With numpy.random.random_sample, the shape argument is a single tuple.
+
+For example, to create an array of samples with shape (3, 5), you can write
+sample = np.random.rand(3, 5)
+or
+sample = np.random.random_sample((3, 5))
+
+The Python stdlib module "random" also contains a Mersenne Twister
+pseudo-random number generator with a number of methods that are similar
+to the ones available in `RandomState`. `RandomState`, besides being
+NumPy-aware, has the advantage that it provides a much larger number
+of probability distributions to choose from.
+
+/ Dus je kunt use	, 
+rand=np.random.RandomState(42)
+/ of,
+rand2=np.random
+
+In [70]: rand.rand(5)
+Out[70]: array([0.31171108, 0.52006802, 0.54671028, 0.18485446, 0.96958463])
+In [71]: rand2.rand(5)
+Out[71]: array([0.37216378, 0.57503978, 0.89170664, 0.78540636, 0.41280859])
+
+/ maar,
+In [72]: rand.random(10)
+AttributeError: 'mtrand.RandomState' object has no attribute 'random'
+
+In [73]: rand2.random(10)
+Out[73]: 
+array([0.43016259, 0.50016717, 0.19611866, 0.15956935, 0.55851395,
+       0.9850149 , 0.38095386, 0.77806371, 0.55303435, 0.74382784])
+
+/ je zou altijd np.random (=rand2) kunnen gebruiken	, 
+
+/ Wat is het verschil,
+In [75]: rand2.random(10)
+Out[75]: 
+array([0.84989639, 0.30169224, 0.45256591, 0.60041092, 0.00564067,
+       0.12172757, 0.25734236, 0.76184963, 0.80985867, 0.99555487])
+In [76]: rand2.rand(10)
+Out[76]: 
+array([0.95845232, 0.20018847, 0.18249688, 0.98379025, 0.50036593,
+       0.64649962, 0.89065535, 0.77494879, 0.22977625, 0.05152478])
+
+/ hierboven staat dat eig	,
+In [77]: rand2.random((10))
+Out[77]: 
+array([0.25805734, 0.08009396, 0.16077197, 0.73844499, 0.93320537,
+       0.39854573, 0.4232493 , 0.09888422, 0.3778649 , 0.89745537])
+/ TODO
+
+/ Einde i	,
+
+/ 79	.
+
+/ we use np.random ipv. np.random.RandState(42)	,
+
+In [82]: x=np.random.randint(100,size=10)
+
+In [83]: x
+Out[83]: array([ 7,  9, 22, 41, 34, 42, 40, 64, 14, 27])
+
+/ 81	,
+
+In [96]: %matplotlib
+Using matplotlib backend: Qt5Agg
+In [97]: import matplotlib.pyplot as plt
+In [98]: import seaborn
+In [99]: seaborn.set()
+
+/i, 
+In [104]: type(X)
+Out[104]: numpy.ndarray
+In [105]: X.shape
+Out[105]: (100, 2)
+
+In [102]: type(X[:,0])
+Out[102]: numpy.ndarray
+In [103]: X[:,0].shape
+Out[103]: (100,)
+
+/ Einde i	,
+
+In [106]: plt.scatter(X[:,0],X[:,1])
+
+/ je kunt nog een paar keer	, je ziet ze met andere kleuren	,
+
+In [107]: X=np.random.multivariate_normal(m,conv,100)
+In [108]: plt.scatter(X[:,0],X[:,1])
+
+In [109]: X=np.random.multivariate_normal(m,conv,100)
+Out[110]: <matplotlib.collections.PathCollection at 0x7f9a23ac6198>
+
+/ waarom geldt ongeveer dat X[:,1]=2*X[:0] ?
+/ TODO 
+
+/i, 
+
+/ de conv matrix moet pos (semi) def	,
+/ is als = transpose(A)*A
+
+In [126]: A=np.array([1,2,0,1]).reshape(2,2)
+
+In [127]: A
+Out[127]: 
+array([[1, 2],
+       [0, 1]])
+
+In [128]: np.dot(A.transpose(),A)
+Out[128]: 
+array([[1, 2],
+       [2, 5]])
+
+In [129]: A=np.array([1,4,0,1]).reshape(2,2)
+
+In [130]: np.dot(A.transpose(),A)
+Out[130]: 
+array([[ 1,  4],
+       [ 4, 17]])
+
+/ Einde i	,
+
+In [132]: A=np.array([1,2,0,1]).reshape(2,2)
+In [134]: conv=np.dot(A.transpose(),A)
+In [138]: m=[0,0]							# is geen np.array	, maar een list	,
+In [136]: X=np.random.multivariate_normal(m,conv,100)
+
+/ Einde VANDERPLAS
+
+/ GERON
+
+/ 7	. 
+
+/ hier zijn alle playbooks	,
+[eric@almond handson-ml]$ pwd
+/home/eric/Devel/python/geron/handson-ml
+
+/ geef daarom hier,
+[eric@almond handson-ml]$ jupyter notebook
+
+/ ga in de browser,
+http://localhost:8888/tree
+/ kies notebook, we zien in tab ernaast	,
+http://localhost:8888/notebooks/04_training_linear_models.ipynb
+
+
+/ we zien de tekst over log regr,
+
+/ Einde GERON
+
+/ MY ML
+
+/ 7	 .
+
+/ lees	,
+[eric@almond my]$ less log_reg_1_class_1_feature_newton.py
+
+[eric@almond my]$ pwd
+/home/eric/Devel/python/my
+
+[eric@almond my]$ ipython
+
+In [1]: import numpy as np
+In [2]: from sklearn import datasets
+In [7]: iris=datasets.load_iris()
+In [6]: iris.keys()
+Out[6]: dict_keys(['data', 'target', 'target_names', 'DESCR', 'feature_names'])
+
+In [34]: iris.data.shape
+Out[34]: (150, 4)
+In [35]: iris.target.shape
+Out[35]: (150,)
+
+In [46]: iris.feature_names
+Out[46]: 
+['sepal length (cm)',
+ 'sepal width (cm)',
+ 'petal length (cm)',
+ 'petal width (cm)']
+In [47]: iris.target_names
+Out[47]: array(['setosa', 'versicolor', 'virginica'], dtype='<U10')
+
+
+/ de 1ste 2 rijen,
+In [41]:  iris.data[:2]
+Out[41]: 
+array([[5.1, 3.5, 1.4, 0.2],
+       [4.9, 3. , 1.4, 0.2]])
+
+In [42]: iris.target[:2]
+Out[42]: array([0, 0])
+
+/ dus de 1ste 2 records zijn van type 0=setosa	,
+
+/ alleen de laaste kolom	, dus  petal_width	,
+In [51]: iris.data[:,[3]]
+Out[51]: 
+array([[0.2],
+       [0.2],
+       [0.2],
+...
+/ toon de eerste 2, 
+In [57]: iris.data[:,[3]][:2]
+Out[57]: 
+array([[0.2],
+       [0.2]])
+/ toon de laatste 2,
+In [56]: iris.data[:,[3]][-2:]
+Out[56]: 
+array([[2.3],
+       [1.8]])
+
+
+
+
+
+/ 13	. 
+
+/ lees,
+[eric@almond my]$ pwd
+/home/eric/Devel/python/my
+
+[eric@almond my]$ cp log_reg_1_class_1_feature_newton.py log_reg_1_class_1_feature_newton_iris_202102.py 
+
+$ vi log_reg_1_class_1_feature_newton_iris_202102.py
+
+In [1]: import numpy as np
+In [2]: from sklearn import datasets
+
+
+In [368]: iris=datasets.load_iris()   
+
+n [367]: iris.data
+Out[367]: 
+array([[5.1, 3.5, 1.4, 0.2],
+       [4.9, 3. , 1.4, 0.2],
+...
+n [368]: iris.target
+Out[368]: 
+array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2])
+
+
+/ phi is 2de kolom Phi	,
+In [228]: phi=iris.data[:,3]                      
+In [228]: phi.shape
+Out[228]: (150,)
+In [229]: Phi=np.c_[np.ones(len(phi),dtype='int'),phi]
+In [230]: Phi.shape
+Out[230]: (150, 2)
+In [235]: w=np.zeros(2)
+In [237]: w.shape
+Out[237]: (2,)
+In [239]: t=(iris['target']==2).astype(int)
+In [241]: t.shape
+Out[241]: (150,)
+In [242]: from scipy.special import expit
+In [243]: p1=expit(Phi.dot(w))
+In [244]: p1.shape
+Out[244]: (150,)
+In [255]: grad=Phi.T @ (p1-t)
+In [256]: grad.shape
+Out[256]: (2,)
+In [247]: R=np.diag(p1*(1-p1))
+In [248]: R.shape
+Out[248]: (150, 150)
+In [257]: H=Phi.T @ R @ Phi
+In [259]: H.shape
+Out[259]: (2, 2)
+In [260]: w=w-np.linalg.inv(H) @ grad
+/ of	,
+In [260]: w=w-la.lu_solve(la.lu_factor(H),grad)
+
+/ 13	. 
+
+/ FINAL 	,
+
+/ class 2 ogv feature 3	,
+
+[eric@almond my]$ cat  log_reg_1_class_1_feature_newton_iris_202102.py
+
+import numpy as np
+from sklearn import datasets
+import scipy as sp
+import scipy.linalg as la
+
+iris=datasets.load_iris()
+
+phi=iris['data'][:,3]    # (150,)
+Phi=np.c_[np.ones(len(phi),dtype='int'),phi] # (150,2)
+w=np.zeros(2) # (2,)
+t=(iris['target']==2).astype(int) # (150,)
+p1=sp.special.expit(Phi@w)     # p1|phi # (150,)
+grad=Phi.T @ (p1-t) # (2,)
+
+for i in range(0,10):
+    p1=sp.special.expit(Phi@w)     # p1|phi  (150,)
+    grad=Phi.T @ (p1-t) # (2,)
+    R=np.diag(p1*(1-p1))    # (150,150)
+    H=Phi.T @ R @ Phi
+    w=w-la.lu_solve(la.lu_factor(H),grad)
+    display(w)
+
+import matplotlib.pyplot as plt
+import seaborn
+seaborn.set()
+
+plt.figure()
+plt.plot(phi[t==0],t[t==0],'gs')
+plt.plot(phi[t==1],t[t==1],'b^')
+
+grid=np.linspace(min(phi),max(phi),101)
+Phi_grid=np.c_[np.ones(101,dtype='int'),grid]
+t_grid=sp.special.expit(Phi_grid @ w)
+plt.plot(grid,t_grid)
+
+plt.show()
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_iris_202102.py 
+array([-2.95221619,  1.9067432 ])
+array([-5.41595373,  3.37328912])
+array([-9.04645818,  5.53966354])
+array([-13.70212828,   8.36784257])
+array([-18.04411003,  11.03842708])
+array([-20.54124041,  12.58379068])
+array([-21.10321628,  12.9334759 ])
+array([-21.12560604,  12.94748582])
+array([-21.12563996,  12.94750716])
+array([-21.12563996,  12.94750716])
+
+/ 13	. 
+
+/ LOGISTICREGRESSION=OWN ALGORITHM
+
+/ class 2	, feature 3
+[eric@almond my]$ ipython  log_reg_1_class_1_feature_iris_geron_202102.py 2 3
+array([-21.12560598])
+array([[12.94748578]])
+
+[eric@almond my]$ cat log_reg_1_class_1_feature_iris_geron_202102.py
+
+import sys
+import numpy as np
+from sklearn import datasets
+from sklearn.linear_model import LogisticRegression
+
+iris=datasets.load_iris()
+
+phi=iris.data[:,[int(sys.argv[2])]]							# (150,1)
+t = (iris.target==int(sys.argv[1])).astype(int)	 # (150,)
+lg=LogisticRegression(solver="liblinear",C=10**10) 
+lg.fit(phi,t)
+
+display(lg.intercept_)
+display(lg.coef_)
+
+/ of interactive	,
+
+from sklearn import datasets 
+In [523]: from sklearn.linear_model import LogisticRegression                                
+
+iris=datasets.load_iris()
+In [523]: X=iris.data[:,[3]]   						# (150,1)                                                               
+In [523]: y=(iris.target==2).astype(int)  # (150,)                                          
+
+
+In [520]: lg=LogisticRegression(solver='liblinear',C=10**10)
+In [521]: lg.fit(X,y)
+Out[521]: 
+LogisticRegression(C=10000000000, class_weight=None, dual=False,
+          fit_intercept=True, intercept_scaling=1, max_iter=100,
+          multi_class='ovr', n_jobs=1, penalty='l2', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, warm_start=False)
+
+In [522]: lg.intercept_,lg.coef_
+Out[522]: (array([-21.12560598]), array([[12.94748578]]))
+
+[eric@almond my]$ pwd
+/home/eric/Devel/python/my
+[eric@almond my]$ ls -ltr
+...
+-rw-rw-r--. 1 eric eric  952 Feb 20 20:19 log_reg_1_class_1_feature_newton_iris_202102.py
+-rw-rw-r--. 1 eric eric  730 Feb 21 19:30 log_reg_1_class_1_feature_newton_eigen_voorbeelden_202102.py
+-rw-rw-r--. 1 eric eric 1491 Feb 23 21:20 log_reg_1_class_1_feature_iris_geron_202102.py
+
+
+/ Einde FINAL
+
+/ FINAL
+
+/ class 2 ogv feature 3	,
+[eric@almond my]$ ipython log_reg_1_class_1_feature_iris_geron_202102.py 2 3
+array([-21.12560598])
+array([[12.94748578]])
+/ class 2 ogv feature 2	,
+[eric@almond my]$ ipython log_reg_1_class_1_feature_iris_geron_202102.py 2 2
+array([-43.78073255])
+array([[9.00196394]])
+/ class 2 ogv feature 1	,
+[eric@almond my]$ ipython log_reg_1_class_1_feature_iris_geron_202102.py 2 1
+array([1.32333756])
+array([[-0.66482798]])
+[eric@almond my]$ ipython log_reg_1_class_1_feature_iris_geron_202102.py 2 0
+array([-16.31956316])
+array([[2.59202035]])
+[eric@almond my]$ ipython log_reg_1_class_1_feature_iris_geron_202102.py 1 3
+array([-1.10535792])
+array([[0.33481593]])
+[eric@almond my]$ ipython log_reg_1_class_1_feature_iris_geron_202102.py 1 2
+array([-1.68856759])
+array([[0.25557469]])
+[eric@almond my]$ ipython log_reg_1_class_1_feature_iris_geron_202102.py 1 1
+array([8.88625873])
+array([[-3.22331457]])
+[eric@almond my]$ ipython log_reg_1_class_1_feature_iris_geron_202102.py 1 0
+array([-1.8863686])
+array([[0.2034156]])
+[eric@almond my]$ ipython log_reg_1_class_1_feature_iris_geron_202102.py 0 3
+array([25.96540174])
+array([[-33.64024542]])
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_iris_202102.py 1 3
+array([-1.01843134,  0.2934633 ])
+array([-1.10399591,  0.33409926])
+array([-1.10535792,  0.33481593])
+array([-1.10535826,  0.33481611])
+array([-1.10535826,  0.33481611])
+array([-1.10535826,  0.33481611])
+array([-1.10535826,  0.33481611])
+array([-1.10535826,  0.33481611])
+array([-1.10535826,  0.33481611])
+array([-1.10535826,  0.33481611])
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_iris_202102.py 1 3
+array([-1.01843134,  0.2934633 ])
+array([-1.10399591,  0.33409926])
+array([-1.10535792,  0.33481593])
+array([-1.10535826,  0.33481611])
+array([-1.10535826,  0.33481611])
+array([-1.10535826,  0.33481611])
+array([-1.10535826,  0.33481611])
+array([-1.10535826,  0.33481611])
+array([-1.10535826,  0.33481611])
+array([-1.10535826,  0.33481611])
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_iris_202102.py 1 2
+array([-1.47912289,  0.21615543])
+array([-1.68094347,  0.25410858])
+array([-1.68856759,  0.25557469])
+array([-1.68857837,  0.25557676])
+array([-1.68857837,  0.25557676])
+array([-1.68857837,  0.25557676])
+array([-1.68857837,  0.25557676])
+array([-1.68857837,  0.25557676])
+array([-1.68857837,  0.25557676])
+array([-1.68857837,  0.25557676])
+
+[eric@almond my]$ cat log_reg_1_class_1_feature_newton_iris_202102.py
+import sys
+import numpy as np
+from sklearn import datasets
+# import sklearn as sk
+import scipy as sp
+import scipy.linalg as la
+
+# iris=sk.datasets.load_iris() # does not work TODO
+iris=datasets.load_iris()
+
+phi=iris['data'][:,int(sys.argv[2])]    # (150,)
+Phi=np.c_[np.ones(len(phi),dtype='int'),phi] # (150,2)
+w=np.zeros(2) # (2,)
+t=(iris['target']==int(sys.argv[1])).astype(int) # (150,)
+p1=sp.special.expit(Phi@w)     # p1|phi # (150,)
+grad=Phi.T @ (p1-t) # (2,)
+
+for i in range(0,10):
+    p1=sp.special.expit(Phi@w)     # p1|phi  (150,)
+    grad=Phi.T @ (p1-t) # (2,)
+    R=np.diag(p1*(1-p1))    # (150,150)
+    H=Phi.T @ R @ Phi
+    w=w-la.lu_solve(la.lu_factor(H),grad)
+    display(w)
+
+import matplotlib.pyplot as plt
+import seaborn
+seaborn.set()
+
+plt.figure()
+plt.plot(phi[t==0],t[t==0],'gs')
+plt.plot(phi[t==1],t[t==1],'b^')
+
+grid=np.linspace(min(phi),max(phi),101)
+Phi_grid=np.c_[np.ones(101,dtype='int'),grid]
+t_grid=sp.special.expit(Phi_grid @ w)
+plt.plot(grid,t_grid)
+
+plt.show()
+
+/ Einde FINAL
+
+/ FINAL
+
+/ 1 class ogv 2 features	,
+
+[eric@almond my]$ cp log_reg_1_class_1_feature_iris_geron_202102.py log_reg_1_class_2_features_iris_geron_202102.py
+
+/ class 2 ogv feature 2,3
+[eric@almond my]$ ipython log_reg_1_class_2_features_iris_geron_202102.py 2 2 3 
+array([-45.26062435])
+array([[ 5.7528683 , 10.44455633]])
+
+[eric@almond my]$ cat log_reg_1_class_2_features_iris_geron_202102.py
+import sys
+import numpy as np
+from sklearn import datasets
+from sklearn.linear_model import LogisticRegression
+import matplotlib.pyplot as plt
+import seaborn
+
+iris=datasets.load_iris()
+
+phi=iris.data[:,[int(sys.argv[2]),int(sys.argv[3])]]			# <<<
+t = (iris.target==int(sys.argv[1])).astype(int)
+lg=LogisticRegression(solver="liblinear",C=10**10) 
+
+lg.fit(phi,t)
+
+display(lg.intercept_)
+display(lg.coef_)
+
+/ 13	. 
+
+[eric@almond my]$ cp log_reg_1_class_1_feature_newton_iris_202102.py log_reg_1_class_2_features_newton_iris_202102.py
+
+[eric@almond my]$ cat log_reg_1_class_2_features_newton_iris_202102.py
+import sys
+import numpy as np
+from sklearn import datasets
+# import sklearn as sk
+import scipy as sp
+import scipy.linalg as la
+
+# iris=sk.datasets.load_iris() # does not work TODO
+iris=datasets.load_iris()
+
+phi=iris['data'][:,[int(sys.argv[2]),int(sys.argv[3])]]    # (150,2)
+Phi=np.c_[np.ones(len(phi),dtype='int'),phi] # (150,3)
+w=np.zeros(3) # (3,)
+t=(iris['target']==int(sys.argv[1])).astype(int) # (150,)
+p1=sp.special.expit(Phi@w)     # p1|phi # (150,)
+grad=Phi.T @ (p1-t) # (3,)
+
+for i in range(0,10):
+    p1=sp.special.expit(Phi@w)     # p1|phi  (150,)
+    grad=Phi.T @ (p1-t) # (3,)
+    R=np.diag(p1*(1-p1))    # (150,150)
+    H=Phi.T @ R @ Phi
+    w=w-la.lu_solve(la.lu_factor(H),grad)
+    display(w)
+
+[eric@almond my]$ ipython log_reg_1_class_2_features_newton_iris_202102.py 2 2 3
+array([-2.64206527, -0.28439284,  2.53976906])
+array([-5.21160351, -0.13845717,  3.66413443])
+array([-9.73272434,  0.46875474,  4.56796196])
+array([-16.77710881,   1.5201714 ,   5.68636136])
+array([-25.41318186,   2.83525866,   7.02607745])
+array([-34.71567155,   4.22896712,   8.55612783])
+array([-42.00359367,   5.28752914,   9.84965916])
+array([-44.93355387,   5.7061491 ,  10.38530258])
+array([-45.2685563 ,   5.75398881,  10.44602654])
+array([-45.27234329,   5.75453225,  10.44669981])
+
+/ Klopt	,
+
+/ Einde FINAL
+
+/ FINAL
+
+/ 4 features, 1 class	,
+
+/ het arg is alleen de class	,
+
+[eric@almond my]$ ipython log_reg_1_class_4_features_newton_iris_202102.py 2
+array([-4.74178586, -0.17639365,  0.79293022,  0.01696003,  2.18617083])
+array([-7.65381609, -0.34685703,  1.14673432,  0.27343687,  3.22908725])
+array([-9.24456123, -0.62559279,  0.71716471,  0.91031363,  4.08679559])
+array([-10.30107232,  -1.11873883,  -1.00840542,   2.32640258,
+         5.34612322])
+array([-14.08319984,  -1.59714009,  -2.20181703,   3.81731771,
+         7.04317257])
+array([-19.55140272,  -2.03655545,  -3.19916405,   5.31654289,
+         9.20982049])
+array([-26.42071823,  -2.34555249,  -4.26926678,   6.77553364,
+        11.94216001])
+array([-34.15841224,  -2.46092702,  -5.46642484,   8.1121248 ,
+        15.04523182])
+array([-40.34708283,  -2.46700914,  -6.37748773,   9.07597058,
+        17.45178156])
+array([-42.47594337,  -2.4649336 ,  -6.66152129,   9.40361465,
+        18.23124169])
+
+[eric@almond my]$ ipython log_reg_1_class_4_features_newton_iris_202102.py 1
+array([ 4.25190769, -0.08617855, -1.76282223,  0.87408548, -1.93276518])
+array([ 6.56881264, -0.21118307, -2.53163175,  1.20429215, -2.54309988])
+array([ 7.27312282, -0.25009901, -2.76278409,  1.29334683, -2.69463101])
+array([ 7.32269986, -0.2527318 , -2.77931212,  1.29927968, -2.70423046])
+array([ 7.32292704, -0.25274345, -2.77938917,  1.29930595, -2.70427087])
+array([ 7.32292705, -0.25274345, -2.77938918,  1.29930595, -2.70427087])
+array([ 7.32292705, -0.25274345, -2.77938918,  1.29930595, -2.70427087])
+array([ 7.32292705, -0.25274345, -2.77938918,  1.29930595, -2.70427087])
+array([ 7.32292705, -0.25274345, -2.77938918,  1.29930595, -2.70427087])
+array([ 7.32292705, -0.25274345, -2.77938918,  1.29930595, -2.70427087])
+
+[eric@almond my]$ ipython log_reg_1_class_4_features_newton_iris_202102.py 0
+array([-1.51012184,  0.2625722 ,  0.96989201, -0.8910455 , -0.25340565])
+array([-2.16891298,  0.34811397,  1.62694371, -1.51216664, -0.24905748])
+array([-2.69843449,  0.44395163,  2.23097412, -2.14169962, -0.26894348])
+array([-3.24226357,  0.58122257,  2.79050805, -2.75144633, -0.4728069 ])
+array([-3.82642141,  0.78094121,  3.28328233, -3.31894617, -0.96641189])
+array([-4.44371247,  1.06203581,  3.68608972, -3.85876241, -1.74914524])
+array([-5.12502249,  1.43385265,  4.00539326, -4.41178719, -2.72752261])
+array([-5.89823525,  1.89095295,  4.2647414 , -5.01175344, -3.80226753])
+array([-6.75035569,  2.41571074,  4.48690014, -5.67306832, -4.90861677])
+array([-7.63901841,  2.98541869,  4.68892965, -6.39706983, -6.00845404])
+
+[eric@almond my]$ ipython log_reg_1_class_4_features_iris_geron_202102.py 2
+array([-42.46853369])
+array([[-2.46312182, -6.66512187,  9.40005677, 18.23704717]])
+[eric@almond my]$ ipython log_reg_1_class_4_features_iris_geron_202102.py 1
+array([7.32072397])
+array([[-0.25239142, -2.77909537,  1.29890498, -2.70358802]])
+[eric@almond my]$ ipython log_reg_1_class_4_features_iris_geron_202102.py 0
+array([0.9011384])
+array([[ 1.51526198,  4.92414959, -7.80941819, -3.81889566]])
+
+/ we zien dat class 0 helemaal niet klopt,
+/ TODO
+
+/ Einde FINAL
+
+/ FINAL
+
+/ class 0
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_iris_geron_202102.py 0 0
+array([27.82505917])
+array([[-5.17505474]])
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_iris_202102.py 0 0
+array([ 8.91128693, -1.63912497])
+array([15.72512211, -2.90541812])
+array([22.12900054, -4.10482265])
+array([26.432491  , -4.91329749])
+array([27.74028948, -5.15911792])
+array([27.82816437, -5.17563106])
+array([27.82852139, -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+/ okay	,
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_iris_202102.py 0 0
+array([ 8.91128693, -1.63912497])
+array([15.72512211, -2.90541812])
+array([22.12900054, -4.10482265])
+array([26.432491  , -4.91329749])
+array([27.74028948, -5.15911792])
+array([27.82816437, -5.17563106])
+array([27.82852139, -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+array([27.8285214 , -5.17569813])
+/ okay	,
+
+
+[eric@almond my]$ ipython log_reg_1_class_2_features_iris_geron_202102.py 0 2 3
+array([24.05565958])
+array([[-6.67454643, -9.82307197]])
+[eric@almond my]$ ipython log_reg_1_class_2_features_newton_iris_202102.py 0 2 3
+array([ 3.06217693, -1.00087776,  0.02763259])
+array([ 5.09783354, -1.81936807,  0.37691497])
+array([ 6.96313852, -2.51389932,  0.36646666])
+array([ 8.57781031, -2.88906075, -0.60381399])
+array([10.17504528, -3.07351266, -2.33328867])
+array([12.05662731, -3.37945185, -4.02475719])
+array([14.21146714, -3.83501714, -5.54245832])
+array([16.58293616, -4.40070486, -6.95002171])
+array([19.12953648, -5.04310032, -8.31030283])
+array([21.81940571, -5.73678936, -9.66992458])
+/ redelijk	,
+[eric@almond my]$ ipython log_reg_1_class_2_features_newton_iris_202102.py 0 2 3
+array([ 3.06217693, -1.00087776,  0.02763259])
+array([ 5.09783354, -1.81936807,  0.37691497])
+array([ 6.96313852, -2.51389932,  0.36646666])
+array([ 8.57781031, -2.88906075, -0.60381399])
+array([10.17504528, -3.07351266, -2.33328867])
+array([12.05662731, -3.37945185, -4.02475719])
+array([14.21146714, -3.83501714, -5.54245832])
+array([16.58293616, -4.40070486, -6.95002171])
+array([19.12953648, -5.04310032, -8.31030283])
+array([21.81940571, -5.73678936, -9.66992458])
+array([ 24.62580747,  -6.46307232, -11.05860594])
+array([ 27.52555668,  -7.20922129, -12.49043747])
+array([ 30.49881329,  -7.9674343 , -13.96751314])
+array([ 33.52923103,  -8.73344616, -15.48477056])
+array([ 36.60390895,  -9.50517343, -17.03427843])
+array([ 39.71301729, -10.28168833, -18.6080121 ])
+array([ 42.84922949, -11.0625848 , -20.19915355])
+array([ 46.00713321, -11.84764966, -21.80242316])
+array([ 49.18272458, -12.6367189 , -23.41394327])
+array([ 52.37301646, -13.42962776, -25.03094989])
+array([ 55.57575169, -14.22620105, -26.65150345])
+array([ 58.78919876, -15.02625758, -28.27425105])
+array([ 62.01200731, -15.82961767, -29.89824639])
+array([ 65.24310652, -16.636109  , -31.52282232])
+array([ 68.48163272, -17.44557057, -33.14750128])
+array([ 71.72687612, -18.25785687, -34.77192581])
+array([ 74.97824201, -19.07284098, -36.39580855])
+array([ 78.23522799, -19.89040196, -38.01894344])
+array([ 81.49739863, -20.71045089, -39.64110504])
+array([ 84.7643771 , -21.5328895 , -41.26215633])
+array([ 88.0358041 , -22.35769795, -42.88176008])
+array([ 91.31141991, -23.18466682, -44.50021432])
+array([ 94.59085785, -24.01393654, -46.11672915])
+array([ 97.874037  , -24.84527765, -47.73183185])
+array([101.16027606, -25.67927045, -49.34321451])
+array([104.45012943, -26.51432195, -50.95581889])
+array([107.74185541, -27.3539001 , -52.55831262])
+array([111.03656981, -28.19728933, -54.15371232])
+array([114.33707563, -29.03107137, -55.78181552])
+array([117.68198571, -29.71975092, -57.85352592])
+array([121.02688571, -30.40855589, -59.92488392])
+array([124.37177779, -31.09747036, -61.99593509])
+array([123.37177779, -31.09747036, -61.99593509])
+array([126.71666447, -31.78648052, -64.06671949])
+array([125.71666447, -31.78648052, -64.06671949])
+array([129.0615439 , -32.47557367, -66.13727015])
+array([128.0615439 , -32.47557367, -66.13727015])
+array([131.40641669, -33.16473913, -68.20761692])
+array([130.40641669, -33.16473913, -68.20761692])
+array([133.75128368, -33.8539676 , -70.27778599])
+/ helemaal verkeerd,	
+
+
+[eric@almond my]$ ipython log_reg_1_class_2_features_iris_geron_202102.py 0 0 1
+array([80.6272241])
+array([[-31.61987832,  28.31499853]])
+[eric@almond my]$ ipython log_reg_1_class_2_features_newton_iris_202102.py 0 0 1
+array([ 1.1723718 , -1.50833671,  2.28378379])
+array([ 2.87323278, -2.70910229,  3.83782039])
+array([ 5.82383027, -4.12785049,  5.35446739])
+array([10.5793925 , -5.93112164,  6.942185  ])
+array([17.07997853, -8.25137327,  8.84788891])
+array([ 25.59650632, -11.29663105,  11.33778311])
+array([ 37.1111016 , -15.44304898,  14.7321623 ])
+array([ 52.28933004, -20.97539974,  19.30173826])
+array([ 70.17600067, -27.59497793,  24.85001005])
+array([ 89.6675178 , -34.86617108,  30.98810799])
+/ redelijk	,
+
+[eric@almond my]$ ipython log_reg_1_class_2_features_newton_iris_202102.py 0 0 1
+array([ 1.1723718 , -1.50833671,  2.28378379])
+array([ 2.87323278, -2.70910229,  3.83782039])
+array([ 5.82383027, -4.12785049,  5.35446739])
+array([10.5793925 , -5.93112164,  6.942185  ])
+array([17.07997853, -8.25137327,  8.84788891])
+array([ 25.59650632, -11.29663105,  11.33778311])
+array([ 37.1111016 , -15.44304898,  14.7321623 ])
+array([ 52.28933004, -20.97539974,  19.30173826])
+array([ 70.17600067, -27.59497793,  24.85001005])
+array([ 89.6675178 , -34.86617108,  30.98810799])
+array([110.32791991, -42.57911105,  37.49456855])
+array([131.89964514, -50.6100114 ,  44.23896734])
+array([154.12494796, -58.85452327,  51.12671621])
+array([176.76712212, -67.22927372,  58.09441401])
+array([199.64857602, -75.67778955,  65.10613621])
+array([222.65723857, -84.16673642,  72.14365884])
+array([245.73046692, -92.67806498,  79.19792362])
+array([ 268.83573012, -101.20240843,   86.2642373 ])
+array([ 291.95679795, -109.73495529,   93.3399881 ])
+array([ 315.08573766, -118.27319331,  100.42358575])
+array([ 338.21871189, -126.81575191,  107.51395722])
+array([ 361.35387303, -135.36182562,  114.61030112])
+array([ 384.49033108, -143.9108913 ,  121.71196677])
+array([ 407.62765335, -152.46257039,  128.81839456])
+array([ 430.76562345, -161.01656245,  135.92908688])
+array([ 453.90412615, -169.57261296,  143.04359342])
+array([ 477.04309282, -178.13049832,  150.16150477])
+array([ 500.18247606, -186.69001782,  157.2824474 ])
+array([ 523.32223627, -195.25098955,  164.40608126])
+array([ 546.46233963, -203.81325118,  171.53210214])
+array([ 569.60275461, -212.3766428 ,  178.66020978])
+array([ 592.74345477, -220.94106295,  185.79021605])
+array([ 615.88441396, -229.50638399,  192.92188167])
+array([ 639.02560081, -238.07247986,  200.05497242])
+array([ 662.16701914, -246.63935148,  207.1894886 ])
+array([ 685.30845131, -255.20629862,  214.3241471 ])
+array([ 708.45032843, -263.77465445,  221.46138396])
+array([ 731.59318556, -272.34608301,  228.6042411 ])
+array([ 754.73604269, -280.91751158,  235.74709824])
+array([ 777.87889983, -289.48894015,  242.88995538])
+array([ 801.02175697, -298.06036872,  250.03281253])
+array([ 824.05017206, -307.77621779,  259.46451066])
+array([ 847.06310503, -317.64688818,  269.20585144])
+array([ 846.11002199, -317.66642863,  269.22538394])
+array([ 869.11358443, -327.63080426,  279.1541352 ])
+array([ 867.23736343, -327.26603015,  278.78966634])
+array([ 890.20428267, -337.59683774,  289.45128152])
+array([ 889.20428267, -337.59683774,  289.45128152])
+array([ 912.25109491, -347.12871532,  298.51503668])
+array([ 911.25109491, -347.12871532,  298.51503668])
+/ dit gaat helemaal verkeerd	, 
+/ TODO
+
+/ gaat alleen verkeerd bij class 0	,
+
+[eric@almond my]$ ipython log_reg_1_class_2_features_newton_iris_202102.py 1 2 3
+array([-2.42011165,  1.2852706 , -2.56740165])
+array([-2.83346688,  1.53022448, -3.0725512 ])
+array([-2.8587132 ,  1.54639795, -3.10696093])
+array([-2.85880689,  1.54646368, -3.10710627])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+array([-2.85880689,  1.54646368, -3.10710628])
+
+[eric@almond my]$ ipython log_reg_1_class_2_features_newton_iris_202102.py 2 2 3
+array([-2.64206527, -0.28439284,  2.53976906])
+array([-5.21160351, -0.13845717,  3.66413443])
+array([-9.73272434,  0.46875474,  4.56796196])
+array([-16.77710881,   1.5201714 ,   5.68636136])
+array([-25.41318186,   2.83525866,   7.02607745])
+array([-34.71567155,   4.22896712,   8.55612783])
+array([-42.00359367,   5.28752914,   9.84965916])
+array([-44.93355387,   5.7061491 ,  10.38530258])
+array([-45.2685563 ,   5.75398881,  10.44602654])
+array([-45.27234329,   5.75453225,  10.44669981])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+array([-45.27234377,   5.75453232,  10.44669989])
+
+/ Einde FINAL
+
+/ MULTINOMIAL
+
+$ ls -ltr
+-rw-rw-r--. 1 eric eric 1431 Feb 24 22:14 log_reg_3_class_4_features_iris_geron_202102.py
+/ heeft geen args	,
+-rw-rw-r--. 1 eric eric 1440 Feb 24 22:24 log_reg_3_class_1_features_iris_geron_202102.py
+/ heeft de feature als arg	,
+
+/ 13	 .
+
+[eric@almond my]$ ipython log_reg_3_class_1_features_iris_geron_202102.py 3
+array([ 32.25741399,  -5.56591178, -26.69150222])
+array([[-36.81302781],
+       [ 11.93277549],
+       [ 24.88025232]])
+lg=LogisticRegression(solver="liblinear",C=10**10) 
+
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_iris_geron_202102.py 0 3
+array([25.96540174])
+array([[-33.64024542]])
+[eric@almond my]$ ipython log_reg_1_class_1_feature_iris_geron_202102.py 1 3
+array([-1.10535792])
+array([[0.33481593]])
+[eric@almond my]$ ipython log_reg_1_class_1_feature_iris_geron_202102.py 2 3
+array([-21.12560598])
+array([[12.94748578]])
+lg=LogisticRegression(multi_class="multinomial",solver="newton-cg",C=10**10) 
+
+/ 13	. 
+
+[eric@almond my]$ ipython log_reg_3_class_4_features_iris_geron_202102.py
+array([  2.32925138,  20.15434543, -22.48359681])
+array([[  4.8858444 ,   7.84777582, -12.84179439,  -6.6637919 ],
+       [ -1.2103132 ,  -0.58344044,   1.70619436,  -5.81118631],
+       [ -3.6755312 ,  -7.26433538,  11.13560003,  12.47497821]])
+[eric@almond my]$ 
+[eric@almond my]$  ipython log_reg_1_class_4_features_iris_geron_202102.py 0
+array([0.9011384])
+array([[ 1.51526198,  4.92414959, -7.80941819, -3.81889566]])
+[eric@almond my]$  ipython log_reg_1_class_4_features_iris_geron_202102.py 1
+array([7.32072397])
+array([[-0.25239142, -2.77909537,  1.29890498, -2.70358802]])
+[eric@almond my]$  ipython log_reg_1_class_4_features_iris_geron_202102.py 2
+array([-42.46853369])
+array([[-2.46312182, -6.66512187,  9.40005677, 18.23704717]])
+
+
+
+
+/ Einde MULTINOMIAL
+
+/ MULTINOMIAL
+
+
+
+
+
+/ Einde MULTINOMIAL
+
+
+
+
+/ 13	. 
+
+In [534]: y=(iris.target==1).astype(int)
+
+In [535]: lg.fit(X,y)
+Out[535]: 
+LogisticRegression(C=10000000000, class_weight=None, dual=False,
+          fit_intercept=True, intercept_scaling=1, max_iter=100,
+          multi_class='ovr', n_jobs=1, penalty='l2', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, warm_start=False)
+
+In [536]: lg.intercept_,lg.coef_
+Out[536]: (array([-1.10535792]), array([[0.33481593]]))
+
+/ 13	. 
+
+In [537]: y=(iris.target==0).astype(int)
+
+In [538]: lg=LogisticRegression(solver='liblinear',C=10**10)
+
+In [539]: lg.fit(X,y)
+Out[539]: 
+LogisticRegression(C=10000000000, class_weight=None, dual=False,
+          fit_intercept=True, intercept_scaling=1, max_iter=100,
+          multi_class='ovr', n_jobs=1, penalty='l2', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, warm_start=False)
+
+In [540]: lg.intercept_,lg.coef_
+Out[540]: (array([25.96540174]), array([[-33.64024542]]))
+
+/ 13	. 
+
+In [541]: lg=LogisticRegression(multi_class='multinomial',solver='newton-cg',C=10**10,random_state=0)
+In [542]: lg.fit(X,iris.target)
+In [543]: lg.intercept_,lg.coef_
+
+/ we zien andere getallen	,
+
+/ of	,
+In [542]: lg.fit(iris.data,iris.target)
+
+
+
+/ 7	. 
+
+[eric@almond my]$ cp log_reg_1_class_1_feature_newton_iris_202102.py log_reg_1_class_1_feature_newton_eigen_voorbeelden_202102.py
+
+/ H wordt singulier	,
+
+
+/ 7	. 
+
+/ vlg sklearn	,
+
+[eric@almond my]$ cp log_reg_1_class_1_feature_newton_iris_202102.py  log_reg_1_class_1_feature_iris_geron_202102.py
+
+/ 13	. 
+
+/ lees,
+https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html#sklearn.linear_model.LogisticRegression
+
+>>> from sklearn.datasets import load_iris
+>>> from sklearn.linear_model import LogisticRegression
+>>> X, y = load_iris(return_X_y=True)
+>>> clf = LogisticRegression(random_state=0).fit(X, y)
+>>> clf.predict(X[:2, :])
+array([0, 0])
+>>> clf.predict_proba(X[:2, :])
+array([[9.8...e-01, 1.8...e-02, 1.4...e-08],
+       [9.7...e-01, 2.8...e-02, ...e-08]])
+>>> clf.score(X, y)
+0.97...
+
+In [448]: X
+Out[448]: 
+array([[5.1, 3.5, 1.4, 0.2],
+       [4.9, 3. , 1.4, 0.2],
+...
+In [449]: y
+Out[449]: 
+array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2])
+In [450]: X.shape
+Out[450]: (150, 4)
+
+In [451]: y.shape
+Out[451]: (150,)
+
+In [454]: clf = LogisticRegression(random_state=0).fit(X, y)
+
+In [455]: clf
+Out[455]: 
+LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,
+          penalty='l2', random_state=0, solver='liblinear', tol=0.0001,
+          verbose=0, warm_start=False)
+
+/ TODO
+
+/ 13	. 
+
+
+
+
+
+
+
+
+
+/ Einde MY ML 
+
+/ MY PYTHON
+
+/ 13	
+
+In [17]: a=np.ones((3,3))
+In [19]: a
+Out[19]: 
+array([[1., 1., 1.],
+       [1., 1., 1.],
+       [1., 1., 1.]])
+/ het ziet eruit als een array van rows, met iedere row een array	,
+In [18]: a.dtype
+Out[18]: dtype('float64')
+In [20]: a.shape
+Out[20]: (3, 3)
+
+In [21]: a[0]
+Out[21]: array([1., 1., 1.])
+In [22]: type(a[0])
+Out[22]: numpy.ndarray
+In [23]: a[0].shape
+Out[23]: (3,)
+
+
+In [29]: a=np.arange(1,10)
+In [30]: a.shape
+Out[30]: (9,)
+In [31]: a=a.reshape(3,3)
+In [32]: a.shape
+Out[32]: (3, 3)
+
+/ 13	. 
+
+/ transpose vector	,
+
+In [58]: a=np.array([1,2,3])
+In [74]: a.shape
+Out[74]: (3,)
+
+/ 1313	. 
+
+In [77]: c=a.reshape(3,1)
+
+In [78]: c.shape
+Out[78]: (3, 1)
+
+In [79]: c
+Out[79]: 
+array([[1],
+       [2],
+       [3]])
+
+/ of	,
+
+In [91]: d=np.c_[a]
+In [92]: d.shape
+Out[92]: (3, 1)
+In [93]: d
+Out[93]: 
+array([[1],
+       [2],
+       [3]])
+
+/ let op	,
+
+In [132]: np.r_[a].shape
+Out[132]: (3,)
+/ en niet (3,1)	,
+
+
+/ 1313	. 
+
+In [59]: b=np.array([4,5,6])
+In [86]: c=np.c_[a,b]
+In [87]: c
+Out[87]: 
+array([[1, 4],
+       [2, 5],
+       [3, 6]])
+In [88]: c.shape
+Out[88]: (3, 2)
+
+/ lees,
+https://stackoverflow.com/questions/22053050/difference-between-numpy-array-shape-r-1-and-r
+
+/ 1313	. 
+
+In [105]: a2=c[:,0]
+
+In [106]: a2.shape
+Out[106]: (3,)
+/ en niet (3,1)
+
+In [107]: a2
+Out[107]: array([1, 2, 3])
+
+In [111]: b2=c[0,:]
+
+In [112]: b2
+Out[112]: array([1, 4])
+
+In [113]: b2.shape
+Out[113]: (2,)
+/ en niet (1,2)
+
+/ 1313	. 
+
+/ maar je kunt gewoon met vectoren links en rechts verm	,
+
+In [116]: a2
+Out[116]: array([1, 2, 3])
+/ in column space	,
+
+In [118]: c
+Out[118]: 
+array([[1, 4],
+       [2, 5],
+       [3, 6]])
+
+In [119]: b2
+Out[119]: array([1, 4])
+/ in row space	, 
+
+In [120]: x=c.dot(b2)
+In [121]: x.shape
+Out[121]: (3,)
+In [122]: x
+Out[122]: array([17, 22, 27])
+
+In [124]: y=a2.dot(c)
+In [125]: y.shape
+Out[125]: (2,)
+In [126]: y
+Out[126]: array([14, 32])
+
+/ als je a2 neerlegt, is het antwoord ook een liggende ...
+In [135]: a2.reshape(1,3).dot(c)
+Out[135]: array([[14, 32]])
+In [136]: a2.reshape(1,3).dot(c).shape
+Out[136]: (1, 2)
+
+n [138]: c.dot(b2.reshape(2,1))
+Out[138]: 
+array([[17],
+       [22],
+       [27]])
+In [139]: c.dot(b2.reshape(2,1)).shape
+Out[139]: (3, 1)
+
+/ 1313	. 
+
+/ truc,
+
+In [152]: pw=iris.data[:,3]
+In [154]: pw.shape
+Out[154]: (150,)
+ 
+In [157]: pw2=iris.data[:,[3]]
+In [158]: pw2.shape
+Out[158]: (150, 1)
+
+/ maar voor np.ones,	 np.c_ maakt het niet uit,
+
+In [169]: o=np.ones(pw.shape,dtype=int)
+In [170]: o.shape
+Out[170]: (150, 1)
+
+In [164]: o2=np.ones(pw2.shape,dtype=int)
+In [165]: o2.shape
+Out[165]: (150, 1)
+
+/ maar voor np.c_ kun je ook nemen:
+In [174]: o[:,0].shape
+Out[174]: (150,)
+
+/ 2 vectors 	,
+In [177]: np.c_[o[:,0],pw].shape
+Out[177]: (150, 2)
+/ 1 matrix, 1 vector,	
+In [178]: np.c_[o,pw].shape
+Out[178]: (150, 2)
+/ 2 matrices	,
+In [167]: np.c_[o2,pw2].shape
+Out[167]: (150, 2)
+
+/ 1313	. 
+
+/ zet vector rechtop	,
+
+/ met reshape(-1,1)
+
+/ 1313	. 
+
+n [191]: iris['target']==2
+Out[191]: 
+array([False, False, False, False,...
+In [192]: (iris['target']==2).shape
+Out[192]: (150,)
+In [193]: (iris['target']==2)[:2]
+Out[193]: array([False, False])
+
+/ 1313	. 
+
+/ we zien hetzelfde bij np.exp: als arg=vector, is het antwoord het ook	; als arg is 'n matrix is het antwoor het ook	,
+
+In [198]: c.dot(np.array([1,4]))
+Out[198]: array([17, 22, 27])
+
+In [199]: np.exp(c.dot(np.array([1,4])))
+Out[199]: array([2.41549528e+07, 3.58491285e+09, 5.32048241e+11])
+
+In [201]: np.exp(c.dot(np.array([1,4])).reshape(-1,1))
+Out[201]: 
+array([[2.41549528e+07],
+       [3.58491285e+09],
+       [5.32048241e+11]])
+
+/ 1313	. 
+
+/ ravel,
+
+/ is terug naar vector	,
+
+In [218]: a.shape
+Out[218]: (3,)
+In [214]: a.reshape(-1,1).shape
+Out[214]: (3, 1)
+In [215]: a.reshape(-1,1).ravel().shape
+Out[215]: (3,)
+In [219]: a.reshape(-1,1).shape
+Out[219]: (3, 1)
+In [217]: a.reshape(1,-1).ravel().shape
+Out[217]: (3,)
+
+/ 13	. 
+
+In [409]: p1.shape
+Out[409]: (150,)
+In [410]:  (p1*p1).shape
+Out[410]: (150,)
+/ puntsgewijs verm	,
+
+In [405]: p1@(1-p1)
+Out[405]: 37.5
+In [407]: p1.T@(1-p1)
+Out[407]: 37.5
+/ .T maakt bij vectoren niet uit	,
+
+
+/ 7	. 
+
+/ imports	,
+
+/ 13	 
+
+/ in interactive ipython	,
+
+In [1]: import numpy as np
+In [2]: from sklearn import datasets
+/ je import een deel van sklearn, sklearn zelf kent deze ipython niet	,
+In [390]: from scipy.special import expit
+
+/ wat ook kan is	,
+from sklearn import datasets as ds
+
+In [397]: sklearn....
+/ kan niet, zoals we boven zagen	,	
+In [398]: import sklearn as sk
+/ deze ipython kent nu heel sklearn	,
+In [399]: sk.datasets.load_iris()
+/ kan wel	,
+In [397]: sklearn....
+/ kan nog steeds niet	,
+
+
+
+/ we hoeven dus niet te doen,
+from ... import numpy
+
+In [392]: import scipy as sp
+In [395]: sp.special.expit(0)
+Out[395]: 0.5
+
+In [393]: import sp.special as sl
+---------------------------------------------------------------------------
+ModuleNotFoundError                       Traceback (most recent call last)
+<ipython-input-393-9fdaba6119b9> in <module>()
+----> 1 import sp.special as sl
+
+In [394]: import scipy.special as sl
+In [396]: sl.expit(0)
+Out[396]: 0.5
+
+/ 13	. 
+
+/ lees,
+https://docs.scipy.org/doc/scipy/reference/index.html
+
+/ scipy heeft submodules,
+scipy.special
+scipy.linalg
+...
+
+/ lees,
+https://scikit-learn.org/stable/modules/classes.html?highlight=datasets#module-sklearn.datasets
+
+/ ze noemen datasets ook een module	,
+
+/ we zien dat	, 
+
+from sklearn import datasets
+iris=datasets.load_iris()
+/ OK	,
+
+import sklearn as sk
+iris=sk.datasets.load_iris() # does not work TODO
+/ ERR, werkt niet	, 
+/ TODO
+
+import scipy as sp
+import scipy.linalg as la
+    p1=sp.special.expit(Phi@w)     # p1|phi  (150,)
+    w=w-la.lu_solve(la.lu_factor(H),grad)
+/ OK	,
+
+
+/ 7	. 
+
+In [435]: phi.shape
+Out[435]: (150,)
+In [430]: phi_=phi.reshape(150,1)
+In [431]: t_=t.reshape(150,1)
+In [433]: phi_[t_==0].shape
+Out[433]: (100,)
+In [434]: phi_[(t_==0).ravel()].shape
+Out[434]: (100, 1)
+/ TODO
+ 
+/ 13	. 
+
+/ hier werkte sk.datasets niet	, 
+/ maar sp.special wel	,
+-rw-rw-r--. 1 eric eric  952 Feb 20 20:19 log_reg_1_class_1_feature_newton_iris_202102.py
+import numpy as np
+from sklearn import datasets
+# import sklearn as sk
+import scipy as sp
+import scipy.linalg as la
+
+# iris=sk.datasets.load_iris() # does not work TODO
+iris=datasets.load_iris()
+
+phi=iris['data'][:,3]    # (150,)
+Phi=np.c_[np.ones(len(phi),dtype='int'),phi] # (150,2)
+w=np.zeros(2) # (2,)
+t=(iris['target']==2).astype(int) # (150,)
+p1=sp.special.expit(Phi@w)     # p1|phi # (150,)
+
+/ hier werkt sp.special niet	,
+[eric@almond my]$ cat log_reg_1_class_1_feature_newton_eigen_voorbeelden_202102.py
+mport numpy as np
+from scipy import special 
+import scipy.linalg as la
+
+phi=np.array([-1,1])     # (2,)
+t=np.array([0,1]) # (2,)
+
+Phi=np.c_[np.ones(len(phi),dtype='int'),phi] # (2,2)
+w=np.zeros(2) # (2,)
+for i in range(0,100):
+    sgm=special.expit(Phi@w)     # p(1|phi)=sgm  (2,)
+
+/ 13	. 
+
+/ args to python script	,
+
+[eric@almond my]$ cat args.py 
+import sys
+display(sys.argv[0])
+display(int(sys.argv[1]))
+display(int(sys.argv[2]))
+[eric@almond my]$ ipython args.py 13 7
+'/home/eric/Devel/python/my/args.py'
+13
+7
+
+
+
+
+/ Einde MY PYTHON
+
+/ MY 
+
+/ 7	. 
+
+/ 13	. 
+
+In [33]:  M
+Out[33]: 
+array([[1, 2],
+       [3, 4]])
+
+
+In [31]: np.kron(M,np.eye(2))
+Out[31]: 
+array([[1., 0., 2., 0.],
+       [0., 1., 0., 2.],
+       [3., 0., 4., 0.],
+       [0., 3., 0., 4.]])
+
+In [32]: np.kron(np.eye(2),M)
+Out[32]: 
+array([[1., 2., 0., 0.],
+       [3., 4., 0., 0.],
+       [0., 0., 1., 2.],
+       [0., 0., 3., 4.]])
+
+/ 13	. 
+
+In [33]:  M
+Out[33]: 
+array([[1, 2],
+       [3, 4]])
+
+In [57]: np.kron(np.array([1,1]),np.diag(M[:,0]))
+Out[57]: 
+array([[1, 0, 1, 0],
+       [0, 3, 0, 3]])
+
+In [58]: np.kron(np.array([1,1]),np.diag(M[:,1]))
+Out[58]: 
+array([[2, 0, 2, 0],
+       [0, 4, 0, 4]])
+
+In [59]: K=np.r_[np.kron(np.array([1,1]),np.diag(M[:,0])),np.kron(np.array([1,1]),np.diag(M[:,1]))]
+Out[59]: 
+array([[1, 0, 1, 0],
+       [0, 3, 0, 3],
+       [2, 0, 2, 0],
+       [0, 4, 0, 4]])
+
+In [68]: K.T
+Out[68]: 
+array([[1, 0, 2, 0],
+       [0, 3, 0, 4],
+       [1, 0, 2, 0],
+       [0, 3, 0, 4]])
+
+/ 13	. 
+
+In [96]: v=np.array([1,2,3])
+
+In [98]: v@v.T
+Out[98]: 14
+
+/ dus dat gaat niet goed,	
+
+In [105]: v=v.reshape(3,1)
+
+In [106]: v
+Out[106]: 
+array([[1],
+       [2],
+       [3]])
+
+In [108]: v@v.T
+Out[108]: 
+array([[1, 2, 3],
+       [2, 4, 6],
+       [3, 6, 9]])
+
+/ nu wel	,
+
+/ 13	. 
+
+In [111]: a=array([1, 2, 3])
+
+In [112]: v=a.reshape(3,1)
+
+In [113]: a.shape
+Out[113]: (3,)
+
+In [114]: v.shape
+Out[114]: (3, 1)
+
+In [115]: np.kron(a,a)
+Out[115]: array([1, 2, 3, 2, 4, 6, 3, 6, 9])
+
+In [116]: np.kron(v,v)
+Out[116]: 
+array([[1],
+       [2],
+       [3],
+       [2],
+       [4],
+       [6],
+       [3],
+       [6],
+       [9]])
+
+In [117]: np.kron(v,v.T)
+Out[117]: 
+array([[1, 2, 3],
+       [2, 4, 6],
+       [3, 6, 9]])
+
+In [120]: v@v.T
+Out[120]: 
+array([[1, 2, 3],
+       [2, 4, 6],
+       [3, 6, 9]])
+
+/ in dit geval np.kron = @	, maar beneden niet	,
+
+In [118]: np.kron(a,a.T)
+Out[118]: array([1, 2, 3, 2, 4, 6, 3, 6, 9])
+
+/ 13	. 
+
+/ 1313	. 
+
+In [138]: np.tensordot(v,v.T,0)
+Out[138]: 
+array([[[[1, 2, 3]]],
+
+
+       [[[2, 4, 6]]],
+
+
+       [[[3, 6, 9]]]])
+In [139]: np.tensordot(v,v.T,0).shape
+Out[139]: (3, 1, 1, 3)
+
+
+/ 1313	 
+
+In [127]: L=np.tensordot(v,v.T,1)
+In [127]: L
+Out[127]: 
+array([[1, 2, 3],
+       [2, 4, 6],
+       [3, 6, 9]])
+
+# summed over 
+In [142]: np.tensordot(L,L.T,1)
+Out[142]: 
+array([[ 14,  28,  42],
+       [ 28,  56,  84],
+       [ 42,  84, 126]])
+
+/ 1313	. 
+
+In [145]: np.tensordot(L,L.T,2)
+Out[145]: array(196)
+
+
+/ 1313	. 
+
+# wordt niet summed over	, 
+In [140]: np.tensordot(L,L.T,0)
+Out[140]: 
+array([[[[ 1,  2,  3],
+         [ 2,  4,  6],
+         [ 3,  6,  9]],
+
+        [[ 2,  4,  6],
+         [ 4,  8, 12],
+         [ 6, 12, 18]],
+
+        [[ 3,  6,  9],
+         [ 6, 12, 18],
+         [ 9, 18, 27]]],
+
+
+       [[[ 2,  4,  6],
+         [ 4,  8, 12],
+         [ 6, 12, 18]],
+
+        [[ 4,  8, 12],
+         [ 8, 16, 24],
+         [12, 24, 36]],
+
+        [[ 6, 12, 18],
+         [12, 24, 36],
+         [18, 36, 54]]],
+
+
+       [[[ 3,  6,  9],
+         [ 6, 12, 18],
+         [ 9, 18, 27]],
+
+        [[ 6, 12, 18],
+         [12, 24, 36],
+         [18, 36, 54]],
+
+        [[ 9, 18, 27],
+         [18, 36, 54],
+         [27, 54, 81]]]])
+
+In [141]: np.tensordot(L,L.T,0).shape
+Out[141]: (3, 3, 3, 3)
+
+/ 1313	. 
+
+In [143]:  np.kron(L,L.T)
+Out[143]: 
+array([[ 1,  2,  3,  2,  4,  6,  3,  6,  9],
+       [ 2,  4,  6,  4,  8, 12,  6, 12, 18],
+       [ 3,  6,  9,  6, 12, 18,  9, 18, 27],
+       [ 2,  4,  6,  4,  8, 12,  6, 12, 18],
+       [ 4,  8, 12,  8, 16, 24, 12, 24, 36],
+       [ 6, 12, 18, 12, 24, 36, 18, 36, 54],
+       [ 3,  6,  9,  6, 12, 18,  9, 18, 27],
+       [ 6, 12, 18, 12, 24, 36, 18, 36, 54],
+       [ 9, 18, 27, 18, 36, 54, 27, 54, 81]])
+
+In [144]: L@L.T
+Out[144]: 
+array([[ 14,  28,  42],
+       [ 28,  56,  84],
+       [ 42,  84, 126]])
+
+/ 1313	. 
+
+In [146]: np.tensordot(L,L.T,([1],[0]))
+Out[146]: 
+array([[ 14,  28,  42],
+       [ 28,  56,  84],
+       [ 42,  84, 126]])
+
+In [147]: np.tensordot(L,L.T,([0],[1]))
+Out[147]: 
+array([[ 14,  28,  42],
+       [ 28,  56,  84],
+       [ 42,  84, 126]])
+
+/ 1313	. 
+
+In [150]: M=np.array([-1,4,5,-2,3,-4,-3,2,-1]).reshape(3,3)
+
+In [151]: M
+Out[151]: 
+array([[-1,  4,  5],
+       [-2,  3, -4],
+       [-3,  2, -1]])
+
+# de normale matrix verm	, (2,1) elem in product=2de rij links * 1ste kol rechts	,
+In [152]: np.tensordot(M,M,([1],[0]))
+Out[152]: 
+array([[-22,  18, -26],
+       [  8,  -7, -18],
+       [  2,  -8, -22]])
+
+# (2,1) elem in product = 2de kol links * 1ste rij rechts
+In [153]: np.tensordot(M,M,([0],[1]))
+Out[153]: 
+array([[-22,   8,   2],
+       [ 18,  -7,  -8],
+       [-26, -18, -22]])
+
+/ 13	. 
+
+In [53]: M
+Out[53]: 
+array([[1, 2],
+       [3, 4]])
+
+In [57]: np.kron(np.array([1,1]),np.diag(M[:,0]))
+Out[57]: 
+array([[1, 0, 1, 0],
+       [0, 3, 0, 3]])
+In [58]: np.kron(np.array([1,1]),np.diag(M[:,1]))
+Out[58]: 
+array([[2, 0, 2, 0],
+       [0, 4, 0, 4]])
+
+In [66]: K=np.r_[np.kron(np.array([1,1]),np.diag(M[:,0])),np.kron(np.array([1,1]),np.diag(M[:,1]))]
+
+In [67]: K
+Out[67]: 
+array([[1, 0, 1, 0],
+       [0, 3, 0, 3],
+       [2, 0, 2, 0],
+       [0, 4, 0, 4]])
+
+/ deze zochten we	,
+In [156]: (np.eye(4)-K)*K.T
+Out[156]: 
+array([[  0.,   0.,  -2.,   0.],
+       [  0.,  -6.,   0., -12.],
+       [ -2.,   0.,  -2.,   0.],
+       [  0., -12.,   0., -12.]])
+
+
+/ Einde MY
