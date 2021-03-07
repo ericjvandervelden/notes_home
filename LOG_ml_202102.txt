@@ -1870,5 +1870,105 @@ array([[  0.,   0.,  -2.,   0.],
        [ -2.,   0.,  -2.,   0.],
        [  0., -12.,   0., -12.]])
 
+/ 13	. 
+
+In [178]: R=np.array([]).reshape(0,4)
+In [179]: for i in np.arange(0,2):
+     ...:     R=np.r_[R,np.kron(np.ones(2)),np.diag(M[:,i]))]
+     ...:     
+     ...:     
+In [180]: R
+Out[180]: 
+array([[1., 0., 1., 0.],
+       [0., 3., 0., 3.],
+       [2., 0., 2., 0.],
+       [0., 4., 0., 4.]])
+w=w-la.lu_solve(la.lu_factor(H),grad)
+In [192]: (np.eye(4)-R)*R.T
+Out[192]: 
+array([[  0.,   0.,  -2.,   0.],
+       [  0.,  -6.,   0., -12.],
+       [ -2.,   0.,  -2.,   0.],
+       [  0., -12.,   0., -12.]])
+
+/ 7	 .
+
+/ args python script	,
+
+/ als het een integer is	,
+int(sys.argv[1]))
+
+[eric@almond my]$ cat args.py 
+import sys
+if len(sys.argv)!=3:
+    print("Give #features #classes\n" ,file=sys.stderr)
+    sys.exit(1)
+
+display(sys.argv[0])
+display(int(sys.argv[1]))
+display(int(sys.argv[2]))
+print(sys.argv[2])
+display(type(sys.argv))
+
+[eric@almond my]$ ipython args.py 13 7
+'/home/eric/Devel/python/my/args.py'
+13
+7
+7
+list
+
+[eric@almond my]$ ipython args.py 13 7 7
+Give #features #classes
+
+---------------------------------------------------------------------------
+SystemExit                                Traceback (most recent call last)
+~/Devel/python/my/args.py in <module>()
+      2 if len(sys.argv)!=3:
+      3     print("Give #features #classes\n" ,file=sys.stderr)
+----> 4     sys.exit(1)
+      5 
+      6 display(sys.argv[0])
+
+SystemExit: 1
+
+/ 13	. 
+
+/ lees https://stackoverflow.com/questions/36926077/how-to-pass-an-array-to-python-through-command-line/36926259
+
+/ lees array en een amount	,
+
+[eric@almond my]$ cat args.py 
+import sys
+import numpy as np
+if len(sys.argv)!=3:
+    print("Give features #classes\n" ,file=sys.stderr)
+    sys.exit(1)
+
+features=np.array(sys.argv[1].split(',')).astype(int)
+nclasses=int(sys.argv[2])
+
+print(len(sys.argv))
+
+print(sys.argv[0])
+print(type(features))
+print(features)
+print(len(features))
+
+print(type(nclasses))
+print(int(nclasses))
+
+display(type(sys.argv))
+
+# 3 args: args.py	, 0,1,2,3	, 3
+[eric@almond my]$ ipython args.py 0,1,2,3 3
+3
+/home/eric/Devel/python/my/args.py
+<class 'numpy.ndarray'>
+[0 1 2 3]
+4
+<class 'int'>
+3
+list
+
 
 / Einde MY
