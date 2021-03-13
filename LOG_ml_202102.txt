@@ -1230,8 +1230,435 @@ Untracked files:
 	renamed:    log_reg_multiclass_202103.py -> log_reg_multiclass_iris_202103.py
 	new file:   log_reg_multiclass_self_202103.py
 
+/ 13	. 
 
 
+In [1102]: A
+Out[1102]: 
+array([[2, 4],
+       [3, 6]])
+
+In [1107]: v
+Out[1107]: 
+array([[1],
+       [2]])
+
+In [1104]: A*v
+Out[1104]: 
+array([[ 2,  4],
+       [ 6, 12]])
+
+In [1105]: A*v.T
+Out[1105]: 
+array([[ 2,  8],
+       [ 3, 12]])
+
+In [1110]: A/v
+Out[1110]: 
+array([[2. , 4. ],
+       [1.5, 3. ]])
+
+In [1111]: A/v.T
+Out[1111]: 
+array([[2., 2.],
+       [3., 3.]])
+
+/ Deel A door de som van de rij	, 
+
+In [1117]: A/(A@np.ones((2,1)))
+Out[1117]: 
+array([[0.33333333, 0.66666667],
+       [0.33333333, 0.66666667]])
+
+/ 13	 .
+
+/ v@v.T, maar dan 4 keer in een matrix, dus, 
+
+(v@v.T v@v.T)
+(v@v.T v@v.T)
+
+In [1128]: np.kron(np.ones((2,2)),v @ v.T)
+Out[1128]: 
+array([[1., 2., 1., 2.],
+       [2., 4., 2., 4.],
+       [1., 2., 1., 2.],
+       [2., 4., 2., 4.]])
+
+/ 13	. 
+
+/ maar nu met een diagonaalmatrix ertussen,
+
+(v@R@v.T v@R@v.T)
+(v@R@v.T v@R@v.T)
+
+/ 1313	. 
+
+/ zo kan het NIET,
+
+In [1129]: R=np.diag([3,5])
+In [1130]: R
+Out[1130]: 
+array([[3, 0],
+       [0, 5]])
+
+In [1131]: Itm=np.kron(np.ones((2,2)),R)
+In [1132]: Itm
+Out[1132]: 
+array([[3., 0., 3., 0.],
+       [0., 5., 0., 5.],
+       [3., 0., 3., 0.],
+       [0., 5., 0., 5.]])
+
+In [1133]: v@ Itm @ v.T
+---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+<ipython-input-1133-954f9446d591> in <module>()
+----> 1 v@ Itm @ v.T
+
+ValueError: shapes (2,1) and (4,4) not aligned: 1 (dim 1) != 4 (dim 0)
+
+/ 1313	. 
+
+In [1151]: v
+Out[1151]: 
+array([[1],
+       [2]])
+
+In [1152]: v @ np.array([3]).reshape(-1,1) @ v.T
+Out[1152]: 
+array([[ 3,  6],
+       [ 6, 12]])
+
+/ NB. we moeten van (3) een 1x1 matrix maken	,
+
+In [1144]: v @ np.array([3]) 
+Out[1144]: array([3, 6])
+/ en is geen staande vector meer, en gaat vervolgens met @ v.T fout	,
+
+/ 1313	. 
+
+In [1184]: A
+Out[1184]: 
+array([[2, 4],
+       [3, 6]])
+
+In [1185]: np.kron(np.ones((3,3)),A)
+Out[1185]: 
+array([[2., 4., 2., 4., 2., 4.],
+       [3., 6., 3., 6., 3., 6.],
+       [2., 4., 2., 4., 2., 4.],
+       [3., 6., 3., 6., 3., 6.],
+       [2., 4., 2., 4., 2., 4.],
+       [3., 6., 3., 6., 3., 6.]])
+
+In [1191]: np.kron(np.ones((3,3)),v@v.T)
+Out[1191]: 
+array([[1., 2., 1., 2., 1., 2.],
+       [2., 4., 2., 4., 2., 4.],
+       [1., 2., 1., 2., 1., 2.],
+       [2., 4., 2., 4., 2., 4.],
+       [1., 2., 1., 2., 1., 2.],
+       [2., 4., 2., 4., 2., 4.]])
+
+/ 1313	. 
+
+In [1166]: A
+Out[1166]: 
+array([[2, 4],
+       [3, 6]])
+
+In [1167]: A.shape
+Out[1167]: (2, 2)
+
+In [1168]: type(A.shape)
+Out[1168]: tuple
+
+In [1169]: 3*A.shape
+Out[1169]: (2, 2, 2, 2, 2, 2)
+
+/ Maar we willen (6,6)	,
+
+/ 1313	. 
+
+/ lees,
+https://stackoverflow.com/questions/1781970/multiplying-a-tuple-by-a-scalar
+
+In [1181]: tuple([3*e for e in A.shape])
+Out[1181]: (6, 6)
+/ of,
+In [1177]: [3*e for e in A.shape]
+Out[1177]: [6, 6]
+
+/ want np.ones vindt een tuple, of list, of numpy array goed,
+
+/ 1313	. 
+
+/ als je een col van A als diagonaal wilt hebben van een matrix, gebruik dan col als vector, niet als matrix, 
+
+In [1192]: A
+Out[1192]: 
+array([[2, 4],
+       [3, 6]])
+
+In [1194]: A[:,0]
+Out[1194]: array([2, 3])
+
+In [1195]: A[:,[0]]
+Out[1195]: 
+array([[2],
+       [3]])
+
+In [1199]: A[:,0]*A[:,0]
+Out[1199]: array([4, 9])
+
+/ dit willen we	,
+In [1198]: np.diag(A[:,0]*A[:,0])
+Out[1198]: 
+array([[4, 0],
+       [0, 9]])
+
+In [1196]: A[:,[0]]*A[:,[0]]
+Out[1196]: 
+array([[4],
+       [9]])
+
+/ dit willen we niet	,
+In [1197]: np.diag(A[:,[0]]*A[:,[0]])
+Out[1197]: array([4])
+
+/ 1313	. 
+
+In [1221]: A
+Out[1221]: 
+array([[2, 4],
+       [3, 6]])
+
+In [1222]: np.vstack([np.diag(A[:,j]) for j in range(A.shape[1])])
+Out[1222]: 
+array([[2, 0],
+       [0, 3],
+       [4, 0],
+       [0, 6]])
+
+In [1226]: Itm @ Itm.T
+Out[1226]: 
+array([[ 4,  0,  8,  0],
+       [ 0,  9,  0, 18],
+       [ 8,  0, 16,  0],
+       [ 0, 18,  0, 36]])
+
+
+/ 1313	. 
+
+/ verschillen np.array, np.block, np.stack, np.vstack, np.hstack	,
+
+In [1227]: A
+Out[1227]: 
+array([[2, 4],
+       [3, 6]])
+
+/ verschil np.array, np.block	,
+
+In [1232]: np.array([np.diag(A[:,j]) for j in range(2)])
+Out[1232]: 
+array([[[2, 0],
+        [0, 3]],
+
+       [[4, 0],
+        [0, 6]]])
+
+In [1233]: np.array([np.diag(A[:,j]) for j in range(2)]).shape
+Out[1233]: (2, 2, 2)
+
+In [1234]: np.block([np.diag(A[:,j]) for j in range(2)])
+Out[1234]: 
+array([[2, 0, 4, 0],
+       [0, 3, 0, 6]])
+
+In [1235]: np.block([np.diag(A[:,j]) for j in range(2)]).shape
+Out[1235]: (2, 4)
+
+/ np.stack = np.array	,
+
+In [1238]: np.stack([np.diag(A[:,j]) for j in range(2)])
+Out[1238]: 
+array([[[2, 0],
+        [0, 3]],
+
+       [[4, 0],
+        [0, 6]]])
+
+/ np.hstack = np.block	,
+
+In [1240]: np.hstack([np.diag(A[:,j]) for j in range(2)])
+Out[1240]: 
+array([[2, 0, 4, 0],
+       [0, 3, 0, 6]])
+
+In [1243]: np.vstack([np.diag(A[:,j]) for j in range(A.shape[1])])
+Out[1243]: 
+array([[2, 0],
+       [0, 3],
+       [4, 0],
+       [0, 6]])
+
+In [1244]: np.vstack([np.diag(A[:,j]) for j in range(A.shape[1])]).shape
+Out[1244]: (4, 2)
+
+/ 1313	. 
+
+/ Bishop (4.110) (210)
+
+/ (c/s) NSxNC 
+/ getallen kloppen niet: som der rijen moet 1 zijn: p(0|s)+p(1|s)+p(2|s)=1 als NC=3	, 
+In [1285]: A
+Out[1285]: 
+array([[2, 4],
+       [3, 6]])
+
+/ NS=2, NC=2
+
+
+In [1259]: Itm0=np.block([np.diag(A[:,j]) for j in range(A.shape[1])])
+In [1271]: Itm0
+Out[1271]: 
+array([[2, 0, 4, 0],
+       [0, 3, 0, 6]])
+
+In [1276]: Itm1=Itm0.T @ -Itm0
+
+In [1277]: Itm1
+Out[1277]: 
+array([[ -4,   0,  -8,   0],
+       [  0,  -9,   0, -18],
+       [ -8,   0, -16,   0],
+       [  0, -18,   0, -36]])
+
+
+In [1267]: [A[:,j] for j in range(A.shape[1])]
+Out[1267]: [array([2, 3]), array([4, 6])]
+
+In [1268]: np.block([A[:,j] for j in range(A.shape[1])])
+Out[1268]: array([2, 3, 4, 6])
+
+In [1269]: Itm2=np.diag(np.block([A[:,j] for j in range(A.shape[1])]))
+In [1275]: Itm2
+Out[1269]: 
+array([[2, 0, 0, 0],
+       [0, 3, 0, 0],
+       [0, 0, 4, 0],
+       [0, 0, 0, 6]])
+
+In [1278]: Itm=Itm2+Itm1
+
+In [1284]: Itm
+Out[1284]: 
+array([[ -2,   0,  -8,   0],
+       [  0,  -6,   0, -18],
+       [ -8,   0, -12,   0],
+       [  0, -18,   0, -30]])
+
+/ 131313	. 
+
+/ NS=2
+/ NF=1
+
+/ Phi = NSxNF+1
+
+In [1301]: Phi=np.array([1,-2,1,2]).reshape(-1,2)
+
+In [1302]: Phi
+Out[1302]: 
+array([[ 1, -2],
+       [ 1,  2]])
+
+/ we moeten Phi en Phi.T in de diagonaal zetten van NCxNC	,
+
+In [1311]: Phi_NC_diag=np.kron(np.eye(NC),Phi)
+In [1304]: Phi_NC_diag
+Out[1304]: 
+array([[ 1., -2.,  0., -0.],
+       [ 1.,  2.,  0.,  0.],
+       [ 0., -0.,  1., -2.],
+       [ 0.,  0.,  1.,  2.]])
+
+In [1305]: Phi_NC_diag.T @ Itm @ Phi_NC_diag
+Out[1305]: 
+array([[  -8.,   -8.,  -26.,  -20.],
+       [  -8.,  -32.,  -20., -104.],
+       [ -26.,  -20.,  -42.,  -36.],
+       [ -20., -104.,  -36., -168.]])
+
+/ Bishop (4.110) (p.210)
+
+/ 1313	 .
+
+[eric@almond my]$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   args.py
+	modified:   log_reg_multiclass_20102.py
+	deleted:    log_reg_multiclass_self_202103.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	fun.py
+	log_reg_multiclass_iris_20210312.py
+	log_reg_multiclass_iris_20210313.py
+	log_reg_multiclass_self_20210313.py
+
+[eric@almond my]$ git add log_reg_multiclass_iris_20210312.py
+[eric@almond my]$ git add log_reg_multiclass_iris_20210313.py
+[eric@almond my]$ git add log_reg_multiclass_self_20210313.py
+[eric@almond my]$ git rm log_reg_multiclass_self_202103.py
+rm 'log_reg_multiclass_self_202103.py'
+
+[eric@almond my]$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	renamed:    log_reg_multiclass_self_202103.py -> log_reg_multiclass_iris_20210312.py
+	new file:   log_reg_multiclass_iris_20210313.py
+	new file:   log_reg_multiclass_self_20210313.py
+
+
+
+
+/ 1313	. 
+
+[eric@almond my]$ ipython log_reg_multiclass_iris_20210313.py 0,1,2,3  2
+[eric@almond my]$ ipython log_reg_multiclass_iris_20210313.py 3 3 2
+
+
+
+
+/ 1313	. 
+
+/ stel dat R zo berekent moet worden	,
+
+In [1255]: R=Itm @ Itm.T
+In [1256]: R
+Out[1256]: 
+array([[ 4,  0,  8,  0],
+       [ 0,  9,  0, 18],
+       [ 8,  0, 16,  0],
+       [ 0, 18,  0, 36]])
+
+/ hoe dan Phi.T @ <block in R> @ Phi	?
+
+/ je kunt (Phi.T Phi.T) @ R (Phi
+														 Phi)
+
+/ 1313	. 
+
+/ list comprehension
 
 
 
