@@ -1660,6 +1660,45 @@ array([[ 4,  0,  8,  0],
 
 / list comprehension
 
+/ 13	. 
+
+/ aanroep	,
+[eric@almond my]$ ipython log_reg_multiclass_self_20210313.py
+Use: log_reg_multiclass_self_202103.py <features> <classes> <#iteraties>
+[eric@almond my]$ ipython log_reg_multiclass_self_20210313.py -- -2,2 0,1 1
+/ of	,
+[eric@almond my]$ ipython log_reg_multiclass_self_20210313.py -- -3,-2,-1,0,1,2,3 0,0,0,1,1,1,1 1
+
+[eric@almond my]$ ipython log_reg_multiclass_iris_20210314.py 
+Use: log_reg_multiclass_20102.py <features> <#iteraties>
+
+/ 13	 .
+
+[eric@almond my]$ ipython log_reg_multiclass_self_20210313.py -- -2,2 0,1 1
+
+/ Hessian @ v = grad : 
+
+(8/81 0 -8/81 0		= 2/9
+ 0   2/9 0   -2/9 = 8/9
+(-8/81 0 8/81 0   = -2/9
+ 0   -2/9 0   2/9 = -8/9)
+
+/ lu:
+
+(8/81 0 -8/81 0		= 2/9
+ 0   2/9 0   -2/9 = 8/9
+(0    0  0    0   = 0
+(0    0  0    0   = 0
+
+/ opl: 
+
+<(1,0,1,0).T,(0,1,0,1).T>+(9/4,4,0,0)
+
+/ lu van python komt hier niet uit	,
+
+/ zie blaadje B16
+
+/ TODO
 
 
 
@@ -2053,6 +2092,17 @@ display(int(sys.argv[2]))
 '/home/eric/Devel/python/my/args.py'
 13
 7
+
+/ 7	 .
+
+/ randint	,
+
+Parameters
+----------
+low : int
+    Lowest (signed) integer to be drawn from the distribution (unless
+    ``high=None``, in which case this parameter is one above the
+    *highest* such integer).
 
 
 
