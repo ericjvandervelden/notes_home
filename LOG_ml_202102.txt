@@ -1707,6 +1707,108 @@ Use: log_reg_multiclass_20102.py <features> <#iteraties>
 
 / Einde MY ML 
 
+/ GERON ML 
+
+[eric@almond my]$ grep LogisticRegression *.py
+log_reg_1_class_1_feature_iris_geron_202102.py:from sklearn.linear_model import LogisticRegression
+log_reg_1_class_1_feature_iris_geron_202102.py:#lg=LogisticRegression()
+log_reg_1_class_1_feature_iris_geron_202102.py:lg=LogisticRegression(solver="liblinear",C=10**10) 
+log_reg_1_class_1_feature_iris_geron_202102.py:#lg=LogisticRegression(C=10**10)
+log_reg_1_class_1_feature_iris_geron_202102.py:#lg=LogisticRegression(C=10)
+log_reg_1_class_2_features_iris_geron_202102.py:from sklearn.linear_model import LogisticRegression
+log_reg_1_class_2_features_iris_geron_202102.py:lg=LogisticRegression(solver="liblinear",C=10**10) 
+log_reg_1_class_4_features_iris_geron_202102.py:from sklearn.linear_model import LogisticRegression
+log_reg_1_class_4_features_iris_geron_202102.py:lg=LogisticRegression(solver="liblinear",C=10**10) 
+log_reg_3_class_1_features_iris_geron_202102.py:from sklearn.linear_model import LogisticRegression
+log_reg_3_class_1_features_iris_geron_202102.py:lg=LogisticRegression(multi_class="multinomial",solver="newton-cg",C=10**10) 
+log_reg_3_class_4_features_iris_geron_202102.py:from sklearn.linear_model import LogisticRegression
+log_reg_3_class_4_features_iris_geron_202102.py:lg=LogisticRegression(multi_class="multinomial",solver="newton-cg",C=10**10) 
+log_reg_3_classes_2_features_newton_geron.py:from sklearn.linear_model import LogisticRegression
+log_reg_3_classes_2_features_newton_geron.py:#lg=LogisticRegression(C=10**10)
+log_reg_3_classes_2_features_newton_geron.py:lg=LogisticRegression(multi_class="multinomial",solver="lbfgs",C=10) # C=10 !
+log_reg_3_classes_2_features_newton_geron.py:#lg=LogisticRegression(C=10)
+log_reg_3_classes_2_features_sklearn.py:from sklearn.linear_model import LogisticRegression
+log_reg_3_classes_2_features_sklearn.py:lg=LogisticRegression(C=10**10)
+log_reg_sklearn.py:from sklearn.linear_model import LogisticRegression
+log_reg_sklearn.py:log_reg = LogisticRegression(solver="liblinear", C=10**
+
+/ 1313	. 
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_iris_geron_202102.py 3 2
+array([-21.12560598])
+array([[12.94748578]])
+
+/ de 1ste kan weg,	 en de 2de moet anders heten	,
+log_reg_1_class_2_features_iris_geron_202102.py
+log_reg_1_class_2_features_iris_geron_202102.py
+
+[eric@almond my]$ ipython log_reg_1_class_2_features_iris_geron_202102.py 3 2
+array([-21.12560598])
+array([[12.94748578]])
+
+[eric@almond my]$ ipython log_reg_1_class_2_features_iris_geron_202102.py 3 2
+array([-21.12560598])
+array([[12.94748578]])
+/ maar	, 
+[eric@almond my]$ ipython log_reg_1_class_2_features_iris_geron_202102.py 0,1,2,3 2
+array([-42.46853369])
+array([[-2.46312182, -6.66512187,  9.40005677, 18.23704717]])
+/ TODO
+
+
+
+
+/ 1313	. 
+
+/ 1ste kan weg, 2de hernoemen	,	
+log_reg_3_class_1_features_iris_geron_202102.py:
+log_reg_3_class_4_features_iris_geron_202102.py
+
+[eric@almond my]$ ipython log_reg_3_class_4_features_iris_geron_202102.py 3
+array([ 32.25741399,  -5.56591178, -26.69150222])
+array([[-36.81302781],
+       [ 11.93277549],
+       [ 24.88025232]])
+
+[eric@almond my]$ ipython log_reg_3_class_4_features_iris_geron_202102.py 0,1,2,3
+array([  2.32925138,  20.15434543, -22.48359681])	 / class 0,1,2
+array([[  4.8858444 ,   7.84777582, -12.84179439,  -6.6637919 ],	/ class 0
+       [ -1.2103132 ,  -0.58344044,   1.70619436,  -5.81118631],	 / class 1
+       [ -3.6755312 ,  -7.26433538,  11.13560003,  12.47497821]])	 / class 2
+feature 	0						1						2							3
+
+
+/ Deze doet het goed, vergl met 1 class hierboven: feature 3, class 2	, 
+/ je moet alle features kiezen	,
+
+/ 13	. 
+
+/ self algoritm on iris en self data
+-rw-rw-r--. 1 eric eric 4751 Mar 14 00:26 log_reg_multiclass_iris_20210313.py
+-rw-rw-r--. 1 eric eric 5144 Mar 14 21:53 log_reg_multiclass_iris_20210314.py		<<<
+-rw-rw-r--. 1 eric eric 5055 Mar 14 22:17 log_reg_multiclass_self_20210313.py		<<<
+
+/ sklearn on iris
+-rw-rw-r--. 1 eric eric 1633 Mar 15 22:16 log_reg_1_class_2_features_iris_geron_202102.py		<<<  1 class LogisticRegression 
+-rw-rw-r--. 1 eric eric 1648 Mar 15 22:20 log_reg_3_class_4_features_iris_geron_202102.py		<<<	 multinomial LogisticRegression
+-rw-rw-r--. 1 eric eric 1674 Mar 15 21:51 log_reg_1_class_1_feature_iris_geron_202102.py	 
+-rw-rw-r--. 1 eric eric 1584 Mar 15 21:54 log_reg_3_class_1_features_iris_geron_202102.py
+-rw-rw-r--. 1 eric eric 1661 Mar 15 22:17 log_reg_3_classes_2_features_newton_geron.py
+
+/ 13	. 
+
+/ sklearn 1 nomial op self voorbeeld,	
+
+[eric@almond my]$ cp log_reg_1_class_2_features_iris_geron_202102.py log_reg_1_class_features_self_geron_20210315.py
+/ MORGEN
+
+
+
+
+
+
+/ Einde GERON ML 
+
 / MY PYTHON
 
 / 13	
