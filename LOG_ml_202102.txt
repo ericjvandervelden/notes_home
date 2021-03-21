@@ -1700,6 +1700,176 @@ Use: log_reg_multiclass_20102.py <features> <#iteraties>
 
 / TODO
 
+/ 7	. 
+
+[eric@almond my]$ ipython log_reg_1_class_features_newton_self_202102.py -- -2,2 0,1 2
+/ en in licplise,
+log_reg_1_class_features_self_geron.py	,
+/=
+[eric@almond my]$ ipython log_reg_1_class_features_self_geron_20210315.py -- -2,2 0,1 
+intercept_
+[0.]
+coef_
+[[5.60143377]]
+
+
+
+/ in liclipse	, 
+
+	lg=LogisticRegression(solver="newton-cg",C=10**10) 
+/ dan is 
+multi_class='ovr'
+	fit(...)
+/s,
+    def fit(self, X, y, sample_weight=None):
+
+        self.classes_ = np.unique(y)
+[0,1]
+
+        fold_coefs_ = Parallel(n_jobs=self.n_jobs, verbose=self.verbose,
+                               backend=backend)(
+            path_func(X, y, pos_class=class_, Cs=[self.C],										/ pos_class=1
+                      fit_intercept=self.fit_intercept, tol=self.tol,
+                      verbose=self.verbose, solver=self.solver,
+                      multi_class=self.multi_class, max_iter=self.max_iter,
+                      class_weight=self.class_weight, check_input=False,
+                      random_state=self.random_state, coef=warm_start_coef_,
+                      penalty=self.penalty,
+                      max_squared_sum=max_squared_sum,
+                      sample_weight=sample_weight)
+            for class_, warm_start_coef_ in zip(classes_, warm_start_coef))			 / classes_=[1], TODO, class_=1
+/s,
+    def __call__(self):
+        return [func(*args, **kwargs) for func, args, kwargs in self.items]
+args=<class 'tuple'>: (array([[-2.], [ 2.]]), array([0, 1]))
+kwargs=dict: {'pos_class': 1, 'Cs': [10000000000], 'fit_intercept': True, 'tol': 0.0001, 'verbose': 0, 'solver': 'newton-cg', 'multi_class': 'ovr', 'max_iter': 100, 'class_weight': None, 'check_input': False, 'random_state': None, 
+ 'coef': None, 'penalty': 'l2', 'max_squared_sum': None, 'sample_weight': None}
+/s,
+def _log_reg_scoring_path(X, y, train, test, pos_class=None, Cs=10,
+                          scoring=None, fit_intercept=False,
+                          max_iter=100, tol=1e-4, class_weight=None,
+                          verbose=0, solver='lbfgs', penalty='l2',
+                          dual=False, intercept_scaling=1.,
+                          multi_class='ovr', random_state=None,
+                          max_squared_sum=None, sample_weight=None):
+    """Computes scores across logistic_regression_path
+
+    pos_class : int, None
+        The class with respect to which we perform a one-vs-all fit.
+        If None, then it is assumed that the given problem is binary.
+
+
+    # For doing a ovr, we need to mask the labels first. for the
+    # multinomial case this is not necessary.
+    if multi_class == 'ovr':
+        w0 = np.zeros(n_features + int(fit_intercept), dtype=X.dtype)
+n_features=1
+fit_intercept=True
+w0=[0,0]
+        mask_classes = np.array([-1, 1])
+        mask = (y == pos_class)
+/ TODO
+[False,True]
+        y_bin = np.ones(y.shape, dtype=X.dtype)
+[1,1]
+        y_bin[~mask] = -1.
+y_bin=[-1,1]
+
+    else:
+        target = y_bin
+
+        elif solver == 'newton-cg':
+            func = _logistic_loss
+            grad = lambda x, *args: _logistic_loss_and_grad(x, *args)[1]
+            hess = _logistic_grad_hess
+
+    for i, C in enumerate(Cs):
+        if solver == 'lbfgs':
+Broyden–Fletcher–Goldfarb–Shanno algorithm
+/n,
+        elif solver == 'newton-cg':
+/j,
+            args = (X, target, 1. / C, sample_weight)
+<class 'tuple'>: (array([[-2.],[ 2.]]), array([-1.,  1.]), 1e-10, array([1., 1.]))
+/ dus class 0 is -1 geworden	,
+/ TODO
+            w0, n_iter_i = newton_cg(hess, func, grad, w0, args=args,
+                                     maxiter=max_iter, tol=tol)
+/s,
+def newton_cg(grad_hess, func, grad, x0, args=(), tol=1e-4,
+              maxiter=100, maxinner=200, line_search=True, warn=True):
+    if line_search:
+/j,
+        old_fval = func(x0, *args)
+x0=ndarray: [0. 0.]	 # w
+/s,
+def _logistic_loss(w, X, y, alpha, sample_weight=None):
+/ Bishop (4.90) (p. 206)
+/ we gaan uitrekenen p(0|-2) en p(1|2)	, = sigma(w.dot(1,-2)), sigma(w.dot(1,2))
+    w, c, yz = _intercept_dot(w, X, y)	 # inproduct met de intercept erbij, dus met (1,-2).dot(w) en (1,2).dot(w)
+w=[0,0]
+X=[[-2],
+	[2]]
+y=[-1,1]
+/s,
+def _intercept_dot(w, X, y):
+    """Computes y * np.dot(X, w).
+    It takes into consideration if the intercept should be fit or not.
+
+    if w.size == X.shape[1] + 1:	/ X.shape[1]=1	, X is zonder intercept	, daarom +1 voor intercept	,
+        c = w[-1]	/ de intercept	, staat bij hun achteraan	,
+0.
+        w = w[:-1]	/ niet de intercept	,	
+0.
+    z = safe_sparse_dot(X, w) + c
+[0,0]	/ klopt	, 
+    yz = y * z
+y=[-1,1]
+/ de loss fct hieronder is log(p(0|-2) + log(p(1|2)	=log(1-p(1|-2))+log(p(1|2)=log(1-sigma(w.T.dot(1,-2)))+log(sigma(w.T.dot(1,2)))=log(sigma(-w.T.dot(1,-2)))+log(sigma(w.T.dot(1,2))) : 1-sigma(x)=sigma(-x)	. Daarom verm. ze met y.
+/t,
+def _logistic_loss(w, X, y, alpha, sample_weight=None):
+    w, c, yz = _intercept_dot(w, X, y)
+/d,
+    # Logistic loss is the negative of the log of the logistic function.
+    out = -np.sum(sample_weight * log_logistic(yz)) + .5 * alpha * np.dot(w, w)
+/ Bishop (4.90)
+/s,
+def log_logistic(X, out=None):
+/ X=[-0,0]	, omdat we 2 samples hebben	,
+/ je berekent w.T.dot((1,-2)) , en dat is de 1ste 0	, en w.T.dot((1,2)), en dat is de 2de 0, 	
+    """Compute the log of the logistic function, ``log(1 / (1 + e ** -x))``.
+
+    This implementation is numerically stable because it splits positive and
+    negative values::
+
+        -log(1 + exp(-x_i))     if x_i > 0
+        x_i - log(1 + exp(x_i)) if x_i <= 0
+
+    For the ordinary logistic function, use ``scipy.special.expit``.
+
+/ klopt	, we willen berekenen de loss fct, dus log(p(0|-2) + log(p(1|2)	, later nemen we de - en krijgen de cost fct	,
+/ hier in log_logistic berekenen we log(p(1|xi)). 
+/ wat hier staat met xi>0 of xi<=0 klopt	, 
+log(1/(1+e^-x))=-log(1+e^-x)
+log(1/(1+e^-x))=log(e^x/e^x+1)=x-log(e^x+1)
+
+
+
+
+
+    is_1d = X.ndim == 1
+True
+/ number of array dimensions
+    X = np.atleast_2d(X)
+[[-0,0]]
+
+    n_samples, n_features = X.shape
+1,2
+/ TODO Je zou denken 2,1
+
+    _log_logistic_sigmoid(n_samples, n_features, X, out)
+/ build in	,
+ndarray: [[-0.69314718 -0.69314718]]	 / log.5, log.5
 
 
 
@@ -1800,7 +1970,46 @@ feature 	0						1						2							3
 / sklearn 1 nomial op self voorbeeld,	
 
 [eric@almond my]$ cp log_reg_1_class_2_features_iris_geron_202102.py log_reg_1_class_features_self_geron_20210315.py
-/ MORGEN
+
+$ vi log_reg_1_class_features_self_geron_20210315.py
+
+phi=np.array(sys.argv[1].split(',')).astype(int).reshape(-1,1)	/ moet 2-dim array	,
+t=np.array(sys.argv[2].split(',')).astype(int)
+lg=LogisticRegression(solver="liblinear",C=10**10)
+lg.fit(phi,t)
+display(lg.intercept_)
+display(lg.coef_)
+
+[eric@almond my]$ ipython log_reg_1_class_features_self_geron_20210315.py -- -2,2 0,1
+array([0.])
+array([[5.60143377]])
+
+/ 13	 .
+
+$ vi log_reg_multi_class_features_self_geron_20210315.py
+
+phi=np.array(sys.argv[1].split(',')).astype(int).reshape(-1,1)
+t=np.array(sys.argv[2].split(',')).astype(int)
+lg=LogisticRegression(multi_class="multinomial",solver="newton-cg",C=10**10)
+lg.fit(phi,t)
+display(lg.intercept_)
+display(lg.coef_)
+
+[eric@almond my]$ ipython log_reg_multi_class_features_self_geron_20210315.py -- -2,2 0,1
+array([-8.57543388e-13])
+array([[2.80071759]])
+
+/ 13	. 
+
+[eric@almond my]$ ls ~/Devel/Eclipse/python/workspace/logisticregression/src/root/nested/
+example.py  __init__.py  log_reg_sklearn2.py  log_reg_sklearn.py
+
+/ in liclipse	, right click log_reg_sklearn2.py, 
+/ run as , python run, 
+/ of	,
+/ debug as,  
+
+
 
 
 
