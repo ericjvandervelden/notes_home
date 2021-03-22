@@ -1817,15 +1817,29 @@ def _intercept_dot(w, X, y):
     It takes into consideration if the intercept should be fit or not.
 
     if w.size == X.shape[1] + 1:	/ X.shape[1]=1	, X is zonder intercept	, daarom +1 voor intercept	,
-        c = w[-1]	/ de intercept	, staat bij hun achteraan	,
+        c = w[-1]	/ de intercept	, staat bij hun achteraan	,	= w0
 0.
-        w = w[:-1]	/ niet de intercept	,	
+        w = w[:-1]	/ niet de intercept	,	= w1
 0.
     z = safe_sparse_dot(X, w) + c
 [0,0]	/ klopt	, 
+
+/ wij doen altijd 
+w.T.dot(1,-2).T = w0-2w1		, phi1=(1,-2).T
+w.T.dot(1,2).T = w0+2w1			, phi2=(1,2).T
+/ zij doen:
+(-2,2).T.dot(w1)+w0=-2w1+w0, 2w1+w0
+/ dus z= beide w.T.dot(phi1)
+
+/ TODO check,	
+
     yz = y * z
 y=[-1,1]
-/ de loss fct hieronder is log(p(0|-2) + log(p(1|2)	=log(1-p(1|-2))+log(p(1|2)=log(1-sigma(w.T.dot(1,-2)))+log(sigma(w.T.dot(1,2)))=log(sigma(-w.T.dot(1,-2)))+log(sigma(w.T.dot(1,2))) : 1-sigma(x)=sigma(-x)	. Daarom verm. ze met y.
+/ de error fct hieronder is log(p(0|-2) + log(p(1|2)	=log(1-p(1|-2))+log(p(1|2)=log(1-sigma(w.T.dot(1,-2)))+log(sigma(w.T.dot(1,2)))=log(sigma(-w.T.dot(1,-2)))+log(sigma(w.T.dot(1,2))) : 1-sigma(x)=sigma(-x)	. Daarom verm. ze met y.
+/ loss fct = - error fct	,
+
+/ dus je hebt -(w0-2w1), (w0+2w1), en dan sgm(-(w0-2w1)), sgm(w0+2w1) = p(0|-2), p(1|2)
+/ want sgm(-x)=1-sgm(x)
 /t,
 def _logistic_loss(w, X, y, alpha, sample_weight=None):
     w, c, yz = _intercept_dot(w, X, y)
@@ -1852,6 +1866,72 @@ def log_logistic(X, out=None):
 / wat hier staat met xi>0 of xi<=0 klopt	, 
 log(1/(1+e^-x))=-log(1+e^-x)
 log(1/(1+e^-x))=log(e^x/e^x+1)=x-log(e^x+1)
+
+/t,
+def _logistic_loss(w, X, y, alpha, sample_weight=None):
+    out = -np.sum(sample_weight * log_logistic(yz)) + .5 * alpha * np.dot(w, w)
+/d,
+float64: 1.3862943611198906
+/ klopt	, 
+
+/t,
+ef newton_cg(grad_hess, func, grad, x0, args=(), tol=1e-4,
+              maxiter=100, maxinner=200, line_search=True, warn=True):
+    if line_search:
+        old_fval = func(x0, *args)
+/d,
+        old_old_fval = None
+
+    while k < maxiter:
+        # Compute a search direction pk by applying the CG method to
+        #  del2 f(xk) p = - fgrad f(xk) starting from 0.
+        fgrad, fhess_p = grad_hess(xk, *args)
+/s,
+def _logistic_grad_hess(w, X, y, alpha, sample_weight=None):
+
+    n_samples, n_features = X.shape
+2,1
+X=[[-2]
+	[2]]
+X.shape=(2,1)
+    grad = np.empty_like(w)
+    fit_intercept = grad.shape[0] > n_features
+/j, grad.shape=(2,)	, 2>1
+    w, c, yz = _intercept_dot(w, X, y)
+yz=[-0,0]	, want y=[-1,1]
+    z = expit(yz)
+[.5,.5]
+    z0 = sample_weight * (z - 1) * y
+
+/ we doen, 
+y=(sgm(-(w0-2w1)), sgm(w0+2w1)).T = (p(0|-2), p(1|2)).T
+y-t = (1-sgm(w0-2w1),sgm(w0+2w1)).T-(0,1).T
+/ zij doen, 
+z=(sgm(w0-2w1),sgm(w0+2w1)).T	, z-1=(sgm(w0-2w1)-1,sgm(w0+2w1)-1).T, (z-1)*y=(1-sgm(w0-2w1),sgm(w0+2w1)-1).T
+																																				=(sgm(-(w0-2w1)),sgm(w0+2w1)-1).T
+/ klopt	,
+(.5,-.5)
+
+/ ik had in mijn notes,
+(-(1-sgm1)+1,sgm2-1).T=(sgm1,sgm2-1).T
+
+    grad[:n_features] = safe_sparse_dot(X.T, z0) + alpha * w
+
+/ wij doen Phi.T*(y-t) = 
+( 1 1) * (.5	= (0
+(-2 2)	 -.5)		-2)
+
+/ zij berekenen grad[:1]=(-2,2).dot((.5,-.5).T)=-2
+grad=[-2,0]
+    if fit_intercept:
+        grad[-1] = z0.sum()
+0
+/ Klopt	,
+/ doen wij ook : (1,1).dot(.5, -.5).T = som nemen	,
+
+
+
+
 
 
 
