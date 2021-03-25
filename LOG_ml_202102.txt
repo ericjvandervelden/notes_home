@@ -1929,7 +1929,7 @@ grad=[-2,0]
 / Klopt	,
 / doen wij ook : (1,1).dot(.5, -.5).T = som nemen	,
 
-
+/ HIER HIER HIER
 
 
 
@@ -3045,4 +3045,12 @@ N^2 memory overhead
 
 M[:,:] = M[p,:]
 M[:,:] = M[:,p]
+
 / Einde MY
+
+/ CG
+
+    #w=w-la.lu_solve(la.lu_factor(H),grad)
+
+
+/ Einde CG
