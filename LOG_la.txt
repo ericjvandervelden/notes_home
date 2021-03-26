@@ -1,0 +1,573 @@
+/ 7	 .
+
+/ A=PLU
+
+/ lees,
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.lu.html
+
+/ lees Strang (98/113)
+
+In [265]: import scipy.linalg as la
+
+/ 13	. 
+
+In [269]: A=np.array([2,1,0,1,2,1,0,1,2]).reshape(-1,3)
+
+In [270]: A
+Out[270]: 
+array([[2, 1, 0],
+       [1, 2, 1],
+       [0, 1, 2]])
+
+In [272]: P,L,U=la.lu(A)
+
+In [273]: P
+Out[273]: 
+array([[1., 0., 0.],
+       [0., 1., 0.],
+       [0., 0., 1.]])
+
+In [274]: L
+Out[274]: 
+array([[1.        , 0.        , 0.        ],
+       [0.5       , 1.        , 0.        ],
+       [0.        , 0.66666667, 1.        ]])
+
+In [275]: U
+Out[275]: 
+array([[2.        , 1.        , 0.        ],
+       [0.        , 1.5       , 1.        ],
+       [0.        , 0.        , 1.33333333]])
+
+/ 13	. 
+
+In [276]:  A=np.array([0,1,2,2,1,0,1,2,1]).reshape(-1,3)
+
+In [277]: A
+Out[277]: 
+array([[0, 1, 2],
+       [2, 1, 0],
+       [1, 2, 1]])
+
+In [278]: P,L,U=la.lu(A)
+
+In [279]: P
+Out[279]: 
+array([[0., 0., 1.],
+       [1., 0., 0.],
+       [0., 1., 0.]])
+
+In [280]: L
+Out[280]: 
+array([[1.        , 0.        , 0.        ],
+       [0.5       , 1.        , 0.        ],
+       [0.        , 0.66666667, 1.        ]])
+
+In [281]: U
+Out[281]: 
+array([[2.        , 1.        , 0.        ],
+       [0.        , 1.5       , 1.        ],
+       [0.        , 0.        , 1.33333333]])
+
+/ check	,
+In [287]: P @ L @ U
+Out[287]: 
+array([[0., 1., 2.],
+       [2., 1., 0.],
+       [1., 2., 1.]])
+/ of zo	,
+In [292]: np.allclose(A-P @ L @ U,np.zeros((3,3)))
+Out[292]: True
+
+
+/ 7	. 
+
+/ ga naar https://docs.scipy.org/doc/scipy/reference/linalg.html
+
+/ je ziet: Decompositions	,
+/ kies svd	,
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.svd.html#scipy.linalg.svd
+
+In [294]: A=np.array([1,2]).reshape(-1,2)
+In [295]: A
+Out[295]: array([[1, 2]])
+
+/ use 'gesvd'	, anders -'en
+
+In [304]: U,S,VT=la.svd(A,lapack_driver='gesvd')
+In [305]: U
+Out[305]: array([[1.]])
+n [308]: S/np.sqrt(5)
+Out[308]: array([1.])
+In [310]: VT*np.sqrt(5)
+Out[310]: 
+array([[ 1.,  2.],
+       [-2.,  1.]])
+
+A=1*sqrt(5)*(1 2)/sqrt(5)
+
+/ 7	. 
+
+/ lu_factor	,
+
+/ lees,
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.lu_factor.html#scipy.linalg.lu_factor
+
+/ 13	. 
+
+In [269]: A=np.array([2,1,0,1,2,1,0,1,2]).reshape(-1,3)
+
+In [335]: A
+Out[335]: 
+array([[2, 1, 0],
+       [1, 2, 1],
+       [0, 1, 2]])
+
+
+In [319]: lu,piv=la.lu_factor(A)
+
+In [320]: lu
+Out[320]: 
+array([[2.        , 1.        , 0.        ],
+       [0.5       , 1.5       , 1.        ],
+       [0.        , 0.66666667, 1.33333333]])
+
+In [321]: piv
+Out[321]: array([0, 1, 2], dtype=int32)
+
+A=L@U=np.array([1,0,0,1/2,1,0,0,2/3,1]).reshape(-1,3) @ np.array([2,1,0,0,3/2,1,0,0,4/3]).reshape(-1,3)
+
+/ we zien L linksonder in lu, en U rechtsboven	, 
+/ de diagonaal is die van U	, 
+/ de diagonaal van L is toch altijd allen 1	, 
+/ deze piv betekent: geen verwisselingen van rijen	, 
+
+/ 13	. 
+
+In [335]: A
+array([[2, 1, 0],
+       [1, 2, 1],
+       [0, 1, 2]])
+
+
+In [276]:  B=np.array([0,1,2,2,1,0,1,2,1]).reshape(-1,3)
+
+In [327]: B
+array([[0, 1, 2],
+       [2, 1, 0],
+       [1, 2, 1]])
+
+In [324]: lu,piv=la.lu_factor(B)
+
+In [325]: lu
+array([[2.        , 1.        , 0.        ],
+       [0.5       , 1.5       , 1.        ],
+       [0.        , 0.66666667, 1.33333333]])
+
+In [326]: piv
+Out[326]: array([1, 2, 2], dtype=int32)
+
+/ zie hieronder	, bij lu_factor	,
+
+
+
+/ 13	. 
+
+/ lees,
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.lu_solve.html#scipy.linalg.lu_solve
+
+In [341]: A=np.array([2,1,0,1,2,1,0,1,2]).reshape(-1,3)
+
+n [342]: lu,piv=la.lu_factor(A)
+
+In [343]: lu
+Out[343]: 
+array([[2.        , 1.        , 0.        ],
+       [0.5       , 1.5       , 1.        ],
+       [0.        , 0.66666667, 1.33333333]])
+
+In [344]: piv
+Out[344]: array([0, 1, 2], dtype=int32)
+
+
+In [345]: b=np.array([1,2,3])
+
+In [346]: x=la.lu_solve((lu,piv),b)
+
+In [347]: x
+Out[347]: array([5.00000000e-01, 1.48029737e-16, 1.50000000e+00])
+/ klopt	,
+
+/ 13	. 
+
+/ rang niet maximaal,
+
+In [348]: A=np.array([1,2,1,2]).reshape(-1,2)
+
+In [349]: A
+Out[349]: 
+array([[1, 2],
+       [1, 2]])
+
+In [351]: lu,piv=la.lu_factor (A)
+/home/eric/miniconda3/bin/ipython:1: LinAlgWarning: Diagonal number 2 is exactly zero. Singular matrix.
+  #!/home/eric/miniconda3/bin/python
+
+In [352]: lu
+Out[352]: 
+array([[1., 2.],
+       [1., 0.]])
+
+In [353]: piv
+Out[353]: array([0, 1], dtype=int32)
+
+/ klopt	, 
+
+In [357]: p,l,u=la.lu(A)
+
+In [358]: p
+Out[358]: 
+array([[1., 0.],
+       [0., 1.]])
+
+In [359]: l
+Out[359]: 
+array([[1., 0.],
+       [1., 1.]])
+
+In [360]: u
+Out[360]: 
+array([[1., 2.],
+       [0., 0.]])
+
+/ dan,
+
+In [354]: b=np.array([3,3])
+In [355]: x=la.lu_solve((lu,piv),b)
+
+In [356]: x
+Out[356]: array([nan, nan])
+
+/ terwijl (1,1) de oplossing is	,
+
+In [361]: c=np.array([3,4])
+
+In [362]: x=la.lu_solve((lu,piv),c)
+
+In [363]: x
+Out[363]: array([-inf,  inf])
+
+/ terwijl er geen oplossing is	,
+
+/ 7	 .
+
+/ la.lu_factor	,
+
+/ lees, 
+https://stackoverflow.com/questions/25929537/how-to-understand-the-pivot-matrix-of-scipy-linalg-lu-factor
+
+
+/ 13	. 
+
+In [1417]: X
+Out[1417]: 
+array([[1, 2, 3],
+       [4, 5, 6]])
+
+In [1418]: np.diag_indices_from(X[:,:2])
+Out[1418]: (array([0, 1]), array([0, 1]))
+
+/ 13	. 
+
+In [1419]: Y
+Out[1419]: 
+array([[2, 1, 0],
+       [1, 2, 1],
+       [0, 1, 2]])
+
+In [1420]: np.diag_indices_from(Y)
+Out[1420]: (array([0, 1, 2]), array([0, 1, 2]))
+
+In [1422]: Y[np.diag_indices_from(Y)]=100
+
+In [1423]: Y
+Out[1423]: 
+array([[100,   1,   0],
+       [  1, 100,   1],
+       [  0,   1, 100]])
+
+/ 13	. 
+
+In [1438]:  A
+Out[1438]: 
+array([[2, 1, 0],
+       [1, 2, 1],
+       [0, 1, 2]])
+
+In [1427]: B
+Out[1427]: 
+array([[0, 1, 2],
+       [2, 1, 0],
+       [1, 2, 1]])
+
+In [1429]: lu,piv=la.lu_factor(B)
+
+In [1433]: U=np.triu(lu)
+In [1434]: L=np.tril(lu,-1)
+In [1435]: L[np.diag_indices_from(L)]=1
+
+In [1436]: L
+Out[1436]: 
+array([[1.        , 0.        , 0.        ],
+       [0.5       , 1.        , 0.        ],
+       [0.        , 0.66666667, 1.        ]])
+
+In [1440]: U
+Out[1440]: 
+array([[2.        , 1.        , 0.        ],
+       [0.        , 1.5       , 1.        ],
+       [0.        , 0.        , 1.33333333]])
+
+In [1439]: np.allclose(A,L@U)
+Out[1439]: True
+
+/ 13	. 
+
+/ in voorbeeld hierboven	, 
+
+In [1441]: piv
+Out[1441]: array([1, 2, 2], dtype=int32)
+
+/ Hoe van A naar B, want B=P@A
+
+/ in rijen is B=r2
+                r0
+								r1
+/ Stel we lezen dit als : verwissel 01, dan 12, dan 22	,	 niet goed:
+
+100@[010@r0=r1]=r1
+001  100 r1 r0  r2
+010  001 r2 r2  r0
+
+/ van achter naar voren lezen: 
+/ Stel we lezen dit als : verwissel 22, dan 12, dan 01	,	 wel goed:
+
+010@[100@r0=r0]=r2
+100  001 r1 r2  r0
+001  010 r2 r1  r1
+
+
+/ als je links verm met een matrix, dan is het niet : gaat naar, maar : komt van	, dus
+
+010@ betekent: op r0 komt r1, op r1 komt r2	, op r2 komt r1
+001						 
+100
+
+In [1454]: A=np.array([0,1,0,0,0,1,1,0,0]).reshape(-1,3)@B
+
+In [1455]: A
+Out[1455]: 
+array([[2, 1, 0],
+       [1, 2, 1],
+       [0, 1, 2]])
+
+
+/ 7	. 
+
+import scipy.linalg as la
+
+
+In [1448]: B=np.array([0,1,2,2,1,0,1,2,1]).reshape(-1,3)
+In [1446]: B
+Out[1446]: 
+array([[0, 1, 2],
+       [2, 1, 0],
+       [1, 2, 1]])
+
+In [1447]: v=np.array([3,3,4])
+
+In [1442]: lu,piv=la.lu_factor(B)
+In [1444]: x=la.lu_solve((lu,piv),np.array([3,3,4]))
+
+In [1450]: x
+Out[1450]: array([1., 1., 1.])
+/ klopt	,
+
+/ 	7. 
+
+/ lees,
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.cg.html
+
+/ zoek, 
+itertools.permutations
+
+/ we hebben, 
+In [1448]: B=np.array([0,1,2,2,1,0,1,2,1]).reshape(-1,3)
+In [1446]: B
+Out[1446]:
+array([[0, 1, 2],
+       [2, 1, 0],
+       [1, 2, 1]])
+
+/ we willen 	,
+In [1451]: A
+Out[1451]: 
+array([[2, 1, 0],
+       [1, 2, 1],
+       [0, 1, 2]])
+
+/ we willen op r0 r1 hebben, op r1 r2, en op r2 r0	, 
+/ dus verm links met 
+010
+001
+100
+
+In [1454]: A=np.array([0,1,0,0,0,1,1,0,0]).reshape(-1,3)@B
+
+In [1455]: A
+Out[1455]: 
+array([[2, 1, 0],
+       [1, 2, 1],
+       [0, 1, 2]])
+
+/ deze is hermites, pos def	, 
+/ dus door rijen te verwisselen van B krijg je een pos def matrix!
+
+/ 13	. 
+
+In [1459]: v
+Out[1459]: array([3, 3, 4])
+
+In [1460]: las.cg(A,v)
+Out[1460]: (array([ 1.75, -0.5 ,  2.25]), 0)
+/ klopt	,
+
+/ 13	.
+
+In [1446]: B
+Out[1446]:
+array([[0, 1, 2],
+       [2, 1, 0],
+       [1, 2, 1]])
+
+/ B is niet hermites, pos def	,
+In [1461]: las.cg(B,v)
+Out[1461]: (array([ 4.89726076,  2.5423391 , -3.57923131]), 30)
+/ slaat nergens op	,
+/ de opl is (1,1,1)	,
+
+
+/ 13	. 
+
+/ niet hermites, wel semi-pos def	,
+In [1462]: C=np.array([1,1,2,2]).reshape(-1,2)
+In [1464]: C
+Out[1464]: 
+array([[1, 1],
+       [2, 2]])
+
+In [1466]: las.cg(C,w)
+Out[1466]: (array([0.66666667, 1.33333333]), 0)
+/ is een opl, maar (1,1) ook	, 
+/ opl=(1,1)+l(1,-1)
+
+/ 7	. 
+
+/ inner product, 
+
+/ use (n,) vectors, niet (n,1) vectors, 
+/ TODO
+
+/ A[:,0] is een (n,) vector	,
+
+In [1479]: A
+Out[1479]: 
+array([[2, 1, 0],
+       [1, 2, 1],
+       [0, 1, 2]])
+
+/ 13	. 
+
+In [1481]: A[:,0]
+Out[1481]: array([2, 1, 0])
+/ geen staande vector dus,	
+
+In [1484]: A[:,0].T
+Out[1484]: array([2, 1, 0])
+/ hetzelfde, .T doet niets,
+
+/ 13	. 
+
+In [1482]: A[:,0] @ A[:,0]
+Out[1482]: 5
+
+In [1483]: A[:,0] * A[:,0]
+Out[1483]: array([4, 1, 0])
+
+/ 13	. 
+
+In [1485]: c=A[:,0].reshape(3,-1)
+
+In [1486]: c
+Out[1486]: 
+array([[2],
+       [1],
+       [0]])
+
+In [1489]: c.T @ c
+Out[1489]: array([[5]])
+
+In [1491]: (c.T @ c).ravel()
+Out[1491]: array([5])
+
+/ 13	. 
+
+In [1494]: c.T.dot(c)
+Out[1494]: array([[5]])
+
+In [1477]: A[:,0].reshape(3,-1).T * A[:,0].reshape(3,-1)
+Out[1477]: 
+array([[4, 2, 0],
+       [2, 1, 0],
+       [0, 0, 0]])
+
+/ 13	. 
+
+In [1496]: np.inner(c,c)
+Out[1496]: 
+array([[4, 2, 0],
+       [2, 1, 0],
+       [0, 0, 0]])
+
+/ 7	. 
+
+/ A @ x of A @ x.reshape(3,-1), dat maakt verschil, het antwoord is als x of x.reshape(3,-1)	,
+
+In [1506]: A
+Out[1506]: 
+array([[2, 1, 10],
+       [1, 2, 1],
+       [0, 1, 2]])
+
+In [1507]: x
+Out[1507]: array([1., 1., 3.])
+
+/ alsof x een staande vector is	,
+In [1517]: A@x
+Out[1517]: array([33.,  6.,  7.])
+
+/ alsof x een liggende vector is	,
+In [1518]: x@A
+Out[1518]: array([ 3.,  6., 17.])
+
+In [1520]: A@x.reshape(3,-1)
+Out[1520]: 
+array([[33.],
+       [ 6.],
+       [ 7.]])
+
+In [1523]: x.reshape(3,-1).T @ A
+Out[1523]: array([[ 3.,  6., 17.]])
+
+
+ 
