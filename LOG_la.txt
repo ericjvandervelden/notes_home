@@ -569,5 +569,61 @@ array([[33.],
 In [1523]: x.reshape(3,-1).T @ A
 Out[1523]: array([[ 3.,  6., 17.]])
 
+/ 7	 	. 
 
- 
+/ 13	. 
+
+/ we hebben gebruikt,
+numpy.sqrt
+/ er is ook
+numpy.lib.scimath.sqrt, die complexe wortels returns,
+
+/ 13	. 
+
+/ er is, 
+numpy.linalg.solve
+/ TODO gauss?
+
+/ er is ook ,
+scipy.linalg.solve
+
+Notes
+
+If the input b matrix is a 1-D array with N elements, when supplied together with an NxN input a, it is assumed as a valid column vector despite the apparent size mismatch. This is compatible with the numpy.dot() behavior and the returned result is still 1-D array.
+
+The generic, symmetric, Hermitian and positive definite solutions are obtained via calling ?GESV, ?SYSV, ?HESV, and ?POSV routines of LAPACK respectively.
+
+/ 13	. 
+
+/ er is,
+numpy.linalg.norm
+/ Frobenius norm, die we altijd doen	, 
+
+In [1532]: la.norm(np.array([3,4]))
+Out[1532]: 5.0
+
+/ 7	. 
+
+/ we hebben cg2.py script	, 
+/ roep aan:
+[eric@almond my]$ ipython cg2.py 2,1,0,1,2,1,0,1,2 3,4,3 0,0,0 5 1e-5
+
+/ cg_debugstatements.py is cg fct, met debugging scripts, maar verkeerde args	,
+
+/ in cg.py staan 2 fcts cg en cg_, waarvan cg_ de goede args heeft,
+
+
+
+/ 7	. 
+
+/ lees,
+https://vi.stackexchange.com/questions/8382/vim-doesnt-use-the-correct-indentation-in-python-files
+
+/ in py script gelden andere regels dan in .txt file met tabs, die door spaces worden vervangen,
+/ TODO
+
+[eric@almond my]$ pwd
+/home/eric/Devel/python/my
+/ in cg2.py zien we dat een tab vervangen is door 4 spaces,
+/ TODO
+
