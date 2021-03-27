@@ -1894,26 +1894,23 @@ def _logistic_grad_hess(w, X, y, alpha, sample_weight=None):
 X=[[-2]
 	[2]]
 X.shape=(2,1)
-    grad = np.empty_like(w)
-    fit_intercept = grad.shape[0] > n_features
+    grad = np.empty_like(w)											/ (2,)
+    fit_intercept = grad.shape[0] > n_features 	
 /j, grad.shape=(2,)	, 2>1
     w, c, yz = _intercept_dot(w, X, y)
-yz=[-0,0]	, want y=[-1,1]
-    z = expit(yz)
+yz=[-0,0]	, want y=[-1,1]			/ loss=-log(1-sgm(w.T@(1,-2).T)-log(sgm(w.T@(1,2).T)
+															/ = -log(sgm(-(w.T@(1,-2).T)))-log(sgm(w.T@(1,2).T)	 / vandaar de -
+    z = expit(yz)	/ neem sgm	,
 [.5,.5]
     z0 = sample_weight * (z - 1) * y
 
-/ we doen, 
-y=(sgm(-(w0-2w1)), sgm(w0+2w1)).T = (p(0|-2), p(1|2)).T
-y-t = (1-sgm(w0-2w1),sgm(w0+2w1)).T-(0,1).T
 / zij doen, 
-z=(sgm(w0-2w1),sgm(w0+2w1)).T	, z-1=(sgm(w0-2w1)-1,sgm(w0+2w1)-1).T, (z-1)*y=(1-sgm(w0-2w1),sgm(w0+2w1)-1).T
-																																				=(sgm(-(w0-2w1)),sgm(w0+2w1)-1).T
+z=(sgm(-(w0-2w1)),sgm(w0+2w1)).T=(1-sgm(w0-2w1),sgm(w0+2w1)).T		= (p(0|(1,-2).T,p(1|(1,2)).T).T
+/ z-1=(-sgm(w0-2w1),sgm(w0+2w1)-1).T, (z-1)*y=(sgm(w0-2w1),sgm(w0+2w1)-1).T= y-t Bishop(4.96), 
+	/ waarin y=(p(1|(1,-2).T),p(1|(1,2).T)
+
 / klopt	,
 (.5,-.5)
-
-/ ik had in mijn notes,
-(-(1-sgm1)+1,sgm2-1).T=(sgm1,sgm2-1).T
 
     grad[:n_features] = safe_sparse_dot(X.T, z0) + alpha * w
 
@@ -1929,7 +1926,6 @@ grad=[-2,0]
 / Klopt	,
 / doen wij ook : (1,1).dot(.5, -.5).T = som nemen	,
 
-/ HIER HIER HIER
 
 
 
