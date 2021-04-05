@@ -627,3 +627,36 @@ https://vi.stackexchange.com/questions/8382/vim-doesnt-use-the-correct-indentati
 / in cg2.py zien we dat een tab vervangen is door 4 spaces,
 / TODO
 
+/ 7	. 
+
+[eric@almond my]$ pwd
+/home/eric/Devel/python/my
+[eric@almond my]$ vi cg.py 
+
+[eric@almond my]$ ipython cg.py
+sol: [1. 1. 1.] 								/ cg fct,	
+sol: [1. 1. 1.]									/ cg_ fct
+
+/ cg_ is de meest logische, omdat je zo de args geeft	, die van cg zijn args van als de cg fct een script was,
+
+/ 7	. 
+
+/ line search	,
+
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.line_search.html
+
+https://en.wikipedia.org/wiki/Wolfe_conditions
+https://en.wikipedia.org/wiki/Line_search
+https://optimization.mccormick.northwestern.edu/index.php/Line_search_methods
+https://sites.math.washington.edu/~burke/crs/408/notes/nlp/line.pdf
+https://en.wikipedia.org/wiki/Backtracking_line_search
+https://www.youtube.com/watch?v=-kwZhTPAhIQ
+
+/ 7	 .
+
+/ pseudo invers	,
+
+/ strang	, 
+https://www.youtube.com/watch?v=N74V4CBO0sk
+
+

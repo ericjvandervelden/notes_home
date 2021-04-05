@@ -2058,18 +2058,45 @@ def _cg(fhess_p, fgrad, maxiter, tol):
 
     xsupi = np.zeros(len(fgrad), dtype=fgrad.dtype)
 [0,0] 	/ w	,
-    ri = fgrad	/ [-2,0]
-    psupi = -ri
+    ri = fgrad	/ (0,-2).T bij ons, (-2,0).T bij hun	,   
+    psupi = -ri 			/ bij ons (0,-2).T, bij hun (2,0).T
     i = 0
-    dri0 = np.dot(ri, ri)
+    dri0 = np.dot(ri, ri)	/ 4 bij beide	,
 
     while i <= maxiter:
         if np.sum(np.abs(ri)) <= tol:
+/n,
             break
-        Ap = fhess_p(psupi)
+        Ap = fhess_p(psupi)	 	/ bij ons (0,-4).T, bij hun (4,0).T
 
-/ zijn check op ri klein, wij k-Axi klein	, 
-/ TODO
+        curv = np.dot(psupi, Ap)	/ 8 bij beide	,
+				...
+        alphai = dri0 / curv	 / .5 bij beide,	 
+        xsupi += alphai * psupi 	/ 0+(0,-1).T bij ons, 0+(1,0).T bij hun	,
+        ri = ri + alphai * Ap		/ (0,-2)-.5*(0,-4)=0	, bij hun (-2,0).T+.5*(4,0)=0	, er staat +alphai, bij ons -	,
+        dri1 = np.dot(ri, ri)
+        betai = dri1 / dri0
+        psupi = -ri + betai * psupi
+        i = i + 1
+        dri0 = dri1          # update np.dot(ri,ri) for next time.
+
+/ volgende,
+
+    while i <= maxiter:
+        if np.sum(np.abs(ri)) <= tol:
+/ j,
+            break
+
+    return xsupi / bij ons (0,-1).T, bij hun (1,0)	,
+
+/t,
+def newton_cg(grad_hess, func, grad, x0, args=(), tol=1e-4,
+              maxiter=100, maxinner=200, line_search=True, warn=True):
+        # Inner loop: solve the Newton update by conjugate gradient, to
+        # avoid inverting the Hessian
+        xsupi = _cg(fhess_p, fgrad, maxiter=maxinner, tol=termcond)
+/d,
+/ bij ons (0,-1).T, bij hun (1,0)	,
 
 
 
@@ -3171,6 +3198,21 @@ N^2 memory overhead
 
 M[:,:] = M[p,:]
 M[:,:] = M[:,p]
+
+/ 7	 
+
+/ vergl 2 arrays,
+
+/ lees,
+https://stackoverflow.com/questions/10580676/comparing-two-numpy-arrays-for-equality-element-wise
+
+(A==B).all()
+Note: maybe you also want to test A and B shape, such as A.shape == B.shape
+
+np.array_equal(A,B)  # test if same shape, same elements values
+np.array_equiv(A,B)  # test if broadcastable shape, same elements values
+np.allclose(A,B,...) # test if same shape, elements have close enough values
+
 
 / Einde MY
 
