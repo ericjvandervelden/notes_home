@@ -2251,6 +2251,15 @@ example.py  __init__.py  log_reg_sklearn2.py  log_reg_sklearn.py
 
 / Einde GERON ML 
 
+
+
+
+
+
+
+
+/ Einde DG
+
 / MY PYTHON
 
 / 13	
@@ -3215,6 +3224,89 @@ np.allclose(A,B,...) # test if same shape, elements have close enough values
 
 
 / Einde MY
+
+/ DG
+
+/ 7	. 
+
+/ in lin_reg_self_20210405.py zit de Phi@Phi_plus opl, ...
+/ TODO doc	, 
+
+$ vi lin_reg_self_20210405.py
+
+...
+import sys
+if len(sys.argv)!=5:
+    print("Use: lin_reg_self_20210405.py <target> <alpha> <#iterations> <absolute tolerance>\n",file=sys.stderr)
+    sys.exit(1)
+
+
+Phi=np.array([[1,1,0],[0,1,1]]).T
+w=np.zeros(Phi.shape[1])#;w[0]=1
+t=np.array(sys.argv[1].split(',')).astype(int)#.reshape(-1,1) #(2,)
+alpha=float(sys.argv[2])
+niter=int(sys.argv[3])
+atol=float(sys.argv[4])
+cost_prev=1e8
+for i in np.arange(0,niter):
+    w=w-alpha*Phi.T @ (Phi @ w - t)
+    cost=.5*np.square(la.norm(Phi @ w - t))
+    print("w=",w," ,cost_prev=",cost_prev," cost=",cost," cost_prev-cost=",cost_prev-cost," i=",i)
+    if(cost_prev<cost):
+        print("verkeerde richting; stijgende cost\n")
+        break
+    if(cost_prev-cost<atol):
+        print("klaar\n")
+
+/ t=(1,2,1).T	, 
+/ t ligt in Im(Phi)
+
+/ t=(1,2,3).T	, 
+/ t ligt niet in Im(Phi)
+/ , w = Phi+ @ (1,2,3).T = 1/3*(1,7).T
+/ Phi @ Phi+ @ (1,2,3).T= 1/3 * (1,8,7).T
+
+/ check dat t-Phi@w loodrecht op ImPhi dus Phi.T @ (t - Phi @ w ) =0
+/ TODO
+
+/ oef met verschillende alpha	,
+
+/ alpha=1 is te groot	,
+[eric@almond my]$ ipython lin_reg_self_20210405.py 1,2,3 1 100 1e-8
+w= [3. 5.]  ,cost_prev= 100000000.0  cost= 22.0  cost_prev-cost= 99999978.0  i= 0
+w= [-5. -3.]  ,cost_prev= 22.0  cost= 85.99999999999999  cost_prev-cost= -63.999999999999986  i= 1
+verkeerde richting; stijgende cost
+
+/ alpha=.5 is 
+[eric@almond my]$ ipython lin_reg_self_20210405.py 1,2,3 .5 100 1e-8
+...
+w= [0.33332825 2.33329773]  ,cost_prev= 0.6666666725650429  cost= 0.6666666681412607  cost_prev-cost= 4.4237821184012205e-09  i= 15
+klaar
+
+
+[eric@almond my]$ ipython lin_reg_self_20210405.py 1,2,3 .1 100 1e-8
+...
+w= [0.33352996 2.33313671]  ,cost_prev= 0.6666667143977739  cost= 0.6666667053288637  cost_prev-cost= 9.068910178378076e-09  i= 80
+klaar
+
+[eric@almond my]$ ipython lin_reg_self_20210405.py 1,2,1 .5 100 1e-8
+...
+w= [1.00003052 1.00003052]  ,cost_prev= 1.117587089538574e-08  cost= 2.793967723846435e-09  cost_prev-cost= 8.381903171539305e-09  i= 14
+klaar
+/ maakt qua aantal iteraties niet uit of t in Im (Phi) of niet	, 
+
+
+
+
+/ TODO
+
+/ 7	. 
+
+[eric@almond my]$ cp log_reg_1_class_1_feature_newton_iris_202102.py log_reg_1_class_1_feature_dg_iris_20210406.py
+[eric@almond my]$ cp log_reg_1_class_features_newton_self_202102.py log_reg_1_class_features_dg_self_20210406.py
+
+-rw-rw-r--. 1 eric eric 1002 Feb 24 21:46 log_reg_1_class_4_features_newton_iris_202102.py
+-rw-rw-r--. 1 eric eric 1028 Feb 24 21:57 log_reg_1_class_2_features_newton_iris_202102.py
 
 / CG
 
