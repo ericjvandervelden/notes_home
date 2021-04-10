@@ -3225,7 +3225,7 @@ np.allclose(A,B,...) # test if same shape, elements have close enough values
 
 / Einde MY
 
-/ DG
+/ GD 
 
 / 7	. 
 
@@ -3295,18 +3295,315 @@ w= [1.00003052 1.00003052]  ,cost_prev= 1.117587089538574e-08  cost= 2.793967723
 klaar
 / maakt qua aantal iteraties niet uit of t in Im (Phi) of niet	, 
 
-
-
-
+/ docs lin_reg_self_20210405.py
 / TODO
+
 
 / 7	. 
 
 [eric@almond my]$ cp log_reg_1_class_1_feature_newton_iris_202102.py log_reg_1_class_1_feature_dg_iris_20210406.py
-[eric@almond my]$ cp log_reg_1_class_features_newton_self_202102.py log_reg_1_class_features_dg_self_20210406.py
 
+[eric@almond my]$ cp log_reg_1_class_features_newton_self_202102.py log_reg_1_class_features_dg_self_20210406.py
+/ ook	,
 -rw-rw-r--. 1 eric eric 1002 Feb 24 21:46 log_reg_1_class_4_features_newton_iris_202102.py
 -rw-rw-r--. 1 eric eric 1028 Feb 24 21:57 log_reg_1_class_2_features_newton_iris_202102.py
+
+
+/ newton,
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_iris_202102.py 3 2 10
+cost= 103.9720770839918
+grad= [ 25.  -11.4]
+w= [-2.95221619  1.9067432 ]
+cost= 48.33896142340537
+grad= [ 8.97074108 -0.38681719]
+w= [-5.41595373  3.37328912]
+cost= 33.32783858145029
+grad= [ 3.93730333 -0.14849381]
+w= [-9.04645818  5.53966354]
+cost= 23.6818712579049
+grad= [ 1.34667894 -0.60577289]
+w= [-13.70212828   8.36784257]
+cost= 18.62183583463461
+grad= [ 0.30106532 -0.53613458]
+w= [-18.04411003  11.03842708]
+cost= 16.97124946930131
+grad= [ 0.03908603 -0.231231  ]
+w= [-20.54124041  12.58379068]
+cost= 16.71880884270708
+grad= [-0.00456524 -0.05416769]
+w= [-21.10321628  12.9334759 ]
+cost= 16.710416392172014
+grad= [-0.00072846 -0.0029108 ]
+w= [-21.12560604  12.94748582]
+cost= 16.710404144814625
+grad= [-1.98233959e-06 -5.82996475e-06]
+w= [-21.12563996  12.94750716]
+cost= 16.71040414478605
+grad= [-6.50768328e-12 -1.66400227e-11]
+w= [-21.12563996  12.94750716]
+
+/ we zien dat alpha=.11 okay, maar .12 ERR	,	
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_dg_iris_20210406.py 3 2 .03  10000 1e-10
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+klaar
+w= [-21.12420933  12.94662432] , i= 8152 , cost_prev= 16.710404193358727 , cost= 16.7104041932588
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_dg_iris_20210406.py 3 2 .05  10000 1e-10
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+klaar
+w= [-21.12453232  12.94682363] , i= 4981 , cost_prev= 16.71040417394218 , cost= 16.710404173842246
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_dg_iris_20210406.py 3 2 .06  10000 1e-10
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+klaar
+w= [-21.1246295  12.9468836] , i= 4136 , cost_prev= 16.710404169067253 , cost= 16.710404168967393
+
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_dg_iris_20210406.py 3 2 .11  10000 1e-10
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+verkeerde richting; stijgende cost
+klaar
+w= [-21.12638341  12.94796594] , i= 2424 , cost_prev= 16.71040415797424 , cost= 16.71040415787491
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_dg_iris_20210406.py 3 2 .12  10000 1e-10
+...
+verkeerde richting; stijgende cost
+
+/ 7	.
+
+/ kijk,
+https://www.youtube.com/watch?v=-kwZhTPAhIQ
+/ 17:17
+/ backtracking line search	,
+
+[eric@almond my]$ vi linsearchbacktrack.py 
+
+
+def p(x):
+    return -(x-.5)*(x-1.5)*(x-3)
+
+def l(x):
+    return -(x-1.5)*(x-3)-(x-.5)*(x-3)-(x-.5)*(x-1.5)
+
+def s(x):
+    return -2*(x-.5) -2*(x-1.5) -2*(x-3)
+
+# newton om minimum te bepalen,
+x0=0
+n=0
+while n<10:
+    x1=x0-l(x0)/s(x0)
+    x0=x1
+    n=n+1
+print("x0=",x0)
+
+x=np.linspace(0,3,101)
+plt.plot(x,p(x))
+c=.2										# <<<
+plt.plot(x,p(0)+c*l(0)*x)
+
+d=3
+g=.9
+n=0
+niter=100
+while n<niter:
+    t=g**n
+    print(t,p(0+t*d),p(0)+c*l(0)*t*d)
+    plt.plot(t*d,p(0)+c*l(0)*t*d,'gs')
+    if p(0+t*d)<=p(0)+c*l(0)*t*d:
+        break
+    n=n+1
+print("t=",t)
+print("0+t*d=",0+t*d)
+
+plt.show()
+
+/ .show() moet onderaan, anders doet hij het alg niet	,
+
+/ je kunt ook g=.8 nemen	, of in .5-.8	,
+
+/ c=.2
+
+/ de lijn snijdt de fct rechts van het minimum	, 
+/ ons punt is het 1ste macht van g, die links van dat snijpunt ligt	,
+/ en die ligt dus ook rechts van het min,
+
+[eric@almond my]$ ipython linsearchbacktrack.py 
+x0= 0.9401835094098877
+1.0 -0.0 -1.8000000000000007
+0.9 0.7919999999999997 -1.3950000000000005
+0.81 1.023093 -1.0305000000000004
+0.7290000000000001 0.9422417970000001 -0.7024500000000007
+0.6561 0.7094019650130002 -0.40720500000000026
+0.5904900000000001 0.4240467379444775 -0.14148450000000068
+0.531441 0.14509373862602398 0.09766394999999983
+0.4782969000000001 -0.09526832681838343 0.31289755499999927
+t= 0.4782969000000001
+0+t*d= 1.4348907000000002
+
+/ c=.4
+
+/ vrij goed!
+
+[eric@almond my]$ ipython linsearchbacktrack.py 
+x0= 0.9401835094098877
+1.0 -0.0 -5.850000000000001
+0.9 0.7919999999999997 -5.040000000000001
+0.81 1.023093 -4.311000000000001
+0.7290000000000001 0.9422417970000001 -3.6549000000000014
+0.6561 0.7094019650130002 -3.0644100000000005
+0.5904900000000001 0.4240467379444775 -2.5329690000000014
+0.531441 0.14509373862602398 -2.0546721000000003
+0.4782969000000001 -0.09526832681838343 -1.6242048900000015
+0.4304672100000001 -0.282064115742273 -1.2367844010000013
+0.3874204890000001 -0.411049212967121 -0.8881059609000008
+0.3486784401000001 -0.4843502288802194 -0.5742953648100011
+0.31381059609000006 -0.50758067932733 -0.29186582832900054
+t= 0.31381059609000006
+0+t*d= 0.9414317882700002
+
+/ c=.6
+
+/ gaat er voorbij	,
+/ de gekantelde raaklijn loopt te steil, en snijdt de fct links van het minimum,
+/ ons punt is het 1ste macht van g, die links van dat snijpunt ligt	,
+/ en ligt ook links van het min,
+
+[eric@almond my]$ ipython linsearchbacktrack.py 
+x0= 0.9401835094098877
+1.0 -0.0 -9.899999999999999
+0.9 0.7919999999999997 -8.685
+0.81 1.023093 -7.5915
+0.7290000000000001 0.9422417970000001 -6.60735
+0.6561 0.7094019650130002 -5.721615
+0.5904900000000001 0.4240467379444775 -4.9244535
+0.531441 0.14509373862602398 -4.20700815
+0.4782969000000001 -0.09526832681838343 -3.5613073350000004
+0.4304672100000001 -0.282064115742273 -2.980176601500001
+0.3874204890000001 -0.411049212967121 -2.4571589413500003
+0.3486784401000001 -0.4843502288802194 -1.9864430472150012
+0.31381059609000006 -0.50758067932733 -1.5627987424935008
+0.2824295364810001 -0.4879749629943449 -1.1815188682441509
+0.2541865828329001 -0.43321794045726 -0.8383669814197354
+0.2287679245496101 -0.35074403343565497 -0.5295302832777624
+0.20589113209464907 -0.24734831887028172 -0.2515772549499862
+0.18530201888518416 -0.12900067020401823 -0.001419529454987245
+t= 0.18530201888518416
+0+t*d= 0.5559060566555525
+
+/ als c=.1, dan  is voor t=1 meteen	,
+    if p(0+t*d)<=p(0)+c*t*d*l(0)
+
+/ 7	. 
+
+[eric@almond my]$ cp log_reg_1_class_1_feature_dg_iris_20210406.py log_reg_1_class_1_feature_dg_backtrack_iris_20210406.py
+
+/ maar 100 gd iteraties, om het begin te laten zien	,
+[eric@almond my]$ ipython log_reg_1_class_1_feature_dg_backtrack_iris_20210406.py 3 2 100 1e-8 .4 .9 100
+n_bt= 0
+s= 1.0
+w= [-0.90986726  0.41489947]
+n_bt= 2
+s= 0.81
+w= [-1.26459016  1.14309701]
+n_bt= 7
+s= 0.4782969000000001
+w= [-1.68570696  0.91631835]
+n_bt= 7
+s= 0.4782969000000001
+w= [-1.83824504  1.36963949]
+n_bt= 9
+s= 0.3874204890000001
+w= [-2.19863063  1.22745349]
+n_bt= 10
+s= 0.3486784401000001
+...
+
+/ maximaal 10000 gd iteraties,
+[eric@almond my]$ ipython log_reg_1_class_1_feature_dg_backtrack_iris_20210406.py 3 2 10000 1e-8 .4 .9 100
+
+n_bt= 94
+s= 4.997995805289306e-05
+w= [-21.11824421  12.94296364]
+n_bt= 93
+s= 5.553328672543673e-05
+w= [-21.11829819  12.9429506 ]
+klaar
+w= [-21.11829819  12.9429506 ] , i= 1922 , cost_prev= 16.71040543995145 , cost= 16.710405429958488
+
+
+
+
+
+/ Einde GD
+
+
+
+
+
 
 / CG
 
