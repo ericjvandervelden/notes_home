@@ -3301,9 +3301,9 @@ klaar
 
 / 7	. 
 
-[eric@almond my]$ cp log_reg_1_class_1_feature_newton_iris_202102.py log_reg_1_class_1_feature_dg_iris_20210406.py
+[eric@almond my]$ cp log_reg_1_class_1_feature_newton_iris_202102.py log_reg_1_class_1_feature_gd_iris_20210406.py
 
-[eric@almond my]$ cp log_reg_1_class_features_newton_self_202102.py log_reg_1_class_features_dg_self_20210406.py
+[eric@almond my]$ cp log_reg_1_class_features_newton_self_202102.py log_reg_1_class_features_gd_self_20210406.py
 / ook	,
 -rw-rw-r--. 1 eric eric 1002 Feb 24 21:46 log_reg_1_class_4_features_newton_iris_202102.py
 -rw-rw-r--. 1 eric eric 1028 Feb 24 21:57 log_reg_1_class_2_features_newton_iris_202102.py
@@ -3344,7 +3344,7 @@ w= [-21.12563996  12.94750716]
 
 / we zien dat alpha=.11 okay, maar .12 ERR	,	
 
-[eric@almond my]$ ipython log_reg_1_class_1_feature_dg_iris_20210406.py 3 2 .03  10000 1e-10
+[eric@almond my]$ ipython log_reg_1_class_1_feature_gd_iris_20210406.py 3 2 .03  10000 1e-10
 verkeerde richting; stijgende cost
 verkeerde richting; stijgende cost
 verkeerde richting; stijgende cost
@@ -3358,7 +3358,7 @@ verkeerde richting; stijgende cost
 klaar
 w= [-21.12420933  12.94662432] , i= 8152 , cost_prev= 16.710404193358727 , cost= 16.7104041932588
 
-[eric@almond my]$ ipython log_reg_1_class_1_feature_dg_iris_20210406.py 3 2 .05  10000 1e-10
+[eric@almond my]$ ipython log_reg_1_class_1_feature_gd_iris_20210406.py 3 2 .05  10000 1e-10
 verkeerde richting; stijgende cost
 verkeerde richting; stijgende cost
 verkeerde richting; stijgende cost
@@ -3379,7 +3379,7 @@ verkeerde richting; stijgende cost
 klaar
 w= [-21.12453232  12.94682363] , i= 4981 , cost_prev= 16.71040417394218 , cost= 16.710404173842246
 
-[eric@almond my]$ ipython log_reg_1_class_1_feature_dg_iris_20210406.py 3 2 .06  10000 1e-10
+[eric@almond my]$ ipython log_reg_1_class_1_feature_gd_iris_20210406.py 3 2 .06  10000 1e-10
 verkeerde richting; stijgende cost
 verkeerde richting; stijgende cost
 verkeerde richting; stijgende cost
@@ -3401,7 +3401,7 @@ klaar
 w= [-21.1246295  12.9468836] , i= 4136 , cost_prev= 16.710404169067253 , cost= 16.710404168967393
 
 
-[eric@almond my]$ ipython log_reg_1_class_1_feature_dg_iris_20210406.py 3 2 .11  10000 1e-10
+[eric@almond my]$ ipython log_reg_1_class_1_feature_gd_iris_20210406.py 3 2 .11  10000 1e-10
 verkeerde richting; stijgende cost
 verkeerde richting; stijgende cost
 verkeerde richting; stijgende cost
@@ -3428,7 +3428,7 @@ verkeerde richting; stijgende cost
 klaar
 w= [-21.12638341  12.94796594] , i= 2424 , cost_prev= 16.71040415797424 , cost= 16.71040415787491
 
-[eric@almond my]$ ipython log_reg_1_class_1_feature_dg_iris_20210406.py 3 2 .12  10000 1e-10
+[eric@almond my]$ ipython log_reg_1_class_1_feature_gd_iris_20210406.py 3 2 .12  10000 1e-10
 ...
 verkeerde richting; stijgende cost
 
@@ -3559,10 +3559,10 @@ t= 0.18530201888518416
 
 / 7	. 
 
-[eric@almond my]$ cp log_reg_1_class_1_feature_dg_iris_20210406.py log_reg_1_class_1_feature_dg_backtrack_iris_20210406.py
+[eric@almond my]$ cp log_reg_1_class_1_feature_gd_iris_20210406.py log_reg_1_class_1_feature_gd_backtrack_iris_20210406.py
 
 / maar 100 gd iteraties, om het begin te laten zien	,
-[eric@almond my]$ ipython log_reg_1_class_1_feature_dg_backtrack_iris_20210406.py 3 2 100 1e-8 .4 .9 100
+[eric@almond my]$ ipython log_reg_1_class_1_feature_gd_backtrack_iris_20210406.py 3 2 100 1e-8 .4 .9 100
 n_bt= 0
 s= 1.0
 w= [-0.90986726  0.41489947]
@@ -3583,7 +3583,7 @@ s= 0.3486784401000001
 ...
 
 / maximaal 10000 gd iteraties,
-[eric@almond my]$ ipython log_reg_1_class_1_feature_dg_backtrack_iris_20210406.py 3 2 10000 1e-8 .4 .9 100
+[eric@almond my]$ ipython log_reg_1_class_1_feature_gd_backtrack_iris_20210406.py 3 2 10000 1e-8 .4 .9 100
 
 n_bt= 94
 s= 4.997995805289306e-05
@@ -3594,11 +3594,78 @@ w= [-21.11829819  12.9429506 ]
 klaar
 w= [-21.11829819  12.9429506 ] , i= 1922 , cost_prev= 16.71040543995145 , cost= 16.710405429958488
 
-
-
-
-
 / Einde GD
+
+/ NEWTON
+
+[eric@almond my]$ cp log_reg_1_class_1_feature_newton_iris_202102.py log_reg_1_class_1_feature_newton_backtrack_iris_202102.py
+
+/ we zien bij newton dat s=1 altijd	, 
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_backtrack_iris_202102.py 1 2 100 1e-8 .4 .9 100  
+w= [0. 0.]
+grad= [25.   80.35]
+grad= [25.   80.35]
+d= [-1.07769123  0.57117154]
+break
+n_bt= 0
+s= 1.0
+w= [ 1.07769123 -0.57117154]
+grad= [1.21638118 4.21209334]
+grad= [1.21638118 4.21209334]
+d= [-0.23977809  0.09150389]
+break
+n_bt= 0
+s= 1.0
+w= [ 1.31746932 -0.66267543]
+grad= [0.02019702 0.07314543]
+grad= [0.02019702 0.07314543]
+d= [-0.0058669   0.00215207]
+break
+n_bt= 0
+s= 1.0
+w= [ 1.32333622 -0.66482751]
+grad= [8.76873797e-06 3.20340852e-05]
+grad= [8.76873797e-06 3.20340852e-05]
+d= [-2.69573457e-06  9.83737916e-07]
+break
+n_bt= 0
+s= 1.0
+klaar
+w= [ 1.32333892 -0.66482849] , i= 3 , cost_prev= 94.16658045045467 , cost= 94.16658045045074
+
+[eric@almond my]$ cp log_reg_1_class_1_feature_newton_backtrack_iris_202102.py log_reg_1_class_1_feature_newton_backtrack_self_202102.py
+
+/ eerder,
+[eric@almond my]$ ipython log_reg_1_class_features_self_geron_20210315.py -- -2,2 0,1
+[LibLinear]intercept_
+[0.]
+coef_
+[[5.60143377]]
+
+[eric@almond my]$ ipython log_reg_1_class_features_self_geron_20210315.py -- -1,0,1 0,1,1
+[LibLinear]intercept_
+[10.62752168]
+coef_
+[[21.77784361]]
+
+/////////////////////////////////////////
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_backtrack_self_202102.py -- -1,0,1 0,1,1 100 1e-8 .4 .9 100
+w= [12.07132684 24.66545232] , i= 15 , cost_prev= 9.113861197352576e-06 , cost= 9.113089817422816e-06
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_backtrack_self_202102.py -- -2,2 0,1 100 1e-8 .4 .9 100
+w= [1.12148518e-16 1.01014474e+01] , i= 18 , cost_prev= 9.147844280792127e-09 , cost= 3.365303927249901e-09
+
+////////////////////////////////////
+/ redelijk	,
+
+/ Einde NEWTON
+
+/ BACKTRACKING
+
+
+
+/ Einde BACKTRACKING
 
 
 
