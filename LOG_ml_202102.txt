@@ -3602,6 +3602,82 @@ w= [-21.11829819  12.9429506 ] , i= 1922 , cost_prev= 16.71040543995145 , cost= 
 
 / we zien bij newton dat s=1 altijd	, 
 
+/ je ziet dat d van links naar rechts gaat rondom het min	,
+	--->
+<--
+	->
+ <-
+/ en w gaat 1 richting op	 
+/ TODO
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_backtrack_iris_202102.py 3 2 100 1e-8 .4 .9 100
+w= [0. 0.]
+grad= [ 25.  -11.4]
+grad= [ 25.  -11.4]
+d= [ 2.95221619 -1.9067432 ]
+break
+n_bt= 0
+s= 1.0
+w= [-2.95221619  1.9067432 ]
+grad= [ 8.97074108 -0.38681719]
+grad= [ 8.97074108 -0.38681719]
+d= [ 2.46373755 -1.46654592]
+break
+n_bt= 0
+s= 1.0
+w= [-5.41595373  3.37328912]
+grad= [ 3.93730333 -0.14849381]
+grad= [ 3.93730333 -0.14849381]
+d= [ 3.63050444 -2.16637442]
+break
+n_bt= 0
+s= 1.0
+w= [-9.04645818  5.53966354]
+grad= [ 1.34667894 -0.60577289]
+grad= [ 1.34667894 -0.60577289]
+d= [ 4.6556701  -2.82817902]
+break
+n_bt= 0
+s= 1.0
+w= [-13.70212828   8.36784257]
+grad= [ 0.30106532 -0.53613458]
+grad= [ 0.30106532 -0.53613458]
+d= [ 4.34198174 -2.67058451]
+break
+n_bt= 0
+s= 1.0
+w= [-18.04411003  11.03842708]
+grad= [ 0.03908603 -0.231231  ]
+grad= [ 0.03908603 -0.231231  ]
+d= [ 2.49713039 -1.5453636 ]
+break
+n_bt= 0
+s= 1.0
+w= [-20.54124041  12.58379068]
+grad= [-0.00456524 -0.05416769]
+grad= [-0.00456524 -0.05416769]
+d= [ 0.56197587 -0.34968523]
+break
+n_bt= 0
+s= 1.0
+w= [-21.10321628  12.9334759 ]
+grad= [-0.00072846 -0.0029108 ]
+grad= [-0.00072846 -0.0029108 ]
+d= [ 0.02238976 -0.01400991]
+break
+n_bt= 0
+s= 1.0
+w= [-21.12560604  12.94748582]
+grad= [-1.98233959e-06 -5.82996475e-06]
+grad= [-1.98233959e-06 -5.82996475e-06]
+d= [ 3.39225916e-05 -2.13408485e-05]
+break
+n_bt= 0
+s= 1.0
+klaar
+w= [-21.12563996  12.94750716] , i= 8 , cost_prev= 16.710404144814625 , cost= 16.71040414478605
+
+
 [eric@almond my]$ ipython log_reg_1_class_1_feature_newton_backtrack_iris_202102.py 1 2 100 1e-8 .4 .9 100  
 w= [0. 0.]
 grad= [25.   80.35]
@@ -3634,6 +3710,8 @@ s= 1.0
 klaar
 w= [ 1.32333892 -0.66482849] , i= 3 , cost_prev= 94.16658045045467 , cost= 94.16658045045074
 
+/ 13	. 
+
 [eric@almond my]$ cp log_reg_1_class_1_feature_newton_backtrack_iris_202102.py log_reg_1_class_1_feature_newton_backtrack_self_202102.py
 
 / eerder,
@@ -3658,6 +3736,74 @@ w= [1.12148518e-16 1.01014474e+01] , i= 18 , cost_prev= 9.147844280792127e-09 , 
 
 ////////////////////////////////////
 / redelijk	,
+
+/ 13	. 
+
+/ lees	,
+https://sites.math.washington.edu/~burke/crs/408/notes/nlp/line.pdf
+
+/ Wolfe conditions
+
+(1.5) c2*f'(xk)*dk <= f'(xk+tk*dk)*dk: c2<1, en f' <0, dus f'(xk+tk*dk) is klein negatief, omdat c2*f'(xk) dat ook is, door c2	, dus is f'(xk+tk*dk) ongeveer 0	,
+
+(1.7) |f'(xk+tk*dk)*dk| < c2*|f'(xk)*dk|: c2<1, dus is |f'(xk+tk*dk)*dk|  klein, ongeveer 0	, 
+
+/ 13	. 
+
+eric@almond my]$ cp log_reg_1_class_1_feature_newton_backtrack_iris_202102.py log_reg_1_class_1_feature_newton_backtrack_weak_wolfe_iris_202102.py
+
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_backtrack_weak_wolfe_iris_202102.py 3 2 100 1e-8 .4 .9 .9 100
+w= [0. 0.]
+d= [-2.95221619  1.9067432 ]
+break
+n_bt= 0
+s= 1.0
+w= [-2.95221619  1.9067432 ]
+d= [-2.46373755  1.46654592]
+break
+n_bt= 0
+s= 1.0
+w= [-5.41595373  3.37328912]
+d= [-3.63050444  2.16637442]
+break
+n_bt= 0
+s= 1.0
+w= [-9.04645818  5.53966354]
+d= [-4.6556701   2.82817902]
+break
+n_bt= 0
+s= 1.0
+w= [-13.70212828   8.36784257]
+d= [-4.34198174  2.67058451]
+break
+n_bt= 0
+s= 1.0
+w= [-18.04411003  11.03842708]
+d= [-2.49713039  1.5453636 ]
+break
+n_bt= 0
+s= 1.0
+w= [-20.54124041  12.58379068]
+d= [-0.56197587  0.34968523]
+break
+n_bt= 0
+s= 1.0
+w= [-21.10321628  12.9334759 ]
+d= [-0.02238976  0.01400991]
+break
+n_bt= 0
+s= 1.0
+w= [-21.12560604  12.94748582]
+d= [-3.39225916e-05  2.13408485e-05]
+break
+n_bt= 0
+s= 1.0
+klaar
+w= [-21.12563996  12.94750716] , i= 8 , cost_prev= 16.710404144814625 , cost= 16.71040414478605
+
+
+
 
 / Einde NEWTON
 
