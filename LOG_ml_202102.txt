@@ -3737,12 +3737,151 @@ w= [1.12148518e-16 1.01014474e+01] , i= 18 , cost_prev= 9.147844280792127e-09 , 
 ////////////////////////////////////
 / redelijk	,
 
-/ 13	. 
+/ we zien hieronder dat op een gegeven moment, 
+w= [10.6275953  21.77800071]
+/ dit is vrijwel wat geron geeft	,
+/ maar het alg gaat door,	
+/ dan zien we 	,
+/ TODO
+
+
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_backtrack_self_202102.py -- -1,0,1 0,1,1 100 1e-8 .4 .9 100
+w= [0. 0.]
+grad= [-0.5 -1. ]
+grad= [-0.5 -1. ]
+d= [-0.66666667 -2.        ]
+break
+n_bt= 0
+s= 1.0
+w= [0.66666667 2.        ]
+grad= [-0.19560427 -0.2735777 ]
+grad= [-0.19560427 -0.2735777 ]
+d= [-0.80142645 -1.58165998]
+break
+n_bt= 0
+s= 1.0
+w= [1.46809311 3.58165998]
+grad= [-0.08581753 -0.11415525]
+grad= [-0.08581753 -0.11415525]
+d= [-1.05651538 -2.0397714 ]
+break
+n_bt= 0
+s= 1.0
+w= [2.52460849 5.62143138]
+grad= [-0.03120224 -0.0435283 ]
+grad= [-0.03120224 -0.0435283 ]
+d= [-1.06191294 -2.09202317]
+break
+n_bt= 0
+s= 1.0
+w= [3.58652143 7.71345456]
+grad= [-0.0110844  -0.01588853]
+grad= [-0.0110844  -0.01588853]
+d= [-1.02574483 -2.04024104]
+break
+n_bt= 0
+s= 1.0
+w= [4.61226626 9.7536956 ]
+grad= [-0.00401694 -0.00581588]
+grad= [-0.00401694 -0.00581588]
+d= [-1.00968937 -2.0153367 ]
+break
+n_bt= 0
+s= 1.0
+w= [ 5.62195563 11.7690323 ]
+grad= [-0.00146939 -0.00213519]
+grad= [-0.00146939 -0.00213519]
+d= [-1.00358623 -2.00569955]
+break
+n_bt= 0
+s= 1.0
+w= [ 6.62554186 13.77473185]
+grad= [-0.00053942 -0.00078488]
+grad= [-0.00053942 -0.00078488]
+d= [-1.00132188 -2.00210385]
+break
+n_bt= 0
+s= 1.0
+w= [ 7.62686374 15.7768357 ]
+grad= [-0.00019829 -0.00028866]
+grad= [-0.00019829 -0.00028866]
+d= [-1.00048662 -2.00077489]
+break
+n_bt= 0
+s= 1.0
+w= [ 8.62735036 17.77761059]
+grad= [-7.29256993e-05 -1.06180893e-04]
+grad= [-7.29256993e-05 -1.06180893e-04]
+d= [-1.00017906 -2.00028519]
+break
+n_bt= 0
+s= 1.0
+w= [ 9.62752942 19.77789578]
+grad= [-2.68250507e-05 -3.90602429e-05]
+grad= [-2.68250507e-05 -3.90602429e-05]
+d= [-1.00006588 -2.00010493]
+break
+n_bt= 0
+s= 1.0
+w= [10.6275953  21.77800071]
+grad= [-9.86800370e-06 -1.43692539e-05]
+grad= [-9.86800370e-06 -1.43692539e-05]
+d= [-1.00002424 -2.0000386 ]
+break
+n_bt= 0
+s= 1.0
+w= [11.62761954 23.77803932]
+grad= [-3.63018413e-06 -5.28612516e-06]
+grad= [-3.63018413e-06 -5.28612516e-06]
+d= [-1.00000892 -2.0000142 ]
+log_reg_1_class_1_feature_newton_backtrack_self_202102.py:34: RuntimeWarning: divide by zero encountered in log
+  return np.ones(Phi.shape[0])@(t*-np.log(p1)+(1-t)*-np.log(1-p1))
+log_reg_1_class_1_feature_newton_backtrack_self_202102.py:34: RuntimeWarning: invalid value encountered in multiply
+  return np.ones(Phi.shape[0])@(t*-np.log(p1)+(1-t)*-np.log(1-p1))
+break
+n_bt= 8
+s= 0.4304672100000001
+w= [12.05809059 24.63897985]
+grad= [-2.36036205e-06 -3.43706482e-06]
+grad= [-2.36036205e-06 -3.43706482e-06]
+d= [-1.0000058  -2.00000923]
+break
+n_bt= 42
+s= 0.011972515182562033
+w= [12.07006317 24.66292499]
+grad= [-2.33227107e-06 -3.39615986e-06]
+grad= [-2.33227107e-06 -3.39615986e-06]
+d= [-1.00000573 -2.00000912]
+break
+n_bt= 64
+s= 0.0011790184577738603
+w= [12.0712422  24.66528304]
+grad= [-2.32952290e-06 -3.39215809e-06]
+grad= [-2.32952290e-06 -3.39215809e-06]
+d= [-1.00000572 -2.00000911]
+break
+n_bt= 89
+s= 8.464149782874062e-05
+klaar
+w= [12.07132684 24.66545232] , i= 15 , cost_prev= 9.113861197352576e-06 , cost= 9.113089817422816e-06
+
+
+/ 7	. 
+
+[eric@almond my]$ ipython num_args.py 1,2,3
+2
+[eric@almond my]$ ipython num_args.py -- -1,0,1
+2
+
+
+/  7	.
+
+/ Wolfe weak 
 
 / lees	,
 https://sites.math.washington.edu/~burke/crs/408/notes/nlp/line.pdf
 
-/ Wolfe conditions
 
 (1.5) c2*f'(xk)*dk <= f'(xk+tk*dk)*dk: c2<1, en f' <0, dus f'(xk+tk*dk) is klein negatief, omdat c2*f'(xk) dat ook is, door c2	, dus is f'(xk+tk*dk) ongeveer 0	,
 
@@ -3750,10 +3889,10 @@ https://sites.math.washington.edu/~burke/crs/408/notes/nlp/line.pdf
 
 / 13	. 
 
-eric@almond my]$ cp log_reg_1_class_1_feature_newton_backtrack_iris_202102.py log_reg_1_class_1_feature_newton_backtrack_weak_wolfe_iris_202102.py
+eric@almond my]$ cp log_reg_1_class_1_feature_newton_backtrack_iris_202102.py log_reg_1_class_1_feature_newton_backtrack_wolfe_weak_iris_202102.py
 
 
-[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_backtrack_weak_wolfe_iris_202102.py 3 2 100 1e-8 .4 .9 .9 100
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_backtrack_wolfe_weak_iris_202102.py 3 2 100 1e-8 .4 .9 .9 100
 w= [0. 0.]
 d= [-2.95221619  1.9067432 ]
 break
@@ -3804,23 +3943,276 @@ w= [-21.12563996  12.94750716] , i= 8 , cost_prev= 16.710404144814625 , cost= 16
 
 
 
+/ 7	. 
+
+/ Wolfe strong	,
+
+/ lees	,
+https://sites.math.washington.edu/~burke/crs/408/notes/nlp/line.pdf
+
+[eric@almond my]$ cp log_reg_1_class_1_feature_newton_backtrack_wolfe_weak_iris_202102.py log_reg_1_class_1_feature_newton_backtrack_wolfe_strong_iris_202102.py
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_backtrack_wolfe_strong_iris_202102.py 3 2 100 1e-8 .4 .9 .9 100
+w= [0. 0.]
+d= [-2.95221619  1.9067432 ]
+break
+n_bt= 0
+s= 1.0
+w= [-2.95221619  1.9067432 ]
+d= [-2.46373755  1.46654592]
+break
+n_bt= 0
+s= 1.0
+w= [-5.41595373  3.37328912]
+d= [-3.63050444  2.16637442]
+break
+n_bt= 0
+s= 1.0
+w= [-9.04645818  5.53966354]
+d= [-4.6556701   2.82817902]
+break
+n_bt= 0
+s= 1.0
+w= [-13.70212828   8.36784257]
+d= [-4.34198174  2.67058451]
+break
+n_bt= 0
+s= 1.0
+w= [-18.04411003  11.03842708]
+d= [-2.49713039  1.5453636 ]
+break
+n_bt= 0
+s= 1.0
+w= [-20.54124041  12.58379068]
+d= [-0.56197587  0.34968523]
+break
+n_bt= 0
+s= 1.0
+w= [-21.10321628  12.9334759 ]
+d= [-0.02238976  0.01400991]
+break
+n_bt= 0
+s= 1.0
+w= [-21.12560604  12.94748582]
+d= [-3.39225916e-05  2.13408485e-05]
+break
+n_bt= 0
+s= 1.0
+klaar
+w= [-21.12563996  12.94750716] , i= 8 , cost_prev= 16.710404144814625 , cost= 16.71040414478605
+
+/ 7	. 
+
+[eric@almond my]$ cp log_reg_1_class_1_feature_newton_backtrack_wolfe_weak_iris_202102.py log_reg_1_class_1_feature_newton_backtrack_wolfe_weak_self_202102.py
+
+
+/ we zien problemen met 
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_backtrack_wolfe_weak_self_202102.py -- -1,0,1 0,1,1  100 1e-8 .4 .9 .9 100
+w= [0. 0.]
+d= [0.66666667 2.        ]
+break
+n_bt= 0
+s= 1.0
+cost_prev= 2.0794415416798357 , cost= 0.715508387972765 , diff= 1.363933153707071
+w= [0.66666667 2.        ]
+d= [0.80142645 1.58165998]
+break
+n_bt= 0
+s= 1.0
+cost_prev= 0.715508387972765 , cost= 0.32774912883911833 , diff= 0.3877592591336466
+w= [1.46809311 3.58165998]
+d= [1.05651538 2.0397714 ]
+break
+n_bt= 0
+s= 1.0
+cost_prev= 0.32774912883911833 , cost= 0.1215350302252257 , diff= 0.20621409861389262
+w= [2.52460849 5.62143138]
+d= [1.06191294 2.09202317]
+break
+n_bt= 0
+s= 1.0
+cost_prev= 0.1215350302252257 , cost= 0.043333853533934215 , diff= 0.07820117669129148
+w= [3.58652143 7.71345456]
+d= [1.02574483 2.04024104]
+break
+n_bt= 0
+s= 1.0
+cost_prev= 0.043333853533934215 , cost= 0.015713177828359612 , diff= 0.027620675705574603
+w= [4.61226626 9.7536956 ]
+d= [1.00968937 2.0153367 ]
+break
+n_bt= 0
+s= 1.0
+cost_prev= 0.015713177828359612 , cost= 0.005748501756676663 , diff= 0.00996467607168295
+w= [ 5.62195563 11.7690323 ]
+d= [1.00358623 2.00569955]
+break
+n_bt= 0
+s= 1.0
+cost_prev= 0.005748501756676663 , cost= 0.0021103763789105286 , diff= 0.003638125377766134
+w= [ 6.62554186 13.77473185]
+d= [1.00132188 2.00210385]
+break
+n_bt= 0
+s= 1.0
+cost_prev= 0.0021103763789105286 , cost= 0.0007757696189133114 , diff= 0.0013346067599972172
+w= [ 7.62686374 15.7768357 ]
+d= [1.00048662 2.00077489]
+break
+n_bt= 0
+s= 1.0
+cost_prev= 0.0007757696189133114 , cost= 0.00028530915690488 , diff= 0.0004904604620084314
+w= [ 8.62735036 17.77761059]
+d= [1.00017906 2.00028519]
+break
+n_bt= 0
+s= 1.0
+cost_prev= 0.00028530915690488 , cost= 0.00010494846955778317 , diff= 0.00018036068734709684
+w= [ 9.62752942 19.77789578]
+d= [1.00006588 2.00010493]
+break
+n_bt= 0
+s= 1.0
+cost_prev= 0.00010494846955778317 , cost= 3.860690847967536e-05 , diff= 6.634156107810781e-05
+w= [10.6275953  21.77800071]
+d= [1.00002424 2.0000386 ]
+break
+n_bt= 0
+s= 1.0
+cost_prev= 3.860690847967536e-05 , cost= 1.4202488171736918e-05 , diff= 2.4404420307938443e-05
+w= [11.62761954 23.77803932]
+d= [1.00000892 2.0000142 ]
+log_reg_1_class_1_feature_newton_backtrack_wolfe_weak_self_202102.py:35: RuntimeWarning: divide by zero encountered in log
+  return np.ones(Phi.shape[0])@(t*-np.log(p1)+(1-t)*-np.log(1-p1))
+log_reg_1_class_1_feature_newton_backtrack_wolfe_weak_self_202102.py:35: RuntimeWarning: invalid value encountered in multiply
+  return np.ones(Phi.shape[0])@(t*-np.log(p1)+(1-t)*-np.log(1-p1))
+break
+n_bt= 8
+s= 0.4304672100000001
+cost_prev= 1.4202488171736918e-05 , cost= 9.234514395860822e-06 , diff= 4.967973775876096e-06
+w= [12.05809059 24.63897985]
+d= [1.0000058  2.00000923]
+n_bt= 100
+s= 2.9512665430652825e-05
+cost_prev= 9.234514395860822e-06 , cost= 9.234241863966604e-06 , diff= 2.7253189421798754e-10
+klaar
+w= [12.0581201  24.63903888] , i= 13 , cost_prev= 9.234514395860822e-06 , cost= 9.234241863966604e-06
+
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_backtrack_wolfe_weak_self_202102.py -- -1,0,1 0,1,1  100 1e-4 .4 .9 .9 100
+...
+break
+n_bt= 0
+s= 1.0
+cost_prev= 0.00010494846955778317 , cost= 3.860690847967536e-05 , diff= 6.634156107810781e-05
+klaar
+w= [10.6275953  21.77800071] , i= 10 , cost_prev= 0.00010494846955778317 , cost= 3.860690847967536e-05
+
 
 / Einde NEWTON
 
-/ BACKTRACKING
+/ SKLEARN 
+
+/ 7	. 
+
+/ 13	. 
+
+/ prg	,
+
+phi=np.array([-2,2]).reshape(-1,1)
+t=np.array([0,1])
+lg=LogisticRegression(solver="newton-cg",C=10**10) 
+
+lg.fit(phi,t)
+
+print(lg.intercept_)
+print(lg.coef_)
 
 
+/ 13	. 
 
-/ Einde BACKTRACKING
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_backtrack_wolfe_weak_self_202102.py -- -2,2 0,1    100 1e-4 .4 .9 .9 100  
+p1= [0.5 0.5]
+t= [0 1]
+cost3= 1.3862943611198906
+w= [0. 0.]
+d= [-0.  1.]
+p1= [0.11920292 0.88079708]
+t= [0 1]
+cost3= 0.25385602208594515
+p1= [0.5 0.5]
+t= [0 1]
+cost3= 1.3862943611198906
+break
+...
+
+[eric@almond my]$ ipython log_reg_1_class_1_feature_newton_backtrack_wolfe_strong_self_202102.py -- -2,2 0,1    100 1e-4 .4 .9 .9 100  
+p1= [0.5 0.5]
+t= [0 1]
+cost3= 1.3862943611198906
+w= [0. 0.]
+d= [-0.  1.]
+p1= [0.11920292 0.88079708]
+t= [0 1]
+cost3= 0.25385602208594515
+p1= [0.5 0.5]
+t= [0 1]
+cost3= 1.3862943611198906
+break
+...
+
+/ 13	. 
+
+/ in sklearn,
+
+optimize.newton_cg
+/=
+ef newton_cg(grad_hess, func, grad, x0, args=(), tol=1e-4,
+              maxiter=100, maxinner=200, line_search=True, warn=True):
+...
+       xsupi = _cg(fhess_p, fgrad, maxiter=maxinner, tol=termcond)
+xsupi=(1,0).T
+/ wij hebben (0,.5).T
+/ klopt, zij hebben de intercept_ onderaan	,
+/ TODO verschil 1 en .5
+/ dus zij zeggen in onze volgorde : (0,1).T
+/ grad=Phi.T @ (y-t)	, y=sgm(Phi@w)	,
+Phi=(1 -2
+		1 2)
+t=(0
+	1)
+w=(0
+	0)
+y=(.5
+	.5)
+y-t=(.5
+	-.5)
+Phi.T=(1 1
+			-2 2)
+grad=(0
+		-2)
+H=Phi.T @ R @ Phi=
+(1 1  @ (.5 0		@ (1 -2
+ -2 2)		0 .5)		(1 2)
+=(0
+	.5)
+
+        if line_search:
+            try:
+                alphak, fc, gc, old_fval, old_old_fval, gfkp1 = \
+                    _line_search_wolfe12(func, grad, xk, xsupi, fgrad,
+                                         old_fval, old_old_fval, args=args)
+/s,
+linesearch.line_search_wolfe1
+		...
+    stp, fval, old_fval = scalar_search_wolfe1(
+            phi, derphi, old_fval, old_old_fval, derphi0,
+            c1=c1, c2=c2, amax=amax, amin=amin, xtol=xtol)
+/s,
+linesearch.scalar_search_wolfe1
+    """
+    Scalar function search for alpha that satisfies strong Wolfe conditions
 
 
-
-
-
-
-/ CG
-
-    #w=w-la.lu_solve(la.lu_factor(H),grad)
-
-
-/ Einde CG
+/ Einde SKLEARN 
