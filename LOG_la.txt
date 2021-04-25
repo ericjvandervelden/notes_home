@@ -659,4 +659,72 @@ https://www.youtube.com/watch?v=-kwZhTPAhIQ
 / strang	, 
 https://www.youtube.com/watch?v=N74V4CBO0sk
 
+/ 7	. 
+
+/ cg2.py	, 
+
+/ we hebben iets aangepast	, we controleren dat pi.T @ A @ pj=0, ri.T @ rj=0,	j<i
+
+for i in np.arange(0,n-1):
+    print("ronde ",i)
+    for j in np.arange(0,i):
+        print("pi.T @ A @ pj=",p[:,j].T @ A @ p[:,i])
+        print("ri.T @ rj=",r[:,j].T @ r[:,i])
+
+[eric@almond my]$  ipython cg2.py 2,1,0,1,2,1,0,1,2 3,4,3 0,0,0 5 1e-5
+x[:,0]: [0. 0. 0.]
+p[:,0]: [3. 4. 3.]
+r[:,0]: [3. 4. 3.]
+ronde  0
+a[i]: 0.29310344827586204
+x[:,i+1]: [0.87931034 1.17241379 0.87931034]
+r[:,i+1]: [ 0.06896552 -0.10344828  0.06896552]
+b[i]: 0.0005945303210463753
+p[:,i+1]: [ 0.07074911 -0.10107015  0.07074911]
+ronde  1
+pi.T @ A @ pj= 1.84297022087776e-14
+ri.T @ rj= 5.329070518200751e-15
+a[i]: 1.7058823529411762
+x[:,i+1]: [1. 1. 1.]
+break
+i: 1
+sol: [1. 1. 1.]
+
+/ hessian uit ons log reg vb	,
+[eric@almond my]$  ipython cg2.py -- 1,0,-1,0,0,1,0,-1,-1,0,1,0,0,-1,0,1 -2,-2,2,2 0,0,0,0 5 1e-5
+x[:,0]: [0. 0. 0. 0.]
+p[:,0]: [-2. -2.  2.  2.]
+r[:,0]: [-2. -2.  2.  2.]
+ronde  0
+a[i]: 0.5
+x[:,i+1]: [-1. -1.  1.  1.]
+break
+i: 0
+sol: [-1. -1.  1.  1.]
+
+/ terwijl als we dit doen met lu_solve, lu_factor	,
+/ deze zitten niet in numpy.linalg	, wel is scipy.linalg,	
+/ TODO
+
+In [1856]: import scipy.linalg as sla
+In [1851]: H=np.array([2,1,0,1,2,1,0,1,2]).reshape(3,-1)
+In [1852]: t=np.array([3,4,3])
+In [1858]: sla.lu_solve(sla.lu_factor(H),t)
+Out[1858]: array([1., 1., 1.])
+
+In [1859]: H=np.array([1,0,-1,0,0,1,0,-1,-1,0,1,0,0,-1,0,1]).reshape(4,-1)
+
+In [1860]: H
+Out[1860]: 
+array([[ 1,  0, -1,  0],
+       [ 0,  1,  0, -1],
+       [-1,  0,  1,  0],
+       [ 0, -1,  0,  1]])
+In [1861]: t=np.array([-2,-2,2,2])
+In [1862]: sla.lu_solve(sla.lu_factor(H),t)
+/home/eric/miniconda3/bin/ipython:1: LinAlgWarning: Diagonal number 3 is exactly zero. Singular matrix.
+  #!/home/eric/miniconda3/bin/python
+Out[1862]: array([nan, nan, nan, nan])
+
+
 

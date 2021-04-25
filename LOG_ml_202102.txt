@@ -4214,5 +4214,45 @@ linesearch.scalar_search_wolfe1
     """
     Scalar function search for alpha that satisfies strong Wolfe conditions
 
+/ 7	 .
+
+[eric@almond my]$ ipython log_reg_1_class_features_self_geron_2_20210315.py -- -2,0,2 0,0,1 1e-4
+[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:    0.0s finished
+intercept_
+[-9.31656843]
+coef_
+[[9.68514938]]
+[eric@almond my]$ ipython log_reg_1_class_features_self_geron_2_20210315.py -- -2,2 0,1 1e-8
+/home/eric/miniconda3/lib/python3.6/site-packages/sklearn/utils/optimize.py:203: ConvergenceWarning: newton-cg failed to converge. Increase the number of iterations.
+  "number of iterations.", ConvergenceWarning)
+[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:    0.0s finished
+intercept_
+[0.]
+coef_
+[[7.10137387]]
+
+/ Dus bij tol=1e-8 krijg je een warning, 
+/ TODO
+
+[eric@almond my]$ ipython log_reg_1_class_features_self_geron_2_20210315.py -- -2,0,2 0,0,1 1e-4
+[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:    0.0s finished
+intercept_
+[-9.31656843]
+coef_
+[[9.68514938]]
+
+[eric@almond my]$ ipython log_reg_1_class_features_self_geron_2_20210315.py -- -2,0,2 0,0,1 1e-8
+/home/eric/miniconda3/lib/python3.6/site-packages/sklearn/utils/optimize.py:203: ConvergenceWarning: newton-cg failed to converge. Increase the number of iterations.
+  "number of iterations.", ConvergenceWarning)
+[Parallel(n_jobs=1)]: Done   1 out of   1 | elapsed:    0.0s finished
+intercept_
+[-12.31662785]
+coef_
+[[12.68513229]]
+
+
+
+
+
 
 / Einde SKLEARN 

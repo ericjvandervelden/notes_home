@@ -1,0 +1,471 @@
+/ 7	. 
+
+/ np.newaxis = None,
+
+In [1845]: d=np.array([1,3])
+
+In [1846]: d
+Out[1846]: array([1, 3])
+
+In [1847]: d[:,None]
+Out[1847]: 
+array([[1],
+       [3]])
+
+In [1848]: d[None,:]
+Out[1848]: array([[1, 3]])
+
+
+/ 7	. 
+
+/ np.squeeze	,
+
+In [1806]: a=np.array([1,2,3,4]).reshape(2,-1)
+In [1807]: a
+Out[1807]: 
+array([[1, 2],
+       [3, 4]])
+
+In [1812]: a[:,0]
+Out[1812]: array([1, 3])
+
+In [1815]: b=a[:,0][:,np.newaxis]
+In [1817]: b
+Out[1817]: 
+array([[1],
+       [3]])
+
+In [1816]: np.squeeze(b)
+Out[1816]: array([1, 3])
+
+In [1822]: b.shape
+Out[1822]: (2, 1)
+
+In [1823]: np.squeeze(b).shape
+Out[1823]: (2,)
+
+
+/ 7	. 
+
+In [1888]: a
+Out[1888]: 
+array([[1, 2],
+       [3, 4]])
+
+/ deel a door som van zijn kolommen	,
+
+In [1889]: a/(a@np.ones((2,1)))		/ OK	,
+Out[1889]: 
+array([[0.33333333, 0.66666667],
+       [0.42857143, 0.57142857]])
+
+In [1890]: a/(a@np.ones(2))			/ verkeerde broadcast	,
+Out[1890]: 
+array([[0.33333333, 0.28571429],
+       [1.        , 0.57142857]])
+
+/ 7	 
+
+In [1907]: a
+Out[1907]: 
+array([[1, 2],
+       [3, 4]])
+
+In [1908]: np.block([[a,a],[a,a]])
+Out[1908]: 
+array([[1, 2, 1, 2],
+       [3, 4, 3, 4],
+       [1, 2, 1, 2],
+       [3, 4, 3, 4]])
+
+/ 7	 .
+
+/ lees	,
+https://numpy.org/doc/stable/reference/generated/numpy.block.html
+
+/ 13	. 
+
+/ met array's,	
+
+In [1984]: e=np.array([1,2,3])
+In [1985]: f=np.array([4,5,6])
+
+In [1986]: np.block([e,f]) 						# hstack	,
+Out[1986]: array([1, 2, 3, 4, 5, 6])
+
+In [1990]: np.block([[e],[f]]) 	# vstack	,
+Out[1990]: 
+array([[1, 2, 3],
+       [4, 5, 6]])
+
+/ 13	. 
+
+In [1999]: a=np.block([np.array([1,2]),np.array([3,4])])	 # hstack, zie boven	,
+In [2000]: a
+Out[2000]: array([1, 2, 3, 4])
+
+n [2006]: a=np.block([[np.array([1,2])],[np.array([3,4])]])	 # vstack, zie boven	,
+
+In [2007]: a
+Out[2007]: 
+array([[1, 2],
+       [3, 4]])
+
+
+In [2002]: a=np.block([[1,2],[3,4]]) 	# vstack, met lists ipv array's,
+
+In [2003]: a
+Out[2003]: 
+array([[1, 2],
+       [3, 4]])
+
+/ 13	. 
+
+In [2012]: [[i,i] for i in np.arange(0,4)]
+Out[2012]: [[0, 0], [1, 1], [2, 2], [3, 3]]
+
+In [2015]: np.r_[[0, 0], [1, 1], [2, 2], [3, 3]]
+Out[2015]: array([0, 0, 1, 1, 2, 2, 3, 3])
+
+
+In [2014]: np.r_[[[0, 0], [1, 1], [2, 2], [3, 3]]]
+Out[2014]: 
+array([[0, 0],
+       [1, 1],
+       [2, 2],
+       [3, 3]])
+
+In [2020]: np.r_[[i,i] for i in np.arange(0,4)]
+  File "<ipython-input-2020-5826eb656a9d>", line 1
+    np.r_[[i,i] for i in np.arange(0,4)]
+                  ^
+SyntaxError: invalid syntax
+
+
+In [2021]: np.r_[[[i,i] for i in np.arange(0,4)]]
+Out[2021]: 
+array([[0, 0],
+       [1, 1],
+       [2, 2],
+       [3, 3]])
+
+
+In [2009]: np.block([[i,i] for i in np.arange(0,4)])
+Out[2009]: 
+array([[0, 0],
+       [1, 1],
+       [2, 2],
+       [3, 3]])
+
+In [2018]: a=np.block([[1,2],[3,4]])
+In [2019]: a
+Out[2019]: 
+array([[1, 2],
+       [3, 4]])
+
+
+In [2025]: np.block([a for i in range(0,4)])
+Out[2025]: 
+array([[1, 2, 1, 2, 1, 2, 1, 2],
+       [3, 4, 3, 4, 3, 4, 3, 4]])
+
+////////////////////////////////////////////////////////////////////////////
+In [2027]: np.block([ [a for j in range(0,4)] for i in range(0,4)])
+Out[2027]: 
+array([[1, 2, 1, 2, 1, 2, 1, 2],
+       [3, 4, 3, 4, 3, 4, 3, 4],
+       [1, 2, 1, 2, 1, 2, 1, 2],
+       [3, 4, 3, 4, 3, 4, 3, 4],
+       [1, 2, 1, 2, 1, 2, 1, 2],
+       [3, 4, 3, 4, 3, 4, 3, 4],
+       [1, 2, 1, 2, 1, 2, 1, 2],
+       [3, 4, 3, 4, 3, 4, 3, 4]])
+
+In [2030]: a[:,0]
+Out[2030]: array([1, 3])
+
+In [2029]: np.block([ [a[:,j] for j in range(0,2)] for i in range(0,4)])
+Out[2029]: 
+array([[1, 3, 2, 4],
+       [1, 3, 2, 4],
+       [1, 3, 2, 4],
+       [1, 3, 2, 4]])
+
+In [2035]: a[:,0][:,None]
+Out[2035]: 
+array([[1],
+       [3]])
+
+In [2034]: np.block([ [a[:,j][:,None] for j in range(0,2)] for i in range(0,2)])
+Out[2034]: 
+array([[1, 2],
+       [3, 4],
+       [1, 2],
+       [3, 4]])
+
+n [2037]: np.block([ [a[:,j][:,None]*a[:,i][:,None] for j in range(0,2)] for i in range(0,2)])
+Out[2037]: 
+array([[ 1,  2],
+       [ 9, 12],
+       [ 2,  4],
+       [12, 16]])
+
+In [2066]: a[:,0][:,None]*(int(0==1)-a[:,1])[:,None]
+Out[2066]: 
+array([[ -2],
+       [-12]])
+In [2067]: np.ravel(a[:,0][:,None]*(int(0==1)-a[:,1])[:,None])
+Out[2067]: array([ -2, -12])
+In [2068]: np.diag(np.ravel(a[:,0][:,None]*(int(0==1)-a[:,1])[:,None]))
+Out[2068]: 
+array([[ -2,   0],
+       [  0, -12]])
+
+
+In [2062]: np.block([ [ np.diag(np.squeeze(a[:,i][:,None]*(int(i==j)-a[:,j])[:,None])) for j in range(0,2)] for 
+      ...: i in range(0,2)])
+Out[2062]: 
+array([[  0,   0,  -2,   0],
+       [  0,  -6,   0, -12],
+       [ -2,   0,  -2,   0],
+       [  0, -12,   0, -12]])
+
+
+/ 13	. 
+
+/ np.kron
+/ TODO
+
+/ 13	. 
+
+/ met lists,
+
+In [1991]: el=[1,2,3]
+
+In [1992]: fl=[4,5,6]
+
+In [1993]: np.block([el,fl])
+Out[1993]: 
+array([[1, 2, 3],
+       [4, 5, 6]])
+
+/ 13	. 
+
+/ np.r_, np.c_ met array's of lists maakt niet uit	,
+
+In [1994]: np.r_[e,f]													# hstack	,
+Out[1994]: array([1, 2, 3, 4, 5, 6])
+
+In [1995]: np.r_[el,fl]
+Out[1995]: array([1, 2, 3, 4, 5, 6])
+
+In [1996]: np.c_[e,f]		 											# dit is niet vstack	,
+Out[1996]: 
+array([[1, 4],
+       [2, 5],
+       [3, 6]])
+
+In [1997]: np.c_[el,fl]
+Out[1997]: 
+array([[1, 4],
+       [2, 5],
+       [3, 6]])
+
+In [1998]: np.c_[[e],[f]]
+Out[1998]: array([[1, 2, 3, 4, 5, 6]])
+
+/ 7	. 
+
+
+
+
+/ 7	. 
+
+/ zo maak je een  list of array van array's	,
+
+/ 13	,	
+
+In [1920]: a
+Out[1920]: 
+array([[1, 2],
+       [3, 4]])
+
+In [1923]: a[:,0]
+Out[1923]: array([1, 3]) 	/ 'n (2,)	, geen (2,1)	,
+
+In [1919]: [a[:,j] for j in np.arange(2)]
+Out[1919]: [array([1, 3]), array([2, 4])]
+
+In [1921]: type([a[:,j] for j in np.arange(2)])
+Out[1921]: list
+
+/ 13	. 
+
+/ maar er een (groot) array van	,
+
+In [1925]: np.block([a[:,j] for j in np.arange(2)])
+Out[1925]: array([1, 3, 2, 4])
+
+/ of met staande vectoren	,
+
+In [1929]: [a[:,[j]] for j in np.arange(2)]
+Out[1929]: 
+[array([[1],
+        [3]]), array([[2],
+        [4]])]
+/ beetje raar geprint	,
+
+n [1951]: (a[:,[j]] for j in np.arange(2))
+Out[1951]: <generator object <genexpr> at 0x7f49f0322af0>
+
+In [1946]: type([a[:,[j]] for j in np.arange(2)])
+Out[1946]: list
+
+In [1934]: len([a[:,[j]] for j in np.arange(2)])
+Out[1934]: 2
+
+In [1936]: [a[:,[j]] for j in np.arange(2)][0]
+Out[1936]: 
+array([[1],
+       [3]])
+
+In [1937]: [a[:,[j]] for j in np.arange(2)][1]
+Out[1937]: 
+array([[2],
+       [4]])
+
+In [1939]: np.block([a[:,[j]] for j in np.arange(2)])==a
+Out[1939]: 
+array([[ True,  True],
+       [ True,  True]])
+
+In [1940]: np.block([a[:,[j]] for j in np.arange(2)])
+Out[1940]: 
+array([[1, 2],
+       [3, 4]])
+
+/ 7	. 
+
+/ lees,	
+https://numpy.org/doc/stable/reference/generated/numpy.c_.html
+
+/ zie links in het menu discrete fourier transform = numpy.fft	, 
+/ TODO
+
+/ stack fcts, block	,
+
+/ .c_, .column_stack kun je (n,) geven	, er komt een (m,n) uit	,
+
+In [1954]: np.c_[1,2]
+Out[1954]: array([[1, 2]])
+
+In [1955]: np.r_[1,2]
+Out[1955]: array([1, 2])
+
+In [1956]: np.r_[1,2][None,:]
+Out[1956]: array([[1, 2]])
+
+In [1957]: np.r_[1,2][:,None]
+Out[1957]: 
+array([[1],
+       [2]])
+
+/ 13	. 
+
+In [1950]: a[:,[j]] for j in np.arange(2)
+  File "<ipython-input-1950-69aa66c45614>", line 1
+    a[:,[j]] for j in np.arange(2)
+               ^
+SyntaxError: invalid syntax
+
+In [1951]: (a[:,[j]] for j in np.arange(2))
+Out[1951]: <generator object <genexpr> at 0x7f49f0322af0>
+
+In [1952]: [(a[:,[j]] for j in np.arange(2))]
+Out[1952]: [<generator object <genexpr> at 0x7f49f0326938>]
+
+n [1953]: type (a[:,[j]] for j in np.arange(2))
+Out[1953]: generator
+
+In [1973]: [a[:,[j]] for j in np.arange(2)]
+Out[1973]: 
+[array([[0],
+        [3]]), array([[1],
+        [4]])]
+/ list,
+
+In [1974]: np.r_[a[:,[j]] for j in np.arange(2)]
+  File "<ipython-input-1974-cca84849d4e2>", line 1
+    np.r_[a[:,[j]] for j in np.arange(2)]
+                     ^
+SyntaxError: invalid syntax
+
+In [1980]: np.r_([a[:,[j]] for j in np.arange(2)])
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+<ipython-input-1980-8069619d2f23> in <module>()
+----> 1 np.r_([a[:,[j]] for j in np.arange(2)])
+
+TypeError: 'RClass' object is not callable
+
+/ 13	. 
+
+/ we zien dat np.r_ geen fct is	, en np.block wel, door de ()	,
+
+In [1981]: np.r_[np.array([1,2,3]),np.array([4,5,6])]
+Out[1981]: array([1, 2, 3, 4, 5, 6])
+
+In [1983]: np.block([np.array([1,2,3]),np.array([4,5,6])])
+Out[1983]: array([1, 2, 3, 4, 5, 6])
+
+/ np.r_ kan geen [a[:,j] for j in np.arange(0,N)] 
+/ np.block wel	,
+
+
+
+/ 13	 .
+
+In [1977]: np.block[a[:,[j]] for j in np.arange(2)]
+  File "<ipython-input-1977-3bd8877676ae>", line 1
+    np.block[a[:,[j]] for j in np.arange(2)]
+                        ^
+SyntaxError: invalid syntax
+
+
+In [1978]: np.block([a[:,[j]] for j in np.arange(2)])
+Out[1978]: 
+array([[0, 1],
+       [3, 4]])
+
+
+/ 13	. 
+
+
+
+
+/ lees, 
+https://numpy.org/doc/stable/reference/generated/numpy.r_.html#numpy.r_
+
+n [1961]: a = np.array([[0, 1, 2], [3, 4, 5]])
+
+In [1962]: a
+Out[1962]: 
+array([[0, 1, 2],
+       [3, 4, 5]])
+
+In [1971]: np.r_[a,a]
+Out[1971]: 
+array([[0, 1, 2],
+       [3, 4, 5],
+       [0, 1, 2],
+       [3, 4, 5]])
+
+In [1970]: np.c_[a,a]
+Out[1970]: 
+array([[0, 1, 2, 0, 1, 2],
+       [3, 4, 5, 3, 4, 5]])
+
+
+
+
+
