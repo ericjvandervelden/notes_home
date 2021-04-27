@@ -4250,8 +4250,15 @@ intercept_
 coef_
 [[12.68513229]]
 
+/ 7	. 
 
+[eric@almond my]$ cp log_reg_multiclass_iris_20210425.py log_reg_multiclass_self_20210425.py
 
+[eric@almond my]$ ipython log_reg_multiclass_self_20210425.py -- -2,2 0,1 100 1e-4 .4 .9 .9 100 1
+d= [-0.  -0.5 -0.   0.5]
+
+/ maar (0,1,0,0) of (0,0,0,-1) is ook goed,
+/ TODO
 
 
 

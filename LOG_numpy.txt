@@ -85,6 +85,86 @@ https://numpy.org/doc/stable/reference/generated/numpy.block.html
 
 / 13	. 
 
+When called with only scalars, np.block is equivalent to an ndarray call. So np.block([[1, 2], [3, 4]]) is equivalent to np.array([[1, 2], [3, 4]]).
+
+In [2143]: np.array([[1,2],[3,4]])
+Out[2143]: 
+array([[1, 2],
+       [3, 4]])
+In [2141]: np.block([[1,2],[3,4]])
+Out[2141]: 
+array([[1, 2],
+       [3, 4]])
+
+/ 13	. 
+
+/ met array's	,
+
+In [2145]: b11=np.eye(3)*2
+In [2153]: b12=np.ones((3,2))
+In [2150]: b21=np.ones((2,3))
+In [2148]: b22=np.eye(2)*5
+In [2149]: np.block([[b11,b12],[b21,b22]])
+Out[2156]: 
+array([[2., 0., 0., 1., 1.],
+       [0., 2., 0., 1., 1.],
+       [0., 0., 2., 1., 1.],
+       [1., 1., 1., 5., 0.],
+       [1., 1., 1., 0., 5.]])
+In [2159]: np.block([[b11,b12],[b21,b22]]).shape
+Out[2159]: (5, 5)
+
+In [2157]: np.array([[b11,b12],[b21,b22]])
+Out[2157]: 
+array([[array([[2., 0., 0.],
+       [0., 2., 0.],
+       [0., 0., 2.]]),
+        array([[1., 1.],
+       [1., 1.],
+       [1., 1.]])],
+       [array([[1., 1., 1.],
+       [1., 1., 1.]]),
+        array([[5., 0.],
+       [0., 5.]])]], dtype=object)
+In [2158]: np.array([[b11,b12],[b21,b22]]).shape
+Out[2158]: (2, 2)
+/ array van blocks	,
+
+/ de blokken hoeven niet aan te sluiten, zodat er een kruis in het midden:
+In [2145]: b11=np.eye(3)*2
+In [2166]: b12=np.ones((3,1))	 # np.ones(3) kan niet	,
+In [2160]: b21=np.ones((2,2))
+In [2161]: b22=np.eye(2)
+
+In [2168]: np.block([[b11,b12],[b21,b22]])
+Out[2168]: 
+array([[2., 0., 0., 1.],
+       [0., 2., 0., 1.],
+       [0., 0., 2., 1.],
+       [1., 1., 1., 0.],
+       [1., 1., 0., 1.]])
+
+/ 13	. 
+
+In [2172]: b11=np.array([1,2])
+In [2173]: b12=np.array([3,4])
+In [2174]: np.block([b11,b12])
+Out[2174]: array([1, 2, 3, 4])
+In [2178]: np.block([[b11],[b12]])
+Out[2178]: 
+array([[1, 2],
+       [3, 4]])
+
+//////////////////////////////////////////////////////////
+/ list = hstack	, list van lists = vstack	,
+	[a,b] # a,b hstack	, list van 2 array's	, 
+	[[a],[b]] # a,b vstack	,	list van list van 1 array	,
+	[[a,b],[c,d]]	# a,b h stack (zie hierboven), c,d hstack	, [a,b] en [c,d] vstack	, list van list van 2 array's
+
+
+
+/ 13	. 
+
 / met array's,	
 
 In [1984]: e=np.array([1,2,3])
@@ -100,11 +180,11 @@ array([[1, 2, 3],
 
 / 13	. 
 
-In [1999]: a=np.block([np.array([1,2]),np.array([3,4])])	 # hstack, zie boven	,
+In [1999]: a=np.block([np.array([1,2]),np.array([3,4])])	 # hstack, want list	, 
 In [2000]: a
 Out[2000]: array([1, 2, 3, 4])
 
-n [2006]: a=np.block([[np.array([1,2])],[np.array([3,4])]])	 # vstack, zie boven	,
+n [2006]: a=np.block([[np.array([1,2])],[np.array([3,4])]])	 # vstack, want list van lists	, 
 
 In [2007]: a
 Out[2007]: 
@@ -112,7 +192,7 @@ array([[1, 2],
        [3, 4]])
 
 
-In [2002]: a=np.block([[1,2],[3,4]]) 	# vstack, met lists ipv array's,
+In [2002]: a=np.block([[1,2],[3,4]]) 	# vstack, list van lists	,
 
 In [2003]: a
 Out[2003]: 
@@ -150,7 +230,10 @@ array([[0, 0],
        [3, 3]])
 
 
-In [2009]: np.block([[i,i] for i in np.arange(0,4)])
+/ scalars,
+In [2009]: np.block([[i,i] for i in np.arange(0,4)])	 # list van lists (van scalars), dus vstack	, 
+/=
+In [2179]:  np.array([[i,i] for i in np.arange(0,4)])	 # list van lists	,
 Out[2009]: 
 array([[0, 0],
        [1, 1],
@@ -158,19 +241,21 @@ array([[0, 0],
        [3, 3]])
 
 In [2018]: a=np.block([[1,2],[3,4]])
+/=
+In [2018]: a=np.array([[1,2],[3,4]])
 In [2019]: a
 Out[2019]: 
 array([[1, 2],
        [3, 4]])
 
 
-In [2025]: np.block([a for i in range(0,4)])
+In [2025]: np.block([a for i in range(0,4)])	# list , dus hstack	,
 Out[2025]: 
 array([[1, 2, 1, 2, 1, 2, 1, 2],
        [3, 4, 3, 4, 3, 4, 3, 4]])
 
 ////////////////////////////////////////////////////////////////////////////
-In [2027]: np.block([ [a for j in range(0,4)] for i in range(0,4)])
+In [2027]: np.block([ [a for j in range(0,4)] for i in range(0,4)]) # list van lists, dus vstack 	,
 Out[2027]: 
 array([[1, 2, 1, 2, 1, 2, 1, 2],
        [3, 4, 3, 4, 3, 4, 3, 4],
@@ -181,10 +266,15 @@ array([[1, 2, 1, 2, 1, 2, 1, 2],
        [1, 2, 1, 2, 1, 2, 1, 2],
        [3, 4, 3, 4, 3, 4, 3, 4]])
 
+In [2180]: a
+Out[2180]: 
+array([[1, 2],
+       [3, 4]])
+
 In [2030]: a[:,0]
 Out[2030]: array([1, 3])
 
-In [2029]: np.block([ [a[:,j] for j in range(0,2)] for i in range(0,4)])
+In [2029]: np.block([ [a[:,j] for j in range(0,2)] for i in range(0,4)])	 # list of lists	,
 Out[2029]: 
 array([[1, 3, 2, 4],
        [1, 3, 2, 4],
@@ -203,7 +293,12 @@ array([[1, 2],
        [1, 2],
        [3, 4]])
 
-n [2037]: np.block([ [a[:,j][:,None]*a[:,i][:,None] for j in range(0,2)] for i in range(0,2)])
+In [2069]: a
+Out[2069]: 
+array([[1, 2],
+       [3, 4]])
+
+In [2037]: np.block([ [a[:,i][:,None]*a[:,j][:,None] for j in range(0,2)] for i in range(0,2)])
 Out[2037]: 
 array([[ 1,  2],
        [ 9, 12],
@@ -221,7 +316,18 @@ Out[2068]:
 array([[ -2,   0],
        [  0, -12]])
 
+In [2069]: a
+Out[2069]: 
+array([[1, 2],
+       [3, 4]])
 
+In [2072]: np.ravel(a,order='c') 	# default	,
+Out[2072]: array([1, 2, 3, 4])
+
+In [2073]: np.ravel(a,order='f')
+Out[2073]: array([1, 3, 2, 4])
+
+/ np.squeeze of np.ravel	,
 In [2062]: np.block([ [ np.diag(np.squeeze(a[:,i][:,None]*(int(i==j)-a[:,j])[:,None])) for j in range(0,2)] for 
       ...: i in range(0,2)])
 Out[2062]: 
@@ -229,6 +335,59 @@ array([[  0,   0,  -2,   0],
        [  0,  -6,   0, -12],
        [ -2,   0,  -2,   0],
        [  0, -12,   0, -12]])
+
+/ we hoeven geen staande vectoren te maken	, 
+
+In [2100]: np.block([ [ np.diag(a[:,i]*(int(i==j)-a[:,j])) for j in range(0,2)] for i in range(0,2)])
+Out[2100]: 
+array([[  0,   0,  -2,   0],
+       [  0,  -6,   0, -12],
+       [ -2,   0,  -2,   0],
+       [  0, -12,   0, -12]])
+
+
+/ Intermezzo
+
+/ list van 2 lang, die elk ook een list van 2 lang is	,
+In [2088]: [ [ a[:,i]*(int(i==j)-a[:,j]) for j in range(0,2)] for i in range(0,2)]
+Out[2088]: [[array([ 0, -6]), array([ -2, -12])], [array([ -2, -12]), array([ -2, -12])]]
+
+/ list van 2 lists, die elk list is van 2 staande vectoren	,
+In [2091]: [ [ a[:,i][:,None]*(int(i==j)-a[:,j])[:,None] for j in range(0,2)] for i in range(0,2)]
+Out[2091]: 
+[[array([[ 0],
+         [-6]]), array([[ -2],
+         [-12]])], [array([[ -2],
+         [-12]]), array([[ -2],
+         [-12]])]]
+In [2092]: [ [ a[:,i][:,None]*(int(i==j)-a[:,j])[:,None] for j in range(0,2)] for i in range(0,2)][0][1]
+Out[2092]: 
+array([[ -2],
+       [-12]])
+
+/ je hoeft ze niet staand te maken voor np.diag	,
+
+In [2096]: [ [ np.diag(a[:,i]*(int(i==j)-a[:,j])) for j in range(0,2)] for i in range(0,2)]
+Out[2096]: 
+[[array([[ 0,  0],
+         [ 0, -6]]), array([[ -2,   0],
+         [  0, -12]])], [array([[ -2,   0],
+         [  0, -12]]), array([[ -2,   0],
+         [  0, -12]])]]
+In [2097]: [ [ np.diag(a[:,i]*(int(i==j)-a[:,j])) for j in range(0,2)] for i in range(0,2)][0][1]
+Out[2097]: 
+array([[ -2,   0],
+       [  0, -12]])
+
+n [2100]: np.block([ [ np.diag(a[:,i]*(int(i==j)-a[:,j])) for j in range(0,2)] for i in range(0,2)])
+Out[2100]: 
+array([[  0,   0,  -2,   0],
+       [  0,  -6,   0, -12],
+       [ -2,   0,  -2,   0],
+       [  0, -12,   0, -12]])
+
+
+/ Einde Intermezzo
 
 
 / 13	. 
@@ -465,7 +624,138 @@ Out[1970]:
 array([[0, 1, 2, 0, 1, 2],
        [3, 4, 5, 3, 4, 5]])
 
+/ 7	. 
+
+In [2186]: a
+Out[2186]: 
+array([[1, 2],
+       [3, 4]])
+
+In [2185]: k=np.ravel(a,order='f')
+In [2191]: k
+Out[2191]: array([1, 3, 2, 4])
+
+/ terug	naar a	,
+In [2190]: k.reshape((2,2),order='f')
+Out[2190]: 
+array([[1, 2],
+       [3, 4]])
 
 
+/ ook, 
+
+In [2193]: k=np.ravel(a,order='f')[:,None]
+
+In [2194]: k
+Out[2194]: 
+array([[1],
+       [3],
+       [2],
+       [4]])
+
+/ terug	,
+In [2195]: k.reshape((2,2),order='f')
+Out[2195]: 
+array([[1, 2],
+       [3, 4]])
+
+
+/ 7	. 
+
+/ broadcast problemen	, als je met (N,1) en (N,) door elkaar werkt	,
+
+/ 13	. 
+
+In [2212]: a
+Out[2212]: 
+array([[1, 2],
+       [3, 4]])
+
+In [2209]: x=np.ones((2,4))
+In [2210]: x
+Out[2210]: 
+array([[1., 1., 1., 1.],
+       [1., 1., 1., 1.]])
+
+In [2208]: x[:,0]
+Out[2208]: array([0., 0.])
+/ ligt,	
+
+In [2211]: a@x[:,0]
+Out[2211]: array([3., 7.])
+/ ligt ook,
+
+In [2203]: k=np.array([0,0])[:,None]
+In [2204]: k
+Out[2204]: 
+array([[0],
+       [0]])
+
+In [2213]: k-a@x[:,0]
+Out[2213]: 
+array([[-3., -7.],
+       [-3., -7.]])
+/ niet de bedoeling,
+
+In [2215]: k-a@x[:,[0]]
+Out[2215]: 
+array([[-3.],
+       [-7.]])
+/ ok,
+
+In [2216]: r=np.zeros((2,4))
+In [2217]: r[:,0]=k-a@x[:,[0]]
+ValueError: could not broadcast input array from shape (2,1) into shape (2,)
+/ r[:,0] ligt	,
+
+/ oplossing	,
+
+In [2218]: r[:,[0]]=k-a@x[:,[0]]
+In [2219]: r
+Out[2219]: 
+array([[-3.,  0.,  0.,  0.],
+       [-7.,  0.,  0.,  0.]])
+/ ok	,
+
+/ 13	. 
+
+/ andere oplossing, 
+
+In [2221]: l=np.zeros(2)
+
+In [2223]: x[:,0]
+Out[2223]: array([1., 1.])
+
+In [2225]: l-a@x[:,0]
+Out[2225]: array([-3., -7.]) 
+
+In [2228]: r=np.zeros((2,4))
+
+In [2229]: r[:,0]=l-a@x[:,0]
+
+In [2230]: r
+Out[2230]: 
+array([[-3.,  0.,  0.,  0.],
+       [-7.,  0.,  0.,  0.]])
+
+/ 13	. 
+
+/ van (N,1) naar (N,)	,
+
+In [2231]: k
+Out[2231]: 
+array([[0],
+       [0]])
+In [2232]: k.ravel()
+Out[2232]: array([0, 0])
+/ of	,
+In [2233]: np.squeeze(k)
+Out[2233]: array([0, 0])
+
+/ terug	,
+In [2234]: k.ravel()[:,None]
+Out[2234]: 
+array([[0],
+       [0]])
 
 
