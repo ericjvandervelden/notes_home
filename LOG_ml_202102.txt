@@ -4260,6 +4260,50 @@ d= [-0.  -0.5 -0.   0.5]
 / maar (0,1,0,0) of (0,0,0,-1) is ook goed,
 / TODO
 
+/ 7	. 
+
+[eric@almond my]$ ipython log_reg_multiclass_self_20210425_2.py -- -2,2 0,1 100 1e-4 .4 .9 .9 100 20
+w= [-1.61148775e-09 -5.30072369e+00 -1.61148775e-09  5.30072369e+00]
+
+/ 7	. 
+
+/ wat zijn	,
+-rw-rw-r--. 1 eric eric 5502 Apr 27 00:00 log_reg_multiclass_iris_20210425.py
+-rw-rw-r--. 1 eric eric 7308 Apr 28 21:43 log_reg_multiclass_self_20210425.py
+/ TODO
+
+/ kijk in 
+[eric@almond my]$ less log_reg_1_class_1_feature_newton_backtrack_wolfe_strong_iris_202102.py
+/ en pas log_reg_multiclass_iris_20210425.py hierop aan	,
+
+$ ipython log_reg_multiclass_iris_20210425_2.py 3 2 100 1e-4 .4 .9 .9 100 20
+...
+cost= 16.71040414480422
+grad= [-1.08470799e-06  3.68829251e-07  1.08470799e-06 -3.68829255e-07]
+break
+n_bt= 0
+d= [ 6.05475258e-07 -2.05877515e-07 -6.05475258e-07  2.05877518e-07]
+w= [ 10.56280673  -6.47374524 -10.56280673   6.47374524]
+s= 1.0
+
+/ vergl	,
+
+[eric@almond my]$ ipython log_reg_2_classes_1_feature_newton.py
+array([[-21.12563996],
+       [ 12.94750716]])
+
+[eric@almond my]$  ipython log_reg_multiclass_iris_geron.py
+array([[6.4737429]])
+array([-10.56280302])
+
+
+
+
+
+
+
+
+
 
 
 / Einde SKLEARN 
