@@ -176,6 +176,7 @@ excl
 
 
 / we doen	,
+[eric@almond my]$ sudo su -
 [root@localhost ~]# rsync -avz --delete --exclude Downloads /home/eric /run/media/eric/WD/almond2/home/
 [root@localhost ~]# rsync -avz --delete /etc /run/media/eric/WD/almond2/
 

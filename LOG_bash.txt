@@ -2,3 +2,14 @@ https://stackoverflow.com/questions/5750450/print-each-command-before-executing
 
 / here docs en pipe
 https://unix.stackexchange.com/questions/88490/how-do-you-use-output-redirection-in-combination-with-here-documents-and-cat
+
+/ 13	. 
+
+/ in welke log files komt postgres3a voor?
+
+[eric@almond Logs]$ if [ $(grep -q postgres3a LOG_postgresql.txt) ]; then echo OK;fi
+/ waarom werkt dit niet	?
+/ TODO
+
+$ ls -ltr | grep postgres  | awk '{print $NF}' | xargs -I % bash -c "echo %;grep postgres3a %"
+/ werkt aardig,	 maar ik wil alleen de files print die postgres3a bevatten

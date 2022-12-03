@@ -135,10 +135,10 @@ and(p1.a=p2.a or p1.b=p2.b)
 
 / (70)
 
-/ 13	. 
+/ 1313	. 
 
 create table source(
-pair_nbr integer not null unique,
+nr integer not null unique,
 a integer not null,
 b integer not null,
 primary key(a,b));
@@ -174,7 +174,221 @@ from flags;
  f
 (2 rows)
 
-/ 13	. 
+
+
+/ 1313	,
+
+with flags(i)as(
+select*
+from (values('t'),('f'))t
+),
+subsets(nr,f01,f02,f03,f04)as( -- name columns  ,
+select row_number()over()nr,f01.i,f02.i,f03.i,f04.i
+from flags f01
+cross join flags f02
+cross join flags f03
+cross join flags f04
+)
+select *
+from subsets
+;
+ nr | f01 | f02 | f03 | f04 
+----+-----+-----+-----+-----
+  1 | t   | t   | t   | t
+  2 | t   | f   | t   | t
+  3 | f   | t   | t   | t
+  4 | f   | f   | t   | t
+  5 | t   | t   | f   | t
+  6 | t   | f   | f   | t
+  7 | f   | t   | f   | t
+  8 | f   | f   | f   | t
+  9 | t   | t   | t   | f
+ 10 | t   | f   | t   | f
+ 11 | f   | t   | t   | f
+ 12 | f   | f   | t   | f
+ 13 | t   | t   | f   | f
+ 14 | t   | f   | f   | f
+ 15 | f   | t   | f   | f
+ 16 | f   | f   | f   | f
+(16 rows)
+/ we hadden f02 en f01 verwisseld verwacht,	
+
+/ 1313	. 
+
+with flags(i)as(
+select*
+from (values('t'),('f'))t
+),
+subsets(nr,f01,f02,f03)as( -- name columns  ,
+select row_number()over()nr,f01.i,f02.i,f03.i
+from flags f01
+cross join flags f02
+cross join flags f03
+)
+select *
+from subsets;
+/ of	,
+with flags(i)as(
+select*
+from (values('t'),('f'))t
+),
+subsets(nr,f01,f02,f03)as( -- name columns  ,
+select row_number()over()nr,f01.i,f02.i,f03.i
+from flags f01
+,flags f02
+,flags f03
+)
+select *
+from subsets;
+ nr | f01 | f02 | f03 
+----+-----+-----+-----
+  1 | t   | t   | t
+  2 | t   | f   | t
+  3 | f   | t   | t
+  4 | f   | f   | t
+  5 | t   | t   | f
+  6 | t   | f   | f
+  7 | f   | t   | f
+  8 | f   | f   | f
+(8 rows)
+/ we hadden f02 en f01 verwisseld verwacht,	
+
+-- subsets en source zijn oo van elkaar	,
+-- de columns van subsets zijn oo van elkaar	,
+-- pak van source de 1ste, en cross join met die subsets die f01='t' hebben	,
+-- pak van source de 2de, en cross join met die subsets die f02='t' hebben	,
+...
+with flags(i)as(
+select*
+from (values('t'),('f'))t
+),
+subsets(nr,f01,f02,f03)as( -- name columns  ,
+select row_number()over()nr,f01.i,f02.i,f03.i
+from flags f01
+cross join flags f02
+cross join flags f03
+),
+candidates(nr,a,b)
+as(
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=1 and p.f01='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=2 and p.f02='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=3 and p.f03='t' 
+)
+select nr,a,b
+from candidates c1
+;
+ nr | a | b 
+----+---+---
+  1 | 1 | 1
+  2 | 1 | 1
+  5 | 1 | 1
+  6 | 1 | 1
+  1 | 1 | 2
+  3 | 1 | 2
+  5 | 1 | 2
+  7 | 1 | 2
+  1 | 2 | 3
+  2 | 2 | 3
+  3 | 2 | 3
+  4 | 2 | 3
+(12 rows)
+
+/ 1313	. 
+
+with flags(i)as(
+select*
+from (values('t'),('f'))t
+),
+subsets(nr,f01,f02,f03)as( -- name columns  ,
+select row_number()over()nr,f01.i,f02.i,f03.i
+from flags f01
+cross join flags f02
+cross join flags f03
+),
+candidates(nr,a,b)
+as(
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=1 and p.f01='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=2 and p.f02='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=3 and p.f03='t' 
+)
+select nr			-- dezen nr hebben unieke a's en unieke b's
+from candidates
+group by nr
+having count(a)=count(distinct a)
+and count(b)=count(distinct b)
+;
+ nr 
+----
+  2
+  3
+  4
+  6
+  7
+(5 rows)
+
+
+with flags(i)as(
+select*
+from (values('t'),('f'))t
+),
+subsets(nr,f01,f02,f03)as( -- name columns  ,
+select row_number()over()nr,f01.i,f02.i,f03.i
+from flags f01
+cross join flags f02
+cross join flags f03
+),
+candidates(nr,a,b)
+as(
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=1 and p.f01='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=2 and p.f02='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=3 and p.f03='t' 
+)
+select nr,a,b
+from candidates c1
+where nr in(
+select c2.nr
+from candidates c2
+group by c2.nr
+having count(a)=count(distinct a)
+and count(b)=count(distinct b)
+)
+order by nr,a,b;
+ nr | a | b 
+----+---+---
+  2 | 1 | 1
+  2 | 2 | 3
+  3 | 1 | 2
+  3 | 2 | 3
+  4 | 2 | 3
+  6 | 1 | 1
+  7 | 1 | 2
+(7 rows)
+
+/ 1313	. 
 
 with flags(i)as(
 select*
@@ -212,14 +426,203 @@ from subsets
  1024 | f   | f   | f   | f   | f   | f   | f   | f   | f   | f
 (1024 rows)
 
+/ 1313	,
+
+with flags(i)as(
+select*
+from (values('t'),('f'))t
+),
+subsets(nr,f01,f02,f03,f04,f05,f06,f07,f08,f09,f10)as( -- name columns  ,
+select row_number()over()nr,f01.i,f02.i,f03.i,f04.i,f05.i,f06.i,f07.i,f08.i,f09.i,f10.i
+from flags f01
+cross join flags f02
+cross join flags f03
+cross join flags f04
+cross join flags f05
+cross join flags f06
+cross join flags f07
+cross join flags f08
+cross join flags f09
+cross join flags f10
+),
+candidates(nr,a,b)
+as(
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=1 and p.f01='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=2 and p.f02='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=3 and p.f03='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=4 and p.f04='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=5 and p.f05='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=6 and p.f06='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=7 and p.f07='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=8 and p.f08='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=9 and p.f09='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=10 and p.f10='t' 
+)
+select nr,a,b
+into res
+from candidates c1
+;
+
+select a,b,count(*) 
+from res
+group by a,b
+;
+ a  | b | count 
+----+---+-------
+  5 | 5 |   512
+  2 | 4 |   512
+  7 | 2 |   512
+  1 | 1 |   512
+  9 | 0 |   512
+ 11 | 2 |   512
+  5 | 3 |   512
+  1 | 2 |   512
+  2 | 3 |   512
+  5 | 1 |   512
+(10 rows)
+/ klopt, er zijn in een column de helft 't' 	, dus altijd 512	,
+/ we zien alle paren van source	,
+
+eric=> select*from res;
+  nr  | a  | b 
+------+----+---
+    1 |  1 | 1
+    2 |  1 | 1
+    3 |  1 | 1
+    4 |  1 | 1
+    5 |  1 | 1
+    6 |  1 | 1
+    7 |  1 | 1
+    8 |  1 | 1
+   17 |  1 | 1
+   18 |  1 | 1
+   19 |  1 | 1
+   20 |  1 | 1
+   21 |  1 | 1
+   22 |  1 | 1
+   23 |  1 | 1
+   24 |  1 | 1
+   33 |  1 | 1
+   34 |  1 | 1
+   35 |  1 | 1
+...
+ 1012 |  1 | 1
+ 1013 |  1 | 1
+ 1014 |  1 | 1
+ 1015 |  1 | 1
+ 1016 |  1 | 1
+    1 |  1 | 2
+    2 |  1 | 2
+    3 |  1 | 2
+    4 |  1 | 2
+    9 |  1 | 2
+   10 |  1 | 2
+   11 |  1 | 2
+...
 
 
+/ 1313	. 
+
+with flags(i)as(
+select*
+from (values('t'),('f'))t
+),
+subsets(nr,f01,f02,f03,f04,f05,f06,f07,f08,f09,f10)as( -- name columns  ,
+select row_number()over()nr,f01.i,f02.i,f03.i,f04.i,f05.i,f06.i,f07.i,f08.i,f09.i,f10.i
+from flags f01
+cross join flags f02
+cross join flags f03
+cross join flags f04
+cross join flags f05
+cross join flags f06
+cross join flags f07
+cross join flags f08
+cross join flags f09
+cross join flags f10
+),
+candidates(nr,a,b)
+as(
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=1 and p.f01='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=2 and p.f02='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=3 and p.f03='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=4 and p.f04='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=5 and p.f05='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=6 and p.f06='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=7 and p.f07='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=8 and p.f08='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=9 and p.f09='t' 
+union all
+select p.nr,s.a,s.b
+from subsets p,source s
+where s.nr=10 and p.f10='t' 
+)
+select nr,a,b
+from candidates c1
+where nr in(
+select c2.nr
+from candidates c2
+group by c2.nr
+having count(a)=count(distinct a)
+and count(b)=count(distinct b)
+and count(*)>5)
+order by nr,a,b;
 
 
-
-
-
-/ KLAD
 
 / 13	. 
 

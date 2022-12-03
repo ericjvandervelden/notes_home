@@ -1,12 +1,40 @@
-/ See GENERATE 
+/ See GENERATE_SERIES
 / See TABLES
 / See SCHEMAS
 / See PRIVILEGES 
 / See MAX
+/ See WINDOW FUNCTIONS
+/ See EXPLAIN
+
+/ 13	. 
+
+/ verander prompt in  bijv	,
+eric@foo
+
+/ lees	,
+https://www.digitalocean.com/community/tutorials/how-to-customize-the-postgresql-prompt-with-psqlrc-on-ubuntu-14-04
+
+eric=> \set     
+AUTOCOMMIT = 'on'
+PROMPT1 = '%/%R%# '
+PROMPT2 = '%/%R%# '
+PROMPT3 = '>> '
+...
 
 
+/ we doen	,
+eric=>  \set PROMPT1 '%n@%/%R%# ' 
+eric@eric=>  \set PROMPT2 '%n@%/%R%# ' 
 
-/ GENERATE 
+eric@eric=> select*
+eric@eric-> from foo;
+
+eric@eric=> \c - mgr
+You are now connected to database "eric" as user "mgr".
+mgr@eric=> 
+
+
+/ GENERATE_SERIES
 
 /  13	. 
 
@@ -604,7 +632,7 @@ group by i;
   7 | 8.0000000000000000
 (11 rows)
 
-/ Einde GENERATE
+/ Einde GENERATE_SERIES
 
 / TABLES 
 
@@ -1913,7 +1941,7 @@ https://www.postgresql.org/docs/9.6/plpgsql-structure.html
 
 / Einde PROCEDURES
 
-/ MISC
+/ WINDOW FUNCTIONS 
 
 / 7	. 
 
@@ -2221,8 +2249,123 @@ eric=> select pg_typeof(i) from ints;
 
 
 
-/ Einde MISC
+/ Einde WINDOW FUNCTIONS 
 
+/ EXPLAIN
+
+
+
+
+/ Einde EXPLAIN
+
+/ OPGAVE POLITIE
+
+create table vreemdeling(vnr int,vnroud int,regd date);
+create table aanhouding(vnr int,datum date);
+insert into vreemdeling values(7,null,'1 Oct 2018');
+insert into vreemdeling values(7,null,'1 Nov 2018');
+insert into vreemdeling values(7,13,'1 Dec 2018');
+insert into aanhouding values(7,'3 Dec 2018');
+insert into vreemdeling values(6,null,'1 Jan 2018');
+insert into vreemdeling values(6,null,'1 Feb 2018');
+insert into vreemdeling values(6,null,'1 Mar 2018');
+insert into aanhouding values(6,'3 Mar 2018');
+
+eric@eric=> select*from vreemdeling;
+ vnr | vnroud |    regd    
+-----+--------+------------
+   7 |        | 2018-10-01
+   7 |        | 2018-11-01
+   7 |     13 | 2018-12-01
+   6 |        | 2018-01-01
+   6 |        | 2018-02-01
+   6 |        | 2018-03-01
+
+eric@eric=> select*from aanhouding
+eric@eric-> ;
+ vnr |   datum    
+-----+------------
+   7 | 2018-12-03
+   6 | 2018-03-03
+
+
+select aan.vnr,aan.datum,vre.regd
+from vreemdeling vre
+join aanhouding aan 
+on vre.vnr=aan.vnr
+and vre.regd<=aan.datum
+;
+ vnr |   datum    |    regd    
+-----+------------+------------
+   6 | 2018-03-03 | 2018-01-01
+   6 | 2018-03-03 | 2018-02-01
+   6 | 2018-03-03 | 2018-03-01
+   7 | 2018-12-03 | 2018-10-01
+   7 | 2018-12-03 | 2018-11-01
+   7 | 2018-12-03 | 2018-12-01
+(6 rows)
+
+select aan.vnr,aan.datum,vre.regd
+from vreemdeling vre
+join aanhouding aan 
+on vre.vnr=aan.vnr
+and vre.regd<=aan.datum
+and vre.vnroud is null
+;
+ vnr |   datum    |    regd    
+-----+------------+------------
+   7 | 2018-12-03 | 2018-11-01
+   7 | 2018-12-03 | 2018-10-01
+   6 | 2018-03-03 | 2018-03-01
+   6 | 2018-03-03 | 2018-02-01
+   6 | 2018-03-03 | 2018-01-01
+(5 rows)
+
+
+select aan.vnr,aan.datum,max(vre.regd)
+from vreemdeling vre
+join aanhouding aan 
+on vre.vnr=aan.vnr
+and vre.regd<=aan.datum
+group by aan.vnr,aan.datum
+;
+ vnr |   datum    |    max     
+-----+------------+------------
+   6 | 2018-03-03 | 2018-03-01
+   7 | 2018-12-03 | 2018-12-01
+(2 rows)
+
+select aan.vnr,aan.datum,max(vre.regd)
+from vreemdeling vre
+join aanhouding aan 
+on vre.vnr=aan.vnr
+and vre.regd<=aan.datum
+and vre.vnroud is null
+group by aan.vnr,aan.datum
+;
+ vnr |   datum    |    max     
+-----+------------+------------
+   7 | 2018-12-03 | 2018-11-01
+   6 | 2018-03-03 | 2018-03-01
+(2 rows)
+
+
+select aan.vnr,aan.datum,max(vre.regd)
+from vreemdeling vre
+join aanhouding aan 
+on vre.vnr=aan.vnr
+and vre.regd<=aan.datum
+and vre.vnroud is not null
+group by aan.vnr,aan.datum
+;
+ vnr |   datum    |    max     
+-----+------------+------------
+   7 | 2018-12-03 | 2018-12-01
+(1 row)
+
+
+
+/ Einde OPGAVE POLITIE
 
 
 

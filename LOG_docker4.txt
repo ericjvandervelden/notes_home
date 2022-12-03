@@ -1520,7 +1520,319 @@ https://hackernoon.com/docker-compose-install-postgresql-for-local-development-e
 / Einde DOCKER COMPOSE POSTGRES
 
 
+/ DOCKER
 
+/ 7	. 
+
+/ build, run, attach (exec)	, command substitution	, 
+
+/ 13	. 
+
+[eric@almond postgres3a]$ pwd
+/home/eric/Devel/Docker2/fedora/postgres3a
+[eric@almond postgres3a]$ less Dockerfile 
+...
+#entrypoint ["postgres"]
+cmd ["postgres"]
+
+[eric@almond postgres3a]$ docker build -t my/fedora-postgres3a .
+[eric@almond postgres3a]$ docker run -it --rm my/fedora-postgres3a bash
+bash-4.3$ exit
+exit
+/ OK,
+/ postgres is installed, niet started	,
+
+/ 13	. 
+
+/ we kunnen ook attach,
+
+/ In Dockerfile staat nog steeds	, en we hebben niet opnieuw build,	
+cmd ["pg_ctl","-w","start"]
+/ daarom moeten we zelf het command: postgres geven	,
+
+[eric@almond postgres3a]$ docker run -it --rm my/fedora-postgres3a bash
+bash-4.3$ postgres
+LOG:  redirecting log output to logging collector process
+HINT:  Future log output will appear in directory "pg_log".
+
+/ in andere console,
+[eric@almond postgres3a]$ docker exec -ti modest_perlman bash
+bash-4.3$ ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+postgres     7  0.0  0.1 344964 19792 ?        S+   19:59   0:00 postgres
+postgres     8  0.0  0.0 197828  2512 ?        Ss   19:59   0:00 postgres: logger process  
+postgres    10  0.0  0.0 344964  3332 ?        Ss   19:59   0:00 postgres: checkpointer process  
+postgres    11  0.0  0.0 344964  4032 ?        Ss   19:59   0:00 postgres: writer process  
+postgres    12  0.0  0.0 344964  3392 ?        Ss   19:59   0:00 postgres: wal writer process  
+postgres    13  0.0  0.0 345400  5864 ?        Ss   19:59   0:00 postgres: autovacuum launcher process  
+postgres    14  0.0  0.0 199948  2476 ?        Ss   19:59   0:00 postgres: stats collector process  
+
+
+/ 13	. 
+
+/ als we entrypoint use ipv cmd, kunnen we zien het cml substitute met bijv: bash,
+
+[eric@almond postgres3a]$ less Dockerfile 
+...
+entrypoint ["postgres"]
+#cmd ["postgres"]
+/ dan werkt NIET	, 
+[eric@almond postgres3a]$ docker run -it --rm my/fedora-postgres3a bash
+postgres: invalid argument: "bash"
+
+/ wat wel kan met entrypoint is	,
+[eric@almond postgres3a]$ docker run -it --rm my/fedora-postgres3a
+/ en in andere console,	
+[eric@almond postgres3a]$ docker exec -ti infallible_wilson bash
+bash-4.3$ 
+
+/ lees,
+https://docs.docker.com/engine/reference/builder/#entrypoint
+...
+Understand how CMD and ENTRYPOINT interact
+CMD will be overridden when running the container with alternative arguments.
+
+/ 13	. 
+
+/ werkt NIET,
+cmd ["pg_ctl","-w","start"]
+
+[eric@almond postgres3a]$ less Dockerfile 
+...
+#entrypoint ["postgres"]
+#cmd ["postgres"]
+cmd ["pg_ctl","-w","start"]
+
+/ werkt NIET,
+[eric@almond postgres3a]$ docker run -it --rm my/fedora-postgres3a
+waiting for server to start....LOG:  redirecting log output to logging collector process
+HINT:  Future log output will appear in directory "pg_log".
+ done
+server started
+[eric@almond postgres3a]$
+/ er is geen container meer	,
+
+/ 13	. 
+
+/ je kunt bij TAB 
+docker stop 
+docker exec -ti  
+/ de container moet er wel zijn, dus bij docker run  kan het niet	,
+
+/ 13	. 
+
+
+
+[eric@almond postgres3a]$ cat Dockerfile 
+user postgres
+cmd ["postgres"]
+/ al maakt dat niet uit, want we gaan hem substitude,	
+[eric@almond postgres3a]$ docker build -t my/fedora-postgres3a .
+bash-4.3$ whoami
+postgres
+
+/ WH omdat in de Dockerfile 
+user postgres
+/ TODO
+
+/ ook, om te kijken wat er gebeurt	,
+[eric@almond postgres3a]$ docker exec -ti condescending_saha bash
+bash-4.3$ ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+postgres     1  0.0  0.0 119916  3416 ?        Ss+  20:19   0:00 bash
+postgres     8  0.0  0.0 119916  3472 ?        Ss   20:20   0:00 bash
+postgres    18  0.0  0.0 150008  3676 ?        R+   20:22   0:00 ps aux
+
+/ we geven in 1ste console	,
+bash-4.3$ postgres
+LOG:  redirecting log output to logging collector process
+HINT:  Future log output will appear in directory "pg_log".
+
+/ in 2de	,
+bash-4.3$ ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+postgres     1  0.0  0.0 119916  3416 ?        Ss   20:19   0:00 bash
+postgres     8  0.0  0.0 119916  3472 ?        Ss   20:20   0:00 bash
+postgres    19  0.7  0.1 344964 20120 ?        S+   20:22   0:00 postgres
+postgres    20  0.0  0.0 197828  2660 ?        Ss   20:22   0:00 postgres: logger process  
+postgres    22  0.0  0.0 344964  3440 ?        Ss   20:22   0:00 postgres: checkpointer process  
+postgres    23  0.0  0.0 344964  3440 ?        Ss   20:22   0:00 postgres: writer process  
+postgres    24  0.0  0.0 344964  3440 ?        Ss   20:22   0:00 postgres: wal writer process  
+postgres    25  0.0  0.0 345400  6024 ?        Ss   20:22   0:00 postgres: autovacuum launcher process  
+postgres    26  0.0  0.0 199948  2624 ?        Ss   20:22   0:00 postgres: stats collector process  
+postgres    27  0.0  0.0 150008  3704 ?        R+   20:23   0:00 ps aux
+/ OK,
+bash-4.3$ pg_ctl stop
+waiting for server to shut down.... done
+server stopped
+bash-4.3$ ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+postgres     1  0.0  0.0 119916  3416 ?        Ss+  20:19   0:00 bash
+postgres     8  0.0  0.0 119916  3476 ?        Ss   20:20   0:00 bash
+postgres    30  0.0  0.0 150008  3636 ?        R+   20:24   0:00 ps aux
+
+/ in 1ste console	,
+/ prompt komt terug	,
+bash-4.3$ 
+/ nu doen we niet postgres, maar pg_ctl start	,
+bash-4.3$ pg_ctl start
+server starting
+bash-4.3$ LOG:  redirecting log output to logging collector process
+HINT:  Future log output will appear in directory "pg_log".
+/ geef Enter,
+bash-4.3$ 
+/ de prompt komt terug, en we kunnen nu ook in deze console kijken,
+bash-4.3$ ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+postgres     1  0.0  0.0 119916  3428 ?        Ss   20:19   0:00 bash
+postgres     8  0.0  0.0 119916  3476 ?        Ss+  20:20   0:00 bash
+postgres    33  0.0  0.1 344964 19944 ?        S    20:25   0:00 /usr/bin/postgr
+postgres    34  0.0  0.0 197828  2484 ?        Ss   20:25   0:00 postgres: logge
+postgres    36  0.0  0.0 344964  3444 ?        Ss   20:25   0:00 postgres: check
+postgres    37  0.0  0.0 344964  4908 ?        Ss   20:25   0:00 postgres: write
+postgres    38  0.0  0.0 344964  3444 ?        Ss   20:25   0:00 postgres: wal w
+postgres    39  0.0  0.0 345400  4516 ?        Ss   20:25   0:00 postgres: autov
+postgres    40  0.0  0.0 199948  2508 ?        Ss   20:25   0:00 postgres: stats
+postgres    48  0.0  0.0 150008  3528 ?        R+   20:31   0:00 ps aux
+
+/ In Dockerfile's cmd werkt 'pg_ctl start' niet, maar op de command line wel	,
+/ ook als we de shell form use,	 werkt het niet	,
+$ cat Dockerfile	,
+cmd pg_ctl -w start
+
+/ met pg_ctl wordt postgres in de background gestart, en blijkbaar werkt dat niet in Dockerfile's cmd	,
+/ met cmd postgres wordt postgres in foreground called, en dat zie je ook, als je in de container daarna Enter geeft, gebeurt er niets,	 
+
+/ 13	. 
+
+/ in Dockerfile	,
+cmd ["postgres"]
+
+[eric@almond postgres3a]$ docker run -it --rm my/fedora-postgres3a
+/ OK,
+/ je kunt hem stoppen met 
+ctrl+c
+/ als je bash als cmd , dan kun je op de prompt 
+bash-4.3$ exit
+
+
+/ 13	. 
+
+/ maak conn met pg vanuit andere container,	
+/ start postgres container, met postgres	, 
+/ start andere postgres container, met bash	, zodat we psql hebben; start hem eerst als root, omdat we /etc/hosts moeten aanpassen	, en dan later in de container gaan we weer over op postgres user,
+
+/ in Dockerfile	,
+cmd ["postgres"]
+
+[eric@almond postgres3a]$ docker run -it --rm my/fedora-postgres3a 
+/ OK,
+/ 
+
+[eric@almond postgres3a]$ docker run -u root -it --rm my/fedora-postgres3a bash
+[root@19e6a550e13c /] # 
+/ andere container,	
+
+
+/ Intermezzo 
+
+/ we moeten de hostname weten van de postgres container, want die moeten we in /etc/hosts in de bash container zetten, 
+
+[eric@almond postgres3a]$ docker inspect sharp_booth 
+        "Config": {
+            "Hostname": "9f41c4dc24f1",
+            "Cmd": [
+                "postgres"
+            ],
+
+[eric@almond postgres3a]$ docker inspect focused_wiles 
+        "Config": {
+            "Hostname": "53677b7874b6",
+            "Cmd": [
+                "bash"
+            ],
+
+/ Einde Intermezzo
+
+/ ook attach we aan de postgres container, om de /etc/hosts file te lezen	,
+[eric@almond postgres3a]$ docker exec -ti sharp_booth bash
+bash-4.3$ cat /etc/hosts
+...
+172.17.0.2	9f41c4dc24f1			/ zelf,
+
+/ docker zet altijd de host zelf in /etc/hosts	,
+
+/ deze line cp we in de /etc/hosts/ van de bash container,	
+[root@19e6a550e13c /]# vi /etc/hosts
+...
+172.17.0.3      19e6a550e13c 		/ zelf,
+172.17.0.2      9f41c4dc24f1 		/ postgres container,
+/ ga over op user postgres	,
+[root@19e6a550e13c /]# su - postgres
+-bash-4.3$ psql -h 9f41c4dc24f1 
+psql (9.5.7)
+Type "help" for help.
+
+postgres=# 
+/ OK,
+
+/ je kunt ook het ip adres van de target gebruiken bij -h 	, 
+
+/ 13	. 
+
+/ we start postgres container, 
+/ we attach, om postgresql.conf of pg_hba.conf aan te passen,
+/ we connect met pg in de container vanaf de host	,
+
+[eric@almond postgres3a]$ docker run -it --rm my/fedora-postgres3a 
+...
+
+[eric@almond postgres3a]$ docker exec -ti goofy_spence bash
+/ we zijn weliswaar postgres, maar we starten niet in de home dir van postgres, maar in /	, 
+/ TODO
+bash-4.3$ cd 
+bash-4.3$ pwd
+/var/lib/pgsql
+bash-4.3$ cd data
+bash-4.3$ ifconfig
+        inet 172.17.0.2  netmask 255.255.0.0  broadcast 0.0.0.0
+bash-4.3$ vi pg_hba.conf 
+#host all all 192.168.123.182/32 trust			/ deze niet	,
+host all all 172.17.0.1/32 trust			/ <-
+#host all all 0.0.0.0/0 trust				/ ook OK,
+bash-4.3$ pg_ctl reload
+server signaled
+
+
+[eric@almond postgres3a]$ ifconfig
+docker0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.1  netmask 255.255.0.0  broadcast 0.0.0.0
+np0s25: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.123.182  netmask 255.255.255.0  broadcast 192.168.123.255
+
+
+/ op almond	,
+[eric@almond postgres3a]$ psql -h 172.17.0.2 -U postgres
+postgres=# 
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+/ Einde DOCKER
 
 
 

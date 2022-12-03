@@ -12,3 +12,668 @@ postgresql replication
 
 https://www.youtube.com/watch?v=iM-zufjan04	/ Boriss Mejias (guitars)
 https://www.youtube.com/watch?v=ldOPon17uYE&t=640s	  / 1ste video	,
+
+ / 7	. 
+
+/ ga in ff naar,
+https://postgresql.thinkific.com/
+/ login met 
+ericjvandervelden@gmail.com
+Wme...
+/ klik op My dashboard
+Full edition, replay course
+/ kies links The art of postgresql, the database
+/ download TheArtOfPostgreSQL-database.zip
+
+[eric@almond Postgres]$ pwd
+/home/eric/Devel/Postgres
+[eric@almond Postgres]$ unzip  ~/Downloads/AepmeAJkSTONbD5DQ2hA_TheArtOfPostgreSQLdatabase-1567530125591.zip 
+[eric@almond Postgres]$ cd TheArtOfPostgreSQL/
+
+
+/ install postgres in home dir,
+/ lees,
+https://www.endpointdev.com/blog/2013/06/installing-postgresql-without-root/
+
+/ 7	. 
+
+/ install
+
+/ 13	. 
+
+[eric@almond TheArtOfPostgreSQL]$ export PGUSER=postgres
+[eric@almond TheArtOfPostgreSQL]$ make 2>&1 | tee LOG_make.txt
+createuser -SDr taop
+createdb -O taop taop
+psql -d taop -c 'create extension btree_gist'
+CREATE EXTENSION
+psql -d taop -c 'create extension ip4r'
+ERROR:  could not open extension control file "/usr/share/pgsql/extension/ip4r.control": No such file or directory
+make: *** [Makefile:15: createdb] Error 1
+
+/ we zullen later zien dat btree_gist niet is geinstalleerd in de taop database	,
+/ voorwaarde is dat hij in de lijst staat van available extensions, en dat is hij,
+/ hierin staan alle available extensions	,
+/usr/share/pgsql/extension
+/ en je kunt ze opvragen in psql met 
+select *from pg_available_extensions
+select *from pg_available_extension_versions
+
+/ 13	. 
+
+/ install ip4r
+
+/ dus voeg hem toe aan de lijst van available extensions	,
+/ want die staat er nog niet bij,
+
+
+[eric@almond TheArtOfPostgreSQL]$ psql -V
+psql (PostgreSQL) 9.6.8
+
+[eric@almond Postgres]$ mkdir extensions
+[eric@almond Postgres]$ cd extensions
+[eric@almond extensions]$ git clone https://github.com/RhodiumToad/ip4r.git
+[eric@almond extensions]$ cd ip4r/
+[eric@almond ip4r]$ make
+gcc -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -m64 -mtune=generic -DLINUX_OOM_SCORE_ADJ=0 -fPIC -I. -I./ -I/usr/include/pgsql/server -I/usr/include/pgsql/internal -D_GNU_SOURCE -I/usr/include/libxml2   -c -o src/ip4r_module.o src/ip4r_module.c
+gcc -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -m64 -mtune=generic -DLINUX_OOM_SCORE_ADJ=0 -fPIC -I. -I./ -I/usr/include/pgsql/server -I/usr/include/pgsql/internal -D_GNU_SOURCE -I/usr/include/libxml2   -c -o src/ip4r.o src/ip4r.c
+gcc -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -m64 -mtune=generic -DLINUX_OOM_SCORE_ADJ=0 -fPIC -I. -I./ -I/usr/include/pgsql/server -I/usr/include/pgsql/internal -D_GNU_SOURCE -I/usr/include/libxml2   -c -o src/ip6r.o src/ip6r.c
+gcc -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -m64 -mtune=generic -DLINUX_OOM_SCORE_ADJ=0 -fPIC -I. -I./ -I/usr/include/pgsql/server -I/usr/include/pgsql/internal -D_GNU_SOURCE -I/usr/include/libxml2   -c -o src/ipaddr.o src/ipaddr.c
+gcc -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -m64 -mtune=generic -DLINUX_OOM_SCORE_ADJ=0 -fPIC -I. -I./ -I/usr/include/pgsql/server -I/usr/include/pgsql/internal -D_GNU_SOURCE -I/usr/include/libxml2   -c -o src/iprange.o src/iprange.c
+gcc -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -m64 -mtune=generic -DLINUX_OOM_SCORE_ADJ=0 -fPIC -I. -I./ -I/usr/include/pgsql/server -I/usr/include/pgsql/internal -D_GNU_SOURCE -I/usr/include/libxml2   -c -o src/raw_io.o src/raw_io.c
+gcc -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -m64 -mtune=generic -DLINUX_OOM_SCORE_ADJ=0 -fPIC -shared -o ip4r.so src/ip4r_module.o src/ip4r.o src/ip6r.o src/ipaddr.o src/iprange.o src/raw_io.o -L/usr/lib64 -Wl,-z,relro -specs=/usr/lib/rpm/redhat/redhat-hardened-ld  -Wl,--as-needed  
+[eric@almond ip4r]$ ls
+expected  ip4r.control  ip4r.so  LICENSE  Makefile  README.ip4r  scripts  sql  src  tools
+[eric@almond ip4r]$ 
+
+eric@almond ip4r]$ sudo su root -c "make -n install" 
+/usr/bin/mkdir -p '/usr/lib64/pgsql'
+/usr/bin/mkdir -p '/usr/share/pgsql/extension'
+/usr/bin/mkdir -p '/usr/share/pgsql/extension'
+/usr/bin/mkdir -p '/usr/share/doc/pgsql/extension'
+/usr/bin/install -c -m 755  ip4r.so '/usr/lib64/pgsql/ip4r.so'
+/usr/bin/install -c -m 644 .//ip4r.control '/usr/share/pgsql/extension/'
+/usr/bin/install -c -m 644 .//scripts/ip4r--2.4.sql .//scripts/ip4r--2.2--2.4.sql .//scripts/ip4r--2.1--2.2.sql .//scripts/ip4r--2.0--2.1.sql .//scripts/ip4r--unpackaged2.1--2.1.sql .//scripts/ip4r--unpackaged2.0--2.0.sql .//scripts/ip4r--unpackaged1--2.0.sql  '/usr/share/pgsql/extension/'
+/usr/bin/install -c -m 644 .//README.ip4r '/usr/share/doc/pgsql/extension/'
+
+[eric@almond ip4r]$ sudo su root -c "make install" 
+/usr/bin/mkdir -p '/usr/lib64/pgsql'
+/usr/bin/mkdir -p '/usr/share/pgsql/extension'
+/usr/bin/mkdir -p '/usr/share/pgsql/extension'
+/usr/bin/mkdir -p '/usr/share/doc/pgsql/extension'
+/usr/bin/install -c -m 755  ip4r.so '/usr/lib64/pgsql/ip4r.so'
+/usr/bin/install -c -m 644 .//ip4r.control '/usr/share/pgsql/extension/'
+/usr/bin/install -c -m 644 .//scripts/ip4r--2.4.sql .//scripts/ip4r--2.2--2.4.sql .//scripts/ip4r--2.1--2.2.sql .//scripts/ip4r--2.0--2.1.sql .//scripts/ip4r--unpackaged2.1--2.1.sql .//scripts/ip4r--unpackaged2.0--2.0.sql .//scripts/ip4r--unpackaged1--2.0.sql  '/usr/share/pgsql/extension/'
+/usr/bin/install -c -m 644 .//README.ip4r '/usr/share/doc/pgsql/extension/'
+
+/ 13	. 
+
+[eric@almond ip4r]$ ls /usr/share/pgsql/extension/ -1 | grep ip4r
+ip4r--2.0--2.1.sql
+ip4r--2.1--2.2.sql
+ip4r--2.2--2.4.sql
+ip4r--2.4.sql
+ip4r.control
+ip4r--unpackaged1--2.0.sql
+ip4r--unpackaged2.0--2.0.sql
+ip4r--unpackaged2.1--2.1.sql
+
+/ 13	. 
+
+[eric@almond TheArtOfPostgreSQL]$ make 2>&1 | tee LOG_make.txt
+createuser -SDr taop
+createuser: creation of new role failed: ERROR:  role "taop" already exists
+make: *** [Makefile:12: createdb] Error 1
+
+/ daarom,
+
+$ vi Makefile
+createdb:
+  #createuser -SDr taop
+  #createdb -O taop $(DBNAME)
+  psql -d $(DBNAME) -c 'create extension btree_gist'
+  psql -d $(DBNAME) -c 'create extension ip4r'
+	...
+
+[eric@almond TheArtOfPostgreSQL]$ make 2>&1 | tee LOG_make_vervolg_1.txt
+#createuser -SDr taop
+#createdb -O taop taop
+psql -d taop -c 'create extension btree_gist'
+psql -d taop -c 'create extension ip4r'
+CREATE EXTENSION
+psql -d taop -c 'create extension hll'
+ERROR:  could not open extension control file "/usr/share/pgsql/extension/hll.control": No such file or directory
+make: *** [Makefile:16: createdb] Error 1
+
+/ we zullen later zien dat de 2 extensions niet zijn geinstalleerd, omdat een superuser dat moet doen,
+
+/ 13	.
+
+[eric@almond extensions]$ git clone https://github.com/citusdata/postgresql-hll.git
+
+[eric@almond postgresql-hll]$ make 
+gcc -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -m64 -mtune=generic -DLINUX_OOM_SCORE_ADJ=0 -fPIC -std=c99 -fPIC -Wall -Wextra -Werror -Wno-unused-parameter -Wno-implicit-fallthrough -Iinclude -I/usr/include -I. -I./ -I/usr/include/pgsql/server -I/usr/include/pgsql/internal -D_GNU_SOURCE -I/usr/include/libxml2   -c -o src/hll.o src/hll.c
+In file included from /usr/include/pgsql/server/funcapi.h:20:0,
+                 from src/hll.c:28:
+src/hll.c: In function ‘hll_hashval_in’:
+src/hll.c:1975:36: error: ‘int8in’ undeclared (first use in this function); did you mean ‘int4in’?
+     Datum dd = DirectFunctionCall1(int8in, PG_GETARG_DATUM(0));
+                                    ^
+/usr/include/pgsql/server/fmgr.h:556:26: note: in definition of macro ‘DirectFunctionCall1’
+  DirectFunctionCall1Coll(func, InvalidOid, arg1)
+                          ^~~~
+src/hll.c:1975:36: note: each undeclared identifier is reported only once for each function it appears in
+     Datum dd = DirectFunctionCall1(int8in, PG_GETARG_DATUM(0));
+                                    ^
+/usr/include/pgsql/server/fmgr.h:556:26: note: in definition of macro ‘DirectFunctionCall1’
+  DirectFunctionCall1Coll(func, InvalidOid, arg1)
+                          ^~~~
+src/hll.c: In function ‘hll_hashval_out’:
+src/hll.c:1984:36: error: ‘int8out’ undeclared (first use in this function); did you mean ‘int4out’?
+     Datum dd = DirectFunctionCall1(int8out, PG_GETARG_DATUM(0));
+                                    ^
+/usr/include/pgsql/server/fmgr.h:556:26: note: in definition of macro ‘DirectFunctionCall1’
+  DirectFunctionCall1Coll(func, InvalidOid, arg1)
+                          ^~~~
+make: *** [<builtin>: src/hll.o] Error 1
+
+/ 13	. 
+
+$ vi Makefile
+
+createdb:
+  #createuser -SDr taop
+  #createdb -O taop $(DBNAME)
+  psql -d $(DBNAME) -c 'create extension btree_gist'
+  psql -d $(DBNAME) -c 'create extension ip4r'
+  #psql -d $(DBNAME) -c 'create extension hll'  # TODO
+  psql -d $(DBNAME) -c 'create extension cube'
+  psql -d $(DBNAME) -c 'create extension earthdistance'
+  psql -d $(DBNAME) -c 'create extension hstore'
+  psql -d $(DBNAME) -c 'create extension intarray'
+  psql -d $(DBNAME) -c 'create extension pg_trgm'
+
+eric@almond TheArtOfPostgreSQL]$ make
+#createuser -SDr taop
+#createdb -O taop taop
+psql -d taop -c 'create extension btree_gist'
+CREATE EXTENSION
+psql -d taop -c 'create extension ip4r'
+CREATE EXTENSION
+#psql -d taop -c 'create extension hll' 	# TODO
+psql -d taop -c 'create extension cube'
+CREATE EXTENSION
+psql -d taop -c 'create extension earthdistance'
+ERROR:  required extension "cube" is not installed
+HINT:  Use CREATE EXTENSION ... CASCADE to install required extensions too.
+make: *** [Makefile:18: createdb] Error 1
+
+/ geen extensie is geinstalleerd, vandaar de foutmelding,
+
+/ 13	. 
+
+/ google,
+psql list extensions in datbase
+/ lees,
+https://stackoverflow.com/questions/21799956/using-psql-how-do-i-list-extensions-installed-in-a-database
+
+taop=> select * from pg_extension;
+ extname | extowner | extnamespace | extrelocatable | extversion | extconfig | extcondition 
+---------+----------+--------------+----------------+------------+-----------+--------------
+ plpgsql |       10 |           11 | f              | 1.0        |           | 
+(1 row)
+/ of,
+taop=> \dx
+                 List of installed extensions
+  Name   | Version |   Schema   |         Description          
+---------+---------+------------+------------------------------
+ plpgsql | 1.0     | pg_catalog | PL/pgSQL procedural language
+(1 row)
+
+Additionally if you want to know which extensions are available on your server: SELECT * FROM pg_available_extensions.
+See pg_available_extensions and pg_available_extension_versions.
+
+taop=> select *from pg_available_extensions;
+        name        | default_version | installed_version |                               comment                                
+--------------------+-----------------+-------------------+----------------------------------------------------------------------
+ pg_stat_statements | 1.4             |                   | track execution statistics of all SQL statements executed
+ hstore_plperl      | 1.0             |                   | transform between hstore and plperl
+ earthdistance      | 1.1             |                   | calculate great-circle distances on the surface of the Earth
+ seg                | 1.1             |                   | data type for representing line segments or floating-point intervals
+ ltree_plpython2u   | 1.0             |                   | transform between ltree and plpython2u
+ dict_xsyn          | 1.0             |                   | text search dictionary template for extended synonym processing
+ ip4r               | 2.4             |                   | 
+ moddatetime        | 1.0             |                   | functions for tracking last modification time
+ unaccent           | 1.1             |                   | text search dictionary that removes accents
+ pgcrypto           | 1.3             |                   | cryptographic functions
+ sslinfo            | 1.2             |                   | information about SSL certificates
+ pg_buffercache     | 1.2             |                   | examine the shared buffer cache
+ autoinc            | 1.0             |                   | functions for autoincrementing fields
+ file_fdw           | 1.0             |                   | foreign-data wrapper for flat file access
+ refint             | 1.0             |                   | functions for implementing referential integrity (obsolete)
+ tsm_system_rows    | 1.0             |                   | TABLESAMPLE method which accepts number of rows as a limit
+ chkpass            | 1.0             |                   | data type for auto-encrypted passwords
+ bloom              | 1.0             |                   | bloom access method - signature file based index
+ ltree_plpythonu    | 1.0             |                   | transform between ltree and plpythonu
+ intagg             | 1.1             |                   | integer aggregator and enumerator (obsolete)
+ cube               | 1.2             |                   | data type for multidimensional cubes
+ dblink             | 1.2             |                   | connect to other PostgreSQL databases from within a database
+ citext             | 1.3             |                   | data type for case-insensitive character strings
+ btree_gin          | 1.0             |                   | support for indexing common datatypes in GIN
+ pgstattuple        | 1.4             |                   | show tuple-level statistics
+ ltree              | 1.1             |                   | data type for hierarchical tree-like structures
+ adminpack          | 1.0             |                   | administrative functions for PostgreSQL
+ lo                 | 1.1             |                   | Large Object maintenance
+ fuzzystrmatch      | 1.1             |                   | determine similarities and distance between strings
+ pg_visibility      | 1.1             |                   | examine the visibility map (VM) and page-level visibility info
+ ltree_plpython3u   | 1.0             |                   | transform between ltree and plpython3u
+ timetravel         | 1.0             |                   | functions for implementing time travel
+ hstore_plpythonu   | 1.0             |                   | transform between hstore and plpythonu
+ pageinspect        | 1.5             |                   | inspect the contents of database pages at a low level
+ hstore_plpython2u  | 1.0             |                   | transform between hstore and plpython2u
+ postgres_fdw       | 1.0             |                   | foreign-data wrapper for remote PostgreSQL servers
+ isn                | 1.1             |                   | data types for international product numbering standards
+ tsearch2           | 1.0             |                   | compatibility package for pre-8.3 text search functions
+ btree_gist         | 1.2             |                   | support for indexing common datatypes in GiST
+ pg_prewarm         | 1.1             |                   | prewarm relation data
+ xml2               | 1.1             |                   | XPath querying and XSLT
+ intarray           | 1.2             |                   | functions, operators, and index support for 1-D arrays of integers
+ hstore_plpython3u  | 1.0             |                   | transform between hstore and plpython3u
+ tcn                | 1.0             |                   | Triggered change notifications
+ uuid-ossp          | 1.1             |                   | generate universally unique identifiers (UUIDs)
+ tsm_system_time    | 1.0             |                   | TABLESAMPLE method which accepts time in milliseconds as a limit
+ hstore             | 1.4             |                   | data type for storing sets of (key, value) pairs
+ pg_trgm            | 1.3             |                   | text similarity measurement and index searching based on trigrams
+ plpgsql            | 1.0             | 1.0               | PL/pgSQL procedural language
+ dict_int           | 1.0             |                   | text search dictionary template for integers
+ insert_username    | 1.0             |                   | functions for tracking who changed a table
+ hstore_plperlu     | 1.0             |                   | transform between hstore and plperlu
+ tablefunc          | 1.0             |                   | functions that manipulate whole tables, including crosstab
+ pgrowlocks         | 1.2             |                   | show row-level locking information
+ pg_freespacemap    | 1.1             |                   | examine the free space map (FSM)
+(55 rows)
+/ ipv4 hebben we zelf erbij gezet,
+
+taop=> select *from pg_available_extension_versions;
+        name        | version | installed | superuser | relocatable |   schema   |      requires       |                         
+      comment                                
+--------------------+---------+-----------+-----------+-------------+------------+---------------------+-------------------------
+---------------------------------------------
+ pg_stat_statements | 1.4     | f         | t         | t           |            |                     | track execution statisti
+cs of all SQL statements executed
+ hstore_plperl      | 1.0     | f         | t         | t           |            | {hstore,plperl}     | transform between hstore
+ and plperl
+ earthdistance      | 1.1     | f         | t         | t           |            | {cube}              | calculate great-circle d
+istances on the surface of the Earth
+ seg                | 1.1     | f         | t         | t           |            |                     | data type for representi
+ng line segments or floating-point intervals
+ ltree_plpython2u   | 1.0     | f         | t         | t           |            | {ltree,plpython2u}  | transform between ltree 
+and plpython2u
+ dict_xsyn          | 1.0     | f         | t         | t           |            |                     | text search dictionary t
+emplate for extended synonym processing
+ ip4r               | 2.4     | f         | t         | t           |            |                     | 
+ moddatetime        | 1.0     | f         | t         | t           |            |                     | functions for tracking l
+ast modification time
+ unaccent           | 1.1     | f         | t         | t           |            |                     | text search dictionary t
+hat removes accents
+ pgcrypto           | 1.3     | f         | t         | t           |            |                     | cryptographic functions
+ sslinfo            | 1.2     | f         | t         | t           |            |                     | information about SSL ce
+rtificates
+ pg_buffercache     | 1.2     | f         | t         | t           |            |                     | examine the shared buffe
+r cache
+ autoinc            | 1.0     | f         | t         | t           |            |                     | functions for autoincrem
+enting fields
+ file_fdw           | 1.0     | f         | t         | t           |            |                     | foreign-data wrapper for
+ flat file access
+ refint             | 1.0     | f         | t         | t           |            |                     | functions for implementi
+ng referential integrity (obsolete)
+ tsm_system_rows    | 1.0     | f         | t         | t           |            |                     | TABLESAMPLE method which
+ accepts number of rows as a limit
+ chkpass            | 1.0     | f         | t         | t           |            |                     | data type for auto-encry
+pted passwords
+ bloom              | 1.0     | f         | t         | t           |            |                     | bloom access method - si
+gnature file based index
+ ltree_plpythonu    | 1.0     | f         | t         | t           |            | {ltree,plpythonu}   | transform between ltree 
+and plpythonu
+ intagg             | 1.1     | f         | t         | t           |            |                     | integer aggregator and e
+numerator (obsolete)
+ cube               | 1.2     | f         | t         | t           |            |                     | data type for multidimen
+sional cubes
+ dblink             | 1.2     | f         | t         | t           |            |                     | connect to other Postgre
+SQL databases from within a database
+ citext             | 1.3     | f         | t         | t           |            |                     | data type for case-insen
+sitive character strings
+ btree_gin          | 1.0     | f         | t         | t           |            |                     | support for indexing com
+mon datatypes in GIN
+ pgstattuple        | 1.4     | f         | t         | t           |            |                     | show tuple-level statist
+ics
+ ltree              | 1.1     | f         | t         | t           |            |                     | data type for hierarchic
+al tree-like structures
+ adminpack          | 1.0     | f         | t         | f           | pg_catalog |                     | administrative functions
+ for PostgreSQL
+ lo                 | 1.1     | f         | t         | t           |            |                     | Large Object maintenance
+ fuzzystrmatch      | 1.1     | f         | t         | t           |            |                     | determine similarities a
+nd distance between strings
+ pg_visibility      | 1.1     | f         | t         | t           |            |                     | examine the visibility m
+ap (VM) and page-level visibility info
+ ltree_plpython3u   | 1.0     | f         | t         | t           |            | {ltree,plpython3u}  | transform between ltree 
+and plpython3u
+ timetravel         | 1.0     | f         | t         | t           |            |                     | functions for implementi
+ng time travel
+ hstore_plpythonu   | 1.0     | f         | t         | t           |            | {hstore,plpythonu}  | transform between hstore
+ and plpythonu
+ pageinspect        | 1.5     | f         | t         | t           |            |                     | inspect the contents of 
+database pages at a low level
+ hstore_plpython2u  | 1.0     | f         | t         | t           |            | {hstore,plpython2u} | transform between hstore
+ and plpython2u
+ postgres_fdw       | 1.0     | f         | t         | t           |            |                     | foreign-data wrapper for
+ remote PostgreSQL servers
+ isn                | 1.1     | f         | t         | t           |            |                     | data types for internati
+onal product numbering standards
+ tsearch2           | 1.0     | f         | t         | f           |            |                     | compatibility package fo
+r pre-8.3 text search functions
+ btree_gist         | 1.2     | f         | t         | t           |            |                     | support for indexing com
+mon datatypes in GiST
+ pg_prewarm         | 1.1     | f         | t         | t           |            |                     | prewarm relation data
+ xml2               | 1.1     | f         | t         | f           |            |                     | XPath querying and XSLT
+ intarray           | 1.2     | f         | t         | t           |            |                     | functions, operators, an
+d index support for 1-D arrays of integers
+ hstore_plpython3u  | 1.0     | f         | t         | t           |            | {hstore,plpython3u} | transform between hstore
+ and plpython3u
+ tcn                | 1.0     | f         | t         | t           |            |                     | Triggered change notific
+ations
+ uuid-ossp          | 1.1     | f         | t         | t           |            |                     | generate universally uni
+que identifiers (UUIDs)
+ tsm_system_time    | 1.0     | f         | t         | t           |            |                     | TABLESAMPLE method which
+ accepts time in milliseconds as a limit
+ hstore             | 1.4     | f         | t         | t           |            |                     | data type for storing se
+ts of (key, value) pairs
+ pg_trgm            | 1.3     | f         | t         | t           |            |                     | text similarity measurem
+ent and index searching based on trigrams
+ plpgsql            | 1.0     | t         | f         | f           | pg_catalog |                     | PL/pgSQL procedural lang
+uage
+ dict_int           | 1.0     | f         | t         | t           |            |                     | text search dictionary t
+emplate for integers
+ insert_username    | 1.0     | f         | t         | t           |            |                     | functions for tracking w
+ho changed a table
+ hstore_plperlu     | 1.0     | f         | t         | t           |            | {hstore,plperlu}    | transform between hstore
+ and plperlu
+ tablefunc          | 1.0     | f         | t         | t           |            |                     | functions that manipulat
+e whole tables, including crosstab
+ pgrowlocks         | 1.2     | f         | t         | t           |            |                     | show row-level locking i
+nformation
+ pg_freespacemap    | 1.1     | f         | t         | t           |            |                     | examine the free space m
+ap (FSM)
+(55 rows)
+
+/ we zien dat onze installations van de extensions niet goed gaan,
+
+taop=> \dx
+                 List of installed extensions
+  Name   | Version |   Schema   |         Description          
+---------+---------+------------+------------------------------
+ plpgsql | 1.0     | pg_catalog | PL/pgSQL procedural language
+(1 row)
+
+
+/ google,
+psql create extensions in database
+/ lees,
+https://www.postgresql.org/docs/9.6/sql-createextension.html
+
+Before you can use CREATE EXTENSION to load an extension into a database, the extension's supporting files must be installed. Information about installing the extensions supplied with PostgreSQL can be found in Additional Supplied Modules.
+The extensions currently available for loading can be identified from the pg_available_extensions or pg_available_extension_versions system views.
+
+/ 13	. 
+
+[eric@almond TheArtOfPostgreSQL]$ sudo -u postgres ls /var/lib/pgsql/data/pg_log -ltr
+total 8
+-rw-------. 1 postgres postgres    0 Nov 28  2019 postgresql-Thu.log
+-rw-------. 1 postgres postgres    0 Nov 29  2019 postgresql-Fri.log
+-rw-------. 1 postgres postgres    0 Nov 30  2019 postgresql-Sat.log
+-rw-------. 1 postgres postgres    0 Feb 18  2020 postgresql-Wed.log
+-rw-------. 1 postgres postgres 1219 Nov 27 14:20 postgresql-Sun.log
+-rw-------. 1 postgres postgres    0 Nov 28 19:26 postgresql-Mon.log
+-rw-------. 1 postgres postgres 1262 Dec  3 16:43 postgresql-Tue.log
+/ Klopt niet, want 3 Dec is zaterdag,
+/ TODO
+/ Maar in de log file staat niet meer dan op de command line, 
+/ log meer,
+/ TODO
+
+[eric@almond TheArtOfPostgreSQL]$ sudo -u postgres less /var/lib/pgsql/data/pg_log/postgresql-Tue.log
+...
+
+/ 13	. 
+
+/ Doe met de hand,
+
+[eric@almond TheArtOfPostgreSQL]$ psql
+psql (9.6.8)
+Type "help" for help.
+
+postgres=# \c taop taop
+You are now connected to database "taop" as user "taop".
+taop=> create extension btree_gist;
+ERROR:  permission denied to create extension "btree_gist"
+HINT:  Must be superuser to create this extension.
+
+/ 13	. 
+
+createuser -SDr taop 				# no superuser, cannot create databases, can create roles,
+createdb -O taop $(DBNAME)	# owner of database is taop
+
+[eric@almond TheArtOfPostgreSQL]$ psql
+psql (9.6.8)
+Type "help" for help.
+
+postgres=# \conninfo
+You are connected to database "postgres" as user "postgres" via socket in "/var/run/postgresql" at port "5432".
+postgres=# \l
+                                              List of databases
+               Name                |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   
+-----------------------------------+----------+----------+-------------+-------------+-----------------------
+ postgres                          | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ taop                              | taop     | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+/ we zien de owners,
+
+postgres=# \dn
+  List of schemas
+  Name  |  Owner   
+--------+----------
+ public | postgres
+(1 row)
+
+[eric@almond TheArtOfPostgreSQL]$ psql -U taop
+psql (9.6.8)
+Type "help" for help.
+
+taop=> \q
+
+/ is de reden als als postgres inlogt we in de postgres database komen , en net zo taop in taop dat ze de owners zijn van die databases?
+
+/ we zien wel dat we in public schema zijn
+create schema authorization eric;
+/ TODO
+/ role eric kan geen database maken, alter,
+/ TODO
+
+postgres=# \c - eric
+You are now connected to database "postgres" as user "eric".
+postgres=> create schema authorization eric;
+ERROR:  permission denied for database postgres
+/ TODO
+
+/ 13	. 
+
+postgres=# \c taop -
+You are now connected to database "taop" as user "postgres".
+
+taop=# create extension btree_gist;
+CREATE EXTENSION
+taop=# \dx
+                           List of installed extensions
+    Name    | Version |   Schema   |                  Description                  
+------------+---------+------------+-----------------------------------------------
+ btree_gist | 1.2     | public     | support for indexing common datatypes in GiST
+ plpgsql    | 1.0     | pg_catalog | PL/pgSQL procedural language
+(2 rows)
+
+/ nu is het gelukt,
+
+/ niet vergeten, anders is de extension niet definitief	, dus als je # \q doet, en weer inlogt, is de extension er niet meer,
+taop=# commit;
+COMMIT
+
+/ nu op de command line,
+
+[eric@almond TheArtOfPostgreSQL]$ psql -U postgres -d taop -c 'create extension ip4r;commit'
+COMMIT
+[eric@almond TheArtOfPostgreSQL]$ psql -d taop
+psql (9.6.8)
+Type "help" for help.
+
+taop=# \conninfo
+You are connected to database "taop" as user "postgres" via socket in "/var/run/postgresql" at port "5432".
+taop=# \dx
+                           List of installed extensions
+    Name    | Version |   Schema   |                  Description                  
+------------+---------+------------+-----------------------------------------------
+ btree_gist | 1.2     | public     | support for indexing common datatypes in GiST
+ ip4r       | 2.4     | public     | 
+ plpgsql    | 1.0     | pg_catalog | PL/pgSQL procedural language
+(3 rows)
+
+/ 13	. 
+
+/ Dit is OK,
+
+taop=# create extension if not exists ip4r;
+NOTICE:  extension "ip4r" already exists, skipping
+CREATE EXTENSION
+
+/ In de Makefile stond 
+
+createdb:
+  #createuser -SDr taop
+  #createdb -O taop $(DBNAME)
+  psql -d $(DBNAME) -c 'create extension btree_gist'
+  psql -d $(DBNAME) -c 'create extension ip4r'
+  #psql -d $(DBNAME) -c 'create extension hll'  # TODO
+  psql -d $(DBNAME) -c 'create extension cube'
+  psql -d $(DBNAME) -c 'create extension earthdistance'
+  psql -d $(DBNAME) -c 'create extension hstore'
+  psql -d $(DBNAME) -c 'create extension intarray'
+  psql -d $(DBNAME) -c 'create extension pg_trgm'
+
+/ is nu,
+
+createdb:
+  #createuser -SDr taop
+  #createdb -O taop $(DBNAME)
+  psql -U postgres -d $(DBNAME) -c 'create extension if not exists btree_gist;commit'
+  psql -U postgres -d $(DBNAME) -c 'create extension if not exists ip4r;commit'
+  #psql -U postgres -d $(DBNAME) -c 'create extension if not exists hll;commit'   # TODO
+  psql -U postgres -d $(DBNAME) -c 'create extension if not exists cube;commit'
+  psql -U postgres -d $(DBNAME) -c 'create extension if not exists earthdistance;commit'
+  psql -U postgres -d $(DBNAME) -c 'create extension if not exists hstore;commit'
+  psql -U postgres -d $(DBNAME) -c 'create extension if not exists intarray;commit'
+  psql -U postgres -d $(DBNAME) -c 'create extension if not exists pg_trgm;commit'
+
+/ voor createuser, createdb is er niet zoiets als 'if not exists' ,
+/ maak ook psql regels ipv createuser en createdb,
+/ TODO
+
+/ 13	. 
+
+/ in $ env staat wel PGUSER=postgres	, 
+/ dat geldt ook voor psql,
+
+[eric@almond Postgres]$ psql
+psql (9.6.8)
+Type "help" for help.
+
+postgres=# \conninfo
+You are connected to database "postgres" as user "postgres" via socket in "/var/run/postgresql" at port "5432".
+
+/ maar in Makefile moesten we -U postgres in psql regels,
+/ TODO
+
+/ 13. 
+
+/ Deze Makefile is OK,
+
+[eric@almond TheArtOfPostgreSQL]$ cat Makefile 
+DUMP    = ./taop.dump
+PG_LIST = ./exclude-extensions.list
+DBNAME  = taop
+
+all: restore
+
+restore: createdb $(PG_LIST)
+	pg_restore -U taop -d $(DBNAME) --use-list=$(PG_LIST) --no-owner $(DUMP)
+	psql -U taop -d $(DBNAME) -f setup.sql
+
+createdb:
+	#createuser -SDr taop
+	#createdb -O taop $(DBNAME)
+	psql -U postgres -d $(DBNAME) -c 'create extension if not exists btree_gist;commit'
+	psql -U postgres -d $(DBNAME) -c 'create extension if not exists ip4r;commit'
+	#psql -U postgres -d $(DBNAME) -c 'create extension if not exists hll;commit' 	# TODO
+	psql -U postgres -d $(DBNAME) -c 'create extension if not exists cube;commit'
+	psql -U postgres -d $(DBNAME) -c 'create extension if not exists earthdistance;commit'
+	psql -U postgres -d $(DBNAME) -c 'create extension if not exists hstore;commit'
+	psql -U postgres -d $(DBNAME) -c 'create extension if not exists intarray;commit'
+	psql -U postgres -d $(DBNAME) -c 'create extension if not exists pg_trgm;commit'
+
+dropdb:
+	dropdb --if-exists $(DBNAME)
+	dropuser --if-exists taop
+
+$(PG_LIST): $(DUMP)
+	pg_restore --list $(DUMP) | awk -f exclude-extensions.awk > $(PG_LIST)
+
+.PHONY: all restore createdb dropdb
+
+/ 13	. 
+
+/ Maar we hadden te weinig ruimte op /,
+/ we hebben gedaan,
+
+[eric@almond Logs]$ psql
+psql (9.6.8)
+Type "help" for help.
+
+postgres=# drop database taop;
+
+
+/ 13	. 
+
+[eric@almond TheArtOfPostgreSQL]$ sudo su - root
+[root@almond ~]# 
+
+[root@almond ~]# systemctl status postgresql
+● postgresql.service - PostgreSQL database server
+   Loaded: loaded (/usr/lib/systemd/system/postgresql.service; disabled; vendor preset: disabled)
+   Active: active (running) since Sun 2022-11-27 13:39:14 CET; 6 days ago
+  Process: 4081 ExecStart=/usr/libexec/postgresql-ctl start -D ${PGDATA} -s -w -t ${PGSTARTTIMEOUT} (code=exited, status=0/SUCCES
+  Process: 4079 ExecStartPre=/usr/libexec/postgresql-check-db-dir postgresql (code=exited, status=0/SUCCESS)
+    Tasks: 7 (limit: 4915)
+   Memory: 993.2M
+      CPU: 51.448s
+   CGroup: /system.slice/postgresql.service
+           ├─4083 /usr/bin/postgres -D /var/lib/pgsql/data
+           ├─4084 postgres: logger process   
+           ├─4086 postgres: checkpointer process   
+           ├─4087 postgres: writer process   
+           ├─4088 postgres: wal writer process   
+           ├─4089 postgres: autovacuum launcher process   
+           └─4090 postgres: stats collector process   
+
+Nov 27 13:39:13 almond.nuts.org systemd[1]: Starting PostgreSQL database server...
+Nov 27 13:39:13 almond.nuts.org postgresql-ctl[4081]: LOG:  redirecting log output to logging collector process
+Nov 27 13:39:13 almond.nuts.org postgresql-ctl[4081]: HINT:  Future log output will appear in directory "pg_log".
+
+
+
+

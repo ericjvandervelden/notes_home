@@ -4333,4 +4333,13 @@ Changes to be committed:
 
 / precies goed	,
 
+/ 7	. 
+
+[eric@almond Logs]$ git diff LOG_bash.txt >diffs/diff_LOG_bash.txt
+[eric@almond Logs]$ git diff LOG_docker4.txt >diffs/diff_LOG_docker4.txt
+[eric@almond Logs]$ git diff LOG_git.txt >diffs/diff_LOG_git.txt
+[eric@almond Logs]$ git diff LOG_postgresql4.txt >diffs/diff_LOG_postgresql4.txt
+[eric@almond Logs]$ git diff LOG_rsync.txt > diffs/diff_LOG_rsync.txt
+[eric@almond Logs]$ git diff LOG_sql_for_smarties.txt >diffs/diff_LOG_sql_for_smarties.txt
+[eric@almond Logs]$ git diff LOG_sql_postgres.txt >diffs/diff_LOG_sql_postgres.txt
 
