@@ -4343,3 +4343,26 @@ Changes to be committed:
 [eric@almond Logs]$ git diff LOG_sql_for_smarties.txt >diffs/diff_LOG_sql_for_smarties.txt
 [eric@almond Logs]$ git diff LOG_sql_postgres.txt >diffs/diff_LOG_sql_postgres.txt
 
+[eric@almond Logs]$ git add LOG_bash.txt
+[eric@almond Logs]$ git add LOG_docker4.txt
+[eric@almond Logs]$ git add LOG_git.txt
+[eric@almond Logs]$ git add LOG_postgresql4.txt
+[eric@almond Logs]$ git add LOG_rsync.txt
+[eric@almond Logs]$ git add LOG_sql_for_smarties.txt
+[eric@almond Logs]$ git add LOG_sql_postgres.txt
+
+
+[eric@almond Logs]$ git remote show origin
+* remote origin
+  Fetch URL: https://github.com/ericjvandervelden/notes_home.git
+  Push  URL: https://github.com/ericjvandervelden/notes_home.git
+  HEAD branch: master
+  Remote branch:
+    master tracked
+  Local branch configured for 'git pull':
+    master merges with remote master
+  Local ref configured for 'git push':
+    master pushes to master (up to date)
+
+/ github personal access token
+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
